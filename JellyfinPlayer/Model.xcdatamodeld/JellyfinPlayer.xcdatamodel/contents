@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20E232" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Server" representedClassName="Server" syncable="YES" codeGenerationType="class">
+        <attribute name="baseURI" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="server_id" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="SignedInUser" representedClassName="SignedInUser" syncable="YES" codeGenerationType="class">
+        <attribute name="device_uuid" optional="YES" attributeType="String"/>
+        <attribute name="user_id" optional="YES" attributeType="String"/>
+        <attribute name="username" optional="YES" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="Server" positionX="-63" positionY="-9" width="128" height="74"/>
+        <element name="SignedInUser" positionX="-63" positionY="9" width="128" height="74"/>
+    </elements>
+</model>
