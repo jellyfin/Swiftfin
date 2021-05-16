@@ -179,6 +179,7 @@ struct ContentView: View {
     
     @State private var needsToSelectServer = false;
     @State private var isSignInErrored = false;
+    @State private var isNetworkErrored = false;
     @State private var isLoading = false;
     @State private var tabSelection: String = "Home";
     @State private var libraries: [String] = [];
@@ -256,9 +257,14 @@ struct ContentView: View {
                         
                     }
                     break
-                case .failure( _):
-                    _isLoading.wrappedValue = false;
-                    _isSignInErrored.wrappedValue = true;
+                case .failure( let error):
+                    if(error.response?.status.code == 401) {
+                        _isLoading.wrappedValue = false;
+                        _isSignInErrored.wrappedValue = true;
+                    } else {
+                        _isLoading.wrappedValue = false;
+                        _isNetworkErrored.wrappedValue = true;
+                    }
                 }
             }
         }
@@ -323,10 +329,14 @@ struct ContentView: View {
                     Image(systemName: "folder")
                 })
                 .tag("All Media")
+                
             }
         }.environmentObject(globalData)
         .onAppear(perform: startup)
         .navigationViewStyle(StackNavigationViewStyle())
+        .alert(isPresented: $isNetworkErrored) {
+            Alert(title: Text("Network Error"), message: Text("Couldn't connect to Jellyfin"), dismissButton: .default(Text("Ok")))
+        }
     }
 }
 

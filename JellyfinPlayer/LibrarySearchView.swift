@@ -1,89 +1,38 @@
 //
-//  LibraryView.swift
+//  LibrarySearchView.swift
 //  JellyfinPlayer
 //
-//  Created by Aiden Vigue on 5/1/21.
+//  Created by Aiden Vigue on 5/2/21.
 //
 
 import SwiftUI
-import SwiftyRequest
 import SwiftyJSON
+import SwiftyRequest
 import ExyteGrid
 import SDWebImageSwiftUI
 
-struct LibraryView: View {
+struct LibrarySearchView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var globalData: GlobalData
-    @State private var prefill_id: String = "";
-    @State private var library_names: [String: String] = [:]
-    @State private var library_ids: [String] = []
-    @State private var selected_library_id: String = "";
+    
+    @State var url: String;
+    @Binding var close: Bool;
+    @State var open: Bool = false;
     @State private var isLoading: Bool = true;
-    
-    @State private var startIndex: Int = 0;
-    @State private var endIndex: Int = 60;
-    @State private var totalItems: Int = 0;
-
+    @State private var onlyUnplayed: Bool = false;
     @State private var viewDidLoad: Bool = false;
-    @State private var filterString: String = "&SortBy=SortName&SortOrder=Descending";
-    @State private var showFiltersPopover: Bool = false;
-    @State private var showSearchPopover: Bool = false;
-    @State private var extraParam: String = "";
-    @State private var title: String = "";
-    @State private var url: String = "";
-    @State private var closeSearch: Bool = false;
-    
-    var gridItems: [GridItem] = [GridItem(.adaptive(minimum: 150, maximum: 400))]
-    
-    init(prefill: String?, names: [String: String], libraries: [String]) {
-        _prefill_id = State(wrappedValue: prefill ?? "")
-        _library_names = State(wrappedValue: names)
-        _library_ids = State(wrappedValue: libraries)
-    }
-    
-    init(prefill: String?, names: [String: String], libraries: [String], filter: String) {
-        _prefill_id = State(wrappedValue: prefill ?? "")
-        _library_names = State(wrappedValue: names)
-        _library_ids = State(wrappedValue: libraries)
-        _filterString = State(wrappedValue: filter);
-    }
-    
-    init(filter: String, extraParams: String, title: String) {
-        _prefill_id = State(wrappedValue: "erwt");
-        _filterString = State(wrappedValue: filter);
-        _extraParam = State(wrappedValue: extraParams);
-        _title = State(wrappedValue: title)
-    }
-    
-    init(extraParams: String, title: String) {
-        _prefill_id = State(wrappedValue: "erwt");
-        _extraParam = State(wrappedValue: extraParams);
-        _title = State(wrappedValue: title)
-    }
-    
     @State var items: [ResumeItem] = []
-    
-    func listOnAppear() {
-        if(_viewDidLoad.wrappedValue == false) {
-            //print("running VDL")
-            _viewDidLoad.wrappedValue = true;
-            _library_ids.wrappedValue.append("favorites")
-            _library_names.wrappedValue["favorites"] = "Favorites"
-            
-            _library_ids.wrappedValue.append("genres")
-            _library_names.wrappedValue["genres"] = "Genres"
+    @State var linkedItem: ResumeItem = ResumeItem();
+    @State var searchQuery: String = "" {
+        didSet {
+            self.onAppear();
         }
-    }
+    };
     
-    func loadItems() {
+    func onAppear() {
         _isLoading.wrappedValue = true;
-        if(_extraParam.wrappedValue == "") {
-            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=\(endIndex)&StartIndex=\(startIndex)&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(selected_library_id == "favorites" ? "&Filters=IsFavorite" : "&ParentId=" + selected_library_id)\(filterString)"
-        } else {
-            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=\(endIndex)&StartIndex=\(startIndex)&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(filterString)\(extraParam)"
-        }
-        
-        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue)
+        _items.wrappedValue = [];
+        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue + "&searchTerm=" + searchQuery)
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"
@@ -94,7 +43,6 @@ struct LibraryView: View {
                 let body = response.body
                 do {
                     let json = try JSON(data: body)
-                    _totalItems.wrappedValue = json["TotalRecordCount"].int ?? 0;
                     for (_,item):(String, JSON) in json["Items"] {
                         // Do something you want
                         let itemObj = ResumeItem()
@@ -139,16 +87,7 @@ struct LibraryView: View {
                 debugPrint(error)
                 break
             }
-            _isLoading.wrappedValue = false;
-        }
-    }
-    
-    func onAppear() {
-        if(_prefill_id.wrappedValue != "") {
-            _selected_library_id.wrappedValue = _prefill_id.wrappedValue;
-        }
-        if(_items.wrappedValue.count == 0) {
-            loadItems()
+            isLoading = false;
         }
     }
     
@@ -165,12 +104,28 @@ struct LibraryView: View {
     }
     
     var body: some View {
-        if(prefill_id != "") {
+        VStack() {
+            NavigationLink(destination: ItemView(item: linkedItem), isActive: $open) {
+                EmptyView();
+            };
+            Spacer().frame(height:6);
+            TextField("Search", text: $searchQuery, onEditingChanged: { _ in
+                print("changed")
+            }, onCommit: {
+                self.onAppear()
+            })
+            .padding(.horizontal, 10)
+            .foregroundColor(Color.secondary)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
             LoadingView(isShowing: $isLoading) {
                 GeometryReader { geometry in
                     Grid(tracks: self.tracks, spacing: GridSpacing(horizontal: 0, vertical: 20)) {
                         ForEach(items, id: \.Id) { item in
-                            NavigationLink(destination: ItemView(item: item )) {
+                            Button() {
+                                _linkedItem.wrappedValue = item;
+                                _close.wrappedValue = false;
+                                _open.wrappedValue = true;
+                            } label: {
                                 VStack(alignment: .leading) {
                                     if(item.Type == "Movie") {
                                         WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
@@ -219,69 +174,10 @@ struct LibraryView: View {
                                 }.frame(width: 100)
                             }
                         }
-                        if(startIndex + endIndex < totalItems) {
-                            HStack() {
-                                Spacer()
-                                Button() {
-                                    startIndex += endIndex;
-                                    loadItems()
-                                } label: {
-                                    HStack() {
-                                        Text("Load more").font(.callout)
-                                        Image(systemName: "arrow.clockwise")
-                                    }
-                                }
-                                Spacer()
-                            }.gridSpan(column: self.isPortrait ? 3 : 6)
-                        }
-                        Spacer().frame(height: 2).gridSpan(column: self.isPortrait ? 3 : 6)
                     }.gridContentMode(.scroll)
                 }
             }
-            .overrideViewPreference(.unspecified)
-            .onAppear(perform: onAppear)
-            .onChange(of: filterString) { tag in
-                isLoading = true;
-                startIndex = 0;
-                totalItems = 0;
-                items = [];
-                loadItems();
-            }
-            .navigationTitle(extraParam == "" ? (library_names[prefill_id] ?? "Library") : title)
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: LibrarySearchView(url: url, close: $closeSearch), isActive: $closeSearch) {
-                        Image(systemName: "magnifyingglass")
-                    }
-                    Button {
-                        showFiltersPopover = true
-                    } label: {
-                        Image(systemName: "line.horizontal.3.decrease")
-                    }
-                }
-            }.popover( isPresented: self.$showFiltersPopover, arrowEdge: .bottom) { LibraryFilterView(library: selected_library_id, output: $filterString, close: $showFiltersPopover).environmentObject(self.globalData) }
-        } else {
-            List(library_ids, id:\.self) { id in
-                if(id != "genres") {
-                    NavigationLink(destination: LibraryView(prefill: id, names: library_names, libraries: library_ids)) {
-                        Text(library_names[id] ?? "").foregroundColor(Color.primary)
-                    }
-                } else {
-                    NavigationLink(destination: LibraryView(prefill: id, names: library_names, libraries: library_ids)) {
-                        Text(library_names[id] ?? "").foregroundColor(Color.primary)
-                    }
-                }
-            }.onAppear(perform: listOnAppear).overrideViewPreference(.unspecified).navigationTitle("All Media")
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button {
-                        print("Search tapped!")
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                }
-            }
-            
-        }
+        }.onAppear(perform: onAppear)
+        .navigationBarTitle("Search", displayMode: .inline)
     }
 }

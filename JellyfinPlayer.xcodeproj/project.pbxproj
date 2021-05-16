@@ -12,7 +12,6 @@
 		5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F753263B65E10014BF09 /* SwiftyRequest */; };
 		5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F756263B7E2E0014BF09 /* KeychainSwift */; };
 		535BAE9F2649E569005FA86D /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAE9E2649E569005FA86D /* ItemView.swift */; };
-		535BAEA32649E96A005FA86D /* JellyfinHLSResourceLoaderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAEA22649E96A005FA86D /* JellyfinHLSResourceLoaderDelegate.swift */; };
 		535BAEA5264A151C005FA86D /* VLCPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAEA4264A151C005FA86D /* VLCPlayer.swift */; };
 		535BAEA7264A18AA005FA86D /* PlayerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAEA6264A18AA005FA86D /* PlayerDemo.swift */; };
 		5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */; };
@@ -39,6 +38,7 @@
 		53E4E645263F6BC000F67C6B /* PartialSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 53E4E644263F6BC000F67C6B /* PartialSheet */; };
 		53E4E647263F6CF100F67C6B /* LibraryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */; };
 		53E4E649263F725B00F67C6B /* MultiSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelector.swift */; };
+		53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE24E5265060780068F029 /* LibrarySearchView.swift */; };
 		53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F29263CF3F500585C35 /* LatestMediaView.swift */; };
 /* End PBXBuildFile section */
 
@@ -59,7 +59,6 @@
 /* Begin PBXFileReference section */
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		535BAE9E2649E569005FA86D /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
-		535BAEA22649E96A005FA86D /* JellyfinHLSResourceLoaderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinHLSResourceLoaderDelegate.swift; sourceTree = "<group>"; };
 		535BAEA4264A151C005FA86D /* VLCPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayer.swift; sourceTree = "<group>"; };
 		535BAEA6264A18AA005FA86D /* PlayerDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDemo.swift; sourceTree = "<group>"; };
 		5377CBF1263B596A003A4E83 /* JellyfinPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JellyfinPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,6 +81,7 @@
 		53DF641D263D9C0600A7CD1A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilterView.swift; sourceTree = "<group>"; };
 		53E4E648263F725B00F67C6B /* MultiSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelector.swift; sourceTree = "<group>"; };
+		53EE24E5265060780068F029 /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
 		53FF7F29263CF3F500585C35 /* LatestMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -147,9 +147,9 @@
 				53E4E648263F725B00F67C6B /* MultiSelector.swift */,
 				535BAE9E2649E569005FA86D /* ItemView.swift */,
 				53A089CF264DA9DA00D57806 /* MovieItemView.swift */,
-				535BAEA22649E96A005FA86D /* JellyfinHLSResourceLoaderDelegate.swift */,
 				535BAEA4264A151C005FA86D /* VLCPlayer.swift */,
 				535BAEA6264A18AA005FA86D /* PlayerDemo.swift */,
+				53EE24E5265060780068F029 /* LibrarySearchView.swift */,
 			);
 			path = JellyfinPlayer;
 			sourceTree = "<group>";
@@ -278,9 +278,9 @@
 				5377CBF7263B596A003A4E83 /* ContentView.swift in Sources */,
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
-				535BAEA32649E96A005FA86D /* JellyfinHLSResourceLoaderDelegate.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
+				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,
 				53892772263C8C6F0035E14B /* LoadingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
