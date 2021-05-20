@@ -94,7 +94,7 @@ struct NextUpView: View {
                                         .fontWeight(.semibold)
                                         .foregroundColor(.primary)
                                         .lineLimit(1)
-                                    Text("S\(String(item.ParentIndexNumber ?? 0))E\(String(item.IndexNumber ?? 0))")
+                                    Text("S\(String(item.ParentIndexNumber ?? 0)):E\(String(item.IndexNumber ?? 0))")
                                         .font(.caption)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.secondary)

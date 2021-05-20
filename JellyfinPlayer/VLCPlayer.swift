@@ -64,7 +64,7 @@ class PlayerUIView: UIView, VLCMediaPlayerDelegate {
             mediaPlayer.wrappedValue.stop()
             mediaPlayer.wrappedValue.media = VLCMedia(url: self.url.wrappedValue.videoUrl)
             self.url.wrappedValue.subtitles.forEach() { sub in
-                if(sub.id != -1) {
+                if(sub.id != -1 && sub.delivery == "External") {
                     mediaPlayer.wrappedValue.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
                 }
             }

@@ -15,6 +15,7 @@ struct Subtitle {
     var name: String;
     var id: Int32;
     var url: URL;
+    var delivery: String;
 }
 
 extension String {
@@ -55,7 +56,15 @@ struct PlayerDemo: View {
     @State private var captionConfiguration: Bool = false {
         didSet {
             if(captionConfiguration == false) {
-                vlcplayer.play()
+                DispatchQueue.global(qos: .userInitiated).async { [self] in
+                    vlcplayer.pause()
+                    usleep(10000);
+                    vlcplayer.play()
+                    usleep(10000);
+                    vlcplayer.pause()
+                    usleep(10000);
+                    vlcplayer.play()
+                }
             }
         }
     };
@@ -221,14 +230,12 @@ struct PlayerDemo: View {
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? "").replacingOccurrences(of: "master.m3u8", with: "main.m3u8"))")!
                         print(streamURL);
                         let item = PlaybackItem(videoType: VideoType.hls, videoUrl: streamURL, subtitles: [])
-                        var SubIndex: Int32 = 2;
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!)
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
                             if(stream["Type"].string == "Subtitle") {
                                 let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
-                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: SubIndex, url: deliveryUrl)
-                                SubIndex+=1;
+                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
                             }
                         }
@@ -240,14 +247,13 @@ struct PlayerDemo: View {
                         print("Direct play of item \(item.Name)")
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")/Videos/\(item.Id)/stream.mp4?Static=true&mediaSourceId=\(item.Id)&deviceId=\(globalData.user?.device_uuid ?? "")&api_key=\(globalData.authToken)&Tag=\(json["MediaSources"][0]["ETag"])")!;
                         let item = PlaybackItem(videoType: VideoType.direct, videoUrl: streamURL, subtitles: [])
-                        var SubIndex: Int32 = 2;
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!)
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
                             if(stream["Type"].string == "Subtitle") {
+                                print("Found subtitle track with title \(stream["DisplayTitle"].string ?? "") Delivery method: \(stream["DeliveryMethod"].string ?? "")")
                                 let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
-                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: SubIndex, url: deliveryUrl)
-                                SubIndex+=1;
+                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
                             }
                         }
@@ -406,14 +412,20 @@ struct PlayerDemo: View {
         .overrideViewPreference(.dark)
         .popover( isPresented: self.$captionConfiguration, arrowEdge: .bottom) {
             NavigationView() {
-                Form() {
-                    Picker("Closed Captions", selection: $selectedCaptionTrack) {
-                        ForEach(subtitles, id: \.id) { caption in
-                            Text(caption.name).tag(caption.id)
+                VStack() {
+                    Form() {
+                        Picker("Closed Captions", selection: $selectedCaptionTrack) {
+                            ForEach(subtitles, id: \.id) { caption in
+                                Text(caption.name).tag(caption.id)
+                            }
+                        }.onChange(of: selectedCaptionTrack) { track in
+                            vlcplayer.currentVideoSubTitleIndex = track;
                         }
-                    }.onChange(of: selectedCaptionTrack) { track in
-                        vlcplayer.currentVideoSubTitleIndex = track;
                     }
+                    Text("Subtitles may take a few moments to appear once selected.")
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                    Spacer()
                 }
                 .navigationBarTitle("Audio & Captions", displayMode: .inline)
                 .toolbar {
