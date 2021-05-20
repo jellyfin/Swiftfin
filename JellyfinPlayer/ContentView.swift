@@ -9,6 +9,7 @@ import SwiftUI
 import KeychainSwift
 import SwiftyRequest
 import SwiftyJSON
+import Introspect
 
 class GlobalData: ObservableObject {
     @Published var user: SignedInUser?
@@ -134,9 +135,6 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
             if(_orientations == .landscapeRight) {
                 let value = UIInterfaceOrientation.landscapeRight.rawValue;
                 UIDevice.current.setValue(value, forKey: "orientation")
-            } else {
-                let value = UIInterfaceOrientation.portrait.rawValue;
-                UIDevice.current.setValue(value, forKey: "orientation")
             }
         }
     };
@@ -186,6 +184,7 @@ struct ContentView: View {
     @State private var library_names: [String: String] = [:];
     @State private var librariesShowRecentlyAdded: [String] = [];
     @State private var libraryPrefillID: String = "";
+    @State private var showSettingsPopover: Bool = false;
     
     @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
     @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
@@ -309,12 +308,12 @@ struct ContentView: View {
                         .toolbar {
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button {
-                                    print("Settings tapped!")
+                                    showSettingsPopover = true;
                                 } label: {
                                     Image(systemName: "gear")
                                 }
                             }
-                        }
+                        }.popover( isPresented: self.$showSettingsPopover, arrowEdge: .bottom) { SettingsView(close: $showSettingsPopover).environmentObject(self.globalData) }
                     }
                     .tabItem({
                         Text("Home")
@@ -337,14 +336,15 @@ struct ContentView: View {
             .navigationViewStyle(StackNavigationViewStyle())
             .alert(isPresented: $isNetworkErrored) {
                 Alert(title: Text("Network Error"), message: Text("Couldn't connect to Jellyfin"), dismissButton: .default(Text("Ok")))
+            }.introspectTabBarController { (UITabBarController) in
+                UITabBarController.tabBar.isHidden = false
             }
         } else {
             Text("Signing in...")
             .onAppear(perform: {
                 DispatchQueue.global(qos: .userInitiated).async { [self] in
-                    print("Signing in")
-                    sleep(3)
-                    jsi.did = false
+                    usleep(500000);
+                    self.jsi.did = false;
                 }
             })
         }

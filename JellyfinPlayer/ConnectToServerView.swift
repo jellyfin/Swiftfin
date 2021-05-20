@@ -11,6 +11,7 @@ import SwiftyRequest
 import SwiftyJSON
 import CoreData
 import KeychainSwift
+import Introspect
 
 struct ConnectToServerView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -193,5 +194,8 @@ struct ConnectToServerView: View {
         }
         .onAppear(perform: start)
         .transition(.move(edge:.bottom))
+        .introspectTabBarController { (UITabBarController) in
+            UITabBarController.tabBar.isHidden = true
+        }
     }
 }

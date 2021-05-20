@@ -8,13 +8,22 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @Binding var close: Bool;
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
+        NavigationView() {
+            Text("SettingsView not implemented.")
+            .navigationBarTitle("Settings", displayMode: .inline)
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button {
+                        close = false
+                    } label: {
+                        HStack() {
+                            Text("Back").font(.callout)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
