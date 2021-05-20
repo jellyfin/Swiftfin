@@ -274,9 +274,7 @@ struct LibraryView: View {
             }.onAppear(perform: listOnAppear).overrideViewPreference(.unspecified).navigationTitle("All Media")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button {
-                        print("Search tapped!")
-                    } label: {
+                    NavigationLink(destination: LibrarySearchView(url: "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=60&StartIndex=0&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(extraParam)", close: $closeSearch), isActive: $closeSearch) {
                         Image(systemName: "magnifyingglass")
                     }
                 }

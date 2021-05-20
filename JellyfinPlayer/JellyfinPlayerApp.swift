@@ -18,22 +18,13 @@ struct JellyfinPlayerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if(!jsi.did) {
-                ContentView()
-                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                    .environmentObject(jsi)
-                    .withHostingWindow() { window in
-                        window?.rootViewController = PreferenceUIHostingController(wrappedView: ContentView().environment(\.managedObjectContext, persistenceController.container.viewContext)
-                                                                                    .environmentObject(jsi))
-                    }
-            } else {
-                Text("Please wait...")
-                    .onAppear(perform: {
-                        print("Signing in")
-                        sleep(1)
-                        jsi.did = false
-                    })
-            }
+            ContentView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(jsi)
+                .withHostingWindow() { window in
+                    window?.rootViewController = PreferenceUIHostingController(wrappedView: ContentView().environment(\.managedObjectContext, persistenceController.container.viewContext)
+                                                                                .environmentObject(jsi))
+                }
         }
     }
 }

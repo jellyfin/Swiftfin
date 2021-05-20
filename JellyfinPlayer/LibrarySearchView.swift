@@ -32,7 +32,7 @@ struct LibrarySearchView: View {
     func onAppear() {
         _isLoading.wrappedValue = true;
         _items.wrappedValue = [];
-        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue + "&searchTerm=" + searchQuery)
+        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue + "&searchTerm=" + searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"

@@ -271,71 +271,82 @@ struct ContentView: View {
     }
 
     var body: some View {
-        LoadingView(isShowing: $isLoading) {
-            TabView(selection: $tabSelection) {
-                NavigationView() {
-                    VStack {
-                        NavigationLink(destination: ConnectToServerView(isActive: $needsToSelectServer), isActive: $needsToSelectServer) {
-                            EmptyView()
-                        }.isDetailLink(false)
-                        NavigationLink(destination: ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server, reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored), isActive: $isSignInErrored) {
-                            EmptyView()
-                        }.isDetailLink(false)
-                        if(!needsToSelectServer && !isSignInErrored) {
-                            VStack(alignment: .leading) {
-                                ScrollView() {
-                                    Spacer().frame(height: self.isPortrait ? 0 : 15)
-                                    ContinueWatchingView()
-                                    NextUpView().padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-                                    ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
-                                        VStack(alignment: .leading) {
-                                            HStack() {
-                                                Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
-                                                Spacer()
-                                                NavigationLink(destination: LibraryView(prefill: library_id, names: library_names, libraries: libraries, filter: "&SortBy=DateCreated&SortOrder=Descending")) {
-                                                    Text("See All").font(.subheadline).fontWeight(.bold)
-                                                }
-                                            }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                            LatestMediaView(library: library_id)
-                                        }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+        if(!jsi.did) {
+            LoadingView(isShowing: $isLoading) {
+                TabView(selection: $tabSelection) {
+                    NavigationView() {
+                        VStack {
+                            NavigationLink(destination: ConnectToServerView(isActive: $needsToSelectServer), isActive: $needsToSelectServer) {
+                                EmptyView()
+                            }.isDetailLink(false)
+                            NavigationLink(destination: ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server, reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored), isActive: $isSignInErrored) {
+                                EmptyView()
+                            }.isDetailLink(false)
+                            if(!needsToSelectServer && !isSignInErrored) {
+                                VStack(alignment: .leading) {
+                                    ScrollView() {
+                                        Spacer().frame(height: self.isPortrait ? 0 : 15)
+                                        ContinueWatchingView()
+                                        NextUpView().padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                                        ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
+                                            VStack(alignment: .leading) {
+                                                HStack() {
+                                                    Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
+                                                    Spacer()
+                                                    NavigationLink(destination: LibraryView(prefill: library_id, names: library_names, libraries: libraries, filter: "&SortBy=DateCreated&SortOrder=Descending")) {
+                                                        Text("See All").font(.subheadline).fontWeight(.bold)
+                                                    }
+                                                }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                                                LatestMediaView(library: library_id)
+                                            }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                                        }
+                                        Spacer().frame(height: 7)
                                     }
-                                    Spacer().frame(height: 7)
+                                }
+                            }
+                        }
+                        .navigationTitle("Home")
+                        .toolbar {
+                            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                                Button {
+                                    print("Settings tapped!")
+                                } label: {
+                                    Image(systemName: "gear")
                                 }
                             }
                         }
                     }
-                    .navigationTitle("Home")
-                    .toolbar {
-                        ToolbarItemGroup(placement: .navigationBarTrailing) {
-                            Button {
-                                print("Settings tapped!")
-                            } label: {
-                                Image(systemName: "gear")
-                            }
-                        }
+                    .tabItem({
+                        Text("Home")
+                        Image(systemName: "house")
+                    })
+                    .tag("Home")
+                    NavigationView() {
+                        LibraryView(prefill: "", names: library_names, libraries: libraries)
+                        .navigationTitle("Library")
                     }
+                    .tabItem({
+                        Text("All Media")
+                        Image(systemName: "folder")
+                    })
+                    .tag("All Media")
+                    
                 }
-                .tabItem({
-                    Text("Home")
-                    Image(systemName: "house")
-                })
-                .tag("Home")
-                NavigationView() {
-                    LibraryView(prefill: "", names: library_names, libraries: libraries)
-                    .navigationTitle("Library")
-                }
-                .tabItem({
-                    Text("All Media")
-                    Image(systemName: "folder")
-                })
-                .tag("All Media")
-                
+            }.environmentObject(globalData)
+            .onAppear(perform: startup)
+            .navigationViewStyle(StackNavigationViewStyle())
+            .alert(isPresented: $isNetworkErrored) {
+                Alert(title: Text("Network Error"), message: Text("Couldn't connect to Jellyfin"), dismissButton: .default(Text("Ok")))
             }
-        }.environmentObject(globalData)
-        .onAppear(perform: startup)
-        .navigationViewStyle(StackNavigationViewStyle())
-        .alert(isPresented: $isNetworkErrored) {
-            Alert(title: Text("Network Error"), message: Text("Couldn't connect to Jellyfin"), dismissButton: .default(Text("Ok")))
+        } else {
+            Text("Signing in...")
+            .onAppear(perform: {
+                DispatchQueue.global(qos: .userInitiated).async { [self] in
+                    print("Signing in")
+                    sleep(3)
+                    jsi.did = false
+                }
+            })
         }
     }
 }

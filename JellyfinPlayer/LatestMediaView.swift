@@ -87,51 +87,53 @@ struct LatestMediaView: View {
                 HStack() {
                     Spacer().frame(width:18)
                     ForEach(resumeItems, id: \.Id) { item in
-                        VStack(alignment: .leading) {
-                            if(item.Type == "Series") {
-                                Spacer().frame(height:10)
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)")!)
-                                    .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                    .placeholder {
-                                        Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .cornerRadius(10)
-                                    }
-                                    .frame(width: 100, height: 150)
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        ZStack {
-                                            Text("\(String(item.ItemBadge ?? 0))")
-                                                .font(.caption)
-                                                .padding(3)
-                                                .foregroundColor(.white)
-                                        }.background(Color.black)
-                                        .opacity(0.8)
-                                        .cornerRadius(10.0)
-                                        .padding(3), alignment: .topTrailing
-                                    ).shadow(radius: 6)
-                            } else {
-                                Spacer().frame(height:10)
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)")!)
-                                    .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                    .placeholder {
-                                        Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .cornerRadius(10)
-                                    }
-                                    .frame(width: 100, height: 150)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 6)
-                            }
-                            Text(item.Name)
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                            Spacer().frame(height:5)
-                        }.frame(width: 100)
+                        NavigationLink(destination: ItemView(item: item)) {
+                            VStack(alignment: .leading) {
+                                if(item.Type == "Series") {
+                                    Spacer().frame(height:10)
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)")!)
+                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                        .placeholder {
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .cornerRadius(10)
+                                        }
+                                        .frame(width: 100, height: 150)
+                                        .cornerRadius(10)
+                                        .overlay(
+                                            ZStack {
+                                                Text("\(String(item.ItemBadge ?? 0))")
+                                                    .font(.caption)
+                                                    .padding(3)
+                                                    .foregroundColor(.white)
+                                            }.background(Color.black)
+                                            .opacity(0.8)
+                                            .cornerRadius(10.0)
+                                            .padding(3), alignment: .topTrailing
+                                        ).shadow(radius: 6)
+                                } else {
+                                    Spacer().frame(height:10)
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)")!)
+                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                        .placeholder {
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .cornerRadius(10)
+                                        }
+                                        .frame(width: 100, height: 150)
+                                        .cornerRadius(10)
+                                        .shadow(radius: 6)
+                                }
+                                Text(item.Name)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                Spacer().frame(height:5)
+                            }.frame(width: 100)
+                        }
                         Spacer().frame(width: 14)
                     }
                     Spacer().frame(width:18)
