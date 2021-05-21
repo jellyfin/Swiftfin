@@ -196,9 +196,11 @@ struct ContentView: View {
     }
     
     func startup() {
+        
         SentrySDK.start { options in
             options.dsn = "https://7ef695d745e942f8a52d69317c5ae241@o704459.ingest.sentry.io/5778161"
             options.debug = false // Enabled debug when first installing is always helpful
+            options.releaseName = "ios-" + (Bundle.main.infoDictionary?["CFBundleVersion"] as! String);
         }
         _libraries.wrappedValue = []
         _library_names.wrappedValue = [:]
