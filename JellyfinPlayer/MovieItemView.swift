@@ -324,7 +324,7 @@ struct MovieItemView: View {
                                                         }
                                                     }
                                                     
-                                                }.offset(x: 0, y: -46).padding(.trailing, 30)
+                                                }.offset(x: 0, y: -46).padding(.trailing, 16)
                                             }.offset(x: 16, y: 40)
                                             , alignment: .bottomLeading)
                                     VStack(alignment: .leading) {
