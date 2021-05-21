@@ -487,7 +487,7 @@ struct MovieItemView: View {
                                                             .fontWeight(.semibold)
                                                             .foregroundColor(.primary)
                                                             .fixedSize(horizontal: false, vertical: true)
-                                                            .offset(x: 11, y: 0)
+                                                            .offset(x: 12, y: 0)
                                                         Spacer().frame(height: 1)
                                                         HStack() {
                                                             Text(String(fullItem.ProductionYear)).font(.subheadline)
@@ -521,7 +521,7 @@ struct MovieItemView: View {
                                                             }
                                                             Spacer()
                                                         }.frame(maxWidth: .infinity)
-                                                        .offset(x: 11)
+                                                        .offset(x: 12)
                                                     }.frame(maxWidth: .infinity)
                                                     Spacer()
                                                     HStack() {

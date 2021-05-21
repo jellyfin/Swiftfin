@@ -23,6 +23,10 @@ struct ItemView: View {
     var body: some View {
         if(item.Type == "Movie") {
             MovieItemView(item: self.item)
+        } else if(item.Type == "Season") {
+            SeasonItemView(item: self.item)
+        } else if(item.Type == "Series") {
+            SeriesItemView(item: self.item)
         } else {
             Text("Type: \(item.Type) not implemented yet :(")
         }
