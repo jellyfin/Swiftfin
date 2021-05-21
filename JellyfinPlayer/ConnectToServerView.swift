@@ -84,7 +84,7 @@ struct ConnectToServerView: View {
                                 } else {
                                     _isConnected.wrappedValue = true;
                                 }
-                            case .failure( _):
+                            case .failure(_):
                                 _isErrored.wrappedValue = true;
                             }
                             _isWorking.wrappedValue = false;
@@ -97,10 +97,10 @@ struct ConnectToServerView: View {
                         }
                     }.disabled(isWorking || uri.isEmpty)
                 }.alert(isPresented: $isErrored) {
-                    Alert(title: Text("Error"), message: Text("Couldn't connect to Jellyfin server"), dismissButton: .default(Text("Try again")))
+                    Alert(title: Text("Error"), message: Text("Couldn't connect to server"), dismissButton: .default(Text("Try again")))
                 }
             } else {
-                Section(header: Text("\(serverSkipped ? "re" : "")Authenticate to \(serverName)")) {
+                Section(header: Text("\(serverSkipped ? "re" : "")Authenticate to \"\(serverName)\"")) {
                     TextField("Username", text: $username)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
@@ -192,12 +192,12 @@ struct ConnectToServerView: View {
                 }
             }
         }.navigationTitle("Connect to Server")
+        .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarBackButtonHidden(true)
         .alert(isPresented: $serverSkippedAlert) {
             Alert(title: Text("Error"), message: Text("Credentials have expired"), dismissButton: .default(Text("Sign in again")))
         }
         .onAppear(perform: start)
-        .transition(.move(edge:.bottom))
         .introspectTabBarController { (UITabBarController) in
             UITabBarController.tabBar.isHidden = true
         }

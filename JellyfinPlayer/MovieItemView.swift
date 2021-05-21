@@ -338,7 +338,7 @@ struct MovieItemView: View {
                                                     Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
                                                 }
                                                 .frame(width: 120, height: 35)
-                                                .background(Color(UIColor.systemBlue))
+                                                .background(Color(red: 172/255, green: 92/255, blue: 195/255))
                                                 .cornerRadius(10)
                                             }.buttonStyle(PlainButtonStyle())
                                             .frame(width: 120, height: 25)
@@ -476,7 +476,7 @@ struct MovieItemView: View {
                                                     Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
                                                 }
                                                 .frame(width: 120, height: 35)
-                                                .background(Color(UIColor.systemBlue))
+                                                .background(Color(red: 172/255, green: 92/255, blue: 195/255))
                                                 .cornerRadius(10)
                                             }.buttonStyle(PlainButtonStyle())
                                             .frame(width: 120, height: 25)
