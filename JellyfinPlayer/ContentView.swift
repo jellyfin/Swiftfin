@@ -243,6 +243,13 @@ struct ContentView: View {
                                     for (_,item2):(String, JSON) in json2["Items"] {
                                         _library_names.wrappedValue[item2["Id"].string ?? ""] = item2["Name"].string ?? ""
                                     }
+                                    
+                                    if(_libraries.wrappedValue.count == 0 && _librariesShowRecentlyAdded.wrappedValue.count == 0) {
+                                        for (_,item2):(String, JSON) in json2["Items"] {
+                                            _libraries.wrappedValue.append(item2["Id"].string ?? "")
+                                            _librariesShowRecentlyAdded.wrappedValue.append(item2["Id"].string ?? "")
+                                        }
+                                    }
                                 } catch {
                                     
                                 }
