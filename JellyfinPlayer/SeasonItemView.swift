@@ -79,7 +79,7 @@ struct SeasonItemView: View {
                         }
                     }
                     
-                    let url2 = "/Shows/\(fullItem.SeriesId ?? "")/Episodes?SeasonId=\(item.Id)&UserId=\(globalData.user?.user_id ?? "")&Fields=ItemCounts%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CCanDelete%2CMediaSourceCount"
+                    let url2 = "/Shows/\(fullItem.SeriesId ?? "")/Episodes?SeasonId=\(item.Id)&UserId=\(globalData.user?.user_id ?? "")&Fields=ItemCounts%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CCanDelete%2CMediaSourceCount%2COverview"
                     let request2 = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url2)
                     request2.headerParameters["X-Emby-Authorization"] = globalData.authHeader
                     request2.contentType = "application/json"
@@ -106,12 +106,12 @@ struct SeasonItemView: View {
                                     episode.SeasonId = json["SeasonId"].string ?? nil
                                     episode.SeriesId = json["SeriesId"].string ?? nil
                                     episode.Overview = json["Overview"].string ?? ""
-                                    print(episode.Overview)
                                     episode.SeriesName = json["SeriesName"].string ?? nil
                                     episode.Progress = Double(json["UserData"]["PlaybackPositionTicks"].int ?? 0)
                                     episode.OfficialRating = json["OfficialRating"].string ?? "PG-13"
                                     episode.Watched = json["UserData"]["Played"].bool ?? false;
                                     episode.ParentId = episode.SeasonId ?? "";
+                                    episode.CommunityRating = String(json["CommunityRating"].float ?? 0.0)
                                     
                                     let seconds: Int = ((json["RunTimeTicks"].int ?? 0)/10000000)
                                     episode.RuntimeTicks = json["RunTimeTicks"].int ?? 0;
@@ -224,26 +224,35 @@ struct SeasonItemView: View {
                                                         .placeholder {
                                                             Image(uiImage: UIImage(blurHash: (episode.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)
                                                                 .resizable()
-                                                                .frame(width: 150, height: 50)
+                                                                .frame(width: 150, height: 90)
                                                                 .cornerRadius(10)
                                                         }.aspectRatio(contentMode: .fill)
                                                         .shadow(radius: 5)
-                                                        .frame(width: 150, height: 75)
+                                                        .frame(width: 150, height: 90)
                                                         .cornerRadius(10)
                                                         .overlay(
                                                             RoundedRectangle(cornerRadius: 10, style: .circular)
                                                                 .fill(Color(red: 172/255, green: 92/255, blue: 195/255).opacity(0.4))
-                                                                .frame(width: CGFloat((episode.Progress/100)*150), height: 75)
+                                                                .frame(width: CGFloat((episode.Progress/Double(episode.RuntimeTicks))*150), height: 90)
                                                             .padding(0), alignment: .bottomLeading
                                                         )
-                                                    VStack() {
-                                                        Text(episode.Name).font(.headline)
-                                                            .fontWeight(.semibold)
-                                                            .foregroundColor(.primary)
-                                                            .fixedSize(horizontal: false, vertical: true)
-                                                            .lineLimit(1)
-                                                        Text(episode.Overview).font(.footnote).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true)
-                                                    }
+                                                    VStack(alignment: .leading) {
+                                                        HStack() {
+                                                            Text(episode.Name).font(.subheadline)
+                                                                .fontWeight(.semibold)
+                                                                .foregroundColor(.primary)
+                                                                .fixedSize(horizontal: false, vertical: true)
+                                                                .lineLimit(1)
+                                                            Spacer()
+                                                            Text(episode.Runtime).font(.subheadline)
+                                                                .fontWeight(.medium)
+                                                                .foregroundColor(.secondary)
+                                                                .lineLimit(1)
+                                                        }
+                                                        Spacer()
+                                                        Text(episode.Overview).font(.footnote).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true).lineLimit(4)
+                                                        Spacer()
+                                                    }.padding(.trailing, 20).offset(y: 2)
                                                 }.offset(x: 12, y: 0)
                                             }
                                             if(fullItem.Directors.count != 0) {
@@ -316,26 +325,56 @@ struct SeasonItemView: View {
                                                         .placeholder {
                                                             Image(uiImage: UIImage(blurHash: (episode.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)
                                                                 .resizable()
-                                                                .frame(width: 150, height: 50)
+                                                                .frame(width: 150, height: 90)
                                                                 .cornerRadius(10)
                                                         }.aspectRatio(contentMode: .fill)
                                                         .shadow(radius: 5)
-                                                        .frame(width: 150, height: 75)
+                                                        .frame(width: 150, height: 90)
                                                         .cornerRadius(10)
                                                         .overlay(
                                                             RoundedRectangle(cornerRadius: 10, style: .circular)
                                                                 .fill(Color(red: 172/255, green: 92/255, blue: 195/255).opacity(0.4))
-                                                                .frame(width: CGFloat((episode.Progress/100)*150), height: 75)
+                                                                .frame(width: CGFloat((episode.Progress/Double(episode.RuntimeTicks))*150), height: 90)
                                                             .padding(0), alignment: .bottomLeading
                                                         )
-                                                    VStack() {
-                                                        Text(episode.Name).font(.headline)
-                                                            .fontWeight(.semibold)
-                                                            .foregroundColor(.primary)
-                                                            .fixedSize(horizontal: false, vertical: true)
-                                                            .lineLimit(1)
-                                                        Text(episode.Overview).font(.footnote).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true)
-                                                    }
+                                                    VStack(alignment: .leading) {
+                                                        HStack() {
+                                                            Text(episode.Name).font(.subheadline)
+                                                                .fontWeight(.semibold)
+                                                                .foregroundColor(.primary)
+                                                                .fixedSize(horizontal: false, vertical: true)
+                                                                .lineLimit(1)
+                                                            Text(episode.Runtime).font(.subheadline)
+                                                                .fontWeight(.medium)
+                                                                .foregroundColor(.secondary)
+                                                                .lineLimit(1)
+                                                            if(episode.OfficialRating != "") {
+                                                                Text(episode.OfficialRating).font(.subheadline)
+                                                                    .fontWeight(.medium)
+                                                                    .foregroundColor(.secondary)
+                                                                    .lineLimit(1)
+                                                                    .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                                                    .overlay(
+                                                                        RoundedRectangle(cornerRadius: 2)
+                                                                            .stroke(Color.secondary, lineWidth: 1)
+                                                                    )
+                                                            }
+                                                            if(episode.CommunityRating != "") {
+                                                                HStack() {
+                                                                    Image(systemName: "star").foregroundColor(.secondary)
+                                                                    Text(episode.CommunityRating).font(.subheadline)
+                                                                        .fontWeight(.semibold)
+                                                                        .foregroundColor(.secondary)
+                                                                        .lineLimit(1)
+                                                                        .offset(x: -6, y: 0)
+                                                                }
+                                                            }
+                                                            Spacer()
+                                                        }
+                                                        Spacer()
+                                                        Text(episode.Overview).font(.footnote).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true).lineLimit(4)
+                                                        Spacer()
+                                                    }.padding(.trailing, 20).offset(y: 2)
                                                 }.offset(x: 12, y: 0)
                                             }
                                             if(fullItem.Directors.count != 0) {
