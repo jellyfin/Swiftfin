@@ -113,6 +113,21 @@ struct SeasonItemView: View {
                                     episode.ParentId = episode.SeasonId ?? "";
                                     episode.CommunityRating = String(json["CommunityRating"].float ?? 0.0)
                                     
+                                    let rI = ResumeItem()
+                                    rI.Name = episode.Name;
+                                    rI.Id = episode.Id;
+                                    rI.IndexNumber = episode.IndexNumber;
+                                    rI.ParentIndexNumber = episode.ParentIndexNumber;
+                                    rI.Image = episode.Poster;
+                                    rI.ImageType = "Primary";
+                                    rI.BlurHash = episode.PosterBlurHash;
+                                    rI.Type = "Episode";
+                                    rI.SeasonId = episode.SeasonId;
+                                    rI.SeriesId = episode.SeriesId;
+                                    rI.SeriesName = episode.SeriesName;
+                                    rI.ProductionYear = episode.ProductionYear;
+                                    episode.ResumeItem = rI;
+                                    
                                     let seconds: Int = ((json["RunTimeTicks"].int ?? 0)/10000000)
                                     episode.RuntimeTicks = json["RunTimeTicks"].int ?? 0;
                                     let hours = (seconds/3600)
@@ -218,42 +233,44 @@ struct SeasonItemView: View {
                                             }
                                             Text(fullItem.Overview).font(.footnote).padding(.top, 3).fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16).padding(.trailing,16)
                                             ForEach(episodes, id: \.Id) { episode in
-                                                HStack() {
-                                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=1000&quality=90&tag=\(episode.Poster)")!)
-                                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                                        .placeholder {
-                                                            Image(uiImage: UIImage(blurHash: (episode.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)
-                                                                .resizable()
-                                                                .frame(width: 150, height: 90)
-                                                                .cornerRadius(10)
-                                                        }.aspectRatio(contentMode: .fill)
-                                                        .shadow(radius: 5)
-                                                        .frame(width: 150, height: 90)
-                                                        .cornerRadius(10)
-                                                        .overlay(
-                                                            RoundedRectangle(cornerRadius: 10, style: .circular)
-                                                                .fill(Color(red: 172/255, green: 92/255, blue: 195/255).opacity(0.4))
-                                                                .frame(width: CGFloat((episode.Progress/Double(episode.RuntimeTicks))*150), height: 90)
-                                                            .padding(0), alignment: .bottomLeading
-                                                        )
-                                                    VStack(alignment: .leading) {
-                                                        HStack() {
-                                                            Text(episode.Name).font(.subheadline)
-                                                                .fontWeight(.semibold)
-                                                                .foregroundColor(.primary)
-                                                                .fixedSize(horizontal: false, vertical: true)
-                                                                .lineLimit(1)
+                                                NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
+                                                    HStack() {
+                                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=1000&quality=90&tag=\(episode.Poster)")!)
+                                                            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                                            .placeholder {
+                                                                Image(uiImage: UIImage(blurHash: (episode.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)
+                                                                    .resizable()
+                                                                    .frame(width: 150, height: 90)
+                                                                    .cornerRadius(10)
+                                                            }.aspectRatio(contentMode: .fill)
+                                                            .shadow(radius: 5)
+                                                            .frame(width: 150, height: 90)
+                                                            .cornerRadius(10)
+                                                            .overlay(
+                                                                RoundedRectangle(cornerRadius: 10, style: .circular)
+                                                                    .fill(Color(red: 172/255, green: 92/255, blue: 195/255).opacity(0.4))
+                                                                    .frame(width: CGFloat((episode.Progress/Double(episode.RuntimeTicks))*150), height: 90)
+                                                                .padding(0), alignment: .bottomLeading
+                                                            )
+                                                        VStack(alignment: .leading) {
+                                                            HStack() {
+                                                                Text(episode.Name).font(.subheadline)
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(.primary)
+                                                                    .fixedSize(horizontal: false, vertical: true)
+                                                                    .lineLimit(1)
+                                                                Spacer()
+                                                                Text(episode.Runtime).font(.subheadline)
+                                                                    .fontWeight(.medium)
+                                                                    .foregroundColor(.secondary)
+                                                                    .lineLimit(1)
+                                                            }
                                                             Spacer()
-                                                            Text(episode.Runtime).font(.subheadline)
-                                                                .fontWeight(.medium)
-                                                                .foregroundColor(.secondary)
-                                                                .lineLimit(1)
-                                                        }
-                                                        Spacer()
-                                                        Text(episode.Overview).font(.footnote).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true).lineLimit(4)
-                                                        Spacer()
-                                                    }.padding(.trailing, 20).offset(y: 2)
-                                                }.offset(x: 12, y: 0)
+                                                            Text(episode.Overview).font(.footnote).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true).lineLimit(4)
+                                                            Spacer()
+                                                        }.padding(.trailing, 20).offset(y: 2)
+                                                    }.offset(x: 12, y: 0)
+                                                }
                                             }
                                             if(fullItem.Directors.count != 0) {
                                                 HStack() {
@@ -319,63 +336,65 @@ struct SeasonItemView: View {
                                             }
                                             Text(fullItem.Overview).font(.footnote).padding(.top, 3).fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16).padding(.trailing,16)
                                             ForEach(episodes, id: \.Id) { episode in
-                                                HStack() {
-                                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=1000&quality=90&tag=\(episode.Poster)")!)
-                                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                                        .placeholder {
-                                                            Image(uiImage: UIImage(blurHash: (episode.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)
-                                                                .resizable()
-                                                                .frame(width: 150, height: 90)
-                                                                .cornerRadius(10)
-                                                        }.aspectRatio(contentMode: .fill)
-                                                        .shadow(radius: 5)
-                                                        .frame(width: 150, height: 90)
-                                                        .cornerRadius(10)
-                                                        .overlay(
-                                                            RoundedRectangle(cornerRadius: 10, style: .circular)
-                                                                .fill(Color(red: 172/255, green: 92/255, blue: 195/255).opacity(0.4))
-                                                                .frame(width: CGFloat((episode.Progress/Double(episode.RuntimeTicks))*150), height: 90)
-                                                            .padding(0), alignment: .bottomLeading
-                                                        )
-                                                    VStack(alignment: .leading) {
-                                                        HStack() {
-                                                            Text(episode.Name).font(.subheadline)
-                                                                .fontWeight(.semibold)
-                                                                .foregroundColor(.primary)
-                                                                .fixedSize(horizontal: false, vertical: true)
-                                                                .lineLimit(1)
-                                                            Text(episode.Runtime).font(.subheadline)
-                                                                .fontWeight(.medium)
-                                                                .foregroundColor(.secondary)
-                                                                .lineLimit(1)
-                                                            if(episode.OfficialRating != "") {
-                                                                Text(episode.OfficialRating).font(.subheadline)
+                                                NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
+                                                    HStack() {
+                                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=1000&quality=90&tag=\(episode.Poster)")!)
+                                                            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                                            .placeholder {
+                                                                Image(uiImage: UIImage(blurHash: (episode.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)
+                                                                    .resizable()
+                                                                    .frame(width: 150, height: 90)
+                                                                    .cornerRadius(10)
+                                                            }.aspectRatio(contentMode: .fill)
+                                                            .shadow(radius: 5)
+                                                            .frame(width: 150, height: 90)
+                                                            .cornerRadius(10)
+                                                            .overlay(
+                                                                RoundedRectangle(cornerRadius: 10, style: .circular)
+                                                                    .fill(Color(red: 172/255, green: 92/255, blue: 195/255).opacity(0.4))
+                                                                    .frame(width: CGFloat((episode.Progress/Double(episode.RuntimeTicks))*150), height: 90)
+                                                                .padding(0), alignment: .bottomLeading
+                                                            )
+                                                        VStack(alignment: .leading) {
+                                                            HStack() {
+                                                                Text(episode.Name).font(.subheadline)
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(.primary)
+                                                                    .fixedSize(horizontal: false, vertical: true)
+                                                                    .lineLimit(1)
+                                                                Text(episode.Runtime).font(.subheadline)
                                                                     .fontWeight(.medium)
                                                                     .foregroundColor(.secondary)
                                                                     .lineLimit(1)
-                                                                    .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                                                                    .overlay(
-                                                                        RoundedRectangle(cornerRadius: 2)
-                                                                            .stroke(Color.secondary, lineWidth: 1)
-                                                                    )
-                                                            }
-                                                            if(episode.CommunityRating != "") {
-                                                                HStack() {
-                                                                    Image(systemName: "star").foregroundColor(.secondary)
-                                                                    Text(episode.CommunityRating).font(.subheadline)
-                                                                        .fontWeight(.semibold)
+                                                                if(episode.OfficialRating != "") {
+                                                                    Text(episode.OfficialRating).font(.subheadline)
+                                                                        .fontWeight(.medium)
                                                                         .foregroundColor(.secondary)
                                                                         .lineLimit(1)
-                                                                        .offset(x: -6, y: 0)
+                                                                        .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                                                        .overlay(
+                                                                            RoundedRectangle(cornerRadius: 2)
+                                                                                .stroke(Color.secondary, lineWidth: 1)
+                                                                        )
                                                                 }
+                                                                if(episode.CommunityRating != "") {
+                                                                    HStack() {
+                                                                        Image(systemName: "star").foregroundColor(.secondary)
+                                                                        Text(episode.CommunityRating).font(.subheadline)
+                                                                            .fontWeight(.semibold)
+                                                                            .foregroundColor(.secondary)
+                                                                            .lineLimit(1)
+                                                                            .offset(x: -6, y: 0)
+                                                                    }
+                                                                }
+                                                                Spacer()
                                                             }
                                                             Spacer()
-                                                        }
-                                                        Spacer()
-                                                        Text(episode.Overview).font(.footnote).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true).lineLimit(4)
-                                                        Spacer()
-                                                    }.padding(.trailing, 20).offset(y: 2)
-                                                }.offset(x: 12, y: 0)
+                                                            Text(episode.Overview).font(.footnote).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true).lineLimit(4)
+                                                            Spacer()
+                                                        }.padding(.trailing, 20).offset(y: 2)
+                                                    }.offset(x: 12, y: 0)
+                                                }
                                             }
                                             if(fullItem.Directors.count != 0) {
                                                 HStack() {

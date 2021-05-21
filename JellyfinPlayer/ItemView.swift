@@ -27,6 +27,8 @@ struct ItemView: View {
             SeasonItemView(item: self.item)
         } else if(item.Type == "Series") {
             SeriesItemView(item: self.item)
+        } else if(item.Type == "Episode") {
+            EpisodeItemView(item: self.item)
         } else {
             Text("Type: \(item.Type) not implemented yet :(")
         }

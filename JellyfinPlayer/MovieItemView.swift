@@ -43,6 +43,8 @@ class DetailItem: ObservableObject {
     @Published var ParentId: String = "";
     @Published var Genres: [IVGenre] = [];
     @Published var ProgressStr: String = "";
+    @Published var ResumeItem: ResumeItem? = nil;
+    @Published var ParentBackdropItemId: String = "";
 }
 
 class IVGenre: ObservableObject {
@@ -322,7 +324,7 @@ struct MovieItemView: View {
                                                         }
                                                     }
                                                     
-                                                }.offset(x: 0, y: -46)
+                                                }.offset(x: 0, y: -46).padding(.trailing, 30)
                                             }.offset(x: 16, y: 40)
                                             , alignment: .bottomLeading)
                                     VStack(alignment: .leading) {
