@@ -349,7 +349,7 @@ struct ContentView: View {
         } else {
             Text("Signing in...")
             .onAppear(perform: {
-                DispatchQueue.global(qos: .userInitiated).async { [self] in
+                DispatchQueue.main.async { [self] in
                     usleep(500000);
                     self.jsi.did = false;
                 }

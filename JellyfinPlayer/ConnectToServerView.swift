@@ -68,7 +68,9 @@ struct ConnectToServerView: View {
                         .autocapitalization(.none)
                     Button {
                         _isWorking.wrappedValue = true;
-                        
+                        if(!_uri.wrappedValue.contains("http")) {
+                            _uri.wrappedValue = "http://" + _uri.wrappedValue;
+                        }
                         let request = RestRequest(method: .get, url: uri + "/System/Info/Public")
                         request.responseObject() { (result: Result<RestResponse<ServerPublicInfoResponse>, RestError>) in
                             switch result {
@@ -159,7 +161,9 @@ struct ConnectToServerView: View {
                                         try viewContext.save()
                                         print("Saved to Core Data Store")
                                         _rootIsActive.wrappedValue = false
-                                        jsi.did = true
+                                        DispatchQueue.main.async { [self] in
+                                            jsi.did = true
+                                        }
                                     } catch {
                                         // Replace this implementation with code to handle the error appropriately.
                                         // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.

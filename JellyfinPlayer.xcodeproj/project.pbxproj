@@ -28,7 +28,6 @@
 		5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389277B263CC3DB0035E14B /* BlurHashDecode.swift */; };
 		53892782263CC8770035E14B /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 53892781263CC8770035E14B /* URLImage */; };
 		538CD954263E3DC100BB5AF0 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */; };
-		538CD957263E441500BB5AF0 /* ExyteGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 538CD956263E441500BB5AF0 /* ExyteGrid */; };
 		53987CA426572C1300E7EA70 /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA326572C1300E7EA70 /* SeasonItemView.swift */; };
 		53987CA626572F0700E7EA70 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA526572F0700E7EA70 /* SeriesItemView.swift */; };
 		53987CA82657424A00E7EA70 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA72657424A00E7EA70 /* EpisodeItemView.swift */; };
@@ -38,6 +37,7 @@
 		53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		53D5E3DE264B47EE00BADDC8 /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF641D263D9C0600A7CD1A /* LibraryView.swift */; };
+		53E0D5F8265821F50046A05F /* ExyteGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 53E0D5F7265821F50046A05F /* ExyteGrid */; };
 		53E4E645263F6BC000F67C6B /* PartialSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 53E4E644263F6BC000F67C6B /* PartialSheet */; };
 		53E4E647263F6CF100F67C6B /* LibraryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */; };
 		53E4E649263F725B00F67C6B /* MultiSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelector.swift */; };
@@ -97,7 +97,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				538CD954263E3DC100BB5AF0 /* SDWebImageSwiftUI in Frameworks */,
-				538CD957263E441500BB5AF0 /* ExyteGrid in Frameworks */,
 				53E4E645263F6BC000F67C6B /* PartialSheet in Frameworks */,
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
 				53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */,
@@ -105,6 +104,7 @@
 				53892782263CC8770035E14B /* URLImage in Frameworks */,
 				53D2F74A264C69F6005792BB /* Introspect in Frameworks */,
 				5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */,
+				53E0D5F8265821F50046A05F /* ExyteGrid in Frameworks */,
 				5338F751263B62E80014BF09 /* HidingViews in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -203,9 +203,9 @@
 				53892779263CBFE70035E14B /* SwiftyJSON */,
 				53892781263CC8770035E14B /* URLImage */,
 				538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */,
-				538CD956263E441500BB5AF0 /* ExyteGrid */,
 				53E4E644263F6BC000F67C6B /* PartialSheet */,
 				53D2F749264C69F6005792BB /* Introspect */,
+				53E0D5F7265821F50046A05F /* ExyteGrid */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer.app */;
@@ -241,9 +241,9 @@
 				53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				53892780263CC8770035E14B /* XCRemoteSwiftPackageReference "url-image" */,
 				538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
-				538CD955263E441500BB5AF0 /* XCRemoteSwiftPackageReference "Grid" */,
 				53E4E643263F6BC000F67C6B /* XCRemoteSwiftPackageReference "PartialSheet" */,
 				53D2F748264C69F6005792BB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				53E0D5F6265821F50046A05F /* XCRemoteSwiftPackageReference "Grid" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -538,20 +538,20 @@
 				minimumVersion = 2.0.2;
 			};
 		};
-		538CD955263E441500BB5AF0 /* XCRemoteSwiftPackageReference "Grid" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/exyte/Grid";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.4.0;
-			};
-		};
 		53D2F748264C69F6005792BB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.1.3;
+			};
+		};
+		53E0D5F6265821F50046A05F /* XCRemoteSwiftPackageReference "Grid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exyte/Grid";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
 			};
 		};
 		53E4E643263F6BC000F67C6B /* XCRemoteSwiftPackageReference "PartialSheet" */ = {
@@ -595,15 +595,15 @@
 			package = 538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
 		};
-		538CD956263E441500BB5AF0 /* ExyteGrid */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 538CD955263E441500BB5AF0 /* XCRemoteSwiftPackageReference "Grid" */;
-			productName = ExyteGrid;
-		};
 		53D2F749264C69F6005792BB /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 53D2F748264C69F6005792BB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
+		};
+		53E0D5F7265821F50046A05F /* ExyteGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53E0D5F6265821F50046A05F /* XCRemoteSwiftPackageReference "Grid" */;
+			productName = ExyteGrid;
 		};
 		53E4E644263F6BC000F67C6B /* PartialSheet */ = {
 			isa = XCSwiftPackageProductDependency;
