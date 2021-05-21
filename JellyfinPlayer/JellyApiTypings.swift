@@ -66,6 +66,9 @@ class ResumeItem: ObservableObject {
     @Published var SeriesId: String? = nil;
     @Published var SeriesName: String? = nil;
     @Published var ItemProgress: Double = 0;
+    @Published var SeasonImage: String? = nil;
+    @Published var SeasonImageType: String? = nil;
+    @Published var SeasonImageBlurHash: String? = nil;
     @Published var ItemBadge: Int? = 0;
     @Published var ProductionYear: Int = 1999;
     @Published var Watched: Bool = false;

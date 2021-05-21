@@ -44,6 +44,9 @@ struct SeriesItemView: View {
                         itemObj.ItemBadge = item["UserData"]["UnplayedItemCount"].int ?? 0
                         itemObj.Image = item["ImageTags"]["Primary"].string ?? ""
                         itemObj.ImageType = "Primary"
+                        itemObj.SeasonImage = item["ParentBackdropImageTags"][0].string ?? ""
+                        itemObj.SeasonImageType = "Backdrop"
+                        itemObj.SeasonImageBlurHash = item["ImageBlurHashes"]["Backdrop"][itemObj.SeasonImage ?? ""].string ?? ""
                         itemObj.BlurHash = item["ImageBlurHashes"]["Primary"][itemObj.Image].string ?? ""
                         itemObj.SeriesName = item["SeriesName"].string ?? ""
                         itemObj.Name = item["Name"].string ?? ""

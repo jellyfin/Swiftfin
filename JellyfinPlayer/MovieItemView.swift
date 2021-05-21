@@ -42,6 +42,7 @@ class DetailItem: ObservableObject {
     @Published var Studios: [String] = [];
     @Published var ParentId: String = "";
     @Published var Genres: [IVGenre] = [];
+    @Published var ProgressStr: String = "";
 }
 
 class IVGenre: ObservableObject {
@@ -258,7 +259,7 @@ struct MovieItemView: View {
                         if(isPortrait) {
                             GeometryReader { geometry in
                                 VStack() {
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=3840&quality=90&tag=\(fullItem.Backdrop)")!)
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=1000&quality=90&tag=\(fullItem.Backdrop)")!)
                                         .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                         .placeholder {
                                             Image(uiImage: UIImage(blurHash: (fullItem.BackdropBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.BackdropBlurHash), size: CGSize(width: 32, height: 32))!)
@@ -440,7 +441,7 @@ struct MovieItemView: View {
                         } else {
                             GeometryReader { geometry in
                                 ZStack() {
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=3840&quality=90&tag=\(fullItem.Backdrop)")!)
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=1000&quality=90&tag=\(fullItem.Backdrop)")!)
                                         .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                         .placeholder {
                                             Image(uiImage: UIImage(blurHash: (fullItem.BackdropBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.BackdropBlurHash), size: CGSize(width: 32, height: 32))!)
