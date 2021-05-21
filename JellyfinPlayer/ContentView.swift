@@ -10,6 +10,7 @@ import KeychainSwift
 import SwiftyRequest
 import SwiftyJSON
 import Introspect
+import Sentry
 
 class GlobalData: ObservableObject {
     @Published var user: SignedInUser?
@@ -195,6 +196,10 @@ struct ContentView: View {
     }
     
     func startup() {
+        SentrySDK.start { options in
+            options.dsn = "https://7ef695d745e942f8a52d69317c5ae241@o704459.ingest.sentry.io/5778161"
+            options.debug = false // Enabled debug when first installing is always helpful
+        }
         _libraries.wrappedValue = []
         _library_names.wrappedValue = [:]
         _librariesShowRecentlyAdded.wrappedValue = []
@@ -337,8 +342,9 @@ struct ContentView: View {
                     })
                     .tag("All Media")
                     
-                }
+                }.edgesIgnoringSafeArea(isPortrait ? [] : [.leading,.trailing])
             }.environmentObject(globalData)
+            .edgesIgnoringSafeArea(isPortrait ? [] : [.leading,.trailing])
             .onAppear(perform: startup)
             .navigationViewStyle(StackNavigationViewStyle())
             .alert(isPresented: $isNetworkErrored) {

@@ -83,6 +83,15 @@
         }
       },
       {
+        "package": "Sentry",
+        "repositoryURL": "https://github.com/getsentry/sentry-cocoa",
+        "state": {
+          "branch": null,
+          "revision": "5275a1ef438774f5e8a5ce8a5577771aa028ecc1",
+          "version": "7.1.0"
+        }
+      },
+      {
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {

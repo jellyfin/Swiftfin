@@ -269,7 +269,7 @@ struct MovieItemView: View {
                                                 .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
                                         }
                                         
-                                        .opacity(0.4)
+                                        .opacity(0.3)
                                         .aspectRatio(contentMode: .fill)
                                         .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
                                         .shadow(radius: 5)
@@ -451,7 +451,7 @@ struct MovieItemView: View {
                                                 .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
                                         }
                                         
-                                        .opacity(0.4)
+                                        .opacity(0.3)
                                         .aspectRatio(contentMode: .fill)
                                         .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
                                         .edgesIgnoringSafeArea(.all)
@@ -490,7 +490,7 @@ struct MovieItemView: View {
                                                             .fontWeight(.semibold)
                                                             .foregroundColor(.primary)
                                                             .fixedSize(horizontal: false, vertical: true)
-                                                            .offset(x: 12, y: 0)
+                                                            .offset(x: 14, y: 0)
                                                         Spacer().frame(height: 1)
                                                         HStack() {
                                                             Text(String(fullItem.ProductionYear)).font(.subheadline)
@@ -524,7 +524,7 @@ struct MovieItemView: View {
                                                             }
                                                             Spacer()
                                                         }.frame(maxWidth: .infinity)
-                                                        .offset(x: 12)
+                                                        .offset(x: 14)
                                                     }.frame(maxWidth: .infinity)
                                                     Spacer()
                                                     HStack() {
