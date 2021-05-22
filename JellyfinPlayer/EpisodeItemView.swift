@@ -587,6 +587,8 @@ struct EpisodeItemView: View {
                     let rootVC = window?.rootViewController;
                     let UIHostingcontroller: PreferenceUIHostingController = rootVC as! PreferenceUIHostingController;
                     vc = UIHostingcontroller;
+                }.introspectTabBarController { (UITabBarController) in
+                    UITabBarController.tabBar.isHidden = true
                 }
             }.onAppear(perform: loadData)
         }
