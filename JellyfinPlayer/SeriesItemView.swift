@@ -85,7 +85,7 @@ struct SeriesItemView: View {
     var body: some View {
         LoadingView(isShowing: $isLoading) {
             GeometryReader { geometry in
-                Grid(tracks: self.tracks, spacing: GridSpacing(horizontal: 0, vertical: 20)) {
+                Grid(tracks: tracks, spacing: GridSpacing(horizontal: 0, vertical: 20)) {
                     ForEach(items, id: \.Id) { item in
                         NavigationLink(destination: ItemView(item: item )) {
                             VStack(alignment: .leading) {
@@ -131,7 +131,7 @@ struct SeriesItemView: View {
                             }.frame(width: 100)
                         }
                     }
-                    Spacer().frame(height: 2).gridSpan(column: self.isPortrait ? 3 : 6)
+                    Spacer().frame(height: 2).gridSpan(column: isPortrait ? 3 : 6)
                 }.gridContentMode(.scroll)
             }
         }

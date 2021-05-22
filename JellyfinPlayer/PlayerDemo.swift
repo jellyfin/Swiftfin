@@ -34,8 +34,8 @@ extension String {
 
         return "\(padString)\(self)"
     }
-
 }
+
 struct PlayerDemo: View {
     @EnvironmentObject var globalData: GlobalData
     var item: DetailItem;
@@ -55,7 +55,7 @@ struct PlayerDemo: View {
     @State private var captionConfiguration: Bool = false {
         didSet {
             if(captionConfiguration == false) {
-                DispatchQueue.global(qos: .userInitiated).async { [self] in
+                DispatchQueue.global(qos: .userInitiated).async { _ in
                     vlcplayer.pause()
                     usleep(10000);
                     vlcplayer.play()
@@ -205,7 +205,7 @@ struct PlayerDemo: View {
     
     func startStream() {
         _streamLoading.wrappedValue = true;
-        let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Items/\(item.Id)/PlaybackInfo?UserId=\(globalData.user?.user_id ?? "")&StartTimeTicks=\(item.Progress)&IsPlayback=true&AutoOpenLiveStream=true&MaxStreamingBitrate=70000000")
+        let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Items/\(item.Id)/PlaybackInfo?UserId=\(globalData.user?.user_id ?? "")&StartTimeTicks=\(Int(item.Progress))&IsPlayback=true&AutoOpenLiveStream=true&MaxStreamingBitrate=70000000")
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"
@@ -251,8 +251,8 @@ struct PlayerDemo: View {
                         _isPlaying.wrappedValue = true;
                     }
                     
-                    DispatchQueue.global(qos: .userInteractive).async { [self] in
-                        self.keepUpWithPlayerState()
+                    DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+                        self?.keepUpWithPlayerState()
                     }
                 } catch {
                     
@@ -361,8 +361,8 @@ struct PlayerDemo: View {
                             let videoDuration = Double(vlcplayer.time.intValue + abs(vlcplayer.remainingTime.intValue))
                             if(bool == true) {
                                 vlcplayer.pause()
-                                DispatchQueue.global(qos: .userInitiated).async { [self] in
-                                    self.processScrubbingState()
+                                DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                                    self?.processScrubbingState()
                                 }
                             } else {
                                 //Scrub is value from 0..1 - find position in video and add / or remove.
@@ -390,6 +390,11 @@ struct PlayerDemo: View {
         .onAppear(perform: startStream)
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        .prefersHomeIndicatorAutoHidden(true)
+        .preferredColorScheme(.dark)
+        .introspectTabBarController { (UITabBarController) in
+            UITabBarController.tabBar.isHidden = true
+        }
         .statusBar(hidden: true)
         .edgesIgnoringSafeArea(.all)
         .onTapGesture(perform: resetTimer)

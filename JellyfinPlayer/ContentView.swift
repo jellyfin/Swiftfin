@@ -33,7 +33,7 @@ struct HostingWindowFinder: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
         DispatchQueue.main.async { [weak view] in
-            self.callback(view?.window)
+            callback(view?.window)
         }
         return view
     }
@@ -348,7 +348,7 @@ struct ContentView: View {
                                 if(!needsToSelectServer && !isSignInErrored) {
                                     VStack(alignment: .leading) {
                                         ScrollView() {
-                                            Spacer().frame(height: self.isPortrait ? 0 : 15)
+                                            Spacer().frame(height: isPortrait ? 0 : 15)
                                             ContinueWatchingView()
                                             NextUpView().padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                                             ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
@@ -377,7 +377,7 @@ struct ContentView: View {
                                         Image(systemName: "gear")
                                     }
                                 }
-                            }.popover( isPresented: self.$showSettingsPopover, arrowEdge: .bottom) { SettingsView(close: $showSettingsPopover).environmentObject(self.globalData) }
+                            }.popover( isPresented: $showSettingsPopover, arrowEdge: .bottom) { SettingsView(close: $showSettingsPopover).environmentObject(globalData) }
                         }
                         .tabItem({
                             Text("Home")
@@ -406,10 +406,10 @@ struct ContentView: View {
             } else {
                 Text("Signing in...")
                 .onAppear(perform: {
-                    DispatchQueue.main.async { [self] in
+                    DispatchQueue.main.async { [weak self] in
                         _viewDidLoad.wrappedValue = false
                         usleep(500000);
-                        self.jsi.did = false;
+                        self?.jsi.did = false;
                     }
                 })
             }

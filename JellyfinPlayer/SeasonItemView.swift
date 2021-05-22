@@ -22,7 +22,7 @@ struct SeasonItemView: View {
     @State private var hasAppearedOnce: Bool = false;
     init(item: ResumeItem) {
         self.item = item;
-        self.fullItem = DetailItem();
+        fullItem = DetailItem();
     }
     
     func loadData() {

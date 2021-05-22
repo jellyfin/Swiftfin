@@ -74,7 +74,7 @@ struct EpisodeItemView: View {
     
     init(item: ResumeItem) {
         self.item = item;
-        self.fullItem = DetailItem();
+        fullItem = DetailItem();
     }
     
     func lockOrientations() {

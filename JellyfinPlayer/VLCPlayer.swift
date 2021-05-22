@@ -59,10 +59,8 @@ class PlayerUIView: UIView, VLCMediaPlayerDelegate {
     func videoSetup() {
         if(lastUrl == nil || lastUrl?.videoUrl != url.wrappedValue.videoUrl) {
             lastUrl = url.wrappedValue
-            print("update called")
-            print(self.url.wrappedValue.videoUrl)
             mediaPlayer.wrappedValue.stop()
-            mediaPlayer.wrappedValue.media = VLCMedia(url: self.url.wrappedValue.videoUrl)
+            mediaPlayer.wrappedValue.media = VLCMedia(url: url.wrappedValue.videoUrl)
             self.url.wrappedValue.subtitles.forEach() { sub in
                 if(sub.id != -1 && sub.delivery == "External") {
                     mediaPlayer.wrappedValue.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
@@ -70,7 +68,7 @@ class PlayerUIView: UIView, VLCMediaPlayerDelegate {
             }
             
             mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFontSize:")), with: 14)
-            mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
+            //mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
             mediaPlayer.wrappedValue.jumpForward(Int32(startTime/10000000))
             mediaPlayer.wrappedValue.play()
         }
