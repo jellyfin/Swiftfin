@@ -86,7 +86,7 @@ struct ContinueWatchingView: View {
                                     VStack(alignment: .leading) {
                                         Spacer().frame(height: 10)
                                         if(item.Type == "Episode") {
-                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=360&quality=90&tag=\(item.Image)")!)
+                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=500&quality=96&tag=\(item.Image)")!)
                                                 .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                 .placeholder {
                                                     Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
@@ -115,7 +115,7 @@ struct ContinueWatchingView: View {
                                                 )
                                                 .shadow(radius: 5)
                                         } else {
-                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=360&tag=\(item.Image)")!)
+                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=500&quality=96&tag=\(item.Image)")!)
                                                 .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                 .placeholder {
                                                     Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)

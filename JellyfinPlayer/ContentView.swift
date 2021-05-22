@@ -11,6 +11,7 @@ import SwiftyRequest
 import SwiftyJSON
 import Introspect
 import Sentry
+import Dynatrace
 import SDWebImageSwiftUI
 
 class GlobalData: ObservableObject {
@@ -198,13 +199,22 @@ struct ContentView: View {
     
     func startup() {
         SentrySDK.start { options in
-            options.dsn = "https://7ef695d745e942f8a52d69317c5ae241@o704459.ingest.sentry.io/5778161"
+            options.dsn = "https://75ac77d6af4d406eb989f3d8ef0f119f@o513670.ingest.sentry.io/5778242"
             options.debug = false // Enabled debug when first installing is always helpful
             options.releaseName = "ios-" + (Bundle.main.infoDictionary?["CFBundleVersion"] as! String);
+            options.enableOutOfMemoryTracking = false
+        }
+
+        let privacyConfig = Dynatrace.userPrivacyOptions()
+        privacyConfig.dataCollectionLevel = .userBehavior
+        privacyConfig.crashReportingOptedIn = true
+        privacyConfig.crashReplayOptedIn = true
+        Dynatrace.applyUserPrivacyOptions(privacyConfig) { (Bool) in
+            print("Dynatrace privacy changed!")
         }
         
         let cache = SDImageCache(namespace: "tiny")
-        cache.config.maxMemoryCost = 100 * 1024 * 1024 // 100MB memory
+        cache.config.maxMemoryCost = 50 * 1024 * 1024 // 100MB memory
         cache.config.maxDiskSize = 1000 * 1024 * 1024 // 1000MB disk
         SDImageCachesManager.shared.addCache(cache)
         SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
@@ -238,11 +248,7 @@ struct ContentView: View {
                 case .success( let resp):
                     do {
                         let json = try JSON(data: resp.body)
-                        _libraries.wrappedValue = json["Configuration"]["OrderedViews"].arrayObject as? [String] ?? [];
                         let array2 = json["Configuration"]["LatestItemsExcludes"].arrayObject as? [String] ?? []
-                        _librariesShowRecentlyAdded.wrappedValue = _libraries.wrappedValue.filter { element in
-                            return !array2.contains(element)
-                        }
                         
                         let request2 = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + "/Users/\(globalData.user?.user_id ?? "")/Views")
                         request2.headerParameters["X-Emby-Authorization"] = globalData.authHeader
@@ -258,11 +264,15 @@ struct ContentView: View {
                                         _library_names.wrappedValue[item2["Id"].string ?? ""] = item2["Name"].string ?? ""
                                     }
                                     
-                                    if(_libraries.wrappedValue.count == 0 && _librariesShowRecentlyAdded.wrappedValue.count == 0) {
-                                        for (_,item2):(String, JSON) in json2["Items"] {
+                                    for (_,item2):(String, JSON) in json2["Items"] {
+                                        if(item2["CollectionType"].string == "tvshows" || item2["CollectionType"].string == "movies") {
                                             _libraries.wrappedValue.append(item2["Id"].string ?? "")
                                             _librariesShowRecentlyAdded.wrappedValue.append(item2["Id"].string ?? "")
                                         }
+                                    }
+                                    
+                                    _librariesShowRecentlyAdded.wrappedValue = _libraries.wrappedValue.filter { element in
+                                        return !array2.contains(element)
                                     }
                                 } catch {
                                     

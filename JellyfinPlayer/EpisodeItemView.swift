@@ -142,7 +142,7 @@ struct EpisodeItemView: View {
                             let imageTag = person["PrimaryImageTag"].string ?? "";
                             cast.ImageBlurHash = person["ImageBlurHashes"]["Primary"][imageTag].string ?? "";
                             cast.Role = person["Role"].string ?? "";
-                            cast.Image = URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxHeight=120&quality=90&tag=\(imageTag)")!
+                            cast.Image = URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxHeight=150&quality=90&tag=\(imageTag)")!
                             fullItem.Cast.append(cast);
                         }
                     }
@@ -214,7 +214,7 @@ struct EpisodeItemView: View {
                         if(isPortrait) {
                             GeometryReader { geometry in
                                 VStack() {
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=400&quality=90&tag=\(fullItem.Backdrop)")!)
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=450&quality=90&tag=\(fullItem.Backdrop)")!)
                                         .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                         .placeholder {
                                             Image(uiImage: UIImage(blurHash: (fullItem.BackdropBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.BackdropBlurHash), size: CGSize(width: 32, height: 32))!)
@@ -228,7 +228,7 @@ struct EpisodeItemView: View {
                                         .shadow(radius: 5)
                                         .overlay(
                                             HStack() {
-                                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=150&quality=90&tag=\(fullItem.Poster)")!)
+                                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
                                                     .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                     .placeholder {
                                                         Image(uiImage: UIImage(blurHash: (fullItem.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)
@@ -410,7 +410,7 @@ struct EpisodeItemView: View {
                                         .edgesIgnoringSafeArea(.all)
                                     HStack() {
                                         VStack() {
-                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=150&quality=90&tag=\(fullItem.Poster)")!)
+                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
                                                 .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                 .placeholder {
                                                     Image(uiImage: UIImage(blurHash: (fullItem.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)

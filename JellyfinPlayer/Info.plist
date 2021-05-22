@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string>7</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -57,5 +57,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>DTXApplicationID</key>
+	<string>8c1f6941-ec78-480c-b589-b41aca29a52e</string>
+	<key>DTXBeaconURL</key>
+	<string>https://bf64941kgh.bf.dynatrace.com/mbeacon</string>
+	<key>DTXUserOptIn</key>
+	<true/>
+	<key>DTXStartupLoadBalancing</key>
+	<true/>
 </dict>
 </plist>

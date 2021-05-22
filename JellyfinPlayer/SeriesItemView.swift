@@ -84,7 +84,7 @@ struct SeriesItemView: View {
                     ForEach(items, id: \.Id) { item in
                         NavigationLink(destination: ItemView(item: item )) {
                             VStack(alignment: .leading) {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=90&tag=\(item.Image)"))
+                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=90&tag=\(item.Image)"))
                                     .resizable()
                                     .placeholder {
                                         Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)

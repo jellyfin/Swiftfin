@@ -1,0 +1,2 @@
+$(SRCROOT)/Carthage/Build/iOS/Dynatrace.framework
+$(SRCROOT)/Carthage/Build/iOS/DynatraceSessionReplay.framework
