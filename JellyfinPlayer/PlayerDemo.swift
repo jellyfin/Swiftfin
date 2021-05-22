@@ -55,7 +55,7 @@ struct PlayerDemo: View {
     @State private var captionConfiguration: Bool = false {
         didSet {
             if(captionConfiguration == false) {
-                DispatchQueue.global(qos: .userInitiated).async { _ in
+                DispatchQueue.global(qos: .userInitiated).async { [self] in
                     vlcplayer.pause()
                     usleep(10000);
                     vlcplayer.play()
@@ -251,8 +251,8 @@ struct PlayerDemo: View {
                         _isPlaying.wrappedValue = true;
                     }
                     
-                    DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-                        self?.keepUpWithPlayerState()
+                    DispatchQueue.global(qos: .userInteractive).async { [self] in
+                        self.keepUpWithPlayerState()
                     }
                 } catch {
                     
@@ -361,8 +361,8 @@ struct PlayerDemo: View {
                             let videoDuration = Double(vlcplayer.time.intValue + abs(vlcplayer.remainingTime.intValue))
                             if(bool == true) {
                                 vlcplayer.pause()
-                                DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                                    self?.processScrubbingState()
+                                DispatchQueue.global(qos: .userInitiated).async { [self] in
+                                    self.processScrubbingState()
                                 }
                             } else {
                                 //Scrub is value from 0..1 - find position in video and add / or remove.

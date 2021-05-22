@@ -406,10 +406,10 @@ struct ContentView: View {
             } else {
                 Text("Signing in...")
                 .onAppear(perform: {
-                    DispatchQueue.main.async { [weak self] in
+                    DispatchQueue.main.async { [self] in
                         _viewDidLoad.wrappedValue = false
                         usleep(500000);
-                        self?.jsi.did = false;
+                        self.jsi.did = false;
                     }
                 })
             }
