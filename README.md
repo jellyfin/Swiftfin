@@ -1,2 +1,2 @@
 JellyfinPlayer
-[](https://discord.gg/WghTptH2)
+[Join the Discord!](https://discord.gg/WghTptH2)
