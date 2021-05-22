@@ -12,6 +12,7 @@ import SwiftyJSON
 import CoreData
 import KeychainSwift
 import Introspect
+import Sentry
 
 struct ConnectToServerView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -177,7 +178,7 @@ struct ConnectToServerView: View {
                                     
                                 }
                             case .failure(let error):
-                                print(error)
+                                SentrySDK.capture(error: error)
                                 _isSignInErrored.wrappedValue = true;
                             }
                             _isWorking.wrappedValue = false;
