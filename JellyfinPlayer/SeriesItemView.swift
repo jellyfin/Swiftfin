@@ -22,7 +22,7 @@ struct SeriesItemView: View {
             return;
         }
         _isLoading.wrappedValue = true;
-        let url = "/Shows/\(item.Id )/Seasons?userId=\(globalData.user?.user_id ?? "")&Fields=ItemCounts%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CCanDelete%2CMediaSourceCount"
+        let url = "/Shows/\(item.Id )/Seasons?userId=\(globalData.user?.user_id ?? "")&Fields=ItemCount"
         
         let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url)
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
@@ -84,7 +84,7 @@ struct SeriesItemView: View {
                     ForEach(items, id: \.Id) { item in
                         NavigationLink(destination: ItemView(item: item )) {
                             VStack(alignment: .leading) {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
+                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=90&tag=\(item.Image)"))
                                     .resizable()
                                     .placeholder {
                                         Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)

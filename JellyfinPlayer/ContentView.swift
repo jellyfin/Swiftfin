@@ -11,6 +11,7 @@ import SwiftyRequest
 import SwiftyJSON
 import Introspect
 import Sentry
+import SDWebImageSwiftUI
 
 class GlobalData: ObservableObject {
     @Published var user: SignedInUser?
@@ -196,12 +197,18 @@ struct ContentView: View {
     }
     
     func startup() {
-        
         SentrySDK.start { options in
             options.dsn = "https://7ef695d745e942f8a52d69317c5ae241@o704459.ingest.sentry.io/5778161"
             options.debug = false // Enabled debug when first installing is always helpful
             options.releaseName = "ios-" + (Bundle.main.infoDictionary?["CFBundleVersion"] as! String);
         }
+        
+        let cache = SDImageCache(namespace: "tiny")
+        cache.config.maxMemoryCost = 100 * 1024 * 1024 // 100MB memory
+        cache.config.maxDiskSize = 1000 * 1024 * 1024 // 1000MB disk
+        SDImageCachesManager.shared.addCache(cache)
+        SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
+        
         _libraries.wrappedValue = []
         _library_names.wrappedValue = [:]
         _librariesShowRecentlyAdded.wrappedValue = []
