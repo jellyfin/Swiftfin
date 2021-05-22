@@ -206,8 +206,9 @@ struct ContentView: View {
         SentrySDK.start { options in
             options.dsn = "https://75ac77d6af4d406eb989f3d8ef0f119f@o513670.ingest.sentry.io/5778242"
             options.debug = false // Enabled debug when first installing is always helpful
+            options.tracesSampleRate = 1.0
             options.releaseName = "ios-" + (Bundle.main.infoDictionary?["CFBundleVersion"] as! String);
-            options.enableOutOfMemoryTracking = false
+            options.enableOutOfMemoryTracking = true
         }
 
         let privacyConfig = Dynatrace.userPrivacyOptions()
@@ -295,7 +296,8 @@ struct ContentView: View {
                                     
                                 }
                                 break
-                            case .failure( _):
+                            case .failure(let error):
+                                SentrySDK.capture(error: error)
                                 break
                             }
                             _isLoading.wrappedValue = false;
@@ -309,6 +311,7 @@ struct ContentView: View {
                         _isLoading.wrappedValue = false;
                         _isSignInErrored.wrappedValue = true;
                     } else {
+                        SentrySDK.capture(error: error)
                         _isLoading.wrappedValue = false;
                         _isNetworkErrored.wrappedValue = true;
                     }
