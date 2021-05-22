@@ -69,8 +69,8 @@ class PlayerUIView: UIView, VLCMediaPlayerDelegate {
             
             mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFontSize:")), with: 14)
             //mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
-            mediaPlayer.wrappedValue.jumpForward(Int32(startTime/10000000))
             mediaPlayer.wrappedValue.play()
+            mediaPlayer.wrappedValue.jumpForward(Int32(startTime/10000000))
         }
     }
 
