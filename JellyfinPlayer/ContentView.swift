@@ -252,6 +252,9 @@ struct ContentView: View {
                 _globalData.wrappedValue.user = savedUser
             }
             
+            let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String;
+            globalData.authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(UIDevice.current.name)\", DeviceId=\"\(globalData.user?.device_uuid ?? "")\", Version=\"\(appVersion ?? "0.0.1")\", Token=\"\(globalData.authToken)\"";
+            
             let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + "/Users/Me")
             request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
             request.contentType = "application/json"
