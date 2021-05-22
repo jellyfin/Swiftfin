@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 import SwiftyRequest
 import SwiftyJSON
 import Introspect
@@ -28,7 +29,6 @@ struct EpisodeItemView: View {
                 formatter.locale = Locale(identifier: "en_US_POSIX")
                 formatter.timeZone = TimeZone(secondsFromGMT: 0)
                 formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
-                print((globalData.server?.baseURI ?? "") + "/Users/\(globalData.user?.user_id ?? "")/PlayedItems/\(fullItem.Id)?DatePlayed=\(formatter.string(from: date).replacingOccurrences(of: ":", with: "%3A"))")
                 let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Users/\(globalData.user?.user_id ?? "")/PlayedItems/\(fullItem.Id)?DatePlayed=\(formatter.string(from: date).replacingOccurrences(of: ":", with: "%3A"))")
                 request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
                 request.contentType = "application/json"
@@ -220,12 +220,12 @@ struct EpisodeItemView: View {
                                         .placeholder {
                                             Image(uiImage: UIImage(blurHash: (fullItem.BackdropBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.BackdropBlurHash), size: CGSize(width: 32, height: 32))!)
                                                 .resizable()
-                                                .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
+                                                .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: UIDevice.current.userInterfaceIdiom == .pad ? 350 : (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
                                         }
                                         
                                         .opacity(0.3)
                                         .aspectRatio(contentMode: .fill)
-                                        .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
+                                        .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: UIDevice.current.userInterfaceIdiom == .pad ? 350 : (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
                                         .shadow(radius: 5)
                                         .overlay(
                                             HStack() {
@@ -277,8 +277,8 @@ struct EpisodeItemView: View {
                                                             }
                                                         }
                                                     }.frame(maxWidth: .infinity, alignment: .leading)
-                                                }.frame(maxWidth: .infinity, alignment: .leading).offset(x: 0, y: -46).padding(.trailing, 16)
-                                            }.offset(x: 16, y: 40)
+                                                }.frame(maxWidth: .infinity, alignment: .leading).offset(x: 0, y: UIDevice.current.userInterfaceIdiom == .pad ? -98 : -46).padding(.trailing, 16)
+                                            }.offset(x: 16, y: UIDevice.current.userInterfaceIdiom == .pad ? 135 : 40)
                                             , alignment: .bottomLeading)
                                     VStack(alignment: .leading) {
                                         HStack() {
@@ -390,7 +390,7 @@ struct EpisodeItemView: View {
                                                 Spacer().frame(height: 3)
                                             }
                                         }
-                                    }.padding(EdgeInsets(top: 24, leading: 0, bottom: 0, trailing: 0))
+                                    }.padding(EdgeInsets(top: UIDevice.current.userInterfaceIdiom == .pad ? 54 : 24, leading: 0, bottom: 0, trailing: 0))
                                 }
                             }
                         } else {
@@ -401,12 +401,12 @@ struct EpisodeItemView: View {
                                         .placeholder {
                                             Image(uiImage: UIImage(blurHash: (fullItem.BackdropBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.BackdropBlurHash), size: CGSize(width: 32, height: 32))!)
                                                 .resizable()
-                                                .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
+                                                .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                         }
                                         
                                         .opacity(0.3)
                                         .aspectRatio(contentMode: .fill)
-                                        .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
+                                        .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                         .edgesIgnoringSafeArea(.all)
                                     HStack() {
                                         VStack() {
@@ -501,11 +501,11 @@ struct EpisodeItemView: View {
                                                             }
                                                         }
                                                     }
-                                                }
+                                                }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 if(fullItem.Tagline != "") {
-                                                    Text(fullItem.Tagline).font(.body).italic().padding(.top, 3).fixedSize(horizontal: false, vertical: true).padding(.leading, 16).padding(.trailing,16)
+                                                    Text(fullItem.Tagline).font(.body).italic().padding(.top, 3).fixedSize(horizontal: false, vertical: true).padding(.leading, 16).padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 }
-                                                Text(fullItem.Overview).font(.footnote).padding(.top, 3).fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16).padding(.trailing,16)
+                                                Text(fullItem.Overview).font(.footnote).padding(.top, 3).fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16).padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 if(fullItem.Genres.count != 0) {
                                                     ScrollView(.horizontal, showsIndicators: false) {
                                                         HStack() {
@@ -515,7 +515,7 @@ struct EpisodeItemView: View {
                                                                     Text(genre.Name).font(.footnote)
                                                                 }
                                                             }
-                                                        }.padding(.leading, 16).padding(.trailing,16)
+                                                        }.padding(.leading, 16).padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                     }
                                                 }
                                                 if(fullItem.Cast.count != 0) {
@@ -547,7 +547,7 @@ struct EpisodeItemView: View {
                                                                     }
                                                                     Spacer().frame(width: 10)
                                                                 }
-                                                                Spacer().frame(width: 16)
+                                                                Spacer().frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                             }
                                                         }
                                                     }.padding(.top, -3)
@@ -556,31 +556,31 @@ struct EpisodeItemView: View {
                                                     HStack() {
                                                         Text("Directors:").font(.callout).fontWeight(.semibold)
                                                         Text(fullItem.Directors.joined(separator: ", ")).font(.footnote).lineLimit(1).foregroundColor(Color.secondary)
-                                                    }.padding(.leading, 16).padding(.trailing,16)
+                                                    }.padding(.leading, 16).padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 }
                                                 if(fullItem.Writers.count != 0) {
                                                     HStack() {
                                                         Text("Writers:").font(.callout).fontWeight(.semibold)
                                                         Text(fullItem.Writers.joined(separator: ", ")).font(.footnote).lineLimit(1).foregroundColor(Color.secondary)
-                                                    }.padding(.leading, 16).padding(.trailing,16)
+                                                    }.padding(.leading, 16).padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 }
                                                 if(fullItem.Studios.count != 0) {
                                                     HStack() {
                                                         Text("Studios:").font(.callout).fontWeight(.semibold)
                                                         Text(fullItem.Studios.joined(separator: ", ")).font(.footnote).lineLimit(1).foregroundColor(Color.secondary)
-                                                    }.padding(.leading, 16).padding(.trailing,16)
+                                                    }.padding(.leading, 16).padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 }
-                                                Spacer().frame(height: 195);
+                                                Spacer().frame(height: 100);
                                             }.frame(maxHeight: .infinity)
-                                        }.padding(.trailing, 55)
-                                    }.padding(.top, 12)
+                                        }
+                                    }.padding(.top, 12).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55).edgesIgnoringSafeArea(.leading)
                                 }
                             }
                         }
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle(fullItem.Name)
+                .navigationTitle("\(fullItem.Name) - S\(String(fullItem.ParentIndexNumber ?? 0)):E\(String(fullItem.IndexNumber ?? 0)) - \(fullItem.SeriesName ?? "")")
                 .supportedOrientations(.allButUpsideDown)
                 .prefersHomeIndicatorAutoHidden(false)
                 .withHostingWindow() { window in
