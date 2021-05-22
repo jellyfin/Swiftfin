@@ -185,7 +185,7 @@ struct ConnectToServerView: View {
                             Spacer()
                             ProgressView().isHidden(!isWorking)
                         }
-                    }.disabled(isWorking || username.isEmpty || password.isEmpty)
+                    }.disabled(isWorking || username.isEmpty)
                     .alert(isPresented: $isSignInErrored) {
                         Alert(title: Text("Error"), message: Text("Invalid credentials"), dismissButton: .default(Text("Back")))
                     }
