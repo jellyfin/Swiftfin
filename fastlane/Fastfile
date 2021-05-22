@@ -19,23 +19,31 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     increment_build_number(xcodeproj: "JellyfinPlayer.xcodeproj")
-    gym
-    upload_to_testflight
+    gym(output_name: "JellyfinPlayer.ipa")
+    identifier_v = get_version_number(xcodeproj: "JellyfinPlayer.xcodeproj")
+    identifier_s = get_info_plist_value(path: "JellyfinPlayer/Info.plist", key: "CFBundleVersion")
+    dynatrace_process_symbols(
+      appId: "8c1f6941-ec78-480c-b589-b41aca29a52e",
+      os: "ios",
+      bundleId: "me.vigue.jellyfin",
+      versionStr: identifier_v,
+      version: identifier_s,
+      server: "https://ofa89490.live.dynatrace.com",
+      symbolsfile: "JellyfinPlayer.app.dSYM.zip"
+    )
     upload_symbols_to_sentry(
       org_slug: 'aidenvigue',
       project_slug: 'jellyfin-swift-ios',
       dsym_path: "JellyfinPlayer.app.dSYM.zip"
     )
-    identifier_v = get_version_number(xcodeproj: "JellyfinPlayer.xcodeproj")
-    identifier_s = get_info_plist_value(path: "JellyfinPlayer/Info.plist", key: "CFBundleVersion")
-    dynatrace_process_symbols(
-	appId: "8c1f6941-ec78-480c-b589-b41aca29a52e",
-	os: "ios",
-	bundleId: "me.vigue.jellyfin",
-	versionStr: identifier_v,
-	version: identifier_s,
-	server: "https://ofa89490.live.dynatrace.com",
-	symbolsfile: "JellyfinPlayer.app.dSYM.zip"
+    set_github_release(
+      repository_name: "acvigue/JellyfinPlayer",
+      name: "Release #{identifier_v}@#{identifier_s}",
+      tag_name: "v#{identifier_s}",
+      description: (File.read("Release Notes.rtf") rescue "No changelog provided"),
+      commitish: "main",
+      upload_assets: ["JellyfinPlayer.ipa"]
     )
+    upload_to_testflight
   end
 end
