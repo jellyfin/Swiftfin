@@ -11,6 +11,13 @@ class justSignedIn: ObservableObject {
     @Published var did: Bool = false
 }
 
+extension UIDevice {
+    var hasNotch: Bool {
+        let bottom = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        return bottom > 0
+    }
+}
+
 class OrientationInfo: ObservableObject {
     enum Orientation {
         case portrait

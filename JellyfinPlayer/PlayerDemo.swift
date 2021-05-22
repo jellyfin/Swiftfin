@@ -390,12 +390,12 @@ struct PlayerDemo: View {
                         .accentColor(Color(red: 172/255, green: 92/255, blue: 195/255))
                         Text(timeText).fontWeight(.semibold).frame(width: 80).foregroundColor(.white)
                     }.padding(EdgeInsets(top: -20, leading: 44, bottom: 42, trailing: 40))
-                }.transition(.fade)
-                .padding(EdgeInsets(top: 0, leading: -30, bottom: 0, trailing: -30))
+                }
+                .padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? -30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? -30 : 0))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(UIColor.black).opacity(0.4))
                 .isHidden(inactivity)
-            }.padding(EdgeInsets(top: 0, leading: 34, bottom: 0, trailing: 34))
+            }.padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? 34 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? 34 : 0))
         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .onAppear(perform: startStream)
         .navigationBarHidden(true)
@@ -409,7 +409,7 @@ struct PlayerDemo: View {
         .edgesIgnoringSafeArea(.all)
         .onTapGesture(perform: resetTimer)
         .overrideViewPreference(.dark)
-        .popover( isPresented: self.$captionConfiguration, arrowEdge: .bottom) {
+        .fullScreenCover(isPresented: self.$captionConfiguration) {
             NavigationView() {
                 VStack() {
                     Form() {

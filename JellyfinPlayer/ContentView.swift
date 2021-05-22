@@ -115,6 +115,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     @objc required dynamic init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        super.modalPresentationStyle = .fullScreen
     }
 
     private class Box {
