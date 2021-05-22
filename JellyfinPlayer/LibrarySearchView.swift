@@ -32,7 +32,7 @@ struct LibrarySearchView: View {
     func onAppear() {
         _isLoading.wrappedValue = true;
         _items.wrappedValue = [];
-        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue + "&searchTerm=" + searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue + "&searchTerm=" + searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! + (_url.wrappedValue.contains("SortBy") ? "" : "&SortBy=Name&SortOrder=Descending"))
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"
@@ -151,10 +151,17 @@ struct LibrarySearchView: View {
                                             .frame(width:100, height: 150)
                                             .cornerRadius(10).overlay(
                                                 ZStack {
-                                                    Text("\(String(item.ItemBadge ?? 0))")
-                                                        .font(.caption)
-                                                        .padding(3)
-                                                        .foregroundColor(.white)
+                                                    if(item.ItemBadge == 0) {
+                                                        Image(systemName: "checkmark")
+                                                            .font(.caption)
+                                                            .padding(3)
+                                                            .foregroundColor(.white)
+                                                    } else {
+                                                        Text("\(String(item.ItemBadge ?? 0))")
+                                                            .font(.caption)
+                                                            .padding(3)
+                                                            .foregroundColor(.white)
+                                                    }
                                                 }.background(Color.black)
                                                 .opacity(0.8)
                                                 .cornerRadius(10.0)

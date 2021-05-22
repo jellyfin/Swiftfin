@@ -71,7 +71,7 @@ struct LibraryView: View {
             _library_names.wrappedValue["favorites"] = "Favorites"
             
             _library_ids.wrappedValue.append("genres")
-            _library_names.wrappedValue["genres"] = "Genres"
+            _library_names.wrappedValue["genres"] = "Genres - WIP"
         }
     }
     
@@ -196,10 +196,17 @@ struct LibraryView: View {
                                             .frame(width:100, height: 150)
                                             .cornerRadius(10).overlay(
                                                 ZStack {
-                                                    Text("\(String(item.ItemBadge ?? 0))")
-                                                        .font(.caption)
-                                                        .padding(3)
-                                                        .foregroundColor(.white)
+                                                    if(item.ItemBadge == 0) {
+                                                        Image(systemName: "checkmark")
+                                                            .font(.caption)
+                                                            .padding(3)
+                                                            .foregroundColor(.white)
+                                                    } else {
+                                                        Text("\(String(item.ItemBadge ?? 0))")
+                                                            .font(.caption)
+                                                            .padding(3)
+                                                            .foregroundColor(.white)
+                                                    }
                                                 }.background(Color.black)
                                                 .opacity(0.8)
                                                 .cornerRadius(10.0)

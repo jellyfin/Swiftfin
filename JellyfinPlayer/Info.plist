@@ -20,6 +20,14 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>7</string>
+	<key>DTXApplicationID</key>
+	<string>8c1f6941-ec78-480c-b589-b41aca29a52e</string>
+	<key>DTXBeaconURL</key>
+	<string>https://bf64941kgh.bf.dynatrace.com/mbeacon</string>
+	<key>DTXStartupLoadBalancing</key>
+	<true/>
+	<key>DTXUserOptIn</key>
+	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -42,6 +50,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
@@ -53,17 +63,8 @@
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>DTXApplicationID</key>
-	<string>8c1f6941-ec78-480c-b589-b41aca29a52e</string>
-	<key>DTXBeaconURL</key>
-	<string>https://bf64941kgh.bf.dynatrace.com/mbeacon</string>
-	<key>DTXUserOptIn</key>
-	<true/>
-	<key>DTXStartupLoadBalancing</key>
-	<true/>
 </dict>
 </plist>

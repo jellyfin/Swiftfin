@@ -10,6 +10,30 @@ import SwiftyRequest
 import SwiftyJSON
 import SDWebImageSwiftUI
 
+struct CustomShape: Shape {
+    let radius: CGFloat
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        let tl = CGPoint(x: rect.minX, y: rect.minY)
+        let tr = CGPoint(x: rect.maxX, y: rect.minY)
+        let br = CGPoint(x: rect.maxX, y: rect.maxY)
+        let bls = CGPoint(x: rect.minX + radius, y: rect.maxY)
+        let blc = CGPoint(x: rect.minX + radius, y: rect.maxY - radius)
+        
+        path.move(to: tl)
+        path.addLine(to: tr)
+        path.addLine(to: br)
+        path.addLine(to: bls)
+        path.addRelativeArc(center: blc, radius: radius,
+          startAngle: Angle.degrees(90), delta: Angle.degrees(90))
+        
+        return path
+    }
+}
+ 
+
 struct ContinueWatchingView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var globalData: GlobalData
@@ -44,12 +68,18 @@ struct ContinueWatchingView: View {
                             //portrait; use backdrop instead
                             itemObj.Image = item["BackdropImageTags"][0].string ?? ""
                             itemObj.ImageType = "Backdrop"
+                            
+                            if(itemObj.Image == "") {
+                                itemObj.Image = item["ParentBackdropImageTags"][0].string ?? ""
+                            }
+                            
                             itemObj.BlurHash = item["ImageBlurHashes"]["Backdrop"][itemObj.Image].string ?? ""
                         } else {
                             itemObj.Image = item["ImageTags"]["Primary"].string ?? ""
                             itemObj.ImageType = "Primary"
                             itemObj.BlurHash = item["ImageBlurHashes"]["Primary"][itemObj.Image].string ?? ""
                         }
+                        
                         itemObj.Name = item["Name"].string ?? ""
                         itemObj.Type = item["Type"].string ?? ""
                         itemObj.IndexNumber = item["IndexNumber"].int ?? nil
@@ -108,10 +138,11 @@ struct ContinueWatchingView: View {
                                                     .padding(6), alignment: .topTrailing
                                                 )
                                                 .overlay(
-                                                    RoundedRectangle(cornerRadius: 10, style: .circular)
-                                                        .fill(Color(red: 172/255, green: 92/255, blue: 195/255).opacity(0.4))
-                                                        .frame(width: CGFloat((item.ItemProgress/100)*320), height: 180)
-                                                    .padding(0), alignment: .bottomLeading
+                                                    Rectangle()
+                                                        .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
+                                                        .mask(CustomShape(radius: 10))
+                                                        .frame(width: CGFloat((item.ItemProgress/100)*320), height: 7)
+                                                        .padding(0), alignment: .bottomLeading
                                                 )
                                                 .shadow(radius: 5)
                                         } else {
@@ -126,9 +157,10 @@ struct ContinueWatchingView: View {
                                                 .frame(width: 320, height: 180)
                                                 .cornerRadius(10)
                                                 .overlay(
-                                                    RoundedRectangle(cornerRadius: 10, style: .circular)
-                                                        .fill(Color(red: 172/255, green: 92/255, blue: 195/255).opacity(0.4))
-                                                        .frame(width: CGFloat((item.ItemProgress/100)*320), height: 180)
+                                                    Rectangle()
+                                                        .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
+                                                        .mask(CustomShape(radius: 10))
+                                                        .frame(width: CGFloat((item.ItemProgress/100)*320), height: 7)
                                                     .padding(0), alignment: .bottomLeading
                                                 )
                                                 .shadow(radius: 5)
@@ -137,6 +169,8 @@ struct ContinueWatchingView: View {
                                             .font(.callout)
                                             .fontWeight(.semibold)
                                             .foregroundColor(.primary)
+                                            .lineLimit(1)
+                                            .frame(width: 320, alignment: .leading)
                                         Spacer().frame(height: 5)
                                     }.padding(.trailing, 5)
                                 }

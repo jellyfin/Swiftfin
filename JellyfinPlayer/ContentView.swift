@@ -188,6 +188,7 @@ struct ContentView: View {
     @State private var librariesShowRecentlyAdded: [String] = [];
     @State private var libraryPrefillID: String = "";
     @State private var showSettingsPopover: Bool = false;
+    @State private var viewDidLoad: Bool = false;
     
     @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
     @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
@@ -198,6 +199,10 @@ struct ContentView: View {
     }
     
     func startup() {
+        if(_viewDidLoad.wrappedValue) {
+            return
+        }
+        _viewDidLoad.wrappedValue = true;
         SentrySDK.start { options in
             options.dsn = "https://75ac77d6af4d406eb989f3d8ef0f119f@o513670.ingest.sentry.io/5778242"
             options.debug = false // Enabled debug when first installing is always helpful
@@ -274,6 +279,18 @@ struct ContentView: View {
                                     _librariesShowRecentlyAdded.wrappedValue = _libraries.wrappedValue.filter { element in
                                         return !array2.contains(element)
                                     }
+                                    
+                                    _libraries.wrappedValue.forEach { library in
+                                        if(_library_names.wrappedValue[library] == nil) {
+                                            _libraries.wrappedValue.removeAll { ele in
+                                                if(library == ele) {
+                                                    return true
+                                                } else {
+                                                    return false
+                                                }
+                                            }
+                                        }
+                                    }
                                 } catch {
                                     
                                 }
@@ -301,84 +318,95 @@ struct ContentView: View {
     }
 
     var body: some View {
-        if(!jsi.did) {
-            LoadingView(isShowing: $isLoading) {
-                TabView(selection: $tabSelection) {
-                    NavigationView() {
-                        VStack {
-                            NavigationLink(destination: ConnectToServerView(isActive: $needsToSelectServer), isActive: $needsToSelectServer) {
-                                EmptyView()
-                            }.isDetailLink(false)
-                            NavigationLink(destination: ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server, reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored), isActive: $isSignInErrored) {
-                                EmptyView()
-                            }.isDetailLink(false)
-                            if(!needsToSelectServer && !isSignInErrored) {
-                                VStack(alignment: .leading) {
-                                    ScrollView() {
-                                        Spacer().frame(height: self.isPortrait ? 0 : 15)
-                                        ContinueWatchingView()
-                                        NextUpView().padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-                                        ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
-                                            VStack(alignment: .leading) {
-                                                HStack() {
-                                                    Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
-                                                    Spacer()
-                                                    NavigationLink(destination: LibraryView(prefill: library_id, names: library_names, libraries: libraries, filter: "&SortBy=DateCreated&SortOrder=Descending")) {
-                                                        Text("See All").font(.subheadline).fontWeight(.bold)
-                                                    }
-                                                }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                                LatestMediaView(library: library_id)
-                                            }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+        if(needsToSelectServer) {
+            NavigationView() {
+                ConnectToServerView(isActive: $needsToSelectServer)
+            }
+        } else if(isSignInErrored) {
+            NavigationView() {
+                ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server, reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored)
+            }
+        } else {
+            if(!jsi.did) {
+                LoadingView(isShowing: $isLoading) {
+                    TabView(selection: $tabSelection) {
+                        NavigationView() {
+                            VStack {
+                                NavigationLink(destination: ConnectToServerView(isActive: $needsToSelectServer), isActive: $needsToSelectServer) {
+                                    EmptyView()
+                                }.isDetailLink(false)
+                                NavigationLink(destination: ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server, reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored), isActive: $isSignInErrored) {
+                                    EmptyView()
+                                }.isDetailLink(false)
+                                if(!needsToSelectServer && !isSignInErrored) {
+                                    VStack(alignment: .leading) {
+                                        ScrollView() {
+                                            Spacer().frame(height: self.isPortrait ? 0 : 15)
+                                            ContinueWatchingView()
+                                            NextUpView().padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                                            ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
+                                                VStack(alignment: .leading) {
+                                                    HStack() {
+                                                        Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
+                                                        Spacer()
+                                                        NavigationLink(destination: LibraryView(prefill: library_id, names: library_names, libraries: libraries, filter: "&SortBy=DateCreated&SortOrder=Descending")) {
+                                                            Text("See All").font(.subheadline).fontWeight(.bold)
+                                                        }
+                                                    }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                                                    LatestMediaView(library: library_id)
+                                                }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                                            }
+                                            Spacer().frame(height: 7)
                                         }
-                                        Spacer().frame(height: 7)
                                     }
                                 }
                             }
-                        }
-                        .navigationTitle("Home")
-                        .toolbar {
-                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button {
-                                    showSettingsPopover = true;
-                                } label: {
-                                    Image(systemName: "gear")
+                            .navigationTitle("Home")
+                            .toolbar {
+                                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                                    Button {
+                                        showSettingsPopover = true;
+                                    } label: {
+                                        Image(systemName: "gear")
+                                    }
                                 }
-                            }
-                        }.popover( isPresented: self.$showSettingsPopover, arrowEdge: .bottom) { SettingsView(close: $showSettingsPopover).environmentObject(self.globalData) }
-                    }
-                    .tabItem({
-                        Text("Home")
-                        Image(systemName: "house")
-                    })
-                    .tag("Home")
-                    NavigationView() {
-                        LibraryView(prefill: "", names: library_names, libraries: libraries)
-                        .navigationTitle("Library")
-                    }
-                    .tabItem({
-                        Text("All Media")
-                        Image(systemName: "folder")
-                    })
-                    .tag("All Media")
-                    
-                }.edgesIgnoringSafeArea(isPortrait ? [] : [.leading,.trailing])
-            }.environmentObject(globalData)
-            .edgesIgnoringSafeArea(isPortrait ? [] : [.leading,.trailing])
-            .onAppear(perform: startup)
-            .navigationViewStyle(StackNavigationViewStyle())
-            .alert(isPresented: $isNetworkErrored) {
-                Alert(title: Text("Network Error"), message: Text("Couldn't connect to Jellyfin"), dismissButton: .default(Text("Ok")))
-            }.introspectTabBarController { (UITabBarController) in
-                UITabBarController.tabBar.isHidden = false
-            }
-        } else {
-            Text("Signing in...")
-            .onAppear(perform: {
-                DispatchQueue.main.async { [self] in
-                    usleep(500000);
-                    self.jsi.did = false;
+                            }.popover( isPresented: self.$showSettingsPopover, arrowEdge: .bottom) { SettingsView(close: $showSettingsPopover).environmentObject(self.globalData) }
+                        }
+                        .tabItem({
+                            Text("Home")
+                            Image(systemName: "house")
+                        })
+                        .tag("Home")
+                        NavigationView() {
+                            LibraryView(prefill: "", names: library_names, libraries: libraries)
+                            .navigationTitle("Library")
+                        }
+                        .tabItem({
+                            Text("All Media")
+                            Image(systemName: "folder")
+                        })
+                        .tag("All Media")
+                        
+                    }.edgesIgnoringSafeArea(isPortrait ? [] : [.leading,.trailing])
+                }.environmentObject(globalData)
+                .edgesIgnoringSafeArea(isPortrait ? [] : [.leading,.trailing])
+                .onAppear(perform: startup)
+                .navigationViewStyle(StackNavigationViewStyle())
+                .alert(isPresented: $isNetworkErrored) {
+                    Alert(title: Text("Network Error"), message: Text("Couldn't connect to Jellyfin"), dismissButton: .default(Text("Ok")))
+                }.introspectTabBarController { (UITabBarController) in
+                    UITabBarController.tabBar.isHidden = false
                 }
-            })
+            } else {
+                Text("Signing in...")
+                .onAppear(perform: {
+                    DispatchQueue.main.async { [self] in
+                        _viewDidLoad.wrappedValue = false
+                        usleep(500000);
+                        self.jsi.did = false;
+                    }
+                })
+            }
         }
     }
 }

@@ -34,6 +34,10 @@ struct LibraryFilterView: View {
     @Binding var close: Bool;
     
     func onAppear() {
+        if(_viewDidLoad.wrappedValue == true) {
+            return
+        }
+        _viewDidLoad.wrappedValue = true;
         if(_output.wrappedValue.contains("&Filters=IsUnplayed")) {
             _onlyUnplayed.wrappedValue = true;
         }
@@ -55,10 +59,6 @@ struct LibraryFilterView: View {
         _sortOrder.wrappedValue = sortOrder;
         
         recalculateFilters()
-        if(_viewDidLoad.wrappedValue == true) {
-            return
-        }
-        _viewDidLoad.wrappedValue = true;
         _allGenres.wrappedValue = []
         let url = "/Items/Filters?UserId=\(globalData.user?.user_id ?? "")&ParentId=\(library)"
         let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url)
@@ -98,6 +98,7 @@ struct LibraryFilterView: View {
     }
     
     func recalculateFilters() {
+        print("recalcFilters running");
         output = "";
         if(_onlyUnplayed.wrappedValue) {
             output = "&Filters=IsUnPlayed";

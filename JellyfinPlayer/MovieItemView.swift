@@ -312,7 +312,7 @@ struct MovieItemView: View {
                                                                         .stroke(Color.secondary, lineWidth: 1)
                                                                 )
                                                         }
-                                                        if(fullItem.CommunityRating != "") {
+                                                        if(fullItem.CommunityRating != "0") {
                                                             HStack() {
                                                                 Image(systemName: "star").foregroundColor(.secondary)
                                                                 Text(fullItem.CommunityRating).font(.subheadline)
@@ -322,8 +322,7 @@ struct MovieItemView: View {
                                                                     .offset(x: -7, y: 0.7)
                                                             }
                                                         }
-                                                    }
-                                                    
+                                                    }.frame(maxWidth: .infinity, alignment: .leading)
                                                 }.offset(x: 0, y: -46).padding(.trailing, 16)
                                             }.offset(x: 16, y: 40)
                                             , alignment: .bottomLeading)
@@ -512,7 +511,7 @@ struct MovieItemView: View {
                                                                             .stroke(Color.secondary, lineWidth: 1)
                                                                     )
                                                             }
-                                                            if(fullItem.CommunityRating != "") {
+                                                            if(fullItem.CommunityRating != "0") {
                                                                 HStack() {
                                                                     Image(systemName: "star").foregroundColor(.secondary)
                                                                     Text(fullItem.CommunityRating).font(.subheadline)
@@ -523,9 +522,9 @@ struct MovieItemView: View {
                                                                 }
                                                             }
                                                             Spacer()
-                                                        }.frame(maxWidth: .infinity)
+                                                        }.frame(maxWidth: .infinity, alignment: .leading)
                                                         .offset(x: 14)
-                                                    }.frame(maxWidth: .infinity)
+                                                    }.frame(maxWidth: .infinity, alignment: .leading)
                                                     Spacer()
                                                     HStack() {
                                                         Button() {

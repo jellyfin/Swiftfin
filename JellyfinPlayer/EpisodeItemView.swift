@@ -265,7 +265,7 @@ struct EpisodeItemView: View {
                                                                         .stroke(Color.secondary, lineWidth: 1)
                                                                 )
                                                         }
-                                                        if(fullItem.CommunityRating != "") {
+                                                        if(fullItem.CommunityRating != "0") {
                                                             HStack() {
                                                                 Image(systemName: "star").foregroundColor(.secondary)
                                                                 Text(fullItem.CommunityRating).font(.subheadline)
@@ -275,9 +275,8 @@ struct EpisodeItemView: View {
                                                                     .offset(x: -7, y: 0.7)
                                                             }
                                                         }
-                                                    }
-                                                    
-                                                }.offset(x: 0, y: -46).padding(.trailing, 16)
+                                                    }.frame(maxWidth: .infinity, alignment: .leading)
+                                                }.frame(maxWidth: .infinity, alignment: .leading).offset(x: 0, y: -46).padding(.trailing, 16)
                                             }.offset(x: 16, y: 40)
                                             , alignment: .bottomLeading)
                                     VStack(alignment: .leading) {
@@ -466,7 +465,7 @@ struct EpisodeItemView: View {
                                                                             .stroke(Color.secondary, lineWidth: 1)
                                                                     )
                                                             }
-                                                            if(fullItem.CommunityRating != "") {
+                                                            if(fullItem.CommunityRating != "0") {
                                                                 HStack() {
                                                                     Image(systemName: "star").foregroundColor(.secondary)
                                                                     Text(fullItem.CommunityRating).font(.subheadline)

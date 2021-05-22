@@ -43,6 +43,11 @@ struct SeriesItemView: View {
                         itemObj.ProductionYear = item["ProductionYear"].int ?? 0
                         itemObj.ItemBadge = item["UserData"]["UnplayedItemCount"].int ?? 0
                         itemObj.Image = item["ImageTags"]["Primary"].string ?? ""
+                        
+                        if(itemObj.Image == "") {
+                            itemObj.Image = item["ParentBackdropImageTags"][0].string ?? ""
+                        }
+                        
                         itemObj.ImageType = "Primary"
                         itemObj.SeasonImage = item["ParentBackdropImageTags"][0].string ?? ""
                         itemObj.SeasonImageType = "Backdrop"
@@ -93,10 +98,17 @@ struct SeriesItemView: View {
                                             .cornerRadius(10)
                                     }.overlay(
                                         ZStack {
-                                            Text("\(String(item.ItemBadge ?? 0))")
-                                                .font(.caption)
-                                                .padding(3)
-                                                .foregroundColor(.white)
+                                            if(item.ItemBadge == 0) {
+                                                Image(systemName: "checkmark")
+                                                    .font(.caption)
+                                                    .padding(3)
+                                                    .foregroundColor(.white)
+                                            } else {
+                                                Text("\(String(item.ItemBadge ?? 0))")
+                                                    .font(.caption)
+                                                    .padding(3)
+                                                    .foregroundColor(.white)
+                                            }
                                         }.background(Color.black)
                                         .opacity(0.8)
                                         .cornerRadius(10.0)

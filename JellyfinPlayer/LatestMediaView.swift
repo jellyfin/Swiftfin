@@ -103,10 +103,17 @@ struct LatestMediaView: View {
                                         .cornerRadius(10)
                                         .overlay(
                                             ZStack {
-                                                Text("\(String(item.ItemBadge ?? 0))")
-                                                    .font(.caption)
-                                                    .padding(3)
-                                                    .foregroundColor(.white)
+                                                if(item.ItemBadge == 0) {
+                                                    Image(systemName: "checkmark")
+                                                        .font(.caption)
+                                                        .padding(3)
+                                                        .foregroundColor(.white)
+                                                } else {
+                                                    Text("\(String(item.ItemBadge ?? 0))")
+                                                        .font(.caption)
+                                                        .padding(3)
+                                                        .foregroundColor(.white)
+                                                }
                                             }.background(Color.black)
                                             .opacity(0.8)
                                             .cornerRadius(10.0)

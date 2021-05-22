@@ -218,10 +218,12 @@ struct SeasonItemView: View {
                                                     .foregroundColor(.primary)
                                                     .fixedSize(horizontal: false, vertical: true)
                                                     .offset(y: -4)
-                                                Text(String(fullItem.ProductionYear)).font(.subheadline)
-                                                    .fontWeight(.medium)
-                                                    .foregroundColor(.secondary)
-                                                    .lineLimit(1)
+                                                if(fullItem.ProductionYear != 0) {
+                                                    Text(String(fullItem.ProductionYear)).font(.subheadline)
+                                                        .fontWeight(.medium)
+                                                        .foregroundColor(.secondary)
+                                                        .lineLimit(1)
+                                                }
                                             }.offset(x: 0, y: 45)
                                         }.offset(x: 16, y: 22)
                                         , alignment: .bottomLeading)
@@ -324,9 +326,11 @@ struct SeasonItemView: View {
                                             .frame(width: 120, height: 180)
                                             .cornerRadius(10)
                                         Spacer().frame(height: 4)
-                                        Text(String(fullItem.ProductionYear)).font(.subheadline)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.secondary)
+                                        if(fullItem.ProductionYear != 0) {
+                                            Text(String(fullItem.ProductionYear)).font(.subheadline)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.secondary)
+                                        }
                                         Spacer()
                                     }
                                     ScrollView() {
