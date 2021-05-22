@@ -62,6 +62,7 @@ class CastMember: ObservableObject {
 
 struct MovieItemView: View {
     @EnvironmentObject var globalData: GlobalData
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @State private var isLoading: Bool = true;
     var item: ResumeItem;
     var fullItem: DetailItem;
@@ -258,7 +259,7 @@ struct MovieItemView: View {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment:.leading) {
                     if(!isLoading) {
-                        if(isPortrait) {
+                        if(orientationInfo.orientation == .portrait) {
                             GeometryReader { geometry in
                                 VStack() {
                                     WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=450&quality=90&tag=\(fullItem.Backdrop)")!)

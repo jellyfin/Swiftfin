@@ -37,6 +37,7 @@ struct CustomShape: Shape {
 struct ContinueWatchingView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var globalData: GlobalData
+    @EnvironmentObject var orientationInfo: OrientationInfo
     
     @State var resumeItems: [ResumeItem] = []
     @State private var viewDidLoad: Int = 0;
@@ -64,7 +65,7 @@ struct ContinueWatchingView: View {
                     for (_,item):(String, JSON) in json["Items"] {
                         // Do something you want
                         let itemObj = ResumeItem()
-                        if(item["PrimaryImageAspectRatio"].double! < 1.0) {
+                        if(item["PrimaryImageAspectRatio"].double ?? 0.0 < 1.0) {
                             //portrait; use backdrop instead
                             itemObj.Image = item["BackdropImageTags"][0].string ?? ""
                             itemObj.ImageType = "Backdrop"

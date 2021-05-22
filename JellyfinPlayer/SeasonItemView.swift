@@ -13,6 +13,7 @@ import SDWebImageSwiftUI
 
 struct SeasonItemView: View {
     @EnvironmentObject var globalData: GlobalData
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @State private var isLoading: Bool = true;
     var item: ResumeItem;
     var fullItem: DetailItem;
@@ -185,7 +186,7 @@ struct SeasonItemView: View {
         LoadingView(isShowing: $isLoading) {
             VStack(alignment:.leading) {
                 if(!isLoading) {
-                    if(isPortrait) {
+                    if(orientationInfo.orientation == .portrait) {
                         GeometryReader { geometry in
                             VStack() {
                                 WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=750&quality=80&tag=\(item.SeasonImage ?? "")")!)

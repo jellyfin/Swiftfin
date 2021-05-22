@@ -15,6 +15,7 @@ struct EpisodeItemView: View {
     @EnvironmentObject var globalData: GlobalData
     @State private var isLoading: Bool = true;
     var item: ResumeItem;
+    @EnvironmentObject var orientationInfo: OrientationInfo
     var fullItem: DetailItem;
     @State private var playing: Bool = false;
     @State private var vc: PreferenceUIHostingController? = nil;
@@ -211,7 +212,7 @@ struct EpisodeItemView: View {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment:.leading) {
                     if(!isLoading) {
-                        if(isPortrait) {
+                        if(orientationInfo.orientation == .portrait) {
                             GeometryReader { geometry in
                                 VStack() {
                                     WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=450&quality=90&tag=\(fullItem.Backdrop)")!)
