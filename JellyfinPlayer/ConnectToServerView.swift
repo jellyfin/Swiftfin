@@ -153,14 +153,14 @@ struct ConnectToServerView: View {
                                     newUser.username = _username.wrappedValue
                                     newUser.user_id = json["User"]["Id"].string ?? ""
                                     
-                                    globalData.authHeader = authHeader
-                                    
                                     let keychain = KeychainSwift()
                                     keychain.set(json["AccessToken"].string ?? "", forKey: "AccessToken_\(json["User"]["Id"].string ?? "")")
                                     
                                     do {
                                         try viewContext.save()
                                         DispatchQueue.main.async { [self] in
+                                            globalData.authHeader = authHeader
+                                            _rootIsActive.wrappedValue = false
                                             jsi.did = true
                                         }
                                     } catch {

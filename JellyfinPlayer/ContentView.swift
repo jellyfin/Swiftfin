@@ -334,11 +334,11 @@ struct ContentView: View {
         if(needsToSelectServer) {
             NavigationView() {
                 ConnectToServerView(isActive: $needsToSelectServer)
-            }
+            }.environmentObject(globalData)
         } else if(isSignInErrored) {
             NavigationView() {
                 ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server, reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored)
-            }
+            }.environmentObject(globalData)
         } else {
             if(!jsi.did) {
                 LoadingView(isShowing: $isLoading) {
