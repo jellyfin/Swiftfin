@@ -22,15 +22,6 @@ platform :ios do
     gym(output_name: "JellyfinPlayer.ipa")
     identifier_v = get_version_number(xcodeproj: "JellyfinPlayer.xcodeproj")
     identifier_s = get_info_plist_value(path: "JellyfinPlayer/Info.plist", key: "CFBundleVersion")
-    dynatrace_process_symbols(
-      appId: "8c1f6941-ec78-480c-b589-b41aca29a52e",
-      os: "ios",
-      bundleId: "me.vigue.jellyfin",
-      versionStr: identifier_v,
-      version: identifier_s,
-      server: "https://ofa89490.live.dynatrace.com",
-      symbolsfile: "JellyfinPlayer.app.dSYM.zip"
-    )
     upload_symbols_to_sentry(
       org_slug: 'aidenvigue',
       project_slug: 'jellyfin-swift-ios',
@@ -45,5 +36,14 @@ platform :ios do
       upload_assets: ["JellyfinPlayer.ipa"]
     )
     upload_to_testflight
+    dynatrace_process_symbols(
+      appId: "8c1f6941-ec78-480c-b589-b41aca29a52e",
+      os: "ios",
+      bundleId: "me.vigue.jellyfin",
+      versionStr: identifier_v,
+      version: identifier_s,
+      server: "https://ofa89490.live.dynatrace.com",
+      symbolsfile: "JellyfinPlayer.app.dSYM.zip"
+    )
   end
 end

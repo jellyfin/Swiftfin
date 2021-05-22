@@ -21,6 +21,8 @@ struct EpisodeItemView: View {
     @State private var playing: Bool = false;
     @State private var vc: PreferenceUIHostingController? = nil;
     @State private var progressString: String = "";
+    @State private var viewDidLoad: Bool = false;
+    
     @State private var watched: Bool = false {
         didSet {
             if(watched == true) {
@@ -83,17 +85,20 @@ struct EpisodeItemView: View {
         }
     }
     
-    func loadData() {
-        if(UIDevice.current.orientation.isLandscape) {
-            orientationInfo.orientation = .landscape;
-        } else {
-            orientationInfo.orientation = .portrait;
-        }
+    func unlockOrientations() {
         if(_vc.wrappedValue != nil) {
             _vc.wrappedValue?._prefersHomeIndicatorAutoHidden = false;
             _vc.wrappedValue?._orientations = .allButUpsideDown;
             _vc.wrappedValue?._viewPreference = .unspecified;
         }
+    }
+    
+    func loadData() {
+        unlockOrientations();
+        if(_viewDidLoad.wrappedValue == true) {
+            return
+        }
+        _viewDidLoad.wrappedValue = true;
         let url = "/Users/\(globalData.user?.user_id ?? "")/Items/\(item.Id)"
         
         let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url)
@@ -200,14 +205,6 @@ struct EpisodeItemView: View {
             }
             _isLoading.wrappedValue = false;
         }
-    }
-    
-    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
-
-    var isPortrait: Bool {
-        let result = verticalSizeClass == .regular && horizontalSizeClass == .compact
-        return result
     }
     
     var body: some View {
@@ -586,15 +583,10 @@ struct EpisodeItemView: View {
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("\(fullItem.Name) - S\(String(fullItem.ParentIndexNumber ?? 0)):E\(String(fullItem.IndexNumber ?? 0)) - \(fullItem.SeriesName ?? "")")
-                .supportedOrientations(.allButUpsideDown)
-                .prefersHomeIndicatorAutoHidden(false)
                 .withHostingWindow() { window in
                     let rootVC = window?.rootViewController;
                     let UIHostingcontroller: PreferenceUIHostingController = rootVC as! PreferenceUIHostingController;
                     vc = UIHostingcontroller;
-                }
-                .introspectTabBarController { (UITabBarController) in
-                    UITabBarController.tabBar.isHidden = false
                 }
             }.onAppear(perform: loadData)
         }

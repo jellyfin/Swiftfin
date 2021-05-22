@@ -38,11 +38,10 @@ extension String {
 }
 struct PlayerDemo: View {
     @EnvironmentObject var globalData: GlobalData
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var item: DetailItem;
     @State private var pbitem: PlaybackItem = PlaybackItem(videoType: VideoType.direct, videoUrl: URL(string: "https://example.com")!, subtitles: []);
     @State private var streamLoading = false;
-    @State private var vlcplayer: VLCMediaPlayer = VLCMediaPlayer(options: ["-vv", "--sub-margin=-50"]);
+    @State private var vlcplayer: VLCMediaPlayer = VLCMediaPlayer(options: ["--sub-margin=-50"]);
     @State private var isPlaying = false;
     @State private var subtitles: [Subtitle] = [];
     @State private var inactivity: Bool = true;
@@ -206,7 +205,7 @@ struct PlayerDemo: View {
     
     func startStream() {
         _streamLoading.wrappedValue = true;
-        let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Items/\(item.Id)/PlaybackInfo?UserId=\(globalData.user?.user_id ?? "")&StartTimeTicks=0&IsPlayback=true&AutoOpenLiveStream=true&MaxStreamingBitrate=70000000")
+        let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Items/\(item.Id)/PlaybackInfo?UserId=\(globalData.user?.user_id ?? "")&StartTimeTicks=\(item.Progress)&IsPlayback=true&AutoOpenLiveStream=true&MaxStreamingBitrate=70000000")
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"
@@ -220,14 +219,7 @@ struct PlayerDemo: View {
                     let json = try JSON(data: body)
                     _playSessionId.wrappedValue = json["PlaySessionId"].string ?? "";
                     if(json["MediaSources"][0]["TranscodingUrl"].string != nil) {
-                        //Video is transcoded due to TranscodingReason - also may just be remuxed
-                        for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
-                            if(stream["Type"].string == "Subtitle") {
-                                print("Found subtitle track: \(stream["DeliveryUrl"].string ?? "")")
-                            }
-                        }
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? "").replacingOccurrences(of: "master.m3u8", with: "main.m3u8"))")!
-                        print(streamURL);
                         let item = PlaybackItem(videoType: VideoType.hls, videoUrl: streamURL, subtitles: [])
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
@@ -243,14 +235,12 @@ struct PlayerDemo: View {
                         pbitem.subtitles = subtitles;
                         _isPlaying.wrappedValue = true;
                     } else {
-                        print("Direct play of item \(item.Name)")
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")/Videos/\(item.Id)/stream?Static=true&mediaSourceId=\(item.Id)&deviceId=\(globalData.user?.device_uuid ?? "")&api_key=\(globalData.authToken)&Tag=\(json["MediaSources"][0]["ETag"])")!;
                         let item = PlaybackItem(videoType: VideoType.direct, videoUrl: streamURL, subtitles: [])
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
                             if(stream["Type"].string == "Subtitle") {
-                                print("Found subtitle track with title \(stream["DisplayTitle"].string ?? "") Delivery method: \(stream["DeliveryMethod"].string ?? "")")
                                 let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
                                 let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
@@ -260,7 +250,8 @@ struct PlayerDemo: View {
                         pbitem.subtitles = subtitles;
                         _isPlaying.wrappedValue = true;
                     }
-                    DispatchQueue.global(qos: .userInitiated).async { [self] in
+                    
+                    DispatchQueue.global(qos: .userInteractive).async { [self] in
                         self.keepUpWithPlayerState()
                     }
                 } catch {
@@ -280,8 +271,7 @@ struct PlayerDemo: View {
         while(vlcplayer.state == VLCMediaPlayerState.paused) {
             let secondsScrubbedTo = round(_scrub.wrappedValue * videoDuration);
             let scrubRemaining = videoDuration - secondsScrubbedTo;
-            usleep(10000)
-            
+            usleep(50000)
             let remainingTime = scrubRemaining;
             let hours = floor(remainingTime / 3600);
             let minutes = (remainingTime.truncatingRemainder(dividingBy: 3600)) / 60;
@@ -401,14 +391,8 @@ struct PlayerDemo: View {
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .statusBar(hidden: true)
-        .introspectTabBarController { (UITabBarController) in
-            UITabBarController.tabBar.isHidden = true
-        }
-        .prefersHomeIndicatorAutoHidden(true)
-        .supportedOrientations(.landscapeRight)
         .edgesIgnoringSafeArea(.all)
         .onTapGesture(perform: resetTimer)
-        .overrideViewPreference(.dark)
         .fullScreenCover(isPresented: self.$captionConfiguration) {
             NavigationView() {
                 VStack() {

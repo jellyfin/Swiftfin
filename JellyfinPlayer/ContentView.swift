@@ -345,12 +345,6 @@ struct ContentView: View {
                     TabView(selection: $tabSelection) {
                         NavigationView() {
                             VStack {
-                                NavigationLink(destination: ConnectToServerView(isActive: $needsToSelectServer), isActive: $needsToSelectServer) {
-                                    EmptyView()
-                                }.isDetailLink(false)
-                                NavigationLink(destination: ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server, reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored), isActive: $isSignInErrored) {
-                                    EmptyView()
-                                }.isDetailLink(false)
                                 if(!needsToSelectServer && !isSignInErrored) {
                                     VStack(alignment: .leading) {
                                         ScrollView() {
@@ -362,7 +356,7 @@ struct ContentView: View {
                                                     HStack() {
                                                         Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
                                                         Spacer()
-                                                        NavigationLink(destination: LibraryView(prefill: library_id, names: library_names, libraries: libraries, filter: "&SortBy=DateCreated&SortOrder=Descending")) {
+                                                        NavigationLink(destination: LibraryView(prefill: library_id, names: [library_id: library_names[library_id] ?? ""], libraries: [library_id], filter: "&SortBy=DateCreated&SortOrder=Descending")) {
                                                             Text("See All").font(.subheadline).fontWeight(.bold)
                                                         }
                                                     }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
@@ -400,9 +394,8 @@ struct ContentView: View {
                         })
                         .tag("All Media")
                         
-                    }.edgesIgnoringSafeArea(isPortrait ? [] : [.leading,.trailing])
+                    }
                 }.environmentObject(globalData)
-                .edgesIgnoringSafeArea(isPortrait ? [] : [.leading,.trailing])
                 .onAppear(perform: startup)
                 .navigationViewStyle(StackNavigationViewStyle())
                 .alert(isPresented: $isNetworkErrored) {

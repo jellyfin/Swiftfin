@@ -16,6 +16,7 @@ import Sentry
 
 struct ConnectToServerView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var globalData: GlobalData
     @EnvironmentObject var jsi: justSignedIn
     @State private var uri = "";
     @State private var isWorking = false;
@@ -80,12 +81,9 @@ struct ConnectToServerView: View {
                             switch result {
                             case .success(let response):
                                 let server = response.body
-                                print("Found server: " + server.ServerName)
                                 _serverName.wrappedValue = server.ServerName
                                 _server_id.wrappedValue = server.Id
-                                if(!server.StartupWizardCompleted) {
-                                    print("Server needs configured")
-                                } else {
+                                if(server.StartupWizardCompleted) {
                                     _isConnected.wrappedValue = true;
                                 }
                             case .failure(_):
@@ -97,7 +95,7 @@ struct ConnectToServerView: View {
                         HStack {
                             Text("Connect")
                             Spacer()
-                        ProgressView().isHidden(!isWorking)
+                            ProgressView().isHidden(!isWorking)
                         }
                     }.disabled(isWorking || uri.isEmpty)
                 }.alert(isPresented: $isErrored) {
@@ -108,14 +106,13 @@ struct ConnectToServerView: View {
                     TextField("Username", text: $username)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
-                    SecureField("Password", text: $password)
+                    SecureField("Password (optional)", text: $password)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                     Button {
                         _isWorking.wrappedValue = true
                         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String;
                         let authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(UIDevice.current.name)\", DeviceId=\"\(serverSkipped ? reauthDeviceID : userUUID.uuidString)\", Version=\"\(appVersion ?? "0.0.1")\"";
-                        print(authHeader)
                         let authJson: [String: Any] = ["Username": _username.wrappedValue, "Pw": _password.wrappedValue]
                         let request = RestRequest(method: .post, url: uri + "/Users/authenticatebyname")
                         request.headerParameters["X-Emby-Authorization"] = authHeader
@@ -128,8 +125,6 @@ struct ConnectToServerView: View {
                             case .success(let response):
                                 do {
                                     let json = try JSON(data: response.body)
-                                    dump(json)
-                                    
                                     let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
                                     let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
@@ -158,21 +153,18 @@ struct ConnectToServerView: View {
                                     newUser.username = _username.wrappedValue
                                     newUser.user_id = json["User"]["Id"].string ?? ""
                                     
+                                    globalData.authHeader = authHeader
+                                    
                                     let keychain = KeychainSwift()
                                     keychain.set(json["AccessToken"].string ?? "", forKey: "AccessToken_\(json["User"]["Id"].string ?? "")")
                                     
                                     do {
                                         try viewContext.save()
-                                        print("Saved to Core Data Store")
-                                        _rootIsActive.wrappedValue = false
                                         DispatchQueue.main.async { [self] in
                                             jsi.did = true
                                         }
                                     } catch {
-                                        // Replace this implementation with code to handle the error appropriately.
-                                        // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                                        let nsError = error as NSError
-                                        fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                                        SentrySDK.capture(error: error)
                                     }
                                 } catch {
                                     
@@ -196,14 +188,9 @@ struct ConnectToServerView: View {
                 }
             }
         }.navigationTitle("Connect to Server")
-        .navigationViewStyle(StackNavigationViewStyle())
-        .navigationBarBackButtonHidden(true)
         .alert(isPresented: $serverSkippedAlert) {
             Alert(title: Text("Error"), message: Text("Credentials have expired"), dismissButton: .default(Text("Sign in again")))
         }
         .onAppear(perform: start)
-        .introspectTabBarController { (UITabBarController) in
-            UITabBarController.tabBar.isHidden = true
-        }
     }
 }
