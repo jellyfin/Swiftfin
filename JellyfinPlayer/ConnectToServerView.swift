@@ -71,6 +71,9 @@ struct ConnectToServerView: View {
                         if(!_uri.wrappedValue.contains("http")) {
                             _uri.wrappedValue = "http://" + _uri.wrappedValue;
                         }
+                        if(_uri.wrappedValue.last == "/") {
+                            _uri.wrappedValue = String(_uri.wrappedValue.dropLast())
+                        }
                         let request = RestRequest(method: .get, url: uri + "/System/Info/Public")
                         request.responseObject() { (result: Result<RestResponse<ServerPublicInfoResponse>, RestError>) in
                             switch result {
