@@ -172,6 +172,7 @@ extension View {
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @StateObject private var globalData = GlobalData()
     @EnvironmentObject var jsi: justSignedIn
 
@@ -200,6 +201,14 @@ struct ContentView: View {
     }
     
     func startup() {
+        
+        let size = UIScreen.main.bounds.size
+        if size.width < size.height {
+            orientationInfo.orientation = .portrait;
+        } else {
+            orientationInfo.orientation = .landscape;
+        }
+        
         if(_viewDidLoad.wrappedValue) {
             return
         }

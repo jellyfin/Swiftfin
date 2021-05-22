@@ -122,10 +122,12 @@ struct SeriesItemView: View {
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
-                                Text(String(item.ProductionYear))
-                                    .foregroundColor(.secondary)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
+                                if(item.ProductionYear != 0) {
+                                    Text(String(item.ProductionYear))
+                                        .foregroundColor(.secondary)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                }
                             }.frame(width: 100)
                         }
                     }

@@ -84,6 +84,11 @@ struct EpisodeItemView: View {
     }
     
     func loadData() {
+        if(UIDevice.current.orientation.isLandscape) {
+            orientationInfo.orientation = .landscape;
+        } else {
+            orientationInfo.orientation = .portrait;
+        }
         if(_vc.wrappedValue != nil) {
             _vc.wrappedValue?._prefersHomeIndicatorAutoHidden = false;
             _vc.wrappedValue?._orientations = .allButUpsideDown;
