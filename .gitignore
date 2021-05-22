@@ -6,6 +6,11 @@
 build/
 DerivedData/
 
+dynatraceSymbols.zip
+Cartfile.resolved
+Gemfile.lock
+dynatrace/
+
 ## Various settings
 *.pbxuser
 !default.pbxuser
