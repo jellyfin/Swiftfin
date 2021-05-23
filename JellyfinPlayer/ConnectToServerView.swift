@@ -13,6 +13,14 @@ import CoreData
 import KeychainSwift
 import Introspect
 import Sentry
+import SDWebImageSwiftUI
+
+class publicUser: ObservableObject {
+    @Published var username: String = "";
+    @Published var hasPassword: Bool = true;
+    @Published var primaryImageTag: String = "";
+    @Published var id: String = "";
+}
 
 struct ConnectToServerView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -25,6 +33,7 @@ struct ConnectToServerView: View {
     @State private var isSignInErrored = false;
     @State private var isConnected = false;
     @State private var serverName = "";
+    @State private var publicUsers: [publicUser] = [];
     @Binding var rootIsActive : Bool
     
     let userUUID = UUID();
@@ -52,12 +61,110 @@ struct ConnectToServerView: View {
     
     func start() {
         if(skip_server_bool) {
-            _serverSkipped.wrappedValue = true;
-            _serverSkippedAlert.wrappedValue = true;
-            _server_id.wrappedValue = skip_server_obj?.server_id ?? ""
-            _serverName.wrappedValue = skip_server_obj?.name ?? ""
             _uri.wrappedValue = skip_server_obj?.baseURI ?? ""
-            _isConnected.wrappedValue = true;
+            let request = RestRequest(method: .get, url: uri + "/users/public")
+            request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
+                switch result {
+                case .success(let response):
+                    do {
+                        let body = response.body;
+                        let json = try JSON(data: body);
+                        
+                        for (_,publicUserDto):(String, JSON) in json {
+                            let newPublicUser = publicUser()
+                            newPublicUser.username = publicUserDto["Name"].string ?? ""
+                            newPublicUser.hasPassword = publicUserDto["HasPassword"].bool ?? true
+                            newPublicUser.primaryImageTag = publicUserDto["PrimaryImageTag"].string ?? ""
+                            newPublicUser.id = publicUserDto["Id"].string ?? ""
+                            _publicUsers.wrappedValue.append(newPublicUser)
+                        }
+                    } catch(_) {
+                        
+                    }
+                    _serverSkipped.wrappedValue = true;
+                    _serverSkippedAlert.wrappedValue = true;
+                    _server_id.wrappedValue = skip_server_obj?.server_id ?? ""
+                    _serverName.wrappedValue = skip_server_obj?.name ?? ""
+                    _isConnected.wrappedValue = true;
+                    break
+                case .failure(_):
+                    _serverSkipped.wrappedValue = true;
+                    _serverSkippedAlert.wrappedValue = true;
+                    _server_id.wrappedValue = skip_server_obj?.server_id ?? ""
+                    _serverName.wrappedValue = skip_server_obj?.name ?? ""
+                    _isConnected.wrappedValue = true;
+                    break
+                }
+
+            }
+        }
+    }
+    
+    func doLogin() {
+        _isWorking.wrappedValue = true
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String;
+        let authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(UIDevice.current.name)\", DeviceId=\"\(serverSkipped ? reauthDeviceID : userUUID.uuidString)\", Version=\"\(appVersion ?? "0.0.1")\"";
+        let authJson: [String: Any] = ["Username": _username.wrappedValue, "Pw": _password.wrappedValue]
+        let request = RestRequest(method: .post, url: uri + "/Users/authenticatebyname")
+        request.headerParameters["X-Emby-Authorization"] = authHeader
+        request.contentType = "application/json"
+        request.acceptType = "application/json"
+        request.messageBodyDictionary = authJson
+        
+        request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
+            switch result {
+            case .success(let response):
+                do {
+                    let json = try JSON(data: response.body)
+                    let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
+                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+                    do {
+                        try viewContext.execute(deleteRequest)
+                    } catch _ as NSError {
+                        // TODO: handle the error
+                    }
+                    
+                    let fetchRequest2: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "SignedInUser")
+                    let deleteRequest2 = NSBatchDeleteRequest(fetchRequest: fetchRequest2)
+
+                    do {
+                        try viewContext.execute(deleteRequest2)
+                    } catch _ as NSError {
+                        // TODO: handle the error
+                    }
+                    
+                    let newServer = Server(context: viewContext)
+                    newServer.baseURI = _uri.wrappedValue
+                    newServer.name = _serverName.wrappedValue
+                    newServer.server_id = _server_id.wrappedValue
+                    
+                    let newUser = SignedInUser(context: viewContext)
+                    newUser.device_uuid = userUUID.uuidString
+                    newUser.username = _username.wrappedValue
+                    newUser.user_id = json["User"]["Id"].string ?? ""
+                    
+                    let keychain = KeychainSwift()
+                    keychain.set(json["AccessToken"].string ?? "", forKey: "AccessToken_\(json["User"]["Id"].string ?? "")")
+                    
+                    do {
+                        try viewContext.save()
+                        DispatchQueue.main.async { [self] in
+                            globalData.authHeader = authHeader
+                            _rootIsActive.wrappedValue = false
+                            jsi.did = true
+                        }
+                    } catch {
+                        SentrySDK.capture(error: error)
+                    }
+                } catch {
+                    
+                }
+            case .failure(let error):
+                SentrySDK.capture(error: error)
+                _isSignInErrored.wrappedValue = true;
+            }
+            _isWorking.wrappedValue = false;
         }
     }
     
@@ -91,6 +198,31 @@ struct ConnectToServerView: View {
                             }
                             _isWorking.wrappedValue = false;
                         }
+                        
+                        let request2 = RestRequest(method: .get, url: uri + "/users/public")
+                        request2.responseData() { (result: Result<RestResponse<Data>, RestError>) in
+                            switch result {
+                            case .success(let response):
+                                do {
+                                    let body = response.body;
+                                    let json = try JSON(data: body);
+                                    
+                                    for (_,publicUserDto):(String, JSON) in json {
+                                        let newPublicUser = publicUser()
+                                        newPublicUser.username = publicUserDto["Name"].string ?? ""
+                                        newPublicUser.hasPassword = publicUserDto["HasPassword"].bool ?? true
+                                        newPublicUser.primaryImageTag = publicUserDto["PrimaryImageTag"].string ?? ""
+                                        newPublicUser.id = publicUserDto["Id"].string ?? ""
+                                        _publicUsers.wrappedValue.append(newPublicUser)
+                                    }
+                                } catch(_) {
+                                    
+                                }
+                                break
+                            case .failure(_):
+                                break
+                            }
+                        }
                     } label: {
                         HStack {
                             Text("Connect")
@@ -102,88 +234,55 @@ struct ConnectToServerView: View {
                     Alert(title: Text("Error"), message: Text("Couldn't connect to server"), dismissButton: .default(Text("Try again")))
                 }
             } else {
-                Section(header: Text("\(serverSkipped ? "re" : "")Authenticate to \"\(serverName)\"")) {
-                    TextField("Username", text: $username)
-                        .disableAutocorrection(true)
-                        .autocapitalization(.none)
-                    SecureField("Password (optional)", text: $password)
-                        .disableAutocorrection(true)
-                        .autocapitalization(.none)
-                    Button {
-                        _isWorking.wrappedValue = true
-                        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String;
-                        let authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(UIDevice.current.name)\", DeviceId=\"\(serverSkipped ? reauthDeviceID : userUUID.uuidString)\", Version=\"\(appVersion ?? "0.0.1")\"";
-                        let authJson: [String: Any] = ["Username": _username.wrappedValue, "Pw": _password.wrappedValue]
-                        let request = RestRequest(method: .post, url: uri + "/Users/authenticatebyname")
-                        request.headerParameters["X-Emby-Authorization"] = authHeader
-                        request.contentType = "application/json"
-                        request.acceptType = "application/json"
-                        request.messageBodyDictionary = authJson
-                        
-                        request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
-                            switch result {
-                            case .success(let response):
-                                do {
-                                    let json = try JSON(data: response.body)
-                                    let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
-                                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
-                                    do {
-                                        try viewContext.execute(deleteRequest)
-                                    } catch _ as NSError {
-                                        // TODO: handle the error
-                                    }
-                                    
-                                    let fetchRequest2: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "SignedInUser")
-                                    let deleteRequest2 = NSBatchDeleteRequest(fetchRequest: fetchRequest2)
-
-                                    do {
-                                        try viewContext.execute(deleteRequest2)
-                                    } catch _ as NSError {
-                                        // TODO: handle the error
-                                    }
-                                    
-                                    let newServer = Server(context: viewContext)
-                                    newServer.baseURI = _uri.wrappedValue
-                                    newServer.name = _serverName.wrappedValue
-                                    newServer.server_id = _server_id.wrappedValue
-                                    
-                                    let newUser = SignedInUser(context: viewContext)
-                                    newUser.device_uuid = userUUID.uuidString
-                                    newUser.username = _username.wrappedValue
-                                    newUser.user_id = json["User"]["Id"].string ?? ""
-                                    
-                                    let keychain = KeychainSwift()
-                                    keychain.set(json["AccessToken"].string ?? "", forKey: "AccessToken_\(json["User"]["Id"].string ?? "")")
-                                    
-                                    do {
-                                        try viewContext.save()
-                                        DispatchQueue.main.async { [self] in
-                                            globalData.authHeader = authHeader
-                                            _rootIsActive.wrappedValue = false
-                                            jsi.did = true
-                                        }
-                                    } catch {
-                                        SentrySDK.capture(error: error)
-                                    }
-                                } catch {
-                                    
-                                }
-                            case .failure(let error):
-                                SentrySDK.capture(error: error)
-                                _isSignInErrored.wrappedValue = true;
+                if(_publicUsers.wrappedValue.count == 0) {
+                    Section(header: Text("\(serverSkipped ? "re" : "")Authenticate to \"\(serverName)\"")) {
+                        TextField("Username", text: $username)
+                            .disableAutocorrection(true)
+                            .autocapitalization(.none)
+                        SecureField("Password", text: $password)
+                            .disableAutocorrection(true)
+                            .autocapitalization(.none)
+                        Button {
+                            doLogin()
+                        } label: {
+                            HStack {
+                                Text("Login")
+                                Spacer()
+                                ProgressView().isHidden(!isWorking)
                             }
-                            _isWorking.wrappedValue = false;
+                        }.disabled(isWorking || username.isEmpty)
+                        .alert(isPresented: $isSignInErrored) {
+                            Alert(title: Text("Error"), message: Text("Invalid credentials"), dismissButton: .default(Text("Back")))
                         }
-                    } label: {
-                        HStack {
-                            Text("Login")
-                            Spacer()
-                            ProgressView().isHidden(!isWorking)
+                    }
+                } else {
+                    Section(header: Text("\(serverSkipped ? "re" : "")Authenticate to \"\(serverName)\"")) {
+                        ForEach(publicUsers, id: \.id) { pubuser in
+                            HStack() {
+                                Button() {
+                                    if(pubuser.hasPassword) {
+                                        _username.wrappedValue = pubuser.username
+                                        _publicUsers.wrappedValue = []
+                                    } else {
+                                        _publicUsers.wrappedValue = []
+                                        _password.wrappedValue = "";
+                                        _username.wrappedValue = pubuser.username
+                                        doLogin()
+                                    }
+                                } label: {
+                                    HStack() {
+                                        Text(pubuser.username).font(.subheadline).fontWeight(.semibold)
+                                        Spacer()
+                                        WebImage(url: URL(string: "\(uri)/Users/\(pubuser.id)/Images/Primary?width=200&quality=80&tag=\(pubuser.primaryImageTag)")!)
+                                            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                            .aspectRatio(contentMode: .fill)
+                                            .shadow(radius: 5)
+                                            .frame(width: 60, height: 60)
+                                            .cornerRadius(30.0)
+                                    }
+                                }
+                            }
                         }
-                    }.disabled(isWorking || username.isEmpty)
-                    .alert(isPresented: $isSignInErrored) {
-                        Alert(title: Text("Error"), message: Text("Invalid credentials"), dismissButton: .default(Text("Back")))
                     }
                 }
             }

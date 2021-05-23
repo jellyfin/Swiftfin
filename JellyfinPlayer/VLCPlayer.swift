@@ -72,7 +72,7 @@ class PlayerUIView: UIView, VLCMediaPlayerDelegate {
             
             DispatchQueue.global(qos: .utility).async { [weak self] in
                 if(self?.url.wrappedValue.videoType ?? .hls == .hls) {
-                    sleep(5)
+                    usleep(75000000)
                 }
                 self?.mediaPlayer.wrappedValue.play()
                 if(self?.startTime != 0) {
