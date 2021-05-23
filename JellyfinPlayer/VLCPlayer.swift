@@ -75,7 +75,10 @@ class PlayerUIView: UIView, VLCMediaPlayerDelegate {
                     sleep(5)
                 }
                 self?.mediaPlayer.wrappedValue.play()
-                self?.mediaPlayer.wrappedValue.jumpForward(Int32(self?.startTime ?? 0/10000000))
+                if(self?.startTime != 0) {
+                    print(self?.startTime ?? "")
+                    self?.mediaPlayer.wrappedValue.jumpForward(Int32(self!.startTime/10000000))
+                }
             }
         }
     }

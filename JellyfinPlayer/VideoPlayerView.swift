@@ -46,6 +46,7 @@ struct VideoPlayerView: View {
     @State private var vlcplayer: VLCMediaPlayer = VLCMediaPlayer(options: ["--sub-margin=-50"]);
     @State private var isPlaying = false;
     @State private var subtitles: [Subtitle] = [];
+    @State private var audioTracks: [Subtitle] = [];
     @State private var inactivity: Bool = true;
     @State private var lastActivityTime: Double = 0;
     @State private var scrub: Double = 0;
@@ -70,6 +71,7 @@ struct VideoPlayerView: View {
         }
     };
     @State private var selectedCaptionTrack: Int32 = -1;
+    @State private var selectedAudioTrack: Int32 = -1;
     var playing: Binding<Bool>;
     
     init(item: DetailItem, playing: Binding<Bool>) {
@@ -130,7 +132,7 @@ struct VideoPlayerView: View {
     func sendProgressReport() {
         var progressBody: String = "";
         if(pbitem.videoType == VideoType.direct) {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(vlcplayer.state == VLCMediaPlayerState.paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"\(pbitem.videoType == VideoType.direct ? "DirectStream" : "Transcode")\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"EventName\":\"timeupdate\"}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(vlcplayer.state == VLCMediaPlayerState.paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"EventName\":\"timeupdate\"}";
         } else {
             progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(vlcplayer.state == VLCMediaPlayerState.paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"EventName\":\"timeupdate\"}";
         }
@@ -142,7 +144,8 @@ struct VideoPlayerView: View {
         request.messageBody = progressBody.data(using: .ascii);
         request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
             switch result {
-            case .success(let _):
+            case .success(let resp):
+                print(resp.body)
                 break
             case .failure(let error):
                 debugPrint(error)
@@ -166,7 +169,8 @@ struct VideoPlayerView: View {
         request.messageBody = progressBody.data(using: .ascii);
         request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
             switch result {
-            case .success(let _):
+            case .success(let resp):
+                print(resp.body)
                 break
             case .failure(let error):
                 debugPrint(error)
@@ -180,7 +184,7 @@ struct VideoPlayerView: View {
         if(pbitem.videoType == VideoType.hls) {
             progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":0,\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem1\"}]}";
         } else {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":0,\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem1\"}]}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":0,\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem1\"}]}";
         }
         
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing")
@@ -190,7 +194,8 @@ struct VideoPlayerView: View {
         request.messageBody = progressBody.data(using: .ascii);
         request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
             switch result {
-            case .success(let _):
+            case .success(let resp):
+                print(resp.body)
                 break
             case .failure(let error):
                 debugPrint(error)
@@ -211,7 +216,6 @@ struct VideoPlayerView: View {
         
         _streamLoading.wrappedValue = true;
         let url = (globalData.server?.baseURI ?? "") + "/Items/\(item.Id)/PlaybackInfo?UserId=\(globalData.user?.user_id ?? "")&StartTimeTicks=\(Int(item.Progress))&IsPlayback=true&AutoOpenLiveStream=true&MaxStreamingBitrate=\(DeviceProfile.DeviceProfile.MaxStreamingBitrate)";
-        print(url)
         let request = RestRequest(method: .post, url: url)
         
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
@@ -230,8 +234,6 @@ struct VideoPlayerView: View {
                         print("Transcoding!")
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? "").replacingOccurrences(of: "master.m3u8", with: "main.m3u8"))")!
                         let item = PlaybackItem(videoType: VideoType.hls, videoUrl: streamURL, subtitles: [])
-                        
-                        print(streamURL)
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
@@ -240,10 +242,24 @@ struct VideoPlayerView: View {
                                 let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
                             }
+                            
+                            if(stream["Type"].string == "Audio") {
+                                let deliveryUrl = URL(string: "https://example.com")!
+                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["IsExternal"].boolValue ? "External" : "Embed")
+                                if(stream["IsDefault"].boolValue) {
+                                    _selectedAudioTrack.wrappedValue = Int32(stream["Index"].int ?? 0);
+                                }
+                                _audioTracks.wrappedValue.append(subtitle);
+                            }
                         }
-                        sendPlayReport();
+                        
+                        if(_selectedAudioTrack.wrappedValue == -1) {
+                            _selectedAudioTrack.wrappedValue = _audioTracks.wrappedValue[0].id;
+                        }
+                        
                         pbitem = item;
                         pbitem.subtitles = subtitles;
+                        sendPlayReport();
                         _isPlaying.wrappedValue = true;
                     } else {
                         print("Direct playing!");
@@ -257,13 +273,28 @@ struct VideoPlayerView: View {
                                 let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
                             }
+                            
+                            if(stream["Type"].string == "Audio") {
+                                let deliveryUrl = URL(string: "https://example.com")!
+                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["IsExternal"].boolValue ? "External" : "Embed")
+                                if(stream["IsDefault"].boolValue) {
+                                    _selectedAudioTrack.wrappedValue = Int32(stream["Index"].int ?? 0);
+                                }
+                                _audioTracks.wrappedValue.append(subtitle);
+                            }
                         }
+                        
+                        if(_selectedAudioTrack.wrappedValue == -1) {
+                            _selectedAudioTrack.wrappedValue = _audioTracks.wrappedValue[0].id;
+                        }
+                        
                         pbitem = item;
                         pbitem.subtitles = subtitles;
+                        sendPlayReport();
                         _isPlaying.wrappedValue = true;
                     }
                     
-                    DispatchQueue.global(qos: .userInteractive).async { [self] in
+                    DispatchQueue.global(qos: .utility).async { [self] in
                         self.keepUpWithPlayerState()
                     }
                 } catch {
@@ -283,7 +314,7 @@ struct VideoPlayerView: View {
         while(vlcplayer.state == VLCMediaPlayerState.paused) {
             let secondsScrubbedTo = round(_scrub.wrappedValue * videoDuration);
             let scrubRemaining = videoDuration - secondsScrubbedTo;
-            usleep(50000)
+            usleep(100000)
             let remainingTime = scrubRemaining;
             let hours = floor(remainingTime / 3600);
             let minutes = (remainingTime.truncatingRemainder(dividingBy: 3600)) / 60;
@@ -297,7 +328,6 @@ struct VideoPlayerView: View {
     }
     
     func resetTimer() {
-        print("resetTimer");
         if(_inactivity.wrappedValue == false) {
             _inactivity.wrappedValue = true;
             return;
@@ -317,6 +347,7 @@ struct VideoPlayerView: View {
                     HStack() {
                         HStack() {
                             Button() {
+                                sendStopReport()
                                 self.playing.wrappedValue = false;
                             } label: {
                                 HStack() {
@@ -374,7 +405,7 @@ struct VideoPlayerView: View {
                             let videoDuration = Double(vlcplayer.time.intValue + abs(vlcplayer.remainingTime.intValue))
                             if(bool == true) {
                                 vlcplayer.pause()
-                                DispatchQueue.global(qos: .userInitiated).async { [self] in
+                                DispatchQueue.global(qos: .utility).async { [self] in
                                     self.processScrubbingState()
                                 }
                             } else {
@@ -422,6 +453,13 @@ struct VideoPlayerView: View {
                             }
                         }.onChange(of: selectedCaptionTrack) { track in
                             vlcplayer.currentVideoSubTitleIndex = track;
+                        }
+                        Picker("Audio Track", selection: $selectedAudioTrack) {
+                            ForEach(audioTracks, id: \.id) { caption in
+                                Text(caption.name).tag(caption.id)
+                            }
+                        }.onChange(of: selectedAudioTrack) { track in
+                            vlcplayer.currentAudioTrackIndex = track;
                         }
                     }
                     Text("Subtitles may take a few moments to appear once selected.")
