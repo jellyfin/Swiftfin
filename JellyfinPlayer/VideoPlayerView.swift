@@ -342,7 +342,7 @@ struct VideoPlayerView: View {
                 VLCPlayer(url: $pbitem, player: $vlcplayer, startTime: Int(item.Progress)).onDisappear(perform: {
                     _isPlaying.wrappedValue = false;
                     vlcplayer.stop()
-                }).background(Color(UIColor.green).opacity(0.4))
+                })
                 VStack() {
                     HStack() {
                         HStack() {
@@ -427,11 +427,10 @@ struct VideoPlayerView: View {
                 }
                 .padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? -30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? -30 : 0))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(UIColor.red).opacity(0.4))
+                .background(Color(.black).opacity(0.4))
                 .isHidden(inactivity)
             }.padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? 34 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? 34 : 0))
         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-        .background(Color(UIColor.blue).opacity(0.4))
         .onAppear(perform: startStream)
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
