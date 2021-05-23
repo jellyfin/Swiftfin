@@ -378,7 +378,7 @@ struct ContentView: View {
                                         Image(systemName: "gear")
                                     }
                                 }
-                            }.popover( isPresented: $showSettingsPopover, arrowEdge: .bottom) { SettingsView(close: $showSettingsPopover).environmentObject(globalData) }
+                            }.fullScreenCover( isPresented: $showSettingsPopover) { SettingsView(close: $showSettingsPopover).environmentObject(globalData) }
                         }
                         .tabItem({
                             Text("Home")
