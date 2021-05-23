@@ -239,7 +239,7 @@ struct ConnectToServerView: View {
                 }
             } else {
                 if(_publicUsers.wrappedValue.count == 0) {
-                    Section(header: Text("\(serverSkipped ? "re" : "")Authenticate to \"\(serverName)\"")) {
+                    Section(header: Text("\(serverSkipped ? "Reauthenticate" : "Login") to \(serverName)")) {
                         TextField("Username", text: $username)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
