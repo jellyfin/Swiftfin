@@ -220,7 +220,7 @@ struct ContentView: View {
             options.releaseName = "ios-" + (Bundle.main.infoDictionary?["CFBundleVersion"] as! String);
             options.enableOutOfMemoryTracking = true
         }
-
+        
         let privacyConfig = Dynatrace.userPrivacyOptions()
         privacyConfig.dataCollectionLevel = .userBehavior
         privacyConfig.crashReportingOptedIn = true
@@ -230,7 +230,7 @@ struct ContentView: View {
         }
         
         let cache = SDImageCache(namespace: "tiny")
-        cache.config.maxMemoryCost = 50 * 1024 * 1024 // 100MB memory
+        cache.config.maxMemoryCost = 50 * 1024 * 1024 // 50MB memory
         cache.config.maxDiskSize = 1000 * 1024 * 1024 // 1000MB disk
         SDImageCachesManager.shared.addCache(cache)
         SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
