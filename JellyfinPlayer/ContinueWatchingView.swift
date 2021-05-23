@@ -178,7 +178,7 @@ struct ContinueWatchingView: View {
                             }
                             Spacer().frame(width:14)
                         }
-                    }
+                    }.frame(height: 200)
                 }
                 .frame(height: 200)
                 .padding(.bottom, 10)
