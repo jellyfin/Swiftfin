@@ -255,7 +255,7 @@ struct MovieItemView: View {
     
     var body: some View {
         if(playing) {
-            PlayerDemo(item: fullItem, playing: $playing).onAppear(perform: lockOrientations)
+            VideoPlayerView(item: fullItem, playing: $playing).onAppear(perform: lockOrientations)
         } else {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment:.leading) {
