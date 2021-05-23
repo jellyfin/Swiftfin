@@ -201,7 +201,6 @@ struct ContentView: View {
     }
     
     func startup() {
-        
         let size = UIScreen.main.bounds.size
         if size.width < size.height {
             orientationInfo.orientation = .portrait;

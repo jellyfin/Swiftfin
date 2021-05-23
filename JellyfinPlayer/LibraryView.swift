@@ -76,6 +76,7 @@ struct LibraryView: View {
     }
     
     func loadItems() {
+        recalcTracks()
         _isLoading.wrappedValue = true;
         if(_extraParam.wrappedValue == "") {
             _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=\(endIndex)&StartIndex=\(startIndex)&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(selected_library_id == "favorites" ? "&Filters=IsFavorite" : "&ParentId=" + selected_library_id)\(filterString)"
@@ -160,15 +161,22 @@ struct LibraryView: View {
         return result
     }
     
-    var tracks: [GridTrack] {
-        self.isPortrait ? 3 : 6
+    func recalcTracks() {
+        let trkCnt: Int = Int(floor(UIScreen.main.bounds.size.width / 125));
+        _tracks.wrappedValue = []
+        for _ in (0..<trkCnt)
+        {
+            _tracks.wrappedValue.append(GridTrack.fr(1))
+        }
     }
+    
+    @State private var tracks: [GridTrack] = []
     
     var body: some View {
         if(prefill_id != "") {
             LoadingView(isShowing: $isLoading) {
                 GeometryReader { geometry in
-                    Grid(tracks: self.tracks, spacing: GridSpacing(horizontal: 0, vertical: 20)) {
+                    Grid(tracks: _tracks.wrappedValue, spacing: GridSpacing(horizontal: 0, vertical: 20)) {
                         ForEach(items, id: \.Id) { item in
                             NavigationLink(destination: ItemView(item: item )) {
                                 VStack(alignment: .leading) {
@@ -239,10 +247,13 @@ struct LibraryView: View {
                                     }
                                 }
                                 Spacer()
-                            }.gridSpan(column: self.isPortrait ? 3 : 6)
+                            }.gridSpan(column: _tracks.wrappedValue.count)
                         }
-                        Spacer().frame(height: 2).gridSpan(column: self.isPortrait ? 3 : 6)
+                        Spacer().frame(height: 2).gridSpan(column: _tracks.wrappedValue.count)
                     }.gridContentMode(.scroll)
+                    .onChange(of: isPortrait) { _ in
+                        recalcTracks()
+                    }
                 }
             }
             .overrideViewPreference(.unspecified)
@@ -266,7 +277,7 @@ struct LibraryView: View {
                         Image(systemName: "line.horizontal.3.decrease")
                     }
                 }
-            }.popover( isPresented: self.$showFiltersPopover, arrowEdge: .bottom) { LibraryFilterView(library: selected_library_id, output: $filterString, close: $showFiltersPopover).environmentObject(self.globalData) }
+            }.fullScreenCover( isPresented: self.$showFiltersPopover) { LibraryFilterView(library: selected_library_id, output: $filterString, close: $showFiltersPopover).environmentObject(self.globalData) }
         } else {
             List(library_ids, id:\.self) { id in
                 if(id != "genres") {

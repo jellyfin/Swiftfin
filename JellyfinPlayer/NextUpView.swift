@@ -84,7 +84,6 @@ struct NextUpView: View {
                                             .placeholder {
                                                 Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
                                                     .resizable()
-                                                    .scaledToFit()
                                                     .frame(width: 100, height: 150)
                                                     .cornerRadius(10)
                                             }

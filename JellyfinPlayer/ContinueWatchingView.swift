@@ -122,7 +122,6 @@ struct ContinueWatchingView: View {
                                                 .placeholder {
                                                     Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
                                                         .resizable()
-                                                        .scaledToFit()
                                                         .frame(width: 320, height: 180)
                                                         .cornerRadius(10)
                                                 }
@@ -153,7 +152,6 @@ struct ContinueWatchingView: View {
                                                 .placeholder {
                                                     Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
                                                         .resizable()
-                                                        .scaledToFit()
                                                         .frame(width: 320, height: 180)
                                                         .cornerRadius(10)
                                                 }

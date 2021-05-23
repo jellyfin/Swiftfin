@@ -94,9 +94,8 @@ struct LatestMediaView: View {
                                     WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=85&tag=\(item.Image)")!)
                                         .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                         .placeholder {
-                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 16))!)
                                                 .resizable()
-                                                .scaledToFit()
                                                 .frame(width: 100, height: 150)
                                                 .cornerRadius(10)
                                         }
@@ -119,6 +118,7 @@ struct LatestMediaView: View {
                                             .opacity(0.8)
                                             .cornerRadius(10.0)
                                             .padding(3), alignment: .topTrailing
+                                            
                                         ).shadow(radius: 6)
                                 } else {
                                     Spacer().frame(height:10)
@@ -127,7 +127,6 @@ struct LatestMediaView: View {
                                         .placeholder {
                                             Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
                                                 .resizable()
-                                                .scaledToFit()
                                                 .frame(width: 100, height: 150)
                                                 .cornerRadius(10)
                                         }
