@@ -9,9 +9,20 @@ import SwiftUI
 
 struct SettingsView: View {
     @Binding var close: Bool;
+    @EnvironmentObject private var globalData: GlobalData
+    @State private var username: String = "";
+    
+    func onAppear() {
+        _username.wrappedValue = globalData.user?.username ?? "";
+    }
+    
     var body: some View {
         NavigationView() {
-            Text("SettingsView not implemented.")
+            Form() {
+                Section(header: Text("Playback settings")) {
+
+                }
+            }
             .navigationBarTitle("Settings", displayMode: .inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
@@ -24,6 +35,6 @@ struct SettingsView: View {
                     }
                 }
             }
-        }
+        }.onAppear(perform: onAppear)
     }
 }

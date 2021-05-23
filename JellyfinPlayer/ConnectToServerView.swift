@@ -34,6 +34,7 @@ struct ConnectToServerView: View {
     @State private var isConnected = false;
     @State private var serverName = "";
     @State private var publicUsers: [publicUser] = [];
+    @State private var lastPublicUsers: [publicUser] = [];
     @Binding var rootIsActive : Bool
     
     let userUUID = UUID();
@@ -258,12 +259,47 @@ struct ConnectToServerView: View {
                             Alert(title: Text("Error"), message: Text("Invalid credentials"), dismissButton: .default(Text("Back")))
                         }
                     }
+                    
+                    if(serverSkipped) {
+                        Section() {
+                            Button {
+                                _serverSkippedAlert.wrappedValue = false;
+                                _server_id.wrappedValue = ""
+                                _serverName.wrappedValue = ""
+                                _isConnected.wrappedValue = false;
+                                _serverSkipped.wrappedValue = false;
+                            } label: {
+                                HStack() {
+                                    HStack() {
+                                        Image(systemName: "chevron.left")
+                                        Text("Change Server")
+                                    }
+                                    Spacer()
+                                }
+                            }
+                        }
+                    } else {
+                        Section() {
+                            Button {
+                                _publicUsers.wrappedValue = _lastPublicUsers.wrappedValue
+                            } label: {
+                                HStack() {
+                                    HStack() {
+                                        Image(systemName: "chevron.left")
+                                        Text("Back")
+                                    }
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }
                 } else {
                     Section(header: Text("\(serverSkipped ? "Reauthenticate" : "Login") to \(serverName)")) {
                         ForEach(publicUsers, id: \.id) { pubuser in
                             HStack() {
                                 Button() {
                                     if(pubuser.hasPassword) {
+                                        _lastPublicUsers.wrappedValue = _publicUsers.wrappedValue
                                         _publicUsers.wrappedValue = []
                                     } else {
                                         _publicUsers.wrappedValue = []
