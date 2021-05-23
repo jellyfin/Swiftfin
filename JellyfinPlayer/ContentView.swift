@@ -334,11 +334,11 @@ struct ContentView: View {
         if(needsToSelectServer) {
             NavigationView() {
                 ConnectToServerView(isActive: $needsToSelectServer)
-            }.environmentObject(globalData)
+            }.environmentObject(globalData).navigationViewStyle(StackNavigationViewStyle())
         } else if(isSignInErrored) {
             NavigationView() {
                 ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server, reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored)
-            }.environmentObject(globalData)
+            }.environmentObject(globalData).navigationViewStyle(StackNavigationViewStyle())
         } else {
             if(!jsi.did) {
                 LoadingView(isShowing: $isLoading) {
@@ -379,6 +379,7 @@ struct ContentView: View {
                                 }
                             }.fullScreenCover( isPresented: $showSettingsPopover) { SettingsView(close: $showSettingsPopover).environmentObject(globalData) }
                         }
+                        .navigationViewStyle(StackNavigationViewStyle())
                         .tabItem({
                             Text("Home")
                             Image(systemName: "house")

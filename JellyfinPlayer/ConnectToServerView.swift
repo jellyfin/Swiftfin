@@ -172,7 +172,7 @@ struct ConnectToServerView: View {
         Form {
             if(!isConnected) {
                 Section(header: Text("Server Information")) {
-                    TextField("Server URL", text: $uri)
+                    TextField("Jellyfin Server URL", text: $uri)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                     Button {
@@ -193,34 +193,37 @@ struct ConnectToServerView: View {
                                 if(server.StartupWizardCompleted) {
                                     _isConnected.wrappedValue = true;
                                 }
+                                
+                                let request2 = RestRequest(method: .get, url: uri + "/users/public")
+                                request2.responseData() { (result: Result<RestResponse<Data>, RestError>) in
+                                    switch result {
+                                    case .success(let response):
+                                        do {
+                                            let body = response.body;
+                                            let json = try JSON(data: body);
+                                            
+                                            for (_,publicUserDto):(String, JSON) in json {
+                                                let newPublicUser = publicUser()
+                                                newPublicUser.username = publicUserDto["Name"].string ?? ""
+                                                newPublicUser.hasPassword = publicUserDto["HasPassword"].bool ?? true
+                                                newPublicUser.primaryImageTag = publicUserDto["PrimaryImageTag"].string ?? ""
+                                                newPublicUser.id = publicUserDto["Id"].string ?? ""
+                                                _publicUsers.wrappedValue.append(newPublicUser)
+                                            }
+                                        } catch(_) {
+                                            
+                                        }
+                                        _isWorking.wrappedValue = false;
+                                        break
+                                    case .failure(_):
+                                        _isErrored.wrappedValue = true;
+                                        _isWorking.wrappedValue = false;
+                                        break
+                                    }
+                                }
                             case .failure(_):
                                 _isErrored.wrappedValue = true;
-                            }
-                            _isWorking.wrappedValue = false;
-                        }
-                        
-                        let request2 = RestRequest(method: .get, url: uri + "/users/public")
-                        request2.responseData() { (result: Result<RestResponse<Data>, RestError>) in
-                            switch result {
-                            case .success(let response):
-                                do {
-                                    let body = response.body;
-                                    let json = try JSON(data: body);
-                                    
-                                    for (_,publicUserDto):(String, JSON) in json {
-                                        let newPublicUser = publicUser()
-                                        newPublicUser.username = publicUserDto["Name"].string ?? ""
-                                        newPublicUser.hasPassword = publicUserDto["HasPassword"].bool ?? true
-                                        newPublicUser.primaryImageTag = publicUserDto["PrimaryImageTag"].string ?? ""
-                                        newPublicUser.id = publicUserDto["Id"].string ?? ""
-                                        _publicUsers.wrappedValue.append(newPublicUser)
-                                    }
-                                } catch(_) {
-                                    
-                                }
-                                break
-                            case .failure(_):
-                                break
+                                _isWorking.wrappedValue = false;
                             }
                         }
                     } label: {
@@ -256,12 +259,11 @@ struct ConnectToServerView: View {
                         }
                     }
                 } else {
-                    Section(header: Text("\(serverSkipped ? "re" : "")Authenticate to \"\(serverName)\"")) {
+                    Section(header: Text("\(serverSkipped ? "Reauthenticate" : "Login") to \(serverName)")) {
                         ForEach(publicUsers, id: \.id) { pubuser in
                             HStack() {
                                 Button() {
                                     if(pubuser.hasPassword) {
-                                        _username.wrappedValue = pubuser.username
                                         _publicUsers.wrappedValue = []
                                     } else {
                                         _publicUsers.wrappedValue = []
@@ -273,14 +275,42 @@ struct ConnectToServerView: View {
                                     HStack() {
                                         Text(pubuser.username).font(.subheadline).fontWeight(.semibold)
                                         Spacer()
-                                        WebImage(url: URL(string: "\(uri)/Users/\(pubuser.id)/Images/Primary?width=200&quality=80&tag=\(pubuser.primaryImageTag)")!)
-                                            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                            .aspectRatio(contentMode: .fill)
-                                            .shadow(radius: 5)
-                                            .frame(width: 60, height: 60)
-                                            .cornerRadius(30.0)
+                                        if(pubuser.primaryImageTag != "") {
+                                            WebImage(url: URL(string: "\(uri)/Users/\(pubuser.id)/Images/Primary?width=200&quality=80&tag=\(pubuser.primaryImageTag)")!)
+                                                .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 60, height: 60)
+                                                .cornerRadius(30.0)
+                                                .shadow(radius: 6)
+                                        } else {
+                                            Image(systemName: "person.fill")
+                                                .foregroundColor(Color(red: 1, green: 1, blue: 1).opacity(0.8))
+                                                .font(.system(size: 35))
+                                                .frame(width: 60, height: 60)
+                                                .background(Color(red: 98/255, green: 121/255, blue: 205/255))
+                                                .cornerRadius(30.0)
+                                                .shadow(radius: 6)
+                                        }
                                     }
                                 }
+                            }
+                        }
+                    }
+                    
+                    Section() {
+                        Button() {
+                            _publicUsers.wrappedValue = []
+                        } label: {
+                            HStack() {
+                                Text("Other User").font(.subheadline).fontWeight(.semibold)
+                                Spacer()
+                                Image(systemName: "person.fill.questionmark")
+                                    .foregroundColor(Color(red: 1, green: 1, blue: 1).opacity(0.8))
+                                    .font(.system(size: 35))
+                                    .frame(width: 60, height: 60)
+                                    .background(Color(red: 98/255, green: 121/255, blue: 205/255))
+                                    .cornerRadius(30.0)
+                                    .shadow(radius: 6)
                             }
                         }
                     }
