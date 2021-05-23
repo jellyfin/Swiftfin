@@ -145,8 +145,8 @@ struct LatestMediaView: View {
                         Spacer().frame(width: 14)
                     }
                     Spacer().frame(width:18)
-                }
-            }.onAppear(perform: onAppear).padding(EdgeInsets(top: -2, leading: 0, bottom: 0, trailing: 0))
+                }.frame(height: 190)
+            }.onAppear(perform: onAppear).padding(EdgeInsets(top: -2, leading: 0, bottom: 0, trailing: 0)).frame(height: 190)
     }
 }
 
