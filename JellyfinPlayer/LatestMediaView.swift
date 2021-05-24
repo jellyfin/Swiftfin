@@ -84,7 +84,7 @@ struct LatestMediaView: View {
     
     var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack() {
+                LazyHStack() {
                     Spacer().frame(width:18)
                     ForEach(resumeItems, id: \.Id) { item in
                         NavigationLink(destination: ItemView(item: item)) {

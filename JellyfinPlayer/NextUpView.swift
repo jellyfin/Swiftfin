@@ -72,7 +72,7 @@ struct NextUpView: View {
             if(resumeItems.count != 0) {
                 Text("Next Up").font(.title2).fontWeight(.bold).padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack() {
+                    LazyHStack() {
                         if(isLoading == false) {
                             Spacer().frame(width:18)
                             ForEach(resumeItems, id: \.Id) { item in
@@ -108,8 +108,8 @@ struct NextUpView: View {
                             }
                             Spacer().frame(width:18)
                         }
-                    }
-                }.padding(EdgeInsets(top: -2, leading: 0, bottom: 0, trailing: 0))
+                    }.frame(height: 200)
+                }.padding(EdgeInsets(top: -2, leading: 0, bottom: 0, trailing: 0)).frame(height: 200)
             }
         }.onAppear(perform: onAppear).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
     }

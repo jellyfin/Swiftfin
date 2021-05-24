@@ -33,8 +33,6 @@ struct LibraryView: View {
     @State private var url: String = "";
     @State private var closeSearch: Bool = false;
     
-    var gridItems: [GridItem] = [GridItem(.adaptive(minimum: 150, maximum: 400))]
-    
     init(prefill: String?, names: [String: String], libraries: [String]) {
         _prefill_id = State(wrappedValue: prefill ?? "")
         _library_names = State(wrappedValue: names)
@@ -166,91 +164,93 @@ struct LibraryView: View {
         _tracks.wrappedValue = []
         for _ in (0..<trkCnt)
         {
-            _tracks.wrappedValue.append(GridTrack.fr(1))
+            _tracks.wrappedValue.append(GridItem.init(.flexible()))
         }
     }
     
-    @State private var tracks: [GridTrack] = []
+    @State private var tracks: [GridItem] = []
     
     var body: some View {
         if(prefill_id != "") {
             LoadingView(isShowing: $isLoading) {
                 GeometryReader { geometry in
-                    Grid(tracks: _tracks.wrappedValue, spacing: GridSpacing(horizontal: 0, vertical: 20)) {
-                        ForEach(items, id: \.Id) { item in
-                            NavigationLink(destination: ItemView(item: item )) {
-                                VStack(alignment: .leading) {
-                                    if(item.Type == "Movie") {
-                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=90&tag=\(item.Image)"))
-                                            .resizable()
-                                            .placeholder {
-                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                                    .resizable()
-                                                    .frame(width: 100, height: 150)
-                                                    .cornerRadius(10)
-                                            }
-                                            .frame(width:100, height: 150)
-                                            .cornerRadius(10)
-                                            .shadow(radius: 5)
-                                    } else {
-                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=90&tag=\(item.Image)"))
-                                            .resizable()
-                                            .placeholder {
-                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                                    .resizable()
-                                                    .frame(width: 100, height: 150)
-                                                    .cornerRadius(10)
-                                            }
-                                            .frame(width:100, height: 150)
-                                            .cornerRadius(10).overlay(
-                                                ZStack {
-                                                    if(item.ItemBadge == 0) {
-                                                        Image(systemName: "checkmark")
-                                                            .font(.caption)
-                                                            .padding(3)
-                                                            .foregroundColor(.white)
-                                                    } else {
-                                                        Text("\(String(item.ItemBadge ?? 0))")
-                                                            .font(.caption)
-                                                            .padding(3)
-                                                            .foregroundColor(.white)
-                                                    }
-                                                }.background(Color.black)
-                                                .opacity(0.8)
-                                                .cornerRadius(10.0)
-                                                .padding(3), alignment: .topTrailing
-                                            )
-                                            .shadow(radius: 5)
-                                    }
-                                    Text(item.Name)
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.primary)
-                                        .lineLimit(1)
-                                    Text(String(item.ProductionYear))
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                }.frame(width: 100)
-                            }
-                        }
-                        if(startIndex + endIndex < totalItems) {
-                            HStack() {
-                                Spacer()
-                                Button() {
-                                    startIndex += endIndex;
-                                    loadItems()
-                                } label: {
-                                    HStack() {
-                                        Text("Load more").font(.callout)
-                                        Image(systemName: "arrow.clockwise")
-                                    }
+                    ScrollView(.vertical) {
+                        LazyVGrid(columns: tracks) {
+                            ForEach(items, id: \.Id) { item in
+                                NavigationLink(destination: ItemView(item: item )) {
+                                    VStack(alignment: .leading) {
+                                        if(item.Type == "Movie") {
+                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=90&tag=\(item.Image)"))
+                                                .resizable()
+                                                .placeholder {
+                                                    Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
+                                                        .resizable()
+                                                        .frame(width: 100, height: 150)
+                                                        .cornerRadius(10)
+                                                }
+                                                .frame(width:100, height: 150)
+                                                .cornerRadius(10)
+                                                .shadow(radius: 5)
+                                        } else {
+                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=90&tag=\(item.Image)"))
+                                                .resizable()
+                                                .placeholder {
+                                                    Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
+                                                        .resizable()
+                                                        .frame(width: 100, height: 150)
+                                                        .cornerRadius(10)
+                                                }
+                                                .frame(width:100, height: 150)
+                                                .cornerRadius(10).overlay(
+                                                    ZStack {
+                                                        if(item.ItemBadge == 0) {
+                                                            Image(systemName: "checkmark")
+                                                                .font(.caption)
+                                                                .padding(3)
+                                                                .foregroundColor(.white)
+                                                        } else {
+                                                            Text("\(String(item.ItemBadge ?? 0))")
+                                                                .font(.caption)
+                                                                .padding(3)
+                                                                .foregroundColor(.white)
+                                                        }
+                                                    }.background(Color.black)
+                                                    .opacity(0.8)
+                                                    .cornerRadius(10.0)
+                                                    .padding(3), alignment: .topTrailing
+                                                )
+                                                .shadow(radius: 5)
+                                        }
+                                        Text(item.Name)
+                                            .font(.caption)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.primary)
+                                            .lineLimit(1)
+                                        Text(String(item.ProductionYear))
+                                            .foregroundColor(.secondary)
+                                            .font(.caption)
+                                            .fontWeight(.medium)
+                                    }.frame(width: 100)
                                 }
-                                Spacer()
-                            }.gridSpan(column: _tracks.wrappedValue.count)
+                            }
+                            if(startIndex + endIndex < totalItems) {
+                                HStack() {
+                                    Spacer()
+                                    Button() {
+                                        startIndex += endIndex;
+                                        loadItems()
+                                    } label: {
+                                        HStack() {
+                                            Text("Load more").font(.callout)
+                                            Image(systemName: "arrow.clockwise")
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                            }
+                            Spacer().frame(height: 2)
                         }
-                        Spacer().frame(height: 2).gridSpan(column: _tracks.wrappedValue.count)
-                    }.gridContentMode(.scroll)
+                    }
                     .onChange(of: isPortrait) { _ in
                         recalcTracks()
                     }

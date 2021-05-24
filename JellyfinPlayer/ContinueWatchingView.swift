@@ -109,7 +109,7 @@ struct ContinueWatchingView: View {
         if(resumeItems.count != 0) {
             VStack(alignment: .leading) {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack() {
+                    LazyHStack() {
                         if(isLoading == false) {
                             Spacer().frame(width:16)
                             ForEach(resumeItems, id: \.Id) { item in
