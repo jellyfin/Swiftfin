@@ -374,8 +374,9 @@ struct VideoPlayerView: View {
             VLCPlayer(url: $pbitem, player: $vlcplayer, startTime: Int(item.Progress)).onDisappear(perform: {
                 _isPlaying.wrappedValue = false;
                 vlcplayer.stop()
-            })
-        }.overlay(
+            }).padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? 30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? 30 : 0))
+        }
+        .overlay(
             VStack() {
                 HStack() {
                     HStack() {
@@ -459,7 +460,6 @@ struct VideoPlayerView: View {
                     Text(timeText).fontWeight(.semibold).frame(width: 80).foregroundColor(.white)
                 }.padding(EdgeInsets(top: -20, leading: 44, bottom: 42, trailing: 40))
             }
-            .padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? -30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? -30 : 0))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(.black).opacity(0.4))
             .isHidden(inactivity)
@@ -469,12 +469,13 @@ struct VideoPlayerView: View {
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .prefersHomeIndicatorAutoHidden(true)
+        .edgesIgnoringSafeArea(.all)
+        .supportedOrientations(.landscapeRight)
         .preferredColorScheme(.dark)
         .introspectTabBarController { (UITabBarController) in
             UITabBarController.tabBar.isHidden = true
         }
         .statusBar(hidden: true)
-        .edgesIgnoringSafeArea(.all)
         .onTapGesture(perform: resetTimer)
         .fullScreenCover(isPresented: self.$captionConfiguration) {
             NavigationView() {

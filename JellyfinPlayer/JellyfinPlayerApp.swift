@@ -61,8 +61,7 @@ struct JellyfinPlayerApp: App {
                 .environmentObject(OrientationInfo())
                 .environmentObject(jsi)
                 .withHostingWindow() { window in
-                    window?.rootViewController = PreferenceUIHostingController(wrappedView: ContentView().environment(\.managedObjectContext, persistenceController.container.viewContext)
-                                                                                .environmentObject(jsi).environmentObject(OrientationInfo()))
+                    window?.rootViewController = PreferenceUIHostingController(wrappedView: ContentView().environment(\.managedObjectContext, persistenceController.container.viewContext).environmentObject(OrientationInfo()).environmentObject(jsi))
                 }
         }
     }

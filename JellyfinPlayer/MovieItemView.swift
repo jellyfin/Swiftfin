@@ -401,14 +401,14 @@ struct MovieItemView: View {
                                                                             WebImage(url: cast.Image)
                                                                                 .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                                                 .placeholder {
-                                                                                    Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 32, height: 32))!)
+                                                                                    Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 4, height: 4))!)
                                                                                         .resizable()
                                                                                         .aspectRatio(contentMode: .fill)
-                                                                                        .frame(width: 100, height: 100)
+                                                                                        .frame(width: 70, height: 70)
                                                                                         .cornerRadius(10)
                                                                                 }
                                                                                 .aspectRatio(contentMode: .fill)
-                                                                                .frame(width: 100, height: 100)
+                                                                                .frame(width: 70, height: 70)
                                                                                 .cornerRadius(10).shadow(radius: 6)
                                                                             Text(cast.Name).font(.footnote).fontWeight(.regular).lineLimit(1).frame(width: 100).foregroundColor(Color.primary)
                                                                             if(cast.Role != "") {
@@ -641,7 +641,7 @@ struct MovieItemView: View {
                 }.introspectTabBarController { (UITabBarController) in
                     UITabBarController.tabBar.isHidden = false
                 }
-            }.onAppear(perform: loadData)
+            }.onAppear(perform: loadData).supportedOrientations(.allButUpsideDown)
         }
     }
 }

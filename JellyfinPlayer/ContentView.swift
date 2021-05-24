@@ -136,7 +136,8 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
     // MARK: Lock orientation
     
     public var _orientations: UIInterfaceOrientationMask = .allButUpsideDown {
-        didSet { UIViewController.attemptRotationToDeviceOrientation();
+        didSet {
+            UIViewController.attemptRotationToDeviceOrientation();
             if(_orientations == .landscapeRight) {
                 let value = UIInterfaceOrientation.landscapeRight.rawValue;
                 UIDevice.current.setValue(value, forKey: "orientation")
