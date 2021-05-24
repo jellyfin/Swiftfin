@@ -168,7 +168,8 @@ class DeviceProfileBuilder {
         SubtitleProfiles.append(_AVSubtitleProfile(Format: "sub", Method: "Embed"))
         SubtitleProfiles.append(_AVSubtitleProfile(Format: "subrip", Method: "Embed"))
         SubtitleProfiles.append(_AVSubtitleProfile(Format: "srt", Method: "Embed"))
-        
+        SubtitleProfiles.append(_AVSubtitleProfile(Format: "pgs", Method: "Embed"))
+
         let ResponseProfiles: [_AVResponseProfile] = [_AVResponseProfile(Type: "Video", Container: "m4v", MimeType: "video/mp4")]
         
         let DP = DeviceProfile(MaxStreamingBitrate: MaxStreamingBitrate, MaxStaticBitrate: MaxStaticBitrate, MusicStreamingTranscodingBitrate: MusicStreamingTranscodingBitrate, DirectPlayProfiles: DirectPlayProfiles, TranscodingProfiles: TranscodingProfiles, CodecProfiles: CodecProfiles, SubtitleProfiles: SubtitleProfiles, ResponseProfiles: ResponseProfiles)
