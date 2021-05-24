@@ -56,6 +56,7 @@ struct VideoPlayerView: View {
     @State private var lastPosition: Double = 0;
     @State private var iterations: Int = 0;
     @State private var startTime: Int = 0;
+    @State private var hasSentPlayReport: Bool = false;
     @State private var captionConfiguration: Bool = false {
         didSet {
             if(captionConfiguration == false) {
@@ -122,6 +123,10 @@ struct VideoPlayerView: View {
                 } else {
                     _iterations.wrappedValue = 0;
                     _streamLoading.wrappedValue = false;
+                    if(_hasSentPlayReport.wrappedValue == false) {
+                        sendPlayReport()
+                        _hasSentPlayReport.wrappedValue = true;
+                    }
                 }
                 if(vlcplayer.state == VLCMediaPlayerState.error) {
                     playing.wrappedValue = false;
@@ -173,7 +178,6 @@ struct VideoPlayerView: View {
             switch result {
             case .success(let resp):
                 print(resp.body)
-                self.playing.wrappedValue = false;
                 break
             case .failure(let error):
                 debugPrint(error)
@@ -186,7 +190,7 @@ struct VideoPlayerView: View {
         var progressBody: String = "";
         _startTime.wrappedValue = Int(Date().timeIntervalSince1970) * 10000000
         if(pbitem.videoType == VideoType.hls) {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(item.Progress)),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":100000}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(item.Progress)),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         } else {
             progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(item.Progress)),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         }
@@ -216,7 +220,7 @@ struct VideoPlayerView: View {
         
         let jsonEncoder = JSONEncoder()
         let jsonData = try! jsonEncoder.encode(DeviceProfile)
-        let jsonString = String(data: jsonData, encoding: .utf8)!
+        let jsonString = String(data: jsonData, encoding: .ascii)!
         print(jsonString)
         
         _streamLoading.wrappedValue = true;
@@ -228,7 +232,7 @@ struct VideoPlayerView: View {
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"
-        request.messageBody = jsonData
+        request.messageBody = jsonString.data(using: .ascii)
          
         request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
             switch result {
@@ -239,13 +243,13 @@ struct VideoPlayerView: View {
                     _playSessionId.wrappedValue = json["PlaySessionId"].string ?? "";
                     if(json["MediaSources"][0]["TranscodingUrl"].string != nil) {
                         print("Transcoding!")
-                        let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? ""))")!
+                        let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? ""))".replacingOccurrences(of: "master.m3u8", with: "main.m3u8"))!
                         print(streamURL)
                         let item = PlaybackItem(videoType: VideoType.hls, videoUrl: streamURL, subtitles: [])
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
-                            if(stream["Type"].string == "Subtitle") {
+                            if(stream["Type"].string == "Subtitle" && stream["Codec"] != "subrip") { //ignore ripped subtitles - we don't want to extract subtitles
                                 let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
                                 let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
@@ -267,7 +271,6 @@ struct VideoPlayerView: View {
                         
                         pbitem = item;
                         pbitem.subtitles = subtitles;
-                        sendPlayReport();
                         _isPlaying.wrappedValue = true;
                     } else {
                         print("Direct playing!");
@@ -298,7 +301,6 @@ struct VideoPlayerView: View {
                         
                         pbitem = item;
                         pbitem.subtitles = subtitles;
-                        sendPlayReport();
                         _isPlaying.wrappedValue = true;
                     }
                     
@@ -356,6 +358,7 @@ struct VideoPlayerView: View {
                         HStack() {
                             Button() {
                                 sendStopReport()
+                                self.playing.wrappedValue = false;
                             } label: {
                                 HStack() {
                                     Image(systemName: "chevron.left").font(.system(size: 20)).foregroundColor(.white)
