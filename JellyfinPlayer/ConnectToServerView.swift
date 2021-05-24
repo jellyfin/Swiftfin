@@ -300,6 +300,7 @@ struct ConnectToServerView: View {
                                 Button() {
                                     if(pubuser.hasPassword) {
                                         _lastPublicUsers.wrappedValue = _publicUsers.wrappedValue
+                                        _username.wrappedValue = pubuser.username
                                         _publicUsers.wrappedValue = []
                                     } else {
                                         _publicUsers.wrappedValue = []

@@ -55,6 +55,7 @@ struct VideoPlayerView: View {
     @State private var playSessionId: String = "";
     @State private var lastPosition: Double = 0;
     @State private var iterations: Int = 0;
+    @State private var startTime: Int = 0;
     @State private var captionConfiguration: Bool = false {
         didSet {
             if(captionConfiguration == false) {
@@ -85,13 +86,14 @@ struct VideoPlayerView: View {
         if(!vlcplayer.isPlaying) {
             while(!vlcplayer.isPlaying) {}
         }
+        sendProgressReport(eventName: "unpause")
         while(vlcplayer.state != VLCMediaPlayerState.stopped) {
             _streamLoading.wrappedValue = false;
             while(vlcplayer.isPlaying) {
                 vlcplayer.currentVideoSubTitleIndex = _selectedCaptionTrack.wrappedValue;
                 usleep(500000)
                 if(CACurrentMediaTime() - lastProgressReportSent > 10) {
-                    sendProgressReport()
+                    sendProgressReport(eventName: "timeupdate")
                     _lastProgressReportSent.wrappedValue = CACurrentMediaTime()
                 }
                 if(vlcplayer.time.intValue != 0) {
@@ -129,12 +131,12 @@ struct VideoPlayerView: View {
         }
     }
     
-    func sendProgressReport() {
+    func sendProgressReport(eventName: String) {
         var progressBody: String = "";
         if(pbitem.videoType == VideoType.direct) {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(vlcplayer.state == VLCMediaPlayerState.paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"EventName\":\"timeupdate\"}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(vlcplayer.state == VLCMediaPlayerState.paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"EventName\":\"\(eventName)\"}";
         } else {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(vlcplayer.state == VLCMediaPlayerState.paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"EventName\":\"timeupdate\"}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(vlcplayer.state == VLCMediaPlayerState.paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"EventName\":\"\(eventName)\"}";
         }
         
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing/Progress")
@@ -157,9 +159,9 @@ struct VideoPlayerView: View {
     func sendStopReport() {
         var progressBody: String = "";
         if(pbitem.videoType == VideoType.direct) {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[],\"PlayMethod\":\"\(pbitem.videoType == VideoType.direct ? "DirectStream" : "Transcode")\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem1\"}]}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         } else {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[{\"start\":0,\"end\":100000}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem1\"}]}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":100000}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         }
         
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing/Stopped")
@@ -171,6 +173,7 @@ struct VideoPlayerView: View {
             switch result {
             case .success(let resp):
                 print(resp.body)
+                self.playing.wrappedValue = false;
                 break
             case .failure(let error):
                 debugPrint(error)
@@ -181,11 +184,13 @@ struct VideoPlayerView: View {
     
     func sendPlayReport() {
         var progressBody: String = "";
+        _startTime.wrappedValue = Int(Date().timeIntervalSince1970) * 10000000
         if(pbitem.videoType == VideoType.hls) {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":0,\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem1\"}]}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(item.Progress)),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":100000}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         } else {
-            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":140000000,\"PositionTicks\":0,\"PlaybackStartTimeTicks\":16209515560670000,\"AudioStreamIndex\":1,\"BufferedRanges\":[],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem1\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem1\"}]}";
+            progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(item.Progress)),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         }
+        print(progressBody)
         
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing")
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
@@ -232,7 +237,7 @@ struct VideoPlayerView: View {
                     _playSessionId.wrappedValue = json["PlaySessionId"].string ?? "";
                     if(json["MediaSources"][0]["TranscodingUrl"].string != nil) {
                         print("Transcoding!")
-                        let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? "").replacingOccurrences(of: "master.m3u8", with: "main.m3u8"))")!
+                        let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? ""))")!
                         let item = PlaybackItem(videoType: VideoType.hls, videoUrl: streamURL, subtitles: [])
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
@@ -348,7 +353,6 @@ struct VideoPlayerView: View {
                         HStack() {
                             Button() {
                                 sendStopReport()
-                                self.playing.wrappedValue = false;
                             } label: {
                                 HStack() {
                                     Image(systemName: "chevron.left").font(.system(size: 20)).foregroundColor(.white)
@@ -381,11 +385,11 @@ struct VideoPlayerView: View {
                             if(vlcplayer.state != VLCMediaPlayerState.paused) {
                                 vlcplayer.pause()
                                 playPauseButtonSystemName = "play"
-                                sendProgressReport()
+                                sendProgressReport(eventName: "pause")
                             } else {
                                 vlcplayer.play()
                                 playPauseButtonSystemName = "pause"
-                                sendProgressReport()
+                                sendProgressReport(eventName: "unpause")
                             }
                         } label: {
                             Image(systemName: playPauseButtonSystemName).font(.system(size: 55)).foregroundColor(.white)
@@ -405,6 +409,7 @@ struct VideoPlayerView: View {
                             let videoDuration = Double(vlcplayer.time.intValue + abs(vlcplayer.remainingTime.intValue))
                             if(bool == true) {
                                 vlcplayer.pause()
+                                sendProgressReport(eventName: "pause")
                                 DispatchQueue.global(qos: .utility).async { [self] in
                                     self.processScrubbingState()
                                 }
@@ -412,7 +417,7 @@ struct VideoPlayerView: View {
                                 //Scrub is value from 0..1 - find position in video and add / or remove.
                                 let secondsScrubbedTo = round(_scrub.wrappedValue * videoDuration);
                                 let offset = secondsScrubbedTo - videoPosition;
-                                sendProgressReport()
+                                sendProgressReport(eventName: "unpause")
                                 vlcplayer.play()
                                 if(offset > 0) {
                                     vlcplayer.jumpForward(Int32(offset)/1000);
