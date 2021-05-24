@@ -307,12 +307,12 @@ struct SeasonItemView: View {
                                     .placeholder {
                                         Image(uiImage: UIImage(blurHash: (item.SeasonImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.SeasonImageBlurHash ?? ""), size: CGSize(width: 32, height: 32))!)
                                             .resizable()
-                                            .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
+                                            .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                     }
                                     
                                     .opacity(0.4)
                                     .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: (geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing) * 0.5625)
+                                    .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                     .edgesIgnoringSafeArea(.all)
                                 HStack() {
                                     VStack(alignment: .leading) {
@@ -422,7 +422,7 @@ struct SeasonItemView: View {
                                             Spacer().frame(height: 195);
                                         }.frame(maxHeight: .infinity)
                                     }.padding(.trailing, 55)
-                                }.padding(.top, 12)
+                                }.padding(.top, 12).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
                             }
                         }
                     }

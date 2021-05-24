@@ -5,6 +5,8 @@
 //  Created by Aiden Vigue on 5/23/21.
 //
 
+//lol can someone buy me a coffee this took forever :|
+
 import Foundation
 import SwiftyJSON
 
