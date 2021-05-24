@@ -66,7 +66,13 @@ struct MovieItemView: View {
     @State private var isLoading: Bool = true;
     var item: ResumeItem;
     var fullItem: DetailItem;
-    @State private var playing: Bool = false;
+    @State private var playing: Bool = false {
+        didSet {
+            if(_playing.wrappedValue == false) {
+                unlockOrientations()
+            }
+        }
+    };
     @State private var vc: PreferenceUIHostingController? = nil;
     @State private var progressString: String = "";
     @State private var viewDidLoad: Bool = false;
@@ -255,7 +261,7 @@ struct MovieItemView: View {
     
     var body: some View {
         if(playing) {
-            VideoPlayerView(item: fullItem, playing: $playing).onAppear(perform: lockOrientations)
+            VideoPlayerView(item: fullItem, playing: $playing).onAppear(perform: lockOrientations).onDisappear(perform: unlockOrientations)
         } else {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment:.leading) {

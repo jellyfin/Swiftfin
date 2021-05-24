@@ -107,74 +107,78 @@ struct ContinueWatchingView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack() {
-                Spacer().frame(width:16)
-                ForEach(resumeItems, id: \.Id) { item in
-                    NavigationLink(destination: ItemView(item: item)) {
-                        VStack(alignment: .leading) {
-                            Spacer().frame(height: 10)
-                            if(item.Type == "Episode") {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
-                                    .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                    .placeholder {
-                                        Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
-                                            .resizable()
-                                            .frame(width: 320, height: 180)
-                                            .cornerRadius(10)
-                                    }
-                                    .frame(width: 320, height: 180)
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        ZStack {
-                                            Text("S\(String(item.ParentIndexNumber ?? 0)):E\(String(item.IndexNumber ?? 0)) - \(item.Name)")
-                                                .font(.caption)
-                                                .padding(6)
-                                                .foregroundColor(.white)
-                                        }.background(Color.black)
-                                        .opacity(0.8)
-                                        .cornerRadius(10.0)
-                                        .padding(6), alignment: .topTrailing
-                                    )
-                                    .overlay(
-                                        Rectangle()
-                                            .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
-                                            .mask(CustomShape(radius: 10))
-                                            .frame(width: CGFloat((item.ItemProgress/100)*320), height: 7)
+            if(_resumeItems.wrappedValue.count > 0) {
+                LazyHStack() {
+                    Spacer().frame(width:16)
+                    ForEach(resumeItems, id: \.Id) { item in
+                        NavigationLink(destination: ItemView(item: item)) {
+                            VStack(alignment: .leading) {
+                                Spacer().frame(height: 10)
+                                if(item.Type == "Episode") {
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
+                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                        .placeholder {
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
+                                                .resizable()
+                                                .frame(width: 320, height: 180)
+                                                .cornerRadius(10)
+                                        }
+                                        .frame(width: 320, height: 180)
+                                        .cornerRadius(10)
+                                        .overlay(
+                                            ZStack {
+                                                Text("S\(String(item.ParentIndexNumber ?? 0)):E\(String(item.IndexNumber ?? 0)) - \(item.Name)")
+                                                    .font(.caption)
+                                                    .padding(6)
+                                                    .foregroundColor(.white)
+                                            }.background(Color.black)
+                                            .opacity(0.8)
+                                            .cornerRadius(10.0)
+                                            .padding(6), alignment: .topTrailing
+                                        )
+                                        .overlay(
+                                            Rectangle()
+                                                .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
+                                                .mask(CustomShape(radius: 10))
+                                                .frame(width: CGFloat((item.ItemProgress/100)*320), height: 7)
+                                                .padding(0), alignment: .bottomLeading
+                                        )
+                                        .shadow(radius: 5)
+                                } else {
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
+                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                        .placeholder {
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
+                                                .resizable()
+                                                .frame(width: 320, height: 180)
+                                                .cornerRadius(10)
+                                        }
+                                        .frame(width: 320, height: 180)
+                                        .cornerRadius(10)
+                                        .overlay(
+                                            Rectangle()
+                                                .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
+                                                .mask(CustomShape(radius: 10))
+                                                .frame(width: CGFloat((item.ItemProgress/100)*320), height: 7)
                                             .padding(0), alignment: .bottomLeading
-                                    )
-                                    .shadow(radius: 5)
-                            } else {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
-                                    .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                    .placeholder {
-                                        Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
-                                            .resizable()
-                                            .frame(width: 320, height: 180)
-                                            .cornerRadius(10)
-                                    }
-                                    .frame(width: 320, height: 180)
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        Rectangle()
-                                            .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
-                                            .mask(CustomShape(radius: 10))
-                                            .frame(width: CGFloat((item.ItemProgress/100)*320), height: 7)
-                                        .padding(0), alignment: .bottomLeading
-                                    )
-                                    .shadow(radius: 5)
-                            }
-                            Text("\(item.Type == "Episode" ? item.SeriesName ?? "" : item.Name)")
-                                .font(.callout)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                                .frame(width: 320, alignment: .leading)
-                            Spacer().frame(height: 5)
-                        }.padding(.trailing, 5)
+                                        )
+                                        .shadow(radius: 5)
+                                }
+                                Text("\(item.Type == "Episode" ? item.SeriesName ?? "" : item.Name)")
+                                    .font(.callout)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                    .frame(width: 320, alignment: .leading)
+                                Spacer().frame(height: 5)
+                            }.padding(.trailing, 5)
+                        }
                     }
-                }
-                Spacer().frame(width:14)
-            }.frame(height: 215)
+                    Spacer().frame(width:14)
+                }.frame(height: 215)
+            } else {
+                EmptyView()
+            }
         }.onAppear(perform: onAppear)
         .frame(height: 215)
         .padding(.bottom, 10)

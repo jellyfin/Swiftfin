@@ -274,7 +274,9 @@ struct VideoPlayerView: View {
                         }
                         
                         if(_selectedAudioTrack.wrappedValue == -1) {
-                            _selectedAudioTrack.wrappedValue = _audioTracks.wrappedValue[0].id;
+                            if(_audioTracks.wrappedValue.count > 0) {
+                                _selectedAudioTrack.wrappedValue = _audioTracks.wrappedValue[0].id;
+                            }
                         }
                         
                         let streamUrl = streamURL.absoluteString;
@@ -319,6 +321,7 @@ struct VideoPlayerView: View {
                             _selectedAudioTrack.wrappedValue = _audioTracks.wrappedValue[0].id;
                         }
                         
+                        sendPlayReport()
                         pbitem = item;
                         pbitem.subtitles = subtitles;
                         _isPlaying.wrappedValue = true;

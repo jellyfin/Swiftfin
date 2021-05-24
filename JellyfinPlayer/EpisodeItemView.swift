@@ -18,7 +18,13 @@ struct EpisodeItemView: View {
     var item: ResumeItem;
     @EnvironmentObject var orientationInfo: OrientationInfo
     var fullItem: DetailItem;
-    @State private var playing: Bool = false;
+    @State private var playing: Bool = false {
+        didSet {
+            if(_playing.wrappedValue == false) {
+                unlockOrientations()
+            }
+        }
+    };
     @State private var vc: PreferenceUIHostingController? = nil;
     @State private var progressString: String = "";
     @State private var viewDidLoad: Bool = false;
