@@ -121,14 +121,14 @@ class DeviceProfileBuilder {
         
         //Build transcoding profiles
             var TranscodingProfiles: [_AVTranscodingProfile] = [];
-            TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav", VideoCodec: "h264", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
+            TranscodingProfiles = [_AVTranscodingProfile(Container: "mp4", Type: "Video", AudioCodec: "aac,mp3,wav", VideoCodec: "h264", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
             
             //Device supports Dolby Digital (AC3, EAC3)
             if(supportsFeature(minimumSupported: .A8X)) {
                 if(supportsFeature(minimumSupported: .A10)) {
                     TranscodingProfiles = [_AVTranscodingProfile(Container: "mp4", Type: "Video", AudioCodec: "aac,mp3,wav,eac3,ac3,flac", VideoCodec: "h264,hevc,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
                 } else {
-                    TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "ac3,eac3,wav,eac3,ac3,flac", VideoCodec: "h264", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                    TranscodingProfiles = [_AVTranscodingProfile(Container: "mp4", Type: "Video", AudioCodec: "ac3,eac3,wav,eac3,ac3,flac", VideoCodec: "h264", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
                 }
             }
             
