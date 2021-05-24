@@ -447,7 +447,7 @@ struct MovieItemView: View {
                                     WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=750&quality=90&tag=\(fullItem.Backdrop)")!)
                                         .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                         .placeholder {
-                                            Image(uiImage: UIImage(blurHash: (fullItem.BackdropBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.BackdropBlurHash), size: CGSize(width: 32, height: 32))!)
+                                            Image(uiImage: UIImage(blurHash: (fullItem.BackdropBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.BackdropBlurHash), size: CGSize(width: 16, height: 16))!)
                                                 .resizable()
                                                 .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing, height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                         }
@@ -461,7 +461,7 @@ struct MovieItemView: View {
                                             WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
                                                 .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                 .placeholder {
-                                                    Image(uiImage: UIImage(blurHash: (fullItem.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 32, height: 32))!)
+                                                    Image(uiImage: UIImage(blurHash: (fullItem.PosterBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.PosterBlurHash), size: CGSize(width: 16, height: 16))!)
                                                         .resizable()
                                                         .frame(width: 120, height: 180)
                                                 }
@@ -577,7 +577,7 @@ struct MovieItemView: View {
                                                                             WebImage(url: cast.Image)
                                                                                 .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                                                 .placeholder {
-                                                                                    Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 32, height: 32))!)
+                                                                                    Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 8, height: 8))!)
                                                                                         .resizable()
                                                                                         .aspectRatio(contentMode: .fill)
                                                                                         .frame(width: 100, height: 100)
