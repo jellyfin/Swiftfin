@@ -18,7 +18,6 @@
 		535BAE9F2649E569005FA86D /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAE9E2649E569005FA86D /* ItemView.swift */; };
 		535BAEA5264A151C005FA86D /* VLCPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAEA4264A151C005FA86D /* VLCPlayer.swift */; };
 		535BAEA7264A18AA005FA86D /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAEA6264A18AA005FA86D /* VideoPlayerView.swift */; };
-		53773D88265C2466000809AA /* ExyteGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 53773D87265C2466000809AA /* ExyteGrid */; };
 		5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */; };
 		5377CBF7263B596A003A4E83 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBF6263B596A003A4E83 /* ContentView.swift */; };
 		5377CBF9263B596B003A4E83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
@@ -31,7 +30,6 @@
 		53892777263CBB000035E14B /* JellyApiTypings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53892776263CBB000035E14B /* JellyApiTypings.swift */; };
 		5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 53892779263CBFE70035E14B /* SwiftyJSON */; };
 		5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389277B263CC3DB0035E14B /* BlurHashDecode.swift */; };
-		53892782263CC8770035E14B /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 53892781263CC8770035E14B /* URLImage */; };
 		538CD954263E3DC100BB5AF0 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */; };
 		53987CA426572C1300E7EA70 /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA326572C1300E7EA70 /* SeasonItemView.swift */; };
 		53987CA626572F0700E7EA70 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA526572F0700E7EA70 /* SeriesItemView.swift */; };
@@ -113,13 +111,11 @@
 			files = (
 				538CD954263E3DC100BB5AF0 /* SDWebImageSwiftUI in Frameworks */,
 				5302F82C2658B5FE00647A2E /* Dynatrace.framework in Frameworks */,
-				53773D88265C2466000809AA /* ExyteGrid in Frameworks */,
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
 				53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */,
 				5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */,
 				5302F82A2658791C00647A2E /* Sentry in Frameworks */,
 				5302F82F2658B60900647A2E /* DynatraceSessionReplay.framework in Frameworks */,
-				53892782263CC8770035E14B /* URLImage in Frameworks */,
 				53D2F74A264C69F6005792BB /* Introspect in Frameworks */,
 				5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */,
 				5338F751263B62E80014BF09 /* HidingViews in Frameworks */,
@@ -223,11 +219,9 @@
 				5338F753263B65E10014BF09 /* SwiftyRequest */,
 				5338F756263B7E2E0014BF09 /* KeychainSwift */,
 				53892779263CBFE70035E14B /* SwiftyJSON */,
-				53892781263CC8770035E14B /* URLImage */,
 				538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */,
 				53D2F749264C69F6005792BB /* Introspect */,
 				5302F8292658791C00647A2E /* Sentry */,
-				53773D87265C2466000809AA /* ExyteGrid */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer.app */;
@@ -264,11 +258,9 @@
 				5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */,
 				5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
-				53892780263CC8770035E14B /* XCRemoteSwiftPackageReference "url-image" */,
 				538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				53D2F748264C69F6005792BB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
-				53773D86265C2466000809AA /* XCRemoteSwiftPackageReference "Grid" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -579,28 +571,12 @@
 				minimumVersion = 19.0.0;
 			};
 		};
-		53773D86265C2466000809AA /* XCRemoteSwiftPackageReference "Grid" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/exyte/Grid";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.4.0;
-			};
-		};
 		53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.1;
-			};
-		};
-		53892780263CC8770035E14B /* XCRemoteSwiftPackageReference "url-image" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/dmytro-anokhin/url-image";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.2.5;
 			};
 		};
 		538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
@@ -642,20 +618,10 @@
 			package = 5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
 		};
-		53773D87265C2466000809AA /* ExyteGrid */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53773D86265C2466000809AA /* XCRemoteSwiftPackageReference "Grid" */;
-			productName = ExyteGrid;
-		};
 		53892779263CBFE70035E14B /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
-		};
-		53892781263CC8770035E14B /* URLImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53892780263CC8770035E14B /* XCRemoteSwiftPackageReference "url-image" */;
-			productName = URLImage;
 		};
 		538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;

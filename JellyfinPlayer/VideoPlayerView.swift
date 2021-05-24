@@ -368,100 +368,100 @@ struct VideoPlayerView: View {
     
     var body: some View {
         LoadingView(isShowing: ($streamLoading)) {
-            ZStack() {
-                VLCPlayer(url: $pbitem, player: $vlcplayer, startTime: Int(item.Progress)).onDisappear(perform: {
-                    _isPlaying.wrappedValue = false;
-                    vlcplayer.stop()
-                })
-                VStack() {
+            VLCPlayer(url: $pbitem, player: $vlcplayer, startTime: Int(item.Progress)).onDisappear(perform: {
+                _isPlaying.wrappedValue = false;
+                vlcplayer.stop()
+            })
+        }.overlay(
+            VStack() {
+                HStack() {
                     HStack() {
-                        HStack() {
-                            Button() {
-                                sendStopReport()
-                                self.playing.wrappedValue = false;
-                            } label: {
-                                HStack() {
-                                    Image(systemName: "chevron.left").font(.system(size: 20)).foregroundColor(.white)
-                                }
-                            }.frame(width: 20)
-                            Spacer()
-                            Text(item.Name).font(.headline).fontWeight(.semibold).foregroundColor(.white).offset(x:-4)
-                            Spacer()
-                            Button() {
-                                vlcplayer.pause()
-                                self.captionConfiguration = true;
-                            } label: {
-                                HStack() {
-                                    Image(systemName: "captions.bubble").font(.system(size: 20)).foregroundColor(.white)
-                                }
-                            }.frame(width: 20)
+                        Button() {
+                            sendStopReport()
+                            self.playing.wrappedValue = false;
+                        } label: {
+                            HStack() {
+                                Image(systemName: "chevron.left").font(.system(size: 20)).foregroundColor(.white)
+                            }
+                        }.frame(width: 20)
+                        Spacer()
+                        Text(item.Name).font(.headline).fontWeight(.semibold).foregroundColor(.white).offset(x:-4)
+                        Spacer()
+                        Button() {
+                            vlcplayer.pause()
+                            self.captionConfiguration = true;
+                        } label: {
+                            HStack() {
+                                Image(systemName: "captions.bubble").font(.system(size: 20)).foregroundColor(.white)
+                            }
+                        }.frame(width: 20)
+                    }
+                    Spacer()
+                }.padding(EdgeInsets(top: 55, leading: 40, bottom: 0, trailing: 40))
+                Spacer()
+                HStack() {
+                    Spacer()
+                    Button() {
+                        vlcplayer.jumpBackward(15)
+                    } label: {
+                        Image(systemName: "gobackward.15").font(.system(size: 40)).foregroundColor(.white)
+                    }.padding(20)
+                    Spacer()
+                    Button() {
+                        if(vlcplayer.state != VLCMediaPlayerState.paused) {
+                            vlcplayer.pause()
+                            playPauseButtonSystemName = "play"
+                            sendProgressReport(eventName: "pause")
+                        } else {
+                            vlcplayer.play()
+                            playPauseButtonSystemName = "pause"
+                            sendProgressReport(eventName: "unpause")
                         }
-                        Spacer()
-                    }.padding(EdgeInsets(top: 55, leading: 40, bottom: 0, trailing: 40))
+                    } label: {
+                        Image(systemName: playPauseButtonSystemName).font(.system(size: 55)).foregroundColor(.white)
+                    }.padding(20)
                     Spacer()
-                    HStack() {
-                        Spacer()
-                        Button() {
-                            vlcplayer.jumpBackward(15)
-                        } label: {
-                            Image(systemName: "gobackward.15").font(.system(size: 40)).foregroundColor(.white)
-                        }.padding(20)
-                        Spacer()
-                        Button() {
-                            if(vlcplayer.state != VLCMediaPlayerState.paused) {
-                                vlcplayer.pause()
-                                playPauseButtonSystemName = "play"
-                                sendProgressReport(eventName: "pause")
-                            } else {
-                                vlcplayer.play()
-                                playPauseButtonSystemName = "pause"
-                                sendProgressReport(eventName: "unpause")
-                            }
-                        } label: {
-                            Image(systemName: playPauseButtonSystemName).font(.system(size: 55)).foregroundColor(.white)
-                        }.padding(20)
-                        Spacer()
-                        Button() {
-                            vlcplayer.jumpForward(15)
-                        } label: {
-                            Image(systemName: "goforward.15").font(.system(size: 40)).foregroundColor(.white)
-                        }.padding(20)
-                        Spacer()
-                    }.padding(.leading, -20)
+                    Button() {
+                        vlcplayer.jumpForward(15)
+                    } label: {
+                        Image(systemName: "goforward.15").font(.system(size: 40)).foregroundColor(.white)
+                    }.padding(20)
                     Spacer()
-                    HStack() {
-                        Slider(value: $scrub, onEditingChanged: { bool in
-                            let videoPosition = Double(vlcplayer.time.intValue)
-                            let videoDuration = Double(vlcplayer.time.intValue + abs(vlcplayer.remainingTime.intValue))
-                            if(bool == true) {
-                                vlcplayer.pause()
-                                sendProgressReport(eventName: "pause")
-                                DispatchQueue.global(qos: .utility).async { [self] in
-                                    self.processScrubbingState()
-                                }
-                            } else {
-                                //Scrub is value from 0..1 - find position in video and add / or remove.
-                                let secondsScrubbedTo = round(_scrub.wrappedValue * videoDuration);
-                                let offset = secondsScrubbedTo - videoPosition;
-                                sendProgressReport(eventName: "unpause")
-                                vlcplayer.play()
-                                if(offset > 0) {
-                                    vlcplayer.jumpForward(Int32(offset)/1000);
-                                } else {
-                                    vlcplayer.jumpBackward(Int32(abs(offset))/1000);
-                                }
+                }.padding(.leading, -20)
+                Spacer()
+                HStack() {
+                    Slider(value: $scrub, onEditingChanged: { bool in
+                        let videoPosition = Double(vlcplayer.time.intValue)
+                        let videoDuration = Double(vlcplayer.time.intValue + abs(vlcplayer.remainingTime.intValue))
+                        if(bool == true) {
+                            vlcplayer.pause()
+                            sendProgressReport(eventName: "pause")
+                            DispatchQueue.global(qos: .utility).async { [self] in
+                                self.processScrubbingState()
                             }
-                        })
-                        .accentColor(Color(red: 172/255, green: 92/255, blue: 195/255))
-                        Text(timeText).fontWeight(.semibold).frame(width: 80).foregroundColor(.white)
-                    }.padding(EdgeInsets(top: -20, leading: 44, bottom: 42, trailing: 40))
-                }
-                .padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? -30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? -30 : 0))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(.black).opacity(0.4))
-                .isHidden(inactivity)
-            }.padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? 34 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? 34 : 0))
-        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        } else {
+                            //Scrub is value from 0..1 - find position in video and add / or remove.
+                            let secondsScrubbedTo = round(_scrub.wrappedValue * videoDuration);
+                            let offset = secondsScrubbedTo - videoPosition;
+                            sendProgressReport(eventName: "unpause")
+                            vlcplayer.play()
+                            if(offset > 0) {
+                                vlcplayer.jumpForward(Int32(offset)/1000);
+                            } else {
+                                vlcplayer.jumpBackward(Int32(abs(offset))/1000);
+                            }
+                        }
+                    })
+                    .accentColor(Color(red: 172/255, green: 92/255, blue: 195/255))
+                    Text(timeText).fontWeight(.semibold).frame(width: 80).foregroundColor(.white)
+                }.padding(EdgeInsets(top: -20, leading: 44, bottom: 42, trailing: 40))
+            }
+            .padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? -30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? -30 : 0))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.black).opacity(0.4))
+            .isHidden(inactivity)
+        , alignment: .topLeading)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .onAppear(perform: startStream)
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)

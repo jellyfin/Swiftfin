@@ -20,15 +20,6 @@
         }
       },
       {
-        "package": "ExyteGrid",
-        "repositoryURL": "https://github.com/exyte/Grid",
-        "state": {
-          "branch": null,
-          "revision": "585dc249126fda6ae675d78175b0c52a311f10c9",
-          "version": "1.4.0"
-        }
-      },
-      {
         "package": "HidingViews",
         "repositoryURL": "https://github.com/GeorgeElsham/HidingViews",
         "state": {
@@ -143,15 +134,6 @@
           "branch": null,
           "revision": "2c543777a5088bed811503a68551a4b4eceac198",
           "version": "3.2.200"
-        }
-      },
-      {
-        "package": "URLImage",
-        "repositoryURL": "https://github.com/dmytro-anokhin/url-image",
-        "state": {
-          "branch": null,
-          "revision": "ccab89ad1cedb04f25dd4df1776dd8c8583b914a",
-          "version": "2.2.5"
         }
       }
     ]

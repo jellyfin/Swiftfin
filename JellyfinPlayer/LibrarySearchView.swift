@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftyJSON
 import SwiftyRequest
-import ExyteGrid
 import SDWebImageSwiftUI
 
 struct LibrarySearchView: View {
@@ -30,6 +29,7 @@ struct LibrarySearchView: View {
     };
     
     func onAppear() {
+        recalcTracks()
         _isLoading.wrappedValue = true;
         _items.wrappedValue = [];
         let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue + "&searchTerm=" + searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! + (_url.wrappedValue.contains("SortBy") ? "" : "&SortBy=Name&SortOrder=Descending"))
@@ -99,9 +99,16 @@ struct LibrarySearchView: View {
         return result
     }
     
-    var tracks: [GridTrack] {
-        self.isPortrait ? 3 : 6
+    func recalcTracks() {
+        let trkCnt: Int = Int(floor(UIScreen.main.bounds.size.width / 125));
+        _tracks.wrappedValue = []
+        for _ in (0..<trkCnt)
+        {
+            _tracks.wrappedValue.append(GridItem.init(.flexible()))
+        }
     }
+    
+    @State private var tracks: [GridItem] = []
     
     var body: some View {
         VStack() {
@@ -118,70 +125,70 @@ struct LibrarySearchView: View {
             .foregroundColor(Color.secondary)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             LoadingView(isShowing: $isLoading) {
-                GeometryReader { geometry in
-                    Grid(tracks: self.tracks, spacing: GridSpacing(horizontal: 0, vertical: 20)) {
-                        ForEach(items, id: \.Id) { item in
-                            Button() {
-                                _linkedItem.wrappedValue = item;
-                                _close.wrappedValue = false;
-                                _open.wrappedValue = true;
-                            } label: {
-                                VStack(alignment: .leading) {
-                                    if(item.Type == "Movie") {
-                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
-                                            .resizable()
-                                            .placeholder {
-                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                                    .resizable()
-                                                    .frame(width: 100, height: 150)
-                                                    .cornerRadius(10)
-                                            }
-                                            .frame(width:100, height: 150)
-                                            .cornerRadius(10)
-                                            .shadow(radius: 5)
-                                    } else {
-                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
-                                            .resizable()
-                                            .placeholder {
-                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                                    .resizable()
-                                                    .frame(width: 100, height: 150)
-                                                    .cornerRadius(10)
-                                            }
-                                            .frame(width:100, height: 150)
-                                            .cornerRadius(10).overlay(
-                                                ZStack {
-                                                    if(item.ItemBadge == 0) {
-                                                        Image(systemName: "checkmark")
-                                                            .font(.caption)
-                                                            .padding(3)
-                                                            .foregroundColor(.white)
-                                                    } else {
-                                                        Text("\(String(item.ItemBadge ?? 0))")
-                                                            .font(.caption)
-                                                            .padding(3)
-                                                            .foregroundColor(.white)
-                                                    }
-                                                }.background(Color.black)
-                                                .opacity(0.8)
-                                                .cornerRadius(10.0)
-                                                .padding(3), alignment: .topTrailing
-                                            )
-                                            .shadow(radius: 5)
-                                    }
-                                    Text(item.Name)
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.primary)
-                                        .lineLimit(1)
-                                    Text(String(item.ProductionYear))
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                }.frame(width: 100)
-                            }
+                LazyVGrid(columns: tracks) {
+                    ForEach(items, id: \.Id) { item in
+                        Button() {
+                            _linkedItem.wrappedValue = item;
+                            _close.wrappedValue = false;
+                            _open.wrappedValue = true;
+                        } label: {
+                            VStack(alignment: .leading) {
+                                if(item.Type == "Movie") {
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
+                                        .resizable()
+                                        .placeholder {
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
+                                                .resizable()
+                                                .frame(width: 100, height: 150)
+                                                .cornerRadius(10)
+                                        }
+                                        .frame(width:100, height: 150)
+                                        .cornerRadius(10)
+                                        .shadow(radius: 5)
+                                } else {
+                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
+                                        .resizable()
+                                        .placeholder {
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
+                                                .resizable()
+                                                .frame(width: 100, height: 150)
+                                                .cornerRadius(10)
+                                        }
+                                        .frame(width:100, height: 150)
+                                        .cornerRadius(10).overlay(
+                                            ZStack {
+                                                if(item.ItemBadge == 0) {
+                                                    Image(systemName: "checkmark")
+                                                        .font(.caption)
+                                                        .padding(3)
+                                                        .foregroundColor(.white)
+                                                } else {
+                                                    Text("\(String(item.ItemBadge ?? 0))")
+                                                        .font(.caption)
+                                                        .padding(3)
+                                                        .foregroundColor(.white)
+                                                }
+                                            }.background(Color.black)
+                                            .opacity(0.8)
+                                            .cornerRadius(10.0)
+                                            .padding(3), alignment: .topTrailing
+                                        )
+                                        .shadow(radius: 5)
+                                }
+                                Text(item.Name)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                Text(String(item.ProductionYear))
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }.frame(width: 100)
                         }
-                    }.gridContentMode(.scroll)
+                    }
+                }.onChange(of: isPortrait) { ip in
+                    recalcTracks()
                 }
             }
         }.onAppear(perform: onAppear)
