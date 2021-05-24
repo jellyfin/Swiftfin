@@ -328,6 +328,26 @@ struct ContentView: View {
                     }
                 }
             }
+            
+            let request2 = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + "/System/Endpoint")
+            request2.headerParameters["X-Emby-Authorization"] = globalData.authHeader
+            request2.contentType = "application/json"
+            request2.acceptType = "application/json"
+            
+            request2.responseData(){ (result: Result<RestResponse<Data>, RestError>) in
+                switch result {
+                case .success( let resp):
+                    do {
+                        let json = try JSON(data: resp.body)
+                        globalData.isInNetwork = json["IsInNetwork"].bool ?? true;
+                    } catch {
+                        
+                    }
+                    break
+                case .failure( let error):
+                    break;
+                }
+            }
         }
     }
 
