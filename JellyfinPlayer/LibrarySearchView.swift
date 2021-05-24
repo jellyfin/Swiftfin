@@ -125,70 +125,72 @@ struct LibrarySearchView: View {
             .foregroundColor(Color.secondary)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             LoadingView(isShowing: $isLoading) {
-                LazyVGrid(columns: tracks) {
-                    ForEach(items, id: \.Id) { item in
-                        Button() {
-                            _linkedItem.wrappedValue = item;
-                            _close.wrappedValue = false;
-                            _open.wrappedValue = true;
-                        } label: {
-                            VStack(alignment: .leading) {
-                                if(item.Type == "Movie") {
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
-                                        .resizable()
-                                        .placeholder {
-                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                                .resizable()
-                                                .frame(width: 100, height: 150)
-                                                .cornerRadius(10)
-                                        }
-                                        .frame(width:100, height: 150)
-                                        .cornerRadius(10)
-                                        .shadow(radius: 5)
-                                } else {
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
-                                        .resizable()
-                                        .placeholder {
-                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                                .resizable()
-                                                .frame(width: 100, height: 150)
-                                                .cornerRadius(10)
-                                        }
-                                        .frame(width:100, height: 150)
-                                        .cornerRadius(10).overlay(
-                                            ZStack {
-                                                if(item.ItemBadge == 0) {
-                                                    Image(systemName: "checkmark")
-                                                        .font(.caption)
-                                                        .padding(3)
-                                                        .foregroundColor(.white)
-                                                } else {
-                                                    Text("\(String(item.ItemBadge ?? 0))")
-                                                        .font(.caption)
-                                                        .padding(3)
-                                                        .foregroundColor(.white)
-                                                }
-                                            }.background(Color.black)
-                                            .opacity(0.8)
-                                            .cornerRadius(10.0)
-                                            .padding(3), alignment: .topTrailing
-                                        )
-                                        .shadow(radius: 5)
-                                }
-                                Text(item.Name)
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .lineLimit(1)
-                                Text(String(item.ProductionYear))
-                                    .foregroundColor(.secondary)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                            }.frame(width: 100)
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: tracks) {
+                        ForEach(items, id: \.Id) { item in
+                            Button() {
+                                _linkedItem.wrappedValue = item;
+                                _close.wrappedValue = false;
+                                _open.wrappedValue = true;
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    if(item.Type == "Movie") {
+                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
+                                            .resizable()
+                                            .placeholder {
+                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
+                                                    .resizable()
+                                                    .frame(width: 100, height: 150)
+                                                    .cornerRadius(10)
+                                            }
+                                            .frame(width:100, height: 150)
+                                            .cornerRadius(10)
+                                            .shadow(radius: 5)
+                                    } else {
+                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
+                                            .resizable()
+                                            .placeholder {
+                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
+                                                    .resizable()
+                                                    .frame(width: 100, height: 150)
+                                                    .cornerRadius(10)
+                                            }
+                                            .frame(width:100, height: 150)
+                                            .cornerRadius(10).overlay(
+                                                ZStack {
+                                                    if(item.ItemBadge == 0) {
+                                                        Image(systemName: "checkmark")
+                                                            .font(.caption)
+                                                            .padding(3)
+                                                            .foregroundColor(.white)
+                                                    } else {
+                                                        Text("\(String(item.ItemBadge ?? 0))")
+                                                            .font(.caption)
+                                                            .padding(3)
+                                                            .foregroundColor(.white)
+                                                    }
+                                                }.background(Color.black)
+                                                .opacity(0.8)
+                                                .cornerRadius(10.0)
+                                                .padding(3), alignment: .topTrailing
+                                            )
+                                            .shadow(radius: 5)
+                                    }
+                                    Text(item.Name)
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                    Text(String(item.ProductionYear))
+                                        .foregroundColor(.secondary)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                }.frame(width: 100)
+                            }
                         }
+                    }.onChange(of: isPortrait) { ip in
+                        recalcTracks()
                     }
-                }.onChange(of: isPortrait) { ip in
-                    recalcTracks()
                 }
             }
         }.onAppear(perform: onAppear)

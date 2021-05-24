@@ -91,55 +91,57 @@ struct SeriesItemView: View {
     
     var body: some View {
         LoadingView(isShowing: $isLoading) {
-            LazyVGrid(columns: tracks) {
-                ForEach(items, id: \.Id) { item in
-                    NavigationLink(destination: ItemView(item: item )) {
-                        VStack(alignment: .leading) {
-                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=90&tag=\(item.Image)"))
-                                .resizable()
-                                .placeholder {
-                                    Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
-                                        .resizable()
-                                        .frame(width: 100, height: 150)
-                                        .cornerRadius(10)
-                                }.overlay(
-                                    ZStack {
-                                        if(item.ItemBadge == 0) {
-                                            Image(systemName: "checkmark")
-                                                .font(.caption)
-                                                .padding(3)
-                                                .foregroundColor(.white)
-                                        } else {
-                                            Text("\(String(item.ItemBadge ?? 0))")
-                                                .font(.caption)
-                                                .padding(3)
-                                                .foregroundColor(.white)
-                                        }
-                                    }.background(Color.black)
-                                    .opacity(0.8)
-                                    .cornerRadius(10.0)
-                                    .padding(3), alignment: .topTrailing
-                                )
-                                .frame(width:100, height: 150)
-                                .cornerRadius(10)
-                                .shadow(radius: 5)
-                            Text(item.Name)
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                            if(item.ProductionYear != 0) {
-                                Text(String(item.ProductionYear))
-                                    .foregroundColor(.secondary)
+            ScrollView(.vertical) {
+                LazyVGrid(columns: tracks) {
+                    ForEach(items, id: \.Id) { item in
+                        NavigationLink(destination: ItemView(item: item )) {
+                            VStack(alignment: .leading) {
+                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=90&tag=\(item.Image)"))
+                                    .resizable()
+                                    .placeholder {
+                                        Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
+                                            .resizable()
+                                            .frame(width: 100, height: 150)
+                                            .cornerRadius(10)
+                                    }.overlay(
+                                        ZStack {
+                                            if(item.ItemBadge == 0) {
+                                                Image(systemName: "checkmark")
+                                                    .font(.caption)
+                                                    .padding(3)
+                                                    .foregroundColor(.white)
+                                            } else {
+                                                Text("\(String(item.ItemBadge ?? 0))")
+                                                    .font(.caption)
+                                                    .padding(3)
+                                                    .foregroundColor(.white)
+                                            }
+                                        }.background(Color.black)
+                                        .opacity(0.8)
+                                        .cornerRadius(10.0)
+                                        .padding(3), alignment: .topTrailing
+                                    )
+                                    .frame(width:100, height: 150)
+                                    .cornerRadius(10)
+                                    .shadow(radius: 5)
+                                Text(item.Name)
                                     .font(.caption)
-                                    .fontWeight(.medium)
-                            }
-                        }.frame(width: 100)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                if(item.ProductionYear != 0) {
+                                    Text(String(item.ProductionYear))
+                                        .foregroundColor(.secondary)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                }
+                            }.frame(width: 100)
+                        }
                     }
+                    Spacer().frame(height: 2)
+                }.onChange(of: isPortrait) { ip in
+                    recalcTracks()
                 }
-                Spacer().frame(height: 2)
-            }.onChange(of: isPortrait) { ip in
-                recalcTracks()
             }
         }
         .overrideViewPreference(.unspecified)
