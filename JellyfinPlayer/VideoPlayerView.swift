@@ -87,6 +87,7 @@ struct VideoPlayerView: View {
         if(!vlcplayer.isPlaying) {
             while(!vlcplayer.isPlaying) {}
         }
+        
         sendProgressReport(eventName: "unpause")
         while(vlcplayer.state != VLCMediaPlayerState.stopped) {
             _streamLoading.wrappedValue = false;
@@ -123,10 +124,6 @@ struct VideoPlayerView: View {
                 } else {
                     _iterations.wrappedValue = 0;
                     _streamLoading.wrappedValue = false;
-                    if(_hasSentPlayReport.wrappedValue == false) {
-                        sendPlayReport()
-                        _hasSentPlayReport.wrappedValue = true;
-                    }
                 }
                 if(vlcplayer.state == VLCMediaPlayerState.error) {
                     playing.wrappedValue = false;
@@ -143,6 +140,10 @@ struct VideoPlayerView: View {
         } else {
             progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(vlcplayer.state == VLCMediaPlayerState.paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"EventName\":\"\(eventName)\"}";
         }
+        
+        print("");
+        print("Sending progress report")
+        print(progressBody)
         
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing/Progress")
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
@@ -169,6 +170,10 @@ struct VideoPlayerView: View {
             progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(vlcplayer.position * Float(item.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":100000}],\"PlayMethod\":\"Transcode\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         }
         
+        print("");
+        print("Sending stop report")
+        print(progressBody)
+        
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing/Stopped")
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
@@ -194,6 +199,9 @@ struct VideoPlayerView: View {
         } else {
             progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(item.Progress)),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[],\"PlayMethod\":\"DirectStream\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(item.Id)\",\"CanSeek\":true,\"ItemId\":\"\(item.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(item.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         }
+        
+        print("");
+        print("Sending play report")
         print(progressBody)
         
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing")
@@ -243,7 +251,7 @@ struct VideoPlayerView: View {
                     _playSessionId.wrappedValue = json["PlaySessionId"].string ?? "";
                     if(json["MediaSources"][0]["TranscodingUrl"].string != nil) {
                         print("Transcoding!")
-                        let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? ""))".replacingOccurrences(of: "master.m3u8", with: "main.m3u8"))!
+                        let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? ""))")!
                         print(streamURL)
                         let item = PlaybackItem(videoType: VideoType.hls, videoUrl: streamURL, subtitles: [])
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
@@ -269,9 +277,21 @@ struct VideoPlayerView: View {
                             _selectedAudioTrack.wrappedValue = _audioTracks.wrappedValue[0].id;
                         }
                         
-                        pbitem = item;
-                        pbitem.subtitles = subtitles;
-                        _isPlaying.wrappedValue = true;
+                        let streamUrl = streamURL.absoluteString;
+                        let segmentUrl = URL(string: streamUrl.replacingOccurrences(of: "master.m3u8", with: "hls1/main/0.ts"))!
+                        print(segmentUrl)
+                        var request2 = URLRequest(url: segmentUrl)
+                        
+                        request2.httpMethod = "GET"
+                        let task = URLSession.shared.dataTask(with: request2) { (data, response2, error) in
+                            DispatchQueue.global(qos: .utility).async { [self] in
+                                self.sendPlayReport()
+                                pbitem = item;
+                                pbitem.subtitles = subtitles;
+                                _isPlaying.wrappedValue = true;
+                            }
+                        }
+                        task.resume()
                     } else {
                         print("Direct playing!");
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")/Videos/\(item.Id)/stream?Static=true&mediaSourceId=\(item.Id)&deviceId=\(globalData.user?.device_uuid ?? "")&api_key=\(globalData.authToken)&Tag=\(json["MediaSources"][0]["ETag"])")!;
