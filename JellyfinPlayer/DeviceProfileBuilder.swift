@@ -166,7 +166,8 @@ class DeviceProfileBuilder {
         SubtitleProfiles.append(_AVSubtitleProfile(Format: "ssa", Method: "External"))
         SubtitleProfiles.append(_AVSubtitleProfile(Format: "pgssub", Method: "Embed"))
         SubtitleProfiles.append(_AVSubtitleProfile(Format: "sub", Method: "Embed"))
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "srt", Method: "External"))
+        SubtitleProfiles.append(_AVSubtitleProfile(Format: "subrip", Method: "Embed"))
+        SubtitleProfiles.append(_AVSubtitleProfile(Format: "srt", Method: "Embed"))
         
         let ResponseProfiles: [_AVResponseProfile] = [_AVResponseProfile(Type: "Video", Container: "m4v", MimeType: "video/mp4")]
         

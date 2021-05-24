@@ -221,6 +221,8 @@ struct VideoPlayerView: View {
         
         _streamLoading.wrappedValue = true;
         let url = (globalData.server?.baseURI ?? "") + "/Items/\(item.Id)/PlaybackInfo?UserId=\(globalData.user?.user_id ?? "")&StartTimeTicks=\(Int(item.Progress))&IsPlayback=true&AutoOpenLiveStream=true&MaxStreamingBitrate=\(DeviceProfile.DeviceProfile.MaxStreamingBitrate)";
+        print(url)
+        
         let request = RestRequest(method: .post, url: url)
         
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
@@ -238,6 +240,7 @@ struct VideoPlayerView: View {
                     if(json["MediaSources"][0]["TranscodingUrl"].string != nil) {
                         print("Transcoding!")
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? ""))")!
+                        print(streamURL)
                         let item = PlaybackItem(videoType: VideoType.hls, videoUrl: streamURL, subtitles: [])
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
