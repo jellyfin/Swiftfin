@@ -18,14 +18,8 @@ struct EpisodeItemView: View {
     var item: ResumeItem;
     @EnvironmentObject var orientationInfo: OrientationInfo
     var fullItem: DetailItem;
-    @State private var playing: Bool = false {
-        didSet {
-            if(_playing.wrappedValue == false) {
-                unlockOrientations()
-            }
-        }
-    };
-    @State private var vc: PreferenceUIHostingController? = nil;
+    @State private var playing: Bool = false;
+
     @State private var progressString: String = "";
     @State private var viewDidLoad: Bool = false;
     
@@ -83,24 +77,7 @@ struct EpisodeItemView: View {
         fullItem = DetailItem();
     }
     
-    func lockOrientations() {
-        if(_vc.wrappedValue != nil) {
-            _vc.wrappedValue?._prefersHomeIndicatorAutoHidden = true;
-            _vc.wrappedValue?._orientations = .landscapeRight;
-            _vc.wrappedValue?._viewPreference = .dark;
-        }
-    }
-    
-    func unlockOrientations() {
-        if(_vc.wrappedValue != nil) {
-            _vc.wrappedValue?._prefersHomeIndicatorAutoHidden = false;
-            _vc.wrappedValue?._orientations = .allButUpsideDown;
-            _vc.wrappedValue?._viewPreference = .unspecified;
-        }
-    }
-    
     func loadData() {
-        unlockOrientations();
         if(_viewDidLoad.wrappedValue == true) {
             return
         }
@@ -215,7 +192,10 @@ struct EpisodeItemView: View {
     
     var body: some View {
         if(playing) {
-            VideoPlayerView(item: fullItem, playing: $playing).onAppear(perform: lockOrientations)
+            VideoPlayerView(item: fullItem, playing: $playing)
+                .supportedOrientations(.landscape)
+                .overrideViewPreference(.dark)
+                .prefersHomeIndicatorAutoHidden(true)
         } else {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment:.leading) {
@@ -589,14 +569,13 @@ struct EpisodeItemView: View {
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("\(fullItem.Name) - S\(String(fullItem.ParentIndexNumber ?? 0)):E\(String(fullItem.IndexNumber ?? 0)) - \(fullItem.SeriesName ?? "")")
-                .withHostingWindow() { window in
-                    let rootVC = window?.rootViewController;
-                    let UIHostingcontroller: PreferenceUIHostingController = rootVC as! PreferenceUIHostingController;
-                    vc = UIHostingcontroller;
-                }.introspectTabBarController { (UITabBarController) in
+                .introspectTabBarController { (UITabBarController) in
                     UITabBarController.tabBar.isHidden = true
                 }
-            }.onAppear(perform: loadData).supportedOrientations(.allButUpsideDown)
+            }.onAppear(perform: loadData)
+            .supportedOrientations(.allButUpsideDown)
+            .overrideViewPreference(.unspecified)
+            .prefersHomeIndicatorAutoHidden(false)
         }
     }
 }

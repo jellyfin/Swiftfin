@@ -490,10 +490,7 @@ struct VideoPlayerView: View {
         .onAppear(perform: startStream)
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        .prefersHomeIndicatorAutoHidden(true)
         .edgesIgnoringSafeArea(.all)
-        .supportedOrientations(.landscapeRight)
-        .preferredColorScheme(.dark)
         .introspectTabBarController { (UITabBarController) in
             UITabBarController.tabBar.isHidden = true
         }

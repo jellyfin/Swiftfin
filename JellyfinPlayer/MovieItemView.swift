@@ -66,14 +66,8 @@ struct MovieItemView: View {
     @State private var isLoading: Bool = true;
     var item: ResumeItem;
     var fullItem: DetailItem;
-    @State private var playing: Bool = false {
-        didSet {
-            if(_playing.wrappedValue == false) {
-                unlockOrientations()
-            }
-        }
-    };
-    @State private var vc: PreferenceUIHostingController? = nil;
+    @State private var playing: Bool = false;
+    
     @State private var progressString: String = "";
     @State private var viewDidLoad: Bool = false;
     
@@ -129,25 +123,8 @@ struct MovieItemView: View {
         self.item = item;
         fullItem = DetailItem();
     }
-    
-    func lockOrientations() {
-        if(_vc.wrappedValue != nil) {
-            _vc.wrappedValue?._prefersHomeIndicatorAutoHidden = true;
-            _vc.wrappedValue?._orientations = .landscapeRight;
-            _vc.wrappedValue?._viewPreference = .dark;
-        }
-    }
-    
-    func unlockOrientations() {
-        if(_vc.wrappedValue != nil) {
-            _vc.wrappedValue?._prefersHomeIndicatorAutoHidden = false;
-            _vc.wrappedValue?._orientations = .allButUpsideDown;
-            _vc.wrappedValue?._viewPreference = .unspecified;
-        }
-    }
-    
+
     func loadData() {
-        unlockOrientations()
         if(_viewDidLoad.wrappedValue == true) {
             return;
         }
@@ -261,7 +238,11 @@ struct MovieItemView: View {
     
     var body: some View {
         if(playing) {
-            VideoPlayerView(item: fullItem, playing: $playing).onAppear(perform: lockOrientations).onDisappear(perform: unlockOrientations)
+            VideoPlayerView(item: fullItem, playing: $playing)
+                .supportedOrientations(.landscape)
+                .preferredColorScheme(.dark)
+                .overrideViewPreference(.dark)
+                .prefersHomeIndicatorAutoHidden(true)
         } else {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment:.leading) {
@@ -625,7 +606,7 @@ struct MovieItemView: View {
                                                 }
                                                 Spacer().frame(height: 195);
                                             }.frame(maxHeight: .infinity)
-                                        }.padding(.trailing, 55)
+                                        }
                                     }.padding(.top, 12).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55).edgesIgnoringSafeArea(.leading)
                                 }
                             }
@@ -634,14 +615,13 @@ struct MovieItemView: View {
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle(fullItem.Name)
-                .withHostingWindow() { window in
-                    let rootVC = window?.rootViewController;
-                    let UIHostingcontroller: PreferenceUIHostingController = rootVC as! PreferenceUIHostingController;
-                    vc = UIHostingcontroller;
-                }.introspectTabBarController { (UITabBarController) in
+                .introspectTabBarController { (UITabBarController) in
                     UITabBarController.tabBar.isHidden = false
                 }
-            }.onAppear(perform: loadData).supportedOrientations(.allButUpsideDown)
+            }.onAppear(perform: loadData)
+            .supportedOrientations(.allButUpsideDown)
+            .overrideViewPreference(.unspecified)
+            .prefersHomeIndicatorAutoHidden(false)
         }
     }
 }

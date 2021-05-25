@@ -193,15 +193,7 @@ struct ContentView: View {
     @State private var libraryPrefillID: String = "";
     @State private var showSettingsPopover: Bool = false;
     @State private var viewDidLoad: Bool = false;
-    
-    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
 
-    var isPortrait: Bool {
-        let result = verticalSizeClass == .regular && horizontalSizeClass == .compact
-        return result
-    }
-    
     func startup() {
         let size = UIScreen.main.bounds.size
         if size.width < size.height {
@@ -358,7 +350,7 @@ struct ContentView: View {
                                 if(!needsToSelectServer && !isSignInErrored) {
                                     VStack(alignment: .leading) {
                                         ScrollView() {
-                                            Spacer().frame(height: isPortrait ? 0 : 15)
+                                            Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 15)
                                             ContinueWatchingView()
                                             NextUpView().padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                                             ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
