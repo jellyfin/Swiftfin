@@ -20,6 +20,9 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Carthage
         run: "carthage update"
-      - uses: maierj/fastlane-action@v2.0.1
+      - uses: sersoft-gmbh/xcodebuild-action@v1
         with:
-          lane: 'build'
+          project: JellyfinPlayer.xcodeproj
+          scheme: JellyfinPlayer
+          destination: platform=iOS
+          action: build
