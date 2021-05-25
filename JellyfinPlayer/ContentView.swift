@@ -379,7 +379,7 @@ struct ContentView: View {
                                         Image(systemName: "gear")
                                     }
                                 }
-                            }.fullScreenCover( isPresented: $showSettingsPopover) { SettingsView(close: $showSettingsPopover).environmentObject(globalData) }
+                            }.fullScreenCover( isPresented: $showSettingsPopover) { SettingsView(viewModel: SettingsViewModel(), close: $showSettingsPopover).environmentObject(globalData) }
                         }
                         .navigationViewStyle(StackNavigationViewStyle())
                         .tabItem({
