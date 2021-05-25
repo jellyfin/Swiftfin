@@ -28,6 +28,12 @@ struct LibraryView: View {
     @State private var url: String = "";
     @State private var closeSearch: Bool = false;
     
+    private var itemsPerPage: Int = 100;
+    
+    @State private var firstItemIndex: Int = 0;
+    @State private var lastItemIndex: Int = 0;
+    @State private var totalItemCount: Int = 0;
+    
     init(prefill: String?, names: [String: String], libraries: [String]) {
         _prefill_id = State(wrappedValue: prefill ?? "")
         _library_names = State(wrappedValue: names)
@@ -72,9 +78,9 @@ struct LibraryView: View {
         recalcTracks()
         _isLoading.wrappedValue = true;
         if(_extraParam.wrappedValue == "") {
-            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(selected_library_id == "favorites" ? "&Filters=IsFavorite" : "&ParentId=" + selected_library_id)\(filterString)"
+            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=\(lastItemIndex - firstItemIndex)&StartIndex=\(firstItemIndex)&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(selected_library_id == "favorites" ? "&Filters=IsFavorite" : "&ParentId=" + selected_library_id)\(filterString)"
         } else {
-            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(filterString)\(extraParam)"
+            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=\(lastItemIndex - firstItemIndex)&StartIndex=\(firstItemIndex)&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(filterString)\(extraParam)"
         }
         
         let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue)
@@ -88,6 +94,7 @@ struct LibraryView: View {
                 let body = response.body
                 do {
                     let json = try JSON(data: body)
+                    _totalItemCount.wrappedValue = json["TotalRecordCount"].int ?? 0;
                     for (_,item):(String, JSON) in json["Items"] {
                         // Do something you want
                         let itemObj = ResumeItem()
@@ -121,7 +128,6 @@ struct LibraryView: View {
                             itemObj.SeriesName = item["SeriesName"].string ?? nil
                         }
                         itemObj.Watched = item["UserData"]["Played"].bool ?? false
-
                         _items.wrappedValue.append(itemObj)
                     }
                 } catch {
@@ -141,8 +147,36 @@ struct LibraryView: View {
             _selected_library_id.wrappedValue = _prefill_id.wrappedValue;
         }
         if(_items.wrappedValue.count == 0) {
+            _firstItemIndex.wrappedValue = 0;
+            _lastItemIndex.wrappedValue = itemsPerPage;
             loadItems()
         }
+    }
+    
+    func nextPage() {
+        _firstItemIndex.wrappedValue = _lastItemIndex.wrappedValue;
+        _lastItemIndex.wrappedValue = _firstItemIndex.wrappedValue + itemsPerPage;
+        
+        if(_lastItemIndex.wrappedValue > _totalItemCount.wrappedValue) {
+            _firstItemIndex.wrappedValue = _totalItemCount.wrappedValue - itemsPerPage;
+            _lastItemIndex.wrappedValue = _totalItemCount.wrappedValue;
+        }
+        
+        _items.wrappedValue = [];
+        loadItems()
+    }
+    
+    func previousPage() {
+        _lastItemIndex.wrappedValue = _firstItemIndex.wrappedValue;
+        _firstItemIndex.wrappedValue = _lastItemIndex.wrappedValue - itemsPerPage;
+        
+        if(_firstItemIndex.wrappedValue < 0) {
+            _firstItemIndex.wrappedValue = 0;
+            _lastItemIndex.wrappedValue = itemsPerPage;
+        }
+        
+        _items.wrappedValue = [];
+        loadItems()
     }
     
     @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
@@ -177,7 +211,7 @@ struct LibraryView: View {
                                         WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=80&tag=\(item.Image)"))
                                             .resizable()
                                             .placeholder {
-                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
+                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
                                                     .resizable()
                                                     .frame(width: 100, height: 150)
                                                     .cornerRadius(10)
@@ -188,7 +222,7 @@ struct LibraryView: View {
                                         WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=80&tag=\(item.Image)"))
                                             .resizable()
                                             .placeholder {
-                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
+                                                Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
                                                     .resizable()
                                                     .frame(width: 100, height: 150)
                                                     .cornerRadius(10)
@@ -228,6 +262,15 @@ struct LibraryView: View {
                     }
                     Spacer().frame(height: 16)
                 }
+                .gesture(
+                   DragGesture().onChanged { value in
+                      if value.translation.height > 0 {
+                         print("Scroll down")
+                      } else {
+                         print("Scroll up")
+                      }
+                   }
+                )
                 .onChange(of: isPortrait) { _ in
                     recalcTracks()
                 }
@@ -242,6 +285,20 @@ struct LibraryView: View {
             .navigationTitle(extraParam == "" ? (library_names[prefill_id] ?? "Library") : title)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    if(firstItemIndex != 0) {
+                        Button {
+                            previousPage()
+                        } label: {
+                            Image(systemName: "chevron.left")
+                        }
+                    }
+                    if(lastItemIndex != totalItemCount) {
+                        Button {
+                            nextPage()
+                        } label: {
+                            Image(systemName: "chevron.right")
+                        }
+                    }
                     NavigationLink(destination: LibrarySearchView(url: url, close: $closeSearch), isActive: $closeSearch) {
                         Image(systemName: "magnifyingglass")
                     }

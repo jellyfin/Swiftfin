@@ -105,7 +105,7 @@ struct NextUpView: View {
                                     .frame(width: 100)
                                     Spacer().frame(width:12)
                                 }
-                                Spacer().frame(width: 13.6)
+                                Spacer().frame(width: 10)
                             }
                             Spacer().frame(width:18)
                         }

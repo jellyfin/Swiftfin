@@ -180,7 +180,6 @@ struct ContinueWatchingView: View {
                 EmptyView()
             }
         }.onAppear(perform: onAppear)
-        .frame(height: 215)
         .padding(.bottom, 10)
     }
 }

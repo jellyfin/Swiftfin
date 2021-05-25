@@ -489,6 +489,7 @@ struct VideoPlayerView: View {
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .onAppear(perform: startStream)
         .navigationBarHidden(true)
+        .overrideViewPreference(.dark)
         .navigationBarBackButtonHidden(true)
         .edgesIgnoringSafeArea(.all)
         .introspectTabBarController { (UITabBarController) in
