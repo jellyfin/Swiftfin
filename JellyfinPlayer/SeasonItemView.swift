@@ -419,7 +419,7 @@ struct SeasonItemView: View {
                                                     Text(fullItem.Studios.joined(separator: ", ")).font(.footnote).lineLimit(1).foregroundColor(Color.secondary)
                                                 }.padding(.leading, 16).padding(.trailing,16)
                                             }
-                                            Spacer().frame(height: 195);
+                                            Spacer().frame(height: 105);
                                         }.frame(maxHeight: .infinity)
                                     }.padding(.trailing, 55)
                                 }.padding(.top, 12).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
