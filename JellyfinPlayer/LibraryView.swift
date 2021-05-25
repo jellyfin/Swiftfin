@@ -285,18 +285,20 @@ struct LibraryView: View {
             .navigationTitle(extraParam == "" ? (library_names[prefill_id] ?? "Library") : title)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if(firstItemIndex != 0) {
-                        Button {
-                            previousPage()
-                        } label: {
-                            Image(systemName: "chevron.left")
+                    if(totalItemCount > itemsPerPage) {
+                        if(firstItemIndex != 0) {
+                            Button {
+                                previousPage()
+                            } label: {
+                                Image(systemName: "chevron.left")
+                            }
                         }
-                    }
-                    if(lastItemIndex != totalItemCount) {
-                        Button {
-                            nextPage()
-                        } label: {
-                            Image(systemName: "chevron.right")
+                        if(lastItemIndex != totalItemCount) {
+                            Button {
+                                nextPage()
+                            } label: {
+                                Image(systemName: "chevron.right")
+                            }
                         }
                     }
                     NavigationLink(destination: LibrarySearchView(url: url, close: $closeSearch), isActive: $closeSearch) {
