@@ -14,9 +14,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7.2'
+          ruby-version: 2.6 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - run: bundle exec rake
       - name: Carthage
         run: "carthage update"
       - uses: maierj/fastlane-action@v2.0.1
