@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct SettingsView: View {
     @Binding var close: Bool;
-    @EnvironmentObject private var globalData: GlobalData
+    @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var globalData: GlobalData
+    @EnvironmentObject var jsi: justSignedIn
     @State private var username: String = "";
     @State private var inNetworkStreamBitrate: Int = 40;
     
@@ -55,6 +58,37 @@ struct SettingsView: View {
                             Text("480p - 3 Mbps").tag(3)
                             Text("480p - 1.5 Mbps").tag(2)
                             Text("480p - 740 Kbps").tag(1)
+                    }
+                }
+                
+                Section() {
+                    Button {
+                        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
+                        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+                        do {
+                            try viewContext.execute(deleteRequest)
+                        } catch _ as NSError {
+                            // TODO: handle the error
+                        }
+                        
+                        let fetchRequest2: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "SignedInUser")
+                        let deleteRequest2 = NSBatchDeleteRequest(fetchRequest: fetchRequest2)
+
+                        do {
+                            try viewContext.execute(deleteRequest2)
+                        } catch _ as NSError {
+                            // TODO: handle the error
+                        }
+                        
+                        globalData.server = nil
+                        globalData.user = nil
+                        globalData.authToken = ""
+                        globalData.authHeader = ""
+                        jsi.did = true
+                        exit(-1)
+                    } label: {
+                        Text("Log out")
                     }
                 }
             }

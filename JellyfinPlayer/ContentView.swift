@@ -213,6 +213,7 @@ struct ContentView: View {
         if(_viewDidLoad.wrappedValue) {
             return
         }
+        
         _viewDidLoad.wrappedValue = true;
         SentrySDK.start { options in
             options.dsn = "https://75ac77d6af4d406eb989f3d8ef0f119f@o513670.ingest.sentry.io/5778242"
