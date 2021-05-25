@@ -93,9 +93,15 @@ struct DeviceProfileRoot: Codable {
 }
 
 class DeviceProfileBuilder {
+    public var bitrate: Int = 0;
+    
+    public func setMaxBitrate(bitrate: Int) {
+        self.bitrate = bitrate
+    }
+    
     public func buildProfile() -> DeviceProfileRoot {
-        let MaxStreamingBitrate = 120000000;
-        let MaxStaticBitrate = 100000000
+        let MaxStreamingBitrate = bitrate;
+        let MaxStaticBitrate = bitrate;
         let MusicStreamingTranscodingBitrate = 384000;
         
         //Build direct play profiles

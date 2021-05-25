@@ -19,10 +19,6 @@ struct LibraryView: View {
     @State private var selected_library_id: String = "";
     @State private var isLoading: Bool = true;
 
-    @State private var startIndex: Int = 0;
-    @State private var endIndex: Int = 60;
-    @State private var totalItems: Int = 0;
-
     @State private var viewDidLoad: Bool = false;
     @State private var filterString: String = "&SortBy=SortName&SortOrder=Descending";
     @State private var showFiltersPopover: Bool = false;
@@ -92,7 +88,6 @@ struct LibraryView: View {
                 let body = response.body
                 do {
                     let json = try JSON(data: body)
-                    _totalItems.wrappedValue = json["TotalRecordCount"].int ?? 0;
                     for (_,item):(String, JSON) in json["Items"] {
                         // Do something you want
                         let itemObj = ResumeItem()
@@ -229,21 +224,6 @@ struct LibraryView: View {
                                 }.frame(width: 100)
                             }
                         }
-                        if(startIndex + endIndex < totalItems) {
-                            HStack() {
-                                Spacer()
-                                Button() {
-                                    startIndex += endIndex;
-                                    loadItems()
-                                } label: {
-                                    HStack() {
-                                        Text("Load more").font(.callout)
-                                        Image(systemName: "arrow.clockwise")
-                                    }
-                                }
-                                Spacer()
-                            }
-                        }
                         Spacer().frame(height: 2)
                     }
                 }
@@ -255,8 +235,6 @@ struct LibraryView: View {
             .onAppear(perform: onAppear)
             .onChange(of: filterString) { tag in
                 isLoading = true;
-                startIndex = 0;
-                totalItems = 0;
                 items = [];
                 loadItems();
             }

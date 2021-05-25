@@ -313,6 +313,13 @@ struct ContentView: View {
                                 SentrySDK.capture(error: error)
                                 break
                             }
+                            let defaults = UserDefaults.standard;
+                            if(defaults.integer(forKey: "InNetworkBandwidth") == 0) {
+                                defaults.setValue(40000000, forKey: "inNetworkBandwidth")
+                            }
+                            if(defaults.integer(forKey: "OutOfNetworkBandwidth") == 0) {
+                                defaults.setValue(40000000, forKey: "OutOfNetworkBandwidth")
+                            }
                             _isLoading.wrappedValue = false;
                         }
                     } catch {

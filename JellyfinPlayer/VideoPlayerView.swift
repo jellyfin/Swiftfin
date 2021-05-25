@@ -18,6 +18,7 @@ struct Subtitle {
     var id: Int32;
     var url: URL;
     var delivery: String;
+    var codec: String;
 }
 
 extension String {
@@ -57,6 +58,7 @@ struct VideoPlayerView: View {
     @State private var iterations: Int = 0;
     @State private var startTime: Int = 0;
     @State private var hasSentPlayReport: Bool = false;
+    @State private var selectedVideoQuality: Int = 0;
     @State private var captionConfiguration: Bool = false {
         didSet {
             if(captionConfiguration == false) {
@@ -72,6 +74,9 @@ struct VideoPlayerView: View {
             }
         }
     };
+    
+    @State private var playbackSettings: Bool = false;
+    
     @State private var selectedCaptionTrack: Int32 = -1;
     @State private var selectedAudioTrack: Int32 = -1;
     var playing: Binding<Bool>;
@@ -224,6 +229,15 @@ struct VideoPlayerView: View {
     func startStream() {
         
         let builder = DeviceProfileBuilder()
+        
+        let defaults = UserDefaults.standard;
+        if(globalData.isInNetwork) {
+            builder.setMaxBitrate(bitrate: defaults.integer(forKey: "InNetworkBandwidth"))
+        } else {
+            builder.setMaxBitrate(bitrate: defaults.integer(forKey: "OutOfNetworkBandwidth"))
+        }
+        _selectedVideoQuality.wrappedValue = builder.bitrate;
+        
         let DeviceProfile = builder.buildProfile()
         
         let jsonEncoder = JSONEncoder()
@@ -254,18 +268,18 @@ struct VideoPlayerView: View {
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? ""))")!
                         print(streamURL)
                         let item = PlaybackItem(videoType: VideoType.hls, videoUrl: streamURL, subtitles: [])
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed", codec: "")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
                             if(stream["Type"].string == "Subtitle" && stream["Codec"] != "subrip") { //ignore ripped subtitles - we don't want to extract subtitles
                                 let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
-                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "")
+                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "", codec: stream["Codec"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
                             }
                             
                             if(stream["Type"].string == "Audio") {
                                 let deliveryUrl = URL(string: "https://example.com")!
-                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["IsExternal"].boolValue ? "External" : "Embed")
+                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["IsExternal"].boolValue ? "External" : "Embed", codec: stream["Codec"].string ?? "")
                                 if(stream["IsDefault"].boolValue) {
                                     _selectedAudioTrack.wrappedValue = Int32(stream["Index"].int ?? 0);
                                 }
@@ -281,7 +295,6 @@ struct VideoPlayerView: View {
                         
                         let streamUrl = streamURL.absoluteString;
                         let segmentUrl = URL(string: streamUrl.replacingOccurrences(of: "master.m3u8", with: "hls1/main/0.ts"))!
-                        print(segmentUrl)
                         var request2 = URLRequest(url: segmentUrl)
                         
                         request2.httpMethod = "GET"
@@ -298,18 +311,18 @@ struct VideoPlayerView: View {
                         print("Direct playing!");
                         let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")/Videos/\(item.Id)/stream?Static=true&mediaSourceId=\(item.Id)&deviceId=\(globalData.user?.device_uuid ?? "")&api_key=\(globalData.authToken)&Tag=\(json["MediaSources"][0]["ETag"])")!;
                         let item = PlaybackItem(videoType: VideoType.direct, videoUrl: streamURL, subtitles: [])
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed")
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed", codec: "")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
-                            if(stream["Type"].string == "Subtitle") {
+                            if(stream["Type"].string == "Subtitle" && stream["Codec"] != "subrip") {
                                 let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
-                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "")
+                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "", codec: stream["Codec"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
                             }
                             
                             if(stream["Type"].string == "Audio") {
                                 let deliveryUrl = URL(string: "https://example.com")!
-                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["IsExternal"].boolValue ? "External" : "Embed")
+                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["IsExternal"].boolValue ? "External" : "Embed", codec: stream["Codec"].string ?? "")
                                 if(stream["IsDefault"].boolValue) {
                                     _selectedAudioTrack.wrappedValue = Int32(stream["Index"].int ?? 0);
                                 }
@@ -391,6 +404,14 @@ struct VideoPlayerView: View {
                         Spacer()
                         Text(item.Name).font(.headline).fontWeight(.semibold).foregroundColor(.white).offset(x:-4)
                         Spacer()
+                        Button() {
+                            vlcplayer.pause()
+                            self.playbackSettings = true;
+                        } label: {
+                            HStack() {
+                                Image(systemName: "gear").font(.system(size: 20)).foregroundColor(.white)
+                            }
+                        }.frame(width: 20).padding(.trailing,15)
                         Button() {
                             vlcplayer.pause()
                             self.captionConfiguration = true;
@@ -506,6 +527,45 @@ struct VideoPlayerView: View {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         Button {
                             captionConfiguration = false;
+                            playPauseButtonSystemName = "pause";
+                        } label: {
+                            HStack() {
+                                Text("Back").font(.callout)
+                            }
+                        }
+                    }
+                }
+            }.edgesIgnoringSafeArea(.bottom)
+        }
+        EmptyView()
+        .fullScreenCover(isPresented: $playbackSettings) {
+            NavigationView() {
+                Form() {
+                    Picker("Quality", selection: $selectedVideoQuality) {
+                        Group {
+                            Text("1080p - 60 Mbps").tag(60000000)
+                            Text("1080p - 40 Mbps").tag(40000000)
+                            Text("1080p - 20 Mbps").tag(20000000)
+                            Text("1080p - 15 Mbps").tag(15000000)
+                            Text("1080p - 10 Mbps").tag(10000000)
+                        }
+                        Group {
+                            Text("720p - 8 Mbps").tag(8000000)
+                            Text("720p - 6 Mbps").tag(6000000)
+                            Text("720p - 4 Mbps").tag(4000000)
+                        }
+                            Text("480p - 3 Mbps").tag(3000000)
+                            Text("480p - 1.5 Mbps").tag(2000000)
+                            Text("480p - 740 Kbps").tag(1000000)
+                    }.onChange(of: selectedVideoQuality) { quality in
+                        print(quality)
+                    }
+                }
+                .navigationBarTitle("Playback Settings", displayMode: .inline)
+                .toolbar {
+                    ToolbarItemGroup(placement: .navigationBarLeading) {
+                        Button {
+                            playbackSettings = false;
                             playPauseButtonSystemName = "pause";
                         } label: {
                             HStack() {
