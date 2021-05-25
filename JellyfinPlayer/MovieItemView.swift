@@ -535,7 +535,7 @@ struct MovieItemView: View {
                                                             }
                                                         }
                                                     }
-                                                }
+                                                }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 if(fullItem.Tagline != "") {
                                                     Text(fullItem.Tagline).font(.body).italic().padding(.top, 3).fixedSize(horizontal: false, vertical: true).padding(.leading, 16).padding(.trailing,UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 }
