@@ -168,6 +168,7 @@ struct LibraryView: View {
         if(prefill_id != "") {
             LoadingView(isShowing: $isLoading) {
                 ScrollView(.vertical) {
+                    Spacer().frame(height: 16)
                     LazyVGrid(columns: tracks) {
                         ForEach(items, id: \.Id) { item in
                             NavigationLink(destination: ItemView(item: item )) {
@@ -224,8 +225,8 @@ struct LibraryView: View {
                                 }.frame(width: 100)
                             }
                         }
-                        Spacer().frame(height: 2)
                     }
+                    Spacer().frame(height: 16)
                 }
                 .onChange(of: isPortrait) { _ in
                     recalcTracks()

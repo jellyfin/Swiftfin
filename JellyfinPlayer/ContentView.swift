@@ -315,7 +315,7 @@ struct ContentView: View {
                             }
                             let defaults = UserDefaults.standard;
                             if(defaults.integer(forKey: "InNetworkBandwidth") == 0) {
-                                defaults.setValue(40000000, forKey: "inNetworkBandwidth")
+                                defaults.setValue(40000000, forKey: "InNetworkBandwidth")
                             }
                             if(defaults.integer(forKey: "OutOfNetworkBandwidth") == 0) {
                                 defaults.setValue(40000000, forKey: "OutOfNetworkBandwidth")

@@ -236,6 +236,7 @@ struct VideoPlayerView: View {
         } else {
             builder.setMaxBitrate(bitrate: defaults.integer(forKey: "OutOfNetworkBandwidth"))
         }
+        print(builder.bitrate)
         _selectedVideoQuality.wrappedValue = builder.bitrate;
         
         let DeviceProfile = builder.buildProfile()
