@@ -109,7 +109,7 @@ struct ContinueWatchingView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             if(_resumeItems.wrappedValue.count > 0) {
                 LazyHStack() {
-                    Spacer().frame(width:16)
+                    Spacer().frame(width:12)
                     ForEach(resumeItems, id: \.Id) { item in
                         NavigationLink(destination: ItemView(item: item)) {
                             VStack(alignment: .leading) {
@@ -174,7 +174,7 @@ struct ContinueWatchingView: View {
                             }.padding(.trailing, 5)
                         }
                     }
-                    Spacer().frame(width:14)
+                    Spacer().frame(width:12)
                 }.frame(height: 215)
             } else {
                 EmptyView()

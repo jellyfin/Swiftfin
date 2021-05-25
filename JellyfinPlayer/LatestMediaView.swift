@@ -85,7 +85,7 @@ struct LatestMediaView: View {
     var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack() {
-                    Spacer().frame(width:18)
+                    Spacer().frame(width:14)
                     ForEach(resumeItems, id: \.Id) { item in
                         NavigationLink(destination: ItemView(item: item)) {
                             VStack(alignment: .leading) {
@@ -144,7 +144,7 @@ struct LatestMediaView: View {
                         }
                         Spacer().frame(width: 14)
                     }
-                    Spacer().frame(width:18)
+                    Spacer().frame(width:14)
                 }.frame(height: 190)
             }.onAppear(perform: onAppear).padding(EdgeInsets(top: -2, leading: 0, bottom: 0, trailing: 0)).frame(height: 190)
     }

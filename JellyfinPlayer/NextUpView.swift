@@ -74,7 +74,7 @@ struct NextUpView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack() {
                         if(isLoading == false) {
-                            Spacer().frame(width:18)
+                            Spacer().frame(width:14)
                             ForEach(resumeItems, id: \.Id) { item in
                                 NavigationLink(destination: ItemView(item: item)) {
                                     VStack(alignment: .leading) {
@@ -107,7 +107,7 @@ struct NextUpView: View {
                                 }
                                 Spacer().frame(width: 10)
                             }
-                            Spacer().frame(width:18)
+                            Spacer().frame(width:14)
                         }
                     }.frame(height: 200)
                 }.padding(EdgeInsets(top: -2, leading: 0, bottom: 0, trailing: 0)).frame(height: 200)
