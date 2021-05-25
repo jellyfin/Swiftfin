@@ -224,6 +224,7 @@ struct MovieItemView: View {
                             _progressString.wrappedValue = "\(String(progminutes).leftPad(toWidth: 2, withString: "0"))m"
                         }
                     }
+                    _isLoading.wrappedValue = false;
                 } catch {
                     
                 }
@@ -232,7 +233,6 @@ struct MovieItemView: View {
                 debugPrint(error)
                 break
             }
-            _isLoading.wrappedValue = false;
         }
     }
     
@@ -243,6 +243,9 @@ struct MovieItemView: View {
                 .preferredColorScheme(.dark)
                 .overrideViewPreference(.dark)
                 .prefersHomeIndicatorAutoHidden(true)
+                .introspectTabBarController { (UITabBarController) in
+                    UITabBarController.tabBar.isHidden = true
+                }
         } else {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment:.leading) {
@@ -382,14 +385,14 @@ struct MovieItemView: View {
                                                                             WebImage(url: cast.Image)
                                                                                 .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                                                 .placeholder {
-                                                                                    Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 4, height: 4))!)
+                                                                                    Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 16, height: 16))!)
                                                                                         .resizable()
                                                                                         .aspectRatio(contentMode: .fill)
-                                                                                        .frame(width: 70, height: 70)
+                                                                                        .frame(width: 100, height: 100)
                                                                                         .cornerRadius(10)
                                                                                 }
                                                                                 .aspectRatio(contentMode: .fill)
-                                                                                .frame(width: 70, height: 70)
+                                                                                .frame(width: 100, height: 100)
                                                                                 .cornerRadius(10).shadow(radius: 6)
                                                                             Text(cast.Name).font(.footnote).fontWeight(.regular).lineLimit(1).frame(width: 100).foregroundColor(Color.primary)
                                                                             if(cast.Role != "") {
@@ -564,7 +567,7 @@ struct MovieItemView: View {
                                                                             WebImage(url: cast.Image)
                                                                                 .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                                                 .placeholder {
-                                                                                    Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 8, height: 8))!)
+                                                                                    Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 16, height: 16))!)
                                                                                         .resizable()
                                                                                         .aspectRatio(contentMode: .fill)
                                                                                         .frame(width: 100, height: 100)
@@ -621,6 +624,7 @@ struct MovieItemView: View {
             }.onAppear(perform: loadData)
             .supportedOrientations(.allButUpsideDown)
             .overrideViewPreference(.unspecified)
+            .preferredColorScheme(.none)
             .prefersHomeIndicatorAutoHidden(false)
         }
     }

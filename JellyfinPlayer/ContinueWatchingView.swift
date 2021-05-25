@@ -118,7 +118,7 @@ struct ContinueWatchingView: View {
                                     WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
                                         .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                         .placeholder {
-                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 48, height: 32))!)
                                                 .resizable()
                                                 .frame(width: 320, height: 180)
                                                 .cornerRadius(10)
@@ -148,7 +148,7 @@ struct ContinueWatchingView: View {
                                     WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
                                         .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                         .placeholder {
-                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 6, height: 6))!)
+                                            Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 48, height: 32))!)
                                                 .resizable()
                                                 .frame(width: 320, height: 180)
                                                 .cornerRadius(10)

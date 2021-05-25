@@ -208,7 +208,7 @@ struct LibraryView: View {
                             NavigationLink(destination: ItemView(item: item )) {
                                 VStack(alignment: .leading) {
                                     if(item.Type == "Movie") {
-                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=80&tag=\(item.Image)"))
+                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
                                             .resizable()
                                             .placeholder {
                                                 Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
@@ -218,8 +218,9 @@ struct LibraryView: View {
                                             }
                                             .frame(width:100, height: 150)
                                             .cornerRadius(10)
+                                            .shadow(radius: 5)
                                     } else {
-                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=80&tag=\(item.Image)"))
+                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
                                             .resizable()
                                             .placeholder {
                                                 Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
@@ -245,7 +246,7 @@ struct LibraryView: View {
                                                 .opacity(0.8)
                                                 .cornerRadius(10.0)
                                                 .padding(3), alignment: .topTrailing
-                                            )
+                                            ).shadow(radius: 5)
                                     }
                                     Text(item.Name)
                                         .font(.caption)

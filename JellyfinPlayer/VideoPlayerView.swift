@@ -44,7 +44,7 @@ struct VideoPlayerView: View {
     var item: DetailItem;
     @State private var pbitem: PlaybackItem = PlaybackItem(videoType: VideoType.direct, videoUrl: URL(string: "https://example.com")!, subtitles: []);
     @State private var streamLoading = false;
-    @State private var vlcplayer: VLCMediaPlayer = VLCMediaPlayer(options: ["--sub-margin=-50"]);
+    @State private var vlcplayer: VLCMediaPlayer = VLCMediaPlayer();
     @State private var isPlaying = false;
     @State private var subtitles: [Subtitle] = [];
     @State private var audioTracks: [Subtitle] = [];
@@ -272,7 +272,7 @@ struct VideoPlayerView: View {
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed", codec: "")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
-                            if(stream["Type"].string == "Subtitle" && stream["Codec"] != "subrip") { //ignore ripped subtitles - we don't want to extract subtitles
+                            if(stream["Type"].string == "Subtitle") { //ignore ripped subtitles - we don't want to extract subtitles
                                 let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
                                 let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "", codec: stream["Codec"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
@@ -315,7 +315,7 @@ struct VideoPlayerView: View {
                         let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed", codec: "")
                         _subtitles.wrappedValue.append(disableSubtitleTrack);
                         for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
-                            if(stream["Type"].string == "Subtitle" && stream["Codec"] != "subrip") {
+                            if(stream["Type"].string == "Subtitle") {
                                 let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
                                 let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "", codec: stream["Codec"].string ?? "")
                                 _subtitles.wrappedValue.append(subtitle);
@@ -490,10 +490,14 @@ struct VideoPlayerView: View {
         .onAppear(perform: startStream)
         .navigationBarHidden(true)
         .overrideViewPreference(.dark)
+        .preferredColorScheme(.dark)
         .navigationBarBackButtonHidden(true)
         .edgesIgnoringSafeArea(.all)
-        .introspectTabBarController { (UITabBarController) in
-            UITabBarController.tabBar.isHidden = true
+        .withHostingWindow { window in
+            if let vc = window?.rootViewController {
+                let preferenceHost = vc as! PreferenceUIHostingController
+                preferenceHost._viewPreference = .dark
+            }
         }
         .statusBar(hidden: true)
         .onTapGesture(perform: resetTimer)

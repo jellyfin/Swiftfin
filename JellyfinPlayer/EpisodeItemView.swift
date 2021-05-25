@@ -196,6 +196,9 @@ struct EpisodeItemView: View {
                 .supportedOrientations(.landscape)
                 .overrideViewPreference(.dark)
                 .prefersHomeIndicatorAutoHidden(true)
+                .introspectTabBarController { (UITabBarController) in
+                    UITabBarController.tabBar.isHidden = true
+                }
         } else {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment:.leading) {
@@ -570,11 +573,12 @@ struct EpisodeItemView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("\(fullItem.Name) - S\(String(fullItem.ParentIndexNumber ?? 0)):E\(String(fullItem.IndexNumber ?? 0)) - \(fullItem.SeriesName ?? "")")
                 .introspectTabBarController { (UITabBarController) in
-                    UITabBarController.tabBar.isHidden = true
+                    UITabBarController.tabBar.isHidden = false
                 }
             }.onAppear(perform: loadData)
             .supportedOrientations(.allButUpsideDown)
             .overrideViewPreference(.unspecified)
+            .preferredColorScheme(.none)
             .prefersHomeIndicatorAutoHidden(false)
         }
     }
