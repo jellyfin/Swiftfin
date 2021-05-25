@@ -18,7 +18,6 @@ jobs:
         with:
           ruby-version: 2.6 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - run: bundle exec rake
       - name: Carthage
         run: "carthage update"
       - uses: maierj/fastlane-action@v2.0.1
