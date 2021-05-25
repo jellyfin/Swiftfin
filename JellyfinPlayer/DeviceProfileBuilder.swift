@@ -105,20 +105,20 @@ class DeviceProfileBuilder {
             //Device supports Dolby Digital (AC3, EAC3)
             if(supportsFeature(minimumSupported: .A8X)) {
                 if(supportsFeature(minimumSupported: .A10)) {
-                    DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac", VideoCodec: "hevc,h264,hev1")] //HEVC/H.264 with Dolby Digital
+                    DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", VideoCodec: "hevc,h264,hev1")] //HEVC/H.264 with Dolby Digital
                 } else {
-                    DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "ac3,eac3,aac,mp3,wav", VideoCodec: "h264")] //H.264 with Dolby Digital
+                    DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "ac3,eac3,aac,mp3,wav,opus", VideoCodec: "h264")] //H.264 with Dolby Digital
                 }
             }
             
             //Device supports Dolby Vision?
             if(supportsFeature(minimumSupported: .A10X)) {
-                DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac", VideoCodec: "dvhe,dvh1,dva1,dvav,h264,hevc,hev1")] //H.264/HEVC with Dolby Digital - No Atmos - Vision
+                DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", VideoCodec: "dvhe,dvh1,dva1,dvav,h264,hevc,hev1")] //H.264/HEVC with Dolby Digital - No Atmos - Vision
             }
             
             //Device supports Dolby Atmos?
             if(supportsFeature(minimumSupported: .A12)) {
-                DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca", VideoCodec: "h264,hevc,dvhe,dvh1,dva1,dvav,h264,hevc,hev1")] //H.264/HEVC with Dolby Digital & Atmos - Vision
+                DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", VideoCodec: "h264,hevc,dvhe,dvh1,dva1,dvav,h264,hevc,hev1")] //H.264/HEVC with Dolby Digital & Atmos - Vision
             }
         
         //Build transcoding profiles
@@ -128,20 +128,20 @@ class DeviceProfileBuilder {
             //Device supports Dolby Digital (AC3, EAC3)
             if(supportsFeature(minimumSupported: .A8X)) {
                 if(supportsFeature(minimumSupported: .A10)) {
-                    TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,eac3,ac3,flac", VideoCodec: "h264,hevc,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                    TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,eac3,ac3,flac,opus", VideoCodec: "h264,hevc,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
                 } else {
-                    TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "ac3,eac3,wav,eac3,ac3,flac", VideoCodec: "h264", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                    TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "ac3,eac3,wav,eac3,ac3,flac,opus", VideoCodec: "h264", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
                 }
             }
             
             //Device supports Dolby Vision?
             if(supportsFeature(minimumSupported: .A10X)) {
-                TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac", VideoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", VideoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
             }
             
             //Device supports Dolby Atmos?
             if(supportsFeature(minimumSupported: .A12)) {
-                TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,dts,truehd,dca", VideoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "9", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,dts,truehd,dca,opus", VideoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "9", MinSegments: "2", BreakOnNonKeyFrames: true)]
             }
         
         var CodecProfiles: [_AVCodecProfile] = []
