@@ -11,7 +11,6 @@ import SwiftyRequest
 import SwiftyJSON
 import Introspect
 import Sentry
-import Dynatrace
 import SDWebImageSwiftUI
 
 class GlobalData: ObservableObject {
@@ -213,14 +212,6 @@ struct ContentView: View {
             options.tracesSampleRate = 1.0
             options.releaseName = "ios-" + (Bundle.main.infoDictionary?["CFBundleVersion"] as! String);
             options.enableOutOfMemoryTracking = true
-        }
-        
-        let privacyConfig = Dynatrace.userPrivacyOptions()
-        privacyConfig.dataCollectionLevel = .userBehavior
-        privacyConfig.crashReportingOptedIn = true
-        privacyConfig.crashReplayOptedIn = true
-        Dynatrace.applyUserPrivacyOptions(privacyConfig) { (Bool) in
-            print("Dynatrace privacy changed!")
         }
         
         let cache = SDImageCache(namespace: "tiny")

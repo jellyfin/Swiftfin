@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5302F82A2658791C00647A2E /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 5302F8292658791C00647A2E /* Sentry */; };
-		5302F82C2658B5FE00647A2E /* Dynatrace.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5302F82B2658B5FE00647A2E /* Dynatrace.framework */; };
-		5302F82F2658B60900647A2E /* DynatraceSessionReplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5302F82E2658B60900647A2E /* DynatraceSessionReplay.framework */; };
 		53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
 		5338F751263B62E80014BF09 /* HidingViews in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F750263B62E80014BF09 /* HidingViews */; };
@@ -73,8 +71,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5302F82B2658B5FE00647A2E /* Dynatrace.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Dynatrace.framework; path = Carthage/Build/iOS/Dynatrace.framework; sourceTree = "<group>"; };
-		5302F82E2658B60900647A2E /* DynatraceSessionReplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DynatraceSessionReplay.framework; path = Carthage/Build/iOS/DynatraceSessionReplay.framework; sourceTree = "<group>"; };
 		53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileBuilder.swift; sourceTree = "<group>"; };
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		535BAE9E2649E569005FA86D /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
@@ -116,12 +112,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				538CD954263E3DC100BB5AF0 /* SDWebImageSwiftUI in Frameworks */,
-				5302F82C2658B5FE00647A2E /* Dynatrace.framework in Frameworks */,
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
 				53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */,
 				5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */,
 				5302F82A2658791C00647A2E /* Sentry in Frameworks */,
-				5302F82F2658B60900647A2E /* DynatraceSessionReplay.framework in Frameworks */,
 				53D2F74A264C69F6005792BB /* Introspect in Frameworks */,
 				5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */,
 				5338F751263B62E80014BF09 /* HidingViews in Frameworks */,
@@ -197,8 +191,6 @@
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5302F82E2658B60900647A2E /* DynatraceSessionReplay.framework */,
-				5302F82B2658B5FE00647A2E /* Dynatrace.framework */,
 				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
 			);
 			name = Frameworks;
@@ -248,7 +240,6 @@
 				5377CBEF263B596A003A4E83 /* Resources */,
 				53D5E3DF264B47EE00BADDC8 /* Embed Frameworks */,
 				5302F8322658B74800647A2E /* CopyFiles */,
-				5302F8332658B74B00647A2E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -324,28 +315,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5302F8332658B74B00647A2E /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"input-ios.xcfilelist",
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-				"output-ios.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5377CBED263B596A003A4E83 /* Sources */ = {
