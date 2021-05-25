@@ -403,7 +403,7 @@ struct VideoPlayerView: View {
                             }
                         }.frame(width: 20)
                         Spacer()
-                        Text(item.Name).font(.headline).fontWeight(.semibold).foregroundColor(.white).offset(x:-4)
+                        Text(item.Name).font(.headline).fontWeight(.semibold).foregroundColor(.white).offset(x:20)
                         Spacer()
                         Button() {
                             vlcplayer.pause()
@@ -445,7 +445,7 @@ struct VideoPlayerView: View {
                         }
                     } label: {
                         Image(systemName: playPauseButtonSystemName).font(.system(size: 55)).foregroundColor(.white)
-                    }.padding(20)
+                    }.padding(20).frame(width: 60, height: 60)
                     Spacer()
                     Button() {
                         vlcplayer.jumpForward(15)

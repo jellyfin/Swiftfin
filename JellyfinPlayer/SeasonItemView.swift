@@ -419,17 +419,17 @@ struct SeasonItemView: View {
                                                     Text(fullItem.Studios.joined(separator: ", ")).font(.footnote).lineLimit(1).foregroundColor(Color.secondary)
                                                 }.padding(.leading, 16).padding(.trailing,16)
                                             }
-                                            Spacer().frame(height: 105);
+                                            Spacer().frame(height: 125);
                                         }.frame(maxHeight: .infinity)
-                                    }.padding(.trailing, 55)
-                                }.padding(.top, 12).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
+                                    }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55).padding(.top, -16)
+                                }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
                             }
                         }
                     }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(item.Name)
+            .navigationTitle("\(item.Name) - \(item.SeriesName ?? "")")
         }.onAppear(perform: loadData)
     }
 }

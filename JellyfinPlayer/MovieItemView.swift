@@ -607,7 +607,7 @@ struct MovieItemView: View {
                                                 Spacer().frame(height: 195);
                                             }.frame(maxHeight: .infinity)
                                         }
-                                    }.padding(.top, 12).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55).edgesIgnoringSafeArea(.leading)
+                                    }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55).edgesIgnoringSafeArea(.leading)
                                 }
                             }
                         }

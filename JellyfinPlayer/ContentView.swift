@@ -224,7 +224,7 @@ struct ContentView: View {
         }
         
         let cache = SDImageCache(namespace: "tiny")
-        cache.config.maxMemoryCost = 50 * 1024 * 1024 // 50MB memory
+        cache.config.maxMemoryCost = 125 * 1024 * 1024 // 125MB memory
         cache.config.maxDiskSize = 1000 * 1024 * 1024 // 1000MB disk
         SDImageCachesManager.shared.addCache(cache)
         SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
