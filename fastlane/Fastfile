@@ -27,7 +27,7 @@ platform :ios do
     identifier_v = get_version_number(xcodeproj: "JellyfinPlayer.xcodeproj")
     identifier_s = get_info_plist_value(path: "JellyfinPlayer/Info.plist", key: "CFBundleVersion")
     upload_symbols_to_sentry(
-      org_slug: 'aidenvigue',
+      org_slug: 'jf-sui',
       project_slug: 'jellyfin-swift-ios',
       dsym_path: "JellyfinPlayer.app.dSYM.zip"
     )
