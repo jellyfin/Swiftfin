@@ -8,14 +8,9 @@
 import SwiftUI
 import CoreData
 
-struct UserSettings: Codable {
-    var LocalMaxBitrate: Int;
-    var RemoteMaxBitrate: Int;
-    var AutoSelectSubtitles: Bool;
-    var AutoSelectSubtitlesLangcode: String;
-}
-
 struct SettingsView: View {
+    @ObservedObject var viewModel: SettingsViewModel
+
     @Binding var close: Bool;
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var globalData: GlobalData
@@ -36,42 +31,18 @@ struct SettingsView: View {
             Form() {
                 Section(header: Text("Playback settings")) {
                     Picker("Default local playback bitrate", selection: $inNetworkStreamBitrate) {
-                        Group {
-                            Text("1080p - 60 Mbps").tag(60000000)
-                            Text("1080p - 40 Mbps").tag(40000000)
-                            Text("1080p - 20 Mbps").tag(20000000)
-                            Text("1080p - 15 Mbps").tag(15000000)
-                            Text("1080p - 10 Mbps").tag(10000000)
+                        ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
+                            Text(bitrate.name).tag(bitrate.value)
                         }
-                        Group {
-                            Text("720p - 8 Mbps").tag(8000000)
-                            Text("720p - 6 Mbps").tag(6000000)
-                            Text("720p - 4 Mbps").tag(4000000)
-                        }
-                            Text("480p - 3 Mbps").tag(3000000)
-                            Text("480p - 1.5 Mbps").tag(2000000)
-                            Text("480p - 740 Kbps").tag(1000000)
                     }.onChange(of: inNetworkStreamBitrate) { _ in
                         let defaults = UserDefaults.standard
                         defaults.setValue(_inNetworkStreamBitrate.wrappedValue, forKey: "InNetworkBandwidth")
                     }
                     
                     Picker("Default remote playback bitrate", selection: $outOfNetworkStreamBitrate) {
-                        Group {
-                            Text("1080p - 60 Mbps").tag(60000000)
-                            Text("1080p - 40 Mbps").tag(40000000)
-                            Text("1080p - 20 Mbps").tag(20000000)
-                            Text("1080p - 15 Mbps").tag(15000000)
-                            Text("1080p - 10 Mbps").tag(10000000)
+                        ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
+                            Text(bitrate.name).tag(bitrate.value)
                         }
-                        Group {
-                            Text("720p - 8 Mbps").tag(8000000)
-                            Text("720p - 6 Mbps").tag(6000000)
-                            Text("720p - 4 Mbps").tag(4000000)
-                        }
-                            Text("480p - 3 Mbps").tag(3000000)
-                            Text("480p - 1.5 Mbps").tag(2000000)
-                            Text("480p - 740 Kbps").tag(1000000)
                     }.onChange(of: outOfNetworkStreamBitrate) { _ in
                         let defaults = UserDefaults.standard
                         defaults.setValue(_outOfNetworkStreamBitrate.wrappedValue, forKey: "OutOfNetworkBandwidth")
@@ -103,6 +74,7 @@ struct SettingsView: View {
                         globalData.authToken = ""
                         globalData.authHeader = ""
                         jsi.did = true
+                        // TODO: This should redirect to the server selection screen
                         exit(-1)
                     } label: {
                         Text("Log out")

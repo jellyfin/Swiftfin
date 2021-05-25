@@ -1,0 +1,46 @@
+[
+    {
+        "name": "1080p - 60 Mbps",
+        "value": 60000000
+    },
+    {
+        "name": "1080p - 40 Mbps",
+        "value": 40000000
+    },
+    {
+        "name": "1080p - 20 Mbps",
+        "value": 20000000
+    },
+    {
+        "name": "1080p - 15 Mbps",
+        "value": 15000000
+    },
+    {
+        "name": "1080p - 10 Mbps",
+        "value": 10000000
+    },
+    {
+        "name": "720p - 8 Mbps",
+        "value": 8000000
+    },
+    {
+        "name": "720p - 6 Mbps",
+        "value": 6000000
+    },
+    {
+        "name": "720p - 4 Mbps",
+        "value": 4000000
+    },
+    {
+        "name": "480p - 3 Mbps",
+        "value": 3000000
+    },
+    {
+        "name": "480p - 1.5 Mbps",
+        "value": 2000000
+    },
+    {
+        "name": "480p - 740 Kbps",
+        "value": 1000000
+    }
+]

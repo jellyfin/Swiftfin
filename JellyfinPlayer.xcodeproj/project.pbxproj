@@ -44,6 +44,9 @@
 		53E4E649263F725B00F67C6B /* MultiSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelector.swift */; };
 		53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE24E5265060780068F029 /* LibrarySearchView.swift */; };
 		53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F29263CF3F500585C35 /* LatestMediaView.swift */; };
+		AE8C3154265D60BF008AA076 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8C3153265D60BF008AA076 /* SettingsModel.swift */; };
+		AE8C3156265D616A008AA076 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8C3155265D616A008AA076 /* SettingsViewModel.swift */; };
+		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -102,6 +105,9 @@
 		53E4E648263F725B00F67C6B /* MultiSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelector.swift; sourceTree = "<group>"; };
 		53EE24E5265060780068F029 /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
 		53FF7F29263CF3F500585C35 /* LatestMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaView.swift; sourceTree = "<group>"; };
+		AE8C3153265D60BF008AA076 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
+		AE8C3155265D616A008AA076 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +152,10 @@
 		5377CBF3263B596A003A4E83 /* JellyfinPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				AE8C3157265D6F5E008AA076 /* Resources */,
+				AE8C3152265D607B008AA076 /* ViewModels */,
+				AE8C3151265D6075008AA076 /* Models */,
+				AE8C3150265D5FE1008AA076 /* Views */,
 				5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */,
 				5377CBF6263B596A003A4E83 /* ContentView.swift */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
@@ -154,7 +164,6 @@
 				5377CBFF263B596B003A4E83 /* Model.xcdatamodeld */,
 				5377CBFA263B596B003A4E83 /* Preview Content */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
-				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
 				5389276D263C25100035E14B /* ContinueWatchingView.swift */,
 				5389276F263C25230035E14B /* NextUpView.swift */,
 				53892771263C8C6F0035E14B /* LoadingView.swift */,
@@ -193,6 +202,38 @@
 				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AE8C3150265D5FE1008AA076 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AE8C3151265D6075008AA076 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AE8C3153265D60BF008AA076 /* SettingsModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AE8C3152265D607B008AA076 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AE8C3155265D616A008AA076 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AE8C3157265D6F5E008AA076 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				AE8C3158265D6F90008AA076 /* bitrates.json */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,6 +318,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5377CBFC263B596B003A4E83 /* Preview Assets.xcassets in Resources */,
+				AE8C3159265D6F90008AA076 /* bitrates.json in Resources */,
 				5377CBF9263B596B003A4E83 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -316,6 +358,7 @@
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				53987CA426572C1300E7EA70 /* SeasonItemView.swift in Sources */,
 				53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */,
+				AE8C3154265D60BF008AA076 /* SettingsModel.swift in Sources */,
 				53892770263C25230035E14B /* NextUpView.swift in Sources */,
 				535BAEA5264A151C005FA86D /* VLCPlayer.swift in Sources */,
 				5377CC01263B596B003A4E83 /* Model.xcdatamodeld in Sources */,
@@ -330,6 +373,7 @@
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
 				53987CA626572F0700E7EA70 /* SeriesItemView.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
+				AE8C3156265D616A008AA076 /* SettingsViewModel.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,
@@ -377,6 +421,8 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
+				"EXCLUDED_ARCHS[sdk=*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -438,6 +484,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -467,6 +514,7 @@
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
+				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -497,6 +545,7 @@
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
+				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
