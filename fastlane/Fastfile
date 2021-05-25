@@ -28,7 +28,7 @@ platform :ios do
       dsym_path: "JellyfinPlayer.app.dSYM.zip"
     )
     set_github_release(
-      repository_name: "acvigue/JellyfinPlayer",
+      repository_name: "jellyfin/JellyfinPlayer",
       name: "Release #{identifier_v}@#{identifier_s}",
       tag_name: "v#{identifier_s}",
       description: (File.read("Release Notes.rtf") rescue "No changelog provided"),
