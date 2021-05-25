@@ -18,7 +18,7 @@ struct LibraryView: View {
     @State private var library_ids: [String] = []
     @State private var selected_library_id: String = "";
     @State private var isLoading: Bool = true;
-    
+
     @State private var startIndex: Int = 0;
     @State private var endIndex: Int = 60;
     @State private var totalItems: Int = 0;
@@ -76,9 +76,9 @@ struct LibraryView: View {
         recalcTracks()
         _isLoading.wrappedValue = true;
         if(_extraParam.wrappedValue == "") {
-            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=\(endIndex)&StartIndex=\(startIndex)&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(selected_library_id == "favorites" ? "&Filters=IsFavorite" : "&ParentId=" + selected_library_id)\(filterString)"
+            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(selected_library_id == "favorites" ? "&Filters=IsFavorite" : "&ParentId=" + selected_library_id)\(filterString)"
         } else {
-            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=\(endIndex)&StartIndex=\(startIndex)&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(filterString)\(extraParam)"
+            _url.wrappedValue = "/Users/\(globalData.user?.user_id ?? "")/Items?&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(filterString)\(extraParam)"
         }
         
         let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + _url.wrappedValue)
@@ -188,7 +188,6 @@ struct LibraryView: View {
                                             }
                                             .frame(width:100, height: 150)
                                             .cornerRadius(10)
-                                            .shadow(radius: 5)
                                     } else {
                                         WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=150&quality=80&tag=\(item.Image)"))
                                             .resizable()
@@ -217,7 +216,6 @@ struct LibraryView: View {
                                                 .cornerRadius(10.0)
                                                 .padding(3), alignment: .topTrailing
                                             )
-                                            .shadow(radius: 5)
                                     }
                                     Text(item.Name)
                                         .font(.caption)
@@ -289,7 +287,7 @@ struct LibraryView: View {
             }.onAppear(perform: listOnAppear).overrideViewPreference(.unspecified).navigationTitle("All Media")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: LibrarySearchView(url: "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=30&StartIndex=0&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(extraParam)", close: $closeSearch), isActive: $closeSearch) {
+                    NavigationLink(destination: LibrarySearchView(url: "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=300&StartIndex=0&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(extraParam)", close: $closeSearch), isActive: $closeSearch) {
                         Image(systemName: "magnifyingglass")
                     }
                 }

@@ -145,7 +145,6 @@ struct LibrarySearchView: View {
                                             }
                                             .frame(width:100, height: 150)
                                             .cornerRadius(10)
-                                            .shadow(radius: 5)
                                     } else {
                                         WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
                                             .resizable()
@@ -174,7 +173,6 @@ struct LibrarySearchView: View {
                                                 .cornerRadius(10.0)
                                                 .padding(3), alignment: .topTrailing
                                             )
-                                            .shadow(radius: 5)
                                     }
                                     Text(item.Name)
                                         .font(.caption)

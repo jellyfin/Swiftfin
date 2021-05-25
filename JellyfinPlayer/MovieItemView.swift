@@ -603,7 +603,7 @@ struct MovieItemView: View {
                                                                 Spacer().frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                             }
                                                         }
-                                                    }.padding(.top, -3)
+                                                    }.padding(.top, -3).padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? -55 : 0)
                                                 }
                                                 if(fullItem.Directors.count != 0) {
                                                     HStack() {
