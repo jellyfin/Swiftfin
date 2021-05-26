@@ -15,6 +15,9 @@ struct VideoPlayerViewRefactored: View {
     var body: some View {
         LoadingView(isShowing: $shouldShowLoadingView) {
             Text("content")
+            .introspectTabBarController { (UITabBarController) in
+                        UITabBarController.tabBar.isHidden = true
+            }
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -23,5 +26,7 @@ struct VideoPlayerViewRefactored: View {
         .preferredColorScheme(.dark)
         .edgesIgnoringSafeArea(.all)
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+        .overrideViewPreference(.unspecified)
+        .supportedOrientations(.landscape)
     }
 }

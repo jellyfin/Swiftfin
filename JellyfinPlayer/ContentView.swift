@@ -130,6 +130,10 @@ struct ContentView: View {
                                             }
                                         }
                                     }
+                                    
+                                    dump(_libraries.wrappedValue)
+                                    dump(_librariesShowRecentlyAdded.wrappedValue)
+                                    dump(_library_names.wrappedValue)
                                 } catch {
                                     
                                 }
@@ -181,8 +185,8 @@ struct ContentView: View {
         } else {
             if(!jsi.did) {
                 LoadingView(isShowing: $isLoading) {
-                    NavigationView() {
-                        TabView(selection: $tabSelection) {
+                    TabView(selection: $tabSelection) {
+                        NavigationView() {
                             VStack(alignment: .leading) {
                                 ScrollView() {
                                     Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 15)
@@ -213,23 +217,24 @@ struct ContentView: View {
                                     }
                                 }
                             }.fullScreenCover( isPresented: $showSettingsPopover) { SettingsView(viewModel: SettingsViewModel(), close: $showSettingsPopover) }
-                            .tabItem({
-                                Text("Home")
-                                Image(systemName: "house")
-                            })
-                            .tag("Home")
-                            
-                            NavigationView() {
-                                LibraryView(prefill: "", names: library_names, libraries: libraries)
-                            }.navigationViewStyle(StackNavigationViewStyle())
-                            .tabItem({
-                                Text("All Media")
-                                Image(systemName: "folder")
-                            })
-                            .tag("All Media")
                         }
+                        .navigationViewStyle(StackNavigationViewStyle())
+                        .tabItem({
+                            Text("Home")
+                            Image(systemName: "house")
+                        })
+                        .tag("Home")
+                        
+                        NavigationView() {
+                            LibraryView(prefill: "", names: library_names, libraries: libraries)
+                        }
+                        .navigationViewStyle(StackNavigationViewStyle())
+                        .tabItem({
+                            Text("All Media")
+                            Image(systemName: "folder")
+                        })
+                        .tag("All Media")
                     }
-                    .navigationViewStyle(StackNavigationViewStyle())
                 }
                 .environmentObject(globalData)
                 .onAppear(perform: startup)

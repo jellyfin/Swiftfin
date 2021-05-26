@@ -10,6 +10,7 @@
 		5302F82A2658791C00647A2E /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 5302F8292658791C00647A2E /* Sentry */; };
 		53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		5335256E265E8D5A006CCA86 /* VideoPlayerViewRefactored.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335256D265E8D5A006CCA86 /* VideoPlayerViewRefactored.swift */; };
+		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
 		5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F753263B65E10014BF09 /* SwiftyRequest */; };
 		5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F756263B7E2E0014BF09 /* KeychainSwift */; };
@@ -115,6 +116,7 @@
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
 				53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */,
 				5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */,
+				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				5302F82A2658791C00647A2E /* Sentry in Frameworks */,
 				5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */,
 			);
@@ -251,6 +253,7 @@
 				53892779263CBFE70035E14B /* SwiftyJSON */,
 				538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */,
 				5302F8292658791C00647A2E /* Sentry */,
+				53352570265EA0A0006CCA86 /* Introspect */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer.app */;
@@ -288,6 +291,7 @@
 				53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -553,6 +557,14 @@
 				minimumVersion = 7.1.0;
 			};
 		};
+		5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.3;
+			};
+		};
 		5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Kitura/SwiftyRequest";
@@ -592,6 +604,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
 			productName = Sentry;
+		};
+		53352570265EA0A0006CCA86 /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
 		};
 		5338F753263B65E10014BF09 /* SwiftyRequest */ = {
 			isa = XCSwiftPackageProductDependency;

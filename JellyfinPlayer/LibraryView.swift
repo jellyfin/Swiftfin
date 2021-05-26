@@ -280,6 +280,8 @@ struct LibraryView: View {
             .onChange(of: filterString) { tag in
                 isLoading = true;
                 items = [];
+                firstItemIndex = 0;
+                lastItemIndex = itemsPerPage;
                 loadItems();
             }
             .navigationTitle(extraParam == "" ? (library_names[prefill_id] ?? "Library") : title)
@@ -322,7 +324,7 @@ struct LibraryView: View {
                         Text(library_names[id] ?? "").foregroundColor(Color.primary)
                     }
                 }
-            }.onAppear(perform: listOnAppear).overrideViewPreference(.unspecified).navigationTitle("All Media")
+            }.onAppear(perform: listOnAppear).navigationTitle("All Media")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     NavigationLink(destination: LibrarySearchView(url: "/Users/\(globalData.user?.user_id ?? "")/Items?Limit=300&StartIndex=0&Recursive=true&Fields=PrimaryImageAspectRatio%2CBasicSyncInfo&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb%2CBanner&IncludeItemTypes=Movie,Series\(extraParam)", close: $closeSearch), isActive: $closeSearch) {
