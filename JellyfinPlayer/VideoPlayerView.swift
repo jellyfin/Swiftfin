@@ -94,6 +94,7 @@ struct VideoPlayerView: View {
         }
         
         sendProgressReport(eventName: "unpause")
+        
         while(vlcplayer.state != VLCMediaPlayerState.stopped) {
             _streamLoading.wrappedValue = false;
             while(vlcplayer.isPlaying) {
@@ -375,6 +376,7 @@ struct VideoPlayerView: View {
     }
     
     func resetTimer() {
+        print("resetTimer ran")
         if(_inactivity.wrappedValue == false) {
             _inactivity.wrappedValue = true;
             return;
@@ -389,6 +391,9 @@ struct VideoPlayerView: View {
                 _isPlaying.wrappedValue = false;
                 vlcplayer.stop()
             }).padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? 30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? 30 : 0))
+        }
+        .introspectTabBarController { (UITabBarController) in
+            UITabBarController.tabBar.isHidden = true
         }
         .overlay(
             VStack() {
