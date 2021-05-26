@@ -20,15 +20,6 @@
         }
       },
       {
-        "package": "HidingViews",
-        "repositoryURL": "https://github.com/GeorgeElsham/HidingViews",
-        "state": {
-          "branch": null,
-          "revision": "7fde89eaeb2f0d3a07f8bf517507c6e27af8e4c3",
-          "version": "1.1.1"
-        }
-      },
-      {
         "package": "KeychainSwift",
         "repositoryURL": "https://github.com/evgenyneu/keychain-swift",
         "state": {
@@ -107,15 +98,6 @@
           "branch": null,
           "revision": "6363cdf6d2fb863e82434f3c4618f4e896e37569",
           "version": "2.13.1"
-        }
-      },
-      {
-        "package": "Introspect",
-        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
-        "state": {
-          "branch": null,
-          "revision": "2e09be8af614401bc9f87d40093ec19ce56ccaf2",
-          "version": "0.1.3"
         }
       },
       {

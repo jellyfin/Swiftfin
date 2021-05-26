@@ -143,7 +143,6 @@ struct ContinueWatchingView: View {
                                                 .frame(width: CGFloat((item.ItemProgress/100)*320), height: 7)
                                                 .padding(0), alignment: .bottomLeading
                                         )
-                                        .shadow(radius: 5)
                                 } else {
                                     WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
                                         .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
@@ -162,7 +161,6 @@ struct ContinueWatchingView: View {
                                                 .frame(width: CGFloat((item.ItemProgress/100)*320), height: 7)
                                             .padding(0), alignment: .bottomLeading
                                         )
-                                        .shadow(radius: 5)
                                 }
                                 Text("\(item.Type == "Episode" ? item.SeriesName ?? "" : item.Name)")
                                     .font(.callout)

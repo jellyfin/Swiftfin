@@ -89,7 +89,6 @@ struct NextUpView: View {
                                             }
                                             .frame(width: 100, height: 150)
                                             .cornerRadius(10)
-                                            .shadow(radius: 6)
                                         Text(item.SeriesName ?? "")
                                             .font(.caption)
                                             .fontWeight(.semibold)

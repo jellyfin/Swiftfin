@@ -6,12 +6,11 @@
 //
 
 import SwiftUI
-import HidingViews
+
 import SwiftyRequest
 import SwiftyJSON
 import CoreData
 import KeychainSwift
-import Introspect
 import Sentry
 import SDWebImageSwiftUI
 
@@ -231,7 +230,9 @@ struct ConnectToServerView: View {
                         HStack {
                             Text("Connect")
                             Spacer()
-                            ProgressView().isHidden(!isWorking)
+                            if(isWorking == true) {
+                                ProgressView()
+                            }
                         }
                     }.disabled(isWorking || uri.isEmpty)
                 }.alert(isPresented: $isErrored) {
@@ -252,7 +253,9 @@ struct ConnectToServerView: View {
                             HStack {
                                 Text("Login")
                                 Spacer()
-                                ProgressView().isHidden(!isWorking)
+                                if(isWorking) {
+                                    ProgressView()
+                                }
                             }
                         }.disabled(isWorking || username.isEmpty)
                         .alert(isPresented: $isSignInErrored) {

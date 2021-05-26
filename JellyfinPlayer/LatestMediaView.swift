@@ -119,7 +119,7 @@ struct LatestMediaView: View {
                                             .cornerRadius(10.0)
                                             .padding(3), alignment: .topTrailing
                                             
-                                        ).shadow(radius: 6)
+                                        )
                                 } else {
                                     Spacer().frame(height:10)
                                     WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)")!)
@@ -132,7 +132,6 @@ struct LatestMediaView: View {
                                         }
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
-                                        .shadow(radius: 6)
                                 }
                                 Text(item.Name)
                                     .font(.caption)

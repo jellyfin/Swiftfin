@@ -392,9 +392,6 @@ struct VideoPlayerView: View {
                 vlcplayer.stop()
             }).padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? 30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? 30 : 0))
         }
-        .introspectTabBarController { (UITabBarController) in
-            UITabBarController.tabBar.isHidden = true
-        }
         .overlay(
             VStack() {
                 HStack() {
@@ -489,7 +486,6 @@ struct VideoPlayerView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(.black).opacity(0.4))
-            .isHidden(inactivity)
         , alignment: .topLeading)
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .onAppear(perform: startStream)

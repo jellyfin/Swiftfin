@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		5302F82A2658791C00647A2E /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 5302F8292658791C00647A2E /* Sentry */; };
 		53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
+		5335256E265E8D5A006CCA86 /* VideoPlayerViewRefactored.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335256D265E8D5A006CCA86 /* VideoPlayerViewRefactored.swift */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
-		5338F751263B62E80014BF09 /* HidingViews in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F750263B62E80014BF09 /* HidingViews */; };
 		5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F753263B65E10014BF09 /* SwiftyRequest */; };
 		5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F756263B7E2E0014BF09 /* KeychainSwift */; };
 		535BAE9F2649E569005FA86D /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAE9E2649E569005FA86D /* ItemView.swift */; };
@@ -34,7 +34,6 @@
 		53987CA82657424A00E7EA70 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA72657424A00E7EA70 /* EpisodeItemView.swift */; };
 		539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */; };
 		53A089D0264DA9DA00D57806 /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A089CF264DA9DA00D57806 /* MovieItemView.swift */; };
-		53D2F74A264C69F6005792BB /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53D2F749264C69F6005792BB /* Introspect */; };
 		53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		53D5E3DE264B47EE00BADDC8 /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF641D263D9C0600A7CD1A /* LibraryView.swift */; };
@@ -72,6 +71,7 @@
 
 /* Begin PBXFileReference section */
 		53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileBuilder.swift; sourceTree = "<group>"; };
+		5335256D265E8D5A006CCA86 /* VideoPlayerViewRefactored.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewRefactored.swift; sourceTree = "<group>"; };
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		535BAE9E2649E569005FA86D /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		535BAEA4264A151C005FA86D /* VLCPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayer.swift; sourceTree = "<group>"; };
@@ -116,9 +116,7 @@
 				53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */,
 				5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */,
 				5302F82A2658791C00647A2E /* Sentry in Frameworks */,
-				53D2F74A264C69F6005792BB /* Introspect in Frameworks */,
 				5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */,
-				5338F751263B62E80014BF09 /* HidingViews in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,6 +174,7 @@
 				53987CA526572F0700E7EA70 /* SeriesItemView.swift */,
 				53987CA72657424A00E7EA70 /* EpisodeItemView.swift */,
 				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
+				5335256D265E8D5A006CCA86 /* VideoPlayerViewRefactored.swift */,
 			);
 			path = JellyfinPlayer;
 			sourceTree = "<group>";
@@ -247,12 +246,10 @@
 			);
 			name = JellyfinPlayer;
 			packageProductDependencies = (
-				5338F750263B62E80014BF09 /* HidingViews */,
 				5338F753263B65E10014BF09 /* SwiftyRequest */,
 				5338F756263B7E2E0014BF09 /* KeychainSwift */,
 				53892779263CBFE70035E14B /* SwiftyJSON */,
 				538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */,
-				53D2F749264C69F6005792BB /* Introspect */,
 				5302F8292658791C00647A2E /* Sentry */,
 			);
 			productName = JellyfinPlayer;
@@ -286,12 +283,10 @@
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
-				5338F74F263B62E80014BF09 /* XCRemoteSwiftPackageReference "HidingViews" */,
 				5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */,
 				5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
-				53D2F748264C69F6005792BB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
@@ -341,6 +336,7 @@
 				53987CA82657424A00E7EA70 /* EpisodeItemView.swift in Sources */,
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
 				53987CA626572F0700E7EA70 /* SeriesItemView.swift in Sources */,
+				5335256E265E8D5A006CCA86 /* VideoPlayerViewRefactored.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
 				AE8C3156265D616A008AA076 /* SettingsViewModel.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
@@ -557,14 +553,6 @@
 				minimumVersion = 7.1.0;
 			};
 		};
-		5338F74F263B62E80014BF09 /* XCRemoteSwiftPackageReference "HidingViews" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/GeorgeElsham/HidingViews";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.1;
-			};
-		};
 		5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Kitura/SwiftyRequest";
@@ -597,14 +585,6 @@
 				minimumVersion = 2.0.2;
 			};
 		};
-		53D2F748264C69F6005792BB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.3;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -612,11 +592,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
 			productName = Sentry;
-		};
-		5338F750263B62E80014BF09 /* HidingViews */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5338F74F263B62E80014BF09 /* XCRemoteSwiftPackageReference "HidingViews" */;
-			productName = HidingViews;
 		};
 		5338F753263B65E10014BF09 /* SwiftyRequest */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -637,11 +612,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
-		};
-		53D2F749264C69F6005792BB /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53D2F748264C69F6005792BB /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
 		};
 /* End XCSwiftPackageProductDependency section */
 

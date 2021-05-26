@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftyRequest
 import SwiftyJSON
-import Introspect
 import SDWebImageSwiftUI
 
 struct SeasonItemView: View {

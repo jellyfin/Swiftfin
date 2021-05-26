@@ -6,14 +6,8 @@
 //
 
 import SwiftUI
-import SwiftyRequest
-import SwiftyJSON
-import Introspect
-import SDWebImageSwiftUI
 
 struct ItemView: View {
-    @EnvironmentObject var globalData: GlobalData
-    @State private var isLoading: Bool = false;
     var item: ResumeItem;
     
     init(item: ResumeItem) {
