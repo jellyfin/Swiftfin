@@ -4,7 +4,7 @@
 //
 //  Created by Aiden Vigue on 5/10/21.
 //
-
+/*
 import SwiftUI
 import SwiftyJSON
 import SwiftyRequest
@@ -41,7 +41,6 @@ extension String {
 
 struct VideoPlayerView: View {
     @EnvironmentObject var globalData: GlobalData
-    var item: DetailItem;
     @State private var pbitem: PlaybackItem = PlaybackItem(videoType: VideoType.direct, videoUrl: URL(string: "https://example.com")!, subtitles: []);
     @State private var streamLoading = false;
     @State private var vlcplayer: VLCMediaPlayer = VLCMediaPlayer();
@@ -76,10 +75,11 @@ struct VideoPlayerView: View {
     };
     
     @State private var playbackSettings: Bool = false;
-    
     @State private var selectedCaptionTrack: Int32 = -1;
     @State private var selectedAudioTrack: Int32 = -1;
+    
     var playing: Binding<Bool>;
+    var item: DetailItem;
     
     init(item: DetailItem, playing: Binding<Bool>) {
         self.item = item;
@@ -582,3 +582,4 @@ struct VideoPlayerView: View {
         }
     }
 }
+*/

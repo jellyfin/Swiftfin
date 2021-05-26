@@ -206,17 +206,17 @@ struct ContentView: View {
                                     }
                                     Spacer().frame(height: 7)
                                 }
-                            }
-                            .navigationTitle("Home")
-                            .toolbar {
-                                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                    Button {
-                                        showSettingsPopover = true;
-                                    } label: {
-                                        Image(systemName: "gear")
+                                .navigationTitle("Home")
+                                .toolbar {
+                                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                                        Button {
+                                            showSettingsPopover = true;
+                                        } label: {
+                                            Image(systemName: "gear")
+                                        }
                                     }
-                                }
-                            }.fullScreenCover( isPresented: $showSettingsPopover) { SettingsView(viewModel: SettingsViewModel(), close: $showSettingsPopover) }
+                                }.fullScreenCover( isPresented: $showSettingsPopover) { SettingsView(viewModel: SettingsViewModel(), close: $showSettingsPopover) }
+                            }
                         }
                         .navigationViewStyle(StackNavigationViewStyle())
                         .tabItem({

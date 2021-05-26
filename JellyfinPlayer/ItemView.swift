@@ -8,39 +8,48 @@
 import SwiftUI
 import Introspect
 
+class ItemPlayback: ObservableObject {
+    @Published var shouldPlay: Bool = false;
+    @Published var itemToPlay: DetailItem = DetailItem();
+}
+
 struct ItemView: View {
     var item: ResumeItem;
+    @StateObject private var playback: ItemPlayback = ItemPlayback()
     
     init(item: ResumeItem) {
         self.item = item;
     }
     
     var body: some View {
-        Group {
-            NavigationLink(destination: EmptyView(), label: {})
-            NavigationLink(destination: EmptyView(), label: {})
-            if(item.Type == "Movie") {
-                MovieItemView(item: self.item)
-            } else if(item.Type == "Season") {
-                SeasonItemView(item: self.item)
-            } else if(item.Type == "Series") {
-                SeriesItemView(item: self.item)
-            } else if(item.Type == "Episode") {
-                EpisodeItemView(item: self.item)
-            } else {
-                Text("Type: \(item.Type) not implemented yet :(")
+        if(playback.shouldPlay) {
+            VideoPlayerViewRefactored(itemPlayback: playback)
+        } else {
+            Group {
+                if(item.Type == "Movie") {
+                    MovieItemView(item: self.item)
+                } else if(item.Type == "Season") {
+                    SeasonItemView(item: self.item)
+                } else if(item.Type == "Series") {
+                    SeriesItemView(item: self.item)
+                } else if(item.Type == "Episode") {
+                    EpisodeItemView(item: self.item)
+                } else {
+                    Text("Type: \(item.Type) not implemented yet :(")
+                }
             }
+            .introspectTabBarController { (UITabBarController) in
+                        UITabBarController.tabBar.isHidden = false
+            }
+            .navigationBarHidden(false)
+            .navigationBarBackButtonHidden(false)
+            .statusBar(hidden: false)
+            .prefersHomeIndicatorAutoHidden(false)
+            .preferredColorScheme(.none)
+            .edgesIgnoringSafeArea([])
+            .overrideViewPreference(.unspecified)
+            .supportedOrientations(.allButUpsideDown)
+            .environmentObject(playback)
         }
-        .introspectTabBarController { (UITabBarController) in
-                    UITabBarController.tabBar.isHidden = false
-        }
-        .navigationBarHidden(false)
-        .navigationBarBackButtonHidden(false)
-        .statusBar(hidden: false)
-        .prefersHomeIndicatorAutoHidden(false)
-        .preferredColorScheme(.none)
-        .edgesIgnoringSafeArea([])
-        .overrideViewPreference(.unspecified)
-        .supportedOrientations(.allButUpsideDown)
     }
 }

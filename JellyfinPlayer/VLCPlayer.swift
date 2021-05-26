@@ -17,10 +17,18 @@ enum VideoType {
     case direct;
 }
 
-struct PlaybackItem {
-    var videoType: VideoType;
-    var videoUrl: URL;
-    var subtitles: [Subtitle];
+struct Subtitle {
+    var name: String;
+    var id: Int32;
+    var url: URL;
+    var delivery: String;
+    var codec: String;
+}
+
+class PlaybackItem: ObservableObject {
+    @Published var videoType: VideoType = .hls;
+    @Published var videoUrl: URL = URL(string: "https://example.com")!;
+    @Published var subtitles: [Subtitle] = [];
 }
 
 struct VLCPlayer: UIViewRepresentable{

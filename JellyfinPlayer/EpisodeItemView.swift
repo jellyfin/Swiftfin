@@ -11,13 +11,13 @@ import SwiftyJSON
 import SDWebImageSwiftUI
 
 struct EpisodeItemView: View {
-    @EnvironmentObject var globalData: GlobalData
-    @State private var isLoading: Bool = true;
+    @EnvironmentObject private var globalData: GlobalData
+    @EnvironmentObject private var orientationInfo: OrientationInfo
+    @EnvironmentObject private var playbackInfo: ItemPlayback
     var item: ResumeItem;
-    @EnvironmentObject var orientationInfo: OrientationInfo
     var fullItem: DetailItem;
-    @State private var playing: Bool = false;
 
+    @State private var isLoading: Bool = true;
     @State private var progressString: String = "";
     @State private var viewDidLoad: Bool = false;
     
@@ -195,7 +195,7 @@ struct EpisodeItemView: View {
                     if(orientationInfo.orientation == .portrait) {
                         GeometryReader { geometry in
                             VStack() {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=450&quality=90&tag=\(fullItem.Backdrop)")!)
+                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=550&quality=90&tag=\(fullItem.Backdrop)")!)
                                     .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                     .placeholder {
                                         Image(uiImage: UIImage(blurHash: (fullItem.BackdropBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem.BackdropBlurHash), size: CGSize(width: 32, height: 32))!)
@@ -263,7 +263,10 @@ struct EpisodeItemView: View {
                                 VStack(alignment: .leading) {
                                     HStack() {
                                         //Play button
-                                        NavigationLink(destination: VideoPlayerViewRefactored()) {
+                                        Button {
+                                            self.playbackInfo.itemToPlay = fullItem;
+                                            self.playbackInfo.shouldPlay = true;
+                                        } label: {
                                             HStack() {
                                                 Text(fullItem.Progress == 0 ? "Play" : "\(progressString) left").foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
                                                 Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
@@ -271,7 +274,8 @@ struct EpisodeItemView: View {
                                             .frame(width: 120, height: 35)
                                             .background(Color(red: 172/255, green: 92/255, blue: 195/255))
                                             .cornerRadius(10)
-                                        }
+                                        }.buttonStyle(PlainButtonStyle())
+                                        .frame(width: 120, height: 35)
                                         Spacer()
                                         HStack() {
                                             Button() {
@@ -324,15 +328,15 @@ struct EpisodeItemView: View {
                                                                         WebImage(url: cast.Image)
                                                                             .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                                             .placeholder {
-                                                                                Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 4, height: 4))!)
+                                                                                Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 16, height: 16))!)
                                                                                     .resizable()
                                                                                     .aspectRatio(contentMode: .fill)
-                                                                                    .frame(width: 70, height: 70)
+                                                                                    .frame(width: 100, height: 100)
                                                                                     .cornerRadius(10)
                                                                             }
                                                                             .aspectRatio(contentMode: .fill)
                                                                             .frame(width: 100, height: 100)
-                                                                            .cornerRadius(10).shadow(radius: 6)
+                                                                            .cornerRadius(10)
                                                                         Text(cast.Name).font(.footnote).fontWeight(.regular).lineLimit(1).frame(width: 100).foregroundColor(Color.primary)
                                                                         if(cast.Role != "") {
                                                                             Text(cast.Role).font(.caption).fontWeight(.medium).lineLimit(1).foregroundColor(Color.secondary).frame(width: 100)
@@ -399,7 +403,10 @@ struct EpisodeItemView: View {
                                             .cornerRadius(10)
                                             .shadow(radius: 5)
                                         Spacer().frame(height: 15)
-                                        NavigationLink(destination: VideoPlayerViewRefactored()) {
+                                        Button {
+                                            self.playbackInfo.itemToPlay = fullItem;
+                                            self.playbackInfo.shouldPlay = true;
+                                        } label: {
                                             HStack() {
                                                 Text(fullItem.Progress == 0 ? "Play" : "\(progressString) left").foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
                                                 Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
@@ -407,7 +414,8 @@ struct EpisodeItemView: View {
                                             .frame(width: 120, height: 35)
                                             .background(Color(red: 172/255, green: 92/255, blue: 195/255))
                                             .cornerRadius(10)
-                                        }
+                                        }.buttonStyle(PlainButtonStyle())
+                                        .frame(width: 120, height: 35)
                                         Spacer()
                                     }
                                     ScrollView() {
@@ -504,7 +512,7 @@ struct EpisodeItemView: View {
                                                                         WebImage(url: cast.Image)
                                                                             .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                                                             .placeholder {
-                                                                                Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 32, height: 32))!)
+                                                                                Image(uiImage: UIImage(blurHash: (cast.ImageBlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : cast.ImageBlurHash), size: CGSize(width: 16, height: 16))!)
                                                                                     .resizable()
                                                                                     .aspectRatio(contentMode: .fill)
                                                                                     .frame(width: 100, height: 100)
@@ -512,7 +520,7 @@ struct EpisodeItemView: View {
                                                                             }
                                                                             .aspectRatio(contentMode: .fill)
                                                                             .frame(width: 100, height: 100)
-                                                                            .cornerRadius(10).shadow(radius: 6)
+                                                                            .cornerRadius(10)
                                                                         Text(cast.Name).font(.footnote).fontWeight(.regular).lineLimit(1).frame(width: 100).foregroundColor(Color.primary)
                                                                         if(cast.Role != "") {
                                                                             Text(cast.Role).font(.caption).fontWeight(.medium).lineLimit(1).foregroundColor(Color.secondary).frame(width: 100)
