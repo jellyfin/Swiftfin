@@ -62,21 +62,19 @@ class VideoPlayerSettingsView: UIViewController {
     private var shouldClosePublisher: AnyCancellable?
     var subtitles: [Subtitle] = []
     var audioTracks: [AudioTrack] = []
-    var currentSubtitleTrack: Int32 = -1;
-    var currentAudioTrack: Int32 = 0;
+    var currentSubtitleTrack: Int32!
+    var currentAudioTrack: Int32!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        contentViewDelegate.audioTrackID = currentAudioTrack;
-        contentViewDelegate.subtitleTrackID = currentSubtitleTrack;
-        ctntView = VideoPlayerSettings(delegate: self.contentViewDelegate, subtitles: self.subtitles, audioTracks: self.audioTracks)
+        ctntView = VideoPlayerSettings(delegate: self.contentViewDelegate, subtitles: self.subtitles, audioTracks: self.audioTracks, initSub: currentSubtitleTrack, initAudio: currentAudioTrack)
         let contentView = UIHostingController(rootView: ctntView)
         self.view.addSubview(contentView.view)
-        contentView.view.translatesAutoresizingMaskIntoConstraints = false;
-        contentView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true;
-        contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true;
-        contentView.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true;
-        contentView.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true;
+        contentView.view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        contentView.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        contentView.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         
         self.subChangePublisher = self.contentViewDelegate.subtitlesDidChange.sink { suiDelegate in
             self.delegate?.subtitleTrackChanged(newTrackID: suiDelegate.subtitleTrackID)
@@ -104,32 +102,54 @@ struct VideoPlayerSettings: View {
     @ObservedObject var delegate: SettingsViewDelegate
     @State private var subtitles: [Subtitle]
     @State private var audioTracks: [AudioTrack]
+    @State private var subtitleSelection: Int32
+    @State private var audioTrackSelection: Int32
     
-    
-    init(delegate: SettingsViewDelegate, subtitles: [Subtitle], audioTracks: [AudioTrack]) {
+    init(delegate: SettingsViewDelegate, subtitles: [Subtitle], audioTracks: [AudioTrack], initSub: Int32, initAudio: Int32) {
         self.delegate = delegate
         self.subtitles = subtitles
         self.audioTracks = audioTracks
         
-        print(subtitles)
-        print(audioTracks)
+        self.subtitleSelection = initSub
+        self.audioTrackSelection = initAudio
+        print(initSub)
+        print(initAudio)
     }
     
     var body: some View {
-        NavigationView() {
-            Form() {
-                Picker("Closed Captions", selection: self.$delegate.subtitleTrackID) {
-                    ForEach(subtitles, id: \.id) { caption in
-                        Text(caption.name).tag(caption.id)
+        GeometryReader { proxy in
+            NavigationView() {
+                Form() {
+                    Picker("Closed Captions", selection: $subtitleSelection) {
+                        ForEach(subtitles, id: \.id) { caption in
+                            Text(caption.name).tag(caption.id)
+                        }
+                    }.onChange(of: subtitleSelection) { id in
+                        self.delegate.subtitleTrackID = id
+                    }
+                    Picker("Audio Track", selection: $audioTrackSelection) {
+                        ForEach(audioTracks, id: \.id) { caption in
+                            Text(caption.name).tag(caption.id).lineLimit(1)
+                        }
+                    }.onChange(of: audioTrackSelection) { id in
+                        self.delegate.audioTrackID = id
+                    }
+                }.navigationTitle("Audio & Captions")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItemGroup(placement: .navigationBarLeading) {
+                        Button {
+                            delegate.close = true;
+                        } label: {
+                            HStack() {
+                                Text("Back").font(.callout)
+                            }
+                        }
                     }
                 }
-                Picker("Audio Track", selection: self.$delegate.audioTrackID) {
-                    ForEach(audioTracks, id: \.id) { caption in
-                        Text(caption.name).tag(caption.id).lineLimit(1)
-                    }
-                }
-            }.navigationTitle("Audio & Captions")
-            .navigationBarTitleDisplayMode(.inline)
-        }.navigationViewStyle(StackNavigationViewStyle())
+            }.navigationViewStyle(StackNavigationViewStyle())
+            .padding(6)
+            .frame(width: proxy.size.width, height: proxy.size.height)
+        }
     }
 }

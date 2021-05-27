@@ -155,11 +155,13 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     
     @IBAction func settingsButtonTapped(_ sender: UIButton) {
         let optionsVC = VideoPlayerSettingsView()
+        print(self.selectedAudioTrack)
+        print(self.selectedCaptionTrack)
+        optionsVC.currentSubtitleTrack = self.selectedCaptionTrack
+        optionsVC.currentAudioTrack = self.selectedAudioTrack
         optionsVC.delegate = self;
         optionsVC.subtitles = subtitleTrackArray
         optionsVC.audioTracks = audioTrackArray
-        optionsVC.currentSubtitleTrack = selectedCaptionTrack
-        optionsVC.currentAudioTrack = selectedAudioTrack
         // Use the popover presentation style for your view controller.
         optionsVC.modalPresentationStyle = .popover
 
@@ -297,6 +299,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                     DispatchQueue.global(qos: .background).async {
                         mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                         mediaPlayer.play()
+                        mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                         subtitleTrackArray.forEach() { sub in
                             if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
                                 print("adding subs for id: \(sub.id) w/ url: \(sub.url)")
@@ -306,10 +309,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         mediaPlayer.pause()
                         delegate?.showLoadingView(self)
                         sleep(3)
-                        mediaPlayer.pause()
                         mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack;
+                        mediaPlayer.pause()
                         mediaPlayer.play()
-                        mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                     }
                 } catch {
                     
