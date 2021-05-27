@@ -51,7 +51,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t2L-Oz-fe9" userLabel="MainActionButton">
-                                        <rect key="frame" x="498.5" y="363.5" width="83" height="83"/>
+                                        <rect key="frame" x="499" y="364" width="83" height="83"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="83" id="PdD-nW-y9r"/>
                                             <constraint firstAttribute="height" constant="83" id="e9j-PI-Ic4"/>
@@ -66,19 +66,6 @@
                                             <action selector="mainActionButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="qBH-T0-6R4"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o8N-R1-DhT">
-                                        <rect key="frame" x="141" y="34" width="798" height="36"/>
-                                        <accessibility key="accessibilityConfiguration">
-                                            <accessibilityTraits key="traits" staticText="YES" header="YES"/>
-                                        </accessibility>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="798" id="l8g-la-DDC"/>
-                                            <constraint firstAttribute="height" constant="36" id="xOv-x8-971"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <color key="highlightedColor" systemColor="labelColor"/>
-                                    </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rLx-SN-RHr">
                                         <rect key="frame" x="30" y="22" width="60" height="60"/>
                                         <constraints>
@@ -95,12 +82,54 @@
                                             <action selector="exitButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="XHc-OR-kc8"/>
                                         </connections>
                                     </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o8N-R1-DhT">
+                                        <rect key="frame" x="141" y="34" width="798" height="36"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" staticText="YES" header="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="798" id="l8g-la-DDC"/>
+                                            <constraint firstAttribute="height" constant="36" id="xOv-x8-971"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="highlightedColor" systemColor="labelColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bYM-Xp-bZO">
+                                        <rect key="frame" x="305" y="367" width="75" height="75"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="76" id="5lC-V1-lHH"/>
+                                            <constraint firstAttribute="width" constant="75" id="IPn-pO-Rxo"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" image="gobackward.15" catalog="system">
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="35"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="jumpBackTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="4vd-25-cCB"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="An8-jF-FAY">
+                                        <rect key="frame" x="700" y="368" width="75" height="75"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="76" id="huv-QZ-HSc"/>
+                                            <constraint firstAttribute="width" constant="75" id="uPN-A8-EV1"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" image="goforward.15" catalog="system">
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="35"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="jumpForwardTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="I6H-fd-Mn8"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.5954241071428571" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="e9f-8l-RdN" secondAttribute="bottom" constant="29" id="231-rB-qDs"/>
                                     <constraint firstAttribute="trailing" secondItem="qft-iu-f1z" secondAttribute="trailing" constant="39" id="2Ie-OW-sUL"/>
+                                    <constraint firstItem="An8-jF-FAY" firstAttribute="leading" secondItem="t2L-Oz-fe9" secondAttribute="trailing" constant="118.5" id="2zE-ul-pOh"/>
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="centerX" secondItem="Qcb-Fb-qZl" secondAttribute="centerX" id="3Gw-QD-lQX"/>
                                     <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="NPi-py-0qd"/>
                                     <constraint firstItem="rLx-SN-RHr" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="30" id="Oe7-LK-6Tl"/>
@@ -109,6 +138,7 @@
                                     <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="aOB-Uz-cbQ"/>
                                     <constraint firstItem="qft-iu-f1z" firstAttribute="leading" secondItem="e9f-8l-RdN" secondAttribute="trailing" constant="29" id="auL-Vv-ZMV"/>
                                     <constraint firstItem="e9f-8l-RdN" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="52" id="ed3-xq-0Ug"/>
+                                    <constraint firstItem="t2L-Oz-fe9" firstAttribute="leading" secondItem="bYM-Xp-bZO" secondAttribute="trailing" constant="118.5" id="fci-L5-1f6"/>
                                     <constraint firstItem="o8N-R1-DhT" firstAttribute="top" secondItem="Qcb-Fb-qZl" secondAttribute="top" constant="34" id="tJD-Ts-VuB"/>
                                     <constraint firstItem="rLx-SN-RHr" firstAttribute="top" secondItem="Qcb-Fb-qZl" secondAttribute="top" constant="22" id="v4G-B1-7y6"/>
                                 </constraints>
@@ -121,6 +151,8 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <connections>
+                        <outlet property="jumpBackButton" destination="bYM-Xp-bZO" id="K2u-5Q-dkm"/>
+                        <outlet property="jumpForwardButton" destination="An8-jF-FAY" id="4hN-YB-yVd"/>
                         <outlet property="mainActionButton" destination="t2L-Oz-fe9" id="nQR-2e-64l"/>
                         <outlet property="seekSlider" destination="e9f-8l-RdN" id="b3H-tn-TPG"/>
                         <outlet property="timeText" destination="qft-iu-f1z" id="pAX-J3-I53"/>
@@ -146,6 +178,8 @@
     </scenes>
     <resources>
         <image name="chevron.backward" catalog="system" width="96" height="128"/>
+        <image name="gobackward.15" catalog="system" width="121" height="128"/>
+        <image name="goforward.15" catalog="system" width="121" height="128"/>
         <image name="play.slash.fill" catalog="system" width="116" height="128"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -1,12 +1,9 @@
 //
-//  VLCPlayer.swift
+//  VideoPlayer.swift
 //  JellyfinPlayer
 //
-//  Created by Aiden Vigue on 5/10/21.
+//  Created by Aiden Vigue on 5/26/21.
 //
-
-//me realizing i shouldve just written the whole app in the mvvm system bc it makes so much more sense
-//Please don't touch this ifle
 
 import SwiftUI
 import MobileVLCKit
@@ -55,7 +52,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     @IBOutlet weak var videoControlsView: UIView!
     @IBOutlet weak var seekSlider: UISlider!
     @IBOutlet weak var titleLabel: UILabel!
-
+    @IBOutlet weak var jumpBackButton: UIButton!
+    @IBOutlet weak var jumpForwardButton: UIButton!
+    
     var shouldShowLoadingScreen: Bool = false;
     var ssTargetValueOffset: Int = 0;
     var ssStartValue: Int = 0;
@@ -63,6 +62,8 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var paused: Bool = true;
     var lastTime: Float = 0.0;
     var startTime: Int = 0;
+    var controlsAppearTime: Double = 0;
+    
     var selectedAudioTrack: Int32 = 0;
     var selectedCaptionTrack: Int32 = 0;
     var playSessionId: String = "";
@@ -115,12 +116,26 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
     
     @IBAction func controlViewTapped(_ sender: Any) {
-        videoControlsView.isHidden = !videoControlsView.isHidden
+        videoControlsView.isHidden = true
     }
     
     @IBAction func contentViewTapped(_ sender: Any) {
-        videoControlsView.isHidden = !videoControlsView.isHidden
+        videoControlsView.isHidden = false
+        controlsAppearTime = CACurrentMediaTime()
     }
+    
+    @IBAction func jumpBackTapped(_ sender: Any) {
+        if(paused == false) {
+            mediaPlayer.jumpBackward(15)
+        }
+    }
+    
+    @IBAction func jumpForwardTapped(_ sender: Any) {
+        if(paused == false) {
+            mediaPlayer.jumpForward(15)
+        }
+    }
+    
     
     
     @IBOutlet weak var mainActionButton: UIButton!
@@ -335,6 +350,11 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 timeTextStr = "\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))";
             }
             timeText.text = timeTextStr
+            
+            if(CACurrentMediaTime() - controlsAppearTime > 5) {
+                videoControlsView.isHidden = true;
+                controlsAppearTime = 10000000000000000000000;
+            }
         } else {
             paused = true;
         }
@@ -474,71 +494,3 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: VLCPlayerWithControls.UIViewControllerType, context: UIViewControllerRepresentableContext<VLCPlayerWithControls>) {
     }
 }
-
-/*
-struct VLCPlayer: UIViewRepresentable{
-    var url: Binding<PlaybackItem>;
-    var player: Binding<VLCMediaPlayer>;
-    var startTime: Int;
-    
-    func updateUIView(_ uiView: PlayerUIView, context: UIViewRepresentableContext<VLCPlayer>) {
-        uiView.url = self.url
-        if(self.url.wrappedValue.videoUrl.absoluteString != "https://example.com") {
-            uiView.videoSetup()
-        }
-    }
-    
-    func makeUIView(context: Context) -> PlayerUIView {
-        return PlayerUIView(frame: .zero, url: url, player: self.player, startTime: self.startTime);
-    }
-}
-
-class PlayerUIView: UIView, VLCMediaPlayerDelegate {
-    
-    private var mediaPlayer: Binding<VLCMediaPlayer>;
-    var url:Binding<PlaybackItem>
-    var lastUrl: PlaybackItem?
-    var startTime: Int
-
-    init(frame: CGRect, url: Binding<PlaybackItem>, player: Binding<VLCMediaPlayer>, startTime: Int) {
-        self.mediaPlayer = player;
-        self.url = url;
-        self.startTime = startTime;
-        super.init(frame: frame)
-        mediaPlayer.wrappedValue.delegate = self
-        mediaPlayer.wrappedValue.drawable = self
-    }
-    
-    func videoSetup() {
-        if(lastUrl == nil || lastUrl?.videoUrl != url.wrappedValue.videoUrl) {
-            lastUrl = url.wrappedValue
-            mediaPlayer.wrappedValue.stop()
-            mediaPlayer.wrappedValue.media = VLCMedia(url: url.wrappedValue.videoUrl)
-            self.url.wrappedValue.subtitles.forEach() { sub in
-                if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
-                    mediaPlayer.wrappedValue.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
-                }
-            }
-            
-            mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFontSize:")), with: 14)
-            //mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
-            
-            DispatchQueue.global(qos: .utility).async { [weak self] in
-                self?.mediaPlayer.wrappedValue.play()
-                if(self?.startTime != 0) {
-                    print(self?.startTime ?? "")
-                    self?.mediaPlayer.wrappedValue.jumpForward(Int32(self!.startTime/10000000))
-                }
-            }
-        }
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-}
- */
