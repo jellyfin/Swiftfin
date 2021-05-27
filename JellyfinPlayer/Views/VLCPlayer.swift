@@ -6,6 +6,7 @@
 //
 
 //me realizing i shouldve just written the whole app in the mvvm system bc it makes so much more sense
+//Please don't touch this ifle
 
 import SwiftUI
 import MobileVLCKit
@@ -65,6 +66,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var selectedAudioTrack: Int32 = 0;
     var selectedCaptionTrack: Int32 = 0;
     var playSessionId: String = "";
+    var lastProgressReportTime: Double = 0;
     
     var subtitleTrackArray: [Subtitle] = [];
     var audioTrackArray: [AudioTrack] = [];
@@ -85,24 +87,21 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
     
     @IBAction func exitButtonPressed(_ sender: Any) {
-        print("exit tap")
+        sendStopReport()
         delegate?.exitPlayer(self)
     }
     
     @IBAction func controlViewTapped(_ sender: Any) {
-        print("control view tap")
         videoControlsView.isHidden = !videoControlsView.isHidden
     }
     
     @IBAction func contentViewTapped(_ sender: Any) {
-        print("content view tap")
         videoControlsView.isHidden = !videoControlsView.isHidden
     }
     
     
     @IBOutlet weak var mainActionButton: UIButton!
     @IBAction func mainActionButtonPressed(_ sender: Any) {
-        print("mab press")
         print(mediaPlayer.state.rawValue)
         if(paused) {
             mediaPlayer.play()
@@ -120,6 +119,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         
         //View has loaded.
         //Show loading screen
+        usleep(10000);
         delegate?.showLoadingView(self)
         
         //Fetch max bitrate from UserDefaults depending on current connection mode
@@ -166,7 +166,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                             }
                             
                             if(stream["Type"].string == "Audio") {
-                                let deliveryUrl = URL(string: "https://example.com")!
                                 let subtitle = AudioTrack(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0))
                                 if(stream["IsDefault"].boolValue) {
                                     selectedAudioTrack = Int32(stream["Index"].int ?? 0);
@@ -201,7 +200,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                             }
                             
                             if(stream["Type"].string == "Audio") {
-                                let deliveryUrl = URL(string: "https://example.com")!
                                 let subtitle = AudioTrack(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0))
                                 if(stream["IsDefault"].boolValue) {
                                     selectedAudioTrack = Int32(stream["Index"].int ?? 0);
@@ -220,6 +218,15 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         item.subtitles = subtitleTrackArray
                         playbackItem = item;
                     }
+                    
+                    mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
+                    playbackItem.subtitles.forEach() { sub in
+                        if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
+                            mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
+                        }
+                    }
+                    mediaPlayer.play()
+                    mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                 } catch {
                     
                 }
@@ -230,8 +237,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             }
         }
         
-        mediaPlayer.media = media
-
         mediaPlayer.delegate = self
         mediaPlayer.drawable = videoContentView
         
@@ -240,7 +245,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         } else {
             titleLabel.text = manifest.Name
         }
-        mediaPlayer.play()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -255,12 +259,13 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             switch currentState {
             case .stopped :
                 print("Video is done playing)")
-
+                sendStopReport()
             case .ended :
                 print("Video is done playing)")
-                
+                sendStopReport()
             case .playing :
                 print("Video is playing")
+                sendProgressReport(eventName: "unpause")
                 delegate?.hideLoadingView(self)
                 paused = false;
                 
@@ -273,6 +278,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 
             case .buffering :
                 print("Video is buffering)")
+                sendProgressReport(eventName: "pause")
                 delegate?.showLoadingView(self)
                 mediaPlayer.pause()
                 usleep(10000)
@@ -280,9 +286,8 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 
             case .error :
                 print("Video has error)")
-                
+                sendStopReport()
             case .esAdded:
-                print("Es Added")
                 mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
             @unknown default:
                 break
@@ -293,11 +298,29 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         let time = mediaPlayer.position;
         if(time != lastTime) {
             paused = false;
+            seekSlider.setValue(mediaPlayer.position, animated: true)
             delegate?.hideLoadingView(self)
+            
+            let remainingTime = abs(mediaPlayer.remainingTime.intValue)/1000;
+            let hours = remainingTime / 3600;
+            let minutes = (remainingTime % 3600) / 60;
+            let seconds = (remainingTime % 3600) % 60;
+            var timeTextStr = "";
+            if(hours != 0) {
+                timeTextStr = "\(Int(hours)):\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))";
+            } else {
+                timeTextStr = "\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))";
+            }
+            timeText.text = timeTextStr
         } else {
             paused = true;
         }
         lastTime = time;
+        
+        if(CACurrentMediaTime() - lastProgressReportTime > 5) {
+            sendProgressReport(eventName: "timeupdate")
+            lastProgressReportTime = CACurrentMediaTime()
+        }
     }
     
     //MARK: Jellyfin Playstate updates
