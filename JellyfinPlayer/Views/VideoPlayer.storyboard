@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad10_2" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Player View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="VideoPlayer" id="Y6W-OH-hqX" customClass="PlayerViewController" customModule="JellyfinPlayer" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="IQg-r0-AeH">
+                        <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view tag="1" contentMode="scaleToFill" semanticContentAttribute="playback" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tsh-rC-BwO" userLabel="VideoContentView">
+                                <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Tag-oM-Uha" appends="YES" id="AlY-fE-iBg"/>
+                                </connections>
+                            </view>
+                            <view contentMode="scaleToFill" id="Qcb-Fb-qZl" userLabel="VideoControlsView">
+                                <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="e9f-8l-RdN" userLabel="SeekSlider">
+                                        <rect key="frame" x="50" y="751" width="873" height="31"/>
+                                        <color key="tintColor" systemColor="systemPurpleColor"/>
+                                        <connections>
+                                            <action selector="seekSliderEnd:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="m4l-h6-V0d"/>
+                                            <action selector="seekSliderStart:" destination="Y6W-OH-hqX" eventType="touchDown" id="it4-Bp-hPL"/>
+                                            <action selector="seekSliderValueChanged:" destination="Y6W-OH-hqX" eventType="valueChanged" id="tfF-Zl-CdU"/>
+                                        </connections>
+                                    </slider>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TimeText" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qft-iu-f1z">
+                                        <rect key="frame" x="950" y="749" width="91" height="34"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="91" id="LbL-h0-EYA"/>
+                                            <constraint firstAttribute="height" constant="34" id="OkD-Dr-Ina"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t2L-Oz-fe9" userLabel="MainActionButton">
+                                        <rect key="frame" x="498.5" y="363.5" width="83" height="83"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="83" id="PdD-nW-y9r"/>
+                                            <constraint firstAttribute="height" constant="83" id="e9j-PI-Ic4"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal">
+                                            <imageReference key="image" image="play.slash.fill" catalog="system" symbolScale="default"/>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="55" scale="default"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="mainActionButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="qBH-T0-6R4"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rLx-SN-RHr">
+                                        <rect key="frame" x="52" y="40" width="18" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="18" id="4Zj-z3-4nR"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" image="chevron.backward" catalog="system">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="24"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="exitButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="XHc-OR-kc8"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="EXAMPLE LONG MOVIE TITLE NAME ABCDEFG1234567890ABCDEFG1234567890 " textAlignment="center" lineBreakMode="tailTruncation" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o8N-R1-DhT">
+                                        <rect key="frame" x="141" y="34" width="798" height="36"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" staticText="YES" header="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="798" id="l8g-la-DDC"/>
+                                            <constraint firstAttribute="height" constant="36" id="xOv-x8-971"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="highlightedColor" systemColor="labelColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.5954241071428571" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="e9f-8l-RdN" secondAttribute="bottom" constant="29" id="231-rB-qDs"/>
+                                    <constraint firstAttribute="trailing" secondItem="qft-iu-f1z" secondAttribute="trailing" constant="39" id="2Ie-OW-sUL"/>
+                                    <constraint firstItem="t2L-Oz-fe9" firstAttribute="centerX" secondItem="Qcb-Fb-qZl" secondAttribute="centerX" id="3Gw-QD-lQX"/>
+                                    <constraint firstItem="o8N-R1-DhT" firstAttribute="centerY" secondItem="rLx-SN-RHr" secondAttribute="centerY" id="8LT-n3-gFu"/>
+                                    <constraint firstItem="rLx-SN-RHr" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="52" id="J0Q-GN-NaA"/>
+                                    <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="NPi-py-0qd"/>
+                                    <constraint firstItem="o8N-R1-DhT" firstAttribute="centerX" secondItem="t2L-Oz-fe9" secondAttribute="centerX" id="RUg-BG-nBq"/>
+                                    <constraint firstItem="t2L-Oz-fe9" firstAttribute="centerY" secondItem="Qcb-Fb-qZl" secondAttribute="centerY" id="TOk-sG-UXV"/>
+                                    <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="aOB-Uz-cbQ"/>
+                                    <constraint firstItem="qft-iu-f1z" firstAttribute="leading" secondItem="e9f-8l-RdN" secondAttribute="trailing" constant="29" id="auL-Vv-ZMV"/>
+                                    <constraint firstItem="e9f-8l-RdN" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="52" id="ed3-xq-0Ug"/>
+                                    <constraint firstItem="o8N-R1-DhT" firstAttribute="leading" secondItem="rLx-SN-RHr" secondAttribute="trailing" constant="71" id="sYe-SO-vtX"/>
+                                    <constraint firstItem="o8N-R1-DhT" firstAttribute="top" secondItem="Qcb-Fb-qZl" secondAttribute="top" constant="34" id="tJD-Ts-VuB"/>
+                                    <constraint firstItem="rLx-SN-RHr" firstAttribute="top" secondItem="Qcb-Fb-qZl" secondAttribute="top" constant="40" id="vZc-Kd-fE5"/>
+                                </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="iQW-fW-KWT" appends="YES" id="H09-88-nzQ"/>
+                                </connections>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="zud-b9-RyD"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                    <connections>
+                        <outlet property="mainActionButton" destination="t2L-Oz-fe9" id="nQR-2e-64l"/>
+                        <outlet property="seekSlider" destination="e9f-8l-RdN" id="b3H-tn-TPG"/>
+                        <outlet property="timeText" destination="qft-iu-f1z" id="pAX-J3-I53"/>
+                        <outlet property="titleLabel" destination="o8N-R1-DhT" id="E7D-iU-bMi"/>
+                        <outlet property="videoContentView" destination="Tsh-rC-BwO" id="5uR-No-wLy"/>
+                        <outlet property="videoControlsView" destination="Qcb-Fb-qZl" id="Z1U-Qr-8ND"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="Tag-oM-Uha">
+                    <connections>
+                        <action selector="contentViewTapped:" destination="Y6W-OH-hqX" id="uq5-EN-60x"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="iQW-fW-KWT">
+                    <connections>
+                        <action selector="controlViewTapped:" destination="Y6W-OH-hqX" id="0lD-A7-3TP"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="130.55555555555554" y="74.81481481481481"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="chevron.backward" catalog="system" width="96" height="128"/>
+        <image name="play.slash.fill" catalog="system" width="116" height="128"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemPurpleColor">
+            <color red="0.68627450980392157" green="0.32156862745098042" blue="0.87058823529411766" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

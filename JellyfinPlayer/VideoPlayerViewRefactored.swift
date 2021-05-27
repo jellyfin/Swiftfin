@@ -25,7 +25,8 @@ struct VideoPlayerViewRefactored: View {
     @State private var selectedAudioTrack: Int32 = 0;
     @State private var selectedCaptionTrack: Int32 = 0;
     @State private var playSessionId: String = "";
-    @State private var shouldOverlayShow: Bool = false;
+    @State private var shouldOverlayShow: Bool = true;
+    @State private var show: Bool = true;
     
     @State private var subtitles: [Subtitle] = [];
     @State private var audioTracks: [Subtitle] = []; // can reuse the same struct
@@ -37,118 +38,129 @@ struct VideoPlayerViewRefactored: View {
     }
     
     var body: some View {
-        LoadingView(isShowing: $shouldShowLoadingView) {
-            VLCPlayer(url: $VLCItem, player: $VLCPlayerObj, startTime: Int(itemPlayback.itemToPlay.Progress)).onDisappear(perform: {
-                VLCPlayerObj.stop()
-            })
-            .padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? 30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? 30 : 0))
-        }
-        .overlay(
-            Group {
-                if(shouldOverlayShow) {
-                    VStack() {
-                        HStack() {
-                            HStack() {
-                                Button() {
-                                    sendStopReport()
-                                    self.itemPlayback.shouldPlay = false;
-                                } label: {
-                                    HStack() {
-                                        Image(systemName: "chevron.left").font(.system(size: 20)).foregroundColor(.white)
-                                    }
-                                }.frame(width: 20)
-                                Spacer()
-                                Text(itemPlayback.itemToPlay.Name).font(.headline).fontWeight(.semibold).foregroundColor(.white).offset(x:20)
-                                Spacer()
-                                Button() {
-                                    VLCPlayerObj.pause()
-                                } label: {
-                                    HStack() {
-                                        Image(systemName: "gear").font(.system(size: 20)).foregroundColor(.white)
-                                    }
-                                }.frame(width: 20).padding(.trailing,15)
-                                Button() {
-                                    VLCPlayerObj.pause()
-                                } label: {
-                                    HStack() {
-                                        Image(systemName: "captions.bubble").font(.system(size: 20)).foregroundColor(.white)
-                                    }
-                                }.frame(width: 20)
-                            }
-                            Spacer()
-                        }.padding(EdgeInsets(top: 55, leading: 40, bottom: 0, trailing: 40))
-                        Spacer()
-                        HStack() {
-                            Spacer()
-                            Button() {
-                                VLCPlayerObj.jumpBackward(15)
-                            } label: {
-                                Image(systemName: "gobackward.15").font(.system(size: 40)).foregroundColor(.white)
-                            }.padding(20)
-                            Spacer()
-                            Button() {
-                                if(VLCPlayerObj.state != .paused) {
-                                    VLCPlayerObj.pause()
-                                    sendProgressReport(eventName: "pause")
-                                } else {
-                                    VLCPlayerObj.play()
-                                    sendProgressReport(eventName: "unpause")
-                                }
-                            } label: {
-                                Image(systemName: VLCPlayerObj.state == .paused ? "play" : "pause").font(.system(size: 55)).foregroundColor(.white)
-                            }.padding(20).frame(width: 60, height: 60)
-                            Spacer()
-                            Button() {
-                                VLCPlayerObj.jumpForward(15)
-                            } label: {
-                                Image(systemName: "goforward.15").font(.system(size: 40)).foregroundColor(.white)
-                            }.padding(20)
-                            Spacer()
-                        }.padding(.leading, -20)
-                        Spacer()
-                        HStack() {
-                            Slider(value: $scrub, onEditingChanged: { bool in
-                                let videoPosition = Double(VLCPlayerObj.time.intValue)
-                                let videoDuration = Double(VLCPlayerObj.time.intValue + abs(VLCPlayerObj.remainingTime.intValue))
-                                if(bool == true) {
-                                    VLCPlayerObj.pause()
-                                    sendProgressReport(eventName: "pause")
-                                } else {
-                                    //Scrub is value from 0..1 - find position in video and add / or remove.
-                                    let secondsScrubbedTo = round(_scrub.wrappedValue * videoDuration);
-                                    let offset = secondsScrubbedTo - videoPosition;
-                                    sendProgressReport(eventName: "unpause")
-                                    VLCPlayerObj.play()
-                                    if(offset > 0) {
-                                        VLCPlayerObj.jumpForward(Int32(offset)/1000);
-                                    } else {
-                                        VLCPlayerObj.jumpBackward(Int32(abs(offset))/1000);
-                                    }
-                                }
-                            })
-                            .accentColor(Color(red: 172/255, green: 92/255, blue: 195/255))
-                            Text(timeText).fontWeight(.semibold).frame(width: 80).foregroundColor(.white)
-                        }.padding(EdgeInsets(top: -20, leading: 44, bottom: 42, trailing: 40))
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                    .background(Color(.black).opacity(0.4))
-                }
+        if(show) {
+            LoadingView(isShowing: $shouldShowLoadingView) {
+                EmptyView()
+                .padding(EdgeInsets(top: 0, leading: UIDevice.current.hasNotch ? 30 : 0, bottom: 0, trailing: UIDevice.current.hasNotch ? 30 : 0))
             }
-            , alignment: .topLeading)
-        .introspectTabBarController { (UITabBarController) in
-                    UITabBarController.tabBar.isHidden = true
+            .overlay(
+                Group {
+                    if(shouldOverlayShow) {
+                        VStack() {
+                            HStack() {
+                                HStack() {
+                                    Button() {
+                                        sendStopReport()
+                                        VLCPlayerObj.stop()
+                                        self.itemPlayback.shouldPlay = false;
+                                    } label: {
+                                        HStack() {
+                                            Image(systemName: "chevron.left").font(.system(size: 20)).foregroundColor(.white)
+                                        }
+                                    }.frame(width: 20)
+                                    Spacer()
+                                    Text(itemPlayback.itemToPlay.Name).font(.headline).fontWeight(.semibold).foregroundColor(.white).offset(x:20)
+                                    Spacer()
+                                    Button() {
+                                        VLCPlayerObj.pause()
+                                    } label: {
+                                        HStack() {
+                                            Image(systemName: "gear").font(.system(size: 20)).foregroundColor(.white)
+                                        }
+                                    }.frame(width: 20).padding(.trailing,15)
+                                    Button() {
+                                        VLCPlayerObj.pause()
+                                    } label: {
+                                        HStack() {
+                                            Image(systemName: "captions.bubble").font(.system(size: 20)).foregroundColor(.white)
+                                        }
+                                    }.frame(width: 20)
+                                }
+                                Spacer()
+                            }.padding(EdgeInsets(top: 55, leading: 40, bottom: 0, trailing: 40))
+                            Spacer()
+                            HStack() {
+                                Spacer()
+                                Button() {
+                                    VLCPlayerObj.jumpBackward(15)
+                                } label: {
+                                    Image(systemName: "gobackward.15").font(.system(size: 40)).foregroundColor(.white)
+                                }.padding(20)
+                                Spacer()
+                                Button() {
+                                    if(VLCPlayerObj.state != .paused) {
+                                        VLCPlayerObj.pause()
+                                        sendProgressReport(eventName: "pause")
+                                    } else {
+                                        VLCPlayerObj.play()
+                                        sendProgressReport(eventName: "unpause")
+                                    }
+                                } label: {
+                                    if(VLCPlayerObj.state == .paused) {
+                                        Image(systemName: "play").font(.system(size: 55)).foregroundColor(.white)
+                                    } else {
+                                        Image(systemName: "pause").font(.system(size: 55)).foregroundColor(.white)
+                                    }
+                                }.padding(20).frame(width: 60, height: 60)
+                                Spacer()
+                                Button() {
+                                    VLCPlayerObj.jumpForward(15)
+                                } label: {
+                                    Image(systemName: "goforward.15").font(.system(size: 40)).foregroundColor(.white)
+                                }.padding(20)
+                                Spacer()
+                            }.padding(.leading, -20)
+                            Spacer()
+                            HStack() {
+                                Slider(value: $scrub, onEditingChanged: { bool in
+                                    let videoPosition = Double(VLCPlayerObj.time.intValue)
+                                    let videoDuration = Double(VLCPlayerObj.time.intValue + abs(VLCPlayerObj.remainingTime.intValue))
+                                    if(bool == true) {
+                                        VLCPlayerObj.pause()
+                                        sendProgressReport(eventName: "pause")
+                                    } else {
+                                        //Scrub is value from 0..1 - find position in video and add / or remove.
+                                        let secondsScrubbedTo = round(_scrub.wrappedValue * videoDuration);
+                                        let offset = secondsScrubbedTo - videoPosition;
+                                        sendProgressReport(eventName: "unpause")
+                                        VLCPlayerObj.play()
+                                        if(offset > 0) {
+                                            VLCPlayerObj.jumpForward(Int32(offset)/1000);
+                                        } else {
+                                            VLCPlayerObj.jumpBackward(Int32(abs(offset))/1000);
+                                        }
+                                    }
+                                })
+                                .accentColor(Color(red: 172/255, green: 92/255, blue: 195/255))
+                                Text(timeText).fontWeight(.semibold).frame(width: 80).foregroundColor(.white)
+                            }.padding(EdgeInsets(top: -20, leading: 44, bottom: 42, trailing: 40))
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .background(Color(.black).opacity(0.4))
+                    }
+                }
+                , alignment: .topLeading)
+            .introspectTabBarController { (UITabBarController) in
+                        UITabBarController.tabBar.isHidden = true
+            }
+            .onTapGesture(perform: resetTimer)
+            .navigationBarHidden(true)
+            .navigationBarBackButtonHidden(true)
+            .statusBar(hidden: true)
+            .prefersHomeIndicatorAutoHidden(true)
+            .preferredColorScheme(.dark)
+            .edgesIgnoringSafeArea(.all)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            .overrideViewPreference(.unspecified)
+            .supportedOrientations(.landscape)
+            .onAppear(perform: onAppear)
+        } else {
+            Text("test").onAppear(perform: {
+                print("ev appear")
+                usleep(10000);
+                _show.wrappedValue = true;
+            })
         }
-        .onTapGesture(perform: resetTimer)
-        .navigationBarHidden(true)
-        .navigationBarBackButtonHidden(true)
-        .statusBar(hidden: true)
-        .prefersHomeIndicatorAutoHidden(true)
-        .preferredColorScheme(.dark)
-        .edgesIgnoringSafeArea(.all)
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-        .overrideViewPreference(.unspecified)
-        .supportedOrientations(.landscape)
-        .onAppear(perform: onAppear)
     }
     
     func onAppear() {
@@ -296,11 +308,12 @@ struct VideoPlayerViewRefactored: View {
     
     func resetTimer() {
         print("rt running")
-        if(_shouldOverlayShow.wrappedValue == true) {
-            _shouldOverlayShow.wrappedValue = false
+        show = false;
+        if(shouldOverlayShow == true) {
+            shouldOverlayShow = false
             return;
         }
-        _shouldOverlayShow.wrappedValue = true;
+        shouldOverlayShow = true;
     }
     
     func sendStopReport() {
