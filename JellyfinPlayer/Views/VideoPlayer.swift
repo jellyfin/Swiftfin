@@ -44,7 +44,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
     weak var delegate: PlayerViewControllerDelegate?
     
-    var mediaPlayer = VLCMediaPlayer(options: ["--sub-margin=200"])!
+    var mediaPlayer = VLCMediaPlayer(options: ["--sub-margin=-50"])!
     var globalData = GlobalData()
     
     @IBOutlet weak var timeText: UILabel!
@@ -54,6 +54,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var jumpBackButton: UIButton!
     @IBOutlet weak var jumpForwardButton: UIButton!
+    @IBOutlet weak var playerSettingsButton: UIButton!
     
     var shouldShowLoadingScreen: Bool = false;
     var ssTargetValueOffset: Int = 0;
@@ -79,6 +80,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         sendProgressReport(eventName: "pause")
         mediaPlayer.pause()
     }
+    
     @IBAction func seekSliderValueChanged(_ sender: Any) {
         let videoDuration = Double(mediaPlayer.time.intValue + abs(mediaPlayer.remainingTime.intValue))/1000
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration);
@@ -154,7 +156,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         //View has loaded.
         //Show loading screen
         usleep(10000);
@@ -266,6 +268,15 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                             mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
                         }
                     }
+                    mediaPlayer.play()
+                    mediaPlayer.currentVideoSubTitleIndex = -1;
+                    mediaPlayer.currentAudioTrackIndex = selectedAudioTrack;
+                    mediaPlayer.pause()
+                    usleep(10000);
+                    mediaPlayer.play()
+                    usleep(10000);
+                    mediaPlayer.pause()
+                    usleep(10000);
                     mediaPlayer.play()
                     mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                 } catch {
