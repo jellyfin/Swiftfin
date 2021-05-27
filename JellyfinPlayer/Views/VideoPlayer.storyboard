@@ -51,7 +51,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t2L-Oz-fe9" userLabel="MainActionButton">
-                                        <rect key="frame" x="499" y="364" width="83" height="83"/>
+                                        <rect key="frame" x="498.5" y="363.5" width="83" height="83"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="83" id="PdD-nW-y9r"/>
                                             <constraint firstAttribute="height" constant="83" id="e9j-PI-Ic4"/>
@@ -95,8 +95,8 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="highlightedColor" systemColor="labelColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bYM-Xp-bZO">
-                                        <rect key="frame" x="305" y="367" width="75" height="75"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bYM-Xp-bZO">
+                                        <rect key="frame" x="305" y="367" width="75" height="76"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="76" id="5lC-V1-lHH"/>
                                             <constraint firstAttribute="width" constant="75" id="IPn-pO-Rxo"/>
@@ -109,8 +109,8 @@
                                             <action selector="jumpBackTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="4vd-25-cCB"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="An8-jF-FAY">
-                                        <rect key="frame" x="700" y="368" width="75" height="75"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="An8-jF-FAY">
+                                        <rect key="frame" x="700" y="367" width="75" height="76"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="76" id="huv-QZ-HSc"/>
                                             <constraint firstAttribute="width" constant="75" id="uPN-A8-EV1"/>
@@ -130,6 +130,7 @@
                                     <constraint firstAttribute="bottom" secondItem="e9f-8l-RdN" secondAttribute="bottom" constant="29" id="231-rB-qDs"/>
                                     <constraint firstAttribute="trailing" secondItem="qft-iu-f1z" secondAttribute="trailing" constant="39" id="2Ie-OW-sUL"/>
                                     <constraint firstItem="An8-jF-FAY" firstAttribute="leading" secondItem="t2L-Oz-fe9" secondAttribute="trailing" constant="118.5" id="2zE-ul-pOh"/>
+                                    <constraint firstItem="An8-jF-FAY" firstAttribute="centerY" secondItem="t2L-Oz-fe9" secondAttribute="centerY" id="36i-Q2-D1K"/>
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="centerX" secondItem="Qcb-Fb-qZl" secondAttribute="centerX" id="3Gw-QD-lQX"/>
                                     <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="NPi-py-0qd"/>
                                     <constraint firstItem="rLx-SN-RHr" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="30" id="Oe7-LK-6Tl"/>
@@ -137,6 +138,7 @@
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="centerY" secondItem="Qcb-Fb-qZl" secondAttribute="centerY" id="TOk-sG-UXV"/>
                                     <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="aOB-Uz-cbQ"/>
                                     <constraint firstItem="qft-iu-f1z" firstAttribute="leading" secondItem="e9f-8l-RdN" secondAttribute="trailing" constant="29" id="auL-Vv-ZMV"/>
+                                    <constraint firstItem="bYM-Xp-bZO" firstAttribute="top" secondItem="An8-jF-FAY" secondAttribute="top" id="cVS-eI-vv2"/>
                                     <constraint firstItem="e9f-8l-RdN" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="52" id="ed3-xq-0Ug"/>
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="leading" secondItem="bYM-Xp-bZO" secondAttribute="trailing" constant="118.5" id="fci-L5-1f6"/>
                                     <constraint firstItem="o8N-R1-DhT" firstAttribute="top" secondItem="Qcb-Fb-qZl" secondAttribute="top" constant="34" id="tJD-Ts-VuB"/>

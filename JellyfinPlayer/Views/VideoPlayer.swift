@@ -44,7 +44,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
     weak var delegate: PlayerViewControllerDelegate?
     
-    var mediaPlayer = VLCMediaPlayer()
+    var mediaPlayer = VLCMediaPlayer(options: ["--sub-margin=200"])!
     var globalData = GlobalData()
     
     @IBOutlet weak var timeText: UILabel!
@@ -64,8 +64,8 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var startTime: Int = 0;
     var controlsAppearTime: Double = 0;
     
-    var selectedAudioTrack: Int32 = 0;
-    var selectedCaptionTrack: Int32 = 0;
+    var selectedAudioTrack: Int32 = -1;
+    var selectedCaptionTrack: Int32 = -1;
     var playSessionId: String = "";
     var lastProgressReportTime: Double = 0;
     
