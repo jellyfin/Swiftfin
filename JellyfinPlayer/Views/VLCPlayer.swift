@@ -75,15 +75,38 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var playbackItem = PlaybackItem();
 
     @IBAction func seekSliderStart(_ sender: Any) {
-        print("ss start")
+        sendProgressReport(eventName: "pause")
         mediaPlayer.pause()
     }
     @IBAction func seekSliderValueChanged(_ sender: Any) {
-        print("ss mv " + String(seekSlider.value))
+        let videoDuration = Double(mediaPlayer.time.intValue + abs(mediaPlayer.remainingTime.intValue))/1000
+        let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration);
+        let scrubRemaining = videoDuration - secondsScrubbedTo;
+        let remainingTime = scrubRemaining;
+        let hours = floor(remainingTime / 3600);
+        let minutes = (remainingTime.truncatingRemainder(dividingBy: 3600)) / 60;
+        let seconds = (remainingTime.truncatingRemainder(dividingBy: 3600)).truncatingRemainder(dividingBy: 60);
+        if(hours != 0) {
+            timeText.text = "\(Int(hours)):\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))";
+        } else {
+            timeText.text = "\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))";
+        }
     }
+    
     @IBAction func seekSliderEnd(_ sender: Any) {
         print("ss end")
+        let videoPosition = Double(mediaPlayer.time.intValue)
+        let videoDuration = Double(mediaPlayer.time.intValue + abs(mediaPlayer.remainingTime.intValue))
+        //Scrub is value from 0..1 - find position in video and add / or remove.
+        let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration);
+        let offset = secondsScrubbedTo - videoPosition;
         mediaPlayer.play()
+        if(offset > 0) {
+            mediaPlayer.jumpForward(Int32(offset)/1000);
+        } else {
+            mediaPlayer.jumpBackward(Int32(abs(offset))/1000);
+        }
+        sendProgressReport(eventName: "unpause")
     }
     
     @IBAction func exitButtonPressed(_ sender: Any) {
