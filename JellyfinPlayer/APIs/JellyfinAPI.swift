@@ -62,7 +62,7 @@ extension Filter {
         parameters["ImageTypeLimit"] = imageTypeLimit
         parameters["IncludeItemTypes"] = itemTypes.map(\.rawValue).joined(separator: ",")
         parameters["ParentId"] = parentID
-        parameters["Recursive"] = recursive
+        parameters["Recursive"] = recursive.description
         parameters["SortBy"] = sort?.rawValue
         parameters["SortOrder"] = asc?.rawValue
         parameters["Genres"] = genres.joined(separator: ",")
@@ -108,15 +108,15 @@ extension JellyfinAPI: TargetType {
         switch self {
         case let .search(_, filter, searchQuery, page):
             var parameters = filter.toParamters
-            parameters["searchTerm"] = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-            parameters["StartIndex"] = page * 100
+            parameters["searchTerm"] = searchQuery
+            parameters["StartIndex"] = (page - 1) * 100
             parameters["Limit"] = 100
-            return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         case let .items(_, filter, page):
             var parameters = filter.toParamters
-            parameters["StartIndex"] = page * 100
+            parameters["StartIndex"] = (page - 1) * 100
             parameters["Limit"] = 100
-            return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         }
     }
 
@@ -125,7 +125,7 @@ extension JellyfinAPI: TargetType {
         case let .items(global, _, _),
              let .search(global, _, _, _):
             return [
-                "X-Emby-Authorization": global.authHeader,
+                "X-Emby-Authorization": global.authHeader
             ]
         }
     }

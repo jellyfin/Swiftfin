@@ -92,14 +92,14 @@ struct LibraryView: View {
         .navigationTitle(title)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if viewModel.isHiddenPreviousButton {
+                if !viewModel.isHiddenPreviousButton {
                     Button {
                         viewModel.requestPreviousPage()
                     } label: {
                         Image(systemName: "chevron.left")
                     }
                 }
-                if viewModel.isHiddenNextButton {
+                if !viewModel.isHiddenNextButton {
                     Button {
                         viewModel.requestNextPage()
                     } label: {

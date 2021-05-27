@@ -70,6 +70,9 @@ final class LibraryViewModel: ObservableObject {
     }
 
     fileprivate func requestItems() {
+        print(globalData.server?.baseURI)
+        print(globalData.authHeader)
+        print(filter)
         isLoading = true
         provider.requestPublisher(.items(globalData: globalData, filter: filter, page: page))
             // .map(ResumeItem.self) TO DO

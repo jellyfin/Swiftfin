@@ -42,6 +42,7 @@ final class LibrarySearchViewModel: ObservableObject {
         cancellables.removeAll()
 
         $searchQuery
+            .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .sink(receiveValue: requestSearch(query:))
             .store(in: &cancellables)
     }
@@ -55,6 +56,7 @@ final class LibrarySearchViewModel: ObservableObject {
                 self.isLoading = false
             }, receiveValue: { response in
                 let body = response.data
+                self.items.removeAll()
                 do {
                     let json = try JSON(data: body)
                     for (_, item): (String, JSON) in json["Items"] {
