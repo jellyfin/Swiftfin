@@ -30,7 +30,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="e9f-8l-RdN" userLabel="SeekSlider">
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="e9f-8l-RdN" userLabel="SeekSlider">
                                         <rect key="frame" x="50" y="751" width="873" height="31"/>
                                         <color key="tintColor" red="0.66666666666666663" green="0.36078431372549019" blue="0.76470588235294112" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="thumbTintColor" red="0.66666666666666663" green="0.36078431372549019" blue="0.76470588235294112" alpha="1" colorSpace="calibratedRGB"/>

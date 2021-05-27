@@ -160,6 +160,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         usleep(10000);
         delegate?.showLoadingView(self)
         
+        mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
+        //mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
+        
         //Fetch max bitrate from UserDefaults depending on current connection mode
         let defaults = UserDefaults.standard
         let maxBitrate = globalData.isInNetwork ? defaults.integer(forKey: "InNetworkBandwidth") : defaults.integer(forKey: "OutOfNetworkBandwidth")
