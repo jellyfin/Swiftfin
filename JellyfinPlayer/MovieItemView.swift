@@ -357,9 +357,9 @@ struct MovieItemView: View {
                                                     HStack() {
                                                         Text("Genres:").font(.callout).fontWeight(.semibold)
                                                         ForEach(fullItem.Genres, id: \.Id) {genre in
-                                                            NavigationLink(destination: LibraryView(extraParams: "&Genres=\(genre.Name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")", title: genre.Name)) {
+//                                                            NavigationLink(destination: LibraryView(extraParams: "&Genres=\(genre.Name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")", title: genre.Name)) {
                                                                 Text(genre.Name).font(.footnote)
-                                                            }
+//                                                            }
                                                         }
                                                     }.padding(.leading, 16).padding(.trailing,16)
                                                 }
@@ -371,7 +371,7 @@ struct MovieItemView: View {
                                                         HStack() {
                                                             Spacer().frame(width: 16)
                                                             ForEach(fullItem.Cast, id: \.Id) { cast in
-                                                                NavigationLink(destination: LibraryView(extraParams: "&PersonIds=\(cast.Id)", title: cast.Name)) {
+//                                                                NavigationLink(destination: LibraryView(extraParams: "&PersonIds=\(cast.Id)", title: cast.Name)) {
                                                                     VStack() {
                                                                         WebImage(url: cast.Image)
                                                                             .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
@@ -390,7 +390,7 @@ struct MovieItemView: View {
                                                                             Text(cast.Role).font(.caption).fontWeight(.medium).lineLimit(1).foregroundColor(Color.secondary).frame(width: 100)
                                                                         }
                                                                     }
-                                                                }
+//                                                                }
                                                                 Spacer().frame(width: 10)
                                                             }
                                                             Spacer().frame(width: 16)
@@ -540,9 +540,9 @@ struct MovieItemView: View {
                                                     HStack() {
                                                         Text("Genres:").font(.callout).fontWeight(.semibold)
                                                         ForEach(fullItem.Genres, id: \.Id) {genre in
-                                                            NavigationLink(destination: LibraryView(extraParams: "&Genres=\(genre.Name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")", title: genre.Name)) {
+//                                                            NavigationLink(destination: LibraryView(extraParams: "&Genres=\(genre.Name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")", title: genre.Name)) {
                                                                 Text(genre.Name).font(.footnote)
-                                                            }
+//                                                            }
                                                         }
                                                     }.padding(.leading, 16).padding(.trailing,UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                                 }
@@ -554,7 +554,7 @@ struct MovieItemView: View {
                                                         HStack() {
                                                             Spacer().frame(width: 16)
                                                             ForEach(fullItem.Cast, id: \.Id) { cast in
-                                                                NavigationLink(destination: LibraryView(extraParams: "&PersonIds=\(cast.Id)", title: cast.Name)) {
+//                                                                NavigationLink(destination: LibraryView(extraParams: "&PersonIds=\(cast.Id)", title: cast.Name)) {
                                                                     VStack() {
                                                                         WebImage(url: cast.Image)
                                                                             .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
@@ -573,7 +573,7 @@ struct MovieItemView: View {
                                                                             Text(cast.Role).font(.caption).fontWeight(.medium).lineLimit(1).foregroundColor(Color.secondary).frame(width: 100)
                                                                         }
                                                                     }
-                                                                }
+//                                                                }
                                                                 Spacer().frame(width: 10)
                                                             }
                                                             Spacer().frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)

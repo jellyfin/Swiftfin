@@ -197,9 +197,9 @@ struct ContentView: View {
                                             HStack() {
                                                 Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
                                                 Spacer()
-                                                NavigationLink(destination: LibraryView(prefill: library_id, names: [library_id: library_names[library_id] ?? ""], libraries: [library_id], filter: "&SortBy=DateCreated&SortOrder=Descending")) {
+//                                                NavigationLink(destination: LibraryView(prefill: library_id, names: [library_id: library_names[library_id] ?? ""], libraries: [library_id], filter: "&SortBy=DateCreated&SortOrder=Descending")) {
                                                     Text("See All").font(.subheadline).fontWeight(.bold)
-                                                }
+//                                                }
                                             }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                                             LatestMediaView(library: library_id)
                                         }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
@@ -224,9 +224,8 @@ struct ContentView: View {
                             Image(systemName: "house")
                         })
                         .tag("Home")
-                        
-                        NavigationView() {
-                            LibraryView(prefill: "", names: library_names, libraries: libraries)
+                        NavigationView {
+                            LibraryListView(libraryNames: library_names, libraryIDs: libraries)
                         }
                         .navigationViewStyle(StackNavigationViewStyle())
                         .tabItem({

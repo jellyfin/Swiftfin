@@ -11,7 +11,7 @@ class justSignedIn: ObservableObject {
     @Published var did: Bool = false
 }
 
-class GlobalData: ObservableObject {
+class GlobalData: ObservableObject {    
     @Published var user: SignedInUser?
     @Published var authToken: String = ""
     @Published var server: Server?
