@@ -39,7 +39,7 @@ protocol PlayerViewControllerDelegate: AnyObject {
     func exitPlayer(_ viewController: PlayerViewController)
 }
 
-class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate {
+class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate, VideoPlayerSettingsDelegate {
 
     weak var delegate: PlayerViewControllerDelegate?
     
@@ -153,16 +153,53 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         }
     }
     
+    @IBAction func settingsButtonTapped(_ sender: UIButton) {
+        let optionsVC = VideoPlayerSettingsView()
+        print(self.selectedAudioTrack)
+        print(self.selectedCaptionTrack)
+        optionsVC.currentSubtitleTrack = self.selectedCaptionTrack
+        optionsVC.currentAudioTrack = self.selectedAudioTrack
+        optionsVC.delegate = self;
+        optionsVC.subtitles = subtitleTrackArray
+        optionsVC.audioTracks = audioTrackArray
+        // Use the popover presentation style for your view controller.
+        optionsVC.modalPresentationStyle = .popover
+
+        // Specify the anchor point for the popover.
+        optionsVC.popoverPresentationController?.sourceView = playerSettingsButton
+
+        // Present the view controller (in a popover).
+        self.present(optionsVC, animated: true) {
+            print("popover visible, pause playback")
+            self.mediaPlayer.pause()
+            self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
+        }
+    }
+    
+    func settingsPopoverDismissed() {
+        self.mediaPlayer.play()
+        self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         //View has loaded.
         //Show loading screen
-        usleep(10000);
         delegate?.showLoadingView(self)
         
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         //mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
+        
+        
+        mediaPlayer.delegate = self
+        mediaPlayer.drawable = videoContentView
+        
+        if(manifest.Type == "Episode") {
+            titleLabel.text = "\(manifest.Name) -  S\(String(manifest.ParentIndexNumber ?? 0)):E\(String(manifest.IndexNumber ?? 0)) - \(manifest.SeriesName ?? "")"
+        } else {
+            titleLabel.text = manifest.Name
+        }
         
         //Fetch max bitrate from UserDefaults depending on current connection mode
         let defaults = UserDefaults.standard
@@ -258,24 +295,23 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         sendPlayReport()
                         playbackItem = item;
                     }
-                    mediaPlayer.stop()
+                    
                     DispatchQueue.global(qos: .background).async {
+                        mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                         mediaPlayer.play()
+                        mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                         subtitleTrackArray.forEach() { sub in
                             if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
                                 print("adding subs for id: \(sub.id) w/ url: \(sub.url)")
                                 mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
                             }
                         }
-                        sleep(3)
                         mediaPlayer.pause()
-                        usleep(10000);
-                        mediaPlayer.play()
+                        delegate?.showLoadingView(self)
+                        sleep(3)
                         mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack;
                         mediaPlayer.pause()
-                        usleep(10000);
                         mediaPlayer.play()
-                        mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                     }
                 } catch {
                     
@@ -286,20 +322,20 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 break
             }
         }
-        
-        mediaPlayer.delegate = self
-        mediaPlayer.drawable = videoContentView
-        
-        if(manifest.Type == "Episode") {
-            titleLabel.text = "\(manifest.Name) -  S\(String(manifest.ParentIndexNumber ?? 0)):E\(String(manifest.IndexNumber ?? 0)) - \(manifest.SeriesName ?? "")"
-        } else {
-            titleLabel.text = manifest.Name
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true;
+    }
+    
+    //MARK: VideoPlayerSettings Delegate
+    func subtitleTrackChanged(newTrackID: Int32) {
+        mediaPlayer.currentVideoSubTitleIndex = newTrackID
+    }
+    
+    func audioTrackChanged(newTrackID: Int32) {
+        mediaPlayer.currentAudioTrackIndex = newTrackID
     }
     
     
@@ -308,11 +344,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             let currentState: VLCMediaPlayerState = mediaPlayer.state
             switch currentState {
             case .stopped :
-                print("Video is done playing)")
-                sendStopReport()
+                break;
             case .ended :
-                print("Video is done playing)")
-                sendStopReport()
+                break;
             case .playing :
                 print("Video is playing")
                 sendProgressReport(eventName: "unpause")
@@ -328,7 +362,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 
             case .buffering :
                 print("Video is buffering)")
-                sendProgressReport(eventName: "pause")
                 delegate?.showLoadingView(self)
                 mediaPlayer.pause()
                 usleep(10000)
@@ -348,6 +381,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         let time = mediaPlayer.position;
         if(time != lastTime) {
             paused = false;
+            mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
             seekSlider.setValue(mediaPlayer.position, animated: true)
             delegate?.hideLoadingView(self)
             
