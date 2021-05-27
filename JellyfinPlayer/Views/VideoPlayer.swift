@@ -39,7 +39,7 @@ protocol PlayerViewControllerDelegate: AnyObject {
     func exitPlayer(_ viewController: PlayerViewController)
 }
 
-class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate {
+class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate, VideoPlayerSettingsDelegate {
 
     weak var delegate: PlayerViewControllerDelegate?
     
@@ -151,6 +151,32 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
             paused = true;
         }
+    }
+    
+    @IBAction func settingsButtonTapped(_ sender: UIButton) {
+        let optionsVC = VideoPlayerSettingsView()
+        optionsVC.delegate = self;
+        optionsVC.subtitles = subtitleTrackArray
+        optionsVC.audioTracks = audioTrackArray
+        optionsVC.currentSubtitleTrack = selectedCaptionTrack
+        optionsVC.currentAudioTrack = selectedAudioTrack
+        // Use the popover presentation style for your view controller.
+        optionsVC.modalPresentationStyle = .popover
+
+        // Specify the anchor point for the popover.
+        optionsVC.popoverPresentationController?.sourceView = playerSettingsButton
+
+        // Present the view controller (in a popover).
+        self.present(optionsVC, animated: true) {
+            print("popover visible, pause playback")
+            self.mediaPlayer.pause()
+            self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
+        }
+    }
+    
+    func settingsPopoverDismissed() {
+        self.mediaPlayer.play()
+        self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
     }
     
     override func viewDidLoad() {
@@ -301,6 +327,15 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         self.tabBarController?.tabBar.isHidden = true;
     }
     
+    //MARK: VideoPlayerSettings Delegate
+    func subtitleTrackChanged(newTrackID: Int32) {
+        mediaPlayer.currentVideoSubTitleIndex = newTrackID
+    }
+    
+    func audioTrackChanged(newTrackID: Int32) {
+        mediaPlayer.currentAudioTrackIndex = newTrackID
+    }
+    
     
     //MARK: VLCMediaPlayer Delegates
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
@@ -325,7 +360,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 
             case .buffering :
                 print("Video is buffering)")
-                sendProgressReport(eventName: "pause")
                 delegate?.showLoadingView(self)
                 mediaPlayer.pause()
                 usleep(10000)
@@ -345,6 +379,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         let time = mediaPlayer.position;
         if(time != lastTime) {
             paused = false;
+            mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
             seekSlider.setValue(mediaPlayer.position, animated: true)
             delegate?.hideLoadingView(self)
             
