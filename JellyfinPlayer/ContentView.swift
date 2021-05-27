@@ -80,7 +80,13 @@ struct ContentView: View {
             }
             
             let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String;
-            globalData.authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(UIDevice.current.name)\", DeviceId=\"\(globalData.user?.device_uuid ?? "")\", Version=\"\(appVersion ?? "0.0.1")\", Token=\"\(globalData.authToken)\"";
+            var header = "MediaBrowser "
+            header.append("Client=\"SwiftFin\",")
+            header.append("Device=\"\(UIDevice.current.name.removeRegexMatches(pattern: "[^\\w\\s]"))\",")
+            header.append("DeviceId=\"\(globalData.user?.device_uuid ?? "")\",")
+            header.append("Version=\"\(appVersion ?? "0.0.1")\",")
+            header.append("Token=\"\(globalData.authToken)\"")
+            globalData.authHeader = header
             
             let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + "/Users/Me")
             request.headerParameters["X-Emby-Authorization"] = globalData.authHeader

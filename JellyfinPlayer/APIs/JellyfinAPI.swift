@@ -67,7 +67,7 @@ extension Filter {
         parameters["ImageTypeLimit"] = imageTypeLimit
         parameters["IncludeItemTypes"] = itemTypes.map(\.rawValue).joined(separator: ",")
         parameters["ParentId"] = parentID
-        parameters["Recursive"] = recursive.description
+        parameters["Recursive"] = recursive
         parameters["SortBy"] = sort?.rawValue
         parameters["SortOrder"] = asc?.rawValue
         parameters["Genres"] = genres.joined(separator: ",")
@@ -83,6 +83,7 @@ enum JellyfinAPI {
 }
 
 extension JellyfinAPI: TargetType {
+    
     var baseURL: URL {
         switch self {
         case let .items(global, _, _),
@@ -117,12 +118,12 @@ extension JellyfinAPI: TargetType {
             parameters["searchTerm"] = searchQuery
             parameters["StartIndex"] = (page - 1) * 100
             parameters["Limit"] = 100
-            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.jellyfin)
         case let .items(_, filter, page):
             var parameters = filter.toParamters
             parameters["StartIndex"] = (page - 1) * 100
             parameters["Limit"] = 100
-            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.jellyfin)
         }
     }
 
@@ -130,11 +131,18 @@ extension JellyfinAPI: TargetType {
         switch self {
         case let .items(global, _, _),
              let .search(global, _, _, _):
-            return [
-                "X-Emby-Authorization": global.authHeader,
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            ]
+            var headers = [String: String]()
+            headers["Content-Type"] = "application/json"
+            headers["Accept"] = "application/json"
+            headers["X-Emby-Authorization"] = global.authHeader
+            return headers
         }
+    }
+}
+
+extension URLEncoding {
+    
+    static var jellyfin: URLEncoding {
+        URLEncoding(destination: .methodDependent, arrayEncoding: .noBrackets, boolEncoding: .literal)
     }
 }

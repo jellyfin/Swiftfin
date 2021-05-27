@@ -43,6 +43,7 @@
 		53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F29263CF3F500585C35 /* LatestMediaView.swift */; };
 		6213388E265F777C00A81A2A /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388D265F777C00A81A2A /* LibraryViewModel.swift */; };
 		62133890265F83A900A81A2A /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388F265F83A900A81A2A /* LibraryListView.swift */; };
+		621338932660107500A81A2A /* String++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* String++.swift */; };
 		6273DD43265F4195009C1D0B /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD42265F4195009C1D0B /* Moya */; };
 		6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD44265F4195009C1D0B /* CombineMoya */; };
 		6273DD48265F41B3009C1D0B /* JellyfinAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */; };
@@ -108,6 +109,7 @@
 		53FF7F29263CF3F500585C35 /* LatestMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaView.swift; sourceTree = "<group>"; };
 		6213388D265F777C00A81A2A /* LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewModel.swift; sourceTree = "<group>"; };
 		6213388F265F83A900A81A2A /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
+		621338922660107500A81A2A /* String++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String++.swift"; sourceTree = "<group>"; };
 		6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPI.swift; sourceTree = "<group>"; };
 		6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchViewModel.swift; sourceTree = "<group>"; };
 		AE8C3153265D60BF008AA076 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 		5377CBF3263B596A003A4E83 /* JellyfinPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				621338912660106C00A81A2A /* Extensions */,
 				6273DD4A265F4794009C1D0B /* Domains */,
 				6273DD46265F419B009C1D0B /* APIs */,
 				AE8C3157265D6F5E008AA076 /* Resources */,
@@ -221,6 +224,14 @@
 				6213388D265F777C00A81A2A /* LibraryViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		621338912660106C00A81A2A /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				621338922660107500A81A2A /* String++.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		6273DD46265F419B009C1D0B /* APIs */ = {
@@ -385,6 +396,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				621338932660107500A81A2A /* String++.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
 				5377CBFE263B596B003A4E83 /* PersistenceController.swift in Sources */,
 				5389276E263C25100035E14B /* ContinueWatchingView.swift in Sources */,
