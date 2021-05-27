@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="ipad12_9rounded" orientation="landscape" layout="fullscreen" appearance="dark"/>
+    <device id="ipad11_0rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Image references" minToolsVersion="12.0"/>
@@ -14,10 +14,10 @@
             <objects>
                 <viewController storyboardIdentifier="VideoPlayer" id="Y6W-OH-hqX" customClass="PlayerViewController" customModule="JellyfinPlayer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IQg-r0-AeH">
-                        <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <subviews>
                             <view autoresizesSubviews="NO" tag="1" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tsh-rC-BwO" userLabel="VideoContentView">
-                                <rect key="frame" x="-13" y="0.0" width="1392" height="1024"/>
+                                <rect key="frame" x="-13" y="0.0" width="860" height="1194"/>
                                 <viewLayoutGuide key="safeArea" id="aVY-BC-PZU"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
@@ -26,10 +26,10 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qcb-Fb-qZl" userLabel="VideoControlsView">
-                                <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                                <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                                 <subviews>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="e9f-8l-RdN" userLabel="SeekSlider">
-                                        <rect key="frame" x="50" y="965" width="1159" height="31"/>
+                                        <rect key="frame" x="50" y="1135" width="627" height="31"/>
                                         <color key="tintColor" red="0.66666666666666663" green="0.36078431372549019" blue="0.76470588235294112" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="thumbTintColor" red="0.66666666666666663" green="0.36078431372549019" blue="0.76470588235294112" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
@@ -39,7 +39,7 @@
                                         </connections>
                                     </slider>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-:--:--" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qft-iu-f1z">
-                                        <rect key="frame" x="1236" y="963" width="91" height="34"/>
+                                        <rect key="frame" x="704" y="1133" width="91" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="91" id="LbL-h0-EYA"/>
                                             <constraint firstAttribute="height" constant="34" id="OkD-Dr-Ina"/>
@@ -49,7 +49,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t2L-Oz-fe9" userLabel="MainActionButton">
-                                        <rect key="frame" x="641.5" y="470.5" width="83" height="83"/>
+                                        <rect key="frame" x="375.5" y="555.5" width="83" height="83"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="83" id="PdD-nW-y9r"/>
                                             <constraint firstAttribute="height" constant="83" id="e9j-PI-Ic4"/>
@@ -80,17 +80,8 @@
                                             <action selector="exitButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="XHc-OR-kc8"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o8N-R1-DhT">
-                                        <rect key="frame" x="106" y="-271" width="1154" height="646"/>
-                                        <accessibility key="accessibilityConfiguration">
-                                            <accessibilityTraits key="traits" staticText="YES" header="YES"/>
-                                        </accessibility>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <color key="highlightedColor" systemColor="labelColor"/>
-                                    </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bYM-Xp-bZO">
-                                        <rect key="frame" x="448" y="474" width="75" height="76"/>
+                                        <rect key="frame" x="182" y="559" width="75" height="76"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="76" id="5lC-V1-lHH"/>
                                             <constraint firstAttribute="width" constant="75" id="IPn-pO-Rxo"/>
@@ -104,7 +95,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="An8-jF-FAY">
-                                        <rect key="frame" x="843" y="474" width="75" height="76"/>
+                                        <rect key="frame" x="577" y="559" width="75" height="76"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="76" id="huv-QZ-HSc"/>
                                             <constraint firstAttribute="width" constant="75" id="uPN-A8-EV1"/>
@@ -118,7 +109,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="riN-y1-ABZ">
-                                        <rect key="frame" x="1271" y="24" width="56" height="56"/>
+                                        <rect key="frame" x="739" y="24" width="56" height="56"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" image="gear" catalog="system">
@@ -126,25 +117,34 @@
                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="23"/>
                                         </state>
                                     </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o8N-R1-DhT">
+                                        <rect key="frame" x="106" y="-367" width="622" height="838"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" staticText="YES" header="YES"/>
+                                        </accessibility>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="highlightedColor" systemColor="labelColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.5954241071428571" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
                                 <constraints>
+                                    <constraint firstItem="t2L-Oz-fe9" firstAttribute="top" secondItem="o8N-R1-DhT" secondAttribute="bottom" constant="84.666666666666657" id="1y1-QQ-N95"/>
                                     <constraint firstAttribute="bottom" secondItem="e9f-8l-RdN" secondAttribute="bottom" constant="29" id="231-rB-qDs"/>
                                     <constraint firstAttribute="trailing" secondItem="qft-iu-f1z" secondAttribute="trailing" constant="39" id="2Ie-OW-sUL"/>
                                     <constraint firstItem="An8-jF-FAY" firstAttribute="leading" secondItem="t2L-Oz-fe9" secondAttribute="trailing" constant="118.5" id="2zE-ul-pOh"/>
                                     <constraint firstItem="An8-jF-FAY" firstAttribute="centerY" secondItem="t2L-Oz-fe9" secondAttribute="centerY" id="36i-Q2-D1K"/>
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="centerX" secondItem="Qcb-Fb-qZl" secondAttribute="centerX" id="3Gw-QD-lQX"/>
+                                    <constraint firstItem="o8N-R1-DhT" firstAttribute="centerY" secondItem="riN-y1-ABZ" secondAttribute="centerY" id="Hs5-Bc-iPB"/>
                                     <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="NPi-py-0qd"/>
                                     <constraint firstItem="rLx-SN-RHr" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="30" id="Oe7-LK-6Tl"/>
-                                    <constraint firstItem="t2L-Oz-fe9" firstAttribute="top" secondItem="o8N-R1-DhT" secondAttribute="bottom" constant="95.666666666666657" id="T1v-V0-2fn"/>
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="centerY" secondItem="Qcb-Fb-qZl" secondAttribute="centerY" id="TOk-sG-UXV"/>
                                     <constraint firstItem="o8N-R1-DhT" firstAttribute="centerX" secondItem="t2L-Oz-fe9" secondAttribute="centerX" id="a5g-8U-9S5"/>
                                     <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="aOB-Uz-cbQ"/>
                                     <constraint firstItem="qft-iu-f1z" firstAttribute="leading" secondItem="e9f-8l-RdN" secondAttribute="trailing" constant="29" id="auL-Vv-ZMV"/>
                                     <constraint firstItem="bYM-Xp-bZO" firstAttribute="top" secondItem="An8-jF-FAY" secondAttribute="top" id="cVS-eI-vv2"/>
                                     <constraint firstItem="e9f-8l-RdN" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="52" id="ed3-xq-0Ug"/>
-                                    <constraint firstItem="o8N-R1-DhT" firstAttribute="centerY" secondItem="rLx-SN-RHr" secondAttribute="centerY" id="eqU-Bg-9Yv"/>
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="leading" secondItem="bYM-Xp-bZO" secondAttribute="trailing" constant="118.5" id="fci-L5-1f6"/>
                                     <constraint firstItem="o8N-R1-DhT" firstAttribute="leading" secondItem="rLx-SN-RHr" secondAttribute="trailing" constant="16" id="qnV-Qf-y9m"/>
                                     <constraint firstItem="rLx-SN-RHr" firstAttribute="top" secondItem="Qcb-Fb-qZl" secondAttribute="top" constant="22" id="v4G-B1-7y6"/>
@@ -191,7 +191,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="129.58963282937367" y="72.89719626168224"/>
+            <point key="canvasLocation" x="129.38388625592415" y="72.307692307692307"/>
         </scene>
     </scenes>
     <resources>
