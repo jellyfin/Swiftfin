@@ -312,7 +312,7 @@ struct LibraryView: View {
                         Image(systemName: "line.horizontal.3.decrease")
                     }
                 }
-            }.fullScreenCover( isPresented: self.$showFiltersPopover) { LibraryFilterView(library: selected_library_id, output: $filterString, close: $showFiltersPopover).environmentObject(self.globalData) }
+            }.sheet( isPresented: self.$showFiltersPopover) { LibraryFilterView(library: selected_library_id, output: $filterString, close: $showFiltersPopover).environmentObject(self.globalData) }
         } else {
             List(library_ids, id:\.self) { id in
                 if(id != "genres") {
