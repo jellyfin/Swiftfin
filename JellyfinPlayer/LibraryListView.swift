@@ -40,26 +40,25 @@ struct LibraryListView: View {
 
     var body: some View {
         List(libraryIDs, id: \.self) { id in
-            if id != "genres" {
-                NavigationLink(destination: LibraryView(viewModel: .init(prefillID: id), title: libraryNames[id] ?? "")) {
+            switch id {
+            case "favorites":
+                NavigationLink(destination: LibraryView(viewModel: .init(filter: Filter(filterTypes: [.isFavorite])),
+                                                        title: libraryNames[id] ?? "")) {
                     Text(libraryNames[id] ?? "").foregroundColor(Color.primary)
                 }
-            } else {
-                //                NavigationLink(destination: LibraryView(prefill: id, names: libraryNames, libraries: library_ids)) {
+            case "genres":
                 Text(libraryNames[id] ?? "").foregroundColor(Color.primary)
-                //                }
+            default:
+                NavigationLink(destination: LibraryView(viewModel: .init(filter: Filter(parentID: id)), title: libraryNames[id] ?? "")) {
+                    Text(libraryNames[id] ?? "").foregroundColor(Color.primary)
+                }
             }
         }
         .onAppear(perform: listOnAppear)
         .navigationTitle("All Media")
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-//                    NavigationLink(destination: LibrarySearchView(viewModel: .init(filter: .init()),
-//                                                                  close: $closeSearch),
-//                                   isActive: $closeSearch) {
+        .navigationBarItems(trailing:
+            NavigationLink(destination: LibrarySearchView(viewModel: .init(filter: .init()))) {
                 Image(systemName: "magnifyingglass")
-//                    }
-            }
-        }
+            })
     }
 }

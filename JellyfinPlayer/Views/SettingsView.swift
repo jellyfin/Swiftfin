@@ -101,17 +101,14 @@ struct SettingsView: View {
             }
 
             .navigationBarTitle("Settings", displayMode: .inline)
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Button {
-                        close = false
-                    } label: {
-                        HStack() {
-                            Text("Back").font(.callout)
-                        }
-                    }
-                }
-            }
+            .navigationBarItems(leading:
+                                    Button {
+                                        close = false
+                                    } label: {
+                                        HStack() {
+                                            Text("Back").font(.callout)
+                                        }
+                                    })
         }.onAppear(perform: onAppear)
     }
 }

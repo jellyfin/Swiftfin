@@ -15,30 +15,21 @@ struct LibrarySearchView: View {
     private var viewContext
     @EnvironmentObject
     var globalData: GlobalData
-
     @ObservedObject
     var viewModel: LibrarySearchViewModel
-
-    @Binding
-    var close: Bool
+    
     @State
-    var open: Bool = false
-    @State
-    private var onlyUnplayed: Bool = false
-    @State
-    private var viewDidLoad: Bool = false
-    @State
-    var linkedItem = ResumeItem()
-
-    func onAppear() {
-        recalcTracks()
-        viewModel.globalData = globalData
-    }
+    private var tracks: [GridItem] = []
 
     @Environment(\.verticalSizeClass)
     var verticalSizeClass: UserInterfaceSizeClass?
     @Environment(\.horizontalSizeClass)
     var horizontalSizeClass: UserInterfaceSizeClass?
+
+    func onAppear() {
+        recalcTracks()
+        viewModel.globalData = globalData
+    }
 
     var isPortrait: Bool {
         let result = verticalSizeClass == .regular && horizontalSizeClass == .compact
@@ -53,15 +44,9 @@ struct LibrarySearchView: View {
         }
     }
 
-    @State
-    private var tracks: [GridItem] = []
-
     var body: some View {
         ZStack {
             VStack {
-                NavigationLink(destination: ItemView(item: linkedItem), isActive: $open) {
-                    EmptyView()
-                }
                 Spacer().frame(height: 6)
                 TextField("Search", text: $viewModel.searchQuery, onEditingChanged: { _ in
                     print("changed")
@@ -72,11 +57,7 @@ struct LibrarySearchView: View {
                 ScrollView(.vertical) {
                     LazyVGrid(columns: tracks) {
                         ForEach(viewModel.items, id: \.Id) { item in
-                            Button {
-                                _linkedItem.wrappedValue = item
-                                _close.wrappedValue = false
-                                _open.wrappedValue = true
-                            } label: {
+                            NavigationLink(destination: ItemView(item: item)) {
                                 ResumeItemGridCell(item: item)
                             }
                         }
@@ -87,6 +68,8 @@ struct LibrarySearchView: View {
             }
             if viewModel.isLoading {
                 ActivityIndicator($viewModel.isLoading)
+            } else if viewModel.items.isEmpty {
+                Text("Empty Response")
             }
         }
         .onAppear(perform: onAppear)

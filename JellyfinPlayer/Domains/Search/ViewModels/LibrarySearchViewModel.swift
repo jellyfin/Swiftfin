@@ -52,16 +52,18 @@ final class LibrarySearchViewModel: ObservableObject {
         provider.requestPublisher(.search(globalData: globalData, filter: filter, searchQuery: query, page: page))
             // .map(ResumeItem.self) TO DO
             .print()
-            .sink(receiveCompletion: { _ in
+            .sink(receiveCompletion: { [weak self] _ in
+                guard let self = self else { return }
                 self.isLoading = false
-            }, receiveValue: { response in
+            }, receiveValue: { [weak self] response in
+                guard let self = self else { return }
                 let body = response.data
-                self.items.removeAll()
+                var innerItems = [ResumeItem]()
                 do {
                     let json = try JSON(data: body)
                     for (_, item): (String, JSON) in json["Items"] {
                         // Do something you want
-                        let itemObj = ResumeItem()
+                        var itemObj = ResumeItem()
                         itemObj.Type = item["Type"].string ?? ""
                         if itemObj.Type == "Series" {
                             itemObj.ItemBadge = item["UserData"]["UnplayedItemCount"].int ?? 0
@@ -93,9 +95,10 @@ final class LibrarySearchViewModel: ObservableObject {
                         }
                         itemObj.Watched = item["UserData"]["Played"].bool ?? false
 
-                        self.items.append(itemObj)
+                        innerItems.append(itemObj)
                     }
                 } catch {}
+                self.items = innerItems
             })
             .store(in: &cancellables)
     }

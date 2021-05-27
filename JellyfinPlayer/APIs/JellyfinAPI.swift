@@ -26,8 +26,11 @@ enum ItemType: String {
 }
 
 enum SortType: String {
-    case name = "Name"
+    case name = "SortName"
     case dateCreated = "DateCreated"
+    case datePlayed = "DatePlayed"
+    case premiereDate = "PremiereDate"
+    case runtime = "Runtime"
 }
 
 enum ASC: String {
@@ -37,20 +40,22 @@ enum ASC: String {
 
 enum FilterType: String {
     case isFavorite = "IsFavorite"
+    case isUnplayed = "IsUnplayed"
 }
 
 struct Filter {
-    var imageTypes = [ImageType]()
-    var fields = [Field]()
-    var itemTypes = [ItemType]()
+    var imageTypes: [ImageType] = [.primary, .backdrop, .thumb, .banner]
+    var fields: [Field] = [.primaryImageAspectRatio, .basicSyncInfo]
+    var itemTypes: [ItemType] = [.movie, .series]
     var filterTypes = [FilterType]()
-    var sort: SortType?
-    var asc: ASC?
+    var sort: SortType? = .dateCreated
+    var asc: ASC? = .descending
     var parentID: String?
-    var imageTypeLimit: Int?
+    var imageTypeLimit: Int? = 1
     var recursive = true
     var genres = [String]()
     var personIds = [String]()
+    var officialRatings = [String]()
 }
 
 extension Filter {
@@ -67,6 +72,7 @@ extension Filter {
         parameters["SortOrder"] = asc?.rawValue
         parameters["Genres"] = genres.joined(separator: ",")
         parameters["PersonIds"] = personIds.joined(separator: ",")
+        parameters["OfficialRatings"] = officialRatings.joined(separator: ",")
         return parameters
     }
 }
@@ -125,7 +131,9 @@ extension JellyfinAPI: TargetType {
         case let .items(global, _, _),
              let .search(global, _, _, _):
             return [
-                "X-Emby-Authorization": global.authHeader
+                "X-Emby-Authorization": global.authHeader,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             ]
         }
     }

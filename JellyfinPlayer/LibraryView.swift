@@ -19,27 +19,23 @@ struct LibraryView: View {
     var viewModel: LibraryViewModel
 
     @State
-    private var viewDidLoad: Bool = false
-    @State
     private var showFiltersPopover: Bool = false
     @State
     private var showSearchPopover: Bool = false
+    
+    private var title: String
+
     @State
-    private var title: String = ""
-    @State
-    private var closeSearch: Bool = false
+    private var tracks: [GridItem] = []
 
     init(viewModel: LibraryViewModel, title: String) {
         self.viewModel = viewModel
-        self._title = State(initialValue: title)
+        self.title = title
     }
 
     func onAppear() {
+        recalcTracks()
         viewModel.globalData = globalData
-        if viewModel.items.isEmpty {
-            recalcTracks()
-            viewModel.requestInitItems()
-        }
     }
 
     @Environment(\.verticalSizeClass)
@@ -60,11 +56,8 @@ struct LibraryView: View {
         }
     }
 
-    @State
-    private var tracks: [GridItem] = []
-
     var body: some View {
-        LoadingView(isShowing: $viewModel.isLoading) {
+        ZStack {
             ScrollView(.vertical) {
                 Spacer().frame(height: 16)
                 LazyVGrid(columns: tracks) {
@@ -76,51 +69,46 @@ struct LibraryView: View {
                 }
                 Spacer().frame(height: 16)
             }
-            .gesture(DragGesture().onChanged { value in
-                if value.translation.height > 0 {
-                    print("Scroll down")
-                } else {
-                    print("Scroll up")
-                }
-            })
             .onChange(of: isPortrait) { _ in
                 recalcTracks()
+            }
+            if viewModel.isLoading {
+                ActivityIndicator($viewModel.isLoading)
+            } else if viewModel.items.isEmpty {
+                Text("Empty Response")
             }
         }
         .overrideViewPreference(.unspecified)
         .onAppear(perform: onAppear)
         .navigationTitle(title)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if !viewModel.isHiddenPreviousButton {
-                    Button {
-                        viewModel.requestPreviousPage()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                    }
-                }
-                if !viewModel.isHiddenNextButton {
-                    Button {
-                        viewModel.requestNextPage()
-                    } label: {
-                        Image(systemName: "chevron.right")
-                    }
-                }
-                NavigationLink(destination: LibrarySearchView(viewModel: .init(filter: viewModel.filter), close: $closeSearch),
-                               isActive: $closeSearch) {
-                    Image(systemName: "magnifyingglass")
-                }
+        .navigationBarItems(trailing: HStack {
+            if !viewModel.isHiddenPreviousButton {
                 Button {
-                    showFiltersPopover = true
+                    viewModel.requestPreviousPage()
                 } label: {
-                    Image(systemName: "line.horizontal.3.decrease")
+                    Image(systemName: "chevron.left")
                 }
             }
+            if !viewModel.isHiddenNextButton {
+                Button {
+                    viewModel.requestNextPage()
+                } label: {
+                    Image(systemName: "chevron.right")
+                }
+            }
+            NavigationLink(destination: LibrarySearchView(viewModel: .init(filter: viewModel.filter))) {
+                Image(systemName: "magnifyingglass")
+            }
+            Button {
+                showFiltersPopover = true
+            } label: {
+                Image(systemName: "line.horizontal.3.decrease")
+            }
+        })
+        .sheet(isPresented: self.$showFiltersPopover) {
+            LibraryFilterView(library: viewModel.filter.parentID ?? "", filter: $viewModel.filter)
+                .environmentObject(self.globalData)
         }
-//            .sheet(isPresented: self.$showFiltersPopover) {
-//                LibraryFilterView(library: selected_library_id, output: $filterString, close: $showFiltersPopover)
-//                    .environmentObject(self.globalData)
-//            }
     }
 }
 

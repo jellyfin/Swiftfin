@@ -12,9 +12,9 @@ import Moya
 import SwiftyJSON
 
 final class LibraryViewModel: ObservableObject {
-    fileprivate var provider = MoyaProvider<JellyfinAPI>(plugins: [NetworkLoggerPlugin(configuration: NetworkLoggerPlugin.Configuration(logOptions: .verbose))])
+    fileprivate var provider =
+        MoyaProvider<JellyfinAPI>(plugins: [NetworkLoggerPlugin()])
 
-    var prefillID: String
     @Published
     var filter: Filter
 
@@ -31,64 +31,59 @@ final class LibraryViewModel: ObservableObject {
 
     var page = 1
 
-    var globalData = GlobalData()
+    var globalData = GlobalData() {
+        didSet {
+            injectEnvironmentData()
+        }
+    }
 
     fileprivate var cancellables = Set<AnyCancellable>()
 
-    init(prefillID: String,
-         filter: Filter? = nil)
-    {
-        self.prefillID = prefillID
+    init(filter: Filter = Filter()) {
+        self.filter = filter
+    }
 
-        if let unwrappedFilter = filter {
-            self.filter = unwrappedFilter
-        } else {
-            self.filter = Filter(imageTypes: [.primary, .backdrop, .thumb, .banner],
-                                 fields: [.primaryImageAspectRatio, .basicSyncInfo],
-                                 itemTypes: [.movie, .series],
-                                 sort: .dateCreated,
-                                 asc: .descending,
-                                 parentID: prefillID,
-                                 imageTypeLimit: 1,
-                                 recursive: true)
-        }
+    fileprivate func injectEnvironmentData() {
+        cancellables.removeAll()
+
+        $filter
+            .sink(receiveValue: requestInitItems(_:))
+            .store(in: &cancellables)
     }
 
     func requestNextPage() {
         page += 1
-        requestItems()
+        requestItems(filter)
     }
 
     func requestPreviousPage() {
         page -= 1
-        requestItems()
-    }
-    
-    func requestInitItems() {
-        page = 1
-        requestItems()
+        requestItems(filter)
     }
 
-    fileprivate func requestItems() {
-        print(globalData.server?.baseURI)
+    func requestInitItems(_ filter: Filter) {
+        page = 1
+        requestItems(filter)
+    }
+
+    fileprivate func requestItems(_ filter: Filter) {
+        print("ASDASDA")
         print(globalData.authHeader)
-        print(filter)
         isLoading = true
         provider.requestPublisher(.items(globalData: globalData, filter: filter, page: page))
             // .map(ResumeItem.self) TO DO
             .print()
-            .sink(receiveCompletion: { _ in
-                self.isLoading = false
-            }, receiveValue: { response in
-                self.items.removeAll()
+            .receive(on: DispatchQueue.main)
+            .map { response -> ([ResumeItem], Int) in
                 let body = response.data
                 var totalCount = 0
+                var innerItems = [ResumeItem]()
                 do {
                     let json = try JSON(data: body)
                     totalCount = json["TotalRecordCount"].int ?? 0
                     for (_, item): (String, JSON) in json["Items"] {
                         // Do something you want
-                        let itemObj = ResumeItem()
+                        var itemObj = ResumeItem()
                         itemObj.Type = item["Type"].string ?? ""
                         if itemObj.Type == "Series" {
                             itemObj.ItemBadge = item["UserData"]["UnplayedItemCount"].int ?? 0
@@ -120,21 +115,29 @@ final class LibraryViewModel: ObservableObject {
                         }
                         itemObj.Watched = item["UserData"]["Played"].bool ?? false
 
-                        self.items.append(itemObj)
+                        innerItems.append(itemObj)
                     }
                 } catch {}
-
-                if totalCount > 100 {
+                return (innerItems, totalCount)
+            }
+            .sink(receiveCompletion: { [weak self] _ in
+                guard let self = self else { return }
+                self.isLoading = false
+            }, receiveValue: { [weak self] items, count in
+                guard let self = self else { return }
+                if count > 100 {
                     if self.page > 1 {
                         self.isHiddenPreviousButton = false
                     }
-                    if totalCount > (self.page * 100) {
+                    if count > (self.page * 100) {
                         self.isHiddenNextButton = false
                     }
                 } else {
                     self.isHiddenNextButton = true
                     self.isHiddenPreviousButton = true
                 }
+
+                self.items = items
             })
             .store(in: &cancellables)
     }

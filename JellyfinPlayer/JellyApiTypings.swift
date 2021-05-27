@@ -53,25 +53,25 @@ struct ServerAuthByNameResponse: Codable {
     var AccessToken: String
 }
 
-class ResumeItem: ObservableObject {
-    @Published var Name: String = "";
-    @Published var Id: String = "";
-    @Published var IndexNumber: Int? = nil;
-    @Published var ParentIndexNumber: Int? = nil;
-    @Published var Image: String = "";
-    @Published var ImageType: String = "";
-    @Published var BlurHash: String = "";
-    @Published var `Type`: String = "";
-    @Published var SeasonId: String? = nil;
-    @Published var SeriesId: String? = nil;
-    @Published var SeriesName: String? = nil;
-    @Published var ItemProgress: Double = 0;
-    @Published var SeasonImage: String? = nil;
-    @Published var SeasonImageType: String? = nil;
-    @Published var SeasonImageBlurHash: String? = nil;
-    @Published var ItemBadge: Int? = 0;
-    @Published var ProductionYear: Int = 1999;
-    @Published var Watched: Bool = false;
+struct ResumeItem {
+    var Name: String = "";
+    var Id: String = "";
+    var IndexNumber: Int? = nil;
+    var ParentIndexNumber: Int? = nil;
+    var Image: String = "";
+    var ImageType: String = "";
+    var BlurHash: String = "";
+    var `Type`: String = "";
+    var SeasonId: String? = nil;
+    var SeriesId: String? = nil;
+    var SeriesName: String? = nil;
+    var ItemProgress: Double = 0;
+    var SeasonImage: String? = nil;
+    var SeasonImageType: String? = nil;
+    var SeasonImageBlurHash: String? = nil;
+    var ItemBadge: Int? = 0;
+    var ProductionYear: Int = 1999;
+    var Watched: Bool = false;
 }
 
 struct ServerMeResponse: Codable {
