@@ -16,6 +16,7 @@ class ItemPlayback: ObservableObject {
 struct ItemView: View {
     var item: ResumeItem;
     @StateObject private var playback: ItemPlayback = ItemPlayback()
+    @State private var shouldShowLoadingView: Bool = false;
     
     init(item: ResumeItem) {
         self.item = item;
@@ -23,7 +24,17 @@ struct ItemView: View {
     
     var body: some View {
         if(playback.shouldPlay) {
-            VideoPlayerViewRefactored(itemPlayback: playback)
+            LoadingView(isShowing: $shouldShowLoadingView) {
+                VLCPlayerWithControls(item: playback.itemToPlay, loadBinding: $shouldShowLoadingView, pBinding: _playback.projectedValue.shouldPlay)
+                    .navigationBarHidden(true)
+                    .navigationBarBackButtonHidden(true)
+                    .statusBar(hidden: true)
+                    .prefersHomeIndicatorAutoHidden(true)
+                    .preferredColorScheme(.dark)
+                    .edgesIgnoringSafeArea(.all)
+                    .overrideViewPreference(.unspecified)
+                    .supportedOrientations(.landscape)
+            }
         } else {
             Group {
                 if(item.Type == "Movie") {
