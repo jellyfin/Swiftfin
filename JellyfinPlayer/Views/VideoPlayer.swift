@@ -158,11 +158,20 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
         //View has loaded.
         //Show loading screen
-        usleep(10000);
         delegate?.showLoadingView(self)
         
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         //mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
+        
+        
+        mediaPlayer.delegate = self
+        mediaPlayer.drawable = videoContentView
+        
+        if(manifest.Type == "Episode") {
+            titleLabel.text = "\(manifest.Name) -  S\(String(manifest.ParentIndexNumber ?? 0)):E\(String(manifest.IndexNumber ?? 0)) - \(manifest.SeriesName ?? "")"
+        } else {
+            titleLabel.text = manifest.Name
+        }
         
         //Fetch max bitrate from UserDefaults depending on current connection mode
         let defaults = UserDefaults.standard
@@ -258,8 +267,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         sendPlayReport()
                         playbackItem = item;
                     }
-                    mediaPlayer.stop()
+                    
                     DispatchQueue.global(qos: .background).async {
+                        mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                         mediaPlayer.play()
                         subtitleTrackArray.forEach() { sub in
                             if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
@@ -267,13 +277,11 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                                 mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
                             }
                         }
+                        mediaPlayer.pause()
+                        delegate?.showLoadingView(self)
                         sleep(3)
                         mediaPlayer.pause()
-                        usleep(10000);
-                        mediaPlayer.play()
                         mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack;
-                        mediaPlayer.pause()
-                        usleep(10000);
                         mediaPlayer.play()
                         mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                     }
@@ -285,15 +293,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 debugPrint(error)
                 break
             }
-        }
-        
-        mediaPlayer.delegate = self
-        mediaPlayer.drawable = videoContentView
-        
-        if(manifest.Type == "Episode") {
-            titleLabel.text = "\(manifest.Name) -  S\(String(manifest.ParentIndexNumber ?? 0)):E\(String(manifest.IndexNumber ?? 0)) - \(manifest.SeriesName ?? "")"
-        } else {
-            titleLabel.text = manifest.Name
         }
     }
     
@@ -308,11 +307,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             let currentState: VLCMediaPlayerState = mediaPlayer.state
             switch currentState {
             case .stopped :
-                print("Video is done playing)")
-                sendStopReport()
+                break;
             case .ended :
-                print("Video is done playing)")
-                sendStopReport()
+                break;
             case .playing :
                 print("Video is playing")
                 sendProgressReport(eventName: "unpause")
