@@ -204,7 +204,7 @@ struct ContentView: View {
                                             LatestMediaView(library: library_id)
                                         }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                                     }
-                                    Spacer().frame(height: 7)
+                                    Spacer().frame(height: 20)
                                 }
                                 .navigationTitle("Home")
                                 .toolbar {

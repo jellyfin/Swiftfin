@@ -113,6 +113,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     
     @IBAction func exitButtonPressed(_ sender: Any) {
         sendStopReport()
+        mediaPlayer.stop()
         delegate?.exitPlayer(self)
     }
     
@@ -163,13 +164,14 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         optionsVC.subtitles = subtitleTrackArray
         optionsVC.audioTracks = audioTrackArray
         // Use the popover presentation style for your view controller.
-        optionsVC.modalPresentationStyle = .popover
-
-        // Specify the anchor point for the popover.
-        optionsVC.popoverPresentationController?.sourceView = playerSettingsButton
-
+        let navVC = UINavigationController(rootViewController: optionsVC)
+        navVC.modalPresentationStyle = .popover
+        navVC.popoverPresentationController?.sourceView = playerSettingsButton
+        
+        
+        
         // Present the view controller (in a popover).
-        self.present(optionsVC, animated: true) {
+        self.present(navVC, animated: true) {
             print("popover visible, pause playback")
             self.mediaPlayer.pause()
             self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
@@ -300,15 +302,15 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                         mediaPlayer.play()
                         mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
+                        mediaPlayer.pause()
                         subtitleTrackArray.forEach() { sub in
                             if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
                                 print("adding subs for id: \(sub.id) w/ url: \(sub.url)")
                                 mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
                             }
                         }
-                        mediaPlayer.pause()
                         delegate?.showLoadingView(self)
-                        sleep(3)
+                        while(mediaPlayer.numberOfSubtitlesTracks != subtitleTrackArray.count - 1) {}
                         mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack;
                         mediaPlayer.pause()
                         mediaPlayer.play()
