@@ -31,7 +31,6 @@ struct AudioTrack {
 class PlaybackItem: ObservableObject {
     @Published var videoType: VideoType = .hls;
     @Published var videoUrl: URL = URL(string: "https://example.com")!;
-    @Published var subtitles: [Subtitle] = [];
 }
 
 protocol PlayerViewControllerDelegate: AnyObject {
@@ -44,7 +43,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
     weak var delegate: PlayerViewControllerDelegate?
     
-    var mediaPlayer = VLCMediaPlayer(options: ["--sub-margin=200"])!
+    var mediaPlayer = VLCMediaPlayer()
     var globalData = GlobalData()
     
     @IBOutlet weak var timeText: UILabel!
@@ -54,6 +53,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var jumpBackButton: UIButton!
     @IBOutlet weak var jumpForwardButton: UIButton!
+    @IBOutlet weak var playerSettingsButton: UIButton!
     
     var shouldShowLoadingScreen: Bool = false;
     var ssTargetValueOffset: Int = 0;
@@ -79,6 +79,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         sendProgressReport(eventName: "pause")
         mediaPlayer.pause()
     }
+    
     @IBAction func seekSliderValueChanged(_ sender: Any) {
         let videoDuration = Double(mediaPlayer.time.intValue + abs(mediaPlayer.remainingTime.intValue))/1000
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration);
@@ -154,7 +155,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         //View has loaded.
         //Show loading screen
         usleep(10000);
@@ -222,7 +223,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         }
                         
                         self.sendPlayReport()
-                        item.subtitles = subtitleTrackArray
                         playbackItem = item;
                     } else {
                         print("Direct playing!");
@@ -256,18 +256,27 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         }
                         
                         sendPlayReport()
-                        item.subtitles = subtitleTrackArray
                         playbackItem = item;
                     }
-                    
-                    mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
-                    playbackItem.subtitles.forEach() { sub in
-                        if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
-                            mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
+                    mediaPlayer.stop()
+                    DispatchQueue.global(qos: .background).async {
+                        mediaPlayer.play()
+                        subtitleTrackArray.forEach() { sub in
+                            if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
+                                print("adding subs for id: \(sub.id) w/ url: \(sub.url)")
+                                mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
+                            }
                         }
+                        sleep(3)
+                        mediaPlayer.pause()
+                        usleep(10000);
+                        mediaPlayer.play()
+                        mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack;
+                        mediaPlayer.pause()
+                        usleep(10000);
+                        mediaPlayer.play()
+                        mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                     }
-                    mediaPlayer.play()
-                    mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
                 } catch {
                     
                 }

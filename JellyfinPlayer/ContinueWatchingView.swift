@@ -172,7 +172,6 @@ struct ContinueWatchingView: View {
                             }.padding(.trailing, 5)
                         }
                     }
-                    Spacer().frame(width:12)
                 }.frame(height: 215)
             } else {
                 EmptyView()
