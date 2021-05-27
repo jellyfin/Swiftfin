@@ -41,6 +41,9 @@
 		53E4E649263F725B00F67C6B /* MultiSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelector.swift */; };
 		53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE24E5265060780068F029 /* LibrarySearchView.swift */; };
 		53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F29263CF3F500585C35 /* LatestMediaView.swift */; };
+		6273DD43265F4195009C1D0B /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD42265F4195009C1D0B /* Moya */; };
+		6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD44265F4195009C1D0B /* CombineMoya */; };
+		6273DD48265F41B3009C1D0B /* JellyfinAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */; };
 		AE8C3154265D60BF008AA076 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8C3153265D60BF008AA076 /* SettingsModel.swift */; };
 		AE8C3156265D616A008AA076 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8C3155265D616A008AA076 /* SettingsViewModel.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
@@ -100,6 +103,7 @@
 		53E4E648263F725B00F67C6B /* MultiSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelector.swift; sourceTree = "<group>"; };
 		53EE24E5265060780068F029 /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
 		53FF7F29263CF3F500585C35 /* LatestMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaView.swift; sourceTree = "<group>"; };
+		6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPI.swift; sourceTree = "<group>"; };
 		AE8C3153265D60BF008AA076 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
 		AE8C3155265D616A008AA076 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
@@ -112,6 +116,8 @@
 			files = (
 				538CD954263E3DC100BB5AF0 /* SDWebImageSwiftUI in Frameworks */,
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
+				6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */,
+				6273DD43265F4195009C1D0B /* Moya in Frameworks */,
 				53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */,
 				5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
@@ -144,6 +150,7 @@
 		5377CBF3263B596A003A4E83 /* JellyfinPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				6273DD46265F419B009C1D0B /* APIs */,
 				AE8C3157265D6F5E008AA076 /* Resources */,
 				AE8C3152265D607B008AA076 /* ViewModels */,
 				AE8C3151265D6075008AA076 /* Models */,
@@ -190,6 +197,14 @@
 				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6273DD46265F419B009C1D0B /* APIs */ = {
+			isa = PBXGroup;
+			children = (
+				6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */,
+			);
+			path = APIs;
 			sourceTree = "<group>";
 		};
 		AE8C3150265D5FE1008AA076 /* Views */ = {
@@ -251,6 +266,8 @@
 				538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */,
 				5302F8292658791C00647A2E /* Sentry */,
 				53352570265EA0A0006CCA86 /* Introspect */,
+				6273DD42265F4195009C1D0B /* Moya */,
+				6273DD44265F4195009C1D0B /* CombineMoya */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer.app */;
@@ -289,6 +306,7 @@
 				538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -332,6 +350,7 @@
 				53A089D0264DA9DA00D57806 /* MovieItemView.swift in Sources */,
 				53E4E649263F725B00F67C6B /* MultiSelector.swift in Sources */,
 				53E4E647263F6CF100F67C6B /* LibraryFilterView.swift in Sources */,
+				6273DD48265F41B3009C1D0B /* JellyfinAPI.swift in Sources */,
 				53892777263CBB000035E14B /* JellyApiTypings.swift in Sources */,
 				5377CBF7263B596A003A4E83 /* ContentView.swift in Sources */,
 				53987CA82657424A00E7EA70 /* EpisodeItemView.swift in Sources */,
@@ -476,7 +495,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_ASSET_PATHS = "\"JellyfinPlayer/Preview Content\"";
-				DEVELOPMENT_TEAM = 9R8RREG67J;
+				DEVELOPMENT_TEAM = 4BHXT8RHFR;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -503,7 +522,7 @@
 				CURRENT_PROJECT_VERSION = 20;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"JellyfinPlayer/Preview Content\"";
-				DEVELOPMENT_TEAM = 9R8RREG67J;
+				DEVELOPMENT_TEAM = 4BHXT8RHFR;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -593,6 +612,14 @@
 				minimumVersion = 2.0.2;
 			};
 		};
+		6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = exactVersion;
+				version = "15.0.0-alpha.1";
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -625,6 +652,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		6273DD42265F4195009C1D0B /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		6273DD44265F4195009C1D0B /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
 		};
 /* End XCSwiftPackageProductDependency section */
 
