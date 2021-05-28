@@ -31,14 +31,6 @@ platform :ios do
       project_slug: 'jellyfin-swift-ios',
       dsym_path: "JellyfinPlayer.app.dSYM.zip"
     )
-    set_github_release(
-      repository_name: "jellyfin/JellyfinPlayer",
-      name: "Release #{identifier_v}@#{identifier_s}",
-      tag_name: "v#{identifier_s}",
-      description: (File.read("Release Notes.rtf") rescue "No changelog provided"),
-      commitish: "main",
-      upload_assets: ["JellyfinPlayer.ipa"]
-    )
     upload_to_testflight
     dynatrace_process_symbols(
       appId: "8c1f6941-ec78-480c-b589-b41aca29a52e",

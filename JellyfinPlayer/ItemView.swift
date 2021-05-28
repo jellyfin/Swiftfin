@@ -24,7 +24,7 @@ struct ItemView: View {
     
     var body: some View {
         if(playback.shouldPlay) {
-            LoadingView(isShowing: $shouldShowLoadingView) {
+            LoadingViewNoBlur(isShowing: $shouldShowLoadingView) {
                 VLCPlayerWithControls(item: playback.itemToPlay, loadBinding: $shouldShowLoadingView, pBinding: _playback.projectedValue.shouldPlay)
                     .navigationBarHidden(true)
                     .navigationBarBackButtonHidden(true)
