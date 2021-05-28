@@ -54,7 +54,7 @@ class SettingsViewDelegate: ObservableObject {
 }
 
 class VideoPlayerSettingsView: UIViewController {
-    private var ctntView: VideoPlayerSettings!
+    private var ctntView: VideoPlayerSettings?
     private var contentViewDelegate: SettingsViewDelegate = SettingsViewDelegate()
     weak var delegate: VideoPlayerSettingsDelegate?
     private var subChangePublisher: AnyCancellable?
@@ -62,12 +62,12 @@ class VideoPlayerSettingsView: UIViewController {
     private var shouldClosePublisher: AnyCancellable?
     var subtitles: [Subtitle] = []
     var audioTracks: [AudioTrack] = []
-    var currentSubtitleTrack: Int32!
-    var currentAudioTrack: Int32!
+    var currentSubtitleTrack: Int32?
+    var currentAudioTrack: Int32?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        ctntView = VideoPlayerSettings(delegate: self.contentViewDelegate, subtitles: self.subtitles, audioTracks: self.audioTracks, initSub: currentSubtitleTrack, initAudio: currentAudioTrack)
+        ctntView = VideoPlayerSettings(delegate: self.contentViewDelegate, subtitles: self.subtitles, audioTracks: self.audioTracks, initSub: currentSubtitleTrack ?? -1, initAudio: currentAudioTrack ?? 1)
         let contentView = UIHostingController(rootView: ctntView)
         self.view.addSubview(contentView.view)
         contentView.view.translatesAutoresizingMaskIntoConstraints = false
@@ -94,7 +94,6 @@ class VideoPlayerSettingsView: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        delegate?.settingsPopoverDismissed()
     }
 }
 
@@ -110,46 +109,36 @@ struct VideoPlayerSettings: View {
         self.subtitles = subtitles
         self.audioTracks = audioTracks
         
-        self.subtitleSelection = initSub
-        self.audioTrackSelection = initAudio
-        print(initSub)
-        print(initAudio)
+        subtitleSelection = initSub
+        audioTrackSelection = initAudio
     }
     
     var body: some View {
-        GeometryReader { proxy in
-            NavigationView() {
-                Form() {
-                    Picker("Closed Captions", selection: $subtitleSelection) {
-                        ForEach(subtitles, id: \.id) { caption in
-                            Text(caption.name).tag(caption.id)
-                        }
-                    }.onChange(of: subtitleSelection) { id in
-                        self.delegate.subtitleTrackID = id
-                    }
-                    Picker("Audio Track", selection: $audioTrackSelection) {
-                        ForEach(audioTracks, id: \.id) { caption in
-                            Text(caption.name).tag(caption.id).lineLimit(1)
-                        }
-                    }.onChange(of: audioTrackSelection) { id in
-                        self.delegate.audioTrackID = id
-                    }
-                }.navigationTitle("Audio & Captions")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarLeading) {
-                        Button {
-                            delegate.close = true;
-                        } label: {
-                            HStack() {
-                                Text("Back").font(.callout)
-                            }
-                        }
+        Form() {
+            if(UIDevice.current.userInterfaceIdiom == .phone) {
+                Button {
+                    delegate.close = true
+                } label: {
+                    HStack() {
+                        Image(systemName: "chevron.left")
+                        Text("Back").font(.callout)
                     }
                 }
-            }.navigationViewStyle(StackNavigationViewStyle())
-            .padding(6)
-            .frame(width: proxy.size.width, height: proxy.size.height)
+            }
+            Picker("Closed Captions", selection: $subtitleSelection) {
+                ForEach(subtitles, id: \.id) { caption in
+                    Text(caption.name).tag(caption.id)
+                }
+            }.onChange(of: subtitleSelection) { id in
+                delegate.subtitleTrackID = id
+            }
+            Picker("Audio Track", selection: $audioTrackSelection) {
+                ForEach(audioTracks, id: \.id) { caption in
+                    Text(caption.name).tag(caption.id).lineLimit(1)
+                }
+            }.onChange(of: audioTrackSelection) { id in
+                delegate.audioTrackID = id
+            }
         }
     }
 }
