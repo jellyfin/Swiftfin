@@ -46,6 +46,7 @@
 		62133890265F83A900A81A2A /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388F265F83A900A81A2A /* LibraryListView.swift */; };
 		621338932660107500A81A2A /* String++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* String++.swift */; };
 		62133895266096EF00A81A2A /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62133894266096EF00A81A2A /* LibraryListViewModel.swift */; };
+		621338B32660A07800A81A2A /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
 		6273DD43265F4195009C1D0B /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD42265F4195009C1D0B /* Moya */; };
 		6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD44265F4195009C1D0B /* CombineMoya */; };
 		6273DD48265F41B3009C1D0B /* JellyfinAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */; };
@@ -114,6 +115,7 @@
 		6213388F265F83A900A81A2A /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		621338922660107500A81A2A /* String++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String++.swift"; sourceTree = "<group>"; };
 		62133894266096EF00A81A2A /* LibraryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListViewModel.swift; sourceTree = "<group>"; };
+		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPI.swift; sourceTree = "<group>"; };
 		6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchViewModel.swift; sourceTree = "<group>"; };
 		AE8C3153265D60BF008AA076 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 		5377CBF3263B596A003A4E83 /* JellyfinPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				621338B12660A06F00A81A2A /* SwiftUI */,
 				621338912660106C00A81A2A /* Extensions */,
 				6273DD4A265F4794009C1D0B /* Domains */,
 				6273DD46265F419B009C1D0B /* APIs */,
@@ -237,6 +240,14 @@
 				621338922660107500A81A2A /* String++.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		621338B12660A06F00A81A2A /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				621338B22660A07800A81A2A /* LazyView.swift */,
+			);
+			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 		6273DD46265F419B009C1D0B /* APIs */ = {
@@ -420,6 +431,7 @@
 				53E4E649263F725B00F67C6B /* MultiSelector.swift in Sources */,
 				53E4E647263F6CF100F67C6B /* LibraryFilterView.swift in Sources */,
 				6213388E265F777C00A81A2A /* LibraryViewModel.swift in Sources */,
+				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
 				62133895266096EF00A81A2A /* LibraryListViewModel.swift in Sources */,
 				6273DD48265F41B3009C1D0B /* JellyfinAPI.swift in Sources */,
 				53892777263CBB000035E14B /* JellyApiTypings.swift in Sources */,

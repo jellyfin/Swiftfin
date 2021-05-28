@@ -220,8 +220,10 @@ struct ContentView: View {
                                                 Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold)
                                                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
                                                 Spacer()
-                                                NavigationLink(destination: LibraryView(viewModel: .init(filter: Filter(parentID: library_id)),
-                                                                                        title: library_names[library_id] ?? "")) {
+                                                NavigationLink(destination: LazyView {
+                                                    LibraryView(viewModel: .init(filter: Filter(parentID: library_id)),
+                                                                title: library_names[library_id] ?? "")
+                                                }) {
                                                     Text("See All").font(.subheadline).fontWeight(.bold)
                                                 }
                                             }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))

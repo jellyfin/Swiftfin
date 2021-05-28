@@ -96,7 +96,7 @@ struct LibraryView: View {
                     Image(systemName: "chevron.right")
                 }
             }
-            NavigationLink(destination: LibrarySearchView(viewModel: .init(filter: viewModel.filter))) {
+            NavigationLink(destination: LazyView { LibrarySearchView(viewModel: .init(filter: viewModel.filter)) }) {
                 Image(systemName: "magnifyingglass")
             }
             Button {

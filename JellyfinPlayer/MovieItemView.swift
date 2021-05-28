@@ -434,11 +434,13 @@ struct MovieItemView: View {
                                                     HStack {
                                                         Text("Genres:").font(.callout).fontWeight(.semibold)
                                                         ForEach(fullItem.Genres, id: \.Id) { genre in
-                                                            NavigationLink(destination: LibraryView(viewModel: .init(filter: Filter(genres: [
+                                                            NavigationLink(destination: LazyView {
+                                                                LibraryView(viewModel: .init(filter: Filter(genres: [
                                                                     genre
                                                                         .Name,
                                                                 ])),
-                                                                title: genre.Name)) {
+                                                                title: genre.Name)
+                                                            }) {
                                                                 Text(genre.Name).font(.footnote)
                                                             }
                                                         }
@@ -452,10 +454,12 @@ struct MovieItemView: View {
                                                         HStack {
                                                             Spacer().frame(width: 16)
                                                             ForEach(fullItem.Cast, id: \.Id) { cast in
-                                                                NavigationLink(destination: LibraryView(viewModel: .init(filter: Filter(personIds: [
-                                                                    cast
-                                                                        .Id,
-                                                                ])), title: cast.Name)) {
+                                                                NavigationLink(destination: LazyView {
+                                                                    LibraryView(viewModel: .init(filter: Filter(personIds: [
+                                                                        cast
+                                                                            .Id,
+                                                                    ])), title: cast.Name)
+                                                                }) {
                                                                     VStack {
                                                                         WebImage(url: cast.Image)
                                                                             .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
@@ -653,11 +657,13 @@ struct MovieItemView: View {
                                                     HStack {
                                                         Text("Genres:").font(.callout).fontWeight(.semibold)
                                                         ForEach(fullItem.Genres, id: \.Id) { genre in
-                                                            NavigationLink(destination: LibraryView(viewModel: .init(filter: Filter(genres: [
+                                                            NavigationLink(destination: LazyView {
+                                                                LibraryView(viewModel: .init(filter: Filter(genres: [
                                                                     genre
                                                                         .Name,
                                                                 ])),
-                                                                title: genre.Name)) {
+                                                                title: genre.Name)
+                                                            }) {
                                                                 Text(genre.Name).font(.footnote)
                                                             }
                                                         }
@@ -672,10 +678,12 @@ struct MovieItemView: View {
                                                         HStack {
                                                             Spacer().frame(width: 16)
                                                             ForEach(fullItem.Cast, id: \.Id) { cast in
-                                                                NavigationLink(destination: LibraryView(viewModel: .init(filter: Filter(personIds: [
-                                                                    cast
-                                                                        .Id,
-                                                                ])), title: cast.Name)) {
+                                                                NavigationLink(destination: LazyView {
+                                                                    LibraryView(viewModel: .init(filter: Filter(personIds: [
+                                                                        cast
+                                                                            .Id,
+                                                                    ])), title: cast.Name)
+                                                                }) {
                                                                     VStack {
                                                                         WebImage(url: cast.Image)
                                                                             .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
