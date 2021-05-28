@@ -6,139 +6,76 @@
 //
 
 import Foundation
-import UIKit
 import SwiftUI
-import Combine
-
-enum SettingsChangedEventTypes {
-    case subTrackChanged
-    case audioTrackChanged
-}
-
-struct settingsChangedEvent {
-    let eventType: SettingsChangedEventTypes
-    let payload: AnyObject
-}
-
-protocol VideoPlayerSettingsDelegate: AnyObject {
-    func subtitleTrackChanged(newTrackID: Int32)
-    func audioTrackChanged(newTrackID: Int32)
-    func settingsPopoverDismissed()
-}
-
-class SettingsViewDelegate: ObservableObject {
-
-    var subtitlesDidChange = PassthroughSubject<SettingsViewDelegate, Never>()
-
-    var subtitleTrackID: Int32 = 0 {
-        didSet {
-            self.subtitlesDidChange.send(self)
-        }
-    }
-    
-    var audioTrackDidChange = PassthroughSubject<SettingsViewDelegate, Never>()
-
-    var audioTrackID: Int32 = 0 {
-        didSet {
-            self.audioTrackDidChange.send(self)
-        }
-    }
-    
-    var shouldClose = PassthroughSubject<SettingsViewDelegate, Never>()
-
-    var close: Bool = false {
-        didSet {
-            self.shouldClose.send(self)
-        }
-    }
-}
 
 class VideoPlayerSettingsView: UIViewController {
-    private var ctntView: VideoPlayerSettings?
-    private var contentViewDelegate: SettingsViewDelegate = SettingsViewDelegate()
-    weak var delegate: VideoPlayerSettingsDelegate?
-    private var subChangePublisher: AnyCancellable?
-    private var audioChangePublisher: AnyCancellable?
-    private var shouldClosePublisher: AnyCancellable?
-    var subtitles: [Subtitle] = []
-    var audioTracks: [AudioTrack] = []
-    var currentSubtitleTrack: Int32?
-    var currentAudioTrack: Int32?
+    private var contentView: UIHostingController<VideoPlayerSettings>!
+    weak var delegate: PlayerViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        ctntView = VideoPlayerSettings(delegate: self.contentViewDelegate, subtitles: self.subtitles, audioTracks: self.audioTracks, initSub: currentSubtitleTrack ?? -1, initAudio: currentAudioTrack ?? 1)
-        let contentView = UIHostingController(rootView: ctntView)
+        contentView = UIHostingController(rootView: VideoPlayerSettings(delegate: self.delegate ?? PlayerViewController()))
         self.view.addSubview(contentView.view)
         contentView.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         contentView.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         contentView.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        
-        self.subChangePublisher = self.contentViewDelegate.subtitlesDidChange.sink { suiDelegate in
-            self.delegate?.subtitleTrackChanged(newTrackID: suiDelegate.subtitleTrackID)
-        }
-        
-        self.audioChangePublisher = self.contentViewDelegate.audioTrackDidChange.sink { suiDelegate in
-            self.delegate?.audioTrackChanged(newTrackID: suiDelegate.audioTrackID)
-        }
-        
-        self.shouldClosePublisher = self.contentViewDelegate.shouldClose.sink { suiDelegate in
-            if(suiDelegate.close == true) {
-                self.delegate?.settingsPopoverDismissed()
-                self.dismiss(animated: true, completion: nil)
-            }
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.delegate?.settingsPopoverDismissed()
     }
 }
 
 struct VideoPlayerSettings: View {
-    @ObservedObject var delegate: SettingsViewDelegate
-    @State private var subtitles: [Subtitle]
-    @State private var audioTracks: [AudioTrack]
-    @State private var subtitleSelection: Int32
-    @State private var audioTrackSelection: Int32
+    @State var delegate: PlayerViewController
+    @State var captionTrack: Int32 = -99;
+    @State var audioTrack: Int32 = -99;
     
-    init(delegate: SettingsViewDelegate, subtitles: [Subtitle], audioTracks: [AudioTrack], initSub: Int32, initAudio: Int32) {
+    init(delegate: PlayerViewController) {
         self.delegate = delegate
-        self.subtitles = subtitles
-        self.audioTracks = audioTracks
-        
-        subtitleSelection = initSub
-        audioTrackSelection = initAudio
     }
     
     var body: some View {
-        Form() {
-            if(UIDevice.current.userInterfaceIdiom == .phone) {
-                Button {
-                    delegate.close = true
-                } label: {
-                    HStack() {
-                        Image(systemName: "chevron.left")
-                        Text("Back").font(.callout)
+        NavigationView() {
+            Form() {
+                Picker("Closed Captions", selection: $captionTrack) {
+                    ForEach(delegate.subtitleTrackArray, id: \.id) { caption in
+                        Text(caption.name).tag(caption.id)
+                    }
+                }
+                .onChange(of: captionTrack) { track in
+                    self.delegate.subtitleTrackChanged(newTrackID: track)
+                }
+                Picker("Audio Track", selection: $audioTrack) {
+                    ForEach(delegate.audioTrackArray, id: \.id) { caption in
+                        Text(caption.name).tag(caption.id).lineLimit(1)
+                    }
+                }.onChange(of: audioTrack) { track in
+                    self.delegate.audioTrackChanged(newTrackID: track)
+                }
+            }.navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Audio & Captions")
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    if(UIDevice.current.userInterfaceIdiom == .phone) {
+                        Button {
+                            self.delegate.settingsPopoverDismissed()
+                        } label: {
+                            HStack() {
+                                Image(systemName: "chevron.left")
+                                Text("Back").font(.callout)
+                            }
+                        }
                     }
                 }
             }
-            Picker("Closed Captions", selection: $subtitleSelection) {
-                ForEach(subtitles, id: \.id) { caption in
-                    Text(caption.name).tag(caption.id)
-                }
-            }.onChange(of: subtitleSelection) { id in
-                delegate.subtitleTrackID = id
-            }
-            Picker("Audio Track", selection: $audioTrackSelection) {
-                ForEach(audioTracks, id: \.id) { caption in
-                    Text(caption.name).tag(caption.id).lineLimit(1)
-                }
-            }.onChange(of: audioTrackSelection) { id in
-                delegate.audioTrackID = id
-            }
-        }
+        }.offset(y: 14)
+        .onAppear(perform: {
+            _captionTrack.wrappedValue = self.delegate.selectedCaptionTrack
+            _audioTrack.wrappedValue = self.delegate.selectedAudioTrack
+        })
     }
 }

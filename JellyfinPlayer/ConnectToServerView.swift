@@ -32,6 +32,7 @@ struct ConnectToServerView: View {
     @State private var isSignInErrored = false;
     @State private var isConnected = false;
     @State private var serverName = "";
+    @State private var usernameDisabled: Bool = false;
     @State private var publicUsers: [publicUser] = [];
     @State private var lastPublicUsers: [publicUser] = [];
     @Binding var rootIsActive : Bool
@@ -244,6 +245,7 @@ struct ConnectToServerView: View {
                         TextField("Username", text: $username)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
+                            .disabled(usernameDisabled)
                         SecureField("Password", text: $password)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
@@ -285,6 +287,7 @@ struct ConnectToServerView: View {
                         Section() {
                             Button {
                                 _publicUsers.wrappedValue = _lastPublicUsers.wrappedValue
+                                _usernameDisabled.wrappedValue = false;
                             } label: {
                                 HStack() {
                                     HStack() {
@@ -304,6 +307,7 @@ struct ConnectToServerView: View {
                                     if(pubuser.hasPassword) {
                                         _lastPublicUsers.wrappedValue = _publicUsers.wrappedValue
                                         _username.wrappedValue = pubuser.username
+                                        _usernameDisabled.wrappedValue = true;
                                         _publicUsers.wrappedValue = []
                                     } else {
                                         _publicUsers.wrappedValue = []
@@ -339,7 +343,9 @@ struct ConnectToServerView: View {
                     
                     Section() {
                         Button() {
+                            _lastPublicUsers.wrappedValue = _publicUsers.wrappedValue;
                             _publicUsers.wrappedValue = []
+                            _username.wrappedValue = ""
                         } label: {
                             HStack() {
                                 Text("Other User").font(.subheadline).fontWeight(.semibold)

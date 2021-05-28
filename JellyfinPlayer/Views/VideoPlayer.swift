@@ -39,7 +39,7 @@ protocol PlayerViewControllerDelegate: AnyObject {
     func exitPlayer(_ viewController: PlayerViewController)
 }
 
-class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate, VideoPlayerSettingsDelegate {
+class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate {
 
     weak var delegate: PlayerViewControllerDelegate?
     
@@ -58,14 +58,23 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var shouldShowLoadingScreen: Bool = false;
     var ssTargetValueOffset: Int = 0;
     var ssStartValue: Int = 0;
+    var optionsVC: VideoPlayerSettingsView?;
     
     var paused: Bool = true;
     var lastTime: Float = 0.0;
     var startTime: Int = 0;
     var controlsAppearTime: Double = 0;
     
-    var selectedAudioTrack: Int32 = -1;
-    var selectedCaptionTrack: Int32 = -1;
+    var selectedAudioTrack: Int32 = -1 {
+        didSet {
+            print(selectedAudioTrack)
+        }
+    };
+    var selectedCaptionTrack: Int32 = -1 {
+        didSet {
+            print(selectedCaptionTrack)
+        }
+    }
     var playSessionId: String = "";
     var lastProgressReportTime: Double = 0;
     
@@ -155,23 +164,15 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
     
     @IBAction func settingsButtonTapped(_ sender: UIButton) {
-        let optionsVC = VideoPlayerSettingsView()
-        print(self.selectedAudioTrack)
-        print(self.selectedCaptionTrack)
-        optionsVC.currentSubtitleTrack = self.selectedCaptionTrack
-        optionsVC.currentAudioTrack = self.selectedAudioTrack
-        optionsVC.delegate = self;
-        optionsVC.subtitles = subtitleTrackArray
-        optionsVC.audioTracks = audioTrackArray
-        // Use the popover presentation style for your view controller.
-        let navVC = UINavigationController(rootViewController: optionsVC)
-        navVC.modalPresentationStyle = .popover
-        navVC.popoverPresentationController?.sourceView = playerSettingsButton
-        
+        optionsVC = VideoPlayerSettingsView()
+        optionsVC?.delegate = self
+
+        optionsVC?.modalPresentationStyle = .popover
+        optionsVC?.popoverPresentationController?.sourceView = playerSettingsButton
         
         
         // Present the view controller (in a popover).
-        self.present(navVC, animated: true) {
+        self.present(optionsVC!, animated: true) {
             print("popover visible, pause playback")
             self.mediaPlayer.pause()
             self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
@@ -179,6 +180,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
     
     func settingsPopoverDismissed() {
+        optionsVC?.dismiss(animated: true, completion: nil)
         self.mediaPlayer.play()
         self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
     }
@@ -188,8 +190,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
         //View has loaded.
         //Show loading screen
-        delegate?.showLoadingView(self)
-        
+
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         //mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
         
@@ -197,11 +198,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         mediaPlayer.delegate = self
         mediaPlayer.drawable = videoContentView
         
-        if(manifest.Type == "Episode") {
-            titleLabel.text = "\(manifest.Name) -  S\(String(manifest.ParentIndexNumber ?? 0)):E\(String(manifest.IndexNumber ?? 0)) - \(manifest.SeriesName ?? "")"
-        } else {
-            titleLabel.text = manifest.Name
-        }
+        titleLabel.text = manifest.Name
         
         //Fetch max bitrate from UserDefaults depending on current connection mode
         let defaults = UserDefaults.standard
@@ -333,10 +330,12 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     
     //MARK: VideoPlayerSettings Delegate
     func subtitleTrackChanged(newTrackID: Int32) {
+        selectedCaptionTrack = newTrackID
         mediaPlayer.currentVideoSubTitleIndex = newTrackID
     }
     
     func audioTrackChanged(newTrackID: Int32) {
+        selectedAudioTrack = newTrackID
         mediaPlayer.currentAudioTrackIndex = newTrackID
     }
     
@@ -400,7 +399,12 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             timeText.text = timeTextStr
             
             if(CACurrentMediaTime() - controlsAppearTime > 5) {
-                videoControlsView.isHidden = true;
+                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+                    self.videoControlsView.alpha = 0.0
+                }, completion: { (finished: Bool) in
+                    self.videoControlsView.isHidden = true;
+                    self.videoControlsView.alpha = 1
+                })
                 controlsAppearTime = 10000000000000000000000;
             }
         } else {
@@ -418,10 +422,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     func sendProgressReport(eventName: String) {
         var progressBody: String = "";
         progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(mediaPlayer.state == .paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(mediaPlayer.position * Float(manifest.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"\(playbackItem.videoType == .hls ? "Transcode" : "DirectStream")\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(manifest.Id)\",\"CanSeek\":true,\"ItemId\":\"\(manifest.Id)\",\"EventName\":\"\(eventName)\"}";
-        
-        print("");
-        print("Sending progress report")
-        print(progressBody)
         
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing/Progress")
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
@@ -445,10 +445,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         
         progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(mediaPlayer.position * Float(manifest.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":100000}],\"PlayMethod\":\"\(playbackItem.videoType == .hls ? "Transcode" : "DirectStream")\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(manifest.Id)\",\"CanSeek\":true,\"ItemId\":\"\(manifest.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(manifest.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
         
-        print("");
-        print("Sending stop report")
-        print(progressBody)
-        
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing/Stopped")
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
@@ -471,10 +467,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         startTime = Int(Date().timeIntervalSince1970) * 10000000
         
         progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(manifest.Progress)),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[],\"PlayMethod\":\"\(playbackItem.videoType == .hls ? "Transcode" : "DirectStream")\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(manifest.Id)\",\"CanSeek\":true,\"ItemId\":\"\(manifest.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(manifest.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
-        
-        print("");
-        print("Sending play report")
-        print(progressBody)
         
         let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing")
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
