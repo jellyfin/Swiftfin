@@ -164,31 +164,24 @@
 		5377CBF3263B596A003A4E83 /* JellyfinPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				621338B12660A06F00A81A2A /* SwiftUI */,
 				621338912660106C00A81A2A /* Extensions */,
-				6273DD4A265F4794009C1D0B /* Domains */,
 				6273DD46265F419B009C1D0B /* APIs */,
 				AE8C3157265D6F5E008AA076 /* Resources */,
 				AE8C3152265D607B008AA076 /* ViewModels */,
 				AE8C3151265D6075008AA076 /* Models */,
 				AE8C3150265D5FE1008AA076 /* Views */,
 				5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */,
+				5377CC02263B596B003A4E83 /* Info.plist */,
 				5377CBF6263B596A003A4E83 /* ContentView.swift */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
 				5377CBFD263B596B003A4E83 /* PersistenceController.swift */,
-				5377CC02263B596B003A4E83 /* Info.plist */,
-				5377CBFF263B596B003A4E83 /* Model.xcdatamodeld */,
 				5377CBFA263B596B003A4E83 /* Preview Content */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
 				5389276D263C25100035E14B /* ContinueWatchingView.swift */,
 				5389276F263C25230035E14B /* NextUpView.swift */,
-				53892771263C8C6F0035E14B /* LoadingView.swift */,
-				53892776263CBB000035E14B /* JellyApiTypings.swift */,
-				5389277B263CC3DB0035E14B /* BlurHashDecode.swift */,
 				53FF7F29263CF3F500585C35 /* LatestMediaView.swift */,
 				53DF641D263D9C0600A7CD1A /* LibraryView.swift */,
 				53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */,
-				53E4E648263F725B00F67C6B /* MultiSelector.swift */,
 				535BAE9E2649E569005FA86D /* ItemView.swift */,
 				53A089CF264DA9DA00D57806 /* MovieItemView.swift */,
 				53EE24E5265060780068F029 /* LibrarySearchView.swift */,
@@ -217,70 +210,25 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		6213388B265F776B00A81A2A /* Library */ = {
-			isa = PBXGroup;
-			children = (
-				6213388C265F777100A81A2A /* ViewModels */,
-			);
-			path = Library;
-			sourceTree = "<group>";
-		};
-		6213388C265F777100A81A2A /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				6213388D265F777C00A81A2A /* LibraryViewModel.swift */,
-				62133894266096EF00A81A2A /* LibraryListViewModel.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
 		621338912660106C00A81A2A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				5389277B263CC3DB0035E14B /* BlurHashDecode.swift */,
+				53E4E648263F725B00F67C6B /* MultiSelector.swift */,
+				53892771263C8C6F0035E14B /* LoadingView.swift */,
+				621338B22660A07800A81A2A /* LazyView.swift */,
 				621338922660107500A81A2A /* String++.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		621338B12660A06F00A81A2A /* SwiftUI */ = {
-			isa = PBXGroup;
-			children = (
-				621338B22660A07800A81A2A /* LazyView.swift */,
-			);
-			path = SwiftUI;
-			sourceTree = "<group>";
-		};
 		6273DD46265F419B009C1D0B /* APIs */ = {
 			isa = PBXGroup;
 			children = (
+				53892776263CBB000035E14B /* JellyApiTypings.swift */,
 				6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */,
 			);
 			path = APIs;
-			sourceTree = "<group>";
-		};
-		6273DD49265F478E009C1D0B /* Search */ = {
-			isa = PBXGroup;
-			children = (
-				6273DD4B265F479B009C1D0B /* ViewModels */,
-			);
-			path = Search;
-			sourceTree = "<group>";
-		};
-		6273DD4A265F4794009C1D0B /* Domains */ = {
-			isa = PBXGroup;
-			children = (
-				6213388B265F776B00A81A2A /* Library */,
-				6273DD49265F478E009C1D0B /* Search */,
-			);
-			path = Domains;
-			sourceTree = "<group>";
-		};
-		6273DD4B265F479B009C1D0B /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */,
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		AE8C3150265D5FE1008AA076 /* Views */ = {
@@ -305,6 +253,9 @@
 		AE8C3152265D607B008AA076 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */,
+				6213388D265F777C00A81A2A /* LibraryViewModel.swift */,
+				62133894266096EF00A81A2A /* LibraryListViewModel.swift */,
 				AE8C3155265D616A008AA076 /* SettingsViewModel.swift */,
 			);
 			path = ViewModels;
@@ -313,6 +264,7 @@
 		AE8C3157265D6F5E008AA076 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5377CBFF263B596B003A4E83 /* Model.xcdatamodeld */,
 				AE8C3158265D6F90008AA076 /* bitrates.json */,
 			);
 			path = Resources;

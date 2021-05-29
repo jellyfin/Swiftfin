@@ -7,8 +7,6 @@
 
 import SDWebImageSwiftUI
 import SwiftUI
-import SwiftyJSON
-import SwiftyRequest
 
 struct LibraryView: View {
     @Environment(\.managedObjectContext)
@@ -68,6 +66,20 @@ struct LibraryView: View {
                         }
                     }
                 }
+                HStack() {
+                    Spacer()
+                    Button {
+                        viewModel.requestPreviousPage()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }.disabled(viewModel.isHiddenPreviousButton)
+                    Button {
+                        viewModel.requestNextPage()
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }.disabled(viewModel.isHiddenNextButton)
+                    Spacer()
+                }
                 Spacer().frame(height: 16)
             }
             .onChange(of: isPortrait) { _ in
@@ -79,7 +91,6 @@ struct LibraryView: View {
                 Text("Empty Response")
             }
         }
-//        .overrideViewPreference(.unspecified)
         .onAppear(perform: onAppear)
         .navigationTitle(title)
         .toolbar {

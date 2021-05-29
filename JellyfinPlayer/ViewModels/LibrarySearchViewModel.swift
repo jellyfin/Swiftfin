@@ -12,7 +12,7 @@ import Moya
 import SwiftyJSON
 
 final class LibrarySearchViewModel: ObservableObject {
-    fileprivate var provider = MoyaProvider<JellyfinAPI>(plugins: [NetworkLoggerPlugin()])
+    fileprivate var provider = MoyaProvider<JellyfinAPI>()
 
     var filter: Filter
 

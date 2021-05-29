@@ -13,7 +13,7 @@ import SwiftyJSON
 
 final class LibraryListViewModel: ObservableObject {
     fileprivate var provider =
-        MoyaProvider<JellyfinAPI>(plugins: [NetworkLoggerPlugin()])
+        MoyaProvider<JellyfinAPI>()
     
     @Published
     var libraryIDs = [String]()

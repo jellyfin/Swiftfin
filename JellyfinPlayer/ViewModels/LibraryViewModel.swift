@@ -13,7 +13,7 @@ import SwiftyJSON
 
 final class LibraryViewModel: ObservableObject {
     fileprivate var provider =
-        MoyaProvider<JellyfinAPI>(plugins: [NetworkLoggerPlugin()])
+        MoyaProvider<JellyfinAPI>()
 
     @Published
     var filter: Filter
@@ -67,12 +67,8 @@ final class LibraryViewModel: ObservableObject {
     }
 
     fileprivate func requestItems(_ filter: Filter) {
-        print("ASDASDA")
-        print(globalData.authHeader)
         isLoading = true
         provider.requestPublisher(.items(globalData: globalData, filter: filter, page: page))
-            // .map(ResumeItem.self) TO DO
-            .print()
             .receive(on: DispatchQueue.main)
             .map { response -> ([ResumeItem], Int) in
                 let body = response.data
