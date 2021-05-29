@@ -33,7 +33,7 @@ struct ItemView: View {
             .preferredColorScheme(.dark)
             .edgesIgnoringSafeArea(.all)
             .overrideViewPreference(.unspecified)
-            .supportedOrientations(.landscape)
+
         } else {
             Group {
                 if(item.Type == "Movie") {

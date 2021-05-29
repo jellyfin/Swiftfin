@@ -185,6 +185,14 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
     }
     
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .landscape
+    }
+    
+    override var shouldAutorotate: Bool {
+        return true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
