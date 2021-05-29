@@ -26,15 +26,14 @@ struct ItemView: View {
         if(playback.shouldPlay) {
             LoadingViewNoBlur(isShowing: $shouldShowLoadingView) {
                 VLCPlayerWithControls(item: playback.itemToPlay, loadBinding: $shouldShowLoadingView, pBinding: _playback.projectedValue.shouldPlay)
-                    .navigationBarHidden(true)
-                    .navigationBarBackButtonHidden(true)
-                    .statusBar(hidden: true)
-                    .prefersHomeIndicatorAutoHidden(true)
-                    .preferredColorScheme(.dark)
-                    .edgesIgnoringSafeArea(.all)
-                    .overrideViewPreference(.unspecified)
-                    .supportedOrientations(.landscape)
-            }
+            }.navigationBarHidden(true)
+            .navigationBarBackButtonHidden(true)
+            .statusBar(hidden: true)
+            .prefersHomeIndicatorAutoHidden(true)
+            .preferredColorScheme(.dark)
+            .edgesIgnoringSafeArea(.all)
+            .overrideViewPreference(.unspecified)
+            .supportedOrientations(.landscape)
         } else {
             Group {
                 if(item.Type == "Movie") {

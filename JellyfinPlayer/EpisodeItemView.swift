@@ -434,8 +434,8 @@ struct EpisodeItemView: View {
                         }
                     } else {
                         GeometryReader { geometry in
-                            ZStack {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=750&quality=90&tag=\(fullItem.Backdrop)")!)
+                            ZStack() {
+                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(fullItem.Backdrop)")!)
                                     .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                     .placeholder {
                                         Image(uiImage: UIImage(blurHash: fullItem
@@ -454,8 +454,9 @@ struct EpisodeItemView: View {
                                     .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                            height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                     .edgesIgnoringSafeArea(.all)
-                                HStack {
-                                    VStack {
+                                    .blur(radius:2)
+                                HStack() {
+                                    VStack() {
                                         WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
                                             .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                             .placeholder {
@@ -622,7 +623,7 @@ struct EpisodeItemView: View {
                                                                 }
                                                                 Spacer().frame(width: 10)
                                                             }
-                                                            Spacer().frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                                                            Spacer().frame(width: 55)
                                                         }
                                                     }
                                                 }.padding(.top, -3)
