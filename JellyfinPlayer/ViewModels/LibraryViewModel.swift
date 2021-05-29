@@ -121,17 +121,28 @@ final class LibraryViewModel: ObservableObject {
                 self.isLoading = false
             }, receiveValue: { [weak self] items, count in
                 guard let self = self else { return }
-                if count > 100 {
-                    if self.page > 1 {
+                print(count)
+                print(items.count)
+                print(self.page)
+                
+                if(count > 100) {
+                    self.isHiddenPreviousButton = true
+                    self.isHiddenNextButton = true
+                    
+                    if(self.page > 1) {
                         self.isHiddenPreviousButton = false
                     }
-                    if count > (self.page * 100) {
+                    
+                    if(self.page * 100 < count) {
                         self.isHiddenNextButton = false
                     }
                 } else {
-                    self.isHiddenNextButton = true
                     self.isHiddenPreviousButton = true
+                    self.isHiddenNextButton = true
                 }
+                
+                print(self.isHiddenPreviousButton)
+                print(self.isHiddenNextButton)
 
                 self.items = items
             })
