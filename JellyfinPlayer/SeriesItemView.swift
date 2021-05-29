@@ -37,7 +37,7 @@ struct SeriesItemView: View {
                     let json = try JSON(data: body)
                     for (_,item):(String, JSON) in json["Items"] {
                         // Do something you want
-                        let itemObj = ResumeItem()
+                        var itemObj = ResumeItem()
                         itemObj.Type = "Season"
                         itemObj.Id = item["Id"].string ?? ""
                         itemObj.ProductionYear = item["ProductionYear"].int ?? 0

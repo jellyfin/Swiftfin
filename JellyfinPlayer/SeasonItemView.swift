@@ -123,7 +123,7 @@ struct SeasonItemView: View {
                                     episode.ParentId = episode.SeasonId ?? ""
                                     episode.CommunityRating = String(json["CommunityRating"].float ?? 0.0)
 
-                                    let rI = ResumeItem()
+                                    var rI = ResumeItem()
                                     rI.Name = episode.Name
                                     rI.Id = episode.Id
                                     rI.IndexNumber = episode.IndexNumber

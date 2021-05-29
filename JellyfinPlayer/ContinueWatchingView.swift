@@ -64,7 +64,7 @@ struct ContinueWatchingView: View {
                     let json = try JSON(data: body)
                     for (_,item):(String, JSON) in json["Items"] {
                         // Do something you want
-                        let itemObj = ResumeItem()
+                        var itemObj = ResumeItem()
                         if(item["PrimaryImageAspectRatio"].double ?? 0.0 < 1.0) {
                             //portrait; use backdrop instead
                             itemObj.Image = item["BackdropImageTags"][0].string ?? ""

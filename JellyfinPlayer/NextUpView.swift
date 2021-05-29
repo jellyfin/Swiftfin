@@ -39,7 +39,7 @@ struct NextUpView: View {
                     let json = try JSON(data: body)
                     for (_,item):(String, JSON) in json["Items"] {
                         // Do something you want
-                        let itemObj = ResumeItem()
+                        var itemObj = ResumeItem()
                         itemObj.Image = item["SeriesPrimaryImageTag"].string ?? ""
                         itemObj.ImageType = "Primary"
                         itemObj.BlurHash = item["ImageBlurHashes"]["Primary"][itemObj.Image].string ?? ""

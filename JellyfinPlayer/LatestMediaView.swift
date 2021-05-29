@@ -47,7 +47,7 @@ struct LatestMediaView: View {
                     let json = try JSON(data: body)
                     for (_,item):(String, JSON) in json {
                         // Do something you want
-                        let itemObj = ResumeItem()
+                        var itemObj = ResumeItem()
                         itemObj.Image = item["ImageTags"]["Primary"].string ?? ""
                         itemObj.ImageType = "Primary"
                         itemObj.BlurHash = item["ImageBlurHashes"]["Primary"][itemObj.Image].string ?? ""
