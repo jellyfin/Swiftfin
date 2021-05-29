@@ -333,7 +333,7 @@ struct SeasonItemView: View {
                     } else {
                         GeometryReader { geometry in
                             ZStack {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=750&quality=80&tag=\(item.SeasonImage ?? "")")!)
+                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(item.SeasonImage ?? "")")!)
                                     .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
                                     .placeholder {
                                         Image(uiImage: UIImage(blurHash: item
@@ -352,6 +352,7 @@ struct SeasonItemView: View {
                                     .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                            height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                     .edgesIgnoringSafeArea(.all)
+                                    .blur(radius:2)
                                 HStack {
                                     VStack(alignment: .leading) {
                                         WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
@@ -382,9 +383,11 @@ struct SeasonItemView: View {
                                                     .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
                                                     .padding(.trailing, 16)
                                             }
-                                            Text(fullItem.Overview).font(.footnote).padding(.top, 3)
-                                                .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
-                                                .padding(.trailing, 16)
+                                            if(fullItem.Overview != "") {
+                                                Text(fullItem.Overview).font(.footnote).padding(.top, 3)
+                                                    .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
+                                                    .padding(.trailing, 16)
+                                            }
                                             ForEach(episodes, id: \.Id) { episode in
                                                 NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
                                                     HStack {
@@ -473,7 +476,7 @@ struct SeasonItemView: View {
                                             }
                                             Spacer().frame(height: 125)
                                         }.frame(maxHeight: .infinity)
-                                    }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55).padding(.top, -16)
+                                    }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                 }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
                             }
                         }

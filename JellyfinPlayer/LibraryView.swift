@@ -20,7 +20,7 @@ struct LibraryView: View {
     @State private var isLoading: Bool = true;
 
     @State private var viewDidLoad: Bool = false;
-    @State private var filterString: String = "&SortBy=SortName&SortOrder=Descending";
+    @State private var filterString: String = "&SortBy=SortName&SortOrder=Ascending";
     @State private var showFiltersPopover: Bool = false;
     @State private var showSearchPopover: Bool = false;
     @State private var extraParam: String = "";
@@ -258,6 +258,27 @@ struct LibraryView: View {
                                         .fontWeight(.medium)
                                 }.frame(width: 100)
                             }
+                        }
+                    }
+                    Spacer().frame(height: 16)
+                    if(totalItemCount > itemsPerPage) {
+                        HStack() {
+                            Spacer()
+                            if(firstItemIndex != 0) {
+                                Button {
+                                    previousPage()
+                                } label: {
+                                    Image(systemName: "chevron.left").font(.system(size: 30))
+                                }
+                            }
+                            if(lastItemIndex != totalItemCount) {
+                                Button {
+                                    nextPage()
+                                } label: {
+                                    Image(systemName: "chevron.right").font(.system(size: 30))
+                                }
+                            }
+                            Spacer()
                         }
                     }
                     Spacer().frame(height: 16)
