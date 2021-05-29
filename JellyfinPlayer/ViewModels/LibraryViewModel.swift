@@ -28,7 +28,11 @@ final class LibraryViewModel: ObservableObject {
     var isHiddenPreviousButton = true
     @Published
     var isHiddenNextButton = true
+    
+    @Published
+    var totalPages = 1
 
+    @Published
     var page = 1
 
     var globalData = GlobalData() {
@@ -124,6 +128,8 @@ final class LibraryViewModel: ObservableObject {
                 print(count)
                 print(items.count)
                 print(self.page)
+                
+                self.totalPages = Int(Float(Double(count)/100.0).rounded(.up))
                 
                 if(count > 100) {
                     self.isHiddenPreviousButton = true

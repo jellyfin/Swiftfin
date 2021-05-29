@@ -73,7 +73,7 @@ struct LibraryView: View {
                     } label: {
                         Image(systemName: "chevron.left").font(.system(size: 25))
                     }.disabled(viewModel.isHiddenPreviousButton)
-                    Spacer()
+                    Text("\(viewModel.page) of \(viewModel.totalPages)")
                     Button {
                         viewModel.requestNextPage()
                     } label: {
