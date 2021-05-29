@@ -34,9 +34,12 @@ struct LibraryListView: View {
             }
         }
         .navigationTitle("All Media")
-        .navigationBarItems(trailing:
-            NavigationLink(destination: LazyView { LibrarySearchView(viewModel: .init(filter: .init())) }) {
-                Image(systemName: "magnifyingglass")
-            })
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                NavigationLink(destination: LazyView { LibrarySearchView(viewModel: .init(filter: .init())) }) {
+                    Image(systemName: "magnifyingglass")
+                }
+            }
+        }
     }
 }

@@ -21,8 +21,8 @@ struct LibraryView: View {
     @State
     private var showFiltersPopover: Bool = false
     @State
-    private var showSearchPopover: Bool = false
-    
+    private var showingSearchView: Bool = false
+
     private var title: String
 
     @State
@@ -34,6 +34,7 @@ struct LibraryView: View {
     }
 
     func onAppear() {
+        guard viewModel.globalData != globalData else { return }
         recalcTracks()
         viewModel.globalData = globalData
     }
@@ -78,33 +79,35 @@ struct LibraryView: View {
                 Text("Empty Response")
             }
         }
-        .overrideViewPreference(.unspecified)
+//        .overrideViewPreference(.unspecified)
         .onAppear(perform: onAppear)
         .navigationTitle(title)
-        .navigationBarItems(trailing: HStack {
-            if !viewModel.isHiddenPreviousButton {
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if !viewModel.isHiddenPreviousButton {
+                    Button {
+                        viewModel.requestPreviousPage()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                }
+                if !viewModel.isHiddenNextButton {
+                    Button {
+                        viewModel.requestNextPage()
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                }
+                NavigationLink(destination: LazyView { LibrarySearchView(viewModel: .init(filter: viewModel.filter)) }) {
+                    Image(systemName: "magnifyingglass")
+                }
                 Button {
-                    viewModel.requestPreviousPage()
+                    showFiltersPopover = true
                 } label: {
-                    Image(systemName: "chevron.left")
+                    Image(systemName: "line.horizontal.3.decrease")
                 }
             }
-            if !viewModel.isHiddenNextButton {
-                Button {
-                    viewModel.requestNextPage()
-                } label: {
-                    Image(systemName: "chevron.right")
-                }
-            }
-            NavigationLink(destination: LazyView { LibrarySearchView(viewModel: .init(filter: viewModel.filter)) }) {
-                Image(systemName: "magnifyingglass")
-            }
-            Button {
-                showFiltersPopover = true
-            } label: {
-                Image(systemName: "line.horizontal.3.decrease")
-            }
-        })
+        }
         .sheet(isPresented: self.$showFiltersPopover) {
             LibraryFilterView(library: viewModel.filter.parentID ?? "", filter: $viewModel.filter)
                 .environmentObject(self.globalData)

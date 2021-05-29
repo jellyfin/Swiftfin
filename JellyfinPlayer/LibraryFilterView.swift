@@ -24,7 +24,7 @@ struct LibraryFilterView: View {
 
     @State
     var library: String
-    
+
     @Binding
     var filter: Filter
     @State
@@ -147,13 +147,17 @@ struct LibraryFilterView: View {
                 }
             }.onAppear(perform: onAppear)
                 .navigationBarTitle("Filters", displayMode: .inline)
-                .navigationBarItems(leading: Button {
-                    presentationMode.wrappedValue.dismiss()
-                } label: {
-                    HStack {
-                        Text("Back").font(.callout)
+                .toolbar {
+                    ToolbarItemGroup(placement: .navigationBarLeading) {
+                        Button {
+                            presentationMode.wrappedValue.dismiss()
+                        } label: {
+                            HStack {
+                                Text("Back").font(.callout)
+                            }
+                        }
                     }
-                })
+                }
         }
     }
 }

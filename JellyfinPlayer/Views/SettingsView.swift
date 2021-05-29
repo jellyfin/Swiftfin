@@ -5,34 +5,44 @@
 //  Created by Aiden Vigue on 4/29/21.
 //
 
-import SwiftUI
 import CoreData
+import SwiftUI
 
 struct SettingsView: View {
-    @ObservedObject var viewModel: SettingsViewModel
+    @ObservedObject
+    var viewModel: SettingsViewModel
 
-    @Binding var close: Bool;
-    @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject var globalData: GlobalData
-    @EnvironmentObject var jsi: justSignedIn
-    @State private var username: String = "";
-    @State private var inNetworkStreamBitrate: Int = 40000000;
-    @State private var outOfNetworkStreamBitrate: Int = 40000000;
-    @State private var autoSelectSubtitles: Bool = false;
-    @State private var autoSelectSubtitlesLangcode: String = "none";
-    
+    @Binding
+    var close: Bool
+    @Environment(\.managedObjectContext)
+    private var viewContext
+    @EnvironmentObject
+    var globalData: GlobalData
+    @EnvironmentObject
+    var jsi: justSignedIn
+    @State
+    private var username: String = ""
+    @State
+    private var inNetworkStreamBitrate: Int = 40_000_000
+    @State
+    private var outOfNetworkStreamBitrate: Int = 40_000_000
+    @State
+    private var autoSelectSubtitles: Bool = false
+    @State
+    private var autoSelectSubtitlesLangcode: String = "none"
+
     func onAppear() {
-        _username.wrappedValue = globalData.user?.username ?? "";
+        _username.wrappedValue = globalData.user?.username ?? ""
         let defaults = UserDefaults.standard
-        _inNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "InNetworkBandwidth");
-        _outOfNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "OutOfNetworkBandwidth");
-        _autoSelectSubtitles.wrappedValue = defaults.bool(forKey: "AutoSelectSubtitles");
-        _autoSelectSubtitlesLangcode.wrappedValue = defaults.string(forKey: "AutoSelectSubtitlesLangcode") ?? "";
+        _inNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "InNetworkBandwidth")
+        _outOfNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "OutOfNetworkBandwidth")
+        _autoSelectSubtitles.wrappedValue = defaults.bool(forKey: "AutoSelectSubtitles")
+        _autoSelectSubtitlesLangcode.wrappedValue = defaults.string(forKey: "AutoSelectSubtitlesLangcode") ?? ""
     }
-    
+
     var body: some View {
-        NavigationView() {
-            Form() {
+        NavigationView {
+            Form {
                 Section(header: Text("Playback settings")) {
                     Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
@@ -42,7 +52,7 @@ struct SettingsView: View {
                         let defaults = UserDefaults.standard
                         defaults.setValue(_inNetworkStreamBitrate.wrappedValue, forKey: "InNetworkBandwidth")
                     }
-                    
+
                     Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
@@ -52,19 +62,17 @@ struct SettingsView: View {
                         defaults.setValue(_outOfNetworkStreamBitrate.wrappedValue, forKey: "OutOfNetworkBandwidth")
                     }
                 }
-                
+
                 Section(header: Text("Accessibility")) {
                     Toggle("Automatically show subtitles", isOn: $autoSelectSubtitles).onChange(of: autoSelectSubtitles, perform: { _ in
                         let defaults = UserDefaults.standard
                         defaults.setValue(autoSelectSubtitles, forKey: "AutoSelectSubtitles")
                     })
-                    Picker("Language preferences", selection: $autoSelectSubtitlesLangcode) {
-                        
-                    }
+                    Picker("Language preferences", selection: $autoSelectSubtitlesLangcode) {}
                 }
-                
-                Section() {
-                    HStack() {
+
+                Section {
+                    HStack {
                         Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
                         Button {
@@ -76,7 +84,7 @@ struct SettingsView: View {
                             } catch _ as NSError {
                                 // TODO: handle the error
                             }
-                            
+
                             let fetchRequest2: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "SignedInUser")
                             let deleteRequest2 = NSBatchDeleteRequest(fetchRequest: fetchRequest2)
 
@@ -85,7 +93,7 @@ struct SettingsView: View {
                             } catch _ as NSError {
                                 // TODO: handle the error
                             }
-                            
+
                             globalData.server = nil
                             globalData.user = nil
                             globalData.authToken = ""
@@ -101,14 +109,15 @@ struct SettingsView: View {
             }
 
             .navigationBarTitle("Settings", displayMode: .inline)
-            .navigationBarItems(leading:
-                                    Button {
-                                        close = false
-                                    } label: {
-                                        HStack() {
-                                            Text("Back").font(.callout)
-                                        }
-                                    })
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button {
+                        close = false
+                    } label: {
+                        Text("Back").font(.callout)
+                    }
+                }
+            }
         }.onAppear(perform: onAppear)
     }
 }

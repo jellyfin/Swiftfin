@@ -27,6 +27,7 @@ struct LibrarySearchView: View {
     var horizontalSizeClass: UserInterfaceSizeClass?
 
     func onAppear() {
+        guard viewModel.globalData != globalData else { return }
         recalcTracks()
         viewModel.globalData = globalData
     }

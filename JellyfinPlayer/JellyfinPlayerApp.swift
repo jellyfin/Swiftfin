@@ -19,6 +19,16 @@ class GlobalData: ObservableObject {
     @Published var isInNetwork: Bool = true;
 }
 
+extension GlobalData: Equatable {
+    
+    static func == (lhs: GlobalData, rhs: GlobalData) -> Bool {
+        lhs.user == rhs.user
+            && lhs.authToken == rhs.authToken
+            && lhs.server == rhs.server
+            && lhs.authHeader == rhs.authHeader        
+    }
+}
+
 extension UIDevice {
     var hasNotch: Bool {
         let bottom = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.safeAreaInsets.bottom ?? 0
