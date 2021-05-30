@@ -349,17 +349,17 @@ struct MovieItemView: View {
                                 .overlay(RoundedRectangle(cornerRadius: 2)
                                     .stroke(Color.secondary, lineWidth: 1))
                         }
-                        if fullItem.CommunityRating != "0" {
-                            HStack {
-                                Image(systemName: "star").foregroundColor(.secondary)
-                                Text(fullItem.CommunityRating).font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
-                                    .offset(x: -7, y: 0.7)
-                            }
-                        }
                     }.frame(maxWidth: .infinity, alignment: .leading)
+                    if fullItem.CommunityRating != "0" {
+                        HStack {
+                            Image(systemName: "star").foregroundColor(.secondary)
+                            Text(fullItem.CommunityRating).font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .offset(x: -7, y: 0.7)
+                        }
+                    }
                 }
                 .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 26)
             }
@@ -406,7 +406,7 @@ struct MovieItemView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? -135 : -60)
+        .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? -189 : -64)
     }
 
     var body: some View {
@@ -422,8 +422,8 @@ struct MovieItemView: View {
                                                      UIScreen.main.bounds.width * 0.5625) {
                             VStack(alignment: .leading) {
                                 Spacer()
-                                    .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 135 : 60)
-                                    .padding(.bottom, 8)
+                                    .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 135 : 40)
+                                    .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 54 : 24)
                                 if fullItem.Tagline != "" {
                                     Text(fullItem.Tagline).font(.body).italic().padding(.top, 7)
                                         .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
