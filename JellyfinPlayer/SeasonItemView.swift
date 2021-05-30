@@ -185,9 +185,8 @@ struct SeasonItemView: View {
         return result
     }
 
-    func portraitHeaderView(proxy: GeometryProxy) -> some View {
-        let yOffset = proxy.frame(in: .global).minY > 0 ? -proxy.frame(in: .global).minY : 0
-        return WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=750&quality=80&tag=\(item.SeasonImage ?? "")")!)
+    var portraitHeaderView: some View {
+        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=750&quality=80&tag=\(item.SeasonImage ?? "")")!)
             .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
             .placeholder {
                 Image(uiImage: UIImage(blurHash: item
@@ -195,50 +194,47 @@ struct SeasonItemView: View {
                         .SeasonImageBlurHash ?? "",
                     size: CGSize(width: 32, height: 32))!)
                     .resizable()
-                    .frame(width: proxy.size.width, height: proxy.size.height - yOffset)
             }
-
             .opacity(0.4)
             .aspectRatio(contentMode: .fill)
-            .frame(width: proxy.size.width, height: proxy.size.height - yOffset)
-
             .shadow(radius: 5)
-            .overlay(HStack(alignment: .bottom, spacing: 12) {
-                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
-                    .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                    .placeholder {
-                        Image(uiImage: UIImage(blurHash: fullItem
-                                .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
-                                .PosterBlurHash,
-                            size: CGSize(width: 32, height: 32))!)
-                            .resizable()
-                            .frame(width: 120, height: 180)
-                            .cornerRadius(10)
-                    }.aspectRatio(contentMode: .fill)
-                    .frame(width: 120, height: 180)
-                    .cornerRadius(10)
-                VStack(alignment: .leading) {
+    }
+
+    var portraitHeaderOverlayView: some View {
+        HStack(alignment: .bottom, spacing: 12) {
+            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
+                .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                .placeholder {
+                    Image(uiImage: UIImage(blurHash: fullItem
+                            .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
+                            .PosterBlurHash,
+                        size: CGSize(width: 32, height: 32))!)
+                        .resizable()
+                        .frame(width: 120, height: 180)
+                        .cornerRadius(10)
+                }.aspectRatio(contentMode: .fill)
+                .frame(width: 120, height: 180)
+                .cornerRadius(10)
+            VStack(alignment: .leading) {
 //                    Text(fullItem.SeriesName ?? "")
 //                        .font(.largeTitle)
 //                        .fontWeight(.bold)
 //                        .foregroundColor(.primary)
 //                        .padding(.bottom, 8)
-                    Text(fullItem.Name).font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .offset(y: -4)
-                    if fullItem.ProductionYear != 0 {
-                        Text(String(fullItem.ProductionYear)).font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
+                Text(fullItem.Name).font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .offset(y: -4)
+                if fullItem.ProductionYear != 0 {
+                    Text(String(fullItem.ProductionYear)).font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
                 }
-            }.padding(.horizontal, 16)
-                .padding(.bottom, -22),
-            alignment: .bottomLeading)
-            .offset(y: yOffset)
+            }
+        }.padding(.horizontal, 16)
+            .padding(.bottom, -22)
     }
 
     var body: some View {
@@ -246,12 +242,13 @@ struct SeasonItemView: View {
             LoadingView(isShowing: $isLoading) {
                 VStack(alignment: .leading) {
                     if orientationInfo.orientation == .portrait {
-                        ScrollView {
-                            GeometryReader { proxy in
-                                portraitHeaderView(proxy: proxy)
-                            }
-                            .frame(height: UIScreen.main.bounds.width * 0.5625)
+                        ParallaxHeaderScrollView(header: portraitHeaderView,
+                                                 staticOverlayView: portraitHeaderOverlayView,
+                                                 overlayAlignment: .bottomLeading,
+                                                 headerHeight: UIScreen.main.bounds.width * 0.5625) {
                             VStack(alignment: .leading) {
+                                Spacer()
+                                    .frame(height: 22)
                                 if fullItem.Tagline != "" {
                                     Text(fullItem.Tagline).font(.body).italic().padding(.top, 7)
                                         .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
@@ -352,7 +349,7 @@ struct SeasonItemView: View {
                                     .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                            height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                     .edgesIgnoringSafeArea(.all)
-                                    .blur(radius:2)
+                                    .blur(radius: 2)
                                 HStack {
                                     VStack(alignment: .leading) {
                                         WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
@@ -383,7 +380,7 @@ struct SeasonItemView: View {
                                                     .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
                                                     .padding(.trailing, 16)
                                             }
-                                            if(fullItem.Overview != "") {
+                                            if fullItem.Overview != "" {
                                                 Text(fullItem.Overview).font(.footnote).padding(.top, 3)
                                                     .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
                                                     .padding(.trailing, 16)
