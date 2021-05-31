@@ -47,6 +47,7 @@
 		621338932660107500A81A2A /* String++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* String++.swift */; };
 		62133895266096EF00A81A2A /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62133894266096EF00A81A2A /* LibraryListViewModel.swift */; };
 		621338B32660A07800A81A2A /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
+		6225FCCB2663841E00E067F6 /* ParallaxHeaderScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */; };
 		6273DD43265F4195009C1D0B /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD42265F4195009C1D0B /* Moya */; };
 		6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD44265F4195009C1D0B /* CombineMoya */; };
 		6273DD48265F41B3009C1D0B /* JellyfinAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */; };
@@ -116,6 +117,7 @@
 		621338922660107500A81A2A /* String++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String++.swift"; sourceTree = "<group>"; };
 		62133894266096EF00A81A2A /* LibraryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListViewModel.swift; sourceTree = "<group>"; };
 		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
+		6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxHeaderScrollView.swift; sourceTree = "<group>"; };
 		6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPI.swift; sourceTree = "<group>"; };
 		6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchViewModel.swift; sourceTree = "<group>"; };
 		AE8C3153265D60BF008AA076 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 				53892771263C8C6F0035E14B /* LoadingView.swift */,
 				621338B22660A07800A81A2A /* LazyView.swift */,
 				621338922660107500A81A2A /* String++.swift */,
+				6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				5377CBFE263B596B003A4E83 /* PersistenceController.swift in Sources */,
 				5389276E263C25100035E14B /* ContinueWatchingView.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
+				6225FCCB2663841E00E067F6 /* ParallaxHeaderScrollView.swift in Sources */,
 				53F8377D265FF67C00F456B3 /* VideoPlayerSettingsView.swift in Sources */,
 				53987CA426572C1300E7EA70 /* SeasonItemView.swift in Sources */,
 				53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */,
