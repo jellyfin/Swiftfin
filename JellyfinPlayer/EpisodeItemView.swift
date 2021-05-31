@@ -261,18 +261,8 @@ struct EpisodeItemView: View {
                                 .overlay(RoundedRectangle(cornerRadius: 2)
                                     .stroke(Color.secondary, lineWidth: 1))
                         }
-                    }.frame(maxWidth: .infinity, alignment: .leading)
-                    if fullItem.CommunityRating != "0" {
-                        HStack {
-                            Image(systemName: "star").foregroundColor(.secondary)
-                            Text(fullItem.CommunityRating).font(.subheadline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                                .offset(x: -7, y: 0.7)
-                        }
                     }
-                }.frame(maxWidth: .infinity, alignment: .leading)
+                }
                 .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 26)
             }
             HStack {
