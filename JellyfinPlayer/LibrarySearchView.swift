@@ -15,7 +15,7 @@ struct LibrarySearchView: View {
     private var viewContext
     @EnvironmentObject
     var globalData: GlobalData
-    @ObservedObject
+    @StateObject
     var viewModel: LibrarySearchViewModel
     
     @State
