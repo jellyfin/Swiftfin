@@ -13,7 +13,7 @@ struct LibraryListView: View {
     private var viewContext
     @EnvironmentObject
     var globalData: GlobalData
-    @ObservedObject
+    @StateObject
     var viewModel: LibraryListViewModel
 
     var body: some View {

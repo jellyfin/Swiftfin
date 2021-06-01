@@ -13,7 +13,7 @@ struct LibraryView: View {
     private var viewContext
     @EnvironmentObject
     var globalData: GlobalData
-    @ObservedObject
+    @StateObject
     var viewModel: LibraryViewModel
 
     @State
@@ -27,7 +27,7 @@ struct LibraryView: View {
     private var tracks: [GridItem] = []
 
     init(viewModel: LibraryViewModel, title: String) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
         self.title = title
     }
 
