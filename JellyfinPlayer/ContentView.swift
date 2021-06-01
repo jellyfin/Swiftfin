@@ -102,7 +102,7 @@ struct ContentView: View {
             let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
             var header = "MediaBrowser "
             header.append("Client=\"SwiftFin\",")
-            header.append("Device=\"\(UIDevice.current.name.removeRegexMatches(pattern: "[^\\w\\s]"))\",")
+            header.append("Device=\"\(UIDevice.current.name.replacingOccurrences(of: "[^A-Za-z0-9 .,]+", with: "", options: [.regularExpression]))\",")
             header.append("DeviceId=\"\(globalData.user?.device_uuid ?? "")\",")
             header.append("Version=\"\(appVersion ?? "0.0.1")\",")
             header.append("Token=\"\(globalData.authToken)\"")
