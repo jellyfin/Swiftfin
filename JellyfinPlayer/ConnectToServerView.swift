@@ -12,7 +12,7 @@ import SwiftyJSON
 import CoreData
 import KeychainSwift
 import Sentry
-import SDWebImageSwiftUI
+import NukeUI
 
 class publicUser: ObservableObject {
     @Published var username: String = "";
@@ -320,9 +320,8 @@ struct ConnectToServerView: View {
                                         Text(pubuser.username).font(.subheadline).fontWeight(.semibold)
                                         Spacer()
                                         if(pubuser.primaryImageTag != "") {
-                                            WebImage(url: URL(string: "\(uri)/Users/\(pubuser.id)/Images/Primary?width=200&quality=80&tag=\(pubuser.primaryImageTag)")!)
-                                                .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                                .aspectRatio(contentMode: .fill)
+                                            LazyImage(source: URL(string: "\(uri)/Users/\(pubuser.id)/Images/Primary?width=200&quality=80&tag=\(pubuser.primaryImageTag)"))
+                                                .contentMode(.aspectFill)
                                                 .frame(width: 60, height: 60)
                                                 .cornerRadius(30.0)
                                                 .shadow(radius: 6)

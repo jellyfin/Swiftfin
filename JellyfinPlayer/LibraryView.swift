@@ -5,8 +5,8 @@
 //  Created by Aiden Vigue on 5/1/21.
 //
 
-import SDWebImageSwiftUI
 import SwiftUI
+import NukeUI
 
 struct LibraryView: View {
     @Environment(\.managedObjectContext)
@@ -87,7 +87,7 @@ struct LibraryView: View {
                 recalcTracks()
             }
             if viewModel.isLoading {
-                ActivityIndicator($viewModel.isLoading)
+                ProgressView()
             } else if viewModel.items.isEmpty {
                 Text("Empty Response")
             }
@@ -136,9 +136,8 @@ extension LibraryView {
         var body: some View {
             VStack(alignment: .leading) {
                 if item.Type == "Movie" {
-                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
-                        .resizable()
-                        .placeholder {
+                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
+                        .placeholderAndFailure {
                             Image(uiImage: UIImage(blurHash: item
                                     .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
                                     .BlurHash,
@@ -150,9 +149,8 @@ extension LibraryView {
                         .frame(width: 100, height: 150)
                         .cornerRadius(10)
                 } else {
-                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
-                        .resizable()
-                        .placeholder {
+                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
+                        .placeholderAndFailure {
                             Image(uiImage: UIImage(blurHash: item
                                     .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
                                     .BlurHash,

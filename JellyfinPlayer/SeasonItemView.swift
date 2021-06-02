@@ -5,7 +5,7 @@
 //  Created by Aiden Vigue on 5/13/21.
 //
 
-import SDWebImageSwiftUI
+import NukeUI
 import SwiftUI
 import SwiftyJSON
 import SwiftyRequest
@@ -18,7 +18,8 @@ struct SeasonItemView: View {
     @State
     private var isLoading: Bool = true
     var item: ResumeItem
-    var fullItem: DetailItem
+    @State
+    var fullItem = DetailItem()
     @State
     var episodes: [DetailItem] = []
     @State
@@ -28,7 +29,6 @@ struct SeasonItemView: View {
 
     init(item: ResumeItem) {
         self.item = item
-        self.fullItem = DetailItem()
     }
 
     func loadData() {
@@ -48,32 +48,33 @@ struct SeasonItemView: View {
                 let body = response.body
                 do {
                     let json = try JSON(data: body)
-                    fullItem.ProductionYear = json["ProductionYear"].int ?? 0
-                    fullItem.Poster = json["ImageTags"]["Primary"].string ?? ""
-                    fullItem.PosterBlurHash = json["ImageBlurHashes"]["Primary"][fullItem.Poster].string ?? ""
-                    fullItem.Backdrop = json["BackdropImageTags"][0].string ?? ""
-                    fullItem.BackdropBlurHash = json["ImageBlurHashes"]["Backdrop"][fullItem.Backdrop].string ?? ""
-                    fullItem.Name = json["Name"].string ?? ""
-                    fullItem.Type = json["Type"].string ?? ""
-                    fullItem.IndexNumber = json["IndexNumber"].int ?? nil
-                    fullItem.SeriesId = json["ParentId"].string ?? nil
-                    fullItem.Id = item.Id
-                    fullItem.Overview = json["Overview"].string ?? ""
-                    fullItem.Tagline = json["Taglines"][0].string ?? ""
-                    fullItem.SeriesName = json["SeriesName"].string ?? nil
-                    fullItem.ParentId = json["ParentId"].string ?? ""
+                    let responseItem = DetailItem()
+                    responseItem.ProductionYear = json["ProductionYear"].int ?? 0
+                    responseItem.Poster = json["ImageTags"]["Primary"].string ?? ""
+                    responseItem.PosterBlurHash = json["ImageBlurHashes"]["Primary"][responseItem.Poster].string ?? ""
+                    responseItem.Backdrop = json["BackdropImageTags"][0].string ?? ""
+                    responseItem.BackdropBlurHash = json["ImageBlurHashes"]["Backdrop"][responseItem.Backdrop].string ?? ""
+                    responseItem.Name = json["Name"].string ?? ""
+                    responseItem.Type = json["Type"].string ?? ""
+                    responseItem.IndexNumber = json["IndexNumber"].int ?? nil
+                    responseItem.SeriesId = json["ParentId"].string ?? nil
+                    responseItem.Id = item.Id
+                    responseItem.Overview = json["Overview"].string ?? ""
+                    responseItem.Tagline = json["Taglines"][0].string ?? ""
+                    responseItem.SeriesName = json["SeriesName"].string ?? nil
+                    responseItem.ParentId = json["ParentId"].string ?? ""
                     // People
-                    fullItem.Directors = []
-                    fullItem.Studios = []
-                    fullItem.Writers = []
-                    fullItem.Cast = []
-                    fullItem.Genres = []
+                    responseItem.Directors = []
+                    responseItem.Studios = []
+                    responseItem.Writers = []
+                    responseItem.Cast = []
+                    responseItem.Genres = []
 
                     for (_, person): (String, JSON) in json["People"] {
                         if person["Type"].stringValue == "Director" {
-                            fullItem.Directors.append(person["Name"].string ?? "")
+                            responseItem.Directors.append(person["Name"].string ?? "")
                         } else if person["Type"].stringValue == "Writer" {
-                            fullItem.Writers.append(person["Name"].string ?? "")
+                            responseItem.Writers.append(person["Name"].string ?? "")
                         } else if person["Type"].stringValue == "Actor" {
                             let cast = CastMember()
                             cast.Name = person["Name"].string ?? ""
@@ -84,9 +85,11 @@ struct SeasonItemView: View {
                             cast
                                 .Image =
                                 URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxWidth=2000&quality=90&tag=\(imageTag)")!
-                            fullItem.Cast.append(cast)
+                            responseItem.Cast.append(cast)
                         }
                     }
+
+                    _fullItem.wrappedValue = responseItem
 
                     let url2 =
                         "/Shows/\(fullItem.SeriesId ?? "")/Episodes?SeasonId=\(item.Id)&UserId=\(globalData.user?.user_id ?? "")&Fields=ItemCounts%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CCanDelete%2CMediaSourceCount%2COverview"
@@ -185,26 +188,29 @@ struct SeasonItemView: View {
         return result
     }
 
+    @ViewBuilder
     var portraitHeaderView: some View {
-        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=750&quality=80&tag=\(item.SeasonImage ?? "")")!)
-            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-            .placeholder {
-                Image(uiImage: UIImage(blurHash: item
-                        .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
-                        .SeasonImageBlurHash ?? "",
-                    size: CGSize(width: 32, height: 32))!)
-                    .resizable()
-            }
-            .opacity(0.4)
-            .aspectRatio(contentMode: .fill)
-            .shadow(radius: 5)
+        if isLoading {
+            EmptyView()
+        } else {
+            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=550&quality=90&tag=\(item.SeasonImage ?? "")"))
+                .placeholderAndFailure {
+                    Image(uiImage: UIImage(blurHash: item
+                            .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
+                            .SeasonImageBlurHash ?? "",
+                        size: CGSize(width: 32, height: 32))!)
+                        .resizable()
+                }
+                .contentMode(.aspectFill)
+                .opacity(0.4)
+                .shadow(radius: 5)
+        }
     }
 
     var portraitHeaderOverlayView: some View {
         HStack(alignment: .bottom, spacing: 12) {
-            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
-                .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                .placeholder {
+            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
+                .placeholderAndFailure {
                     Image(uiImage: UIImage(blurHash: fullItem
                             .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
                             .PosterBlurHash,
@@ -212,7 +218,8 @@ struct SeasonItemView: View {
                         .resizable()
                         .frame(width: 120, height: 180)
                         .cornerRadius(10)
-                }.aspectRatio(contentMode: .fill)
+                }
+                .contentMode(.aspectFill)
                 .frame(width: 120, height: 180)
                 .cornerRadius(10)
             VStack(alignment: .leading) {
@@ -237,32 +244,156 @@ struct SeasonItemView: View {
             .padding(.bottom, -22)
     }
 
-    var body: some View {
-        VStack(alignment: .leading) {
-            LoadingView(isShowing: $isLoading) {
-                VStack(alignment: .leading) {
-                    if orientationInfo.orientation == .portrait {
-                        ParallaxHeaderScrollView(header: portraitHeaderView,
-                                                 staticOverlayView: portraitHeaderOverlayView,
-                                                 overlayAlignment: .bottomLeading,
-                                                 headerHeight: UIScreen.main.bounds.width * 0.5625) {
-                            VStack(alignment: .leading) {
-                                Spacer()
-                                    .frame(height: 22)
+    @ViewBuilder
+    var innerBody: some View {
+        if orientationInfo.orientation == .portrait {
+            ParallaxHeaderScrollView(header: portraitHeaderView,
+                                     staticOverlayView: portraitHeaderOverlayView,
+                                     overlayAlignment: .bottomLeading,
+                                     headerHeight: UIScreen.main.bounds.width * 0.5625) {
+                LazyVStack(alignment: .leading) {
+                    Spacer()
+                        .frame(height: 22)
+                    if fullItem.Tagline != "" {
+                        Text(fullItem.Tagline).font(.body).italic().padding(.top, 7)
+                            .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
+                            .padding(.trailing, 16)
+                    }
+                    Text(fullItem.Overview).font(.footnote).padding(.top, 3)
+                        .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
+                        .padding(.trailing, 16)
+                    ForEach(episodes, id: \.Id) { episode in
+                        NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
+                            HStack {
+                                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)"))
+                                    .placeholderAndFailure {
+                                        Image(uiImage: UIImage(blurHash: episode
+                                                .PosterBlurHash == "" ?
+                                                "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
+                                                .PosterBlurHash,
+                                            size: CGSize(width: 32, height: 32))!)
+                                            .resizable()
+                                            .frame(width: 150, height: 90)
+                                            .cornerRadius(10)
+                                    }
+                                    .contentMode(.aspectFill)
+                                    .shadow(radius: 5)
+                                    .frame(width: 150, height: 90)
+                                    .cornerRadius(10)
+                                    .overlay(RoundedRectangle(cornerRadius: 10, style: .circular)
+                                        .fill(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255)
+                                            .opacity(0.4))
+                                        .frame(width: CGFloat((episode.Progress / Double(episode.RuntimeTicks)) *
+                                                   150),
+                                        height: 90)
+                                        .padding(0), alignment: .bottomLeading)
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        Text(episode.Name).font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.primary)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                            .lineLimit(1)
+                                        Spacer()
+                                        Text(episode.Runtime).font(.subheadline)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.secondary)
+                                            .lineLimit(1)
+                                    }
+                                    Spacer()
+                                    Text(episode.Overview).font(.footnote).foregroundColor(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true).lineLimit(4)
+                                    Spacer()
+                                }.padding(.trailing, 20).offset(y: 2)
+                            }.offset(x: 12, y: 0)
+                        }
+                    }
+                    if !fullItem.Directors.isEmpty {
+                        HStack {
+                            Text("Directors:").font(.callout).fontWeight(.semibold)
+                            Text(fullItem.Directors.joined(separator: ", ")).font(.footnote).lineLimit(1)
+                                .foregroundColor(Color.secondary)
+                        }.padding(.leading, 16).padding(.trailing, 16)
+                    }
+                    if !fullItem.Writers.isEmpty {
+                        HStack {
+                            Text("Writers:").font(.callout).fontWeight(.semibold)
+                            Text(fullItem.Writers.joined(separator: ", ")).font(.footnote).lineLimit(1)
+                                .foregroundColor(Color.secondary)
+                        }.padding(.leading, 16).padding(.trailing, 16)
+                    }
+                    if !fullItem.Studios.isEmpty {
+                        HStack {
+                            Text("Studios:").font(.callout).fontWeight(.semibold)
+                            Text(fullItem.Studios.joined(separator: ", ")).font(.footnote).lineLimit(1)
+                                .foregroundColor(Color.secondary)
+                        }.padding(.leading, 16).padding(.trailing, 16)
+                    }
+                    Spacer().frame(height: 3)
+                }
+            }
+        } else {
+            GeometryReader { geometry in
+                ZStack {
+                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(item.SeasonImage ?? "")"))
+                        .placeholderAndFailure {
+                            Image(uiImage: UIImage(blurHash: item
+                                    .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
+                                    .SeasonImageBlurHash ?? "",
+                                size: CGSize(width: 32, height: 32))!)
+                                .resizable()
+                                .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets
+                                    .trailing,
+                                    height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets
+                                        .bottom)
+                        }
+                        .contentMode(.aspectFill)
+
+                        .opacity(0.4)
+                        .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
+                               height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
+                        .edgesIgnoringSafeArea(.all)
+                        .blur(radius: 2)
+                    HStack {
+                        VStack(alignment: .leading) {
+                            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
+                                .placeholderAndFailure {
+                                    Image(uiImage: UIImage(blurHash: fullItem
+                                            .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
+                                            fullItem.PosterBlurHash,
+                                        size: CGSize(width: 32, height: 32))!)
+                                        .resizable()
+                                        .frame(width: 120, height: 180)
+                                        .cornerRadius(10)
+                                }
+                                .contentMode(.aspectFill)
+                                .frame(width: 120, height: 180)
+                                .cornerRadius(10)
+                            Spacer().frame(height: 4)
+                            if fullItem.ProductionYear != 0 {
+                                Text(String(fullItem.ProductionYear)).font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                        ScrollView {
+                            LazyVStack(alignment: .leading) {
                                 if fullItem.Tagline != "" {
-                                    Text(fullItem.Tagline).font(.body).italic().padding(.top, 7)
+                                    Text(fullItem.Tagline).font(.body).italic().padding(.top, 3)
                                         .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
                                         .padding(.trailing, 16)
                                 }
-                                Text(fullItem.Overview).font(.footnote).padding(.top, 3)
-                                    .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
-                                    .padding(.trailing, 16)
+                                if fullItem.Overview != "" {
+                                    Text(fullItem.Overview).font(.footnote).padding(.top, 3)
+                                        .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
+                                        .padding(.trailing, 16)
+                                }
                                 ForEach(episodes, id: \.Id) { episode in
                                     NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
                                         HStack {
-                                            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)")!)
-                                                .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                                .placeholder {
+                                            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)"))
+                                                .placeholderAndFailure {
                                                     Image(uiImage: UIImage(blurHash: episode
                                                             .PosterBlurHash == "" ?
                                                             "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
@@ -271,7 +402,8 @@ struct SeasonItemView: View {
                                                         .resizable()
                                                         .frame(width: 150, height: 90)
                                                         .cornerRadius(10)
-                                                }.aspectRatio(contentMode: .fill)
+                                                }
+                                                .contentMode(.aspectFill)
                                                 .shadow(radius: 5)
                                                 .frame(width: 150, height: 90)
                                                 .cornerRadius(10)
@@ -289,11 +421,30 @@ struct SeasonItemView: View {
                                                         .foregroundColor(.primary)
                                                         .fixedSize(horizontal: false, vertical: true)
                                                         .lineLimit(1)
-                                                    Spacer()
                                                     Text(episode.Runtime).font(.subheadline)
                                                         .fontWeight(.medium)
                                                         .foregroundColor(.secondary)
                                                         .lineLimit(1)
+                                                    if episode.OfficialRating != "" {
+                                                        Text(episode.OfficialRating).font(.subheadline)
+                                                            .fontWeight(.medium)
+                                                            .foregroundColor(.secondary)
+                                                            .lineLimit(1)
+                                                            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                                            .overlay(RoundedRectangle(cornerRadius: 2)
+                                                                .stroke(Color.secondary, lineWidth: 1))
+                                                    }
+                                                    if episode.CommunityRating != "" {
+                                                        HStack {
+                                                            Image(systemName: "star").foregroundColor(.secondary)
+                                                            Text(episode.CommunityRating).font(.subheadline)
+                                                                .fontWeight(.semibold)
+                                                                .foregroundColor(.secondary)
+                                                                .lineLimit(1)
+                                                                .offset(x: -6, y: 0)
+                                                        }
+                                                    }
+                                                    Spacer()
                                                 }
                                                 Spacer()
                                                 Text(episode.Overview).font(.footnote).foregroundColor(.secondary)
@@ -324,162 +475,18 @@ struct SeasonItemView: View {
                                             .foregroundColor(Color.secondary)
                                     }.padding(.leading, 16).padding(.trailing, 16)
                                 }
-                                Spacer().frame(height: 3)
-                            }
-                        }
-                    } else {
-                        GeometryReader { geometry in
-                            ZStack {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(item.SeasonImage ?? "")")!)
-                                    .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                    .placeholder {
-                                        Image(uiImage: UIImage(blurHash: item
-                                                .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
-                                                .SeasonImageBlurHash ?? "",
-                                            size: CGSize(width: 32, height: 32))!)
-                                            .resizable()
-                                            .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets
-                                                .trailing,
-                                                height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets
-                                                    .bottom)
-                                    }
-
-                                    .opacity(0.4)
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
-                                           height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
-                                    .edgesIgnoringSafeArea(.all)
-                                    .blur(radius: 2)
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
-                                            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                            .placeholder {
-                                                Image(uiImage: UIImage(blurHash: fullItem
-                                                        .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
-                                                        fullItem.PosterBlurHash,
-                                                    size: CGSize(width: 32, height: 32))!)
-                                                    .resizable()
-                                                    .frame(width: 120, height: 180)
-                                                    .cornerRadius(10)
-                                            }.aspectRatio(contentMode: .fill)
-                                            .frame(width: 120, height: 180)
-                                            .cornerRadius(10)
-                                        Spacer().frame(height: 4)
-                                        if fullItem.ProductionYear != 0 {
-                                            Text(String(fullItem.ProductionYear)).font(.subheadline)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        Spacer()
-                                    }
-                                    ScrollView {
-                                        VStack(alignment: .leading) {
-                                            if fullItem.Tagline != "" {
-                                                Text(fullItem.Tagline).font(.body).italic().padding(.top, 3)
-                                                    .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
-                                                    .padding(.trailing, 16)
-                                            }
-                                            if fullItem.Overview != "" {
-                                                Text(fullItem.Overview).font(.footnote).padding(.top, 3)
-                                                    .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
-                                                    .padding(.trailing, 16)
-                                            }
-                                            ForEach(episodes, id: \.Id) { episode in
-                                                NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
-                                                    HStack {
-                                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)")!)
-                                                            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                                            .placeholder {
-                                                                Image(uiImage: UIImage(blurHash: episode
-                                                                        .PosterBlurHash == "" ?
-                                                                        "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
-                                                                        .PosterBlurHash,
-                                                                    size: CGSize(width: 32, height: 32))!)
-                                                                    .resizable()
-                                                                    .frame(width: 150, height: 90)
-                                                                    .cornerRadius(10)
-                                                            }.aspectRatio(contentMode: .fill)
-                                                            .shadow(radius: 5)
-                                                            .frame(width: 150, height: 90)
-                                                            .cornerRadius(10)
-                                                            .overlay(RoundedRectangle(cornerRadius: 10, style: .circular)
-                                                                .fill(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255)
-                                                                    .opacity(0.4))
-                                                                .frame(width: CGFloat((episode.Progress / Double(episode.RuntimeTicks)) *
-                                                                           150),
-                                                                height: 90)
-                                                                .padding(0), alignment: .bottomLeading)
-                                                        VStack(alignment: .leading) {
-                                                            HStack {
-                                                                Text(episode.Name).font(.subheadline)
-                                                                    .fontWeight(.semibold)
-                                                                    .foregroundColor(.primary)
-                                                                    .fixedSize(horizontal: false, vertical: true)
-                                                                    .lineLimit(1)
-                                                                Text(episode.Runtime).font(.subheadline)
-                                                                    .fontWeight(.medium)
-                                                                    .foregroundColor(.secondary)
-                                                                    .lineLimit(1)
-                                                                if episode.OfficialRating != "" {
-                                                                    Text(episode.OfficialRating).font(.subheadline)
-                                                                        .fontWeight(.medium)
-                                                                        .foregroundColor(.secondary)
-                                                                        .lineLimit(1)
-                                                                        .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                                                                        .overlay(RoundedRectangle(cornerRadius: 2)
-                                                                            .stroke(Color.secondary, lineWidth: 1))
-                                                                }
-                                                                if episode.CommunityRating != "" {
-                                                                    HStack {
-                                                                        Image(systemName: "star").foregroundColor(.secondary)
-                                                                        Text(episode.CommunityRating).font(.subheadline)
-                                                                            .fontWeight(.semibold)
-                                                                            .foregroundColor(.secondary)
-                                                                            .lineLimit(1)
-                                                                            .offset(x: -6, y: 0)
-                                                                    }
-                                                                }
-                                                                Spacer()
-                                                            }
-                                                            Spacer()
-                                                            Text(episode.Overview).font(.footnote).foregroundColor(.secondary)
-                                                                .fixedSize(horizontal: false, vertical: true).lineLimit(4)
-                                                            Spacer()
-                                                        }.padding(.trailing, 20).offset(y: 2)
-                                                    }.offset(x: 12, y: 0)
-                                                }
-                                            }
-                                            if !fullItem.Directors.isEmpty {
-                                                HStack {
-                                                    Text("Directors:").font(.callout).fontWeight(.semibold)
-                                                    Text(fullItem.Directors.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                                        .foregroundColor(Color.secondary)
-                                                }.padding(.leading, 16).padding(.trailing, 16)
-                                            }
-                                            if !fullItem.Writers.isEmpty {
-                                                HStack {
-                                                    Text("Writers:").font(.callout).fontWeight(.semibold)
-                                                    Text(fullItem.Writers.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                                        .foregroundColor(Color.secondary)
-                                                }.padding(.leading, 16).padding(.trailing, 16)
-                                            }
-                                            if !fullItem.Studios.isEmpty {
-                                                HStack {
-                                                    Text("Studios:").font(.callout).fontWeight(.semibold)
-                                                    Text(fullItem.Studios.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                                        .foregroundColor(Color.secondary)
-                                                }.padding(.leading, 16).padding(.trailing, 16)
-                                            }
-                                            Spacer().frame(height: 125)
-                                        }.frame(maxHeight: .infinity)
-                                    }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
-                            }
-                        }
-                    }
+                                Spacer().frame(height: 125)
+                            }.frame(maxHeight: .infinity)
+                        }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                    }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
                 }
             }
+        }
+    }
+
+    var body: some View {
+        LoadingView(isShowing: $isLoading) {
+            innerBody
         }
         .onAppear(perform: loadData)
         .navigationBarTitleDisplayMode(.inline)

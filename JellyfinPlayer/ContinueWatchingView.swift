@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftyRequest
 import SwiftyJSON
-import SDWebImageSwiftUI
+import NukeUI
 
 struct CustomShape: Shape {
     let radius: CGFloat
@@ -115,9 +115,8 @@ struct ContinueWatchingView: View {
                             VStack(alignment: .leading) {
                                 Spacer().frame(height: 10)
                                 if(item.Type == "Episode") {
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
-                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                        .placeholder {
+                                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)"))
+                                        .placeholderAndFailure {
                                             Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 48, height: 32))!)
                                                 .resizable()
                                                 .frame(width: 320, height: 180)
@@ -144,9 +143,8 @@ struct ContinueWatchingView: View {
                                                 .padding(0), alignment: .bottomLeading
                                         )
                                 } else {
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)")!)
-                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
-                                        .placeholder {
+                                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=550&quality=80&tag=\(item.Image)"))
+                                        .placeholderAndFailure {
                                             Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 48, height: 32))!)
                                                 .resizable()
                                                 .frame(width: 320, height: 180)

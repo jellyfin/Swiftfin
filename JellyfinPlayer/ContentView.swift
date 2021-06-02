@@ -8,10 +8,10 @@
 import SwiftUI
 
 import KeychainSwift
-import SDWebImageSwiftUI
 import Sentry
 import SwiftyJSON
 import SwiftyRequest
+import Nuke
 
 struct ContentView: View {
     @Environment(\.managedObjectContext)
@@ -75,12 +75,9 @@ struct ContentView: View {
             options.releaseName = "ios-" + (Bundle.main.infoDictionary?["CFBundleVersion"] as! String)
             options.enableOutOfMemoryTracking = true
         }
-
-        let cache = SDImageCache(namespace: "tiny")
-        cache.config.maxMemoryCost = 125 * 1024 * 1024 // 125MB memory
-        cache.config.maxDiskSize = 1000 * 1024 * 1024 // 1000MB disk
-        SDImageCachesManager.shared.addCache(cache)
-        SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
+        
+        ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
+        DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
         _libraries.wrappedValue = []
         _library_names.wrappedValue = [:]

@@ -28,7 +28,6 @@
 		53892777263CBB000035E14B /* JellyApiTypings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53892776263CBB000035E14B /* JellyApiTypings.swift */; };
 		5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 53892779263CBFE70035E14B /* SwiftyJSON */; };
 		5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389277B263CC3DB0035E14B /* BlurHashDecode.swift */; };
-		538CD954263E3DC100BB5AF0 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */; };
 		53987CA426572C1300E7EA70 /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA326572C1300E7EA70 /* SeasonItemView.swift */; };
 		53987CA626572F0700E7EA70 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA526572F0700E7EA70 /* SeriesItemView.swift */; };
 		53987CA82657424A00E7EA70 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA72657424A00E7EA70 /* EpisodeItemView.swift */; };
@@ -47,6 +46,8 @@
 		621338932660107500A81A2A /* String++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* String++.swift */; };
 		62133895266096EF00A81A2A /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62133894266096EF00A81A2A /* LibraryListViewModel.swift */; };
 		621338B32660A07800A81A2A /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
+		621C638026672A30004216EA /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 621C637F26672A30004216EA /* NukeUI */; };
+		621C638226676728004216EA /* LazyImage++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621C638126676728004216EA /* LazyImage++.swift */; };
 		6225FCCB2663841E00E067F6 /* ParallaxHeaderScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */; };
 		6273DD43265F4195009C1D0B /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD42265F4195009C1D0B /* Moya */; };
 		6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD44265F4195009C1D0B /* CombineMoya */; };
@@ -117,6 +118,7 @@
 		621338922660107500A81A2A /* String++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String++.swift"; sourceTree = "<group>"; };
 		62133894266096EF00A81A2A /* LibraryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListViewModel.swift; sourceTree = "<group>"; };
 		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
+		621C638126676728004216EA /* LazyImage++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LazyImage++.swift"; sourceTree = "<group>"; };
 		6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxHeaderScrollView.swift; sourceTree = "<group>"; };
 		6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPI.swift; sourceTree = "<group>"; };
 		6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchViewModel.swift; sourceTree = "<group>"; };
@@ -130,13 +132,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				538CD954263E3DC100BB5AF0 /* SDWebImageSwiftUI in Frameworks */,
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
 				6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */,
 				6273DD43265F4195009C1D0B /* Moya in Frameworks */,
 				53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */,
 				5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
+				621C638026672A30004216EA /* NukeUI in Frameworks */,
 				5302F82A2658791C00647A2E /* Sentry in Frameworks */,
 				5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */,
 			);
@@ -221,6 +223,7 @@
 				621338B22660A07800A81A2A /* LazyView.swift */,
 				621338922660107500A81A2A /* String++.swift */,
 				6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */,
+				621C638126676728004216EA /* LazyImage++.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -295,11 +298,11 @@
 				5338F753263B65E10014BF09 /* SwiftyRequest */,
 				5338F756263B7E2E0014BF09 /* KeychainSwift */,
 				53892779263CBFE70035E14B /* SwiftyJSON */,
-				538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */,
 				5302F8292658791C00647A2E /* Sentry */,
 				53352570265EA0A0006CCA86 /* Introspect */,
 				6273DD42265F4195009C1D0B /* Moya */,
 				6273DD44265F4195009C1D0B /* CombineMoya */,
+				621C637F26672A30004216EA /* NukeUI */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer.app */;
@@ -335,10 +338,10 @@
 				5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */,
 				5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
-				538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */,
+				621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -369,6 +372,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				621338932660107500A81A2A /* String++.swift in Sources */,
+				621C638226676728004216EA /* LazyImage++.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
 				5377CBFE263B596B003A4E83 /* PersistenceController.swift in Sources */,
 				5389276E263C25100035E14B /* ContinueWatchingView.swift in Sources */,
@@ -644,12 +648,12 @@
 				minimumVersion = 5.0.1;
 			};
 		};
-		538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+		621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			repositoryURL = "https://github.com/kean/NukeUI";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.2;
+				branch = main;
+				kind = branch;
 			};
 		};
 		6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */ = {
@@ -688,10 +692,10 @@
 			package = 53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
 		};
-		538CD953263E3DC100BB5AF0 /* SDWebImageSwiftUI */ = {
+		621C637F26672A30004216EA /* NukeUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 538CD952263E3DC100BB5AF0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
-			productName = SDWebImageSwiftUI;
+			package = 621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */;
+			productName = NukeUI;
 		};
 		6273DD42265F4195009C1D0B /* Moya */ = {
 			isa = XCSwiftPackageProductDependency;
