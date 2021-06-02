@@ -91,9 +91,6 @@ struct SeasonItemView: View {
 
                     _fullItem.wrappedValue = responseItem
 
-                    print("!@#!@#@#!@#")
-                    print(fullItem.SeriesId)
-
                     let url2 =
                         "/Shows/\(fullItem.SeriesId ?? "")/Episodes?SeasonId=\(item.Id)&UserId=\(globalData.user?.user_id ?? "")&Fields=ItemCounts%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CCanDelete%2CMediaSourceCount%2COverview"
                     let request2 = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url2)
