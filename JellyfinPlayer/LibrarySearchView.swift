@@ -88,7 +88,7 @@ struct ResumeItemGridCell: View {
         VStack(alignment: .leading) {
             if item.Type == "Movie" {
                 LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
-                    .placeholder {
+                    .placeholderAndFailure {
                         Image(uiImage: UIImage(blurHash: item
                                 .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
                                 .BlurHash,
@@ -101,7 +101,7 @@ struct ResumeItemGridCell: View {
                     .cornerRadius(10)
             } else {
                 LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))                    
-                    .placeholder {
+                    .placeholderAndFailure {
                         Image(uiImage: UIImage(blurHash: item
                                 .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
                                 .BlurHash,

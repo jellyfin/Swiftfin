@@ -47,6 +47,7 @@
 		62133895266096EF00A81A2A /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62133894266096EF00A81A2A /* LibraryListViewModel.swift */; };
 		621338B32660A07800A81A2A /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
 		621C638026672A30004216EA /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 621C637F26672A30004216EA /* NukeUI */; };
+		621C638226676728004216EA /* LazyImage++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621C638126676728004216EA /* LazyImage++.swift */; };
 		6225FCCB2663841E00E067F6 /* ParallaxHeaderScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */; };
 		6273DD43265F4195009C1D0B /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD42265F4195009C1D0B /* Moya */; };
 		6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD44265F4195009C1D0B /* CombineMoya */; };
@@ -117,6 +118,7 @@
 		621338922660107500A81A2A /* String++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String++.swift"; sourceTree = "<group>"; };
 		62133894266096EF00A81A2A /* LibraryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListViewModel.swift; sourceTree = "<group>"; };
 		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
+		621C638126676728004216EA /* LazyImage++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LazyImage++.swift"; sourceTree = "<group>"; };
 		6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxHeaderScrollView.swift; sourceTree = "<group>"; };
 		6273DD47265F41B3009C1D0B /* JellyfinAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPI.swift; sourceTree = "<group>"; };
 		6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchViewModel.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				621338B22660A07800A81A2A /* LazyView.swift */,
 				621338922660107500A81A2A /* String++.swift */,
 				6225FCCA2663841E00E067F6 /* ParallaxHeaderScrollView.swift */,
+				621C638126676728004216EA /* LazyImage++.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -369,6 +372,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				621338932660107500A81A2A /* String++.swift in Sources */,
+				621C638226676728004216EA /* LazyImage++.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
 				5377CBFE263B596B003A4E83 /* PersistenceController.swift in Sources */,
 				5389276E263C25100035E14B /* ContinueWatchingView.swift in Sources */,

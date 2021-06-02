@@ -97,7 +97,7 @@ struct SeriesItemView: View {
                         NavigationLink(destination: ItemView(item: item )) {
                             VStack(alignment: .leading) {
                                 LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=90&tag=\(item.Image)"))
-                                    .placeholder {
+                                    .placeholderAndFailure {
                                         Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 32, height: 32))!)
                                             .resizable()
                                             .frame(width: 100, height: 150)

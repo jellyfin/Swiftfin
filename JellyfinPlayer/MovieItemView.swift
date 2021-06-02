@@ -294,7 +294,7 @@ struct MovieItemView: View {
 
     var portraitHeaderView: some View {
         LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=550&quality=90&tag=\(fullItem.Backdrop)"))
-            .placeholder {
+            .placeholderAndFailure {
                 Image(uiImage: UIImage(blurHash: fullItem
                         .BackdropBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
                         .BackdropBlurHash,
@@ -310,7 +310,7 @@ struct MovieItemView: View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
                 LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
-                    .placeholder {
+                    .placeholderAndFailure {
                         Image(uiImage: UIImage(blurHash: fullItem
                                 .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
                                 fullItem.PosterBlurHash,
@@ -453,7 +453,7 @@ struct MovieItemView: View {
                                                     }) {
                                                         VStack {
                                                             LazyImage(source: cast.Image)
-                                                                .placeholder {
+                                                                .placeholderAndFailure {
                                                                     Image(uiImage: UIImage(blurHash: cast
                                                                             .ImageBlurHash == "" ?
                                                                             "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
@@ -511,7 +511,7 @@ struct MovieItemView: View {
                         GeometryReader { geometry in
                             ZStack {
                                 LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(fullItem.Backdrop)"))
-                                    .placeholder {
+                                    .placeholderAndFailure {
                                         Image(uiImage: UIImage(blurHash: fullItem
                                                 .BackdropBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
                                                 .BackdropBlurHash,
@@ -532,7 +532,7 @@ struct MovieItemView: View {
                                 HStack {
                                     VStack {
                                         LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
-                                            .placeholder {
+                                            .placeholderAndFailure {
                                                 Image(uiImage: UIImage(blurHash: fullItem
                                                         .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
                                                         fullItem.PosterBlurHash,
@@ -670,7 +670,7 @@ struct MovieItemView: View {
                                                                 }) {
                                                                     VStack {
                                                                         LazyImage(source: cast.Image)
-                                                                            .placeholder {
+                                                                            .placeholderAndFailure {
                                                                                 Image(uiImage: UIImage(blurHash: cast
                                                                                         .ImageBlurHash == "" ?
                                                                                         "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :

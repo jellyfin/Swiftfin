@@ -92,7 +92,7 @@ struct LatestMediaView: View {
                                 if(item.Type == "Series") {
                                     Spacer().frame(height:10)
                                     LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
-                                        .placeholder {
+                                        .placeholderAndFailure {
                                             Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
                                                 .resizable()
                                                 .frame(width: 100, height: 150)
@@ -122,7 +122,7 @@ struct LatestMediaView: View {
                                 } else {
                                     Spacer().frame(height:10)
                                     LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
-                                        .placeholder {
+                                        .placeholderAndFailure {
                                             Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
                                                 .resizable()
                                                 .frame(width: 100, height: 150)

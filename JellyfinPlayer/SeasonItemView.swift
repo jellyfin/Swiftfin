@@ -18,7 +18,8 @@ struct SeasonItemView: View {
     @State
     private var isLoading: Bool = true
     var item: ResumeItem
-    var fullItem: DetailItem
+    @State
+    var fullItem = DetailItem()
     @State
     var episodes: [DetailItem] = []
     @State
@@ -28,7 +29,6 @@ struct SeasonItemView: View {
 
     init(item: ResumeItem) {
         self.item = item
-        self.fullItem = DetailItem()
     }
 
     func loadData() {
@@ -48,32 +48,33 @@ struct SeasonItemView: View {
                 let body = response.body
                 do {
                     let json = try JSON(data: body)
-                    fullItem.ProductionYear = json["ProductionYear"].int ?? 0
-                    fullItem.Poster = json["ImageTags"]["Primary"].string ?? ""
-                    fullItem.PosterBlurHash = json["ImageBlurHashes"]["Primary"][fullItem.Poster].string ?? ""
-                    fullItem.Backdrop = json["BackdropImageTags"][0].string ?? ""
-                    fullItem.BackdropBlurHash = json["ImageBlurHashes"]["Backdrop"][fullItem.Backdrop].string ?? ""
-                    fullItem.Name = json["Name"].string ?? ""
-                    fullItem.Type = json["Type"].string ?? ""
-                    fullItem.IndexNumber = json["IndexNumber"].int ?? nil
-                    fullItem.SeriesId = json["ParentId"].string ?? nil
-                    fullItem.Id = item.Id
-                    fullItem.Overview = json["Overview"].string ?? ""
-                    fullItem.Tagline = json["Taglines"][0].string ?? ""
-                    fullItem.SeriesName = json["SeriesName"].string ?? nil
-                    fullItem.ParentId = json["ParentId"].string ?? ""
+                    let responseItem = DetailItem()
+                    responseItem.ProductionYear = json["ProductionYear"].int ?? 0
+                    responseItem.Poster = json["ImageTags"]["Primary"].string ?? ""
+                    responseItem.PosterBlurHash = json["ImageBlurHashes"]["Primary"][responseItem.Poster].string ?? ""
+                    responseItem.Backdrop = json["BackdropImageTags"][0].string ?? ""
+                    responseItem.BackdropBlurHash = json["ImageBlurHashes"]["Backdrop"][responseItem.Backdrop].string ?? ""
+                    responseItem.Name = json["Name"].string ?? ""
+                    responseItem.Type = json["Type"].string ?? ""
+                    responseItem.IndexNumber = json["IndexNumber"].int ?? nil
+                    responseItem.SeriesId = json["ParentId"].string ?? nil
+                    responseItem.Id = item.Id
+                    responseItem.Overview = json["Overview"].string ?? ""
+                    responseItem.Tagline = json["Taglines"][0].string ?? ""
+                    responseItem.SeriesName = json["SeriesName"].string ?? nil
+                    responseItem.ParentId = json["ParentId"].string ?? ""
                     // People
-                    fullItem.Directors = []
-                    fullItem.Studios = []
-                    fullItem.Writers = []
-                    fullItem.Cast = []
-                    fullItem.Genres = []
+                    responseItem.Directors = []
+                    responseItem.Studios = []
+                    responseItem.Writers = []
+                    responseItem.Cast = []
+                    responseItem.Genres = []
 
                     for (_, person): (String, JSON) in json["People"] {
                         if person["Type"].stringValue == "Director" {
-                            fullItem.Directors.append(person["Name"].string ?? "")
+                            responseItem.Directors.append(person["Name"].string ?? "")
                         } else if person["Type"].stringValue == "Writer" {
-                            fullItem.Writers.append(person["Name"].string ?? "")
+                            responseItem.Writers.append(person["Name"].string ?? "")
                         } else if person["Type"].stringValue == "Actor" {
                             let cast = CastMember()
                             cast.Name = person["Name"].string ?? ""
@@ -84,9 +85,14 @@ struct SeasonItemView: View {
                             cast
                                 .Image =
                                 URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxWidth=2000&quality=90&tag=\(imageTag)")!
-                            fullItem.Cast.append(cast)
+                            responseItem.Cast.append(cast)
                         }
                     }
+
+                    _fullItem.wrappedValue = responseItem
+
+                    print("!@#!@#@#!@#")
+                    print(fullItem.SeriesId)
 
                     let url2 =
                         "/Shows/\(fullItem.SeriesId ?? "")/Episodes?SeasonId=\(item.Id)&UserId=\(globalData.user?.user_id ?? "")&Fields=ItemCounts%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CCanDelete%2CMediaSourceCount%2COverview"
@@ -185,41 +191,29 @@ struct SeasonItemView: View {
         return result
     }
 
+    @ViewBuilder
     var portraitHeaderView: some View {
-        LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=750&quality=90&tag=\(item.SeasonImage ?? "")"))
-            .placeholder {
-                Image(uiImage: UIImage(blurHash: item
-                        .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
-                        .SeasonImageBlurHash ?? "",
-                    size: CGSize(width: 32, height: 32))!)
-                    .resizable()
-            }
-            .failure{
-                Image(uiImage: UIImage(blurHash: item
-                        .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
-                        .SeasonImageBlurHash ?? "",
-                    size: CGSize(width: 32, height: 32))!)
-                    .resizable()
-            }
-            .contentMode(.aspectFill)
-            .onStart { print("onStart \($0.request.url)") }
-            .onProgress { _,_,_ in print("onProgress") }
-            .onSuccess { _ in print("onSuccess") }
-            .onFailure { error in
-                print(error.dataLoadingError?.localizedDescription)
-                print(error.description)
-                print(error.localizedDescription)
-            }
-            .onCompletion { _ in print("onCompletion") }
-            .frame(minWidth: 0, maxWidth: .infinity)
-            .opacity(0.4)
-            .shadow(radius: 5)
+        if isLoading {
+            EmptyView()
+        } else {
+            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=550&quality=90&tag=\(item.SeasonImage ?? "")"))
+                .placeholderAndFailure {
+                    Image(uiImage: UIImage(blurHash: item
+                            .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
+                            .SeasonImageBlurHash ?? "",
+                        size: CGSize(width: 32, height: 32))!)
+                        .resizable()
+                }
+                .contentMode(.aspectFill)
+                .opacity(0.4)
+                .shadow(radius: 5)
+        }
     }
 
     var portraitHeaderOverlayView: some View {
         HStack(alignment: .bottom, spacing: 12) {
             LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
-                .placeholder {
+                .placeholderAndFailure {
                     Image(uiImage: UIImage(blurHash: fullItem
                             .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
                             .PosterBlurHash,
@@ -275,7 +269,7 @@ struct SeasonItemView: View {
                         NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
                             HStack {
                                 LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)"))
-                                    .placeholder {
+                                    .placeholderAndFailure {
                                         Image(uiImage: UIImage(blurHash: episode
                                                 .PosterBlurHash == "" ?
                                                 "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
@@ -345,7 +339,7 @@ struct SeasonItemView: View {
             GeometryReader { geometry in
                 ZStack {
                     LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(item.SeasonImage ?? "")"))
-                        .placeholder {
+                        .placeholderAndFailure {
                             Image(uiImage: UIImage(blurHash: item
                                     .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
                                     .SeasonImageBlurHash ?? "",
@@ -366,7 +360,7 @@ struct SeasonItemView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
-                                .placeholder {
+                                .placeholderAndFailure {
                                     Image(uiImage: UIImage(blurHash: fullItem
                                             .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
                                             fullItem.PosterBlurHash,
@@ -402,7 +396,7 @@ struct SeasonItemView: View {
                                     NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
                                         HStack {
                                             LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)"))
-                                                .placeholder {
+                                                .placeholderAndFailure {
                                                     Image(uiImage: UIImage(blurHash: episode
                                                             .PosterBlurHash == "" ?
                                                             "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
