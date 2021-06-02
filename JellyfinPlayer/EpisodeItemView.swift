@@ -5,10 +5,10 @@
 //  Created by Aiden Vigue on 5/13/21.
 //
 
-import SDWebImageSwiftUI
 import SwiftUI
 import SwiftyJSON
 import SwiftyRequest
+import NukeUI
 
 struct EpisodeItemView: View {
     @EnvironmentObject
@@ -204,8 +204,7 @@ struct EpisodeItemView: View {
 
     var portraitHeaderView: some View {
         VStack {
-            WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=550&quality=90&tag=\(fullItem.Backdrop)")!)
-                .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=550&quality=90&tag=\(fullItem.Backdrop)"))
                 .placeholder {
                     Image(uiImage: UIImage(blurHash: fullItem
                             .BackdropBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
@@ -213,9 +212,8 @@ struct EpisodeItemView: View {
                         size: CGSize(width: 32, height: 32))!)
                         .resizable()
                 }
-
+                .contentMode(.aspectFill)
                 .opacity(0.3)
-                .aspectRatio(contentMode: .fill)
                 .shadow(radius: 5)
         }
     }
@@ -223,8 +221,7 @@ struct EpisodeItemView: View {
     var portraitHeaderOverlayView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
-                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
-                    .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
                     .placeholder {
                         Image(uiImage: UIImage(blurHash: fullItem
                                 .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
@@ -233,7 +230,8 @@ struct EpisodeItemView: View {
                             .resizable()
                             .frame(width: 120, height: 180)
                             .cornerRadius(10)
-                    }.aspectRatio(contentMode: .fill)
+                    }
+                    .contentMode(.aspectFill)
                     .frame(width: 120, height: 180)
                     .cornerRadius(10)
                 VStack(alignment: .leading) {
@@ -365,8 +363,7 @@ struct EpisodeItemView: View {
                                                         ])), title: cast.Name)
                                                     }) {
                                                         VStack {
-                                                            WebImage(url: cast.Image)
-                                                                .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                                            LazyImage(source: cast.Image)
                                                                 .placeholder {
                                                                     Image(uiImage: UIImage(blurHash: cast
                                                                             .ImageBlurHash == "" ?
@@ -379,7 +376,8 @@ struct EpisodeItemView: View {
                                                                         .frame(width: 100, height: 100)
                                                                         .cornerRadius(10)
                                                                 }
-                                                                .aspectRatio(contentMode: .fill)
+                                                                
+                                                                .contentMode(.aspectFill)
                                                                 .frame(width: 100, height: 100)
                                                                 .cornerRadius(10)
                                                             Text(cast.Name).font(.footnote).fontWeight(.regular).lineLimit(1)
@@ -424,8 +422,7 @@ struct EpisodeItemView: View {
                     } else {
                         GeometryReader { geometry in
                             ZStack {
-                                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(fullItem.Backdrop)")!)
-                                    .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(fullItem.Backdrop)"))
                                     .placeholder {
                                         Image(uiImage: UIImage(blurHash: fullItem
                                                 .BackdropBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
@@ -437,17 +434,16 @@ struct EpisodeItemView: View {
                                                 height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets
                                                     .bottom)
                                     }
+                                    .contentMode(.aspectFill)
 
                                     .opacity(0.3)
-                                    .aspectRatio(contentMode: .fill)
                                     .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                            height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                                     .edgesIgnoringSafeArea(.all)
                                     .blur(radius: 2)
                                 HStack {
                                     VStack {
-                                        WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)")!)
-                                            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                        LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
                                             .placeholder {
                                                 Image(uiImage: UIImage(blurHash: fullItem
                                                         .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
@@ -456,7 +452,7 @@ struct EpisodeItemView: View {
                                                     .resizable()
                                                     .frame(width: 120, height: 180)
                                             }
-                                            .aspectRatio(contentMode: .fill)
+                                            .contentMode(.fill)
                                             .frame(width: 120, height: 180)
                                             .cornerRadius(10)
                                             .shadow(radius: 5)
@@ -585,8 +581,7 @@ struct EpisodeItemView: View {
                                                                     ])), title: cast.Name)
                                                                 }) {
                                                                     VStack {
-                                                                        WebImage(url: cast.Image)
-                                                                            .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                                                        LazyImage(source: cast.Image)
                                                                             .placeholder {
                                                                                 Image(uiImage: UIImage(blurHash: cast
                                                                                         .ImageBlurHash == "" ?
@@ -599,7 +594,7 @@ struct EpisodeItemView: View {
                                                                                     .frame(width: 100, height: 100)
                                                                                     .cornerRadius(10)
                                                                             }
-                                                                            .aspectRatio(contentMode: .fill)
+                                                                            .contentMode(.aspectFill)
                                                                             .frame(width: 100, height: 100)
                                                                             .cornerRadius(10)
                                                                         Text(cast.Name).font(.footnote).fontWeight(.regular).lineLimit(1)

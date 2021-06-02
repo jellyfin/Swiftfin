@@ -5,10 +5,10 @@
 //  Created by Aiden Vigue on 5/2/21.
 //
 
-import SDWebImageSwiftUI
 import SwiftUI
 import SwiftyJSON
 import SwiftyRequest
+import NukeUI
 
 struct LibrarySearchView: View {
     @Environment(\.managedObjectContext)
@@ -68,7 +68,7 @@ struct LibrarySearchView: View {
                 }
             }
             if viewModel.isLoading {
-                ActivityIndicator($viewModel.isLoading)
+                ProgressView()
             } else if viewModel.items.isEmpty {
                 Text("Empty Response")
             }
@@ -87,8 +87,7 @@ struct ResumeItemGridCell: View {
     var body: some View {
         VStack(alignment: .leading) {
             if item.Type == "Movie" {
-                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
-                    .resizable()
+                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
                     .placeholder {
                         Image(uiImage: UIImage(blurHash: item
                                 .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
@@ -101,8 +100,7 @@ struct ResumeItemGridCell: View {
                     .frame(width: 100, height: 150)
                     .cornerRadius(10)
             } else {
-                WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
-                    .resizable()
+                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))                    
                     .placeholder {
                         Image(uiImage: UIImage(blurHash: item
                                 .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item

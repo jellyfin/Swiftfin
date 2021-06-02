@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftyRequest
 import SwiftyJSON
-import SDWebImageSwiftUI
+import NukeUI
 
 struct LatestMediaView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -91,8 +91,7 @@ struct LatestMediaView: View {
                             VStack(alignment: .leading) {
                                 if(item.Type == "Series") {
                                     Spacer().frame(height:10)
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)")!)
-                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
                                         .placeholder {
                                             Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
                                                 .resizable()
@@ -122,8 +121,7 @@ struct LatestMediaView: View {
                                         )
                                 } else {
                                     Spacer().frame(height:10)
-                                    WebImage(url: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)")!)
-                                        .resizable() // Resizable like SwiftUI.Image, you must use this modifier or the view will use the image bitmap size
+                                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
                                         .placeholder {
                                             Image(uiImage: UIImage(blurHash: (item.BlurHash == "" ?  "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item.BlurHash), size: CGSize(width: 16, height: 16))!)
                                                 .resizable()
