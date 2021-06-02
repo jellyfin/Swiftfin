@@ -197,6 +197,10 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         super.viewDidLoad()
 
         //View has loaded.
+        
+        //Rotate to landscape only if necessary
+        UIViewController.attemptRotationToDeviceOrientation();
+        
         //Show loading screen
 
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)

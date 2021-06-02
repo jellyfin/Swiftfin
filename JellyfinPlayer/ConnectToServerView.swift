@@ -11,7 +11,6 @@ import SwiftyRequest
 import SwiftyJSON
 import CoreData
 import KeychainSwift
-import Sentry
 import NukeUI
 
 class publicUser: ObservableObject {
@@ -156,13 +155,11 @@ struct ConnectToServerView: View {
                             jsi.did = true
                         }
                     } catch {
-                        SentrySDK.capture(error: error)
                     }
                 } catch {
                     
                 }
-            case .failure(let error):
-                SentrySDK.capture(error: error)
+            case .failure(_):
                 _isSignInErrored.wrappedValue = true;
             }
             _isWorking.wrappedValue = false;

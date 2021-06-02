@@ -8,7 +8,6 @@
 import SwiftUI
 
 import KeychainSwift
-import Sentry
 import SwiftyJSON
 import SwiftyRequest
 import Nuke
@@ -68,14 +67,7 @@ struct ContentView: View {
         }
 
         _viewDidLoad.wrappedValue = true
-        SentrySDK.start { options in
-            options.dsn = "https://75ac77d6af4d406eb989f3d8ef0f119f@o513670.ingest.sentry.io/5778242"
-            options.debug = false // Enabled debug when first installing is always helpful
-            options.tracesSampleRate = 1.0
-            options.releaseName = "ios-" + (Bundle.main.infoDictionary?["CFBundleVersion"] as! String)
-            options.enableOutOfMemoryTracking = true
-        }
-        
+
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
@@ -163,8 +155,8 @@ struct ContentView: View {
                                     dump(_librariesShowRecentlyAdded.wrappedValue)
                                     dump(_library_names.wrappedValue)
                                 } catch {}
-                            case let .failure(error):
-                                SentrySDK.capture(error: error)
+                            case .failure(_):
+                               break
                             }
                             let defaults = UserDefaults.standard
                             if defaults.integer(forKey: "InNetworkBandwidth") == 0 {
@@ -181,7 +173,6 @@ struct ContentView: View {
                         _isLoading.wrappedValue = false
                         _isSignInErrored.wrappedValue = true
                     } else {
-                        SentrySDK.capture(error: error)
                         _isLoading.wrappedValue = false
                         _isNetworkErrored.wrappedValue = true
                     }

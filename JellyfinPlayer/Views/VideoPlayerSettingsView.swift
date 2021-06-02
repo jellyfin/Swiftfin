@@ -72,7 +72,7 @@ struct VideoPlayerSettings: View {
                     }
                 }
             }
-        }.offset(y: 14)
+        }.offset(y: UIDevice.current.userInterfaceIdiom == .pad ? 14 : 0)
         .onAppear(perform: {
             _captionTrack.wrappedValue = self.delegate.selectedCaptionTrack
             _audioTrack.wrappedValue = self.delegate.selectedAudioTrack

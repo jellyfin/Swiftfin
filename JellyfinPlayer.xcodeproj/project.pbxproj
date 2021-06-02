@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5302F82A2658791C00647A2E /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 5302F8292658791C00647A2E /* Sentry */; };
 		53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		53313B90265EEA6D00947AA3 /* VideoPlayer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */; };
 		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
@@ -139,7 +138,6 @@
 				5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				621C638026672A30004216EA /* NukeUI in Frameworks */,
-				5302F82A2658791C00647A2E /* Sentry in Frameworks */,
 				5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,7 +296,6 @@
 				5338F753263B65E10014BF09 /* SwiftyRequest */,
 				5338F756263B7E2E0014BF09 /* KeychainSwift */,
 				53892779263CBFE70035E14B /* SwiftyJSON */,
-				5302F8292658791C00647A2E /* Sentry */,
 				53352570265EA0A0006CCA86 /* Introspect */,
 				6273DD42265F4195009C1D0B /* Moya */,
 				6273DD44265F4195009C1D0B /* CombineMoya */,
@@ -338,7 +335,6 @@
 				5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */,
 				5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
-				5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */,
 				621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */,
@@ -608,14 +604,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.1.0;
-			};
-		};
 		5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
@@ -667,11 +655,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		5302F8292658791C00647A2E /* Sentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5302F8282658791C00647A2E /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = Sentry;
-		};
 		53352570265EA0A0006CCA86 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
