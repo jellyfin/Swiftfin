@@ -101,7 +101,7 @@
                                             <constraint firstAttribute="width" constant="75" id="uPN-A8-EV1"/>
                                         </constraints>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" image="goforward.15" catalog="system">
+                                        <state key="normal" image="goforward.30" catalog="system">
                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="35"/>
                                         </state>
                                         <connections>
@@ -159,6 +159,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="zud-b9-RyD"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="Qcb-Fb-qZl" firstAttribute="top" secondItem="zud-b9-RyD" secondAttribute="top" id="0rU-S8-2ZG"/>
                             <constraint firstItem="Tsh-rC-BwO" firstAttribute="bottom" secondItem="IQg-r0-AeH" secondAttribute="bottom" id="CLQ-xL-eMg"/>
@@ -201,7 +202,7 @@
         <image name="chevron.backward" catalog="system" width="96" height="128"/>
         <image name="gear" catalog="system" width="128" height="119"/>
         <image name="gobackward.15" catalog="system" width="121" height="128"/>
-        <image name="goforward.15" catalog="system" width="121" height="128"/>
+        <image name="goforward.30" catalog="system" width="121" height="128"/>
         <image name="play.slash.fill" catalog="system" width="116" height="128"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

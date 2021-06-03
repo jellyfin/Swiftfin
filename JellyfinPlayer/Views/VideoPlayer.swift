@@ -143,11 +143,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     
     @IBAction func jumpForwardTapped(_ sender: Any) {
         if(paused == false) {
-            mediaPlayer.jumpForward(15)
+            mediaPlayer.jumpForward(30)
         }
     }
-    
-    
     
     @IBOutlet weak var mainActionButton: UIButton!
     @IBAction func mainActionButtonPressed(_ sender: Any) {
