@@ -259,7 +259,7 @@ struct EpisodeItemView: View {
                         }
                     }
                 }
-                .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 26)
+                .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 30)
             }
             HStack {
                 // Play button

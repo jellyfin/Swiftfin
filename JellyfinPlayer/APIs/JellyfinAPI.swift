@@ -117,7 +117,7 @@ extension JellyfinAPI: TargetType {
             var parameters = filter.toParamters
             parameters["searchTerm"] = searchQuery
             parameters["StartIndex"] = (page - 1) * 100
-            parameters["Limit"] = 100
+            parameters["Limit"] = 60
             return .requestParameters(parameters: parameters, encoding: URLEncoding.jellyfin)
         case let .items(_, filter, page):
             var parameters = filter.toParamters
