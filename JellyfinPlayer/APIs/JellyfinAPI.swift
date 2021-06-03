@@ -1,5 +1,5 @@
 //
-//  SearchAPI.swift
+//  JellyfinAPI.swift
 //  JellyfinPlayer
 //
 //  Created by PangMo5 on 2021/05/27.

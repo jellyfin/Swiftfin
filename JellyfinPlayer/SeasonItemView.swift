@@ -203,7 +203,7 @@ struct SeasonItemView: View {
                 }
                 .contentMode(.aspectFill)
                 .opacity(0.4)
-                .shadow(radius: 5)
+                .blur(radius: 2.0)
         }
     }
 
@@ -223,11 +223,6 @@ struct SeasonItemView: View {
                 .frame(width: 120, height: 180)
                 .cornerRadius(10)
             VStack(alignment: .leading) {
-//                    Text(fullItem.SeriesName ?? "")
-//                        .font(.largeTitle)
-//                        .fontWeight(.bold)
-//                        .foregroundColor(.primary)
-//                        .padding(.bottom, 8)
                 Text(fullItem.Name).font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -239,9 +234,9 @@ struct SeasonItemView: View {
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
-            }
+            }.offset(y: -32)
         }.padding(.horizontal, 16)
-            .padding(.bottom, -22)
+        .offset(y: 22)
     }
 
     @ViewBuilder
@@ -252,8 +247,6 @@ struct SeasonItemView: View {
                                      overlayAlignment: .bottomLeading,
                                      headerHeight: UIScreen.main.bounds.width * 0.5625) {
                 LazyVStack(alignment: .leading) {
-                    Spacer()
-                        .frame(height: 22)
                     if fullItem.Tagline != "" {
                         Text(fullItem.Tagline).font(.body).italic().padding(.top, 7)
                             .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
@@ -289,6 +282,11 @@ struct SeasonItemView: View {
                                         .padding(0), alignment: .bottomLeading)
                                 VStack(alignment: .leading) {
                                     HStack {
+                                        Text("S\(String(episode.ParentIndexNumber ?? 0)):E\(String(episode.IndexNumber ?? 0))").font(.subheadline)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.secondary)
+                                            .lineLimit(1)
+                                        Spacer()
                                         Text(episode.Name).font(.subheadline)
                                             .fontWeight(.semibold)
                                             .foregroundColor(.primary)
@@ -329,8 +327,8 @@ struct SeasonItemView: View {
                                 .foregroundColor(Color.secondary)
                         }.padding(.leading, 16).padding(.trailing, 16)
                     }
-                    Spacer().frame(height: 3)
-                }
+                    Spacer().frame(height: 6)
+                }.padding(.leading, 2)
             }
         } else {
             GeometryReader { geometry in
@@ -356,6 +354,7 @@ struct SeasonItemView: View {
                         .blur(radius: 2)
                     HStack {
                         VStack(alignment: .leading) {
+                            Spacer().frame(height: 16)
                             LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
                                 .placeholderAndFailure {
                                     Image(uiImage: UIImage(blurHash: fullItem
@@ -378,6 +377,7 @@ struct SeasonItemView: View {
                             Spacer()
                         }
                         ScrollView {
+                            Spacer().frame(height: 16)
                             LazyVStack(alignment: .leading) {
                                 if fullItem.Tagline != "" {
                                     Text(fullItem.Tagline).font(.body).italic().padding(.top, 3)
@@ -416,12 +416,7 @@ struct SeasonItemView: View {
                                                     .padding(0), alignment: .bottomLeading)
                                             VStack(alignment: .leading) {
                                                 HStack {
-                                                    Text(episode.Name).font(.subheadline)
-                                                        .fontWeight(.semibold)
-                                                        .foregroundColor(.primary)
-                                                        .fixedSize(horizontal: false, vertical: true)
-                                                        .lineLimit(1)
-                                                    Text(episode.Runtime).font(.subheadline)
+                                                    Text("S\(String(episode.ParentIndexNumber ?? 0)):E\(String(episode.IndexNumber ?? 0))").font(.subheadline)
                                                         .fontWeight(.medium)
                                                         .foregroundColor(.secondary)
                                                         .lineLimit(1)
@@ -434,17 +429,17 @@ struct SeasonItemView: View {
                                                             .overlay(RoundedRectangle(cornerRadius: 2)
                                                                 .stroke(Color.secondary, lineWidth: 1))
                                                     }
-                                                    if episode.CommunityRating != "" {
-                                                        HStack {
-                                                            Image(systemName: "star").foregroundColor(.secondary)
-                                                            Text(episode.CommunityRating).font(.subheadline)
-                                                                .fontWeight(.semibold)
-                                                                .foregroundColor(.secondary)
-                                                                .lineLimit(1)
-                                                                .offset(x: -6, y: 0)
-                                                        }
-                                                    }
                                                     Spacer()
+                                                    Text(episode.Name).font(.subheadline)
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(.primary)
+                                                        .fixedSize(horizontal: false, vertical: true)
+                                                        .lineLimit(1)
+                                                    Spacer()
+                                                    Text(episode.Runtime).font(.subheadline)
+                                                        .fontWeight(.medium)
+                                                        .foregroundColor(.secondary)
+                                                        .lineLimit(1)
                                                 }
                                                 Spacer()
                                                 Text(episode.Overview).font(.footnote).foregroundColor(.secondary)
@@ -475,10 +470,10 @@ struct SeasonItemView: View {
                                             .foregroundColor(Color.secondary)
                                     }.padding(.leading, 16).padding(.trailing, 16)
                                 }
-                                Spacer().frame(height: 125)
+                                Spacer().frame(height: 95)
                             }.frame(maxHeight: .infinity)
                         }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                    }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
+                    }.padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 0)
                 }
             }
         }

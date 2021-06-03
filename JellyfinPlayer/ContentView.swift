@@ -65,7 +65,7 @@ struct ContentView: View {
         if _viewDidLoad.wrappedValue {
             return
         }
-
+        
         _viewDidLoad.wrappedValue = true
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory

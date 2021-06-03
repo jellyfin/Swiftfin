@@ -92,6 +92,7 @@ struct SeriesItemView: View {
     var body: some View {
         LoadingView(isShowing: $isLoading) {
             ScrollView(.vertical) {
+                Spacer().frame(height: 16)
                 LazyVGrid(columns: tracks) {
                     ForEach(items, id: \.Id) { item in
                         NavigationLink(destination: ItemView(item: item )) {
