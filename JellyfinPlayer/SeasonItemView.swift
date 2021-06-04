@@ -273,13 +273,13 @@ struct SeasonItemView: View {
                                     .shadow(radius: 5)
                                     .frame(width: 150, height: 90)
                                     .cornerRadius(10)
-                                    .overlay(RoundedRectangle(cornerRadius: 10, style: .circular)
-                                        .fill(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255)
-                                            .opacity(0.4))
-                                        .frame(width: CGFloat((episode.Progress / Double(episode.RuntimeTicks)) *
-                                                   150),
-                                        height: 90)
-                                        .padding(0), alignment: .bottomLeading)
+                                    .overlay(
+                                        Rectangle()
+                                            .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
+                                            .mask(CustomShape(radius: 10))
+                                            .frame(width: CGFloat((episode.Progress / Double(episode.RuntimeTicks)) * 150), height: 7)
+                                            .padding(0), alignment: .bottomLeading
+                                    )
                                 VStack(alignment: .leading) {
                                     HStack {
                                         Text("S\(String(episode.ParentIndexNumber ?? 0)):E\(String(episode.IndexNumber ?? 0))").font(.subheadline)
@@ -407,13 +407,13 @@ struct SeasonItemView: View {
                                                 .shadow(radius: 5)
                                                 .frame(width: 150, height: 90)
                                                 .cornerRadius(10)
-                                                .overlay(RoundedRectangle(cornerRadius: 10, style: .circular)
-                                                    .fill(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255)
-                                                        .opacity(0.4))
-                                                    .frame(width: CGFloat((episode.Progress / Double(episode.RuntimeTicks)) *
-                                                               150),
-                                                    height: 90)
-                                                    .padding(0), alignment: .bottomLeading)
+                                                .overlay(
+                                                    Rectangle()
+                                                        .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
+                                                        .mask(CustomShape(radius: 10))
+                                                        .frame(width: CGFloat((episode.Progress / Double(episode.RuntimeTicks)) * 150), height: 7)
+                                                        .padding(0), alignment: .bottomLeading
+                                                )
                                             VStack(alignment: .leading) {
                                                 HStack {
                                                     Text("S\(String(episode.ParentIndexNumber ?? 0)):E\(String(episode.IndexNumber ?? 0))").font(.subheadline)
