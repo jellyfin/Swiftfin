@@ -10,19 +10,7 @@
           "red" : "0.667"
         }
       },
-      "idiom" : "iphone"
-    },
-    {
-      "color" : {
-        "color-space" : "srgb",
-        "components" : {
-          "alpha" : "1.000",
-          "blue" : "0.765",
-          "green" : "0.361",
-          "red" : "0.667"
-        }
-      },
-      "idiom" : "tv"
+      "idiom" : "universal"
     }
   ],
   "info" : {
