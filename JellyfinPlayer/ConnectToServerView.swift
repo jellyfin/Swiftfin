@@ -1,9 +1,9 @@
-//
-//  ConnectToServerView.swift
-//  JellyfinPlayer
-//
-//  Created by Aiden Vigue on 4/29/21.
-//
+/* JellyfinPlayer/Swiftfin is subject to the terms of the Mozilla Public
+ * License, v2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+ */
 
 import SwiftUI
 
@@ -12,6 +12,7 @@ import SwiftyJSON
 import CoreData
 import KeychainSwift
 import NukeUI
+import JellyfinAPI
 
 class publicUser: ObservableObject {
     @Published var username: String = "";
@@ -102,10 +103,12 @@ struct ConnectToServerView: View {
     
     func doLogin() {
         _isWorking.wrappedValue = true
-        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String;
-        let authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(UIDevice.current.name)\", DeviceId=\"\(serverSkipped ? reauthDeviceID : userUUID.uuidString)\", Version=\"\(appVersion ?? "0.0.1")\"";
         let authJson: [String: Any] = ["Username": _username.wrappedValue, "Pw": _password.wrappedValue]
         let request = RestRequest(method: .post, url: uri + "/Users/authenticatebyname")
+        
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String;
+        let authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(UIDevice.current.name)\", DeviceId=\"\(serverSkipped ? reauthDeviceID : userUUID.uuidString)\", Version=\"\(appVersion ?? "0.0.1")\"";
+        
         request.headerParameters["X-Emby-Authorization"] = authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"

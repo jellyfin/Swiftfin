@@ -1,9 +1,9 @@
-//
-//  ContentView.swift
-//  JellyfinPlayer
-//
-//  Created by Aiden Vigue on 4/29/21.
-//
+/* JellyfinPlayer/Swiftfin is subject to the terms of the Mozilla Public
+ * License, v2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+ */
 
 import SwiftUI
 
@@ -11,6 +11,8 @@ import KeychainSwift
 import SwiftyJSON
 import SwiftyRequest
 import Nuke
+import Combine
+import JellyfinAPI
 
 struct ContentView: View {
     @Environment(\.managedObjectContext)
@@ -33,10 +35,6 @@ struct ContentView: View {
 
     @State
     private var needsToSelectServer = false
-    @State
-    private var isSignInErrored = false
-    @State
-    private var isNetworkErrored = false
     @State
     private var isLoading = false
     @State
@@ -62,136 +60,91 @@ struct ContentView: View {
             orientationInfo.orientation = .landscape
         }
 
-        if _viewDidLoad.wrappedValue {
+        if viewDidLoad {
             return
         }
         
-        _viewDidLoad.wrappedValue = true
+        viewDidLoad = true
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
-        _libraries.wrappedValue = []
-        _library_names.wrappedValue = [:]
-        _librariesShowRecentlyAdded.wrappedValue = []
         if servers.isEmpty {
-            _isLoading.wrappedValue = false
-            _needsToSelectServer.wrappedValue = true
+            isLoading = false
+            needsToSelectServer = true
         } else {
-            _isLoading.wrappedValue = true
+            isLoading = true
             let savedUser = savedUsers[0]
 
             let keychain = KeychainSwift()
             if keychain.get("AccessToken_\(savedUser.user_id ?? "")") != nil {
-                _globalData.wrappedValue.authToken = keychain.get("AccessToken_\(savedUser.user_id ?? "")") ?? ""
-                _globalData.wrappedValue.server = servers[0]
-                _globalData.wrappedValue.user = savedUser
+                globalData.authToken = keychain.get("AccessToken_\(savedUser.user_id ?? "")") ?? ""
+                globalData.server = servers[0]
+                globalData.user = savedUser
             }
 
             let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
             var deviceName = UIDevice.current.name;
             deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
             deviceName = deviceName.removeRegexMatches(pattern: "[^\\w\\s]");
+            
             var header = "MediaBrowser "
-            header.append("Client=\"SwiftFin\",")
-            header.append("Device=\"\(deviceName)\",")
-            header.append("DeviceId=\"\(globalData.user?.device_uuid ?? "")\",")
-            header.append("Version=\"\(appVersion ?? "0.0.1")\",")
+            header.append("Client=\"SwiftFin\", ")
+            header.append("Device=\"\(deviceName)\", ")
+            header.append("DeviceId=\"\(globalData.user?.device_uuid ?? "")\", ")
+            header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
             header.append("Token=\"\(globalData.authToken)\"")
+            
             globalData.authHeader = header
-
-            let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + "/Users/Me")
-            request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-            request.contentType = "application/json"
-            request.acceptType = "application/json"
-
-            request.responseData { (result: Result<RestResponse<Data>, RestError>) in
-                switch result {
-                case let .success(resp):
-                    do {
-                        let json = try JSON(data: resp.body)
-                        let array2 = json["Configuration"]["LatestItemsExcludes"].arrayObject as? [String] ?? []
-
-                        let request2 = RestRequest(method: .get,
-                                                   url: (globalData.server?.baseURI ?? "") +
-                                                       "/Users/\(globalData.user?.user_id ?? "")/Views")
-                        request2.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-                        request2.contentType = "application/json"
-                        request2.acceptType = "application/json"
-
-                        request2.responseData { (result2: Result<RestResponse<Data>, RestError>) in
-                            switch result2 {
-                            case let .success(resp):
-                                do {
-                                    let json2 = try JSON(data: resp.body)
-                                    for (_, item2): (String, JSON) in json2["Items"] {
-                                        _library_names.wrappedValue[item2["Id"].string ?? ""] = item2["Name"].string ?? ""
-                                    }
-
-                                    for (_, item2): (String, JSON) in json2["Items"] {
-                                        if item2["CollectionType"].string == "tvshows" || item2["CollectionType"].string == "movies" {
-                                            _libraries.wrappedValue.append(item2["Id"].string ?? "")
-                                            _librariesShowRecentlyAdded.wrappedValue.append(item2["Id"].string ?? "")
-                                        }
-                                    }
-
-                                    _librariesShowRecentlyAdded.wrappedValue = _libraries.wrappedValue.filter { element in
-                                        !array2.contains(element)
-                                    }
-
-                                    _libraries.wrappedValue.forEach { library in
-                                        if _library_names.wrappedValue[library] == nil {
-                                            _libraries.wrappedValue.removeAll { ele in
-                                                if library == ele {
-                                                    return true
-                                                } else {
-                                                    return false
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    dump(_libraries.wrappedValue)
-                                    dump(_librariesShowRecentlyAdded.wrappedValue)
-                                    dump(_library_names.wrappedValue)
-                                } catch {}
-                            case .failure(_):
-                               break
-                            }
-                            let defaults = UserDefaults.standard
-                            if defaults.integer(forKey: "InNetworkBandwidth") == 0 {
-                                defaults.setValue(40_000_000, forKey: "InNetworkBandwidth")
-                            }
-                            if defaults.integer(forKey: "OutOfNetworkBandwidth") == 0 {
-                                defaults.setValue(40_000_000, forKey: "OutOfNetworkBandwidth")
-                            }
-                            _isLoading.wrappedValue = false
-                        }
-                    } catch {}
-                case let .failure(error):
-                    if error.response?.status.code == 401 {
-                        _isLoading.wrappedValue = false
-                        _isSignInErrored.wrappedValue = true
-                    } else {
-                        _isLoading.wrappedValue = false
-                        _isNetworkErrored.wrappedValue = true
+            JellyfinAPI.basePath = globalData.server?.baseURI ?? ""
+            JellyfinAPI.customHeaders = ["X-Emby-Authorization": globalData.authHeader]
+            
+            UserAPI.getCurrentUser()
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                }, receiveValue: { response in
+                    //Get all libraries
+                    libraries = response.configuration?.orderedViews ?? []
+                    librariesShowRecentlyAdded = libraries.filter { element in
+                        return !(response.configuration?.latestItemsExcludes?.contains(element))!
                     }
-                }
+                })
+                .store(in: &globalData.pendingAPIRequests)
+            
+            UserViewsAPI.getUserViews(userId: globalData.user?.user_id ?? "")
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                }, receiveValue: { response in
+                    //Get all libraries
+                    response.items?.forEach({ item in
+                        library_names[item.id ?? ""] = item.name
+                    })
+                })
+                .store(in: &globalData.pendingAPIRequests)
+            
+            let defaults = UserDefaults.standard
+            if defaults.integer(forKey: "InNetworkBandwidth") == 0 {
+                defaults.setValue(40_000_000, forKey: "InNetworkBandwidth")
             }
+            if defaults.integer(forKey: "OutOfNetworkBandwidth") == 0 {
+                defaults.setValue(40_000_000, forKey: "OutOfNetworkBandwidth")
+            }
+            
+            isLoading = false
         }
     }
 
     var body: some View {
-        if needsToSelectServer {
+        if (needsToSelectServer == true) {
             NavigationView {
                 ConnectToServerView(isActive: $needsToSelectServer)
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .environmentObject(globalData)
-        } else if isSignInErrored {
+        } else if (globalData.expiredCredentials == true) {
             NavigationView {
                 ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server,
-                                    reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $isSignInErrored)
+                                    reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $globalData.expiredCredentials)
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .environmentObject(globalData)
@@ -257,7 +210,7 @@ struct ContentView: View {
                 }
                 .environmentObject(globalData)
                 .onAppear(perform: startup)
-                .alert(isPresented: $isNetworkErrored) {
+                .alert(isPresented: $globalData.networkError) {
                     Alert(title: Text("Network Error"), message: Text("Couldn't connect to Jellyfin"), dismissButton: .default(Text("Ok")))
                 }
             } else {

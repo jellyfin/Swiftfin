@@ -1,9 +1,9 @@
-//
-//  DeviceProfileBuilder.swift
-//  JellyfinPlayer
-//
-//  Created by Aiden Vigue on 5/23/21.
-//
+/* JellyfinPlayer/Swiftfin is subject to the terms of the Mozilla Public
+ * License, v2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+ */
 
 //lol can someone buy me a coffee this took forever :|
 

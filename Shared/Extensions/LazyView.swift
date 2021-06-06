@@ -5,16 +5,12 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Foundation
 import SwiftUI
 
-@main
-struct JellyfinPlayer_tvOSApp: App {
-    let persistenceController = PersistenceController.shared
-
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-        }
+struct LazyView<Content: View>: View {
+    var content: () -> Content
+    var body: some View {
+        self.content()
     }
 }
