@@ -37,8 +37,8 @@ struct EpisodeItemView: View {
                 formatter.timeZone = TimeZone(secondsFromGMT: 0)
                 formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
                 let request = RestRequest(method: .post,
-                                          url: (globalData.server?.baseURI ?? "") +
-                                              "/Users/\(globalData.user?.user_id ?? "")/PlayedItems/\(fullItem.Id)?DatePlayed=\(formatter.string(from: date).replacingOccurrences(of: ":", with: "%3A"))")
+                                          url: (globalData.server.baseURI ?? "") +
+                                              "/Users/\(globalData.user.user_id ?? "")/PlayedItems/\(fullItem.Id)?DatePlayed=\(formatter.string(from: date).replacingOccurrences(of: ":", with: "%3A"))")
                 request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
                 request.contentType = "application/json"
                 request.acceptType = "application/json"
@@ -47,8 +47,8 @@ struct EpisodeItemView: View {
                 }
             } else {
                 let request = RestRequest(method: .delete,
-                                          url: (globalData.server?.baseURI ?? "") +
-                                              "/Users/\(globalData.user?.user_id ?? "")/PlayedItems/\(fullItem.Id)")
+                                          url: (globalData.server.baseURI ?? "") +
+                                              "/Users/\(globalData.user.user_id ?? "")/PlayedItems/\(fullItem.Id)")
                 request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
                 request.contentType = "application/json"
                 request.acceptType = "application/json"
@@ -64,8 +64,8 @@ struct EpisodeItemView: View {
         didSet {
             if favorite == true {
                 let request = RestRequest(method: .post,
-                                          url: (globalData.server?.baseURI ?? "") +
-                                              "/Users/\(globalData.user?.user_id ?? "")/FavoriteItems/\(fullItem.Id)")
+                                          url: (globalData.server.baseURI ?? "") +
+                                              "/Users/\(globalData.user.user_id ?? "")/FavoriteItems/\(fullItem.Id)")
                 request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
                 request.contentType = "application/json"
                 request.acceptType = "application/json"
@@ -74,8 +74,8 @@ struct EpisodeItemView: View {
                 }
             } else {
                 let request = RestRequest(method: .delete,
-                                          url: (globalData.server?.baseURI ?? "") +
-                                              "/Users/\(globalData.user?.user_id ?? "")/FavoriteItems/\(fullItem.Id)")
+                                          url: (globalData.server.baseURI ?? "") +
+                                              "/Users/\(globalData.user.user_id ?? "")/FavoriteItems/\(fullItem.Id)")
                 request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
                 request.contentType = "application/json"
                 request.acceptType = "application/json"
@@ -96,9 +96,9 @@ struct EpisodeItemView: View {
             return
         }
         _viewDidLoad.wrappedValue = true
-        let url = "/Users/\(globalData.user?.user_id ?? "")/Items/\(item.Id)"
+        let url = "/Users/\(globalData.user.user_id ?? "")/Items/\(item.Id)"
 
-        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url)
+        let request = RestRequest(method: .get, url: (globalData.server.baseURI ?? "") + url)
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"
@@ -152,7 +152,7 @@ struct EpisodeItemView: View {
                             cast.Role = person["Role"].string ?? ""
                             cast
                                 .Image =
-                                URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxHeight=250&quality=85&tag=\(imageTag)")!
+                                URL(string: "\(globalData.server.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxHeight=250&quality=85&tag=\(imageTag)")!
                             fullItem.Cast.append(cast)
                         }
                     }
@@ -203,7 +203,7 @@ struct EpisodeItemView: View {
     }
 
     var portraitHeaderView: some View {
-            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=550&quality=90&tag=\(fullItem.Backdrop)"))
+            LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=550&quality=90&tag=\(fullItem.Backdrop)"))
                 .placeholderAndFailure {
                     Image(uiImage: UIImage(blurHash: fullItem
                             .BackdropBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
@@ -219,7 +219,7 @@ struct EpisodeItemView: View {
     var portraitHeaderOverlayView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
-                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
+                LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
                     .placeholderAndFailure {
                         Image(uiImage: UIImage(blurHash: fullItem
                                 .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
@@ -420,7 +420,7 @@ struct EpisodeItemView: View {
                     } else {
                         GeometryReader { geometry in
                             ZStack {
-                                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(fullItem.Backdrop)"))
+                                LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.ParentBackdropItemId)/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(fullItem.Backdrop)"))
                                     .placeholderAndFailure {
                                         Image(uiImage: UIImage(blurHash: fullItem
                                                 .BackdropBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
@@ -441,7 +441,7 @@ struct EpisodeItemView: View {
                                     .blur(radius: 2)
                                 HStack {
                                     VStack {
-                                        LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
+                                        LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
                                             .placeholderAndFailure {
                                                 Image(uiImage: UIImage(blurHash: fullItem
                                                         .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :

@@ -7,19 +7,13 @@
 
 import SwiftUI
 import MobileVLCKit
-import SwiftyJSON
-import SwiftyRequest
-
-enum VideoType {
-    case hls;
-    case direct;
-}
+import JellyfinAPI
 
 struct Subtitle {
     var name: String;
     var id: Int32;
     var url: URL;
-    var delivery: String;
+    var delivery: SubtitleDeliveryMethod;
     var codec: String;
 }
 
@@ -29,7 +23,7 @@ struct AudioTrack {
 }
 
 class PlaybackItem: ObservableObject {
-    @Published var videoType: VideoType = .hls;
+    @Published var videoType: PlayMethod = .directPlay;
     @Published var videoUrl: URL = URL(string: "https://example.com")!;
 }
 
@@ -81,7 +75,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var subtitleTrackArray: [Subtitle] = [];
     var audioTrackArray: [AudioTrack] = [];
     
-    var manifest: DetailItem = DetailItem();
+    var manifest: BaseItemDto = BaseItemDto();
     var playbackItem = PlaybackItem();
 
     @IBAction func seekSliderStart(_ sender: Any) {
@@ -199,8 +193,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         //Rotate to landscape only if necessary
         UIViewController.attemptRotationToDeviceOrientation();
         
-        //Show loading screen
-
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         //mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
         
@@ -208,7 +200,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         mediaPlayer.delegate = self
         mediaPlayer.drawable = videoContentView
         
-        titleLabel.text = manifest.Name
+        titleLabel.text = manifest.name
         
         //Fetch max bitrate from UserDefaults depending on current connection mode
         let defaults = UserDefaults.standard
@@ -219,118 +211,88 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
         
-        let jsonEncoder = JSONEncoder()
-        let jsonData = try! jsonEncoder.encode(profile)
+        let playbackInfo = PlaybackInfoDto(userId: globalData.user.user_id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
         
-        let url = (globalData.server?.baseURI ?? "") + "/Items/\(manifest.Id)/PlaybackInfo?UserId=\(globalData.user?.user_id ?? "")&StartTimeTicks=\(Int(manifest.Progress))&IsPlayback=true&AutoOpenLiveStream=true&MaxStreamingBitrate=\(profile.DeviceProfile.MaxStreamingBitrate)";
-
-        let request = RestRequest(method: .post, url: url)
-        
-        request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-        request.contentType = "application/json"
-        request.acceptType = "application/json"
-        request.messageBody = jsonData
-         
-        request.responseData() { [self] (result: Result<RestResponse<Data>, RestError>) in
-            switch result {
-            case .success(let response):
-                let body = response.body
-                do {
-                    let json = try JSON(data: body)
-                    playSessionId = json["PlaySessionId"].string ?? "";
-                    if(json["MediaSources"][0]["TranscodingUrl"].string != nil) {
-                        let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")\((json["MediaSources"][0]["TranscodingUrl"].string ?? ""))")!
-                        let item = PlaybackItem()
-                        item.videoType = .hls
-                        item.videoUrl = streamURL
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed", codec: "")
-                        subtitleTrackArray.append(disableSubtitleTrack);
-                        
-                        for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
-                            if(stream["Type"].string == "Subtitle") { //ignore ripped subtitles - we don't want to extract subtitles
-                                let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
-                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "", codec: stream["Codec"].string ?? "")
-                                subtitleTrackArray.append(subtitle);
-                            }
-                            
-                            if(stream["Type"].string == "Audio") {
-                                let subtitle = AudioTrack(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0))
-                                if(stream["IsDefault"].boolValue) {
-                                    selectedAudioTrack = Int32(stream["Index"].int ?? 0);
-                                }
-                                audioTrackArray.append(subtitle);
-                            }
+        MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: globalData.user.user_id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
+            .sink(receiveCompletion: { completion in
+                HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+            }, receiveValue: { [self] response in
+                playSessionId = response.playSessionId!
+                let mediaSource = response.mediaSources!.first.self!
+                if(mediaSource.transcodingUrl != nil) {
+                    //Item is being transcoded by request of server
+                    let streamURL = URL(string: "\(globalData.server.baseURI!)\(mediaSource.transcodingUrl!)")
+                    let item = PlaybackItem()
+                    item.videoType = .transcode
+                    item.videoUrl = streamURL!
+                    
+                    let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: .embed, codec: "")
+                    subtitleTrackArray.append(disableSubtitleTrack);
+                    
+                    //Loop through media streams and add to array
+                    for stream in mediaSource.mediaStreams! {
+                        if(stream.type == .subtitle) {
+                            let deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
+                            let subtitle = Subtitle(name: stream.displayTitle!, id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
+                            subtitleTrackArray.append(subtitle);
                         }
                         
-                        if(selectedAudioTrack == -1) {
-                            if(audioTrackArray.count > 0) {
-                                selectedAudioTrack = audioTrackArray[0].id;
+                        if(stream.type == .audio) {
+                            let subtitle = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
+                            if(stream.isDefault! == true) {
+                                selectedAudioTrack = Int32(stream.index!);
                             }
+                            audioTrackArray.append(subtitle);
                         }
-                        
-                        self.sendPlayReport()
-                        playbackItem = item;
-                    } else {
-                        print("Direct playing!");
-                        let streamURL: URL = URL(string: "\(globalData.server?.baseURI ?? "")/Videos/\(manifest.Id)/stream?Static=true&mediaSourceId=\(manifest.Id)&deviceId=\(globalData.user?.device_uuid ?? "")&api_key=\(globalData.authToken)&Tag=\(json["MediaSources"][0]["ETag"])")!;
-                        let item = PlaybackItem()
-                        item.videoUrl = streamURL
-                        item.videoType = .direct
-                        
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: "Embed", codec: "")
-                        subtitleTrackArray.append(disableSubtitleTrack);
-                        for (_,stream):(String, JSON) in json["MediaSources"][0]["MediaStreams"] {
-                            if(stream["Type"].string == "Subtitle") {
-                                let deliveryUrl = URL(string: "\(globalData.server?.baseURI ?? "")\(stream["DeliveryUrl"].string ?? "")")!
-                                let subtitle = Subtitle(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0), url: deliveryUrl, delivery: stream["DeliveryMethod"].string ?? "", codec: stream["Codec"].string ?? "")
-                                subtitleTrackArray.append(subtitle);
-                            }
-                            
-                            if(stream["Type"].string == "Audio") {
-                                let subtitle = AudioTrack(name: stream["DisplayTitle"].string ?? "", id: Int32(stream["Index"].int ?? 0))
-                                if(stream["IsDefault"].boolValue) {
-                                    selectedAudioTrack = Int32(stream["Index"].int ?? 0);
-                                }
-                                audioTrackArray.append(subtitle);
-                            }
-                        }
-                        
-                        if(selectedAudioTrack == -1) {
-                            if(audioTrackArray.count > 0) {
-                                selectedAudioTrack = audioTrackArray[0].id;
-                            }
-                        }
-                        
-                        sendPlayReport()
-                        playbackItem = item;
                     }
                     
-                    DispatchQueue.global(qos: .background).async {
-                        mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
-                        mediaPlayer.play()
-                        mediaPlayer.jumpForward(Int32(manifest.Progress/10000000))
-                        mediaPlayer.pause()
-                        subtitleTrackArray.forEach() { sub in
-                            if(sub.id != -1 && sub.delivery == "External" && sub.codec != "subrip") {
-                                print("adding subs for id: \(sub.id) w/ url: \(sub.url)")
-                                mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
-                            }
+                    if(selectedAudioTrack == -1) {
+                        if(audioTrackArray.count > 0) {
+                            selectedAudioTrack = audioTrackArray[0].id;
                         }
-                        delegate?.showLoadingView(self)
-                        while(mediaPlayer.numberOfSubtitlesTracks != subtitleTrackArray.count - 1) {}
-                        mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack;
-                        mediaPlayer.pause()
-                        mediaPlayer.play()
                     }
-                } catch {
                     
+                    self.sendPlayReport()
+                    playbackItem = item;
+                } else {
+                    //Item will be directly played by the client.
+                    let streamURL: URL = URL(string: "\(globalData.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(globalData.user.device_uuid!)&api_key=\(globalData.authToken)&Tag=\(mediaSource.eTag!)")!;
+                    
+                    let item = PlaybackItem()
+                    item.videoUrl = streamURL
+                    item.videoType = .directPlay
+                    
+                    let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: .embed, codec: "")
+                    subtitleTrackArray.append(disableSubtitleTrack);
+                    
+                    //Loop through media streams and add to array
+                    for stream in mediaSource.mediaStreams! {
+                        if(stream.type == .subtitle) {
+                            let deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
+                            let subtitle = Subtitle(name: stream.displayTitle!, id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
+                            subtitleTrackArray.append(subtitle);
+                        }
+                        
+                        if(stream.type == .audio) {
+                            let subtitle = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
+                            if(stream.isDefault! == true) {
+                                selectedAudioTrack = Int32(stream.index!);
+                            }
+                            audioTrackArray.append(subtitle);
+                        }
+                    }
+                    
+                    if(selectedAudioTrack == -1) {
+                        if(audioTrackArray.count > 0) {
+                            selectedAudioTrack = audioTrackArray[0].id;
+                        }
+                    }
+                    
+                    self.sendPlayReport()
+                    playbackItem = item;
                 }
-                break
-            case .failure(let error):
-                debugPrint(error)
-                break
-            }
-        }
+            })
+            .store(in: &globalData.pendingAPIRequests)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -430,74 +392,46 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     
     //MARK: Jellyfin Playstate updates
     func sendProgressReport(eventName: String) {
-        var progressBody: String = "";
-        progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":\(mediaPlayer.state == .paused ? "true" : "false"),\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(mediaPlayer.position * Float(manifest.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":569735888.888889}],\"PlayMethod\":\"\(playbackItem.videoType == .hls ? "Transcode" : "DirectStream")\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(manifest.Id)\",\"CanSeek\":true,\"ItemId\":\"\(manifest.Id)\",\"EventName\":\"\(eventName)\"}";
+        let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
         
-        let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing/Progress")
-        request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-        request.contentType = "application/json"
-        request.acceptType = "application/json"
-        request.messageBody = progressBody.data(using: .ascii);
-        request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
-            switch result {
-            case .success(let resp):
-                print(resp.body)
-                break
-            case .failure(let error):
-                debugPrint(error)
-                break
-            }
-        }
+        PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
+            .sink(receiveCompletion: { completion in
+                HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+            }, receiveValue: { response in
+                print("Playback progress report sent!")
+            })
+            .store(in: &globalData.pendingAPIRequests)
     }
     
     func sendStopReport() {
-        var progressBody: String = "";
+        let stopInfo = PlaybackStopInfo(item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), liveStreamId: nil, playSessionId: playSessionId, failed: nil, nextMediaType: nil, playlistItemId: "playlistItem0", nowPlayingQueue: [])
         
-        progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":true,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(mediaPlayer.position * Float(manifest.RuntimeTicks))),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[{\"start\":0,\"end\":100000}],\"PlayMethod\":\"\(playbackItem.videoType == .hls ? "Transcode" : "DirectStream")\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(manifest.Id)\",\"CanSeek\":true,\"ItemId\":\"\(manifest.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(manifest.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
-        
-        let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing/Stopped")
-        request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-        request.contentType = "application/json"
-        request.acceptType = "application/json"
-        request.messageBody = progressBody.data(using: .ascii);
-        request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
-            switch result {
-            case .success(let resp):
-                print(resp.body)
-                break
-            case .failure(let error):
-                debugPrint(error)
-                break
-            }
-        }
+        PlaystateAPI.reportPlaybackStopped(playbackStopInfo: stopInfo)
+            .sink(receiveCompletion: { completion in
+                HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+            }, receiveValue: { response in
+                print("Playback stop report sent!")
+            })
+            .store(in: &globalData.pendingAPIRequests)
     }
     
     func sendPlayReport() {
-        var progressBody: String = "";
         startTime = Int(Date().timeIntervalSince1970) * 10000000
         
-        progressBody  = "{\"VolumeLevel\":100,\"IsMuted\":false,\"IsPaused\":false,\"RepeatMode\":\"RepeatNone\",\"ShuffleMode\":\"Sorted\",\"MaxStreamingBitrate\":120000000,\"PositionTicks\":\(Int(manifest.Progress)),\"PlaybackStartTimeTicks\":\(startTime),\"AudioStreamIndex\":\(selectedAudioTrack),\"BufferedRanges\":[],\"PlayMethod\":\"\(playbackItem.videoType == .hls ? "Transcode" : "DirectStream")\",\"PlaySessionId\":\"\(playSessionId)\",\"PlaylistItemId\":\"playlistItem0\",\"MediaSourceId\":\"\(manifest.Id)\",\"CanSeek\":true,\"ItemId\":\"\(manifest.Id)\",\"NowPlayingQueue\":[{\"Id\":\"\(manifest.Id)\",\"PlaylistItemId\":\"playlistItem0\"}]}";
+        let startInfo = PlaybackStartInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: false, isMuted: false, positionTicks: manifest.userData?.playbackPositionTicks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
         
-        let request = RestRequest(method: .post, url: (globalData.server?.baseURI ?? "") + "/Sessions/Playing")
-        request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-        request.contentType = "application/json"
-        request.acceptType = "application/json"
-        request.messageBody = progressBody.data(using: .ascii);
-        request.responseData() { (result: Result<RestResponse<Data>, RestError>) in
-            switch result {
-            case .success(let resp):
-                print(resp.body)
-                break
-            case .failure(let error):
-                debugPrint(error)
-                break
-            }
-        }
+        PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
+            .sink(receiveCompletion: { completion in
+                HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+            }, receiveValue: { response in
+                print("Playback start report sent!")
+            })
+            .store(in: &globalData.pendingAPIRequests)
     }
 }
 
 struct VLCPlayerWithControls: UIViewControllerRepresentable {
-    var item: DetailItem
+    var item: BaseItemDto
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var globalData: GlobalData;
     

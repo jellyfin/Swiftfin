@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20E232" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20E241" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Server" representedClassName="Server" syncable="YES" codeGenerationType="class">
-        <attribute name="baseURI" optional="YES" attributeType="String"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="server_id" optional="YES" attributeType="String"/>
+        <attribute name="baseURI" attributeType="String" defaultValueString=""/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="server_id" attributeType="String" defaultValueString=""/>
     </entity>
     <entity name="SignedInUser" representedClassName="SignedInUser" syncable="YES" codeGenerationType="class">
-        <attribute name="device_uuid" optional="YES" attributeType="String"/>
-        <attribute name="user_id" optional="YES" attributeType="String"/>
-        <attribute name="username" optional="YES" attributeType="String"/>
+        <attribute name="device_uuid" attributeType="String" defaultValueString=""/>
+        <attribute name="user_id" attributeType="String" defaultValueString=""/>
+        <attribute name="username" attributeType="String" defaultValueString=""/>
     </entity>
     <elements>
         <element name="Server" positionX="-63" positionY="-9" width="128" height="74"/>

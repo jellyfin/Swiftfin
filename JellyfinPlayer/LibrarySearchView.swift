@@ -87,7 +87,7 @@ struct ResumeItemGridCell: View {
     var body: some View {
         VStack(alignment: .leading) {
             if item.Type == "Movie" {
-                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
+                LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
                     .placeholderAndFailure {
                         Image(uiImage: UIImage(blurHash: item
                                 .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
@@ -100,7 +100,7 @@ struct ResumeItemGridCell: View {
                     .frame(width: 100, height: 150)
                     .cornerRadius(10)
             } else {
-                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))                    
+                LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?fillWidth=300&fillHeight=450&quality=90&tag=\(item.Image)"))
                     .placeholderAndFailure {
                         Image(uiImage: UIImage(blurHash: item
                                 .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item

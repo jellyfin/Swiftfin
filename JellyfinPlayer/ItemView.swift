@@ -7,25 +7,29 @@
 
 import SwiftUI
 import Introspect
+import JellyfinAPI
 
-class ItemPlayback: ObservableObject {
-    @Published var shouldPlay: Bool = false;
-    @Published var itemToPlay: DetailItem = DetailItem();
+//good lord the environmental modifiers ;P
+
+class VideoPlayerItem: ObservableObject {
+    @Published var shouldShowPlayer: Bool = false;
+    @Published var itemToPlay: BaseItemDto = BaseItemDto();
 }
 
 struct ItemView: View {
-    var item: ResumeItem;
-    @StateObject private var playback: ItemPlayback = ItemPlayback()
-    @State private var shouldShowLoadingView: Bool = false;
+    private var item: BaseItemDto;
+    @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()
     
-    init(item: ResumeItem) {
+    @State private var isLoading: Bool = false; //This variable is only changed by the underlying VLC view.
+    
+    init(item: BaseItemDto) {
         self.item = item;
     }
     
     var body: some View {
-        if(playback.shouldPlay) {
-            LoadingViewNoBlur(isShowing: $shouldShowLoadingView) {
-                VLCPlayerWithControls(item: playback.itemToPlay, loadBinding: $shouldShowLoadingView, pBinding: _playback.projectedValue.shouldPlay)
+        if(videoPlayerItem.shouldShowPlayer) {
+            LoadingViewNoBlur(isShowing: $isLoading) {
+                VLCPlayerWithControls(item: playback.itemToPlay, loadBinding: $isLoading, pBinding: _videoPlayerItem.projectedValue.shouldShowPlayer)
             }.navigationBarHidden(true)
             .navigationBarBackButtonHidden(true)
             .statusBar(hidden: true)
@@ -34,7 +38,6 @@ struct ItemView: View {
             .edgesIgnoringSafeArea(.all)
             .overrideViewPreference(.unspecified)
             .supportedOrientations(.landscape)
-
         } else {
             Group {
                 if(item.Type == "Movie") {
@@ -50,7 +53,7 @@ struct ItemView: View {
                 }
             }
             .introspectTabBarController { (UITabBarController) in
-                        UITabBarController.tabBar.isHidden = false
+                UITabBarController.tabBar.isHidden = false
             }
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(false)

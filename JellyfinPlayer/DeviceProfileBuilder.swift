@@ -8,7 +8,7 @@
 //lol can someone buy me a coffee this took forever :|
 
 import Foundation
-import SwiftyJSON
+import JellyfinAPI
 
 enum CPUModel {
     case A4
@@ -33,65 +33,6 @@ enum CPUModel {
     case A99
 }
 
-struct _AVDirectProfile: Codable {
-    var Container: String;
-    var `Type`: String;
-    var AudioCodec: String = "";
-    var VideoCodec: String = "";
-}
-
-struct _AVTranscodingProfile: Codable {
-    var Container: String;
-    var `Type`: String;
-    var AudioCodec: String = "";
-    var VideoCodec: String = "";
-    var Context: String = "";
-    var `Protocol`: String = "hls";
-    var MaxAudioChannels: String = "6";
-    var MinSegments: String = "2";
-    var BreakOnNonKeyFrames: Bool = true;
-}
-
-struct _AVCodecCondition: Codable {
-    var Condition: String;
-    var Property: String;
-    var Value: String;
-    var IsRequired: Bool;
-}
-
-struct _AVCodecProfile: Codable {
-    var `Type`: String;
-    var Codec: String = "";
-    var Conditions: [_AVCodecCondition] = [];
-}
-
-struct _AVSubtitleProfile: Codable {
-    var Format: String;
-    var Method: String;
-}
-
-struct _AVResponseProfile: Codable {
-    var `Type`: String;
-    var Container: String;
-    var MimeType: String;
-}
-
-struct DeviceProfile: Codable {
-    var MaxStreamingBitrate: Int;
-    var MaxStaticBitrate: Int;
-    var MusicStreamingTranscodingBitrate: Int;
-    var DirectPlayProfiles: [_AVDirectProfile] = [];
-    var TranscodingProfiles: [_AVTranscodingProfile] = [];
-    var ContainerProfiles: [_AVDirectProfile] = [];
-    var CodecProfiles: [_AVCodecProfile] = [];
-    var SubtitleProfiles: [_AVSubtitleProfile] = [];
-    var ResponseProfiles: [_AVResponseProfile] = [];
-}
-
-struct DeviceProfileRoot: Codable {
-    var DeviceProfile: DeviceProfile;
-}
-
 class DeviceProfileBuilder {
     public var bitrate: Int = 0;
     
@@ -99,92 +40,91 @@ class DeviceProfileBuilder {
         self.bitrate = bitrate
     }
     
-    public func buildProfile() -> DeviceProfileRoot {
-        print(CPUinfo())
-        let MaxStreamingBitrate = bitrate;
-        let MaxStaticBitrate = bitrate;
-        let MusicStreamingTranscodingBitrate = 384000;
+    public func buildProfile() -> DeviceProfile {
+        let maxStreamingBitrate = bitrate;
+        let maxStaticBitrate = bitrate;
+        let musicStreamingTranscodingBitrate = 384000;
         
         //Build direct play profiles
-            var DirectPlayProfiles: [_AVDirectProfile] = [];
-            DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav", VideoCodec: "h264")]
+            var directPlayProfiles: [DirectPlayProfile] = [];
+        directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav", videoCodec: "h264", type: .video)]
             
             //Device supports Dolby Digital (AC3, EAC3)
             if(supportsFeature(minimumSupported: .A8X)) {
                 if(supportsFeature(minimumSupported: .A10)) {
-                    DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", VideoCodec: "hevc,h264,hev1")] //HEVC/H.264 with Dolby Digital
+                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "hevc,h264,hev1", type: .video)] //HEVC/H.264 with Dolby Digital
                 } else {
-                    DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "ac3,eac3,aac,mp3,wav,opus", VideoCodec: "h264")] //H.264 with Dolby Digital
+                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "ac3,eac3,aac,mp3,wav,opus", videoCodec: "h264", type: .video)] //H.264 with Dolby Digital
                 }
             }
             
             //Device supports Dolby Vision?
             if(supportsFeature(minimumSupported: .A10X)) {
-                DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", VideoCodec: "dvhe,dvh1,dva1,dvav,h264,hevc,hev1")] //H.264/HEVC with Dolby Digital - No Atmos - Vision
+                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "dvhe,dvh1,dva1,dvav,h264,hevc,hev1", type: .video)] //H.264/HEVC with Dolby Digital - No Atmos - Vision
             }
             
             //Device supports Dolby Atmos?
             if(supportsFeature(minimumSupported: .A12)) {
-                DirectPlayProfiles = [_AVDirectProfile(Container: "mov,mp4,mkv", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", VideoCodec: "h264,hevc,dvhe,dvh1,dva1,dvav,h264,hevc,hev1")] //H.264/HEVC with Dolby Digital & Atmos - Vision
+                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", videoCodec: "h264,hevc,dvhe,dvh1,dva1,dvav,h264,hevc,hev1", type: .video)] //H.264/HEVC with Dolby Digital & Atmos - Vision
             }
         
         //Build transcoding profiles
-            var TranscodingProfiles: [_AVTranscodingProfile] = [];
-            TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav", VideoCodec: "h264", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "2", MinSegments: "2", BreakOnNonKeyFrames: true)]
+            var transcodingProfiles: [TranscodingProfile] = [];
+        transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264", audioCodec: "aac,mp3,wav")]
             
             //Device supports Dolby Digital (AC3, EAC3)
             if(supportsFeature(minimumSupported: .A8X)) {
                 if(supportsFeature(minimumSupported: .A10)) {
-                    TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,eac3,ac3,flac,opus", VideoCodec: "h264,hevc,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                    transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "aac,mp3,wav,eac3,ac3,flac,opus", audioCodec: "h264,hevc,hev1", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
                 } else {
-                    TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,eac3,ac3,opus", VideoCodec: "h264", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "2", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                    transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264", audioCodec: "aac,mp3,wav,eac3,ac3,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
                 }
             }
             
             //Device supports Dolby Vision?
             if(supportsFeature(minimumSupported: .A10X)) {
-                TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", VideoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "6", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
             }
             
             //Device supports Dolby Atmos?
             if(supportsFeature(minimumSupported: .A12)) {
-                TranscodingProfiles = [_AVTranscodingProfile(Container: "ts", Type: "Video", AudioCodec: "aac,mp3,wav,ac3,eac3,flac,dts,truehd,dca,opus", VideoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", Context: "Streaming", Protocol: "hls", MaxAudioChannels: "9", MinSegments: "2", BreakOnNonKeyFrames: true)]
+                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", audioCodec: "aac,mp3,wav,ac3,eac3,flac,dts,truehd,dca,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
             }
         
-        var CodecProfiles: [_AVCodecProfile] = []
+        var codecProfiles: [CodecProfile] = []
         
-        let h264CodecConditions: [_AVCodecCondition] = [
-            _AVCodecCondition(Condition: "NotEquals", Property: "IsAnamorphic", Value: "true", IsRequired: false),
-            _AVCodecCondition(Condition: "EqualsAny", Property: "VideoProfile", Value: "high|main|baseline|constrained baseline", IsRequired: false),
-            _AVCodecCondition(Condition: "LessThanEqual", Property: "VideoLevel", Value: "60", IsRequired: false),
-            _AVCodecCondition(Condition: "NotEquals", Property: "IsInterlaced", Value: "true", IsRequired: false)]
-        let hevcCodecConditions: [_AVCodecCondition] = [
-            _AVCodecCondition(Condition: "NotEquals", Property: "IsAnamorphic", Value: "true", IsRequired: false),
-            _AVCodecCondition(Condition: "EqualsAny", Property: "VideoProfile", Value: "main|main 10", IsRequired: false),
-            _AVCodecCondition(Condition: "LessThanEqual", Property: "VideoLevel", Value: "160", IsRequired: false),
-            _AVCodecCondition(Condition: "NotEquals", Property: "IsInterlaced", Value: "true", IsRequired: false)]
+        let h264CodecConditions: [ProfileCondition] = [
+            ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
+            ProfileCondition(condition: .equalsAny, property: .videoProfile, value: "high|main|baseline|constrained baseline", isRequired: false),
+            ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "60", isRequired: false),
+            ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false)]
+        let hevcCodecConditions: [ProfileCondition] = [
+            ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
+            ProfileCondition(condition: .equalsAny, property: .videoProfile, value: "main|main 10", isRequired: false),
+            ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "160", isRequired: false),
+            ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false)]
         
-        CodecProfiles.append(_AVCodecProfile(Type: "Video", Codec: "h264", Conditions: h264CodecConditions))
+        codecProfiles.append(CodecProfile(type: .video, applyConditions: h264CodecConditions, codec: "h264"))
         
         if(supportsFeature(minimumSupported: .A10)) {
-            CodecProfiles.append(_AVCodecProfile(Type: "Video", Codec: "hevc", Conditions: hevcCodecConditions))
+            codecProfiles.append(CodecProfile(type: .video, applyConditions: hevcCodecConditions,codec: "hevc"))
         }
         
-        var SubtitleProfiles: [_AVSubtitleProfile] = []
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "vtt", Method: "External"))
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "ass", Method: "External"))
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "ssa", Method: "External"))
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "pgssub", Method: "Embed"))
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "sub", Method: "Embed"))
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "rip", Method: "Embed"))
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "srt", Method: "Embed"))
-        SubtitleProfiles.append(_AVSubtitleProfile(Format: "pgs", Method: "Embed"))
+        var subtitleProfiles: [SubtitleProfile] = []
+        subtitleProfiles.append(SubtitleProfile(format: "vtt", method: .external))
+        subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
+        subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
+        subtitleProfiles.append(SubtitleProfile(format: "pgssub", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "sub", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "rip", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "srt", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "pgs", method: .embed))
 
-        let ResponseProfiles: [_AVResponseProfile] = [_AVResponseProfile(Type: "Video", Container: "m4v", MimeType: "video/mp4")]
+        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", type: .video, mimeType: "video/mp4")]
         
-        let DP = DeviceProfile(MaxStreamingBitrate: MaxStreamingBitrate, MaxStaticBitrate: MaxStaticBitrate, MusicStreamingTranscodingBitrate: MusicStreamingTranscodingBitrate, DirectPlayProfiles: DirectPlayProfiles, TranscodingProfiles: TranscodingProfiles, CodecProfiles: CodecProfiles, SubtitleProfiles: SubtitleProfiles, ResponseProfiles: ResponseProfiles)
+        let profile = DeviceProfile(maxStreamingBitrate: maxStreamingBitrate, maxStaticBitrate: maxStaticBitrate, musicStreamingTranscodingBitrate: musicStreamingTranscodingBitrate, directPlayProfiles: directPlayProfiles, transcodingProfiles: transcodingProfiles, containerProfiles: [], codecProfiles: codecProfiles, responseProfiles: responseProfiles, subtitleProfiles: subtitleProfiles)
         
-        return DeviceProfileRoot(DeviceProfile: DP)
+        return profile
     }
     
     private func supportsFeature(minimumSupported: CPUModel) -> Bool {

@@ -8,63 +8,46 @@
 import SwiftUI
 
 import KeychainSwift
-import SwiftyJSON
-import SwiftyRequest
 import Nuke
 import Combine
 import JellyfinAPI
 
 struct ContentView: View {
-    @Environment(\.managedObjectContext)
-    private var viewContext
-    @EnvironmentObject
-    var orientationInfo: OrientationInfo
-    @StateObject
-    private var globalData = GlobalData()
-    @EnvironmentObject
-    var jsi: justSignedIn
+    @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var orientationInfo: OrientationInfo
+    @EnvironmentObject var jsi: justSignedIn
+    
+    @StateObject private var globalData = GlobalData()
 
-    @FetchRequest(entity: Server.entity(),
-                  sortDescriptors: [NSSortDescriptor(keyPath: \Server.name, ascending: true)])
-    private var servers: FetchedResults<Server>
+    @FetchRequest(entity: Server.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Server.name, ascending: true)])
+        private var servers: FetchedResults<Server>
 
-    @FetchRequest(entity: SignedInUser.entity(),
-                  sortDescriptors: [NSSortDescriptor(keyPath: \SignedInUser.username,
-                                                     ascending: true)])
-    private var savedUsers: FetchedResults<SignedInUser>
+    @FetchRequest(entity: SignedInUser.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \SignedInUser.username, ascending: true)])
+        private var savedUsers: FetchedResults<SignedInUser>
 
-    @State
-    private var needsToSelectServer = false
-    @State
-    private var isLoading = false
-    @State
-    private var tabSelection: String = "Home"
-    @State
-    private var libraries: [String] = []
-    @State
-    private var library_names: [String: String] = [:]
-    @State
-    private var librariesShowRecentlyAdded: [String] = []
-    @State
-    private var libraryPrefillID: String = ""
-    @State
-    private var showSettingsPopover: Bool = false
-    @State
-    private var viewDidLoad: Bool = false
+    @State private var needsToSelectServer = false
+    @State private var isLoading = false
+    @State private var tabSelection: String = "Home"
+    @State private var libraries: [String] = []
+    @State private var library_names: [String: String] = [:]
+    @State private var librariesShowRecentlyAdded: [String] = []
+    @State private var libraryPrefillID: String = ""
+    @State private var showSettingsPopover: Bool = false
+    @State private var viewDidLoad: Bool = false
 
     func startup() {
+        if(viewDidLoad == true) {
+            return
+        }
+        
+        viewDidLoad = true
+        
         let size = UIScreen.main.bounds.size
         if size.width < size.height {
             orientationInfo.orientation = .portrait
         } else {
             orientationInfo.orientation = .landscape
         }
-
-        if viewDidLoad {
-            return
-        }
-        
-        viewDidLoad = true
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
@@ -91,19 +74,18 @@ struct ContentView: View {
             var header = "MediaBrowser "
             header.append("Client=\"SwiftFin\", ")
             header.append("Device=\"\(deviceName)\", ")
-            header.append("DeviceId=\"\(globalData.user?.device_uuid ?? "")\", ")
+            header.append("DeviceId=\"\(globalData.user.device_uuid ?? "")\", ")
             header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
             header.append("Token=\"\(globalData.authToken)\"")
             
             globalData.authHeader = header
-            JellyfinAPI.basePath = globalData.server?.baseURI ?? ""
+            JellyfinAPI.basePath = globalData.server.baseURI ?? ""
             JellyfinAPI.customHeaders = ["X-Emby-Authorization": globalData.authHeader]
             
             UserAPI.getCurrentUser()
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
-                    //Get all libraries
                     libraries = response.configuration?.orderedViews ?? []
                     librariesShowRecentlyAdded = libraries.filter { element in
                         return !(response.configuration?.latestItemsExcludes?.contains(element))!
@@ -111,11 +93,10 @@ struct ContentView: View {
                 })
                 .store(in: &globalData.pendingAPIRequests)
             
-            UserViewsAPI.getUserViews(userId: globalData.user?.user_id ?? "")
+            UserViewsAPI.getUserViews(userId: globalData.user.user_id ?? "")
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
-                    //Get all libraries
                     response.items?.forEach({ item in
                         library_names[item.id ?? ""] = item.name
                     })
@@ -144,7 +125,7 @@ struct ContentView: View {
         } else if (globalData.expiredCredentials == true) {
             NavigationView {
                 ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server,
-                                    reauth_deviceId: globalData.user?.device_uuid ?? "", isActive: $globalData.expiredCredentials)
+                                    reauth_deviceId: globalData.user.device_uuid ?? "", isActive: $globalData.expiredCredentials)
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .environmentObject(globalData)
@@ -155,9 +136,9 @@ struct ContentView: View {
                         NavigationView {
                             VStack(alignment: .leading) {
                                 ScrollView {
-                                    Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 15)
+                                    Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 16)
                                     ContinueWatchingView()
-                                    NextUpView().padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                                    NextUpView()
                                     ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
                                         VStack(alignment: .leading) {
                                             HStack {
@@ -171,7 +152,7 @@ struct ContentView: View {
                                                     Text("See All").font(.subheadline).fontWeight(.bold)
                                                 }
                                             }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                            LatestMediaView(library: library_id)
+                                            LatestMediaView(usingLibraryID: library_id)
                                         }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                                     }
                                     Spacer().frame(height: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
@@ -211,10 +192,10 @@ struct ContentView: View {
                 .environmentObject(globalData)
                 .onAppear(perform: startup)
                 .alert(isPresented: $globalData.networkError) {
-                    Alert(title: Text("Network Error"), message: Text("Couldn't connect to Jellyfin"), dismissButton: .default(Text("Ok")))
+                    Alert(title: Text("Network Error"), message: Text("An error occured while performing a network request"), dismissButton: .default(Text("Ok")))
                 }
             } else {
-                Text("Signing in...")
+                Text("Please wait...")
                     .onAppear(perform: {
                         DispatchQueue.main.async { [self] in
                             _viewDidLoad.wrappedValue = false

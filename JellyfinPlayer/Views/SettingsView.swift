@@ -32,7 +32,7 @@ struct SettingsView: View {
     private var autoSelectSubtitlesLangcode: String = "none"
 
     func onAppear() {
-        _username.wrappedValue = globalData.user?.username ?? ""
+        _username.wrappedValue = globalData.user.username ?? ""
         let defaults = UserDefaults.standard
         _inNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "InNetworkBandwidth")
         _outOfNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "OutOfNetworkBandwidth")
@@ -94,8 +94,8 @@ struct SettingsView: View {
                                 // TODO: handle the error
                             }
 
-                            globalData.server = nil
-                            globalData.user = nil
+                            globalData.server = Server()
+                            globalData.user = SignedInUser()
                             globalData.authToken = ""
                             globalData.authHeader = ""
                             jsi.did = true

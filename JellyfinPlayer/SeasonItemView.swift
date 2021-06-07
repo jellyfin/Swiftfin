@@ -35,9 +35,9 @@ struct SeasonItemView: View {
         if hasAppearedOnce {
             return
         }
-        let url = "/Users/\(globalData.user?.user_id ?? "")/Items/\(item.Id)"
+        let url = "/Users/\(globalData.user.user_id ?? "")/Items/\(item.Id)"
 
-        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url)
+        let request = RestRequest(method: .get, url: (globalData.server.baseURI ?? "") + url)
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"
@@ -84,7 +84,7 @@ struct SeasonItemView: View {
                             cast.Role = person["Role"].string ?? ""
                             cast
                                 .Image =
-                                URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxWidth=2000&quality=90&tag=\(imageTag)")!
+                                URL(string: "\(globalData.server.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxWidth=2000&quality=90&tag=\(imageTag)")!
                             responseItem.Cast.append(cast)
                         }
                     }
@@ -92,8 +92,8 @@ struct SeasonItemView: View {
                     _fullItem.wrappedValue = responseItem
 
                     let url2 =
-                        "/Shows/\(fullItem.SeriesId ?? "")/Episodes?SeasonId=\(item.Id)&UserId=\(globalData.user?.user_id ?? "")&Fields=ItemCounts%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CCanDelete%2CMediaSourceCount%2COverview"
-                    let request2 = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url2)
+                        "/Shows/\(fullItem.SeriesId ?? "")/Episodes?SeasonId=\(item.Id)&UserId=\(globalData.user.user_id ?? "")&Fields=ItemCounts%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CCanDelete%2CMediaSourceCount%2COverview"
+                    let request2 = RestRequest(method: .get, url: (globalData.server.baseURI ?? "") + url2)
                     request2.headerParameters["X-Emby-Authorization"] = globalData.authHeader
                     request2.contentType = "application/json"
                     request2.acceptType = "application/json"
@@ -193,7 +193,7 @@ struct SeasonItemView: View {
         if isLoading {
             EmptyView()
         } else {
-            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=550&quality=90&tag=\(item.SeasonImage ?? "")"))
+            LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=550&quality=90&tag=\(item.SeasonImage ?? "")"))
                 .placeholderAndFailure {
                     Image(uiImage: UIImage(blurHash: item
                             .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
@@ -209,7 +209,7 @@ struct SeasonItemView: View {
 
     var portraitHeaderOverlayView: some View {
         HStack(alignment: .bottom, spacing: 12) {
-            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
+            LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
                 .placeholderAndFailure {
                     Image(uiImage: UIImage(blurHash: fullItem
                             .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
@@ -258,7 +258,7 @@ struct SeasonItemView: View {
                     ForEach(episodes, id: \.Id) { episode in
                         NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
                             HStack {
-                                LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)"))
+                                LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)"))
                                     .placeholderAndFailure {
                                         Image(uiImage: UIImage(blurHash: episode
                                                 .PosterBlurHash == "" ?
@@ -276,7 +276,7 @@ struct SeasonItemView: View {
                                     .overlay(
                                         Rectangle()
                                             .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
-                                            .mask(CustomShape(radius: 10))
+                                            .mask(ProgressBar())
                                             .frame(width: CGFloat((episode.Progress / Double(episode.RuntimeTicks)) * 150), height: 7)
                                             .padding(0), alignment: .bottomLeading
                                     )
@@ -333,7 +333,7 @@ struct SeasonItemView: View {
         } else {
             GeometryReader { geometry in
                 ZStack {
-                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(item.SeasonImage ?? "")"))
+                    LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.SeriesId ?? "")/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(item.SeasonImage ?? "")"))
                         .placeholderAndFailure {
                             Image(uiImage: UIImage(blurHash: item
                                     .SeasonImageBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
@@ -355,7 +355,7 @@ struct SeasonItemView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             Spacer().frame(height: 16)
-                            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
+                            LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
                                 .placeholderAndFailure {
                                     Image(uiImage: UIImage(blurHash: fullItem
                                             .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
@@ -392,7 +392,7 @@ struct SeasonItemView: View {
                                 ForEach(episodes, id: \.Id) { episode in
                                     NavigationLink(destination: ItemView(item: episode.ResumeItem ?? ResumeItem())) {
                                         HStack {
-                                            LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)"))
+                                            LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(episode.Id)/Images/Primary?maxWidth=300&quality=90&tag=\(episode.Poster)"))
                                                 .placeholderAndFailure {
                                                     Image(uiImage: UIImage(blurHash: episode
                                                             .PosterBlurHash == "" ?
@@ -410,7 +410,7 @@ struct SeasonItemView: View {
                                                 .overlay(
                                                     Rectangle()
                                                         .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
-                                                        .mask(CustomShape(radius: 10))
+                                                        .mask(ProgressBar())
                                                         .frame(width: CGFloat((episode.Progress / Double(episode.RuntimeTicks)) * 150), height: 7)
                                                         .padding(0), alignment: .bottomLeading
                                                 )

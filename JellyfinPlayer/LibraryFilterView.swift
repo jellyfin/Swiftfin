@@ -65,8 +65,8 @@ struct LibraryFilterView: View {
         _sortOrder.wrappedValue = filter.asc?.rawValue ?? sortOrder
 
         _allGenres.wrappedValue = []
-        let url = "/Items/Filters?UserId=\(globalData.user?.user_id ?? "")&ParentId=\(library)"
-        let request = RestRequest(method: .get, url: (globalData.server?.baseURI ?? "") + url)
+        let url = "/Items/Filters?UserId=\(globalData.user.user_id ?? "")&ParentId=\(library)"
+        let request = RestRequest(method: .get, url: (globalData.server.baseURI ?? "") + url)
         request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
         request.contentType = "application/json"
         request.acceptType = "application/json"

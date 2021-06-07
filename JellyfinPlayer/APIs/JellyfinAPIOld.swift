@@ -88,7 +88,7 @@ extension JellyfinAPIOld: TargetType {
         switch self {
         case let .items(global, _, _),
              let .search(global, _, _, _):
-            return URL(string: global.server?.baseURI ?? "")!
+            return URL(string: global.server.baseURI ?? "")!
         }
     }
 
@@ -96,7 +96,7 @@ extension JellyfinAPIOld: TargetType {
         switch self {
         case let .items(global, _, _),
              let .search(global, _, _, _):
-            return "/Users/\(global.user?.user_id ?? "")/Items"
+            return "/Users/\(global.user.user_id ?? "")/Items"
         }
     }
 

@@ -136,7 +136,7 @@ extension LibraryView {
         var body: some View {
             VStack(alignment: .leading) {
                 if item.Type == "Movie" {
-                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
+                    LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
                         .placeholderAndFailure {
                             Image(uiImage: UIImage(blurHash: item
                                     .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item
@@ -149,7 +149,7 @@ extension LibraryView {
                         .frame(width: 100, height: 150)
                         .cornerRadius(10)
                 } else {
-                    LazyImage(source: URL(string: "\(globalData.server?.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
+                    LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(item.Id)/Images/\(item.ImageType)?maxWidth=250&quality=80&tag=\(item.Image)"))
                         .placeholderAndFailure {
                             Image(uiImage: UIImage(blurHash: item
                                     .BlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : item

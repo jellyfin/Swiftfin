@@ -1,0 +1,81 @@
+/* SwiftFin is subject to the terms of the Mozilla Public
+ * License, v2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+ */
+
+import Foundation
+import JellyfinAPI
+import UIKit
+
+//001fC^ = dark grey plain blurhash
+
+extension BaseItemDto {
+    func getSeriesPrimaryImageBlurHash() -> String {
+        let rawImgURL = self.getSeriesPrimaryImage(baseURL: "", maxWidth: 1).absoluteString;
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
+        
+        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^";
+    }
+    
+    func getPrimaryImageBlurHash() -> String {
+        let rawImgURL = self.getPrimaryImage(baseURL: "", maxWidth: 1).absoluteString;
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
+        
+        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^";
+    }
+    
+    func getBackdropImageBlurHash() -> String {
+        let rawImgURL = self.getBackdropImage(baseURL: "", maxWidth: 1).absoluteString;
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
+        
+        if(rawImgURL.contains("Backdrop")) {
+            return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^";
+        } else {
+            return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^";
+        }
+    }
+    
+    func getBackdropImage(baseURL: String, maxWidth: Int) -> URL {
+        var imageType = "";
+        var imageTag = "";
+        
+        if(self.primaryImageAspectRatio ?? 0.0 < 1.0) {
+            imageType = "Backdrop";
+            imageTag = (self.backdropImageTags ?? [""])[0]
+        } else {
+            imageType = "Primary";
+            imageTag = self.imageTags?["Primary"] ?? ""
+        }
+        
+        if(imageTag == "") {
+            imageType = "Backdrop";
+            imageTag = self.parentBackdropImageTags?[0] ?? ""
+        }
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        return URL(string: urlString)!
+    }
+    
+    func getSeriesPrimaryImage(baseURL: String, maxWidth: Int) -> URL {
+        let imageType = "Primary";
+        let imageTag = self.seriesPrimaryImageTag ?? ""
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+        let urlString = "\(baseURL)/Items/\(self.seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        return URL(string: urlString)!
+    }
+    
+    func getPrimaryImage(baseURL: String, maxWidth: Int) -> URL {
+        let imageType = "Primary";
+        var imageTag = self.imageTags?["Primary"] ?? "";
+        
+        if(imageTag == "") {
+            imageTag = self.seriesPrimaryImageTag ?? ""
+        }
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+        
+        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        return URL(string: urlString)!
+    }
+}
