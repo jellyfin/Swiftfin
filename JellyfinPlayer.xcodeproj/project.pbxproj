@@ -11,7 +11,6 @@
 		53313B90265EEA6D00947AA3 /* VideoPlayer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */; };
 		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
-		5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F753263B65E10014BF09 /* SwiftyRequest */; };
 		5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F756263B7E2E0014BF09 /* KeychainSwift */; };
 		535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */; };
 		535870652669D21600D05A09 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870642669D21600D05A09 /* ContentView.swift */; };
@@ -20,14 +19,8 @@
 		5358706C2669D21700D05A09 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5358706B2669D21700D05A09 /* Persistence.swift */; };
 		5358706F2669D21700D05A09 /* JellyfinPlayer_tvOS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5358706D2669D21700D05A09 /* JellyfinPlayer_tvOS.xcdatamodeld */; };
 		5358707E2669D64F00D05A09 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
-		5358708B2669D7A800D05A09 /* SwiftyRequest in Frameworks */ = {isa = PBXBuildFile; productRef = 5358708A2669D7A800D05A09 /* SwiftyRequest */; };
 		5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5358708C2669D7A800D05A09 /* KeychainSwift */; };
-		5358708F2669D7A800D05A09 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 5358708E2669D7A800D05A09 /* SwiftyJSON */; };
 		535870912669D7A800D05A09 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 535870902669D7A800D05A09 /* Introspect */; };
-		535870932669D7A800D05A09 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 535870922669D7A800D05A09 /* CombineMoya */; };
-		535870952669D7A800D05A09 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 535870942669D7A800D05A09 /* Moya */; };
-		535870972669D7A800D05A09 /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 535870962669D7A800D05A09 /* ReactiveMoya */; };
-		535870992669D7A800D05A09 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 535870982669D7A800D05A09 /* RxMoya */; };
 		5358709B2669D7A800D05A09 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5358709A2669D7A800D05A09 /* NukeUI */; };
 		5358709D2669D82900D05A09 /* TVVLCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5358709C2669D82900D05A09 /* TVVLCKit.framework */; };
 		5358709E2669D82900D05A09 /* TVVLCKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5358709C2669D82900D05A09 /* TVVLCKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -52,11 +45,7 @@
 		5389276E263C25100035E14B /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389276D263C25100035E14B /* ContinueWatchingView.swift */; };
 		53892770263C25230035E14B /* NextUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389276F263C25230035E14B /* NextUpView.swift */; };
 		53892772263C8C6F0035E14B /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53892771263C8C6F0035E14B /* LoadingView.swift */; };
-		5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 53892779263CBFE70035E14B /* SwiftyJSON */; };
 		5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389277B263CC3DB0035E14B /* BlurHashDecode.swift */; };
-		53987CA426572C1300E7EA70 /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA326572C1300E7EA70 /* SeasonItemView.swift */; };
-		53987CA626572F0700E7EA70 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA526572F0700E7EA70 /* SeriesItemView.swift */; };
-		53987CA82657424A00E7EA70 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA72657424A00E7EA70 /* EpisodeItemView.swift */; };
 		539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */; };
 		53A089D0264DA9DA00D57806 /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A089CF264DA9DA00D57806 /* MovieItemView.swift */; };
 		53A431BD266B0FF20016769F /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 53A431BC266B0FF20016769F /* JellyfinAPI */; };
@@ -66,25 +55,16 @@
 		53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		53D5E3DE264B47EE00BADDC8 /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF641D263D9C0600A7CD1A /* LibraryView.swift */; };
-		53E4E647263F6CF100F67C6B /* LibraryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */; };
 		53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelectorView.swift */; };
 		53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE24E5265060780068F029 /* LibrarySearchView.swift */; };
 		53F8377D265FF67C00F456B3 /* VideoPlayerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */; };
 		53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F29263CF3F500585C35 /* LatestMediaView.swift */; };
-		6213388E265F777C00A81A2A /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388D265F777C00A81A2A /* LibraryViewModel.swift */; };
 		62133890265F83A900A81A2A /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388F265F83A900A81A2A /* LibraryListView.swift */; };
 		621338932660107500A81A2A /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
-		62133895266096EF00A81A2A /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62133894266096EF00A81A2A /* LibraryListViewModel.swift */; };
 		621338B32660A07800A81A2A /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
 		621C638026672A30004216EA /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 621C637F26672A30004216EA /* NukeUI */; };
 		621C638226676728004216EA /* NukeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621C638126676728004216EA /* NukeExtensions.swift */; };
 		6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
-		6273DD43265F4195009C1D0B /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD42265F4195009C1D0B /* Moya */; };
-		6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 6273DD44265F4195009C1D0B /* CombineMoya */; };
-		6273DD48265F41B3009C1D0B /* JellyfinAPIOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6273DD47265F41B3009C1D0B /* JellyfinAPIOld.swift */; };
-		6273DD4E265F47B2009C1D0B /* LibrarySearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */; };
-		AE8C3154265D60BF008AA076 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8C3153265D60BF008AA076 /* SettingsModel.swift */; };
-		AE8C3156265D616A008AA076 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8C3155265D616A008AA076 /* SettingsViewModel.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 /* End PBXBuildFile section */
 
@@ -125,7 +105,6 @@
 /* Begin PBXFileReference section */
 		53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileBuilder.swift; sourceTree = "<group>"; };
 		53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = VideoPlayer.storyboard; sourceTree = "<group>"; };
-		5333A68A266BDDC10044FD6B /* JellyfinPlayer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JellyfinPlayer.entitlements; sourceTree = "<group>"; };
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JellyfinPlayer tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinPlayer_tvOSApp.swift; sourceTree = "<group>"; };
@@ -166,17 +145,11 @@
 		53EE24E5265060780068F029 /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
 		53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSettingsView.swift; sourceTree = "<group>"; };
 		53FF7F29263CF3F500585C35 /* LatestMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaView.swift; sourceTree = "<group>"; };
-		6213388D265F777C00A81A2A /* LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewModel.swift; sourceTree = "<group>"; };
 		6213388F265F83A900A81A2A /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		621338922660107500A81A2A /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
-		62133894266096EF00A81A2A /* LibraryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListViewModel.swift; sourceTree = "<group>"; };
 		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		621C638126676728004216EA /* NukeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NukeExtensions.swift; sourceTree = "<group>"; };
 		6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxHeader.swift; sourceTree = "<group>"; };
-		6273DD47265F41B3009C1D0B /* JellyfinAPIOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPIOld.swift; sourceTree = "<group>"; };
-		6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchViewModel.swift; sourceTree = "<group>"; };
-		AE8C3153265D60BF008AA076 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
-		AE8C3155265D616A008AA076 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -185,17 +158,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				535870972669D7A800D05A09 /* ReactiveMoya in Frameworks */,
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
-				5358708F2669D7A800D05A09 /* SwiftyJSON in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
-				535870952669D7A800D05A09 /* Moya in Frameworks */,
 				5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */,
 				5358709D2669D82900D05A09 /* TVVLCKit.framework in Frameworks */,
-				535870932669D7A800D05A09 /* CombineMoya in Frameworks */,
 				5358709B2669D7A800D05A09 /* NukeUI in Frameworks */,
-				535870992669D7A800D05A09 /* RxMoya in Frameworks */,
-				5358708B2669D7A800D05A09 /* SwiftyRequest in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,14 +171,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
-				6273DD45265F4195009C1D0B /* CombineMoya in Frameworks */,
-				6273DD43265F4195009C1D0B /* Moya in Frameworks */,
 				53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */,
-				5338F754263B65E10014BF09 /* SwiftyRequest in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				621C638026672A30004216EA /* NukeUI in Frameworks */,
 				53A431BD266B0FF20016769F /* JellyfinAPI in Frameworks */,
-				5389277A263CBFE70035E14B /* SwiftyJSON in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,8 +207,8 @@
 			isa = PBXGroup;
 			children = (
 				621338912660106C00A81A2A /* Extensions */,
-				535870AB2669D8D300D05A09 /* Typings */,
 				AE8C3157265D6F5E008AA076 /* Resources */,
+				535870AB2669D8D300D05A09 /* Typings */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -261,12 +224,12 @@
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
-				535870752669D60C00D05A09 /* Shared */,
 				53D5E3DA264B460200BADDC8 /* Cartfile */,
+				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				5377CBF3263B596A003A4E83 /* JellyfinPlayer */,
 				535870612669D21600D05A09 /* JellyfinPlayer tvOS */,
 				5377CBF2263B596A003A4E83 /* Products */,
-				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
+				535870752669D60C00D05A09 /* Shared */,
 			);
 			sourceTree = "<group>";
 		};
@@ -282,31 +245,31 @@
 		5377CBF3263B596A003A4E83 /* JellyfinPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				5333A68A266BDDC10044FD6B /* JellyfinPlayer.entitlements */,
-				6273DD46265F419B009C1D0B /* APIs */,
-				AE8C3152265D607B008AA076 /* ViewModels */,
-				AE8C3151265D6075008AA076 /* Models */,
-				AE8C3150265D5FE1008AA076 /* Views */,
-				5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */,
-				5377CC02263B596B003A4E83 /* Info.plist */,
-				5377CBF6263B596A003A4E83 /* ContentView.swift */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
+				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
+				5377CBF6263B596A003A4E83 /* ContentView.swift */,
+				5389276D263C25100035E14B /* ContinueWatchingView.swift */,
+				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
+				53987CA72657424A00E7EA70 /* EpisodeItemView.swift */,
+				5377CC02263B596B003A4E83 /* Info.plist */,
+				535BAE9E2649E569005FA86D /* ItemView.swift */,
+				5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */,
+				53FF7F29263CF3F500585C35 /* LatestMediaView.swift */,
+				53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */,
+				6213388F265F83A900A81A2A /* LibraryListView.swift */,
+				53EE24E5265060780068F029 /* LibrarySearchView.swift */,
+				53DF641D263D9C0600A7CD1A /* LibraryView.swift */,
+				53892771263C8C6F0035E14B /* LoadingView.swift */,
+				53A089CF264DA9DA00D57806 /* MovieItemView.swift */,
+				5389276F263C25230035E14B /* NextUpView.swift */,
 				5377CBFD263B596B003A4E83 /* PersistenceController.swift */,
 				5377CBFA263B596B003A4E83 /* Preview Content */,
-				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
-				5389276D263C25100035E14B /* ContinueWatchingView.swift */,
-				5389276F263C25230035E14B /* NextUpView.swift */,
-				53FF7F29263CF3F500585C35 /* LatestMediaView.swift */,
-				53DF641D263D9C0600A7CD1A /* LibraryView.swift */,
-				53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */,
-				535BAE9E2649E569005FA86D /* ItemView.swift */,
-				53A089CF264DA9DA00D57806 /* MovieItemView.swift */,
-				53EE24E5265060780068F029 /* LibrarySearchView.swift */,
 				53987CA326572C1300E7EA70 /* SeasonItemView.swift */,
 				53987CA526572F0700E7EA70 /* SeriesItemView.swift */,
-				53987CA72657424A00E7EA70 /* EpisodeItemView.swift */,
-				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
-				6213388F265F83A900A81A2A /* LibraryListView.swift */,
+				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
+				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
+				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
 			);
 			path = JellyfinPlayer;
 			sourceTree = "<group>";
@@ -331,62 +294,23 @@
 		621338912660106C00A81A2A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				5389277B263CC3DB0035E14B /* BlurHashDecode.swift */,
-				53E4E648263F725B00F67C6B /* MultiSelectorView.swift */,
-				621338B22660A07800A81A2A /* LazyView.swift */,
-				621338922660107500A81A2A /* StringExtensions.swift */,
-				6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */,
-				621C638126676728004216EA /* NukeExtensions.swift */,
-				53C4404D266C75C70049424C /* HandleAPIRequestCompletion.swift */,
 				5364F454266CA0DC0026ECBA /* APIExtensions.swift */,
+				5389277B263CC3DB0035E14B /* BlurHashDecode.swift */,
+				53C4404D266C75C70049424C /* HandleAPIRequestCompletion.swift */,
+				621338B22660A07800A81A2A /* LazyView.swift */,
+				53E4E648263F725B00F67C6B /* MultiSelectorView.swift */,
+				621C638126676728004216EA /* NukeExtensions.swift */,
+				6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */,
+				621338922660107500A81A2A /* StringExtensions.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		6273DD46265F419B009C1D0B /* APIs */ = {
-			isa = PBXGroup;
-			children = (
-				6273DD47265F41B3009C1D0B /* JellyfinAPIOld.swift */,
-			);
-			path = APIs;
-			sourceTree = "<group>";
-		};
-		AE8C3150265D5FE1008AA076 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				53892771263C8C6F0035E14B /* LoadingView.swift */,
-				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
-				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
-				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
-				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		AE8C3151265D6075008AA076 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				AE8C3153265D60BF008AA076 /* SettingsModel.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		AE8C3152265D607B008AA076 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				6273DD4D265F47B2009C1D0B /* LibrarySearchViewModel.swift */,
-				6213388D265F777C00A81A2A /* LibraryViewModel.swift */,
-				62133894266096EF00A81A2A /* LibraryListViewModel.swift */,
-				AE8C3155265D616A008AA076 /* SettingsViewModel.swift */,
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		AE8C3157265D6F5E008AA076 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				5377CBFF263B596B003A4E83 /* Model.xcdatamodeld */,
 				AE8C3158265D6F90008AA076 /* bitrates.json */,
+				5377CBFF263B596B003A4E83 /* Model.xcdatamodeld */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -409,14 +333,8 @@
 			);
 			name = "JellyfinPlayer tvOS";
 			packageProductDependencies = (
-				5358708A2669D7A800D05A09 /* SwiftyRequest */,
 				5358708C2669D7A800D05A09 /* KeychainSwift */,
-				5358708E2669D7A800D05A09 /* SwiftyJSON */,
 				535870902669D7A800D05A09 /* Introspect */,
-				535870922669D7A800D05A09 /* CombineMoya */,
-				535870942669D7A800D05A09 /* Moya */,
-				535870962669D7A800D05A09 /* ReactiveMoya */,
-				535870982669D7A800D05A09 /* RxMoya */,
 				5358709A2669D7A800D05A09 /* NukeUI */,
 				53A431BE266B0FFE0016769F /* JellyfinAPI */,
 			);
@@ -440,12 +358,8 @@
 			);
 			name = JellyfinPlayer;
 			packageProductDependencies = (
-				5338F753263B65E10014BF09 /* SwiftyRequest */,
 				5338F756263B7E2E0014BF09 /* KeychainSwift */,
-				53892779263CBFE70035E14B /* SwiftyJSON */,
 				53352570265EA0A0006CCA86 /* Introspect */,
-				6273DD42265F4195009C1D0B /* Moya */,
-				6273DD44265F4195009C1D0B /* CombineMoya */,
 				621C637F26672A30004216EA /* NukeUI */,
 				53A431BC266B0FF20016769F /* JellyfinAPI */,
 			);
@@ -483,11 +397,8 @@
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
-				5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */,
 				5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */,
-				53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
-				6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */,
 				621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */,
 				53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 			);
@@ -559,31 +470,21 @@
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */,
 				53F8377D265FF67C00F456B3 /* VideoPlayerSettingsView.swift in Sources */,
-				53987CA426572C1300E7EA70 /* SeasonItemView.swift in Sources */,
 				53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */,
 				62133890265F83A900A81A2A /* LibraryListView.swift in Sources */,
-				AE8C3154265D60BF008AA076 /* SettingsModel.swift in Sources */,
 				53892770263C25230035E14B /* NextUpView.swift in Sources */,
 				535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */,
 				5377CC01263B596B003A4E83 /* Model.xcdatamodeld in Sources */,
 				53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */,
 				53A089D0264DA9DA00D57806 /* MovieItemView.swift in Sources */,
 				53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */,
-				53E4E647263F6CF100F67C6B /* LibraryFilterView.swift in Sources */,
-				6213388E265F777C00A81A2A /* LibraryViewModel.swift in Sources */,
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
-				62133895266096EF00A81A2A /* LibraryListViewModel.swift in Sources */,
 				535870AD2669D8DD00D05A09 /* Typings.swift in Sources */,
-				6273DD48265F41B3009C1D0B /* JellyfinAPIOld.swift in Sources */,
 				53C4404E266C75C70049424C /* HandleAPIRequestCompletion.swift in Sources */,
 				5377CBF7263B596A003A4E83 /* ContentView.swift in Sources */,
-				53987CA82657424A00E7EA70 /* EpisodeItemView.swift in Sources */,
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
-				53987CA626572F0700E7EA70 /* SeriesItemView.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
-				AE8C3156265D616A008AA076 /* SettingsViewModel.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
-				6273DD4E265F47B2009C1D0B /* LibrarySearchViewModel.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,
 				53892772263C8C6F0035E14B /* LoadingView.swift in Sources */,
@@ -868,28 +769,12 @@
 				minimumVersion = 0.1.3;
 			};
 		};
-		5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Kitura/SwiftyRequest";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.2.200;
-			};
-		};
 		5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 19.0.0;
-			};
-		};
-		53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.1;
 			};
 		};
 		53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
@@ -908,14 +793,6 @@
 				kind = branch;
 			};
 		};
-		6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Moya/Moya";
-			requirement = {
-				kind = exactVersion;
-				version = "15.0.0-alpha.1";
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -924,65 +801,25 @@
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
 		};
-		5338F753263B65E10014BF09 /* SwiftyRequest */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */;
-			productName = SwiftyRequest;
-		};
 		5338F756263B7E2E0014BF09 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
-		};
-		5358708A2669D7A800D05A09 /* SwiftyRequest */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5338F752263B65E10014BF09 /* XCRemoteSwiftPackageReference "SwiftyRequest" */;
-			productName = SwiftyRequest;
 		};
 		5358708C2669D7A800D05A09 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
 		};
-		5358708E2669D7A800D05A09 /* SwiftyJSON */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
-			productName = SwiftyJSON;
-		};
 		535870902669D7A800D05A09 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
 		};
-		535870922669D7A800D05A09 /* CombineMoya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = CombineMoya;
-		};
-		535870942669D7A800D05A09 /* Moya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = Moya;
-		};
-		535870962669D7A800D05A09 /* ReactiveMoya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = ReactiveMoya;
-		};
-		535870982669D7A800D05A09 /* RxMoya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = RxMoya;
-		};
 		5358709A2669D7A800D05A09 /* NukeUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */;
 			productName = NukeUI;
-		};
-		53892779263CBFE70035E14B /* SwiftyJSON */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53892778263CBFE70035E14B /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
-			productName = SwiftyJSON;
 		};
 		53A431BC266B0FF20016769F /* JellyfinAPI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -998,16 +835,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */;
 			productName = NukeUI;
-		};
-		6273DD42265F4195009C1D0B /* Moya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = Moya;
-		};
-		6273DD44265F4195009C1D0B /* CombineMoya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6273DD41265F4195009C1D0B /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = CombineMoya;
 		};
 /* End XCSwiftPackageProductDependency section */
 

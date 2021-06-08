@@ -6,146 +6,32 @@
  */
 
 import SwiftUI
-import SwiftyJSON
-import SwiftyRequest
 import NukeUI
-
-class DetailItem: ObservableObject {
-    @Published
-    var Name: String = ""
-    @Published
-    var Id: String = ""
-    @Published
-    var IndexNumber: Int? = nil
-    @Published
-    var ParentIndexNumber: Int? = nil
-    @Published
-    var Poster: String = ""
-    @Published
-    var Backdrop: String = ""
-    @Published
-    var PosterBlurHash: String = ""
-    @Published
-    var BackdropBlurHash: String = ""
-    @Published
-    var `Type`: String = ""
-    @Published
-    var SeasonId: String? = nil
-    @Published
-    var SeriesId: String? = nil
-    @Published
-    var SeriesName: String? = nil
-    @Published
-    var ItemProgress: Double = 0
-    @Published
-    var ItemBadge: Int? = 0
-    @Published
-    var ProductionYear: Int = 1999
-    @Published
-    var Runtime: String = ""
-    @Published
-    var RuntimeTicks: Int = 0
-    @Published
-    var Cast: [CastMember] = []
-    @Published
-    var OfficialRating: String = ""
-    @Published
-    var Progress: Double = 0
-    @Published
-    var Watched: Bool = false
-    @Published
-    var Overview: String = ""
-    @Published
-    var Tagline: String = ""
-    @Published
-    var Directors: [String] = []
-    @Published
-    var Writers: [String] = []
-    @Published
-    var CriticRating: String = ""
-    @Published
-    var CommunityRating: String = ""
-    @Published
-    var Studios: [String] = []
-    @Published
-    var ParentId: String = ""
-    @Published
-    var Genres: [IVGenre] = []
-    @Published
-    var ProgressStr: String = ""
-    @Published
-    var ResumeItem: ResumeItem? = nil
-    @Published
-    var ParentBackdropItemId: String = ""
-}
-
-class IVGenre: ObservableObject {
-    @Published
-    var Id: String = ""
-    @Published
-    var Name: String = ""
-}
-
-class CastMember: ObservableObject {
-    @Published
-    var Name: String = ""
-    @Published
-    var Role: String = ""
-    @Published
-    var ImageBlurHash: String = ""
-    @Published
-    var Id: String = ""
-    @Published
-    var Image = URL(string: "https://example.com")!
-}
+import JellyfinAPI
 
 struct MovieItemView: View {
-    @EnvironmentObject
-    private var globalData: GlobalData
-    @EnvironmentObject
-    private var orientationInfo: OrientationInfo
-    @EnvironmentObject
-    private var playbackInfo: ItemPlayback
+    @EnvironmentObject private var globalData: GlobalData
+    @EnvironmentObject private var orientationInfo: OrientationInfo
+    @EnvironmentObject private var playbackInfo: VideoPlayerItem
 
-    @State
-    private var isLoading: Bool = true
-
-    var item: ResumeItem
-    var fullItem: DetailItem
-
-    @State
-    private var progressString: String = ""
-    @State
-    private var viewDidLoad: Bool = false
-    @State
-    private var watched: Bool = false {
+    var item: BaseItemDto
+    
+    @State private var watched: Bool = false {
         didSet {
             if watched == true {
-                let date = Date()
-                let formatter = DateFormatter()
-                formatter.locale = Locale(identifier: "en_US_POSIX")
-                formatter.timeZone = TimeZone(secondsFromGMT: 0)
-                print((globalData.server.baseURI ?? "") +
-                    "/Users/\(globalData.user.user_id ?? "")/PlayedItems/\(fullItem.Id)?DatePlayed=\(formatter.string(from: date).replacingOccurrences(of: ":", with: "%3A"))")
-                let request = RestRequest(method: .post,
-                                          url: (globalData.server.baseURI ?? "") +
-                                              "/Users/\(globalData.user.user_id ?? "")/PlayedItems/\(fullItem.Id)?DatePlayed=\(formatter.string(from: date).replacingOccurrences(of: ":", with: "%3A"))")
-                request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-                request.contentType = "application/json"
-                request.acceptType = "application/json"
-
-                request.responseData { (_: Result<RestResponse<Data>, RestError>) in
-                }
+                PlaystateAPI.markPlayedItem(userId: globalData.user.user_id!, itemId: item.id!)
+                    .sink(receiveCompletion: { completion in
+                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    }, receiveValue: { _ in
+                    })
+                    .store(in: &globalData.pendingAPIRequests)
             } else {
-                let request = RestRequest(method: .delete,
-                                          url: (globalData.server.baseURI ?? "") +
-                                              "/Users/\(globalData.user.user_id ?? "")/PlayedItems/\(fullItem.Id)")
-                request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-                request.contentType = "application/json"
-                request.acceptType = "application/json"
-
-                request.responseData { (_: Result<RestResponse<Data>, RestError>) in
-                }
+                PlaystateAPI.markUnplayedItem(userId: globalData.user.user_id!, itemId: item.id!)
+                    .sink(receiveCompletion: { completion in
+                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    }, receiveValue: { _ in
+                    })
+                    .store(in: &globalData.pendingAPIRequests)
             }
         }
     }
@@ -154,150 +40,27 @@ struct MovieItemView: View {
     private var favorite: Bool = false {
         didSet {
             if favorite == true {
-                let request = RestRequest(method: .post,
-                                          url: (globalData.server.baseURI ?? "") +
-                                              "/Users/\(globalData.user.user_id ?? "")/FavoriteItems/\(fullItem.Id)")
-                request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-                request.contentType = "application/json"
-                request.acceptType = "application/json"
-
-                request.responseData { (_: Result<RestResponse<Data>, RestError>) in
-                }
+                UserLibraryAPI.markFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
+                    .sink(receiveCompletion: { completion in
+                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    }, receiveValue: { _ in
+                    })
+                    .store(in: &globalData.pendingAPIRequests)
             } else {
-                let request = RestRequest(method: .delete,
-                                          url: (globalData.server.baseURI ?? "") +
-                                              "/Users/\(globalData.user.user_id ?? "")/FavoriteItems/\(fullItem.Id)")
-                request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-                request.contentType = "application/json"
-                request.acceptType = "application/json"
-
-                request.responseData { (_: Result<RestResponse<Data>, RestError>) in
-                }
-            }
-        }
-    }
-
-    init(item: ResumeItem) {
-        self.item = item
-        self.fullItem = DetailItem()
-    }
-
-    func loadData() {
-        if _viewDidLoad.wrappedValue == true {
-            return
-        }
-        _viewDidLoad.wrappedValue = true
-        let url = "/Users/\(globalData.user.user_id ?? "")/Items/\(item.Id)"
-
-        let request = RestRequest(method: .get, url: (globalData.server.baseURI ?? "") + url)
-        request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-        request.contentType = "application/json"
-        request.acceptType = "application/json"
-
-        request.responseData { (result: Result<RestResponse<Data>, RestError>) in
-            switch result {
-            case let .success(response):
-                let body = response.body
-                do {
-                    let json = try JSON(data: body)
-                    fullItem.ProductionYear = json["ProductionYear"].int ?? 0
-                    fullItem.Poster = json["ImageTags"]["Primary"].string ?? ""
-                    fullItem.PosterBlurHash = json["ImageBlurHashes"]["Primary"][fullItem.Poster].string ?? ""
-                    fullItem.Backdrop = json["BackdropImageTags"][0].string ?? ""
-                    fullItem.BackdropBlurHash = json["ImageBlurHashes"]["Backdrop"][fullItem.Backdrop].string ?? ""
-                    fullItem.Name = json["Name"].string ?? ""
-                    fullItem.Type = json["Type"].string ?? ""
-                    fullItem.IndexNumber = json["IndexNumber"].int ?? nil
-                    fullItem.Id = json["Id"].string ?? ""
-                    fullItem.ParentIndexNumber = json["ParentIndexNumber"].int ?? nil
-                    fullItem.SeasonId = json["SeasonId"].string ?? nil
-                    fullItem.SeriesId = json["SeriesId"].string ?? nil
-                    fullItem.Overview = json["Overview"].string ?? ""
-                    fullItem.Tagline = json["Taglines"][0].string ?? ""
-                    fullItem.SeriesName = json["SeriesName"].string ?? nil
-                    fullItem.Progress = Double(json["UserData"]["PlaybackPositionTicks"].int ?? 0)
-                    fullItem.OfficialRating = json["OfficialRating"].string ?? "PG-13"
-                    fullItem.Watched = json["UserData"]["Played"].bool ?? false
-                    fullItem.CommunityRating = String(json["CommunityRating"].float ?? 0.0)
-                    fullItem.CriticRating = String(json["CriticRating"].int ?? 0)
-                    fullItem.ParentId = json["ParentId"].string ?? ""
-                    // People
-                    fullItem.Directors = []
-                    fullItem.Studios = []
-                    fullItem.Writers = []
-                    fullItem.Cast = []
-                    fullItem.Genres = []
-
-                    for (_, person): (String, JSON) in json["People"] {
-                        if person["Type"].stringValue == "Director" {
-                            fullItem.Directors.append(person["Name"].string ?? "")
-                        } else if person["Type"].stringValue == "Writer" {
-                            fullItem.Writers.append(person["Name"].string ?? "")
-                        } else if person["Type"].stringValue == "Actor" {
-                            let cast = CastMember()
-                            cast.Name = person["Name"].string ?? ""
-                            cast.Id = person["Id"].string ?? ""
-                            let imageTag = person["PrimaryImageTag"].string ?? ""
-                            cast.ImageBlurHash = person["ImageBlurHashes"]["Primary"][imageTag].string ?? ""
-                            cast.Role = person["Role"].string ?? ""
-                            cast
-                                .Image =
-                                URL(string: "\(globalData.server.baseURI ?? "")/Items/\(cast.Id)/Images/Primary?maxWidth=250&quality=85&tag=\(imageTag)")!
-                            fullItem.Cast.append(cast)
-                        }
-                    }
-
-                    // Studios
-                    for (_, studio): (String, JSON) in json["Studios"] {
-                        fullItem.Studios.append(studio["Name"].string ?? "")
-                    }
-
-                    // Genres
-                    for (_, genre): (String, JSON) in json["GenreItems"] {
-                        let tmpGenre = IVGenre()
-                        tmpGenre.Id = genre["Id"].string ?? ""
-                        tmpGenre.Name = genre["Name"].string ?? ""
-                        fullItem.Genres.append(tmpGenre)
-                    }
-
-                    _watched.wrappedValue = fullItem.Watched
-                    _favorite.wrappedValue = json["UserData"]["IsFavorite"].bool ?? false
-
-                    // Process runtime
-                    let seconds: Int = ((json["RunTimeTicks"].int ?? 0) / 10_000_000)
-                    fullItem.RuntimeTicks = json["RunTimeTicks"].int ?? 0
-                    let hours = (seconds / 3600)
-                    let minutes = ((seconds - (hours * 3600)) / 60)
-                    if hours != 0 {
-                        fullItem.Runtime = "\(hours):\(String(minutes).leftPad(toWidth: 2, withString: "0"))"
-                    } else {
-                        fullItem.Runtime = "\(String(minutes).leftPad(toWidth: 2, withString: "0"))m"
-                    }
-
-                    if fullItem.Progress != 0 {
-                        let remainingSecs = (Double(json["RunTimeTicks"].int ?? 0) - fullItem.Progress) / 10_000_000
-                        let proghours = Int(remainingSecs / 3600)
-                        let progminutes = Int((Int(remainingSecs) - (proghours * 3600)) / 60)
-                        if proghours != 0 {
-                            _progressString.wrappedValue = "\(proghours):\(String(progminutes).leftPad(toWidth: 2, withString: "0"))"
-                        } else {
-                            _progressString.wrappedValue = "\(String(progminutes).leftPad(toWidth: 2, withString: "0"))m"
-                        }
-                    }
-                    _isLoading.wrappedValue = false
-                } catch {}
-            case let .failure(error):
-                debugPrint(error)
+                UserLibraryAPI.unmarkFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
+                    .sink(receiveCompletion: { completion in
+                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    }, receiveValue: { _ in
+                    })
+                    .store(in: &globalData.pendingAPIRequests)
             }
         }
     }
 
     var portraitHeaderView: some View {
-        LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=550&quality=90&tag=\(fullItem.Backdrop)"))
+        LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 1200))
             .placeholderAndFailure {
-                Image(uiImage: UIImage(blurHash: fullItem
-                        .BackdropBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
-                        .BackdropBlurHash,
+                Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(),
                     size: CGSize(width: 32, height: 32))!)
                     .resizable()
             }
@@ -309,11 +72,9 @@ struct MovieItemView: View {
     var portraitHeaderOverlayView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
-                LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
+                LazyImage(source: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120))
                     .placeholderAndFailure {
-                        Image(uiImage: UIImage(blurHash: fullItem
-                                .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
-                                fullItem.PosterBlurHash,
+                        Image(uiImage: UIImage(blurHash: item.getPrimaryImageBlurHash(),
                             size: CGSize(width: 32, height: 32))!)
                             .resizable()
                             .frame(width: 120, height: 180)
@@ -324,22 +85,22 @@ struct MovieItemView: View {
                     .cornerRadius(10)
                 VStack(alignment: .leading) {
                     Spacer()
-                    Text(fullItem.Name).font(.headline)
+                    Text(item.name!).font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                         .offset(y: -4)
                     HStack {
-                        Text(String(fullItem.ProductionYear)).font(.subheadline)
+                        Text(String(item.productionYear ?? 0)).font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                        Text(fullItem.Runtime).font(.subheadline)
+                        Text(item.getItemRuntime()).font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                        if fullItem.OfficialRating != "" {
-                            Text(fullItem.OfficialRating).font(.subheadline)
+                        if item.officialRating != "" {
+                            Text(item.officialRating!).font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
@@ -354,11 +115,11 @@ struct MovieItemView: View {
             HStack {
                 // Play button
                 Button {
-                    self.playbackInfo.itemToPlay = fullItem
-                    self.playbackInfo.shouldPlay = true
+                    self.playbackInfo.itemToPlay = item
+                    self.playbackInfo.shouldShowPlayer = true
                 } label: {
                     HStack {
-                        Text(fullItem.Progress == 0 ? "Play" : "\(progressString) left")
+                        Text(item.getItemProgressString() == "" ? "Play" : "\(item.getItemProgressString()) left")
                             .foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
                         Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
                     }
@@ -398,349 +159,310 @@ struct MovieItemView: View {
     }
 
     var body: some View {
-        LoadingView(isShowing: $isLoading) {
-            VStack(alignment: .leading) {
-                if !isLoading {
-                    if orientationInfo.orientation == .portrait {
-                        ParallaxHeaderScrollView(header: portraitHeaderView,
-                                                 staticOverlayView: portraitHeaderOverlayView,
-                                                 overlayAlignment: .bottomLeading,
-                                                 headerHeight: UIDevice.current
-                                                     .userInterfaceIdiom == .pad ? 350 :
-                                                     UIScreen.main.bounds.width * 0.5625) {
-                            VStack(alignment: .leading) {
-                                Spacer()
-                                    .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 135 : 40)
-                                    .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 54 : 24)
-                                if fullItem.Tagline != "" {
-                                    Text(fullItem.Tagline).font(.body).italic().padding(.top, 7)
-                                        .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
-                                        .padding(.trailing, 16)
-                                }
-                                Text(fullItem.Overview).font(.footnote).padding(.top, 3)
-                                    .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
-                                    .padding(.trailing, 16)
-                                if !fullItem.Genres.isEmpty {
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack {
-                                            Text("Genres:").font(.callout).fontWeight(.semibold)
-                                            ForEach(fullItem.Genres, id: \.Id) { genre in
-                                                NavigationLink(destination: LazyView {
-                                                    LibraryView(viewModel: .init(filter: Filter(genres: [
-                                                        genre
-                                                            .Name,
-                                                    ])),
-                                                    title: genre.Name)
-                                                }) {
-                                                    Text(genre.Name).font(.footnote)
-                                                }
-                                            }
-                                        }.padding(.leading, 16).padding(.trailing, 16)
+        VStack(alignment: .leading) {
+            if orientationInfo.orientation == .portrait {
+                ParallaxHeaderScrollView(header: portraitHeaderView, staticOverlayView: portraitHeaderOverlayView, overlayAlignment: .bottomLeading, headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds.width * 0.5625) {
+                    VStack(alignment: .leading) {
+                        Spacer()
+                            .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 135 : 40)
+                            .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 54 : 24)
+                        if !(item.taglines ?? []).isEmpty {
+                            Text(item.taglines!.first!).font(.body).italic().padding(.top, 7)
+                                .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
+                                .padding(.trailing, 16)
+                        }
+                        Text(item.overview ?? "").font(.footnote).padding(.top, 3)
+                            .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
+                            .padding(.trailing, 16)
+                        if !(item.genreItems ?? []).isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack {
+                                    Text("Genres:").font(.callout).fontWeight(.semibold)
+                                    ForEach(item.genreItems!, id: \.id) { genre in
+                                        NavigationLink(destination: LazyView {
+                                            LibraryView(withGenre: genre)
+                                        }) {
+                                            Text(genre.name ?? "").font(.footnote)
+                                        }
                                     }
-                                }
-                                if !fullItem.Cast.isEmpty {
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        VStack {
-                                            Spacer().frame(height: 8)
-                                            HStack {
-                                                Spacer().frame(width: 16)
-                                                ForEach(fullItem.Cast, id: \.Id) { cast in
-                                                    NavigationLink(destination: LazyView {
-                                                        LibraryView(viewModel: .init(filter: Filter(personIds: [
-                                                            cast
-                                                                .Id,
-                                                        ])), title: cast.Name)
-                                                    }) {
-                                                        VStack {
-                                                            LazyImage(source: cast.Image)
-                                                                .placeholderAndFailure {
-                                                                    Image(uiImage: UIImage(blurHash: cast
-                                                                            .ImageBlurHash == "" ?
-                                                                            "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
-                                                                            cast.ImageBlurHash,
-                                                                        size: CGSize(width: 16,
-                                                                                     height: 16))!)
-                                                                        .resizable()
-                                                                        .aspectRatio(contentMode: .fill)
-                                                                        .frame(width: 100, height: 100)
-                                                                        .cornerRadius(10)
-                                                                }
-                                                                .contentMode(.aspectFill)
-                                                                .frame(width: 100, height: 100)
-                                                                .cornerRadius(10)
-                                                            Text(cast.Name).font(.footnote).fontWeight(.regular).lineLimit(1)
-                                                                .frame(width: 100).foregroundColor(Color.primary)
-                                                            if cast.Role != "" {
-                                                                Text(cast.Role).font(.caption).fontWeight(.medium).lineLimit(1)
-                                                                    .foregroundColor(Color.secondary).frame(width: 100)
+                                }.padding(.leading, 16).padding(.trailing, 16)
+                            }
+                        }
+                        if !(item.people ?? []).isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                VStack {
+                                    Spacer().frame(height: 8)
+                                    HStack {
+                                        Spacer().frame(width: 16)
+                                        ForEach(item.people!, id: \.self) { person in
+                                            if(person.type! == "Actor") {
+                                                NavigationLink(destination: LazyView {
+                                                    LibraryView(withPerson: person)
+                                                }) {
+                                                    VStack {
+                                                        LazyImage(source: person.getImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
+                                                            .placeholderAndFailure {
+                                                                Image(uiImage: UIImage(blurHash: person.getBlurHash(),
+                                                                    size: CGSize(width: 16,
+                                                                                 height: 16))!)
+                                                                    .resizable()
+                                                                    .aspectRatio(contentMode: .fill)
+                                                                    .frame(width: 100, height: 100)
+                                                                    .cornerRadius(10)
                                                             }
+                                                            .contentMode(.aspectFill)
+                                                            .frame(width: 100, height: 100)
+                                                            .cornerRadius(10)
+                                                        Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
+                                                            .frame(width: 100).foregroundColor(Color.primary)
+                                                        if person.role != "" {
+                                                            Text(person.role!).font(.caption).fontWeight(.medium).lineLimit(1)
+                                                                .foregroundColor(Color.secondary).frame(width: 100)
                                                         }
                                                     }
-                                                    Spacer().frame(width: 10)
                                                 }
-                                                Spacer().frame(width: 16)
+                                                Spacer().frame(width: 10)
                                             }
                                         }
-                                    }.padding(.top, -3)
+                                        Spacer().frame(width: 16)
+                                    }
                                 }
-                                if !fullItem.Directors.isEmpty {
-                                    HStack {
-                                        Text("Directors:").font(.callout).fontWeight(.semibold)
-                                        Text(fullItem.Directors.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                            .foregroundColor(Color.secondary)
-                                    }.padding(.leading, 16).padding(.trailing, 16)
-                                }
-                                if !fullItem.Writers.isEmpty {
-                                    HStack {
-                                        Text("Writers:").font(.callout).fontWeight(.semibold)
-                                        Text(fullItem.Writers.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                            .foregroundColor(Color.secondary)
-                                    }.padding(.leading, 16).padding(.trailing, 16)
-                                }
-                                if !fullItem.Studios.isEmpty {
-                                    HStack {
-                                        Text("Studios:").font(.callout).fontWeight(.semibold)
-                                        Text(fullItem.Studios.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                            .foregroundColor(Color.secondary)
-                                    }.padding(.leading, 16).padding(.trailing, 16)
-                                }
-                                Spacer().frame(height: 3)
+                            }.padding(.top, -3)
+                        }
+                        if !(item.studios ?? []).isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack {
+                                    Text("Studios:").font(.callout).fontWeight(.semibold)
+                                    ForEach(item.studios!, id: \.id) { studio in
+                                        NavigationLink(destination: LazyView {
+                                            LibraryView(withStudio: studio)
+                                        }) {
+                                            Text(studio.name ?? "").font(.footnote)
+                                        }
+                                    }
+                                }.padding(.leading, 16).padding(.trailing, 16)
                             }
                         }
-                    } else {
-                        GeometryReader { geometry in
-                            ZStack {
-                                LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.Id)/Images/Backdrop?maxWidth=\(String(Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))&quality=80&tag=\(fullItem.Backdrop)"))
+                        Spacer().frame(height: 3)
+                    }
+                }
+            } else {
+                GeometryReader { geometry in
+                    ZStack {
+                        LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))
+                            .placeholderAndFailure {
+                                Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(),
+                                    size: CGSize(width: 16, height: 16))!)
+                                    .resizable()
+                                    .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets
+                                        .trailing,
+                                        height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets
+                                            .bottom)
+                            }
+                            .contentMode(.aspectFill)
+
+                            .opacity(0.3)
+                            .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
+                                   height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
+                            .edgesIgnoringSafeArea(.all)
+                            .blur(radius: 2)
+                        HStack {
+                            VStack {
+                                LazyImage(source: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120))
                                     .placeholderAndFailure {
-                                        Image(uiImage: UIImage(blurHash: fullItem
-                                                .BackdropBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" : fullItem
-                                                .BackdropBlurHash,
+                                        Image(uiImage: UIImage(blurHash: item.getPrimaryImageBlurHash(),
                                             size: CGSize(width: 16, height: 16))!)
                                             .resizable()
-                                            .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets
-                                                .trailing,
-                                                height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets
-                                                    .bottom)
-                                    }
-                                    .contentMode(.aspectFill)
-
-                                    .opacity(0.3)
-                                    .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
-                                           height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
-                                    .edgesIgnoringSafeArea(.all)
-                                    .blur(radius: 2)
-                                HStack {
-                                    VStack {
-                                        LazyImage(source: URL(string: "\(globalData.server.baseURI ?? "")/Items/\(fullItem.Id)/Images/Primary?maxWidth=250&quality=90&tag=\(fullItem.Poster)"))
-                                            .placeholderAndFailure {
-                                                Image(uiImage: UIImage(blurHash: fullItem
-                                                        .PosterBlurHash == "" ? "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
-                                                        fullItem.PosterBlurHash,
-                                                    size: CGSize(width: 16, height: 16))!)
-                                                    .resizable()
-                                                    .frame(width: 120, height: 180)
-                                            }
                                             .frame(width: 120, height: 180)
-                                            .cornerRadius(10)
-                                            .shadow(radius: 5)
-                                        Spacer().frame(height: 15)
-                                        Button {
-                                            self.playbackInfo.itemToPlay = fullItem
-                                            self.playbackInfo.shouldPlay = true
-                                        } label: {
-                                            HStack {
-                                                Text(fullItem.Progress == 0 ? "Play" : "\(progressString) left")
-                                                    .foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
-                                                Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
-                                            }
-                                            .frame(width: 120, height: 35)
-                                            .background(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255))
-                                            .cornerRadius(10)
-                                        }.buttonStyle(PlainButtonStyle())
-                                            .frame(width: 120, height: 35)
-                                        Spacer()
                                     }
-                                    ScrollView {
+                                    .frame(width: 120, height: 180)
+                                    .cornerRadius(10)
+                                    .shadow(radius: 5)
+                                Spacer().frame(height: 15)
+                                Button {
+                                    self.playbackInfo.itemToPlay = item
+                                    self.playbackInfo.shouldShowPlayer = true
+                                } label: {
+                                    HStack {
+                                        Text(item.getItemProgressString() == "" ? "Play" : "\(item.getItemProgressString()) left")
+                                            .foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
+                                        Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
+                                    }
+                                    .frame(width: 120, height: 35)
+                                    .background(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255))
+                                    .cornerRadius(10)
+                                }.buttonStyle(PlainButtonStyle())
+                                    .frame(width: 120, height: 35)
+                                Spacer()
+                            }
+                            ScrollView {
+                                VStack(alignment: .leading) {
+                                    HStack {
                                         VStack(alignment: .leading) {
+                                            Text(item.name ?? "").font(.headline)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(.primary)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                                .offset(x: 14, y: 0)
+                                            Spacer().frame(height: 1)
                                             HStack {
-                                                VStack(alignment: .leading) {
-                                                    Text(fullItem.Name).font(.headline)
+                                                Text(String(item.productionYear ?? 0)).font(.subheadline)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.secondary)
+                                                    .lineLimit(1)
+                                                Text(item.getItemRuntime()).font(.subheadline)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.secondary)
+                                                    .lineLimit(1)
+                                                if item.officialRating != nil {
+                                                    Text(item.officialRating!).font(.subheadline)
                                                         .fontWeight(.semibold)
-                                                        .foregroundColor(.primary)
-                                                        .fixedSize(horizontal: false, vertical: true)
-                                                        .offset(x: 14, y: 0)
-                                                    Spacer().frame(height: 1)
+                                                        .foregroundColor(.secondary)
+                                                        .lineLimit(1)
+                                                        .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                                        .overlay(RoundedRectangle(cornerRadius: 2)
+                                                            .stroke(Color.secondary, lineWidth: 1))
+                                                }
+                                                if item.communityRating != nil {
                                                     HStack {
-                                                        Text(String(fullItem.ProductionYear)).font(.subheadline)
-                                                            .fontWeight(.medium)
+                                                        Image(systemName: "star").foregroundColor(.secondary)
+                                                        Text(String(item.communityRating!)).font(.subheadline)
+                                                            .fontWeight(.semibold)
                                                             .foregroundColor(.secondary)
                                                             .lineLimit(1)
-                                                        Text(fullItem.Runtime).font(.subheadline)
-                                                            .fontWeight(.medium)
-                                                            .foregroundColor(.secondary)
-                                                            .lineLimit(1)
-                                                        if fullItem.OfficialRating != "" {
-                                                            Text(fullItem.OfficialRating).font(.subheadline)
-                                                                .fontWeight(.semibold)
-                                                                .foregroundColor(.secondary)
-                                                                .lineLimit(1)
-                                                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                                                                .overlay(RoundedRectangle(cornerRadius: 2)
-                                                                    .stroke(Color.secondary, lineWidth: 1))
-                                                        }
-                                                        if fullItem.CommunityRating != "0" {
-                                                            HStack {
-                                                                Image(systemName: "star").foregroundColor(.secondary)
-                                                                Text(fullItem.CommunityRating).font(.subheadline)
-                                                                    .fontWeight(.semibold)
-                                                                    .foregroundColor(.secondary)
-                                                                    .lineLimit(1)
-                                                                    .offset(x: -7, y: 0.7)
-                                                            }
-                                                        }
-                                                        Spacer()
-                                                    }.frame(maxWidth: .infinity, alignment: .leading)
-                                                        .offset(x: 14)
-                                                }.frame(maxWidth: .infinity, alignment: .leading)
+                                                            .offset(x: -7, y: 0.7)
+                                                    }
+                                                }
                                                 Spacer()
+                                            }.frame(maxWidth: .infinity, alignment: .leading)
+                                                .offset(x: 14)
+                                        }.frame(maxWidth: .infinity, alignment: .leading)
+                                        Spacer()
+                                        HStack {
+                                            Button {
+                                                favorite.toggle()
+                                            } label: {
+                                                if !favorite {
+                                                    Image(systemName: "heart").foregroundColor(Color.primary)
+                                                        .font(.system(size: 20))
+                                                } else {
+                                                    Image(systemName: "heart.fill").foregroundColor(Color(UIColor.systemRed))
+                                                        .font(.system(size: 20))
+                                                }
+                                            }
+                                            Button {
+                                                watched.toggle()
+                                            } label: {
+                                                if watched {
+                                                    Image(systemName: "checkmark.rectangle.fill").foregroundColor(Color.primary)
+                                                        .font(.system(size: 20))
+                                                } else {
+                                                    Image(systemName: "xmark.rectangle").foregroundColor(Color.primary)
+                                                        .font(.system(size: 20))
+                                                }
+                                            }
+                                        }
+                                    }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                                    if !(item.taglines ?? []).isEmpty {
+                                        Text(item.taglines!.first!).font(.body).italic().padding(.top, 3)
+                                            .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
+                                            .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                                    }
+                                    Text(item.overview ?? "").font(.footnote).padding(.top, 3)
+                                        .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
+                                        .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                                    if !(item.genreItems ?? []).isEmpty {
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            HStack {
+                                                Text("Genres:").font(.callout).fontWeight(.semibold)
+                                                ForEach(item.genreItems!, id: \.id) { genre in
+                                                    NavigationLink(destination: LazyView {
+                                                        LibraryView(withGenre: genre)
+                                                    }) {
+                                                        Text(genre.name ?? "").font(.footnote)
+                                                    }
+                                                }
+                                            }
+                                            .padding(.leading, 16)
+                                            .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                                        }
+                                    }
+                                    if !(item.people ?? []).isEmpty {
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            VStack {
+                                                Spacer().frame(height: 8)
                                                 HStack {
-                                                    Button {
-                                                        favorite.toggle()
-                                                    } label: {
-                                                        if !favorite {
-                                                            Image(systemName: "heart").foregroundColor(Color.primary)
-                                                                .font(.system(size: 20))
-                                                        } else {
-                                                            Image(systemName: "heart.fill").foregroundColor(Color(UIColor.systemRed))
-                                                                .font(.system(size: 20))
-                                                        }
-                                                    }
-                                                    Button {
-                                                        watched.toggle()
-                                                    } label: {
-                                                        if watched {
-                                                            Image(systemName: "checkmark.rectangle.fill").foregroundColor(Color.primary)
-                                                                .font(.system(size: 20))
-                                                        } else {
-                                                            Image(systemName: "xmark.rectangle").foregroundColor(Color.primary)
-                                                                .font(.system(size: 20))
-                                                        }
-                                                    }
-                                                }
-                                            }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                            if fullItem.Tagline != "" {
-                                                Text(fullItem.Tagline).font(.body).italic().padding(.top, 3)
-                                                    .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
-                                                    .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                            }
-                                            Text(fullItem.Overview).font(.footnote).padding(.top, 3)
-                                                .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
-                                                .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                            if !fullItem.Genres.isEmpty {
-                                                ScrollView(.horizontal, showsIndicators: false) {
-                                                    HStack {
-                                                        Text("Genres:").font(.callout).fontWeight(.semibold)
-                                                        ForEach(fullItem.Genres, id: \.Id) { genre in
+                                                    Spacer().frame(width: 16)
+                                                    ForEach(item.people!, id: \.self) { person in
+                                                        if(person.type! == "Actor") {
                                                             NavigationLink(destination: LazyView {
-                                                                LibraryView(viewModel: .init(filter: Filter(genres: [
-                                                                    genre
-                                                                        .Name,
-                                                                ])),
-                                                                title: genre.Name)
+                                                                LibraryView(withPerson: person)
                                                             }) {
-                                                                Text(genre.Name).font(.footnote)
-                                                            }
-                                                        }
-                                                    }.padding(.leading, 16)
-                                                        .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                                }
-                                            }
-                                            if !fullItem.Cast.isEmpty {
-                                                ScrollView(.horizontal, showsIndicators: false) {
-                                                    VStack {
-                                                        Spacer().frame(height: 8)
-                                                        HStack {
-                                                            Spacer().frame(width: 16)
-                                                            ForEach(fullItem.Cast, id: \.Id) { cast in
-                                                                NavigationLink(destination: LazyView {
-                                                                    LibraryView(viewModel: .init(filter: Filter(personIds: [
-                                                                        cast
-                                                                            .Id,
-                                                                    ])), title: cast.Name)
-                                                                }) {
-                                                                    VStack {
-                                                                        LazyImage(source: cast.Image)
-                                                                            .placeholderAndFailure {
-                                                                                Image(uiImage: UIImage(blurHash: cast
-                                                                                        .ImageBlurHash == "" ?
-                                                                                        "W$H.4}D%bdo#a#xbtpxVW?W?jXWsXVt7Rjf5axWqxbWXnhada{s-" :
-                                                                                        cast.ImageBlurHash,
-                                                                                    size: CGSize(width: 16,
-                                                                                                 height: 16))!)
-                                                                                    .resizable()
-                                                                                    .aspectRatio(contentMode: .fill)
-                                                                                    .frame(width: 100, height: 100)
-                                                                                    .cornerRadius(10)
-                                                                            }
-                                                                            .contentMode(.aspectFill)
-                                                                            .frame(width: 100, height: 100)
-                                                                            .cornerRadius(10)
-                                                                        Text(cast.Name).font(.footnote).fontWeight(.regular).lineLimit(1)
-                                                                            .frame(width: 100).foregroundColor(Color.primary)
-                                                                        if cast.Role != "" {
-                                                                            Text(cast.Role).font(.caption).fontWeight(.medium).lineLimit(1)
-                                                                                .foregroundColor(Color.secondary).frame(width: 100)
+                                                                VStack {
+                                                                    LazyImage(source: person.getImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
+                                                                        .placeholderAndFailure {
+                                                                            Image(uiImage: UIImage(blurHash: person.getBlurHash(),
+                                                                                size: CGSize(width: 16,
+                                                                                             height: 16))!)
+                                                                                .resizable()
+                                                                                .aspectRatio(contentMode: .fill)
+                                                                                .frame(width: 100, height: 100)
+                                                                                .cornerRadius(10)
                                                                         }
+                                                                        .contentMode(.aspectFill)
+                                                                        .frame(width: 100, height: 100)
+                                                                        .cornerRadius(10)
+                                                                    Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
+                                                                        .frame(width: 100).foregroundColor(Color.primary)
+                                                                    if person.role != "" {
+                                                                        Text(person.role!).font(.caption).fontWeight(.medium).lineLimit(1)
+                                                                            .foregroundColor(Color.secondary).frame(width: 100)
                                                                     }
                                                                 }
-                                                                Spacer().frame(width: 10)
                                                             }
-                                                            Spacer().frame(width: 55)
+                                                            Spacer().frame(width: 10)
                                                         }
                                                     }
-                                                }.padding(.top, -3)
-                                                    .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? -55 : 0)
+                                                    Spacer().frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                                                }
                                             }
-                                            if !fullItem.Directors.isEmpty {
-                                                HStack {
-                                                    Text("Directors:").font(.callout).fontWeight(.semibold)
-                                                    Text(fullItem.Directors.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                                        .foregroundColor(Color.secondary)
-                                                }.padding(.leading, 16)
-                                                    .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                            }
-                                            if !fullItem.Writers.isEmpty {
-                                                HStack {
-                                                    Text("Writers:").font(.callout).fontWeight(.semibold)
-                                                    Text(fullItem.Writers.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                                        .foregroundColor(Color.secondary)
-                                                }.padding(.leading, 16)
-                                                    .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                            }
-                                            if !fullItem.Studios.isEmpty {
-                                                HStack {
-                                                    Text("Studios:").font(.callout).fontWeight(.semibold)
-                                                    Text(fullItem.Studios.joined(separator: ", ")).font(.footnote).lineLimit(1)
-                                                        .foregroundColor(Color.secondary)
-                                                }.padding(.leading, 16)
-                                                    .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                            }
-                                            Spacer().frame(height: 195)
-                                        }.frame(maxHeight: .infinity)
+                                        }.padding(.top, -3)
                                     }
-                                }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                    .edgesIgnoringSafeArea(.leading)
+                                    if !(item.studios ?? []).isEmpty {
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            HStack {
+                                                Text("Studios:").font(.callout).fontWeight(.semibold)
+                                                ForEach(item.studios!, id: \.id) { studio in
+                                                    NavigationLink(destination: LazyView {
+                                                        LibraryView(withStudio: studio)
+                                                    }) {
+                                                        Text(studio.name ?? "").font(.footnote)
+                                                    }
+                                                }
+                                            }
+                                            .padding(.leading, 16)
+                                            .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                                        }
+                                    }
+                                    Spacer().frame(height: 195)
+                                }.frame(maxHeight: .infinity)
                             }
-                        }
+                        }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                            .edgesIgnoringSafeArea(.leading)
                     }
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(fullItem.Name)
-        }.onAppear(perform: loadData)
-            .supportedOrientations(.allButUpsideDown)
-            .overrideViewPreference(.unspecified)
-            .preferredColorScheme(.none)
-            .prefersHomeIndicatorAutoHidden(false)
+        }
+        .onAppear(perform: {
+            favorite = item.userData?.isFavorite ?? false
+            watched = item.userData?.played ?? false
+            dump(item)
+        })
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(item.name!)
+        .supportedOrientations(.allButUpsideDown)
+        .overrideViewPreference(.unspecified)
+        .preferredColorScheme(.none)
+        .prefersHomeIndicatorAutoHidden(false)
     }
 }

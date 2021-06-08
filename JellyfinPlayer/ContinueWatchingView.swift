@@ -52,7 +52,7 @@ struct ContinueWatchingView: View {
                 LazyHStack() {
                     Spacer().frame(width:14)
                     ForEach(items, id: \.id) { item in
-                        NavigationLink(destination: EmptyView()) {
+                        NavigationLink(destination: ItemView(item: item)) {
                             VStack(alignment: .leading) {
                                 Spacer().frame(height: 10)
                                 LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI ?? "", maxWidth: 320))

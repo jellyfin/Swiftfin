@@ -88,14 +88,18 @@ struct ConnectToServerView: View {
         deviceName = deviceName.removeRegexMatches(pattern: "[^\\w\\s]");
         
         let authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(deviceName)\", DeviceId=\"\(serverSkipped ? reauthDeviceID : userUUID.uuidString)\", Version=\"\(appVersion ?? "0.0.1")\"";
+        print(authHeader)
         
         JellyfinAPI.customHeaders["X-Emby-Authorization"] = authHeader
         
-        UserAPI.authenticateUser(userId: username, pw: password)
+        let x: AuthenticateUserByName = AuthenticateUserByName(username: username, pw: password, password: nil)
+        
+        UserAPI.authenticateUserByName(authenticateUserByName: x)
             .sink(receiveCompletion: { completion in
                 isWorking = false
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
             }, receiveValue: { response in
+                isWorking = true
                 let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
@@ -133,6 +137,8 @@ struct ConnectToServerView: View {
                         globalData.authHeader = authHeader
                         _rootIsActive.wrappedValue = false
                         jsi.did = true
+                        print("logged in")
+                        isWorking = false
                     }
                 } catch {
                     print("Couldn't store objects to CoreData")
@@ -291,6 +297,9 @@ struct ConnectToServerView: View {
                                                 .frame(width: 60, height: 60)
                                                 .cornerRadius(30.0)
                                                 .shadow(radius: 6)
+                                                .onAppear(perform: {
+                                                    print("\(uri)/Users/\(publicUser.id!)/Images/Primary?width=200&quality=80&tag=\(publicUser.primaryImageTag!)")
+                                                })
                                         } else {
                                             Image(systemName: "person.fill")
                                                 .foregroundColor(Color(red: 1, green: 1, blue: 1).opacity(0.8))

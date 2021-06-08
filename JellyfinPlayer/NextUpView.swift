@@ -41,7 +41,7 @@ struct NextUpView: View {
                     LazyHStack() {
                         Spacer().frame(width:16)
                         ForEach(items, id: \.id) { item in
-                            NavigationLink(destination: EmptyView()) {
+                            NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
                                     LazyImage(source: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
                                         .placeholderAndFailure {

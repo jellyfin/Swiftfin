@@ -6,99 +6,15 @@
  */
 
 import SwiftUI
-import SwiftyJSON
-import SwiftyRequest
-
-struct Genre: Hashable, Identifiable {
-    var name: String
-    var id: String { name }
-}
+import JellyfinAPI
 
 struct LibraryFilterView: View {
-    @Environment(\.presentationMode)
-    var presentationMode
-    @Environment(\.managedObjectContext)
-    private var viewContext
-    @EnvironmentObject
-    var globalData: GlobalData
-
-    @State
-    var library: String
-
-    @Binding
-    var filter: Filter
-    @State
-    private var isLoading: Bool = true
-    @State
-    private var onlyUnplayed: Bool = false
-    @State
-    private var allGenres: [Genre] = []
-    @State
-    private var selectedGenres: Set<Genre> = []
-
-    @State
-    private var allRatings: [Genre] = []
-    @State
-    private var selectedRatings: Set<Genre> = []
-    @State
-    private var sortBySelection: String = "SortName"
-    @State
-    private var sortOrder: String = "Descending"
-    @State
-    private var viewDidLoad: Bool = false
-
-    func onAppear() {
-        if _viewDidLoad.wrappedValue == true {
-            return
-        }
-        _viewDidLoad.wrappedValue = true
-        if filter.filterTypes.contains(.isUnplayed) {
-            _onlyUnplayed.wrappedValue = true
-        }
-        if !filter.genres.isEmpty {
-            _selectedGenres.wrappedValue = Set(filter.genres.map { Genre(name: $0) })
-        }
-        if !filter.officialRatings.isEmpty {
-            _selectedRatings.wrappedValue = Set(filter.officialRatings.map { Genre(name: $0) })
-        }
-        _sortBySelection.wrappedValue = filter.sort?.rawValue ?? sortBySelection
-        _sortOrder.wrappedValue = filter.asc?.rawValue ?? sortOrder
-
-        _allGenres.wrappedValue = []
-        let url = "/Items/Filters?UserId=\(globalData.user.user_id ?? "")&ParentId=\(library)"
-        let request = RestRequest(method: .get, url: (globalData.server.baseURI ?? "") + url)
-        request.headerParameters["X-Emby-Authorization"] = globalData.authHeader
-        request.contentType = "application/json"
-        request.acceptType = "application/json"
-
-        request.responseData { (result: Result<RestResponse<Data>, RestError>) in
-            switch result {
-            case let .success(response):
-                let body = response.body
-                do {
-                    let json = try JSON(data: body)
-                    let arr = json["Genres"].arrayObject as? [String] ?? []
-                    for genreName in arr {
-                        // print(genreName)
-                        let genre = Genre(name: genreName)
-                        allGenres.append(genre)
-                    }
-
-                    let arr2 = json["OfficialRatings"].arrayObject as? [String] ?? []
-                    for genreName in arr2 {
-                        // print(genreName)
-                        let genre = Genre(name: genreName)
-                        allRatings.append(genre)
-                    }
-                } catch {}
-            case let .failure(error):
-                debugPrint(error)
-            }
-            isLoading = false
-        }
-    }
+    @EnvironmentObject var globalData: GlobalData
+    @Binding var filter: Filter
 
     var body: some View {
+        EmptyView()
+        /*
         NavigationView {
             LoadingView(isShowing: $isLoading) {
                 Form {
@@ -159,5 +75,6 @@ struct LibraryFilterView: View {
                     }
                 }
         }
+         */
     }
 }

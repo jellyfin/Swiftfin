@@ -291,6 +291,24 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                     self.sendPlayReport()
                     playbackItem = item;
                 }
+                
+                DispatchQueue.global(qos: .background).async {
+                    mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
+                    mediaPlayer.play()
+                    mediaPlayer.jumpForward(Int32(manifest.userData?.playbackPositionTicks ?? 0/10000000))
+                    mediaPlayer.pause()
+                    subtitleTrackArray.forEach() { sub in
+                        if(sub.id != -1 && sub.delivery == .external && sub.codec != "subrip") {
+                            print("adding subs for id: \(sub.id) w/ url: \(sub.url)")
+                            mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
+                        }
+                    }
+                    delegate?.showLoadingView(self)
+                    while(mediaPlayer.numberOfSubtitlesTracks != subtitleTrackArray.count - 1) {}
+                    mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack;
+                    mediaPlayer.pause()
+                    mediaPlayer.play()
+                }
             })
             .store(in: &globalData.pendingAPIRequests)
     }

@@ -12,6 +12,8 @@ import UIKit
 //001fC^ = dark grey plain blurhash
 
 extension BaseItemDto {
+    
+    //MARK: Images
     func getSeriesPrimaryImageBlurHash() -> String {
         let rawImgURL = self.getSeriesPrimaryImage(baseURL: "", maxWidth: 1).absoluteString;
         let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
@@ -77,5 +79,51 @@ extension BaseItemDto {
         
         let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
         return URL(string: urlString)!
+    }
+    
+    //MARK: Calculations
+    func getItemRuntime() -> String {
+        let seconds: Int = Int(self.runTimeTicks!) / 10_000_000
+        let hours = (seconds / 3600)
+        let minutes = ((seconds - (hours * 3600)) / 60)
+        if hours != 0 {
+            return "\(hours):\(String(minutes).leftPad(toWidth: 2, withString: "0"))"
+        } else {
+            return "\(String(minutes).leftPad(toWidth: 2, withString: "0"))m"
+        }
+    }
+    
+    func getItemProgressString() -> String {
+        if(self.userData?.playbackPositionTicks == nil || self.userData?.playbackPositionTicks == 0) {
+            return "";
+        }
+        
+        let remainingSecs = Int(self.runTimeTicks! - (self.userData?.playbackPositionTicks!)!) / 10_000_000
+        let proghours = Int(remainingSecs / 3600)
+        let progminutes = Int((Int(remainingSecs) - (proghours * 3600)) / 60)
+        if proghours != 0 {
+            return "\(proghours):\(String(progminutes).leftPad(toWidth: 2, withString: "0"))"
+        } else {
+            return "\(String(progminutes).leftPad(toWidth: 2, withString: "0"))m"
+        }
+    }
+}
+
+extension BaseItemPerson {
+    func getImage(baseURL: String, maxWidth: Int) -> URL {
+        let imageType = "Primary";
+        let imageTag = self.primaryImageTag ?? ""
+
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+        
+        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        return URL(string: urlString)!
+    }
+    
+    func getBlurHash() -> String {
+        let rawImgURL = self.getImage(baseURL: "", maxWidth: 1).absoluteString;
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
+        
+        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^";
     }
 }

@@ -16,8 +16,8 @@ struct LatestMediaView: View {
     private var library_id: String = "";
     @State private var viewDidLoad: Bool = false;
     
-    init(usingLibraryID: String) {
-        library_id = usingLibraryID;
+    init(usingParentID: String) {
+        library_id = usingParentID;
     }
     
     func onAppear() {
@@ -41,7 +41,7 @@ struct LatestMediaView: View {
                     Spacer().frame(width:16)
                     ForEach(items, id: \.id) { item in
                         if(item.type == "Series" || item.type == "Movie") {
-                            NavigationLink(destination: EmptyView()) {
+                            NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
                                     Spacer().frame(height:10)
                                     LazyImage(source: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100))

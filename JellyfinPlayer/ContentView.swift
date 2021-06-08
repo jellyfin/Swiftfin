@@ -34,6 +34,7 @@ struct ContentView: View {
     @State private var libraryPrefillID: String = ""
     @State private var showSettingsPopover: Bool = false
     @State private var viewDidLoad: Bool = false
+    @State private var loadState: Int = 2
 
     func startup() {
         if(viewDidLoad == true) {
@@ -85,10 +86,15 @@ struct ContentView: View {
             UserAPI.getCurrentUser()
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    loadState = loadState - 1
                 }, receiveValue: { response in
                     libraries = response.configuration?.orderedViews ?? []
                     librariesShowRecentlyAdded = libraries.filter { element in
                         return !(response.configuration?.latestItemsExcludes?.contains(element))!
+                    }
+                    
+                    if(loadState == 0) {
+                        isLoading = false
                     }
                 })
                 .store(in: &globalData.pendingAPIRequests)
@@ -96,10 +102,15 @@ struct ContentView: View {
             UserViewsAPI.getUserViews(userId: globalData.user.user_id ?? "")
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    loadState = loadState - 1
                 }, receiveValue: { response in
                     response.items?.forEach({ item in
                         library_names[item.id ?? ""] = item.name
                     })
+                    
+                    if(loadState == 0) {
+                        isLoading = false
+                    }
                 })
                 .store(in: &globalData.pendingAPIRequests)
             
@@ -110,8 +121,6 @@ struct ContentView: View {
             if defaults.integer(forKey: "OutOfNetworkBandwidth") == 0 {
                 defaults.setValue(40_000_000, forKey: "OutOfNetworkBandwidth")
             }
-            
-            isLoading = false
         }
     }
 
@@ -132,61 +141,67 @@ struct ContentView: View {
         } else {
             if !jsi.did {
                 LoadingView(isShowing: $isLoading) {
-                    TabView(selection: $tabSelection) {
-                        NavigationView {
-                            VStack(alignment: .leading) {
-                                ScrollView {
-                                    Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 16)
-                                    ContinueWatchingView()
-                                    NextUpView()
-                                    ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
-                                        VStack(alignment: .leading) {
-                                            HStack {
-                                                Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold)
-                                                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
-                                                Spacer()
-                                                NavigationLink(destination: LazyView {
-                                                    LibraryView(viewModel: .init(filter: Filter(parentID: library_id)),
-                                                                title: library_names[library_id] ?? "")
-                                                }) {
-                                                    Text("See All").font(.subheadline).fontWeight(.bold)
+                    VStack() {
+                        if(loadState == 0) {
+                            TabView(selection: $tabSelection) {
+                                NavigationView {
+                                    VStack(alignment: .leading) {
+                                        ScrollView {
+                                            Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 16)
+                                            ContinueWatchingView()
+                                            NextUpView()
+                                            ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
+                                                VStack(alignment: .leading) {
+                                                    HStack {
+                                                        Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold)
+                                                            .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
+                                                        Spacer()
+                                                        NavigationLink(destination: LazyView {
+                                                            LibraryView(usingParentID: library_id,
+                                                                        title: library_names[library_id] ?? "")
+                                                        }) {
+                                                            Text("See All").font(.subheadline).fontWeight(.bold)
+                                                        }
+                                                    }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                                                    LatestMediaView(usingParentID: library_id)
+                                                }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                                            }
+                                            Spacer().frame(height: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
+                                        }
+                                        .navigationTitle("Home")
+                                        .toolbar {
+                                            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                                                Button {
+                                                    showSettingsPopover = true
+                                                } label: {
+                                                    Image(systemName: "gear")
                                                 }
-                                            }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                            LatestMediaView(usingLibraryID: library_id)
-                                        }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-                                    }
-                                    Spacer().frame(height: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
-                                }
-                                .navigationTitle("Home")
-                                .toolbar {
-                                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                        Button {
-                                            showSettingsPopover = true
-                                        } label: {
-                                            Image(systemName: "gear")
+                                            }
+                                        }
+                                        .fullScreenCover(isPresented: $showSettingsPopover) {
+                                            SettingsView(viewModel: SettingsViewModel(), close: $showSettingsPopover)
                                         }
                                     }
                                 }
-                                .fullScreenCover(isPresented: $showSettingsPopover) {
-                                    SettingsView(viewModel: SettingsViewModel(), close: $showSettingsPopover)
+                                .navigationViewStyle(StackNavigationViewStyle())
+                                .tabItem {
+                                    Text("Home")
+                                    Image(systemName: "house")
                                 }
+                                .tag("Home")
+                                NavigationView {
+                                    LibraryListView(libraries: library_names)
+                                }
+                                .navigationViewStyle(StackNavigationViewStyle())
+                                .tabItem {
+                                    Text("All Media")
+                                    Image(systemName: "folder")
+                                }
+                                .tag("All Media")
                             }
+                        } else {
+                            Text("Loading...")
                         }
-                        .navigationViewStyle(StackNavigationViewStyle())
-                        .tabItem {
-                            Text("Home")
-                            Image(systemName: "house")
-                        }
-                        .tag("Home")
-                        NavigationView {
-                            LibraryListView(viewModel: .init(libraryNames: library_names, libraryIDs: libraries))
-                        }
-                        .navigationViewStyle(StackNavigationViewStyle())
-                        .tabItem {
-                            Text("All Media")
-                            Image(systemName: "folder")
-                        }
-                        .tag("All Media")
                     }
                 }
                 .environmentObject(globalData)

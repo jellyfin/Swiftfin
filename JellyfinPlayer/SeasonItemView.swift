@@ -7,34 +7,22 @@
 
 import NukeUI
 import SwiftUI
-import SwiftyJSON
-import SwiftyRequest
+import JellyfinAPI
 
 struct SeasonItemView: View {
-    @EnvironmentObject
-    var globalData: GlobalData
-    @EnvironmentObject
-    var orientationInfo: OrientationInfo
-    @State
-    private var isLoading: Bool = true
+    @EnvironmentObject var globalData: GlobalData
+    @EnvironmentObject var orientationInfo: OrientationInfo
+    @State private var isLoading: Bool = true
+    
     var item: ResumeItem
-    @State
-    var fullItem = DetailItem()
-    @State
-    var episodes: [DetailItem] = []
-    @State
-    private var progressString: String = ""
-    @State
-    private var hasAppearedOnce: Bool = false
+
+    @State private var episodes: [BaseItemDto] = []
 
     init(item: ResumeItem) {
         self.item = item
     }
 
-    func loadData() {
-        if hasAppearedOnce {
-            return
-        }
+    func onAppear() {
         let url = "/Users/\(globalData.user.user_id ?? "")/Items/\(item.Id)"
 
         let request = RestRequest(method: .get, url: (globalData.server.baseURI ?? "") + url)
@@ -483,7 +471,7 @@ struct SeasonItemView: View {
         LoadingView(isShowing: $isLoading) {
             innerBody
         }
-        .onAppear(perform: loadData)
+        .onAppear(perform: onAppear)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("\(item.Name) - \(item.SeriesName ?? "")")
     }

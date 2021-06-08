@@ -17,53 +17,79 @@ class VideoPlayerItem: ObservableObject {
 }
 
 struct ItemView: View {
-    private var item: BaseItemDto;
-    @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()
+    @EnvironmentObject private var globalData: GlobalData
     
-    @State private var isLoading: Bool = false; //This variable is only changed by the underlying VLC view.
+    @State private var fullItem: BaseItemDto = BaseItemDto();
+    private var item: BaseItemDto;
+    
+    @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()
+    @State private var videoIsLoading: Bool = false; //This variable is only changed by the underlying VLC view.
+    @State private var isLoading: Bool = false;
     
     init(item: BaseItemDto) {
-        self.item = item;
+        self.item = item
+    }
+    
+    func onAppear() {
+        isLoading = true;
+        UserLibraryAPI.getItem(userId: globalData.user.user_id!, itemId: item.id!)
+            .sink(receiveCompletion: { completion in
+                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+            }, receiveValue: { response in
+                isLoading = false
+                fullItem = response
+            })
+            .store(in: &globalData.pendingAPIRequests)
     }
     
     var body: some View {
-        if(videoPlayerItem.shouldShowPlayer) {
-            LoadingViewNoBlur(isShowing: $isLoading) {
-                VLCPlayerWithControls(item: playback.itemToPlay, loadBinding: $isLoading, pBinding: _videoPlayerItem.projectedValue.shouldShowPlayer)
-            }.navigationBarHidden(true)
-            .navigationBarBackButtonHidden(true)
-            .statusBar(hidden: true)
-            .prefersHomeIndicatorAutoHidden(true)
-            .preferredColorScheme(.dark)
-            .edgesIgnoringSafeArea(.all)
-            .overrideViewPreference(.unspecified)
-            .supportedOrientations(.landscape)
-        } else {
-            Group {
-                if(item.Type == "Movie") {
-                    MovieItemView(item: self.item)
-                } else if(item.Type == "Season") {
-                    SeasonItemView(item: self.item)
-                } else if(item.Type == "Series") {
-                    SeriesItemView(item: self.item)
-                } else if(item.Type == "Episode") {
-                    EpisodeItemView(item: self.item)
+        VStack {
+            if(videoPlayerItem.shouldShowPlayer) {
+                LoadingViewNoBlur(isShowing: $videoIsLoading) {
+                    VLCPlayerWithControls(item: videoPlayerItem.itemToPlay, loadBinding: $videoIsLoading, pBinding: _videoPlayerItem.projectedValue.shouldShowPlayer)
+                }.navigationBarHidden(true)
+                .navigationBarBackButtonHidden(true)
+                .statusBar(hidden: true)
+                .prefersHomeIndicatorAutoHidden(true)
+                .preferredColorScheme(.dark)
+                .edgesIgnoringSafeArea(.all)
+                .overrideViewPreference(.unspecified)
+                .supportedOrientations(.landscape)
+            } else {
+                if(isLoading) {
+                    ProgressView()
                 } else {
-                    Text("Type: \(item.Type) not implemented yet :(")
+                    VStack {
+                        if(fullItem.type == "Movie") {
+                            MovieItemView(item: fullItem)
+                        } else if(fullItem.type == "Season") {
+                            EmptyView()
+                            //SeasonItemView(item: fullItem)
+                        } else if(fullItem.type == "Series") {
+                            EmptyView()
+                            //SeriesItemView(item: fullItem)
+                        } else if(fullItem.type == "Episode") {
+                            EmptyView()
+                            //EpisodeItemView(item: fullItem)
+                        } else {
+                            Text("Type: \(fullItem.type ?? "") not implemented yet :(")
+                        }
+                    }
+                    .introspectTabBarController { (UITabBarController) in
+                        UITabBarController.tabBar.isHidden = false
+                    }
+                    .navigationBarHidden(false)
+                    .navigationBarBackButtonHidden(false)
+                    .statusBar(hidden: false)
+                    .prefersHomeIndicatorAutoHidden(false)
+                    .preferredColorScheme(.none)
+                    .edgesIgnoringSafeArea([])
+                    .overrideViewPreference(.unspecified)
+                    .supportedOrientations(.allButUpsideDown)
+                    .environmentObject(videoPlayerItem)
                 }
             }
-            .introspectTabBarController { (UITabBarController) in
-                UITabBarController.tabBar.isHidden = false
-            }
-            .navigationBarHidden(false)
-            .navigationBarBackButtonHidden(false)
-            .statusBar(hidden: false)
-            .prefersHomeIndicatorAutoHidden(false)
-            .preferredColorScheme(.none)
-            .edgesIgnoringSafeArea([])
-            .overrideViewPreference(.unspecified)
-            .supportedOrientations(.allButUpsideDown)
-            .environmentObject(playback)
         }
+        .onAppear(perform: onAppear)
     }
 }
