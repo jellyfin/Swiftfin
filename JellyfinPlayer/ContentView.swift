@@ -93,7 +93,7 @@ struct ContentView: View {
                         return !(response.configuration?.latestItemsExcludes?.contains(element))!
                     }
                     
-                    if(loadState == 0) {
+                    if(loadState == 1) {
                         isLoading = false
                     }
                 })
@@ -108,7 +108,7 @@ struct ContentView: View {
                         library_names[item.id ?? ""] = item.name
                     })
                     
-                    if(loadState == 0) {
+                    if(loadState == 1) {
                         isLoading = false
                     }
                 })

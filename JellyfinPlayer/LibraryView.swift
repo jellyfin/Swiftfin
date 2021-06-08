@@ -22,6 +22,9 @@ struct LibraryView: View {
     var personId: String = ""
     var genre: String = ""
     var studio: String = ""
+
+    @State private var totalPages: Int = 0;
+    @State private var currentPage: Int = 0;
     
     init(usingParentID: String, title: String) {
         self.usingParentID = usingParentID
@@ -57,11 +60,13 @@ struct LibraryView: View {
         isLoading = true
         items = []
         
-        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 100, recursive: true, searchTerm: nil, sortOrder: [.ascending], fields: [.parentId,.primaryImageAspectRatio,.basicSyncInfo], includeItemTypes: ["Movie","Series"], filters: filters, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
+        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.parentId,.primaryImageAspectRatio,.basicSyncInfo], includeItemTypes: ["Movie","Series"], filters: filters, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 isLoading = false
             }, receiveValue: { response in
+                let x = ceil(Double(response.totalRecordCount!) / 100.0)
+                totalPages = Int(x)
                 items = response.items ?? []
                 isLoading = false
             })
@@ -116,6 +121,25 @@ struct LibraryView: View {
                             }.onChange(of: orientationInfo.orientation) { _ in
                                 recalcTracks()
                             }
+                            HStack() {
+                                Spacer()
+                                HStack() {
+                                    Button {
+                                        currentPage = currentPage - 1
+                                        onAppear()
+                                    } label: {
+                                        Image(systemName: "chevron.left")
+                                    }.disabled(currentPage == 0)
+                                    Text("\(String(currentPage+1)) of \(String(totalPages))")
+                                    Button {
+                                        currentPage = currentPage + 1
+                                        onAppear()
+                                    } label: {
+                                        Image(systemName: "chevron.right")
+                                    }.disabled(currentPage > totalPages - 1)
+                                }
+                                Spacer()
+                            }
                         }
                     }
                 } else {
@@ -125,5 +149,32 @@ struct LibraryView: View {
         }
         .onAppear(perform: onAppear)
         .navigationBarTitle(title, displayMode: .inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if(currentPage > 0) {
+                    Button {
+                        currentPage = currentPage - 1
+                        onAppear()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                }
+                if(currentPage < totalPages - 1) {
+                    Button {
+                        currentPage = currentPage + 1
+                        onAppear()
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                }
+                if(usingParentID != "") {
+                    NavigationLink(destination: LazyView {
+                        LibrarySearchView(usingParentID: usingParentID)
+                    }) {
+                        Image(systemName: "magnifyingglass")
+                    }
+                }
+            }
+        }
     }
 }

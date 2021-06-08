@@ -17,7 +17,6 @@ struct LibraryListView: View {
     
     init(libraries: [String: String]) {
         self.libraries = libraries
-        print(libraries)
     }
     
     func onAppear() {
@@ -27,8 +26,6 @@ struct LibraryListView: View {
                 _library_ids.wrappedValue.append(k)
                 _library_names.wrappedValue[k] = v
             }
-            print(library_ids)
-            print(library_names)
         }
     }
     
