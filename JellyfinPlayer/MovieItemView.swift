@@ -249,7 +249,7 @@ struct MovieItemView: View {
             } else {
                 GeometryReader { geometry in
                     ZStack {
-                        LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: Int(geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing)))
+                        LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 200))
                             .placeholderAndFailure {
                                 Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(),
                                     size: CGSize(width: 16, height: 16))!)
@@ -456,7 +456,6 @@ struct MovieItemView: View {
         .onAppear(perform: {
             favorite = item.userData?.isFavorite ?? false
             watched = item.userData?.played ?? false
-            dump(item)
         })
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(item.name!)

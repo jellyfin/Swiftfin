@@ -73,8 +73,7 @@ struct ItemView: View {
                         } else if(fullItem.type == "Series") {
                             SeriesItemView(item: fullItem)
                         } else if(fullItem.type == "Episode") {
-                            EmptyView()
-                            //EpisodeItemView(item: fullItem)
+                            EpisodeItemView(item: fullItem)
                         } else {
                             Text("Type: \(fullItem.type ?? "") not implemented yet :(")
                         }

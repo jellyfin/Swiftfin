@@ -174,7 +174,7 @@ struct SeasonItemView: View {
         } else {
             GeometryReader { geometry in
                 ZStack {
-                    LazyImage(source: item.getSeriesBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: Int(geometry.size.width)))
+                    LazyImage(source: item.getSeriesBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 200))
                         .placeholderAndFailure {
                             Image(uiImage: UIImage(blurHash: item.getSeriesBackdropImageBlurHash(),
                                 size: CGSize(width: 32, height: 32))!)
