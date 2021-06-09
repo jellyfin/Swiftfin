@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5377CBF0263B596A003A4E83"
-               BuildableName = "JellyfinPlayer.app"
-               BlueprintName = "JellyfinPlayer"
+               BuildableName = "JellyfinPlayer iOS.app"
+               BlueprintName = "JellyfinPlayer iOS"
                ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5377CBF0263B596A003A4E83"
-            BuildableName = "JellyfinPlayer.app"
-            BlueprintName = "JellyfinPlayer"
+            BuildableName = "JellyfinPlayer iOS.app"
+            BlueprintName = "JellyfinPlayer iOS"
             ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5377CBF0263B596A003A4E83"
-            BuildableName = "JellyfinPlayer.app"
-            BlueprintName = "JellyfinPlayer"
+            BuildableName = "JellyfinPlayer iOS.app"
+            BlueprintName = "JellyfinPlayer iOS"
             ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

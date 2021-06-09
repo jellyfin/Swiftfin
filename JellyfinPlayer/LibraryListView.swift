@@ -14,6 +14,7 @@ struct LibraryListView: View {
     @State var library_ids: [String] = ["favorites", "genres"]
     @State var library_names: [String: String] = ["favorites": "Favorites", "genres": "Genres"]
     var libraries: [String: String] = [:] //input libraries
+    var withFavorites: LibraryFilters = LibraryFilters(filters: [.isFavorite], sortOrder: [.descending], sortBy: ["SortName"])
     
     init(libraries: [String: String]) {
         self.libraries = libraries
@@ -34,7 +35,7 @@ struct LibraryListView: View {
             switch key {
                 case "favorites":
                     NavigationLink(destination: LazyView {
-                        LibraryView(usingParentID: "", title: library_names[key] ?? "", filters: [.isFavorite])
+                        LibraryView(usingParentID: "", title: library_names[key] ?? "", usingFilters: withFavorites)
                     }) {
                         Text(library_names[key] ?? "")
                     }

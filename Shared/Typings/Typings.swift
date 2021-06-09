@@ -7,6 +7,20 @@
 
 import Foundation
 import Combine
+import JellyfinAPI
+
+struct LibraryFilters: Codable, Hashable {
+    var filters: [ItemFilter] = []
+    var sortOrder: [SortOrder] = [.descending]
+    var sortBy: [String] = ["SortName"]
+}
+
+public enum SortBy: String, Codable, CaseIterable {
+    case productionYear = "ProductionYear"
+    case premiereDate = "PremiereDate"
+    case name = "SortName"
+    case dateAdded = "DateCreated"
+}
 
 class justSignedIn: ObservableObject {
     @Published var did: Bool = false

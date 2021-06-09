@@ -18,7 +18,7 @@ struct LibraryView: View {
     
     var usingParentID: String = ""
     var title: String = ""
-    var filters: [ItemFilter] = []
+    var filters: LibraryFilters = LibraryFilters()
     var personId: String = ""
     var genre: String = ""
     var studio: String = ""
@@ -31,10 +31,10 @@ struct LibraryView: View {
         self.title = title
     }
     
-    init(usingParentID: String, title: String, filters: [ItemFilter]) {
+    init(usingParentID: String, title: String, usingFilters: LibraryFilters) {
         self.usingParentID = usingParentID
         self.title = title
-        self.filters = filters
+        self.filters = usingFilters
     }
     
     init(withPerson: BaseItemPerson) {
@@ -60,7 +60,7 @@ struct LibraryView: View {
         isLoading = true
         items = []
         
-        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.parentId,.primaryImageAspectRatio,.basicSyncInfo], includeItemTypes: ["Movie","Series"], filters: filters, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
+        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: (usingParentID != "" ? usingParentID : nil), fields: [.parentId,.primaryImageAspectRatio,.basicSyncInfo], includeItemTypes: ["Movie","Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 isLoading = false
@@ -121,29 +121,36 @@ struct LibraryView: View {
                             }.onChange(of: orientationInfo.orientation) { _ in
                                 recalcTracks()
                             }
-                            HStack() {
-                                Spacer()
+                            if(totalPages > 1) {
                                 HStack() {
-                                    Button {
-                                        currentPage = currentPage - 1
-                                        onAppear()
-                                    } label: {
-                                        Image(systemName: "chevron.left")
-                                    }.disabled(currentPage == 0)
-                                    Text("\(String(currentPage+1)) of \(String(totalPages))")
-                                    Button {
-                                        currentPage = currentPage + 1
-                                        onAppear()
-                                    } label: {
-                                        Image(systemName: "chevron.right")
-                                    }.disabled(currentPage > totalPages - 1)
+                                    Spacer()
+                                    HStack() {
+                                        Button {
+                                            currentPage = currentPage - 1
+                                            onAppear()
+                                        } label: {
+                                            Image(systemName: "chevron.left")
+                                                .font(.system(size: 25))
+                                        }.disabled(currentPage == 0)
+                                        Text("Page \(String(currentPage+1)) of \(String(totalPages))")
+                                            .font(.headline)
+                                            .fontWeight(.semibold)
+                                        Button {
+                                            currentPage = currentPage + 1
+                                            onAppear()
+                                        } label: {
+                                            Image(systemName: "chevron.right")
+                                                .font(.system(size: 25))
+                                        }.disabled(currentPage > totalPages - 1)
+                                    }
+                                    Spacer()
                                 }
-                                Spacer()
                             }
+                            Spacer().frame(height: 16)
                         }
                     }
                 } else {
-                    Text("No results found :(")
+                    Text("No results.")
                 }
             }
         }

@@ -35,6 +35,8 @@ struct ContentView: View {
     @State private var showSettingsPopover: Bool = false
     @State private var viewDidLoad: Bool = false
     @State private var loadState: Int = 2
+    
+    private var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: ["DateCreated"])
 
     func startup() {
         if(viewDidLoad == true) {
@@ -158,7 +160,7 @@ struct ContentView: View {
                                                         Spacer()
                                                         NavigationLink(destination: LazyView {
                                                             LibraryView(usingParentID: library_id,
-                                                                        title: library_names[library_id] ?? "")
+                                                                        title: library_names[library_id] ?? "", usingFilters: recentFilterSet)
                                                         }) {
                                                             Text("See All").font(.subheadline).fontWeight(.bold)
                                                         }

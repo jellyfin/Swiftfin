@@ -25,21 +25,31 @@ struct ItemView: View {
     @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()
     @State private var videoIsLoading: Bool = false; //This variable is only changed by the underlying VLC view.
     @State private var isLoading: Bool = false;
+    @State private var viewDidLoad: Bool = false;
     
     init(item: BaseItemDto) {
         self.item = item
     }
     
     func onAppear() {
-        isLoading = true;
-        UserLibraryAPI.getItem(userId: globalData.user.user_id!, itemId: item.id!)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-            }, receiveValue: { response in
-                isLoading = false
-                fullItem = response
-            })
-            .store(in: &globalData.pendingAPIRequests)
+        if(viewDidLoad) {
+            return
+        }
+        
+        if(item.type == "Movie" || item.type == "Episode") {
+            isLoading = true;
+            UserLibraryAPI.getItem(userId: globalData.user.user_id!, itemId: item.id!)
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                }, receiveValue: { response in
+                    isLoading = false
+                    viewDidLoad = true
+                    fullItem = response
+                })
+                .store(in: &globalData.pendingAPIRequests)
+        } else {
+            viewDidLoad = true
+        }
     }
     
     var body: some View {
@@ -60,15 +70,14 @@ struct ItemView: View {
                     ProgressView()
                 } else {
                     VStack {
-                        if(fullItem.type == "Movie") {
+                        if(item.type == "Movie") {
                             MovieItemView(item: fullItem)
-                        } else if(fullItem.type == "Season") {
+                        } else if(item.type == "Season") {
                             EmptyView()
-                            //SeasonItemView(item: fullItem)
-                        } else if(fullItem.type == "Series") {
-                            EmptyView()
-                            //SeriesItemView(item: fullItem)
-                        } else if(fullItem.type == "Episode") {
+                            SeasonItemView(item: item)
+                        } else if(item.type == "Series") {
+                            SeriesItemView(item: item)
+                        } else if(item.type == "Episode") {
                             EmptyView()
                             //EpisodeItemView(item: fullItem)
                         } else {
