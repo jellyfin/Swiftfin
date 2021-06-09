@@ -198,7 +198,6 @@ struct NextUpEntryView: View {
     }
 
     func large(items: [(BaseItemDto, UIImage?)]) -> some View {
-        GeometryReader { _ in
             VStack(spacing: 0) {
                 if let firstItem = items[safe: 0] {
                     ZStack(alignment: .topTrailing) {
@@ -212,12 +211,12 @@ struct NextUpEntryView: View {
                                 Text(firstItem.0.seriesName ?? "")
                                     .font(.caption)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.white)
                                     .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                                 Text("\(firstItem.0.name ?? "") · S\(firstItem.0.parentIndexNumber ?? 0):E\(firstItem.0.indexNumber ?? 0)")
                                     .font(.caption)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.gray)
                                     .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             }
                             .padding(12)
@@ -239,7 +238,6 @@ struct NextUpEntryView: View {
                 }
                 .padding(12)
             }
-        }
     }
 
     @ViewBuilder
