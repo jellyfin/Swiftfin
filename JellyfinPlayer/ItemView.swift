@@ -36,20 +36,16 @@ struct ItemView: View {
             return
         }
         
-        if(item.type == "Movie" || item.type == "Episode") {
-            isLoading = true;
-            UserLibraryAPI.getItem(userId: globalData.user.user_id!, itemId: item.id!)
-                .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                }, receiveValue: { response in
-                    isLoading = false
-                    viewDidLoad = true
-                    fullItem = response
-                })
-                .store(in: &globalData.pendingAPIRequests)
-        } else {
-            viewDidLoad = true
-        }
+        isLoading = true;
+        UserLibraryAPI.getItem(userId: globalData.user.user_id!, itemId: item.id!)
+            .sink(receiveCompletion: { completion in
+                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+            }, receiveValue: { response in
+                isLoading = false
+                viewDidLoad = true
+                fullItem = response
+            })
+            .store(in: &globalData.pendingAPIRequests)
     }
     
     var body: some View {
@@ -70,14 +66,13 @@ struct ItemView: View {
                     ProgressView()
                 } else {
                     VStack {
-                        if(item.type == "Movie") {
+                        if(fullItem.type == "Movie") {
                             MovieItemView(item: fullItem)
-                        } else if(item.type == "Season") {
-                            EmptyView()
-                            SeasonItemView(item: item)
-                        } else if(item.type == "Series") {
-                            SeriesItemView(item: item)
-                        } else if(item.type == "Episode") {
+                        } else if(fullItem.type == "Season") {
+                            SeasonItemView(item: fullItem)
+                        } else if(fullItem.type == "Series") {
+                            SeriesItemView(item: fullItem)
+                        } else if(fullItem.type == "Episode") {
                             EmptyView()
                             //EpisodeItemView(item: fullItem)
                         } else {

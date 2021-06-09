@@ -54,7 +54,7 @@ struct SeriesItemView: View {
                 Spacer().frame(height: 16)
                 LazyVGrid(columns: tracks) {
                     ForEach(seasons, id: \.id) { season in
-                        NavigationLink(destination: ItemView(item: season )) {
+                        NavigationLink(destination: ItemView(item: season)) {
                             VStack(alignment: .leading) {
                                 LazyImage(source: season.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
                                     .placeholderAndFailure {

@@ -265,7 +265,7 @@ struct MovieItemView: View {
                             .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                    height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
                             .edgesIgnoringSafeArea(.all)
-                            .blur(radius: 2)
+                            .blur(radius: 4)
                         HStack {
                             VStack {
                                 LazyImage(source: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120))

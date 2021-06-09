@@ -14,6 +14,13 @@ import UIKit
 extension BaseItemDto {
     
     //MARK: Images
+    func getSeriesBackdropImageBlurHash() -> String {
+        let rawImgURL = self.getSeriesBackdropImage(baseURL: "", maxWidth: 1).absoluteString;
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
+        
+        return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^";
+    }
+    
     func getSeriesPrimaryImageBlurHash() -> String {
         let rawImgURL = self.getSeriesPrimaryImage(baseURL: "", maxWidth: 1).absoluteString;
         let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
@@ -57,6 +64,18 @@ extension BaseItemDto {
         }
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
         let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        return URL(string: urlString)!
+    }
+    
+    func getSeriesBackdropImage(baseURL: String, maxWidth: Int) -> URL {
+        let imageType = "Backdrop";
+        let imageTag = (self.parentBackdropImageTags ?? [])[0];
+        
+        print(imageType)
+        print(imageTag)
+
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+        let urlString = "\(baseURL)/Items/\(self.parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
         return URL(string: urlString)!
     }
     
