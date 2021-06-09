@@ -11,6 +11,7 @@ import KeychainSwift
 import Nuke
 import Combine
 import JellyfinAPI
+import WidgetKit
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -19,6 +20,7 @@ struct ContentView: View {
     
     @StateObject private var globalData = GlobalData()
 
+    @FetchRequest(entity: <#T##NSEntityDescription#>, sortDescriptors: <#T##[NSSortDescriptor]#>, predicate: <#T##NSPredicate?#>, animation: <#T##Animation?#>)
     @FetchRequest(entity: Server.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Server.name, ascending: true)])
         private var servers: FetchedResults<Server>
 
@@ -63,6 +65,7 @@ struct ContentView: View {
             let savedUser = savedUsers[0]
 
             let keychain = KeychainSwift()
+            keychain.accessGroup = "4BHXT8RHFR.dev.pangmo5.swiftfin.keychainGroup"
             if keychain.get("AccessToken_\(savedUser.user_id ?? "")") != nil {
                 globalData.authToken = keychain.get("AccessToken_\(savedUser.user_id ?? "")") ?? ""
                 globalData.server = servers[0]
@@ -124,6 +127,7 @@ struct ContentView: View {
                 defaults.setValue(40_000_000, forKey: "OutOfNetworkBandwidth")
             }
         }
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     var body: some View {
