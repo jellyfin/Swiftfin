@@ -16,8 +16,12 @@ struct LibrarySearchView: View {
     @State private var items: [BaseItemDto] = []
     @State private var searchQuery: String = ""
     @State private var isLoading: Bool = false
+    private var usingParentID: String = ""
+    @State private var lastSearchTime: Double = CACurrentMediaTime()
     
-    var usingParentID: String
+    init(usingParentID: String) {
+        self.usingParentID = usingParentID
+    }
 
     func onAppear() {
         recalcTracks()
@@ -26,40 +30,39 @@ struct LibrarySearchView: View {
     
     func requestSearch(query: String) {
         isLoading = true
-        ItemsAPI.getItems(userId: globalData.user.user_id!, searchTerm: query, parentId: usingParentID)
+        print(usingParentID)
+        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.parentId,.primaryImageAspectRatio,.basicSyncInfo], includeItemTypes: ["Movie","Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
             }, receiveValue: { response in
-                items = response.items!
+                items = response.items ?? []
+                isLoading = false
             })
             .store(in: &globalData.pendingAPIRequests)
-        
-        isLoading = false
     }
     
     //MARK: tracks for grid
     @State private var tracks: [GridItem] = []
     func recalcTracks() {
         let trkCnt = Int(floor(UIScreen.main.bounds.size.width / 125))
-        _tracks.wrappedValue = []
+        tracks = []
         for _ in 0 ..< trkCnt {
-            _tracks.wrappedValue.append(GridItem(.flexible()))
+            tracks.append(GridItem(.flexible()))
         }
     }
 
     var body: some View {
-        ZStack {
+        VStack {
+            Spacer().frame(height: 6)
+            SearchBar(text: $searchQuery)
             if(isLoading == true) {
+                Spacer()
                 ProgressView()
-            }
-            if(!items.isEmpty) {
-                VStack {
-                    Spacer().frame(height: 6)
-                    TextField("Search", text: $searchQuery)
-                        .padding(.horizontal, 10)
-                        .foregroundColor(Color.secondary)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                Spacer()
+            } else {
+                if(!items.isEmpty) {
                     ScrollView(.vertical) {
+                        Spacer().frame(height: 16)
                         LazyVGrid(columns: tracks) {
                             ForEach(items, id: \.id) { item in
                                 NavigationLink(destination: ItemView(item: item)) {
@@ -74,31 +77,36 @@ struct LibrarySearchView: View {
                                             }
                                             .frame(width: 100, height: 150)
                                             .cornerRadius(10)
-                                        Text(item.name!)
+                                        Text(item.name ?? "")
                                             .font(.caption)
                                             .fontWeight(.semibold)
                                             .foregroundColor(.primary)
                                             .lineLimit(1)
-                                        Text(String(item.productionYear!))
+                                        Text(String(item.productionYear ?? 0))
                                             .foregroundColor(.secondary)
                                             .font(.caption)
                                             .fontWeight(.medium)
                                     }.frame(width: 100)
                                 }
                             }
-                        }.onChange(of: orientationInfo.orientation) { _ in
+                        }
+                        Spacer().frame(height: 16)
+                            .onChange(of: orientationInfo.orientation) { _ in
                             recalcTracks()
                         }
                     }
+                } else {
+                    Text("No results :(")
                 }
-            } else {
-                Text("No results found :(")
             }
         }
         .onAppear(perform: onAppear)
         .navigationBarTitle("Search", displayMode: .inline)
         .onChange(of: searchQuery) { query in
-            requestSearch(query: query)
+            if(CACurrentMediaTime() - lastSearchTime > 0.5) {
+                lastSearchTime = CACurrentMediaTime()
+                requestSearch(query: query)
+            }
         }
     }
 }

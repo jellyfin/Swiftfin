@@ -57,6 +57,7 @@
 		53D5E3DD264B47EE00BADDC8 /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		53D5E3DE264B47EE00BADDC8 /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		53DE4BD02670961400739748 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA72657424A00E7EA70 /* EpisodeItemView.swift */; };
+		53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DE4BD1267098F300739748 /* SearchBarView.swift */; };
 		53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF641D263D9C0600A7CD1A /* LibraryView.swift */; };
 		53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelectorView.swift */; };
 		53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE24E5265060780068F029 /* LibrarySearchView.swift */; };
@@ -143,6 +144,7 @@
 		53C4404D266C75C70049424C /* HandleAPIRequestCompletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleAPIRequestCompletion.swift; sourceTree = "<group>"; };
 		53D5E3DA264B460200BADDC8 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = Carthage/Build/MobileVLCKit.xcframework; sourceTree = "<group>"; };
+		53DE4BD1267098F300739748 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		53DF641D263D9C0600A7CD1A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilterView.swift; sourceTree = "<group>"; };
 		53E4E648263F725B00F67C6B /* MultiSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectorView.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
 				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
 				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
+				53DE4BD1267098F300739748 /* SearchBarView.swift */,
 			);
 			path = JellyfinPlayer;
 			sourceTree = "<group>";
@@ -484,6 +487,7 @@
 				5377CC01263B596B003A4E83 /* Model.xcdatamodeld in Sources */,
 				53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */,
 				53A089D0264DA9DA00D57806 /* MovieItemView.swift in Sources */,
+				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
 				53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */,
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
 				535870AD2669D8DD00D05A09 /* Typings.swift in Sources */,

@@ -58,9 +58,9 @@ struct EpisodeItemView: View {
     }
 
     var portraitHeaderView: some View {
-        LazyImage(source: item.getSeriesBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 1200))
+        LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 1200))
             .placeholderAndFailure {
-                Image(uiImage: UIImage(blurHash: item.getSeriesBackdropImageBlurHash(),
+                Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(),
                     size: CGSize(width: 32, height: 32))!)
                     .resizable()
             }
@@ -249,9 +249,9 @@ struct EpisodeItemView: View {
             } else {
                 GeometryReader { geometry in
                     ZStack {
-                        LazyImage(source: item.getSeriesBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 200))
+                        LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 200))
                             .placeholderAndFailure {
-                                Image(uiImage: UIImage(blurHash: item.getSeriesBackdropImageBlurHash(),
+                                Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(),
                                     size: CGSize(width: 16, height: 16))!)
                                     .resizable()
                                     .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets

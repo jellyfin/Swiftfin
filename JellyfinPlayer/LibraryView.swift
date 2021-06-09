@@ -25,6 +25,7 @@ struct LibraryView: View {
 
     @State private var totalPages: Int = 0;
     @State private var currentPage: Int = 0;
+    @State private var isSearching: String? = "";
     
     init(usingParentID: String, title: String) {
         self.usingParentID = usingParentID
@@ -175,9 +176,7 @@ struct LibraryView: View {
                     }
                 }
                 if(usingParentID != "") {
-                    NavigationLink(destination: LazyView {
-                        LibrarySearchView(usingParentID: usingParentID)
-                    }) {
+                    NavigationLink(destination: LibrarySearchView(usingParentID: usingParentID)) {
                         Image(systemName: "magnifyingglass")
                     }
                 }
