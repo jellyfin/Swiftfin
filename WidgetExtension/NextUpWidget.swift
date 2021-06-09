@@ -198,73 +198,75 @@ struct NextUpEntryView: View {
     }
 
     func large(items: [(BaseItemDto, UIImage?)]) -> some View {
-            VStack(spacing: 0) {
-                if let firstItem = items[safe: 0] {
-                    ZStack(alignment: .topTrailing) {
-                        ZStack(alignment: .bottomLeading) {
-                            if let image = firstItem.1 {
-                                Image(uiImage: image)
-                                    .centerCropped()
-                                    .innerShadow(color: .black.opacity(0.5), radius: 0.5)
-                            }
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(firstItem.0.seriesName ?? "")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
-                                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                                Text("\(firstItem.0.name ?? "") · S\(firstItem.0.parentIndexNumber ?? 0):E\(firstItem.0.indexNumber ?? 0)")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.gray)
-                                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                            }
-                            .padding(12)
+        VStack(spacing: 0) {
+            if let firstItem = items[safe: 0] {
+                ZStack(alignment: .topTrailing) {
+                    ZStack(alignment: .bottomLeading) {
+                        if let image = firstItem.1 {
+                            Image(uiImage: image)
+                                .centerCropped()
+                                .innerShadow(color: .black.opacity(0.5), radius: 0.5)
                         }
-                        headerSymbol
-                            .padding(12)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(firstItem.0.seriesName ?? "")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            Text("\(firstItem.0.name ?? "") · S\(firstItem.0.parentIndexNumber ?? 0):E\(firstItem.0.indexNumber ?? 0)")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.gray)
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(12)
                     }
-                    .clipped()
-                    .shadow(radius: 8)
+                    headerSymbol
+                        .padding(12)
                 }
-                VStack(spacing: 8) {
-                    if let secondItem = items[safe: 1] {
-                        largeVideoView(item: secondItem)
-                    }
-                    Divider()
-                    if let thridItem = items[safe: 2] {
-                        largeVideoView(item: thridItem)
-                    }
-                }
-                .padding(12)
+                .clipped()
+                .shadow(radius: 8)
             }
+            VStack(spacing: 8) {
+                if let secondItem = items[safe: 1] {
+                    largeVideoView(item: secondItem)
+                }
+                Divider()
+                if let thridItem = items[safe: 2] {
+                    largeVideoView(item: thridItem)
+                }
+            }
+            .padding(12)
+        }
     }
 
     @ViewBuilder
     var body: some View {
         Group {
-        if let error = entry.error {
-            HStack {
-                Image(systemName: "exclamationmark.octagon")
-                Text((error as? WidgetError)?.rawValue ?? "asdasd")
-            }
-            .background(Color.blue)
-        } else {
-            switch family {
-            case .systemSmall:
-                if let item = entry.items.first {
-                    small(item: item)
-                } else {
+            if let error = entry.error {
+                HStack {
+                    Image(systemName: "exclamationmark.octagon")
+                    Text(error.localizedDescription)
+                }
+                .background(Color.blue)
+            } else if entry.items.isEmpty {
+                Text("Empty Response")
+            } else {
+                switch family {
+                case .systemSmall:
+                    if let item = entry.items.first {
+                        small(item: item)
+                    } else {
+                        EmptyView()
+                    }
+                case .systemMedium:
+                    medium(items: entry.items)
+                case .systemLarge:
+                    large(items: entry.items)
+                @unknown default:
                     EmptyView()
                 }
-            case .systemMedium:
-                medium(items: entry.items)
-            case .systemLarge:
-                large(items: entry.items)
-            @unknown default:
-                EmptyView()
             }
-        }
         }
         .background(Color(.secondarySystemBackground))
     }
