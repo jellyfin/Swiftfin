@@ -20,7 +20,6 @@ struct ContentView: View {
     
     @StateObject private var globalData = GlobalData()
 
-    @FetchRequest(entity: <#T##NSEntityDescription#>, sortDescriptors: <#T##[NSSortDescriptor]#>, predicate: <#T##NSPredicate?#>, animation: <#T##Animation?#>)
     @FetchRequest(entity: Server.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Server.name, ascending: true)])
         private var servers: FetchedResults<Server>
 
