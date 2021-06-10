@@ -70,8 +70,8 @@ struct EpisodeItemView: View {
                     .resizable()
             }
             .contentMode(.aspectFill)
-            .opacity(0.3)
-            .shadow(radius: 5)
+            .opacity(0.4)
+            .blur(radius: 2.0)
     }
 
     var portraitHeaderOverlayView: some View {

@@ -27,6 +27,7 @@ struct LibraryView: View {
     @State private var totalPages: Int = 0;
     @State private var currentPage: Int = 0;
     @State private var isSearching: String? = "";
+    @State private var viewDidLoad: Bool = false;
     
     init(usingParentID: String, title: String) {
         self.usingParentID = usingParentID
@@ -59,6 +60,11 @@ struct LibraryView: View {
     
     func onAppear() {
         recalcTracks()
+        
+        if(viewDidLoad) {
+            return
+        }
+        
         isLoading = true
         items = []
         
@@ -72,6 +78,7 @@ struct LibraryView: View {
                     totalPages = Int(x)
                     items = response.items ?? []
                     isLoading = false
+                    viewDidLoad = true
                 })
                 .store(in: &globalData.pendingAPIRequests)
         }

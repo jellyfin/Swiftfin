@@ -42,13 +42,13 @@ struct LatestMediaView: View {
                 LazyHStack() {
                     Spacer().frame(width:16)
                     ForEach(items, id: \.id) { item in
-                        if(item.type == "Series" || item.type == "Movie" || item.type == "Episode") {
+                        if(item.type == "Series" || item.type == "Movie") {
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
                                     Spacer().frame(height:10)
-                                    LazyImage(source: (item.type != "Episode" ? item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100) : item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100)))
+                                    LazyImage(source: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
                                         .placeholderAndFailure {
-                                            Image(uiImage: UIImage(blurHash: item.getPrimaryImageBlurHash(), size: CGSize(width: 16, height: 20))!)
+                                            Image(uiImage: UIImage(blurHash: item.getSeriesPrimaryImageBlurHash(), size: CGSize(width: 16, height: 20))!)
                                                 .resizable()
                                                 .frame(width: 100, height: 150)
                                                 .cornerRadius(10)
@@ -61,19 +61,11 @@ struct LatestMediaView: View {
                                         .fontWeight(.semibold)
                                         .foregroundColor(.primary)
                                         .lineLimit(1)
-                                    if(item.type == "Episode") {
-                                        Text("S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))")
-                                            .font(.caption)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.secondary)
-                                            .lineLimit(1)
-                                    } else {
-                                        Text(String(item.productionYear ?? 0))
-                                            .font(.caption)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.secondary)
-                                            .lineLimit(1)
-                                    }
+                                    Text(String(item.productionYear ?? 0))
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(1)
                                 }.frame(width: 100)
                                 Spacer().frame(width: 15)
                             }

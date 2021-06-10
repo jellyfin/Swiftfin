@@ -28,7 +28,7 @@ struct SeriesItemView: View {
         isLoading = true
         
         DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people])
+            TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], isMissing: false)
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
@@ -74,7 +74,7 @@ struct SeriesItemView: View {
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
-                                if(season.productionYear != 0) {
+                                if(season.productionYear != nil) {
                                     Text(String(season.productionYear!))
                                         .foregroundColor(.secondary)
                                         .font(.caption)
