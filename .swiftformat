@@ -1,7 +1,5 @@
 # version: 0.47.5
 
---exclude Pods,Derived,Sources/R.generated.swift
-
 --indent 4 #indent
 --self init-only # redundantSelf
 --semicolons never # semicolons
