@@ -25,8 +25,31 @@ jobs:
         with:
           ruby-version: 2.6 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Install Carthage
+      - name: Install VLCKit
         run: "carthage update"
+        
+      - name: Cache VLCKit
+        uses: actions/cache@v2
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-carthage-
+        
+      - name: Cache SPM
+        uses: actions/cache@v2
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+            
+      - name: Cache build output
+        uses: actions/cache@v2
+        with:
+          path: "~/Library/Developer/Xcode/DerivedData"
+          key: ${{ runner.os }}-deriveddata
+        
       - name: Build!
         run: |
           xcodebuild build -project "JellyfinPlayer.xcodeproj" \
