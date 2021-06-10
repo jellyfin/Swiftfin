@@ -449,7 +449,7 @@ struct MovieItemView: View {
                                             .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                         }
                                     }
-                                    Spacer().frame(height: 195)
+                                    Spacer().frame(height: 105)
                                 }.frame(maxHeight: .infinity)
                             }
                         }.padding(.top, 16).padding(.leading, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
