@@ -20,37 +20,41 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - name: Install Ruby
+      
+      - name: Cache Carthage dependencies
+        id: cache-vlckit
+        uses: actions/cache@v2
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-${{ matrix.scheme }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.scheme }}-carthage-
+        
+      - name: Cache Swift packages
+        uses: actions/cache@v2
+        with:
+          path: .build
+          key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.scheme }}-spm-
+            
+      - name: Cache DerivedData folder
+        uses: actions/cache@v2
+        with:
+          path: "~/Library/Developer/Xcode/DerivedData"
+          key: ${{ runner.os }}-${{ matrix.scheme }}-deriveddata
+      
+      - name: Install Ruby (for Carthage)
+        if: steps.cache-vlckit.outputs.cache-hit != 'true'
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Install VLCKit
+      - name: Update Carthage dependencies
+        if: steps.cache-vlckit.outputs.cache-hit != 'true'
         run: "carthage update"
         
-      - name: Cache VLCKit
-        uses: actions/cache@v2
-        with:
-          path: Carthage
-          key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-carthage-
-        
-      - name: Cache SPM
-        uses: actions/cache@v2
-        with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-spm-
-            
-      - name: Cache build output
-        uses: actions/cache@v2
-        with:
-          path: "~/Library/Developer/Xcode/DerivedData"
-          key: ${{ runner.os }}-deriveddata
-        
-      - name: Build!
+      - name: xcodebuild!
         run: |
           xcodebuild build -project "JellyfinPlayer.xcodeproj" \
           -scheme "${{ matrix.scheme }}" \
