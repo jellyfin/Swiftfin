@@ -11,14 +11,12 @@ jobs:
     name: Build schemes
     strategy:
       matrix:
-        os:
-          - macos-11
         platform:
           - tvOS
           - iOS
-        xcode:
-          - ^12
-    runs-on: ${{ matrix.os }}
+          
+    runs-on: macos-latest
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -31,7 +29,7 @@ jobs:
         run: "carthage update"
       - uses: mxcl/xcodebuild@v1
         with:
-          xcode: ${{ matrix.xcode }}
+          xcode: ^12
           platform: ${{ matrix.platform }}
           action: build             # default = `test`
           code-coverage: true       # default = `false`
