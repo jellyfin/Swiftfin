@@ -1,4 +1,5 @@
-/* JellyfinPlayer/Swiftfin is subject to the terms of the Mozilla Public
+/*
+ * JellyfinPlayer/Swiftfin is subject to the terms of the Mozilla Public
  * License, v2.0. If a copy of the MPL was not distributed with this
  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
  *
@@ -61,17 +62,19 @@ struct LibraryView: View {
         isLoading = true
         items = []
         
-        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], includeItemTypes: ["Movie","Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                isLoading = false
-            }, receiveValue: { response in
-                let x = ceil(Double(response.totalRecordCount!) / 100.0)
-                totalPages = Int(x)
-                items = response.items ?? []
-                isLoading = false
-            })
-            .store(in: &globalData.pendingAPIRequests)
+        DispatchQueue.global(qos: .userInitiated).async {
+            ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], includeItemTypes: ["Movie","Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    isLoading = false
+                }, receiveValue: { response in
+                    let x = ceil(Double(response.totalRecordCount!) / 100.0)
+                    totalPages = Int(x)
+                    items = response.items ?? []
+                    isLoading = false
+                })
+                .store(in: &globalData.pendingAPIRequests)
+        }
     }
     
     //MARK: tracks for grid

@@ -287,88 +287,88 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         
         let playbackInfo = PlaybackInfoDto(userId: globalData.user.user_id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
         
-        MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: globalData.user.user_id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
-            }, receiveValue: { [self] response in
-                playSessionId = response.playSessionId!
-                let mediaSource = response.mediaSources!.first.self!
-                if(mediaSource.transcodingUrl != nil) {
-                    //Item is being transcoded by request of server
-                    let streamURL = URL(string: "\(globalData.server.baseURI!)\(mediaSource.transcodingUrl!)")
-                    let item = PlaybackItem()
-                    item.videoType = .transcode
-                    item.videoUrl = streamURL!
-                    
-                    let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: .embed, codec: "")
-                    subtitleTrackArray.append(disableSubtitleTrack);
-                    
-                    //Loop through media streams and add to array
-                    for stream in mediaSource.mediaStreams! {
-                        if(stream.type == .subtitle) {
-                            let deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
-                            let subtitle = Subtitle(name: stream.displayTitle!, id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
-                            subtitleTrackArray.append(subtitle);
+        DispatchQueue.global(qos: .userInitiated).async { [self] in
+            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: globalData.user.user_id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+                }, receiveValue: { [self] response in
+                    playSessionId = response.playSessionId!
+                    let mediaSource = response.mediaSources!.first.self!
+                    if(mediaSource.transcodingUrl != nil) {
+                        //Item is being transcoded by request of server
+                        let streamURL = URL(string: "\(globalData.server.baseURI!)\(mediaSource.transcodingUrl!)")
+                        let item = PlaybackItem()
+                        item.videoType = .transcode
+                        item.videoUrl = streamURL!
+                        
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: .embed, codec: "")
+                        subtitleTrackArray.append(disableSubtitleTrack);
+                        
+                        //Loop through media streams and add to array
+                        for stream in mediaSource.mediaStreams! {
+                            if(stream.type == .subtitle) {
+                                let deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
+                                let subtitle = Subtitle(name: stream.displayTitle!, id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
+                                subtitleTrackArray.append(subtitle);
+                            }
+                            
+                            if(stream.type == .audio) {
+                                let subtitle = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
+                                if(stream.isDefault! == true) {
+                                    selectedAudioTrack = Int32(stream.index!);
+                                }
+                                audioTrackArray.append(subtitle);
+                            }
                         }
                         
-                        if(stream.type == .audio) {
-                            let subtitle = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
-                            if(stream.isDefault! == true) {
-                                selectedAudioTrack = Int32(stream.index!);
+                        if(selectedAudioTrack == -1) {
+                            if(audioTrackArray.count > 0) {
+                                selectedAudioTrack = audioTrackArray[0].id;
                             }
-                            audioTrackArray.append(subtitle);
-                        }
-                    }
-                    
-                    if(selectedAudioTrack == -1) {
-                        if(audioTrackArray.count > 0) {
-                            selectedAudioTrack = audioTrackArray[0].id;
-                        }
-                    }
-                    
-                    self.sendPlayReport()
-                    playbackItem = item;
-                } else {
-                    //Item will be directly played by the client.
-                    let streamURL: URL = URL(string: "\(globalData.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(globalData.user.device_uuid!)&api_key=\(globalData.authToken)&Tag=\(mediaSource.eTag!)")!;
-                    
-                    let item = PlaybackItem()
-                    item.videoUrl = streamURL
-                    item.videoType = .directPlay
-                    
-                    let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: .embed, codec: "")
-                    subtitleTrackArray.append(disableSubtitleTrack);
-                    
-                    //Loop through media streams and add to array
-                    for stream in mediaSource.mediaStreams! {
-                        if(stream.type == .subtitle) {
-                            let deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
-                            let subtitle = Subtitle(name: stream.displayTitle!, id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
-                            subtitleTrackArray.append(subtitle);
                         }
                         
-                        if(stream.type == .audio) {
-                            let subtitle = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
-                            if(stream.isDefault! == true) {
-                                selectedAudioTrack = Int32(stream.index!);
+                        self.sendPlayReport()
+                        playbackItem = item;
+                    } else {
+                        //Item will be directly played by the client.
+                        let streamURL: URL = URL(string: "\(globalData.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(globalData.user.device_uuid!)&api_key=\(globalData.authToken)&Tag=\(mediaSource.eTag!)")!;
+                        
+                        let item = PlaybackItem()
+                        item.videoUrl = streamURL
+                        item.videoType = .directPlay
+                        
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: .embed, codec: "")
+                        subtitleTrackArray.append(disableSubtitleTrack);
+                        
+                        //Loop through media streams and add to array
+                        for stream in mediaSource.mediaStreams! {
+                            if(stream.type == .subtitle) {
+                                let deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
+                                let subtitle = Subtitle(name: stream.displayTitle!, id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
+                                subtitleTrackArray.append(subtitle);
                             }
-                            audioTrackArray.append(subtitle);
+                            
+                            if(stream.type == .audio) {
+                                let subtitle = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
+                                if(stream.isDefault! == true) {
+                                    selectedAudioTrack = Int32(stream.index!);
+                                }
+                                audioTrackArray.append(subtitle);
+                            }
                         }
+                        
+                        if(selectedAudioTrack == -1) {
+                            if(audioTrackArray.count > 0) {
+                                selectedAudioTrack = audioTrackArray[0].id;
+                            }
+                        }
+                        
+                        self.sendPlayReport()
+                        playbackItem = item;
                     }
                     
-                    if(selectedAudioTrack == -1) {
-                        if(audioTrackArray.count > 0) {
-                            selectedAudioTrack = audioTrackArray[0].id;
-                        }
-                    }
+                    self.setupNowPlayingCC()
                     
-                    self.sendPlayReport()
-                    playbackItem = item;
-                }
-                
-                self.setupNowPlayingCC()
-                
-                DispatchQueue.global(qos: .background).async {
                     mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                     mediaPlayer.play()
                     print(manifest.userData?.playbackPositionTicks ?? 0)
@@ -385,9 +385,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                     mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack;
                     mediaPlayer.pause()
                     mediaPlayer.play()
-                }
-            })
-            .store(in: &globalData.pendingAPIRequests)
+                })
+                .store(in: &globalData.pendingAPIRequests)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

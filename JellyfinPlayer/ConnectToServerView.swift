@@ -5,8 +5,6 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-//MARK: refactor this file! it's the first swift file I ever wrote and it clearly shows.
-
 import SwiftUI
 import CoreData
 import KeychainSwift

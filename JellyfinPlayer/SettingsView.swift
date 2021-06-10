@@ -9,30 +9,20 @@ import CoreData
 import SwiftUI
 
 struct SettingsView: View {
-    @ObservedObject
-    var viewModel: SettingsViewModel
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @EnvironmentObject var globalData: GlobalData
+    @EnvironmentObject var jsi: justSignedIn
+    
+    @ObservedObject var viewModel: SettingsViewModel
 
-    @Binding
-    var close: Bool
-    @Environment(\.managedObjectContext)
-    private var viewContext
-    @EnvironmentObject
-    var globalData: GlobalData
-    @EnvironmentObject
-    var jsi: justSignedIn
-    @State
-    private var username: String = ""
-    @State
-    private var inNetworkStreamBitrate: Int = 40_000_000
-    @State
-    private var outOfNetworkStreamBitrate: Int = 40_000_000
-    @State
-    private var autoSelectSubtitles: Bool = false
-    @State
-    private var autoSelectSubtitlesLangcode: String = "none"
+    @Binding var close: Bool
+    @State private var inNetworkStreamBitrate: Int = 40_000_000
+    @State private var outOfNetworkStreamBitrate: Int = 40_000_000
+    @State private var autoSelectSubtitles: Bool = false
+    @State private var autoSelectSubtitlesLangcode: String = "none"
 
     func onAppear() {
-        _username.wrappedValue = globalData.user.username ?? ""
         let defaults = UserDefaults.standard
         _inNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "InNetworkBandwidth")
         _outOfNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "OutOfNetworkBandwidth")
@@ -73,7 +63,7 @@ struct SettingsView: View {
 
                 Section {
                     HStack {
-                        Text("Signed in as \(username)").foregroundColor(.primary)
+                        Text("Signed in as \(globalData.user.username!)").foregroundColor(.primary)
                         Spacer()
                         Button {
                             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
@@ -119,38 +109,5 @@ struct SettingsView: View {
                 }
             }
         }.onAppear(perform: onAppear)
-    }
-}
-
-struct UserSettings: Decodable {
-    var LocalMaxBitrate: Int;
-    var RemoteMaxBitrate: Int;
-    var AutoSelectSubtitles: Bool;
-    var AutoSelectSubtitlesLangcode: String;
-    var SubtitlePositionOffset: Int;
-    var SubtitleFontName: String;
-}
-
-struct Bitrates: Codable, Hashable {
-    public var name: String
-    public var value: Int
-}
-
-final class SettingsViewModel: ObservableObject {
-    var bitrates: [Bitrates] = []
-
-    init() {
-        let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!
-
-        do {
-            let jsonData = try Data(contentsOf: url, options: .mappedIfSafe)
-            do {
-                self.bitrates = try JSONDecoder().decode([Bitrates].self, from: jsonData)
-            } catch {
-                print(error)
-            }
-        } catch {
-            print(error)
-        }
     }
 }

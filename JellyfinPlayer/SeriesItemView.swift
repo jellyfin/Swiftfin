@@ -26,15 +26,18 @@ struct SeriesItemView: View {
         }
         
         isLoading = true
-        TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people])
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-            }, receiveValue: { response in
-                isLoading = false
-                viewDidLoad = true
-                seasons = response.items ?? []
-            })
-            .store(in: &globalData.pendingAPIRequests)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people])
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                }, receiveValue: { response in
+                    isLoading = false
+                    viewDidLoad = true
+                    seasons = response.items ?? []
+                })
+                .store(in: &globalData.pendingAPIRequests)
+        }
     }
 
     //MARK: Grid tracks

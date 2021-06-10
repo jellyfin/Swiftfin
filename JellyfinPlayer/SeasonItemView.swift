@@ -28,15 +28,17 @@ struct SeasonItemView: View {
             return
         }
 
-        TvShowsAPI.getEpisodes(seriesId: item.seriesId!, userId: globalData.user.user_id!, fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], seasonId: item.id!)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                isLoading = false
-            }, receiveValue: { response in
-                viewDidLoad = true
-                episodes = response.items ?? []
-            })
-            .store(in: &globalData.pendingAPIRequests)
+        DispatchQueue.global(qos: .userInitiated).async {
+            TvShowsAPI.getEpisodes(seriesId: item.seriesId!, userId: globalData.user.user_id!, fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], seasonId: item.id!)
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    isLoading = false
+                }, receiveValue: { response in
+                    viewDidLoad = true
+                    episodes = response.items ?? []
+                })
+                .store(in: &globalData.pendingAPIRequests)
+        }
     }
 
     @ViewBuilder
