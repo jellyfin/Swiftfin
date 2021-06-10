@@ -11,6 +11,7 @@ import KeychainSwift
 import Nuke
 import Combine
 import JellyfinAPI
+import WidgetKit
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -63,6 +64,7 @@ struct ContentView: View {
             let savedUser = savedUsers[0]
 
             let keychain = KeychainSwift()
+            keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
             if keychain.get("AccessToken_\(savedUser.user_id ?? "")") != nil {
                 globalData.authToken = keychain.get("AccessToken_\(savedUser.user_id ?? "")") ?? ""
                 globalData.server = servers[0]
@@ -126,6 +128,7 @@ struct ContentView: View {
                 defaults.setValue(40_000_000, forKey: "OutOfNetworkBandwidth")
             }
         }
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     var body: some View {
