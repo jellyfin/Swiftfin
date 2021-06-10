@@ -1,0 +1,35 @@
+name: fastlane build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build prod
+    strategy:
+      matrix:
+        scheme:
+          - "JellyfinPlayer"
+          - "JellyfinPlayer tvOS"
+          
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: Install Carthage
+        run: "carthage update"
+      - name: Build!
+        run: |
+          xcodebuild build -project "JellyfinPlayer.xcodeproj" \
+          -scheme "${{ matrix.scheme }}" \
+          CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO          
+      
