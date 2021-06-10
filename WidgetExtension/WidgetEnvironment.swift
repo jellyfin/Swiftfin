@@ -15,8 +15,8 @@ import UIKit
 final class WidgetEnvironment {
     static let shared = WidgetEnvironment()
     
-    var server: Server!
-    var user: SignedInUser!
+    var server: Server?
+    var user: SignedInUser?
     var header: String?
     
     init() {
