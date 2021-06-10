@@ -15,11 +15,11 @@ func HandleAPIRequestCompletion(globalData: GlobalData, completion: Subscribers.
             break
         case .failure(let error):
             if let err = error as? ErrorResponse {
-                switch(err){
+                switch err {
                     case .error(401, _, _, _):
-                        globalData.expiredCredentials = true;
-                    case .error(_, _, _, _):
-                        globalData.networkError = true;
+                        globalData.expiredCredentials = true
+                    case .error:
+                        globalData.networkError = true
                 }
             }
             break

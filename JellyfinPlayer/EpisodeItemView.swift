@@ -13,7 +13,7 @@ struct EpisodeItemView: View {
     @EnvironmentObject private var globalData: GlobalData
     @EnvironmentObject private var orientationInfo: OrientationInfo
     @EnvironmentObject private var playbackInfo: VideoPlayerItem
-    
+
     var item: BaseItemDto
 
     @State private var settingState: Bool = true
@@ -200,7 +200,7 @@ struct EpisodeItemView: View {
                                     HStack {
                                         Spacer().frame(width: 16)
                                         ForEach(item.people!, id: \.self) { person in
-                                            if(person.type! == "Actor") {
+                                            if person.type! == "Actor" {
                                                 NavigationLink(destination: LazyView {
                                                     LibraryView(withPerson: person)
                                                 }) {
@@ -399,7 +399,7 @@ struct EpisodeItemView: View {
                                                 HStack {
                                                     Spacer().frame(width: 16)
                                                     ForEach(item.people!, id: \.self) { person in
-                                                        if(person.type! == "Actor") {
+                                                        if person.type! == "Actor" {
                                                             NavigationLink(destination: LazyView {
                                                                 LibraryView(withPerson: person)
                                                             }) {

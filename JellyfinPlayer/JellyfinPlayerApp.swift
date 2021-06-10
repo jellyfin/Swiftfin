@@ -19,11 +19,11 @@ class OrientationInfo: ObservableObject {
         case portrait
         case landscape
     }
-    
-    @Published var orientation: Orientation = .portrait;
-    
+
+    @Published var orientation: Orientation = .portrait
+
     private var _observer: NSObjectProtocol?
-    
+
     init() {
         _observer = NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: nil) { [weak self] note in
             guard let device = note.object as? UIDevice else {
@@ -31,13 +31,12 @@ class OrientationInfo: ObservableObject {
             }
             if device.orientation.isPortrait {
                 self?.orientation = .portrait
-            }
-            else if device.orientation.isLandscape {
+            } else if device.orientation.isLandscape {
                 self?.orientation = .landscape
             }
         }
     }
-    
+
     deinit {
         if let observer = _observer {
             NotificationCenter.default.removeObserver(observer)
@@ -52,7 +51,7 @@ extension View {
 }
 
 struct HostingWindowFinder: UIViewRepresentable {
-    var callback: (UIWindow?) -> ()
+    var callback: (UIWindow?) -> Void
 
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
@@ -89,7 +88,7 @@ struct ViewPreferenceKey: PreferenceKey {
 struct SupportedOrientationsPreferenceKey: PreferenceKey {
     typealias Value = UIInterfaceOrientationMask
     static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
-    
+
     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
         // use the most restrictive set from the stack
         value.formIntersection(nextValue())
@@ -129,27 +128,27 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
     override var prefersHomeIndicatorAutoHidden: Bool {
         _prefersHomeIndicatorAutoHidden
     }
-    
+
     // MARK: Lock orientation
-    
+
     public var _orientations: UIInterfaceOrientationMask = .allButUpsideDown {
         didSet {
-            UIViewController.attemptRotationToDeviceOrientation();
-            if(_orientations == .landscape) {
-                let value = UIInterfaceOrientation.landscapeRight.rawValue;
+            UIViewController.attemptRotationToDeviceOrientation()
+            if _orientations == .landscape {
+                let value = UIInterfaceOrientation.landscapeRight.rawValue
                 UIDevice.current.setValue(value, forKey: "orientation")
             }
         }
-    };
+    }
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         _orientations
     }
-    
+
     public var _viewPreference: UIUserInterfaceStyle = .unspecified {
         didSet {
             overrideUserInterfaceStyle = _viewPreference
         }
-    };
+    }
 }
 
 extension View {
@@ -157,12 +156,12 @@ extension View {
     func prefersHomeIndicatorAutoHidden(_ value: Bool) -> some View {
         preference(key: PrefersHomeIndicatorAutoHiddenPreferenceKey.self, value: value)
     }
-    
+
     func supportedOrientations(_ supportedOrientations: UIInterfaceOrientationMask) -> some View {
         // When rendered, export the requested orientations upward to Root
         preference(key: SupportedOrientationsPreferenceKey.self, value: supportedOrientations)
     }
-    
+
     func overrideViewPreference(_ viewPreference: UIUserInterfaceStyle) -> some View {
         // When rendered, export the requested orientations upward to Root
         preference(key: ViewPreferenceKey.self, value: viewPreference)
@@ -173,14 +172,14 @@ extension View {
 struct JellyfinPlayerApp: App {
     let persistenceController = PersistenceController.shared
     @StateObject private var jsi = justSignedIn()
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(OrientationInfo())
                 .environmentObject(jsi)
-                .withHostingWindow() { window in
+                .withHostingWindow { window in
                     window?.rootViewController = PreferenceUIHostingController(wrappedView: ContentView().environment(\.managedObjectContext, persistenceController.container.viewContext).environmentObject(OrientationInfo()).environmentObject(jsi))
                 }
         }

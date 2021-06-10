@@ -200,7 +200,7 @@ struct MovieItemView: View {
                                     HStack {
                                         Spacer().frame(width: 16)
                                         ForEach(item.people!, id: \.self) { person in
-                                            if(person.type! == "Actor") {
+                                            if person.type! == "Actor" {
                                                 NavigationLink(destination: LazyView {
                                                     LibraryView(withPerson: person)
                                                 }) {
@@ -399,7 +399,7 @@ struct MovieItemView: View {
                                                 HStack {
                                                     Spacer().frame(width: 16)
                                                     ForEach(item.people!, id: \.self) { person in
-                                                        if(person.type! == "Actor") {
+                                                        if person.type! == "Actor" {
                                                             NavigationLink(destination: LazyView {
                                                                 LibraryView(withPerson: person)
                                                             }) {

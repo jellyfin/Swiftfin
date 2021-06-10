@@ -15,7 +15,7 @@ extension String {
             return regex.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: replaceWith)
         } catch { return self }
     }
-    
+
     func leftPad(toWidth width: Int, withString string: String?) -> String {
         let paddingString = string ?? " "
 
@@ -32,4 +32,3 @@ extension String {
         return "\(padString)\(self)"
     }
 }
-

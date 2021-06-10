@@ -10,26 +10,26 @@ import Introspect
 import JellyfinAPI
 
 class VideoPlayerItem: ObservableObject {
-    @Published var shouldShowPlayer: Bool = false;
-    @Published var itemToPlay: BaseItemDto = BaseItemDto();
+    @Published var shouldShowPlayer: Bool = false
+    @Published var itemToPlay: BaseItemDto = BaseItemDto()
 }
 
 struct ItemView: View {
     @EnvironmentObject private var globalData: GlobalData
-    private var item: BaseItemDto;
-    
+    private var item: BaseItemDto
+
     @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()
-    @State private var videoIsLoading: Bool = false; //This variable is only changed by the underlying VLC view.
-    @State private var isLoading: Bool = false;
-    @State private var viewDidLoad: Bool = false;
-    
+    @State private var videoIsLoading: Bool = false; // This variable is only changed by the underlying VLC view.
+    @State private var isLoading: Bool = false
+    @State private var viewDidLoad: Bool = false
+
     init(item: BaseItemDto) {
         self.item = item
     }
-    
+
     var body: some View {
         VStack {
-            if(videoPlayerItem.shouldShowPlayer) {
+            if videoPlayerItem.shouldShowPlayer {
                 LoadingViewNoBlur(isShowing: $videoIsLoading) {
                     VLCPlayerWithControls(item: videoPlayerItem.itemToPlay, loadBinding: $videoIsLoading, pBinding: _videoPlayerItem.projectedValue.shouldShowPlayer)
                 }.navigationBarHidden(true)
@@ -42,13 +42,13 @@ struct ItemView: View {
                 .supportedOrientations(.landscape)
             } else {
                 VStack {
-                    if(item.type == "Movie") {
+                    if item.type == "Movie" {
                         MovieItemView(item: item)
-                    } else if(item.type == "Season") {
+                    } else if item.type == "Season" {
                         SeasonItemView(item: item)
-                    } else if(item.type == "Series") {
+                    } else if item.type == "Series" {
                         SeriesItemView(item: item)
-                    } else if(item.type == "Episode") {
+                    } else if item.type == "Episode" {
                         EpisodeItemView(item: item)
                     } else {
                         Text("Type: \(item.type ?? "") not implemented yet :(")
