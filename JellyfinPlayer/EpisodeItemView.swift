@@ -16,22 +16,25 @@ struct EpisodeItemView: View {
     
     var item: BaseItemDto
 
+    @State private var settingState: Bool = true
     @State private var watched: Bool = false {
         didSet {
-            if watched == true {
-                PlaystateAPI.markPlayedItem(userId: globalData.user.user_id!, itemId: item.id!)
-                    .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    }, receiveValue: { _ in
-                    })
-                    .store(in: &globalData.pendingAPIRequests)
-            } else {
-                PlaystateAPI.markUnplayedItem(userId: globalData.user.user_id!, itemId: item.id!)
-                    .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    }, receiveValue: { _ in
-                    })
-                    .store(in: &globalData.pendingAPIRequests)
+            if !settingState {
+                if watched == true {
+                    PlaystateAPI.markPlayedItem(userId: globalData.user.user_id!, itemId: item.id!)
+                        .sink(receiveCompletion: { completion in
+                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        }, receiveValue: { _ in
+                        })
+                        .store(in: &globalData.pendingAPIRequests)
+                } else {
+                    PlaystateAPI.markUnplayedItem(userId: globalData.user.user_id!, itemId: item.id!)
+                        .sink(receiveCompletion: { completion in
+                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        }, receiveValue: { _ in
+                        })
+                        .store(in: &globalData.pendingAPIRequests)
+                }
             }
         }
     }
@@ -39,20 +42,22 @@ struct EpisodeItemView: View {
     @State
     private var favorite: Bool = false {
         didSet {
-            if favorite == true {
-                UserLibraryAPI.markFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
-                    .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    }, receiveValue: { _ in
-                    })
-                    .store(in: &globalData.pendingAPIRequests)
-            } else {
-                UserLibraryAPI.unmarkFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
-                    .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    }, receiveValue: { _ in
-                    })
-                    .store(in: &globalData.pendingAPIRequests)
+            if !settingState {
+                if favorite == true {
+                    UserLibraryAPI.markFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
+                        .sink(receiveCompletion: { completion in
+                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        }, receiveValue: { _ in
+                        })
+                        .store(in: &globalData.pendingAPIRequests)
+                } else {
+                    UserLibraryAPI.unmarkFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
+                        .sink(receiveCompletion: { completion in
+                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        }, receiveValue: { _ in
+                        })
+                        .store(in: &globalData.pendingAPIRequests)
+                }
             }
         }
     }
@@ -99,7 +104,7 @@ struct EpisodeItemView: View {
                             .fontWeight(.medium)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                        if item.officialRating != "" {
+                        if item.officialRating != nil {
                             Text(item.officialRating!).font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
@@ -454,8 +459,9 @@ struct EpisodeItemView: View {
             }
         }
         .onAppear(perform: {
-            favorite = item.userData?.isFavorite ?? false
-            watched = item.userData?.played ?? false
+            favorite = item.userData!.isFavorite!
+            watched = item.userData!.played!
+            settingState = false
         })
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("\(item.seriesName ?? "") - S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))")

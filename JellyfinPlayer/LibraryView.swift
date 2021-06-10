@@ -61,7 +61,7 @@ struct LibraryView: View {
         isLoading = true
         items = []
         
-        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: (usingParentID != "" ? usingParentID : nil), fields: [.parentId,.primaryImageAspectRatio,.basicSyncInfo], includeItemTypes: ["Movie","Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
+        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], includeItemTypes: ["Movie","Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 isLoading = false
@@ -184,3 +184,5 @@ struct LibraryView: View {
         }
     }
 }
+
+//stream BM^S by nicki!

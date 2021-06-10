@@ -26,7 +26,7 @@ struct LatestMediaView: View {
         }
         viewDidLoad = true;
         
-        UserLibraryAPI.getLatestMedia(userId: globalData.user.user_id!, parentId: library_id, fields: [.primaryImageAspectRatio,.seriesPrimaryImage], enableUserData: true, limit: 12)
+        UserLibraryAPI.getLatestMedia(userId: globalData.user.user_id!, parentId: library_id, fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], enableUserData: true, limit: 12)
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
             }, receiveValue: { response in

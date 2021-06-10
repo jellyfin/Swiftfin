@@ -14,8 +14,8 @@ struct SeasonItemView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     
     var item: BaseItemDto = BaseItemDto()
-
     @State private var episodes: [BaseItemDto] = []
+    
     @State private var isLoading: Bool = true
     @State private var viewDidLoad: Bool = false
     
@@ -27,10 +27,8 @@ struct SeasonItemView: View {
         if(viewDidLoad) {
             return
         }
-        
-        dump(item)
-        
-        TvShowsAPI.getEpisodes(seriesId: item.seriesId!, userId: globalData.user.user_id!, fields: [.primaryImageAspectRatio, .seasonUserData, .itemCounts, .overview], seasonId: item.id!)
+
+        TvShowsAPI.getEpisodes(seriesId: item.seriesId!, userId: globalData.user.user_id!, fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], seasonId: item.id!)
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 isLoading = false

@@ -34,7 +34,7 @@ struct ConnectToServerView: View {
     @State private var serverSkipped: Bool = false;
     @State private var serverSkippedAlert: Bool = false;
     @State private var skip_server_bool: Bool = false;
-    @State private var skip_server_obj: Server = Server();
+    @State private var skip_server_obj: Server!;
     
     @Binding var rootIsActive: Bool
     
@@ -297,9 +297,6 @@ struct ConnectToServerView: View {
                                                 .frame(width: 60, height: 60)
                                                 .cornerRadius(30.0)
                                                 .shadow(radius: 6)
-                                                .onAppear(perform: {
-                                                    print("\(uri)/Users/\(publicUser.id!)/Images/Primary?width=200&quality=80&tag=\(publicUser.primaryImageTag!)")
-                                                })
                                         } else {
                                             Image(systemName: "person.fill")
                                                 .foregroundColor(Color(red: 1, green: 1, blue: 1).opacity(0.8))

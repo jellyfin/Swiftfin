@@ -31,7 +31,7 @@ struct LibrarySearchView: View {
     func requestSearch(query: String) {
         isLoading = true
         print(usingParentID)
-        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.parentId,.primaryImageAspectRatio,.basicSyncInfo], includeItemTypes: ["Movie","Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
+        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], includeItemTypes: ["Movie","Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
             }, receiveValue: { response in
@@ -110,3 +110,5 @@ struct LibrarySearchView: View {
         }
     }
 }
+
+//stream NM5 by nicki!

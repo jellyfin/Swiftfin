@@ -24,9 +24,9 @@ struct SeriesItemView: View {
         if(viewDidLoad) {
             return;
         }
-        isLoading = true
         
-        TvShowsAPI.getSeasons(seriesId: item.id ?? "")
+        isLoading = true
+        TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people])
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
             }, receiveValue: { response in

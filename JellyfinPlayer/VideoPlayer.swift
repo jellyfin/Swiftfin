@@ -8,6 +8,7 @@
 import SwiftUI
 import MobileVLCKit
 import JellyfinAPI
+import MediaPlayer
 
 struct Subtitle {
     var name: String;
@@ -185,9 +186,78 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         return true
     }
     
+    func setupNowPlayingCC() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        commandCenter.playCommand.isEnabled = true;
+        commandCenter.pauseCommand.isEnabled = true;
+        commandCenter.seekForwardCommand.isEnabled = true;
+        commandCenter.seekBackwardCommand.isEnabled = true;
+        commandCenter.changePlaybackPositionCommand.isEnabled = true
+
+        // Add handler for Pause Command
+        commandCenter.pauseCommand.addTarget{ event in
+            self.mediaPlayer.pause()
+            self.sendProgressReport(eventName: "pause")
+            return .success
+        }
+        
+        //Add handler for Play command
+        commandCenter.playCommand.addTarget{ event in
+            self.mediaPlayer.play()
+            self.sendProgressReport(eventName: "unpause")
+            return .success
+        }
+        
+        //Add handler for FF command
+        commandCenter.seekForwardCommand.addTarget{ event in
+            self.mediaPlayer.jumpForward(30)
+            self.sendProgressReport(eventName: "timeupdate")
+            return .success
+        }
+        
+        //Add handler for RW command
+        commandCenter.seekBackwardCommand.addTarget{ event in
+            self.mediaPlayer.jumpBackward(15)
+            self.sendProgressReport(eventName: "timeupdate")
+            return .success
+        }
+        
+        //Scrubber
+        commandCenter.changePlaybackPositionCommand.addTarget { [weak self](remoteEvent) -> MPRemoteCommandHandlerStatus in
+            guard let self = self else {return .commandFailed}
+           
+            if let event = remoteEvent as? MPChangePlaybackPositionCommandEvent {
+                let targetSeconds = event.positionTime
+                
+                let videoPosition = Double(self.mediaPlayer.time.intValue)
+                let offset = targetSeconds - videoPosition;
+                if(offset > 0) {
+                    self.mediaPlayer.jumpForward(Int32(offset)/1000);
+                } else {
+                    self.mediaPlayer.jumpBackward(Int32(abs(offset))/1000);
+                }
+                self.sendProgressReport(eventName: "unpause")
+                
+                return .success
+            } else {
+                return .commandFailed
+            }
+        }
+        
+        var nowPlayingInfo = [String : Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name ?? ""
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+    }
+    
+    override func remoteControlReceived(with event: UIEvent?) {
+        dump(event)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         //View has loaded.
         
         //Rotate to landscape only if necessary
@@ -200,7 +270,11 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         mediaPlayer.delegate = self
         mediaPlayer.drawable = videoContentView
         
-        titleLabel.text = manifest.name
+        if(manifest.type == "Movie") {
+            titleLabel.text = manifest.name
+        } else {
+            titleLabel.text = "S\(String(manifest.parentIndexNumber!)):E\(String(manifest.indexNumber!)) “\(manifest.name!)”"
+        }
         
         //Fetch max bitrate from UserDefaults depending on current connection mode
         let defaults = UserDefaults.standard
@@ -292,9 +366,12 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                     playbackItem = item;
                 }
                 
+                self.setupNowPlayingCC()
+                
                 DispatchQueue.global(qos: .background).async {
                     mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                     mediaPlayer.play()
+                    print(manifest.userData?.playbackPositionTicks ?? 0)
                     mediaPlayer.jumpForward(Int32(manifest.userData?.playbackPositionTicks ?? 0/10000000))
                     mediaPlayer.pause()
                     subtitleTrackArray.forEach() { sub in

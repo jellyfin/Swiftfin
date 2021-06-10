@@ -15,23 +15,26 @@ struct MovieItemView: View {
     @EnvironmentObject private var playbackInfo: VideoPlayerItem
 
     var item: BaseItemDto
-    
+
+    @State private var settingState: Bool = true
     @State private var watched: Bool = false {
         didSet {
-            if watched == true {
-                PlaystateAPI.markPlayedItem(userId: globalData.user.user_id!, itemId: item.id!)
-                    .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    }, receiveValue: { _ in
-                    })
-                    .store(in: &globalData.pendingAPIRequests)
-            } else {
-                PlaystateAPI.markUnplayedItem(userId: globalData.user.user_id!, itemId: item.id!)
-                    .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    }, receiveValue: { _ in
-                    })
-                    .store(in: &globalData.pendingAPIRequests)
+            if !settingState {
+                if watched == true {
+                    PlaystateAPI.markPlayedItem(userId: globalData.user.user_id!, itemId: item.id!)
+                        .sink(receiveCompletion: { completion in
+                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        }, receiveValue: { _ in
+                        })
+                        .store(in: &globalData.pendingAPIRequests)
+                } else {
+                    PlaystateAPI.markUnplayedItem(userId: globalData.user.user_id!, itemId: item.id!)
+                        .sink(receiveCompletion: { completion in
+                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        }, receiveValue: { _ in
+                        })
+                        .store(in: &globalData.pendingAPIRequests)
+                }
             }
         }
     }
@@ -39,20 +42,22 @@ struct MovieItemView: View {
     @State
     private var favorite: Bool = false {
         didSet {
-            if favorite == true {
-                UserLibraryAPI.markFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
-                    .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    }, receiveValue: { _ in
-                    })
-                    .store(in: &globalData.pendingAPIRequests)
-            } else {
-                UserLibraryAPI.unmarkFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
-                    .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    }, receiveValue: { _ in
-                    })
-                    .store(in: &globalData.pendingAPIRequests)
+            if !settingState {
+                if favorite == true {
+                    UserLibraryAPI.markFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
+                        .sink(receiveCompletion: { completion in
+                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        }, receiveValue: { _ in
+                        })
+                        .store(in: &globalData.pendingAPIRequests)
+                } else {
+                    UserLibraryAPI.unmarkFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
+                        .sink(receiveCompletion: { completion in
+                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        }, receiveValue: { _ in
+                        })
+                        .store(in: &globalData.pendingAPIRequests)
+                }
             }
         }
     }
@@ -454,8 +459,9 @@ struct MovieItemView: View {
             }
         }
         .onAppear(perform: {
-            favorite = item.userData?.isFavorite ?? false
-            watched = item.userData?.played ?? false
+            favorite = item.userData!.isFavorite!
+            watched = item.userData!.played!
+            settingState = false
         })
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(item.name!)

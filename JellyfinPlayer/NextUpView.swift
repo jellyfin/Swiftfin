@@ -21,7 +21,7 @@ struct NextUpView: View {
         }
         viewDidLoad = true;
         
-        TvShowsAPI.getNextUp(userId: globalData.user.user_id!, limit: 12)
+        TvShowsAPI.getNextUp(userId: globalData.user.user_id!, limit: 12, fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people])
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
             }, receiveValue: { response in
