@@ -1,4 +1,4 @@
-name: fastlane build
+name: "xcodebuild: run"
 
 on:
   push:
