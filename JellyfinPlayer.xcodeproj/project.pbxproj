@@ -689,7 +689,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.pangmo5.swiftfintvos;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.pangmo5.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_VERSION = 5.0;
@@ -718,7 +718,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.pangmo5.swiftfintvos;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.pangmo5.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_VERSION = 5.0;
