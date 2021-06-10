@@ -34,7 +34,7 @@ class GlobalData: ObservableObject {
     @Published var isInNetwork: Bool = true;
     @Published var networkError: Bool = false;
     @Published var expiredCredentials: Bool = false;
-    @Published var pendingAPIRequests = Set<AnyCancellable>();
+    var pendingAPIRequests = Set<AnyCancellable>();
 }
 
 extension GlobalData: Equatable {

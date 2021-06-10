@@ -85,36 +85,38 @@ struct ContentView: View {
             JellyfinAPI.basePath = globalData.server.baseURI ?? ""
             JellyfinAPI.customHeaders = ["X-Emby-Authorization": globalData.authHeader]
             
-            UserAPI.getCurrentUser()
-                .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    loadState = loadState - 1
-                }, receiveValue: { response in
-                    libraries = response.configuration?.orderedViews ?? []
-                    librariesShowRecentlyAdded = libraries.filter { element in
-                        return !(response.configuration?.latestItemsExcludes?.contains(element))!
-                    }
-                    
-                    if(loadState == 1) {
-                        isLoading = false
-                    }
-                })
-                .store(in: &globalData.pendingAPIRequests)
-            
-            UserViewsAPI.getUserViews(userId: globalData.user.user_id ?? "")
-                .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                    loadState = loadState - 1
-                }, receiveValue: { response in
-                    response.items?.forEach({ item in
-                        library_names[item.id ?? ""] = item.name
+            DispatchQueue.global(qos: .userInitiated).async {
+                UserAPI.getCurrentUser()
+                    .sink(receiveCompletion: { completion in
+                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        loadState = loadState - 1
+                    }, receiveValue: { response in
+                        libraries = response.configuration?.orderedViews ?? []
+                        librariesShowRecentlyAdded = libraries.filter { element in
+                            return !(response.configuration?.latestItemsExcludes?.contains(element))!
+                        }
+                        
+                        if(loadState == 1) {
+                            isLoading = false
+                        }
                     })
-                    
-                    if(loadState == 1) {
-                        isLoading = false
-                    }
-                })
-                .store(in: &globalData.pendingAPIRequests)
+                    .store(in: &globalData.pendingAPIRequests)
+                
+                UserViewsAPI.getUserViews(userId: globalData.user.user_id ?? "")
+                    .sink(receiveCompletion: { completion in
+                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        loadState = loadState - 1
+                    }, receiveValue: { response in
+                        response.items?.forEach({ item in
+                            library_names[item.id ?? ""] = item.name
+                        })
+                        
+                        if(loadState == 1) {
+                            isLoading = false
+                        }
+                    })
+                    .store(in: &globalData.pendingAPIRequests)
+            }
             
             let defaults = UserDefaults.standard
             if defaults.integer(forKey: "InNetworkBandwidth") == 0 {

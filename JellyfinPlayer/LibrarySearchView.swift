@@ -30,15 +30,17 @@ struct LibrarySearchView: View {
     
     func requestSearch(query: String) {
         isLoading = true
-        print(usingParentID)
-        ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], includeItemTypes: ["Movie","Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-            }, receiveValue: { response in
-                items = response.items ?? []
-                isLoading = false
-            })
-            .store(in: &globalData.pendingAPIRequests)
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], includeItemTypes: ["Movie","Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                }, receiveValue: { response in
+                    items = response.items ?? []
+                    isLoading = false
+                })
+                .store(in: &globalData.pendingAPIRequests)
+        }
     }
     
     //MARK: tracks for grid
