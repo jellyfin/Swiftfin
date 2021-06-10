@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: "Build 🔨"
+    name: ""
     strategy:
       matrix:
         scheme:
