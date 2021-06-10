@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    name: Build schemes
+    name: Build prod
     strategy:
       matrix:
-        platform:
-          - tvOS
-          - iOS
+        scheme:
+          - "JellyfinPlayer"
+          - "JellyfinPlayer tvOS"
           
     runs-on: macos-latest
     
@@ -27,12 +27,9 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Install Carthage
         run: "carthage update"
-      - uses: mxcl/xcodebuild@v1
-        with:
-          xcode: ^12
-          platform: ${{ matrix.platform }}
-          action: build             # default = `test`
-          code-coverage: true       # default = `false`
-          warnings-as-errors: true  # default = `false`
-          configuration: release    # no default, ie. `xcodebuild` decides itself
+      - name: Build!
+        run: |
+          xcodebuild build -project "JellyfinPlayer" \
+          -scheme "${{ matrix.scheme }}" \
+          CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO          
       
