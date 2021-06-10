@@ -312,7 +312,7 @@ extension NextUpEntryView {
                         if let image = firstItem.1 {
                             Image(uiImage: image)
                                 .centerCropped()
-                                .innerShadow(color: .black.opacity(0.5), radius: 0.5)
+                                .innerShadow(color: Color.black.opacity(0.5), radius: 0.5)
                         }
                         VStack(alignment: .leading, spacing: 8) {
                             Text(firstItem.0.seriesName ?? "")
@@ -342,8 +342,8 @@ extension NextUpEntryView {
                     largeVideoPlaceholderView
                 }
                 Divider()
-                if let thridItem = items[safe: 2] {
-                    largeVideoView(item: thridItem)
+                if let thirdItem = items[safe: 2] {
+                    largeVideoView(item: thirdItem)
                 } else {
                     largeVideoPlaceholderView
                 }
@@ -362,7 +362,7 @@ struct NextUpWidget: Widget {
             NextUpEntryView(entry: entry)
         }
         .configurationDisplayName("Next Up")
-        .description("Keep watching where you left off or see what's on next.")
+        .description("Keep watching where you left off or see what's up next.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
@@ -372,41 +372,41 @@ struct NextUpWidget_Previews: PreviewProvider {
         Group {
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [(.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                                  UIImage(named: "jellyfin"))],
+                                                  UIImage(named: "WidgetHeaderSymbol"))],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name2", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series2"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [(.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                                  UIImage(named: "jellyfin"))],
+                                                  UIImage(named: "WidgetHeaderSymbol"))],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .preferredColorScheme(.dark)
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
@@ -414,11 +414,11 @@ struct NextUpWidget_Previews: PreviewProvider {
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name2", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series2"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
@@ -431,7 +431,7 @@ struct NextUpWidget_Previews: PreviewProvider {
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
@@ -439,9 +439,9 @@ struct NextUpWidget_Previews: PreviewProvider {
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "jellyfin")),
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
