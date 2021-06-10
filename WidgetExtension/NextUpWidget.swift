@@ -216,7 +216,7 @@ extension NextUpEntryView {
 
 extension NextUpEntryView {
     var headerSymbol: some View {
-        Image("jellyfin")
+        Image("WidgetHeaderSymbol")
             .resizable()
             .frame(width: 12, height: 12)
             .cornerRadius(4)

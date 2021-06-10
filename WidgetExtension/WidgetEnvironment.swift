@@ -15,8 +15,8 @@ import UIKit
 final class WidgetEnvironment {
     static let shared = WidgetEnvironment()
     
-    var server: Server?
-    var user: SignedInUser?
+    var server: Server!
+    var user: SignedInUser!
     var header: String?
     
     init() {
@@ -34,7 +34,7 @@ final class WidgetEnvironment {
 
         let keychain = KeychainSwift()
         // need prefix
-        keychain.accessGroup = "4BHXT8RHFR.dev.pangmo5.swiftfin.keychainGroup"
+        keychain.accessGroup = "4BHXT8RHFR.me.vigue.swiftfin.keychainGroup"
         guard let authToken = keychain.get("AccessToken_\(user?.user_id ?? "")") else {
             return
         }
