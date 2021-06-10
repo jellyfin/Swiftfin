@@ -27,9 +27,9 @@ class justSignedIn: ObservableObject {
 }
 
 class GlobalData: ObservableObject {
-    @Published var user: SignedInUser = SignedInUser()
+    @Published var user: SignedInUser!
     @Published var authToken: String = ""
-    @Published var server: Server = Server()
+    @Published var server: Server!
     @Published var authHeader: String = ""
     @Published var isInNetwork: Bool = true;
     @Published var networkError: Bool = false;

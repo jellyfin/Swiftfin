@@ -37,7 +37,7 @@ struct ContinueWatchingView: View {
     @State private var items: [BaseItemDto] = []
     
     func onAppear() {
-        ItemsAPI.getResumeItems(userId: globalData.user.user_id ?? "", limit: 12, fields: [.primaryImageAspectRatio], mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary,.backdrop,.thumb])
+        ItemsAPI.getResumeItems(userId: globalData.user.user_id ?? "", limit: 12, fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary,.backdrop,.thumb])
             .sink(receiveCompletion: { completion in
                 HandleAPIRequestCompletion(globalData: globalData, completion: completion)
             }, receiveValue: { response in

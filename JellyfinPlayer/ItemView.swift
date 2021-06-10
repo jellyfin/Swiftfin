@@ -9,8 +9,6 @@ import SwiftUI
 import Introspect
 import JellyfinAPI
 
-//good lord the environmental modifiers ;P
-
 class VideoPlayerItem: ObservableObject {
     @Published var shouldShowPlayer: Bool = false;
     @Published var itemToPlay: BaseItemDto = BaseItemDto();
@@ -18,8 +16,6 @@ class VideoPlayerItem: ObservableObject {
 
 struct ItemView: View {
     @EnvironmentObject private var globalData: GlobalData
-    
-    @State private var fullItem: BaseItemDto = BaseItemDto();
     private var item: BaseItemDto;
     
     @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()
@@ -29,23 +25,6 @@ struct ItemView: View {
     
     init(item: BaseItemDto) {
         self.item = item
-    }
-    
-    func onAppear() {
-        if(viewDidLoad) {
-            return
-        }
-        
-        isLoading = true;
-        UserLibraryAPI.getItem(userId: globalData.user.user_id!, itemId: item.id!)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-            }, receiveValue: { response in
-                isLoading = false
-                viewDidLoad = true
-                fullItem = response
-            })
-            .store(in: &globalData.pendingAPIRequests)
     }
     
     var body: some View {
@@ -62,37 +41,32 @@ struct ItemView: View {
                 .overrideViewPreference(.unspecified)
                 .supportedOrientations(.landscape)
             } else {
-                if(isLoading) {
-                    ProgressView()
-                } else {
-                    VStack {
-                        if(fullItem.type == "Movie") {
-                            MovieItemView(item: fullItem)
-                        } else if(fullItem.type == "Season") {
-                            SeasonItemView(item: fullItem)
-                        } else if(fullItem.type == "Series") {
-                            SeriesItemView(item: fullItem)
-                        } else if(fullItem.type == "Episode") {
-                            EpisodeItemView(item: fullItem)
-                        } else {
-                            Text("Type: \(fullItem.type ?? "") not implemented yet :(")
-                        }
+                VStack {
+                    if(item.type == "Movie") {
+                        MovieItemView(item: item)
+                    } else if(item.type == "Season") {
+                        SeasonItemView(item: item)
+                    } else if(item.type == "Series") {
+                        SeriesItemView(item: item)
+                    } else if(item.type == "Episode") {
+                        EpisodeItemView(item: item)
+                    } else {
+                        Text("Type: \(item.type ?? "") not implemented yet :(")
                     }
-                    .introspectTabBarController { (UITabBarController) in
-                        UITabBarController.tabBar.isHidden = false
-                    }
-                    .navigationBarHidden(false)
-                    .navigationBarBackButtonHidden(false)
-                    .statusBar(hidden: false)
-                    .prefersHomeIndicatorAutoHidden(false)
-                    .preferredColorScheme(.none)
-                    .edgesIgnoringSafeArea([])
-                    .overrideViewPreference(.unspecified)
-                    .supportedOrientations(.allButUpsideDown)
-                    .environmentObject(videoPlayerItem)
                 }
+                .introspectTabBarController { (UITabBarController) in
+                    UITabBarController.tabBar.isHidden = false
+                }
+                .navigationBarHidden(false)
+                .navigationBarBackButtonHidden(false)
+                .statusBar(hidden: false)
+                .prefersHomeIndicatorAutoHidden(false)
+                .preferredColorScheme(.none)
+                .edgesIgnoringSafeArea([])
+                .overrideViewPreference(.unspecified)
+                .supportedOrientations(.allButUpsideDown)
+                .environmentObject(videoPlayerItem)
             }
         }
-        .onAppear(perform: onAppear)
     }
 }
