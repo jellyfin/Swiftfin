@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public extension Collection {
 
     /// SwifterSwift: Safe protects the array from out of bounds by use of optional.

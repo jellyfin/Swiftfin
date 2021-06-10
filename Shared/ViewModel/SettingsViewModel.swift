@@ -10,12 +10,12 @@
 import Foundation
 
 struct UserSettings: Decodable {
-    var LocalMaxBitrate: Int;
-    var RemoteMaxBitrate: Int;
-    var AutoSelectSubtitles: Bool;
-    var AutoSelectSubtitlesLangcode: String;
-    var SubtitlePositionOffset: Int;
-    var SubtitleFontName: String;
+    var LocalMaxBitrate: Int
+    var RemoteMaxBitrate: Int
+    var AutoSelectSubtitles: Bool
+    var AutoSelectSubtitlesLangcode: String
+    var SubtitlePositionOffset: Int
+    var SubtitleFontName: String
 }
 
 struct Bitrates: Codable, Hashable {

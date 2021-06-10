@@ -12,15 +12,15 @@ struct LoadingView<Content>: View where Content: View {
     @Binding var isShowing: Bool // should the modal be visible?
     var content: () -> Content
     var text: String?  // the text to display under the ProgressView - defaults to "Loading..."
-    
+
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             ZStack(alignment: .center) {
                 // the content to display - if the modal is showing, we'll blur it
                 content()
                     .disabled(isShowing)
                     .blur(radius: isShowing ? 2 : 0)
-                
+
                 // all contents inside here will only be shown when isShowing is true
                 if isShowing {
                     // this Rectangle is a semi-transparent black overlay
@@ -30,7 +30,7 @@ struct LoadingView<Content>: View where Content: View {
 
                     // the magic bit - our ProgressView just displays an activity
                     // indicator, with some text underneath showing what we are doing
-                    HStack() {
+                    HStack {
                         ProgressView()
                         Text(text ?? "Loading").fontWeight(.semibold).font(.callout).offset(x: 60)
                         Spacer()
@@ -51,14 +51,14 @@ struct LoadingViewNoBlur<Content>: View where Content: View {
     @Binding var isShowing: Bool // should the modal be visible?
     var content: () -> Content
     var text: String?  // the text to display under the ProgressView - defaults to "Loading..."
-    
+
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             ZStack(alignment: .center) {
                 // the content to display - if the modal is showing, we'll blur it
                 content()
                     .disabled(isShowing)
-                
+
                 // all contents inside here will only be shown when isShowing is true
                 if isShowing {
                     // this Rectangle is a semi-transparent black overlay
@@ -68,7 +68,7 @@ struct LoadingViewNoBlur<Content>: View where Content: View {
 
                     // the magic bit - our ProgressView just displays an activity
                     // indicator, with some text underneath showing what we are doing
-                    HStack() {
+                    HStack {
                         ProgressView()
                         Text(text ?? "Loading").fontWeight(.semibold).font(.callout).offset(x: 60)
                         Spacer()
@@ -83,4 +83,3 @@ struct LoadingViewNoBlur<Content>: View where Content: View {
         }
     }
 }
-

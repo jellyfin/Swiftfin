@@ -14,21 +14,21 @@ import UIKit
 
 final class WidgetEnvironment {
     static let shared = WidgetEnvironment()
-    
+
     var server: Server?
     var user: SignedInUser?
     var header: String?
-    
+
     init() {
         update()
     }
-    
+
     func update() {
         let serverRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
         let servers = try? PersistenceController.shared.container.viewContext.fetch(serverRequest) as? [Server]
         let savedUserRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SignedInUser")
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest) as? [SignedInUser]
-        
+
         server = servers?.first
         user = savedUsers?.first
 

@@ -12,33 +12,32 @@ import JellyfinAPI
 struct ProgressBar: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         let tl = CGPoint(x: rect.minX, y: rect.minY)
         let tr = CGPoint(x: rect.maxX, y: rect.minY)
         let br = CGPoint(x: rect.maxX, y: rect.maxY)
         let bls = CGPoint(x: rect.minX + 10, y: rect.maxY)
         let blc = CGPoint(x: rect.minX + 10, y: rect.maxY - 10)
-        
+
         path.move(to: tl)
         path.addLine(to: tr)
         path.addLine(to: br)
         path.addLine(to: bls)
         path.addRelativeArc(center: blc, radius: 10,
           startAngle: Angle.degrees(90), delta: Angle.degrees(90))
-        
+
         return path
     }
 }
- 
 
 struct ContinueWatchingView: View {
     @EnvironmentObject var globalData: GlobalData
-    
+
     @State private var items: [BaseItemDto] = []
-    
+
     func onAppear() {
         DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getResumeItems(userId: globalData.user.user_id ?? "", limit: 12, fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary,.backdrop,.thumb])
+            ItemsAPI.getResumeItems(userId: globalData.user.user_id ?? "", limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
@@ -47,12 +46,12 @@ struct ContinueWatchingView: View {
                 .store(in: &globalData.pendingAPIRequests)
         }
     }
-    
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            if(items.count > 0) {
-                LazyHStack() {
-                    Spacer().frame(width:14)
+            if items.count > 0 {
+                LazyHStack {
+                    Spacer().frame(width: 14)
                     ForEach(items, id: \.id) { item in
                         NavigationLink(destination: ItemView(item: item)) {
                             VStack(alignment: .leading) {
@@ -70,7 +69,7 @@ struct ContinueWatchingView: View {
                                     .cornerRadius(10)
                                     .overlay(
                                         Group {
-                                            if(item.type == "Episode") {
+                                            if item.type == "Episode" {
                                                 Text("\(item.name!)")
                                                     .font(.caption)
                                                     .padding(6)
