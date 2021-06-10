@@ -29,7 +29,7 @@ jobs:
         run: "carthage update"
       - name: Build!
         run: |
-          xcodebuild build -project "JellyfinPlayer" \
+          xcodebuild build -project "JellyfinPlayer.xcodeproj" \
           -scheme "${{ matrix.scheme }}" \
           CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO          
       
