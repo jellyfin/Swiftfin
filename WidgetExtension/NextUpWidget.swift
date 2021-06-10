@@ -6,9 +6,7 @@
  */
 
 import Combine
-import CoreData
 import JellyfinAPI
-import KeychainSwift
 import Nuke
 import SwiftUI
 import WidgetKit
@@ -17,7 +15,7 @@ enum WidgetError: String, Error {
     case unknown
     case emptyServer
     case emptyUser
-    case emptyToken
+    case emptyHeader
 }
 
 struct NextUpWidgetProvider: TimelineProvider {
@@ -26,61 +24,36 @@ struct NextUpWidgetProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NextUpEntry) -> Void) {
-        let entry = NextUpEntry(date: Date(), items: [], error: nil)
-        completion(entry)
-    }
-
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
         let currentDate = Date()
-        let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
-        let serverRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
-        let servers = try? PersistenceController.shared.container.viewContext.fetch(serverRequest) as? [Server]
-        let savedUserRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SignedInUser")
-        let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest) as? [SignedInUser]
-        guard let server = servers?.first else { return
+        WidgetEnvironment.shared.update()
+        guard let server = WidgetEnvironment.shared.server else { return
             DispatchQueue.main.async {
-                completion(Timeline(entries: [NextUpEntry(date: entryDate, items: [], error: WidgetError.emptyServer)],
-                                    policy: .after(entryDate)))
+                completion(NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyServer))
             }
         }
-        guard let savedUser = savedUsers?.first else { return
+        guard let savedUser = WidgetEnvironment.shared.user else { return
             DispatchQueue.main.async {
-                completion(Timeline(entries: [NextUpEntry(date: entryDate, items: [], error: WidgetError.emptyUser)],
-                                    policy: .after(entryDate)))
+                completion(NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyUser))
             }
         }
-
-        let keychain = KeychainSwift()
-        // need prefix
-        keychain.accessGroup = "4BHXT8RHFR.dev.pangmo5.swiftfin.keychainGroup"
-        guard let authToken = keychain.get("AccessToken_\(savedUser.user_id ?? "")") else { return
+        guard let header = WidgetEnvironment.shared.header else { return
             DispatchQueue.main.async {
-                completion(Timeline(entries: [NextUpEntry(date: entryDate, items: [], error: WidgetError.emptyToken)],
-                                    policy: .after(entryDate)))
+                completion(NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyHeader))
             }
         }
-
-        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        var deviceName = UIDevice.current.name
-        deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
-        deviceName = deviceName.removeRegexMatches(pattern: "[^\\w\\s]")
-
-        var header = "MediaBrowser "
-        header.append("Client=\"SwiftFin\", ")
-        header.append("Device=\"\(deviceName)\", ")
-        header.append("DeviceId=\"\(savedUser.device_uuid ?? "")\", ")
-        header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
-        header.append("Token=\"\(authToken)\"")
-
+        var tempCancellables = Set<AnyCancellable>()
         JellyfinAPI.basePath = server.baseURI ?? ""
         JellyfinAPI.customHeaders = ["X-Emby-Authorization": header]
-        _ = TvShowsAPI.getNextUp(userId: savedUser.user_id, limit: 3)
+        TvShowsAPI.getNextUp(userId: savedUser.user_id, limit: 3,
+                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                             imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
+            .subscribe(on: DispatchQueue.global(qos: .background))
             .sink(receiveCompletion: { result in
                 switch result {
                 case .finished:
                     break
                 case let .failure(error):
-                    completion(Timeline(entries: [NextUpEntry(date: entryDate, items: [], error: error)], policy: .after(entryDate)))
+                    completion(NextUpEntry(date: currentDate, items: [], error: error))
                 }
             }, receiveValue: { response in
                 let dispatchGroup = DispatchGroup()
@@ -98,11 +71,71 @@ struct NextUpWidgetProvider: TimelineProvider {
                     }
                 }
 
-                DispatchQueue.main.async {
-                    completion(Timeline(entries: [NextUpEntry(date: entryDate, items: downloadedItems, error: nil)],
+                dispatchGroup.notify(queue: .main) {
+                    completion(NextUpEntry(date: currentDate, items: downloadedItems, error: nil))
+                }
+            })
+            .store(in: &tempCancellables)
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
+        let currentDate = Date()
+        let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
+        WidgetEnvironment.shared.update()
+        guard let server = WidgetEnvironment.shared.server else { return
+            DispatchQueue.main.async {
+                completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyServer)],
+                                    policy: .after(entryDate)))
+            }
+        }
+        guard let savedUser = WidgetEnvironment.shared.user else { return
+            DispatchQueue.main.async {
+                completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyUser)],
+                                    policy: .after(entryDate)))
+            }
+        }
+        guard let header = WidgetEnvironment.shared.header else { return
+            DispatchQueue.main.async {
+                completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyHeader)],
+                                    policy: .after(entryDate)))
+            }
+        }
+        var tempCancellables = Set<AnyCancellable>()
+        JellyfinAPI.basePath = server.baseURI ?? ""
+        JellyfinAPI.customHeaders = ["X-Emby-Authorization": header]
+        TvShowsAPI.getNextUp(userId: savedUser.user_id, limit: 3,
+                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                             imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
+            .subscribe(on: DispatchQueue.global(qos: .background))
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .finished:
+                    break
+                case let .failure(error):
+                    completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: error)], policy: .after(entryDate)))
+                }
+            }, receiveValue: { response in
+                let dispatchGroup = DispatchGroup()
+                let items = response.items ?? []
+                var downloadedItems = [(BaseItemDto, UIImage?)]()
+                items.enumerated().forEach { _, item in
+                    dispatchGroup.enter()
+                    ImagePipeline.shared.loadImage(with: item.getBackdropImage(baseURL: server.baseURI ?? "", maxWidth: 320)) { result in
+                        guard case let .success(image) = result else {
+                            dispatchGroup.leave()
+                            return
+                        }
+                        downloadedItems.append((item, image.image))
+                        dispatchGroup.leave()
+                    }
+                }
+
+                dispatchGroup.notify(queue: .main) {
+                    completion(Timeline(entries: [NextUpEntry(date: currentDate, items: downloadedItems, error: nil)],
                                         policy: .after(entryDate)))
                 }
             })
+            .store(in: &tempCancellables)
     }
 }
 
@@ -118,6 +151,70 @@ struct NextUpEntryView: View {
     @Environment(\.widgetFamily)
     var family
 
+    @ViewBuilder
+    var body: some View {
+        Group {
+            if let error = entry.error {
+                HStack {
+                    Image(systemName: "exclamationmark.octagon")
+                    Text((error as? WidgetError)?.rawValue ?? "")
+                }
+                .background(Color.blue)
+            } else if entry.items.isEmpty {
+                Text("Empty Next Up")
+                    .font(.body)
+                    .bold()
+                    .foregroundColor(.primary)
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            } else {
+                switch family {
+                case .systemSmall:
+                    small(item: entry.items.first)
+                case .systemMedium:
+                    medium(items: entry.items)
+                case .systemLarge:
+                    large(items: entry.items)
+                @unknown default:
+                    EmptyView()
+                }
+            }
+        }
+        .background(Color(.secondarySystemBackground))
+    }
+}
+
+extension NextUpEntryView {
+    var smallVideoPlaceholderView: some View {
+        VStack(alignment: .leading) {
+            Color(.systemGray)
+                .aspectRatio(.init(width: 1, height: 0.5625), contentMode: .fill)
+                .cornerRadius(8)
+                .shadow(radius: 8)
+            Color(.systemGray2)
+                .frame(width: 100, height: 10)
+            Color(.systemGray3)
+                .frame(width: 80, height: 10)
+        }
+    }
+
+    var largeVideoPlaceholderView: some View {
+        HStack(spacing: 20) {
+            Color(.systemGray)
+                .aspectRatio(.init(width: 1, height: 0.5625), contentMode: .fill)
+                .cornerRadius(8)
+                .shadow(radius: 8)
+            VStack(alignment: .leading, spacing: 8) {
+                Color(.systemGray2)
+                    .frame(width: 100, height: 10)
+                Color(.systemGray3)
+                    .frame(width: 80, height: 10)
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+extension NextUpEntryView {
     var headerSymbol: some View {
         Image("jellyfin")
             .resizable()
@@ -127,7 +224,7 @@ struct NextUpEntryView: View {
     }
 
     func smallVideoView(item: (BaseItemDto, UIImage?)) -> some View {
-        VStack(alignment: .trailing) {
+        VStack(alignment: .leading) {
             if let image = item.1 {
                 Image(uiImage: image)
                     .resizable()
@@ -140,12 +237,12 @@ struct NextUpEntryView: View {
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(.primary)
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .lineLimit(1)
             Text("\(item.0.name ?? "") · S\(item.0.parentIndexNumber ?? 0):E\(item.0.indexNumber ?? 0)")
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .lineLimit(1)
         }
     }
 
@@ -173,11 +270,17 @@ struct NextUpEntryView: View {
             }
         }
     }
+}
 
-    func small(item: (BaseItemDto, UIImage?)) -> some View {
+extension NextUpEntryView {
+    func small(item: (BaseItemDto, UIImage?)?) -> some View {
         VStack(alignment: .trailing) {
             headerSymbol
-            smallVideoView(item: item)
+            if let item = item {
+                smallVideoView(item: item)
+            } else {
+                smallVideoPlaceholderView
+            }
         }
         .padding(12)
     }
@@ -188,9 +291,13 @@ struct NextUpEntryView: View {
             HStack(spacing: 16) {
                 if let firstItem = items[safe: 0] {
                     smallVideoView(item: firstItem)
+                } else {
+                    smallVideoPlaceholderView
                 }
                 if let secondItem = items[safe: 1] {
                     smallVideoView(item: secondItem)
+                } else {
+                    smallVideoPlaceholderView
                 }
             }
         }
@@ -219,6 +326,7 @@ struct NextUpEntryView: View {
                                 .foregroundColor(.gray)
                                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                         }
+                        .shadow(radius: 8)
                         .padding(12)
                     }
                     headerSymbol
@@ -230,45 +338,18 @@ struct NextUpEntryView: View {
             VStack(spacing: 8) {
                 if let secondItem = items[safe: 1] {
                     largeVideoView(item: secondItem)
+                } else {
+                    largeVideoPlaceholderView
                 }
                 Divider()
                 if let thridItem = items[safe: 2] {
                     largeVideoView(item: thridItem)
+                } else {
+                    largeVideoPlaceholderView
                 }
             }
             .padding(12)
         }
-    }
-
-    @ViewBuilder
-    var body: some View {
-        Group {
-            if let error = entry.error {
-                HStack {
-                    Image(systemName: "exclamationmark.octagon")
-                    Text(error.localizedDescription)
-                }
-                .background(Color.blue)
-            } else if entry.items.isEmpty {
-                Text("Empty Response")
-            } else {
-                switch family {
-                case .systemSmall:
-                    if let item = entry.items.first {
-                        small(item: item)
-                    } else {
-                        EmptyView()
-                    }
-                case .systemMedium:
-                    medium(items: entry.items)
-                case .systemLarge:
-                    large(items: entry.items)
-                @unknown default:
-                    EmptyView()
-                }
-            }
-        }
-        .background(Color(.secondarySystemBackground))
     }
 }
 
@@ -337,6 +418,29 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
                                               UIImage(named: "jellyfin")),
                                              (.init(name: "Name2", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series2"),
+                                              UIImage(named: "jellyfin")),
+                                         ],
+                                         error: nil))
+                .previewContext(WidgetPreviewContext(family: .systemLarge))
+                .preferredColorScheme(.dark)
+            NextUpEntryView(entry: .init(date: Date(),
+                                         items: [],
+                                         error: nil))
+                .previewContext(WidgetPreviewContext(family: .systemSmall))
+                .preferredColorScheme(.dark)
+            NextUpEntryView(entry: .init(date: Date(),
+                                         items: [
+                                             (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
+                                              UIImage(named: "jellyfin")),
+                                         ],
+                                         error: nil))
+                .previewContext(WidgetPreviewContext(family: .systemMedium))
+                .preferredColorScheme(.dark)
+            NextUpEntryView(entry: .init(date: Date(),
+                                         items: [
+                                             (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
+                                              UIImage(named: "jellyfin")),
+                                             (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
                                               UIImage(named: "jellyfin")),
                                          ],
                                          error: nil))
