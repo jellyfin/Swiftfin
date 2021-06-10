@@ -13,18 +13,16 @@ jobs:
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
       
       - name: Run SwiftLint
         run: swiftlint --fix
         
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v7 # You can change this to use a specific version
-        with:
-          add: '.'
-          author_name: acvigue
-          author_email: acvigue@me.com
-          default_author: user_info
-          message: 'Auto lint'
-          pull_strategy: '--no-rebase'
-          push: true
+      - name: Commit new changes to the repo
+        run: |
+          git config user.name jellyfin-bot
+          git config user.email team@jellyfin.org
+          git pull
+          git add .
+          git commit -m "auto lint" || echo
+          git push
