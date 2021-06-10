@@ -32,14 +32,14 @@ class GlobalData: ObservableObject {
     @Published var authToken: String = ""
     @Published var server: Server!
     @Published var authHeader: String = ""
-    @Published var isInNetwork: Bool = true;
-    @Published var networkError: Bool = false;
-    @Published var expiredCredentials: Bool = false;
-    var pendingAPIRequests = Set<AnyCancellable>();
+    @Published var isInNetwork: Bool = true
+    @Published var networkError: Bool = false
+    @Published var expiredCredentials: Bool = false
+    var pendingAPIRequests = Set<AnyCancellable>()
 }
 
 extension GlobalData: Equatable {
-    
+
     static func == (lhs: GlobalData, rhs: GlobalData) -> Bool {
         lhs.user == rhs.user
             && lhs.authToken == rhs.authToken

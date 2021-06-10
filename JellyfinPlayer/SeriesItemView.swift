@@ -12,23 +12,23 @@ import JellyfinAPI
 struct SeriesItemView: View {
     @EnvironmentObject private var globalData: GlobalData
     @EnvironmentObject private var orientationInfo: OrientationInfo
-    
-    var item: BaseItemDto;
-    
-    @State private var seasons: [BaseItemDto] = [];
-    @State private var isLoading: Bool = true;
-    @State private var viewDidLoad: Bool = false;
-    
+
+    var item: BaseItemDto
+
+    @State private var seasons: [BaseItemDto] = []
+    @State private var isLoading: Bool = true
+    @State private var viewDidLoad: Bool = false
+
     func onAppear() {
         recalcTracks()
-        if(viewDidLoad) {
-            return;
+        if viewDidLoad {
+            return
         }
-        
+
         isLoading = true
-        
+
         DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], isMissing: false)
+            TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], isMissing: false)
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
@@ -40,17 +40,16 @@ struct SeriesItemView: View {
         }
     }
 
-    //MARK: Grid tracks
+    // MARK: Grid tracks
     func recalcTracks() {
-        let trkCnt: Int = Int(floor(UIScreen.main.bounds.size.width / 125));
+        let trkCnt: Int = Int(floor(UIScreen.main.bounds.size.width / 125))
         tracks = []
-        for _ in (0..<trkCnt)
-        {
+        for _ in (0..<trkCnt) {
             tracks.append(GridItem.init(.flexible()))
         }
     }
     @State private var tracks: [GridItem] = []
-    
+
     var body: some View {
         LoadingView(isShowing: $isLoading) {
             ScrollView(.vertical) {
@@ -66,7 +65,7 @@ struct SeriesItemView: View {
                                             .frame(width: 100, height: 150)
                                             .cornerRadius(10)
                                     }
-                                    .frame(width:100, height: 150)
+                                    .frame(width: 100, height: 150)
                                     .cornerRadius(10)
                                     .shadow(radius: 5)
                                 Text(season.name ?? "")
@@ -74,7 +73,7 @@ struct SeriesItemView: View {
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
-                                if(season.productionYear != nil) {
+                                if season.productionYear != nil {
                                     Text(String(season.productionYear!))
                                         .foregroundColor(.secondary)
                                         .font(.caption)
@@ -84,7 +83,7 @@ struct SeriesItemView: View {
                         }
                     }
                     Spacer().frame(height: 2)
-                }.onChange(of: orientationInfo.orientation) { ip in
+                }.onChange(of: orientationInfo.orientation) { _ in
                     recalcTracks()
                 }
             }

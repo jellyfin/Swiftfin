@@ -19,8 +19,7 @@ struct ParallaxHeaderScrollView<Header: View, StaticOverlayView: View, Content: 
          staticOverlayView: StaticOverlayView,
          overlayAlignment: Alignment = .center,
          headerHeight: CGFloat,
-         content: @escaping () -> Content)
-    {
+         content: @escaping () -> Content) {
         self.header = header
         self.staticOverlayView = staticOverlayView
         self.overlayAlignment = overlayAlignment

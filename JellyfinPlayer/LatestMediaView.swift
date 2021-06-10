@@ -11,23 +11,23 @@ import JellyfinAPI
 
 struct LatestMediaView: View {
     @EnvironmentObject var globalData: GlobalData
-    
+
     @State var items: [BaseItemDto] = []
-    private var library_id: String = "";
-    @State private var viewDidLoad: Bool = false;
-    
+    private var library_id: String = ""
+    @State private var viewDidLoad: Bool = false
+
     init(usingParentID: String) {
-        library_id = usingParentID;
+        library_id = usingParentID
     }
-    
+
     func onAppear() {
-        if(viewDidLoad == true) {
+        if viewDidLoad == true {
             return
         }
-        viewDidLoad = true;
-        
+        viewDidLoad = true
+
         DispatchQueue.global(qos: .userInitiated).async {
-            UserLibraryAPI.getLatestMedia(userId: globalData.user.user_id!, parentId: library_id, fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], enableUserData: true, limit: 12)
+            UserLibraryAPI.getLatestMedia(userId: globalData.user.user_id!, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true, limit: 12)
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
@@ -36,16 +36,16 @@ struct LatestMediaView: View {
                 .store(in: &globalData.pendingAPIRequests)
         }
     }
-    
+
     var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack() {
-                    Spacer().frame(width:16)
+                LazyHStack {
+                    Spacer().frame(width: 16)
                     ForEach(items, id: \.id) { item in
-                        if(item.type == "Series" || item.type == "Movie") {
+                        if item.type == "Series" || item.type == "Movie" {
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
-                                    Spacer().frame(height:10)
+                                    Spacer().frame(height: 10)
                                     LazyImage(source: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
                                         .placeholderAndFailure {
                                             Image(uiImage: UIImage(blurHash: item.getSeriesPrimaryImageBlurHash(), size: CGSize(width: 16, height: 20))!)
@@ -55,7 +55,7 @@ struct LatestMediaView: View {
                                         }
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
-                                    Spacer().frame(height:5)
+                                    Spacer().frame(height: 5)
                                     Text(item.seriesName ?? item.name ?? "")
                                         .font(.caption)
                                         .fontWeight(.semibold)

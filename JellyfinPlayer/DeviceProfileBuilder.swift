@@ -5,7 +5,7 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-//lol can someone buy me a coffee this took forever :|
+// lol can someone buy me a coffee this took forever :|
 
 import Foundation
 import JellyfinAPI
@@ -34,65 +34,65 @@ enum CPUModel {
 }
 
 class DeviceProfileBuilder {
-    public var bitrate: Int = 0;
-    
+    public var bitrate: Int = 0
+
     public func setMaxBitrate(bitrate: Int) {
         self.bitrate = bitrate
     }
-    
+
     public func buildProfile() -> DeviceProfile {
-        let maxStreamingBitrate = bitrate;
-        let maxStaticBitrate = bitrate;
-        let musicStreamingTranscodingBitrate = 384000;
-        
-        //Build direct play profiles
-            var directPlayProfiles: [DirectPlayProfile] = [];
+        let maxStreamingBitrate = bitrate
+        let maxStaticBitrate = bitrate
+        let musicStreamingTranscodingBitrate = 384000
+
+        // Build direct play profiles
+            var directPlayProfiles: [DirectPlayProfile] = []
         directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav", videoCodec: "h264", type: .video)]
-            
-            //Device supports Dolby Digital (AC3, EAC3)
-            if(supportsFeature(minimumSupported: .A8X)) {
-                if(supportsFeature(minimumSupported: .A10)) {
-                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "hevc,h264,hev1", type: .video)] //HEVC/H.264 with Dolby Digital
+
+            // Device supports Dolby Digital (AC3, EAC3)
+            if supportsFeature(minimumSupported: .A8X) {
+                if supportsFeature(minimumSupported: .A10) {
+                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "hevc,h264,hev1", type: .video)] // HEVC/H.264 with Dolby Digital
                 } else {
-                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "ac3,eac3,aac,mp3,wav,opus", videoCodec: "h264", type: .video)] //H.264 with Dolby Digital
+                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "ac3,eac3,aac,mp3,wav,opus", videoCodec: "h264", type: .video)] // H.264 with Dolby Digital
                 }
             }
-            
-            //Device supports Dolby Vision?
-            if(supportsFeature(minimumSupported: .A10X)) {
-                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "dvhe,dvh1,dva1,dvav,h264,hevc,hev1", type: .video)] //H.264/HEVC with Dolby Digital - No Atmos - Vision
+
+            // Device supports Dolby Vision?
+            if supportsFeature(minimumSupported: .A10X) {
+                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "dvhe,dvh1,dva1,dvav,h264,hevc,hev1", type: .video)] // H.264/HEVC with Dolby Digital - No Atmos - Vision
             }
-            
-            //Device supports Dolby Atmos?
-            if(supportsFeature(minimumSupported: .A12)) {
-                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", videoCodec: "h264,hevc,dvhe,dvh1,dva1,dvav,h264,hevc,hev1", type: .video)] //H.264/HEVC with Dolby Digital & Atmos - Vision
+
+            // Device supports Dolby Atmos?
+            if supportsFeature(minimumSupported: .A12) {
+                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", videoCodec: "h264,hevc,dvhe,dvh1,dva1,dvav,h264,hevc,hev1", type: .video)] // H.264/HEVC with Dolby Digital & Atmos - Vision
             }
-        
-        //Build transcoding profiles
-            var transcodingProfiles: [TranscodingProfile] = [];
+
+        // Build transcoding profiles
+            var transcodingProfiles: [TranscodingProfile] = []
         transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264", audioCodec: "aac,mp3,wav")]
-            
-            //Device supports Dolby Digital (AC3, EAC3)
-            if(supportsFeature(minimumSupported: .A8X)) {
-                if(supportsFeature(minimumSupported: .A10)) {
+
+            // Device supports Dolby Digital (AC3, EAC3)
+            if supportsFeature(minimumSupported: .A8X) {
+                if supportsFeature(minimumSupported: .A10) {
                     transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "aac,mp3,wav,eac3,ac3,flac,opus", audioCodec: "h264,hevc,hev1", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
                 } else {
                     transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264", audioCodec: "aac,mp3,wav,eac3,ac3,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
                 }
             }
-            
-            //Device supports Dolby Vision?
-            if(supportsFeature(minimumSupported: .A10X)) {
+
+            // Device supports Dolby Vision?
+            if supportsFeature(minimumSupported: .A10X) {
                 transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
             }
-            
-            //Device supports Dolby Atmos?
-            if(supportsFeature(minimumSupported: .A12)) {
+
+            // Device supports Dolby Atmos?
+            if supportsFeature(minimumSupported: .A12) {
                 transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", audioCodec: "aac,mp3,wav,ac3,eac3,flac,dts,truehd,dca,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
             }
-        
+
         var codecProfiles: [CodecProfile] = []
-        
+
         let h264CodecConditions: [ProfileCondition] = [
             ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
             ProfileCondition(condition: .equalsAny, property: .videoProfile, value: "high|main|baseline|constrained baseline", isRequired: false),
@@ -103,13 +103,13 @@ class DeviceProfileBuilder {
             ProfileCondition(condition: .equalsAny, property: .videoProfile, value: "main|main 10", isRequired: false),
             ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "160", isRequired: false),
             ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false)]
-        
+
         codecProfiles.append(CodecProfile(type: .video, applyConditions: h264CodecConditions, codec: "h264"))
-        
-        if(supportsFeature(minimumSupported: .A10)) {
-            codecProfiles.append(CodecProfile(type: .video, applyConditions: hevcCodecConditions,codec: "hevc"))
+
+        if supportsFeature(minimumSupported: .A10) {
+            codecProfiles.append(CodecProfile(type: .video, applyConditions: hevcCodecConditions, codec: "hevc"))
         }
-        
+
         var subtitleProfiles: [SubtitleProfile] = []
         subtitleProfiles.append(SubtitleProfile(format: "vtt", method: .external))
         subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
@@ -121,12 +121,12 @@ class DeviceProfileBuilder {
         subtitleProfiles.append(SubtitleProfile(format: "pgs", method: .embed))
 
         let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", type: .video, mimeType: "video/mp4")]
-        
+
         let profile = DeviceProfile(maxStreamingBitrate: maxStreamingBitrate, maxStaticBitrate: maxStaticBitrate, musicStreamingTranscodingBitrate: musicStreamingTranscodingBitrate, directPlayProfiles: directPlayProfiles, transcodingProfiles: transcodingProfiles, containerProfiles: [], codecProfiles: codecProfiles, responseProfiles: responseProfiles, subtitleProfiles: subtitleProfiles)
-        
+
         return profile
     }
-    
+
     private func supportsFeature(minimumSupported: CPUModel) -> Bool {
         let intValues: [CPUModel: Int] = [.A4: 1, .A5: 2, .A5X: 3, .A6: 4, .A6X: 5, .A7: 6, .A7X: 7, .A8: 8, .A8X: 9, .A9: 10, .A9X: 11, .A10: 12, .A10X: 13, .A11: 14, .A12: 15, .A12X: 16, .A12Z: 16, .A13: 17, .A14: 18, .A99: 99]
         return intValues[CPUinfo()] ?? 0 >= intValues[minimumSupported] ?? 0
@@ -147,7 +147,7 @@ class DeviceProfileBuilder {
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
         let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8 , value != 0 else { return identifier }
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
         #endif
@@ -189,10 +189,10 @@ class DeviceProfileBuilder {
         case "iPad7,1", "iPad7,2":                                   return .A10X
         case "iPad7,3", "iPad7,4":                                   return .A10X
         case "iPad7,5", "iPad7,6", "iPad7,11", "iPad7,12":           return .A10
-        case "iPad8,1", "iPad8,2" ,"iPad8,3", "iPad8,4":             return .A12X
-        case "iPad8,5", "iPad8,6" ,"iPad8,7", "iPad8,8":             return .A12X
+        case "iPad8,1", "iPad8,2", "iPad8,3", "iPad8,4":             return .A12X
+        case "iPad8,5", "iPad8,6", "iPad8,7", "iPad8,8":             return .A12X
         case "iPad8,9", "iPad8,10", "iPad8,11", "iPad8,12":          return .A12Z
-        case "iPad11,3", "iPad11,4" ,"iPad11,6", "iPad11,7":         return .A12
+        case "iPad11,3", "iPad11,4", "iPad11,6", "iPad11,7":         return .A12
         case "iPad13,1", "iPad13,2":                                 return .A14
         case "AppleTV5,3":                                           return .A8
         case "AppleTV6,2":                                           return .A10X

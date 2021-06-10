@@ -10,26 +10,26 @@ import SwiftUI
 
 struct LibraryListView: View {
     @EnvironmentObject var globalData: GlobalData
-    
+
     @State var library_ids: [String] = ["favorites", "genres"]
     @State var library_names: [String: String] = ["favorites": "Favorites", "genres": "Genres"]
-    var libraries: [String: String] = [:] //input libraries
+    var libraries: [String: String] = [:] // input libraries
     var withFavorites: LibraryFilters = LibraryFilters(filters: [.isFavorite], sortOrder: [.descending], sortBy: ["SortName"])
-    
+
     init(libraries: [String: String]) {
         self.libraries = libraries
     }
-    
+
     func onAppear() {
-        if(library_ids.count == 2) {
-            libraries.forEach() { k,v in
+        if library_ids.count == 2 {
+            libraries.forEach { k, v in
                 print("\(k): \(v)")
                 _library_ids.wrappedValue.append(k)
                 _library_names.wrappedValue[k] = v
             }
         }
     }
-    
+
     var body: some View {
         List(library_ids, id: \.self) { key in
             switch key {

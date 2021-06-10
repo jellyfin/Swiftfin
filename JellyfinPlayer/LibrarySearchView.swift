@@ -12,13 +12,13 @@ import JellyfinAPI
 struct LibrarySearchView: View {
     @EnvironmentObject var globalData: GlobalData
     @EnvironmentObject var orientationInfo: OrientationInfo
-    
+
     @State private var items: [BaseItemDto] = []
     @State private var searchQuery: String = ""
     @State private var isLoading: Bool = false
     private var usingParentID: String = ""
     @State private var lastSearchTime: Double = CACurrentMediaTime()
-    
+
     init(usingParentID: String) {
         self.usingParentID = usingParentID
     }
@@ -27,12 +27,12 @@ struct LibrarySearchView: View {
         recalcTracks()
         requestSearch(query: "")
     }
-    
+
     func requestSearch(query: String) {
         isLoading = true
 
         DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio,.seriesPrimaryImage,.seasonUserData,.overview,.genres,.people], includeItemTypes: ["Movie","Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
+            ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
@@ -42,8 +42,8 @@ struct LibrarySearchView: View {
                 .store(in: &globalData.pendingAPIRequests)
         }
     }
-    
-    //MARK: tracks for grid
+
+    // MARK: tracks for grid
     @State private var tracks: [GridItem] = []
     func recalcTracks() {
         let trkCnt = Int(floor(UIScreen.main.bounds.size.width / 125))
@@ -57,12 +57,12 @@ struct LibrarySearchView: View {
         VStack {
             Spacer().frame(height: 6)
             SearchBar(text: $searchQuery)
-            if(isLoading == true) {
+            if isLoading == true {
                 Spacer()
                 ProgressView()
                 Spacer()
             } else {
-                if(!items.isEmpty) {
+                if !items.isEmpty {
                     ScrollView(.vertical) {
                         Spacer().frame(height: 16)
                         LazyVGrid(columns: tracks) {
@@ -105,7 +105,7 @@ struct LibrarySearchView: View {
         .onAppear(perform: onAppear)
         .navigationBarTitle("Search", displayMode: .inline)
         .onChange(of: searchQuery) { query in
-            if(CACurrentMediaTime() - lastSearchTime > 0.5) {
+            if CACurrentMediaTime() - lastSearchTime > 0.5 {
                 lastSearchTime = CACurrentMediaTime()
                 requestSearch(query: query)
             }
@@ -113,4 +113,4 @@ struct LibrarySearchView: View {
     }
 }
 
-//stream NM5 by nicki!
+// stream NM5 by nicki!

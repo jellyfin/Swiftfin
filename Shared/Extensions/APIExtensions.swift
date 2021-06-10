@@ -9,68 +9,68 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-//001fC^ = dark grey plain blurhash
+// 001fC^ = dark grey plain blurhash
 
 extension BaseItemDto {
-    
-    //MARK: Images
+
+    // MARK: Images
     func getSeriesBackdropImageBlurHash() -> String {
-        let rawImgURL = self.getSeriesBackdropImage(baseURL: "", maxWidth: 1).absoluteString;
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
-        
-        return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^";
+        let rawImgURL = self.getSeriesBackdropImage(baseURL: "", maxWidth: 1).absoluteString
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+
+        return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
     }
-    
+
     func getSeriesPrimaryImageBlurHash() -> String {
-        let rawImgURL = self.getSeriesPrimaryImage(baseURL: "", maxWidth: 1).absoluteString;
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
-        
-        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^";
+        let rawImgURL = self.getSeriesPrimaryImage(baseURL: "", maxWidth: 1).absoluteString
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+
+        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^"
     }
-    
+
     func getPrimaryImageBlurHash() -> String {
-        let rawImgURL = self.getPrimaryImage(baseURL: "", maxWidth: 1).absoluteString;
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
-        
-        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^";
+        let rawImgURL = self.getPrimaryImage(baseURL: "", maxWidth: 1).absoluteString
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+
+        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^"
     }
-    
+
     func getBackdropImageBlurHash() -> String {
-        let rawImgURL = self.getBackdropImage(baseURL: "", maxWidth: 1).absoluteString;
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
-        
-        if(rawImgURL.contains("Backdrop")) {
-            return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^";
+        let rawImgURL = self.getBackdropImage(baseURL: "", maxWidth: 1).absoluteString
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+
+        if rawImgURL.contains("Backdrop") {
+            return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
         } else {
-            return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^";
+            return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^"
         }
     }
-    
+
     func getBackdropImage(baseURL: String, maxWidth: Int) -> URL {
-        var imageType = "";
-        var imageTag = "";
-        
-        if(self.primaryImageAspectRatio ?? 0.0 < 1.0) {
-            imageType = "Backdrop";
+        var imageType = ""
+        var imageTag = ""
+
+        if self.primaryImageAspectRatio ?? 0.0 < 1.0 {
+            imageType = "Backdrop"
             imageTag = (self.backdropImageTags ?? [""])[0]
         } else {
-            imageType = "Primary";
+            imageType = "Primary"
             imageTag = self.imageTags?["Primary"] ?? ""
         }
-        
-        if(imageTag == "") {
-            imageType = "Backdrop";
+
+        if imageTag == "" {
+            imageType = "Backdrop"
             imageTag = self.parentBackdropImageTags?[0] ?? ""
         }
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
         let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
         return URL(string: urlString)!
     }
-    
+
     func getSeriesBackdropImage(baseURL: String, maxWidth: Int) -> URL {
-        let imageType = "Backdrop";
-        let imageTag = (self.parentBackdropImageTags ?? [])[0];
-        
+        let imageType = "Backdrop"
+        let imageTag = (self.parentBackdropImageTags ?? [])[0]
+
         print(imageType)
         print(imageTag)
 
@@ -78,29 +78,29 @@ extension BaseItemDto {
         let urlString = "\(baseURL)/Items/\(self.parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
         return URL(string: urlString)!
     }
-    
+
     func getSeriesPrimaryImage(baseURL: String, maxWidth: Int) -> URL {
-        let imageType = "Primary";
+        let imageType = "Primary"
         let imageTag = self.seriesPrimaryImageTag ?? ""
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
         let urlString = "\(baseURL)/Items/\(self.seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
         return URL(string: urlString)!
     }
-    
+
     func getPrimaryImage(baseURL: String, maxWidth: Int) -> URL {
-        let imageType = "Primary";
-        var imageTag = self.imageTags?["Primary"] ?? "";
-        
-        if(imageTag == "") {
+        let imageType = "Primary"
+        var imageTag = self.imageTags?["Primary"] ?? ""
+
+        if imageTag == "" {
             imageTag = self.seriesPrimaryImageTag ?? ""
         }
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        
+
         let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
         return URL(string: urlString)!
     }
-    
-    //MARK: Calculations
+
+    // MARK: Calculations
     func getItemRuntime() -> String {
         let seconds: Int = Int(self.runTimeTicks!) / 10_000_000
         let hours = (seconds / 3600)
@@ -111,12 +111,12 @@ extension BaseItemDto {
             return "\(String(minutes).leftPad(toWidth: 2, withString: "0"))m"
         }
     }
-    
+
     func getItemProgressString() -> String {
-        if(self.userData?.playbackPositionTicks == nil || self.userData?.playbackPositionTicks == 0) {
-            return "";
+        if self.userData?.playbackPositionTicks == nil || self.userData?.playbackPositionTicks == 0 {
+            return ""
         }
-        
+
         let remainingSecs = Int(self.runTimeTicks! - (self.userData?.playbackPositionTicks!)!) / 10_000_000
         let proghours = Int(remainingSecs / 3600)
         let progminutes = Int((Int(remainingSecs) - (proghours * 3600)) / 60)
@@ -130,19 +130,19 @@ extension BaseItemDto {
 
 extension BaseItemPerson {
     func getImage(baseURL: String, maxWidth: Int) -> URL {
-        let imageType = "Primary";
+        let imageType = "Primary"
         let imageTag = self.primaryImageTag ?? ""
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        
+
         let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
         return URL(string: urlString)!
     }
-    
+
     func getBlurHash() -> String {
-        let rawImgURL = self.getImage(baseURL: "", maxWidth: 1).absoluteString;
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1];
-        
-        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^";
+        let rawImgURL = self.getImage(baseURL: "", maxWidth: 1).absoluteString
+        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+
+        return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^"
     }
 }

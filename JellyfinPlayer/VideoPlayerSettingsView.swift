@@ -22,7 +22,7 @@ class VideoPlayerSettingsView: UIViewController {
         contentView.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         contentView.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.delegate?.settingsPopoverDismissed()
@@ -30,17 +30,17 @@ class VideoPlayerSettingsView: UIViewController {
 }
 
 struct VideoPlayerSettings: View {
-    @State var delegate: PlayerViewController!
-    @State var captionTrack: Int32 = -99;
-    @State var audioTrack: Int32 = -99;
-    
+    @State weak var delegate: PlayerViewController!
+    @State var captionTrack: Int32 = -99
+    @State var audioTrack: Int32 = -99
+
     init(delegate: PlayerViewController) {
         self.delegate = delegate
     }
-    
+
     var body: some View {
-        NavigationView() {
-            Form() {
+        NavigationView {
+            Form {
                 Picker("Closed Captions", selection: $captionTrack) {
                     ForEach(delegate.subtitleTrackArray, id: \.id) { caption in
                         Text(caption.name).tag(caption.id)
@@ -60,11 +60,11 @@ struct VideoPlayerSettings: View {
             .navigationTitle("Audio & Captions")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
-                    if(UIDevice.current.userInterfaceIdiom == .phone) {
+                    if UIDevice.current.userInterfaceIdiom == .phone {
                         Button {
                             self.delegate.settingsPopoverDismissed()
                         } label: {
-                            HStack() {
+                            HStack {
                                 Image(systemName: "chevron.left")
                                 Text("Back").font(.callout)
                             }

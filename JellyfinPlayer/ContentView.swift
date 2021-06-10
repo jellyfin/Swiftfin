@@ -17,7 +17,7 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var orientationInfo: OrientationInfo
     @EnvironmentObject var jsi: justSignedIn
-    
+
     @StateObject private var globalData = GlobalData()
 
     @FetchRequest(entity: Server.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Server.name, ascending: true)])
@@ -36,16 +36,16 @@ struct ContentView: View {
     @State private var showSettingsPopover: Bool = false
     @State private var viewDidLoad: Bool = false
     @State private var loadState: Int = 2
-    
+
     private var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: ["DateCreated"])
 
     func startup() {
-        if(viewDidLoad == true) {
+        if viewDidLoad == true {
             return
         }
-        
+
         viewDidLoad = true
-        
+
         let size = UIScreen.main.bounds.size
         if size.width < size.height {
             orientationInfo.orientation = .portrait
@@ -72,21 +72,21 @@ struct ContentView: View {
             }
 
             let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-            var deviceName = UIDevice.current.name;
+            var deviceName = UIDevice.current.name
             deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
-            deviceName = deviceName.removeRegexMatches(pattern: "[^\\w\\s]");
-            
+            deviceName = deviceName.removeRegexMatches(pattern: "[^\\w\\s]")
+
             var header = "MediaBrowser "
             header.append("Client=\"SwiftFin\", ")
             header.append("Device=\"\(deviceName)\", ")
             header.append("DeviceId=\"\(globalData.user.device_uuid ?? "")\", ")
             header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
             header.append("Token=\"\(globalData.authToken)\"")
-            
+
             globalData.authHeader = header
             JellyfinAPI.basePath = globalData.server.baseURI ?? ""
             JellyfinAPI.customHeaders = ["X-Emby-Authorization": globalData.authHeader]
-            
+
             DispatchQueue.global(qos: .userInitiated).async {
                 UserAPI.getCurrentUser()
                     .sink(receiveCompletion: { completion in
@@ -97,13 +97,13 @@ struct ContentView: View {
                         librariesShowRecentlyAdded = libraries.filter { element in
                             return !(response.configuration?.latestItemsExcludes?.contains(element))!
                         }
-                        
-                        if(loadState == 1) {
+
+                        if loadState == 1 {
                             isLoading = false
                         }
                     })
                     .store(in: &globalData.pendingAPIRequests)
-                
+
                 UserViewsAPI.getUserViews(userId: globalData.user.user_id ?? "")
                     .sink(receiveCompletion: { completion in
                         HandleAPIRequestCompletion(globalData: globalData, completion: completion)
@@ -112,14 +112,14 @@ struct ContentView: View {
                         response.items?.forEach({ item in
                             library_names[item.id ?? ""] = item.name
                         })
-                        
-                        if(loadState == 1) {
+
+                        if loadState == 1 {
                             isLoading = false
                         }
                     })
                     .store(in: &globalData.pendingAPIRequests)
             }
-            
+
             let defaults = UserDefaults.standard
             if defaults.integer(forKey: "InNetworkBandwidth") == 0 {
                 defaults.setValue(40_000_000, forKey: "InNetworkBandwidth")
@@ -132,13 +132,13 @@ struct ContentView: View {
     }
 
     var body: some View {
-        if (needsToSelectServer == true) {
+        if needsToSelectServer == true {
             NavigationView {
                 ConnectToServerView(isActive: $needsToSelectServer)
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .environmentObject(globalData)
-        } else if (globalData.expiredCredentials == true) {
+        } else if globalData.expiredCredentials == true {
             NavigationView {
                 ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server,
                                     reauth_deviceId: globalData.user.device_uuid ?? "", isActive: $globalData.expiredCredentials)
@@ -148,8 +148,8 @@ struct ContentView: View {
         } else {
             if !jsi.did {
                 LoadingView(isShowing: $isLoading) {
-                    VStack() {
-                        if(loadState == 0) {
+                    VStack {
+                        if loadState == 0 {
                             TabView(selection: $tabSelection) {
                                 NavigationView {
                                     VStack(alignment: .leading) {

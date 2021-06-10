@@ -15,83 +15,83 @@ struct ConnectToServerView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var globalData: GlobalData
     @EnvironmentObject var jsi: justSignedIn
-    
-    @State private var uri = "";
-    @State private var isWorking = false;
-    @State private var isErrored = false;
-    @State private var isDone = false;
-    @State private var isSignInErrored = false;
-    @State private var isConnected = false;
-    @State private var serverName = "";
-    @State private var usernameDisabled: Bool = false;
-    @State private var publicUsers: [UserDto] = [];
-    @State private var lastPublicUsers: [UserDto] = [];
-    @State private var username = "";
-    @State private var password = "";
-    @State private var server_id = "";
-    @State private var serverSkipped: Bool = false;
-    @State private var serverSkippedAlert: Bool = false;
-    @State private var skip_server_bool: Bool = false;
-    @State private var skip_server_obj: Server!;
-    
+
+    @State private var uri = ""
+    @State private var isWorking = false
+    @State private var isErrored = false
+    @State private var isDone = false
+    @State private var isSignInErrored = false
+    @State private var isConnected = false
+    @State private var serverName = ""
+    @State private var usernameDisabled: Bool = false
+    @State private var publicUsers: [UserDto] = []
+    @State private var lastPublicUsers: [UserDto] = []
+    @State private var username = ""
+    @State private var password = ""
+    @State private var server_id = ""
+    @State private var serverSkipped: Bool = false
+    @State private var serverSkippedAlert: Bool = false
+    @State private var skip_server_bool: Bool = false
+    @State private var skip_server_obj: Server!
+
     @Binding var rootIsActive: Bool
-    
-    private var reauthDeviceID: String = "";
-    private let userUUID = UUID();
-    
+
+    private var reauthDeviceID: String = ""
+    private let userUUID = UUID()
+
     init(skip_server: Bool, skip_server_prefill: Server, reauth_deviceId: String, isActive: Binding<Bool>) {
         _rootIsActive = isActive
         skip_server_bool = skip_server
         skip_server_obj = skip_server_prefill
         reauthDeviceID = reauth_deviceId
     }
-    
+
     init(isActive: Binding<Bool>) {
         _rootIsActive = isActive
     }
-    
+
     func start() {
-        if(skip_server_bool) {
+        if skip_server_bool {
             uri = skip_server_obj.baseURI!
-            
+
             UserAPI.getPublicUsers()
                 .sink(receiveCompletion: { completion in
                     switch completion {
                         case .finished:
                             break
-                        case .failure(_):
-                            skip_server_bool = false;
-                            skip_server_obj = Server();
+                        case .failure:
+                            skip_server_bool = false
+                            skip_server_obj = Server()
                             break
                     }
                 }, receiveValue: { response in
                     publicUsers = response
-                    
-                    serverSkipped = true;
-                    serverSkippedAlert = true;
+
+                    serverSkipped = true
+                    serverSkippedAlert = true
                     server_id = skip_server_obj.server_id!
                     serverName = skip_server_obj.name!
-                    isConnected = true;
+                    isConnected = true
                 })
                 .store(in: &globalData.pendingAPIRequests)
         }
     }
-    
+
     func doLogin() {
         isWorking = true
-        
-        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String;
-        var deviceName = UIDevice.current.name;
+
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        var deviceName = UIDevice.current.name
         deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
-        deviceName = deviceName.removeRegexMatches(pattern: "[^\\w\\s]");
-        
-        let authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(deviceName)\", DeviceId=\"\(serverSkipped ? reauthDeviceID : userUUID.uuidString)\", Version=\"\(appVersion ?? "0.0.1")\"";
+        deviceName = deviceName.removeRegexMatches(pattern: "[^\\w\\s]")
+
+        let authHeader = "MediaBrowser Client=\"SwiftFin\", Device=\"\(deviceName)\", DeviceId=\"\(serverSkipped ? reauthDeviceID : userUUID.uuidString)\", Version=\"\(appVersion ?? "0.0.1")\""
         print(authHeader)
-        
+
         JellyfinAPI.customHeaders["X-Emby-Authorization"] = authHeader
-        
+
         let x: AuthenticateUserByName = AuthenticateUserByName(username: username, pw: password, password: nil)
-        
+
         UserAPI.authenticateUserByName(authenticateUserByName: x)
             .sink(receiveCompletion: { completion in
                 isWorking = false
@@ -106,29 +106,29 @@ struct ConnectToServerView: View {
                 } catch _ as NSError {
 
                 }
-                
+
                 let fetchRequest2: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "SignedInUser")
                 let deleteRequest2 = NSBatchDeleteRequest(fetchRequest: fetchRequest2)
 
                 do {
                     try viewContext.execute(deleteRequest2)
                 } catch _ as NSError {
-                    
+
                 }
-                
+
                 let newServer = Server(context: viewContext)
                 newServer.baseURI = uri
                 newServer.name = serverName
                 newServer.server_id = server_id
-                
+
                 let newUser = SignedInUser(context: viewContext)
                 newUser.device_uuid = userUUID.uuidString
                 newUser.username = username
                 newUser.user_id = response.user!.id!
-                
+
                 let keychain = KeychainSwift()
                 keychain.set(response.accessToken!, forKey: "AccessToken_\(newUser.user_id!)")
-                
+
                 do {
                     try viewContext.save()
                     DispatchQueue.main.async { [self] in
@@ -144,30 +144,30 @@ struct ConnectToServerView: View {
             })
             .store(in: &globalData.pendingAPIRequests)
     }
-    
+
     var body: some View {
         Form {
-            if(!isConnected) {
+            if !isConnected {
                 Section(header: Text("Server Information")) {
                     TextField("Jellyfin Server URL", text: $uri)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                     Button {
-                        isWorking = true;
-                        if(!uri.contains("http")) {
-                            uri = "http://" + uri;
+                        isWorking = true
+                        if !uri.contains("http") {
+                            uri = "http://" + uri
                         }
-                        if(uri.last == "/") {
+                        if uri.last == "/" {
                             uri = String(uri.dropLast())
                         }
-                        
+
                         JellyfinAPI.basePath = uri
                         SystemAPI.getPublicSystemInfo()
                             .sink(receiveCompletion: { completion in
                                 switch completion {
                                     case .finished:
                                         break
-                                    case .failure(_):
+                                    case .failure:
                                         isErrored = true
                                         isWorking = false
                                         break
@@ -176,15 +176,15 @@ struct ConnectToServerView: View {
                                 let server = response
                                 serverName = server.serverName!
                                 server_id = server.id!
-                                if(server.startupWizardCompleted!) {
-                                    isConnected = true;
-                                    
+                                if server.startupWizardCompleted! {
+                                    isConnected = true
+
                                     UserAPI.getPublicUsers()
                                         .sink(receiveCompletion: { completion in
                                             switch completion {
                                                 case .finished:
                                                     break
-                                                case .failure(_):
+                                                case .failure:
                                                     isErrored = true
                                                     isWorking = false
                                                     break
@@ -201,7 +201,7 @@ struct ConnectToServerView: View {
                         HStack {
                             Text("Connect")
                             Spacer()
-                            if(isWorking == true) {
+                            if isWorking == true {
                                 ProgressView()
                             }
                         }
@@ -210,7 +210,7 @@ struct ConnectToServerView: View {
                     Alert(title: Text("Error"), message: Text("Couldn't connect to server"), dismissButton: .default(Text("Try again")))
                 }
             } else {
-                if(publicUsers.count == 0) {
+                if publicUsers.count == 0 {
                     Section(header: Text("\(serverSkipped ? "Reauthenticate" : "Login") to \(serverName)")) {
                         TextField("Username", text: $username)
                             .disableAutocorrection(true)
@@ -225,7 +225,7 @@ struct ConnectToServerView: View {
                             HStack {
                                 Text("Login")
                                 Spacer()
-                                if(isWorking) {
+                                if isWorking {
                                     ProgressView()
                                 }
                             }
@@ -234,9 +234,9 @@ struct ConnectToServerView: View {
                             Alert(title: Text("Error"), message: Text("Invalid credentials"), dismissButton: .default(Text("Back")))
                         }
                     }
-                    
-                    if(serverSkipped) {
-                        Section() {
+
+                    if serverSkipped {
+                        Section {
                             Button {
                                 serverSkippedAlert = false
                                 server_id = ""
@@ -244,8 +244,8 @@ struct ConnectToServerView: View {
                                 isConnected = false
                                 serverSkipped = false
                             } label: {
-                                HStack() {
-                                    HStack() {
+                                HStack {
+                                    HStack {
                                         Image(systemName: "chevron.left")
                                         Text("Change Server")
                                     }
@@ -254,13 +254,13 @@ struct ConnectToServerView: View {
                             }
                         }
                     } else {
-                        Section() {
+                        Section {
                             Button {
                                 publicUsers = lastPublicUsers
-                                usernameDisabled = false;
+                                usernameDisabled = false
                             } label: {
-                                HStack() {
-                                    HStack() {
+                                HStack {
+                                    HStack {
                                         Image(systemName: "chevron.left")
                                         Text("Back")
                                     }
@@ -272,9 +272,9 @@ struct ConnectToServerView: View {
                 } else {
                     Section(header: Text("\(serverSkipped ? "Reauthenticate" : "Login") to \(serverName)")) {
                         ForEach(publicUsers, id: \.id) { publicUser in
-                            HStack() {
+                            HStack {
                                 Button() {
-                                    if(publicUser.hasPassword!) {
+                                    if publicUser.hasPassword! {
                                         lastPublicUsers = publicUsers
                                         username = publicUser.name!
                                         usernameDisabled = true
@@ -286,10 +286,10 @@ struct ConnectToServerView: View {
                                         doLogin()
                                     }
                                 } label: {
-                                    HStack() {
+                                    HStack {
                                         Text(publicUser.name!).font(.subheadline).fontWeight(.semibold)
                                         Spacer()
-                                        if(publicUser.primaryImageTag != "") {
+                                        if publicUser.primaryImageTag != "" {
                                             LazyImage(source: URL(string: "\(uri)/Users/\(publicUser.id!)/Images/Primary?width=200&quality=80&tag=\(publicUser.primaryImageTag!)"))
                                                 .contentMode(.aspectFill)
                                                 .frame(width: 60, height: 60)
@@ -309,14 +309,14 @@ struct ConnectToServerView: View {
                             }
                         }
                     }
-                    
-                    Section() {
+
+                    Section {
                         Button() {
                             lastPublicUsers = publicUsers
                             publicUsers = []
                             username = ""
                         } label: {
-                            HStack() {
+                            HStack {
                                 Text("Other User").font(.subheadline).fontWeight(.semibold)
                                 Spacer()
                                 Image(systemName: "person.fill.questionmark")
