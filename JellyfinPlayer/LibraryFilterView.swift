@@ -10,7 +10,7 @@ import JellyfinAPI
 
 struct LibraryFilterView: View {
     @EnvironmentObject var globalData: GlobalData
-    @Binding var filter: Filter
+    @Binding var filter: LibraryFilters
 
     var body: some View {
         EmptyView()
