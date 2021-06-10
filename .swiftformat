@@ -1,0 +1,18 @@
+# version: 0.47.5
+
+--indent 4 #indent
+--self init-only # redundantSelf
+--semicolons never # semicolons
+--stripunusedargs closure-only # unusedArguments
+--maxwidth 140 #wrap
+--assetliterals visual-width #wrap
+--wraparguments after-first # wrapArguments
+--wrapparameters after-first # wrapArguments
+--wrapcollections before-first # wrapArguments
+--wrapconditions after-first # wrapArguments
+--funcattributes prev-line # wrapAttributes
+--typeattributes prev-line # wrapAttributes
+--varattributes prev-line # wrapAttributes
+
+--enable isEmpty
+--disable strongOutlets,yodaConditions
