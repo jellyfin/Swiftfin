@@ -18,11 +18,8 @@ jobs:
       - name: Run SwiftLint
         run: swiftlint --fix
         
-      - name: Commit new changes to the repo
-        run: |
-          git config user.name jellyfin-bot
-          git config user.email team@jellyfin.org
-          git pull
-          git add .
-          git commit -m "auto lint" || echo
-          git push
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "[ci] SwiftLint"
+          reviewers: "acvigue"
