@@ -30,7 +30,7 @@ class VideoPlayerSettingsView: UIViewController {
 }
 
 struct VideoPlayerSettings: View {
-    @State weak var delegate: PlayerViewController!
+    weak var delegate: PlayerViewController!
     @State var captionTrack: Int32 = -99
     @State var audioTrack: Int32 = -99
 
