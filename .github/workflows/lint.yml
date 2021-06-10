@@ -24,7 +24,7 @@ jobs:
           add: '.'
           author_name: acvigue
           author_email: acvigue@me.com
-          default_author: github_actor
+          default_author: user_info
           message: 'Auto lint'
           pull_strategy: '--no-rebase'
           push: true
