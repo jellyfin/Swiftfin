@@ -1,0 +1,40 @@
+name: fastlane build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build schemes
+    strategy:
+      matrix:
+        os:
+          - macos-11
+        platform:
+          - tvOS
+          - iOS
+        xcode:
+          - ^12
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: Install VLCKit
+        run: "carthage update"
+      - use: mxcl/xcodebuild@v1
+        with:
+          xcode: ${{ matrix.xcode }}
+          platform: ${{ matrix.platform }}
+          action: build             # default = `test`
+          code-coverage: true       # default = `false`
+          warnings-as-errors: true  # default = `false`
+          configuration: release    # no default, ie. `xcodebuild` decides itself
+      
