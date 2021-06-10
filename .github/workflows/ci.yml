@@ -15,7 +15,7 @@ jobs:
           - "JellyfinPlayer"
           - "JellyfinPlayer tvOS"
           
-    runs-on: macos-11
+    runs-on: macos-latest
     
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
