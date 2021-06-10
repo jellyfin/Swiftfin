@@ -34,7 +34,7 @@ final class WidgetEnvironment {
 
         let keychain = KeychainSwift()
         // need prefix
-        keychain.accessGroup = "4BHXT8RHFR.me.vigue.swiftfin.keychainGroup"
+        keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
         guard let authToken = keychain.get("AccessToken_\(user?.user_id ?? "")") else {
             return
         }

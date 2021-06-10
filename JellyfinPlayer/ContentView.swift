@@ -64,7 +64,7 @@ struct ContentView: View {
             let savedUser = savedUsers[0]
 
             let keychain = KeychainSwift()
-            keychain.accessGroup = "4BHXT8RHFR.dev.pangmo5.swiftfin.keychainGroup"
+            keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
             if keychain.get("AccessToken_\(savedUser.user_id ?? "")") != nil {
                 globalData.authToken = keychain.get("AccessToken_\(savedUser.user_id ?? "")") ?? ""
                 globalData.server = servers[0]
