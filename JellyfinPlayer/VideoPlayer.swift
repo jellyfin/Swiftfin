@@ -262,7 +262,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         // View has loaded.
 
         // Rotate to landscape only if necessary
-        
+
         UIViewController.attemptRotationToDeviceOrientation()
 
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
@@ -310,7 +310,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         for stream in mediaSource.mediaStreams! {
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
-                                if(stream.deliveryMethod == .external) {
+                                if stream.deliveryMethod == .external {
                                     deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
                                 } else {
                                     deliveryUrl = nil
@@ -351,7 +351,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         for stream in mediaSource.mediaStreams! {
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
-                                if(stream.deliveryMethod == .external) {
+                                if stream.deliveryMethod == .external {
                                     deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
                                 } else {
                                     deliveryUrl = nil
@@ -381,26 +381,26 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
                     mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                     mediaPlayer.play()
-                    
-                    //1 second = 10,000,000 ticks
-                    
+
+                    // 1 second = 10,000,000 ticks
+
                     let startTicks = round(Double(manifest.userData?.playbackPositionTicks ?? 0), toNearest: 10_000_000)
                     let startSeconds = Int32(startTicks) / 10_000_000
                     mediaPlayer.jumpForward(startSeconds)
-                    
-                    //Pause and load captions into memory.
+
+                    // Pause and load captions into memory.
                     mediaPlayer.pause()
                     subtitleTrackArray.forEach { sub in
                         if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
                             mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                         }
                     }
-                    
-                    //Wait for captions to load
+
+                    // Wait for captions to load
                     delegate?.showLoadingView(self)
                     while mediaPlayer.numberOfSubtitlesTracks != subtitleTrackArray.count - 1 {}
-                    
-                    //Select default track & resume playback
+
+                    // Select default track & resume playback
                     mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
                     mediaPlayer.pause()
                     mediaPlayer.play()

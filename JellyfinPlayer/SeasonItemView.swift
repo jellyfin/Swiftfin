@@ -296,7 +296,7 @@ struct SeasonItemView: View {
     }
 
     var body: some View {
-        if(isLoading) {
+        if isLoading {
             ProgressView()
             .onAppear(perform: onAppear)
         } else {

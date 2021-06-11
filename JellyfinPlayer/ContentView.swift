@@ -147,7 +147,7 @@ struct ContentView: View {
             .environmentObject(globalData)
         } else {
             if !jsi.did {
-                if(isLoading) {
+                if isLoading {
                     ProgressView()
                 } else {
                     VStack {
@@ -158,7 +158,7 @@ struct ContentView: View {
                                         Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 16)
                                         ContinueWatchingView()
                                         NextUpView()
-                                        
+
                                         ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
                                             VStack(alignment: .leading) {
                                                 HStack {
@@ -169,7 +169,7 @@ struct ContentView: View {
                                                         LibraryView(usingParentID: library_id,
                                                                     title: library_names[library_id] ?? "", usingFilters: recentFilterSet)
                                                     }) {
-                                                        HStack() {
+                                                        HStack {
                                                             Text("See All").font(.subheadline).fontWeight(.bold)
                                                             Image(systemName: "chevron.right").font(Font.subheadline.bold())
                                                         }
@@ -178,7 +178,7 @@ struct ContentView: View {
                                                 LatestMediaView(usingParentID: library_id)
                                             }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                                         }
-                                        
+
                                         Spacer().frame(height: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
                                     }
                                     .navigationTitle("Home")

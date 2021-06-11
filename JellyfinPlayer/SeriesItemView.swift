@@ -51,7 +51,7 @@ struct SeriesItemView: View {
     @State private var tracks: [GridItem] = []
 
     var body: some View {
-        if(isLoading) {
+        if isLoading {
             ProgressView()
             .onAppear(perform: onAppear)
         } else {

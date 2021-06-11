@@ -274,7 +274,7 @@ struct ConnectToServerView: View {
                         ForEach(publicUsers, id: \.id) { publicUser in
                             HStack {
                                 Button() {
-                                    if (publicUser.hasPassword ?? true) {
+                                    if publicUser.hasPassword ?? true {
                                         lastPublicUsers = publicUsers
                                         username = publicUser.name ?? ""
                                         usernameDisabled = true
