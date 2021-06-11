@@ -28,7 +28,7 @@ struct SeriesItemView: View {
         isLoading = true
 
         DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], isMissing: false)
+            TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
@@ -51,7 +51,10 @@ struct SeriesItemView: View {
     @State private var tracks: [GridItem] = []
 
     var body: some View {
-        LoadingView(isShowing: $isLoading) {
+        if(isLoading) {
+            ProgressView()
+            .onAppear(perform: onAppear)
+        } else {
             ScrollView(.vertical) {
                 Spacer().frame(height: 16)
                 LazyVGrid(columns: tracks) {
@@ -87,9 +90,8 @@ struct SeriesItemView: View {
                     recalcTracks()
                 }
             }
+            .overrideViewPreference(.unspecified)
+            .navigationTitle(item.name ?? "")
         }
-        .overrideViewPreference(.unspecified)
-        .onAppear(perform: onAppear)
-        .navigationTitle(item.name ?? "")
     }
 }

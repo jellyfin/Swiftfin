@@ -52,7 +52,9 @@ extension BaseItemDto {
 
         if self.primaryImageAspectRatio ?? 0.0 < 1.0 {
             imageType = "Backdrop"
-            imageTag = (self.backdropImageTags ?? [""])[0]
+            if(!(self.backdropImageTags?.isEmpty ?? true)) {
+                imageTag = (self.backdropImageTags ?? [""])[0]
+            }
         } else {
             imageType = "Primary"
             imageTag = self.imageTags?["Primary"] ?? ""
@@ -60,10 +62,13 @@ extension BaseItemDto {
 
         if imageTag == "" {
             imageType = "Backdrop"
-            imageTag = self.parentBackdropImageTags?[0] ?? ""
+            if(!(self.parentBackdropImageTags?.isEmpty ?? true)) {
+                imageTag = (self.parentBackdropImageTags ?? [""])[0]
+            }
         }
+        
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -75,7 +80,7 @@ extension BaseItemDto {
         print(imageTag)
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(baseURL)/Items/\(self.parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        let urlString = "\(baseURL)/Items/\(self.parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -83,7 +88,7 @@ extension BaseItemDto {
         let imageType = "Primary"
         let imageTag = self.seriesPrimaryImageTag ?? ""
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(baseURL)/Items/\(self.seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        let urlString = "\(baseURL)/Items/\(self.seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -96,7 +101,7 @@ extension BaseItemDto {
         }
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -128,6 +133,10 @@ extension BaseItemDto {
     }
 }
 
+func round(_ value: Double, toNearest: Double) -> Double {
+  return round(value / toNearest) * toNearest
+}
+
 extension BaseItemPerson {
     func getImage(baseURL: String, maxWidth: Int) -> URL {
         let imageType = "Primary"
@@ -135,7 +144,7 @@ extension BaseItemPerson {
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 

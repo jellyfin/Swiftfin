@@ -13,7 +13,7 @@ import MediaPlayer
 struct Subtitle {
     var name: String
     var id: Int32
-    var url: URL
+    var url: URL?
     var delivery: SubtitleDeliveryMethod
     var codec: String
 }
@@ -197,6 +197,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         commandCenter.pauseCommand.addTarget { _ in
             self.mediaPlayer.pause()
             self.sendProgressReport(eventName: "pause")
+            self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
             return .success
         }
 
@@ -204,6 +205,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         commandCenter.playCommand.addTarget { _ in
             self.mediaPlayer.play()
             self.sendProgressReport(eventName: "unpause")
+            self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
             return .success
         }
 
@@ -260,6 +262,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         // View has loaded.
 
         // Rotate to landscape only if necessary
+        
         UIViewController.attemptRotationToDeviceOrientation()
 
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
@@ -269,9 +272,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         mediaPlayer.drawable = videoContentView
 
         if manifest.type == "Movie" {
-            titleLabel.text = manifest.name
+            titleLabel.text = manifest.name ?? ""
         } else {
-            titleLabel.text = "S\(String(manifest.parentIndexNumber!)):E\(String(manifest.indexNumber!)) “\(manifest.name!)”"
+            titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
         }
 
         // Fetch max bitrate from UserDefaults depending on current connection mode
@@ -283,14 +286,15 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
 
-        let playbackInfo = PlaybackInfoDto(userId: globalData.user.user_id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
+        let playbackInfo = PlaybackInfoDto(userId: globalData.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
 
         DispatchQueue.global(qos: .userInitiated).async { [self] in
-            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: globalData.user.user_id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
+            delegate?.showLoadingView(self)
+            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: globalData.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
                 }, receiveValue: { [self] response in
-                    playSessionId = response.playSessionId!
+                    playSessionId = response.playSessionId ?? ""
                     let mediaSource = response.mediaSources!.first.self!
                     if mediaSource.transcodingUrl != nil {
                         // Item is being transcoded by request of server
@@ -299,14 +303,19 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         item.videoType = .transcode
                         item.videoUrl = streamURL!
 
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: .embed, codec: "")
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: nil, delivery: .embed, codec: "")
                         subtitleTrackArray.append(disableSubtitleTrack)
 
                         // Loop through media streams and add to array
                         for stream in mediaSource.mediaStreams! {
                             if stream.type == .subtitle {
-                                let deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
-                                let subtitle = Subtitle(name: stream.displayTitle!, id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
+                                var deliveryUrl: URL?
+                                if(stream.deliveryMethod == .external) {
+                                    deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
+                                } else {
+                                    deliveryUrl = nil
+                                }
+                                let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt")
                                 subtitleTrackArray.append(subtitle)
                             }
 
@@ -335,14 +344,19 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         item.videoUrl = streamURL
                         item.videoType = .directPlay
 
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: URL(string: "https://example.com")!, delivery: .embed, codec: "")
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: nil, delivery: .embed, codec: "")
                         subtitleTrackArray.append(disableSubtitleTrack)
 
                         // Loop through media streams and add to array
                         for stream in mediaSource.mediaStreams! {
                             if stream.type == .subtitle {
-                                let deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
-                                let subtitle = Subtitle(name: stream.displayTitle!, id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
+                                var deliveryUrl: URL?
+                                if(stream.deliveryMethod == .external) {
+                                    deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
+                                } else {
+                                    deliveryUrl = nil
+                                }
+                                let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt")
                                 subtitleTrackArray.append(subtitle)
                             }
 
@@ -365,21 +379,28 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         playbackItem = item
                     }
 
-                    self.setupNowPlayingCC()
-
                     mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                     mediaPlayer.play()
-                    print(manifest.userData?.playbackPositionTicks ?? 0)
-                    mediaPlayer.jumpForward(Int32(manifest.userData?.playbackPositionTicks ?? 0/10000000))
+                    
+                    //1 second = 10,000,000 ticks
+                    
+                    let startTicks = round(Double(manifest.userData?.playbackPositionTicks ?? 0), toNearest: 10_000_000)
+                    let startSeconds = Int32(startTicks) / 10_000_000
+                    mediaPlayer.jumpForward(startSeconds)
+                    
+                    //Pause and load captions into memory.
                     mediaPlayer.pause()
                     subtitleTrackArray.forEach { sub in
                         if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
-                            print("adding subs for id: \(sub.id) w/ url: \(sub.url)")
-                            mediaPlayer.addPlaybackSlave(sub.url, type: .subtitle, enforce: false)
+                            mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                         }
                     }
+                    
+                    //Wait for captions to load
                     delegate?.showLoadingView(self)
                     while mediaPlayer.numberOfSubtitlesTracks != subtitleTrackArray.count - 1 {}
+                    
+                    //Select default track & resume playback
                     mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
                     mediaPlayer.pause()
                     mediaPlayer.play()
@@ -414,6 +435,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 break
             case .playing :
                 print("Video is playing")
+                self.setupNowPlayingCC()
                 sendProgressReport(eventName: "unpause")
                 delegate?.hideLoadingView(self)
                 paused = false

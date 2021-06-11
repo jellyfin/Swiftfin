@@ -21,9 +21,11 @@ struct SettingsView: View {
     @State private var outOfNetworkStreamBitrate: Int = 40_000_000
     @State private var autoSelectSubtitles: Bool = false
     @State private var autoSelectSubtitlesLangcode: String = "none"
+    @State private var username: String = ""
 
     func onAppear() {
         let defaults = UserDefaults.standard
+        _username.wrappedValue = globalData.user.username!
         _inNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "InNetworkBandwidth")
         _outOfNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "OutOfNetworkBandwidth")
         _autoSelectSubtitles.wrappedValue = defaults.bool(forKey: "AutoSelectSubtitles")
@@ -63,7 +65,7 @@ struct SettingsView: View {
 
                 Section {
                     HStack {
-                        Text("Signed in as \(globalData.user.username!)").foregroundColor(.primary)
+                        Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
                         Button {
                             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
@@ -97,7 +99,7 @@ struct SettingsView: View {
                     }
                 }
             }
-
+            .padding(.top, 12)
             .navigationBarTitle("Settings", displayMode: .inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {

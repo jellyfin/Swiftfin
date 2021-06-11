@@ -96,15 +96,17 @@ struct MovieItemView: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .offset(y: -4)
                     HStack {
-                        Text(String(item.productionYear ?? 0)).font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
+                        if(item.productionYear != nil) {
+                            Text(String(item.productionYear ?? 0)).font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
                         Text(item.getItemRuntime()).font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                        if item.officialRating != "" {
+                        if item.officialRating != nil {
                             Text(item.officialRating!).font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
@@ -311,10 +313,12 @@ struct MovieItemView: View {
                                                 .offset(x: 14, y: 0)
                                             Spacer().frame(height: 1)
                                             HStack {
-                                                Text(String(item.productionYear ?? 0)).font(.subheadline)
-                                                    .fontWeight(.medium)
-                                                    .foregroundColor(.secondary)
-                                                    .lineLimit(1)
+                                                if(item.productionYear != nil) {
+                                                    Text(String(item.productionYear ?? 0)).font(.subheadline)
+                                                        .fontWeight(.medium)
+                                                        .foregroundColor(.secondary)
+                                                        .lineLimit(1)
+                                                }
                                                 Text(item.getItemRuntime()).font(.subheadline)
                                                     .fontWeight(.medium)
                                                     .foregroundColor(.secondary)

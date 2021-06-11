@@ -84,10 +84,14 @@ struct LibrarySearchView: View {
                                             .fontWeight(.semibold)
                                             .foregroundColor(.primary)
                                             .lineLimit(1)
-                                        Text(String(item.productionYear ?? 0))
-                                            .foregroundColor(.secondary)
-                                            .font(.caption)
-                                            .fontWeight(.medium)
+                                        if(item.productionYear != nil) {
+                                            Text(String(item.productionYear ?? 0))
+                                                .foregroundColor(.secondary)
+                                                .font(.caption)
+                                                .fontWeight(.medium)
+                                        } else {
+                                            Text(item.type!)
+                                        }
                                     }.frame(width: 100)
                                 }
                             }

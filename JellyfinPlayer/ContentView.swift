@@ -147,74 +147,77 @@ struct ContentView: View {
             .environmentObject(globalData)
         } else {
             if !jsi.did {
-                LoadingView(isShowing: $isLoading) {
+                if(isLoading) {
+                    ProgressView()
+                } else {
                     VStack {
-                        if loadState == 0 {
-                            TabView(selection: $tabSelection) {
-                                NavigationView {
-                                    VStack(alignment: .leading) {
-                                        ScrollView {
-                                            Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 16)
-                                            ContinueWatchingView()
-                                            NextUpView()
-                                            ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
-                                                VStack(alignment: .leading) {
-                                                    HStack {
-                                                        Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold)
-                                                            .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
-                                                        Spacer()
-                                                        NavigationLink(destination: LazyView {
-                                                            LibraryView(usingParentID: library_id,
-                                                                        title: library_names[library_id] ?? "", usingFilters: recentFilterSet)
-                                                        }) {
+                        TabView(selection: $tabSelection) {
+                            NavigationView {
+                                VStack(alignment: .leading) {
+                                    ScrollView {
+                                        Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 16)
+                                        ContinueWatchingView()
+                                        NextUpView()
+                                        
+                                        ForEach(librariesShowRecentlyAdded, id: \.self) { library_id in
+                                            VStack(alignment: .leading) {
+                                                HStack {
+                                                    Text("Latest \(library_names[library_id] ?? "")").font(.title2).fontWeight(.bold)
+                                                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
+                                                    Spacer()
+                                                    NavigationLink(destination: LazyView {
+                                                        LibraryView(usingParentID: library_id,
+                                                                    title: library_names[library_id] ?? "", usingFilters: recentFilterSet)
+                                                    }) {
+                                                        HStack() {
                                                             Text("See All").font(.subheadline).fontWeight(.bold)
+                                                            Image(systemName: "chevron.right").font(Font.subheadline.bold())
                                                         }
-                                                    }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                                    LatestMediaView(usingParentID: library_id)
-                                                }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-                                            }
-                                            Spacer().frame(height: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
+                                                    }
+                                                }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                                                LatestMediaView(usingParentID: library_id)
+                                            }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                                         }
-                                        .navigationTitle("Home")
-                                        .toolbar {
-                                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                                Button {
-                                                    showSettingsPopover = true
-                                                } label: {
-                                                    Image(systemName: "gear")
-                                                }
+                                        
+                                        Spacer().frame(height: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
+                                    }
+                                    .navigationTitle("Home")
+                                    .toolbar {
+                                        ToolbarItemGroup(placement: .navigationBarTrailing) {
+                                            Button {
+                                                showSettingsPopover = true
+                                            } label: {
+                                                Image(systemName: "gear")
                                             }
-                                        }
-                                        .fullScreenCover(isPresented: $showSettingsPopover) {
-                                            SettingsView(viewModel: SettingsViewModel(), close: $showSettingsPopover)
                                         }
                                     }
+                                    .fullScreenCover(isPresented: $showSettingsPopover) {
+                                        SettingsView(viewModel: SettingsViewModel(), close: $showSettingsPopover)
+                                    }
                                 }
-                                .navigationViewStyle(StackNavigationViewStyle())
-                                .tabItem {
-                                    Text("Home")
-                                    Image(systemName: "house")
-                                }
-                                .tag("Home")
-                                NavigationView {
-                                    LibraryListView(libraries: library_names)
-                                }
-                                .navigationViewStyle(StackNavigationViewStyle())
-                                .tabItem {
-                                    Text("All Media")
-                                    Image(systemName: "folder")
-                                }
-                                .tag("All Media")
                             }
-                        } else {
-                            Text("Loading...")
+                            .navigationViewStyle(StackNavigationViewStyle())
+                            .tabItem {
+                                Text("Home")
+                                Image(systemName: "house")
+                            }
+                            .tag("Home")
+                            NavigationView {
+                                LibraryListView(libraries: library_names)
+                            }
+                            .navigationViewStyle(StackNavigationViewStyle())
+                            .tabItem {
+                                Text("All Media")
+                                Image(systemName: "folder")
+                            }
+                            .tag("All Media")
                         }
                     }
-                }
-                .environmentObject(globalData)
-                .onAppear(perform: startup)
-                .alert(isPresented: $globalData.networkError) {
-                    Alert(title: Text("Network Error"), message: Text("An error occured while performing a network request"), dismissButton: .default(Text("Ok")))
+                    .environmentObject(globalData)
+                    .onAppear(perform: startup)
+                    .alert(isPresented: $globalData.networkError) {
+                        Alert(title: Text("Network Error"), message: Text("An error occured while performing a network request"), dismissButton: .default(Text("Ok")))
+                    }
                 }
             } else {
                 Text("Please wait...")

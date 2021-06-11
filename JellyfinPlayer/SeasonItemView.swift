@@ -296,11 +296,13 @@ struct SeasonItemView: View {
     }
 
     var body: some View {
-        LoadingView(isShowing: $isLoading) {
+        if(isLoading) {
+            ProgressView()
+            .onAppear(perform: onAppear)
+        } else {
             innerBody
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("\(item.name ?? "") - \(item.seriesName ?? "")")
         }
-        .onAppear(perform: onAppear)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle("\(item.name ?? "") - \(item.seriesName ?? "")")
     }
 }

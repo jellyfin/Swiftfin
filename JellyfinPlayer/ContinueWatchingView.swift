@@ -37,7 +37,7 @@ struct ContinueWatchingView: View {
 
     func onAppear() {
         DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getResumeItems(userId: globalData.user.user_id ?? "", limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
+            ItemsAPI.getResumeItems(userId: globalData.user.user_id!, limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
                 .sink(receiveCompletion: { completion in
                     HandleAPIRequestCompletion(globalData: globalData, completion: completion)
                 }, receiveValue: { response in
@@ -56,7 +56,7 @@ struct ContinueWatchingView: View {
                         NavigationLink(destination: ItemView(item: item)) {
                             VStack(alignment: .leading) {
                                 Spacer().frame(height: 10)
-                                LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI ?? "", maxWidth: 320))
+                                LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 320))
                                     .placeholderAndFailure {
                                         Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(), size: CGSize(width: 48, height: 32))!)
                                             .resizable()
@@ -70,7 +70,7 @@ struct ContinueWatchingView: View {
                                     .overlay(
                                         Group {
                                             if item.type == "Episode" {
-                                                Text("\(item.name!)")
+                                                Text("\(item.name ?? "")")
                                                     .font(.caption)
                                                     .padding(6)
                                                     .foregroundColor(.white)
@@ -84,7 +84,7 @@ struct ContinueWatchingView: View {
                                         Rectangle()
                                             .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
                                             .mask(ProgressBar())
-                                            .frame(width: CGFloat(item.userData!.playedPercentage!*3.2), height: 7)
+                                            .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 3.2), height: 7)
                                             .padding(0), alignment: .bottomLeading
                                     )
                                 Text(item.seriesName ?? item.name ?? "")

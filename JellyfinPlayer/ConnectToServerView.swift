@@ -274,23 +274,23 @@ struct ConnectToServerView: View {
                         ForEach(publicUsers, id: \.id) { publicUser in
                             HStack {
                                 Button() {
-                                    if publicUser.hasPassword! {
+                                    if (publicUser.hasPassword ?? true) {
                                         lastPublicUsers = publicUsers
-                                        username = publicUser.name!
+                                        username = publicUser.name ?? ""
                                         usernameDisabled = true
                                         publicUsers = []
                                     } else {
                                         publicUsers = []
                                         password = ""
-                                        username = publicUser.name!
+                                        username = publicUser.name ?? ""
                                         doLogin()
                                     }
                                 } label: {
                                     HStack {
-                                        Text(publicUser.name!).font(.subheadline).fontWeight(.semibold)
+                                        Text(publicUser.name ?? "").font(.subheadline).fontWeight(.semibold)
                                         Spacer()
-                                        if publicUser.primaryImageTag != "" {
-                                            LazyImage(source: URL(string: "\(uri)/Users/\(publicUser.id!)/Images/Primary?width=200&quality=80&tag=\(publicUser.primaryImageTag!)"))
+                                        if publicUser.primaryImageTag != nil {
+                                            LazyImage(source: URL(string: "\(uri)/Users/\(publicUser.id ?? "")/Images/Primary?width=200&quality=80&tag=\(publicUser.primaryImageTag!)"))
                                                 .contentMode(.aspectFill)
                                                 .frame(width: 60, height: 60)
                                                 .cornerRadius(30.0)
