@@ -381,17 +381,17 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
                     mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
                     mediaPlayer.play()
-                    
-                    //1 second = 10,000,000 ticks
-                    
+
+                    // 1 second = 10,000,000 ticks
+
                     let rawStartTicks = manifest.userData?.playbackPositionTicks ?? 0
-                    
-                    if(rawStartTicks != 0) {
+
+                    if rawStartTicks != 0 {
                         let startSeconds = rawStartTicks / 10_000_000
                         mediaPlayer.jumpForward(Int32(startSeconds))
                     }
-                    
-                    //Pause and load captions into memory.
+
+                    // Pause and load captions into memory.
                     mediaPlayer.pause()
                     subtitleTrackArray.forEach { sub in
                         if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
