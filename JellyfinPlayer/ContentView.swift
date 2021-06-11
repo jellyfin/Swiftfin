@@ -132,7 +132,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        if needsToSelectServer == true {
+        if needsToSelectServer == true || globalData.server == nil {
             NavigationView {
                 ConnectToServerView(isActive: $needsToSelectServer)
             }
@@ -141,7 +141,7 @@ struct ContentView: View {
         } else if globalData.expiredCredentials == true {
             NavigationView {
                 ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server,
-                                    reauth_deviceId: globalData.user.device_uuid ?? "", isActive: $globalData.expiredCredentials)
+                                    reauth_deviceId: globalData.user.device_uuid!, isActive: $globalData.expiredCredentials)
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .environmentObject(globalData)
