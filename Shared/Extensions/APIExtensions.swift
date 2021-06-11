@@ -52,7 +52,7 @@ extension BaseItemDto {
 
         if self.primaryImageAspectRatio ?? 0.0 < 1.0 {
             imageType = "Backdrop"
-            if(!(self.backdropImageTags?.isEmpty ?? true)) {
+            if !(self.backdropImageTags?.isEmpty ?? true) {
                 imageTag = (self.backdropImageTags ?? [""])[0]
             }
         } else {
@@ -62,11 +62,11 @@ extension BaseItemDto {
 
         if imageTag == "" {
             imageType = "Backdrop"
-            if(!(self.parentBackdropImageTags?.isEmpty ?? true)) {
+            if !(self.parentBackdropImageTags?.isEmpty ?? true) {
                 imageTag = (self.parentBackdropImageTags ?? [""])[0]
             }
         }
-        
+
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
         let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!

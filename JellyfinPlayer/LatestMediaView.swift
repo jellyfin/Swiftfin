@@ -61,7 +61,7 @@ struct LatestMediaView: View {
                                         .fontWeight(.semibold)
                                         .foregroundColor(.primary)
                                         .lineLimit(1)
-                                    if(item.productionYear != nil) {
+                                    if item.productionYear != nil {
                                         Text(String(item.productionYear ?? 0))
                                             .foregroundColor(.secondary)
                                             .font(.caption)

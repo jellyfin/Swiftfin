@@ -96,7 +96,7 @@ struct MovieItemView: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .offset(y: -4)
                     HStack {
-                        if(item.productionYear != nil) {
+                        if item.productionYear != nil {
                             Text(String(item.productionYear ?? 0)).font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.secondary)
@@ -313,7 +313,7 @@ struct MovieItemView: View {
                                                 .offset(x: 14, y: 0)
                                             Spacer().frame(height: 1)
                                             HStack {
-                                                if(item.productionYear != nil) {
+                                                if item.productionYear != nil {
                                                     Text(String(item.productionYear ?? 0)).font(.subheadline)
                                                         .fontWeight(.medium)
                                                         .foregroundColor(.secondary)
