@@ -74,7 +74,7 @@ extension BaseItemDto {
 
     func getSeriesBackdropImage(baseURL: String, maxWidth: Int) -> URL {
         let imageType = "Backdrop"
-        let imageTag = (self.parentBackdropImageTags ?? [])[0]
+        let imageTag = (self.parentBackdropImageTags ?? [""])[0]
 
         print(imageType)
         print(imageTag)
