@@ -92,6 +92,7 @@ struct SeriesItemView: View {
             }
             .overrideViewPreference(.unspecified)
             .navigationTitle(item.name ?? "")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

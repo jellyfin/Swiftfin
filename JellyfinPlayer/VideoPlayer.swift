@@ -509,15 +509,17 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
     // MARK: Jellyfin Playstate updates
     func sendProgressReport(eventName: String) {
-        let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
+        if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
+            let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
-        PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
-            }, receiveValue: { _ in
-                print("Playback progress report sent!")
-            })
-            .store(in: &globalData.pendingAPIRequests)
+            PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
+                .sink(receiveCompletion: { completion in
+                    HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+                }, receiveValue: { _ in
+                    print("Playback progress report sent!")
+                })
+                .store(in: &globalData.pendingAPIRequests)
+        }
     }
 
     func sendStopReport() {

@@ -459,8 +459,8 @@ struct EpisodeItemView: View {
             }
         }
         .onAppear(perform: {
-            favorite = item.userData!.isFavorite!
-            watched = item.userData!.played!
+            favorite = item.userData?.isFavorite ?? false
+            watched = item.userData?.played ?? false
             settingState = false
         })
         .navigationBarTitleDisplayMode(.inline)

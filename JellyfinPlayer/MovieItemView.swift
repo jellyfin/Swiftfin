@@ -463,12 +463,12 @@ struct MovieItemView: View {
             }
         }
         .onAppear(perform: {
-            favorite = item.userData!.isFavorite!
-            watched = item.userData!.played!
+            favorite = item.userData?.isFavorite ?? false
+            watched = item.userData?.played ?? false
             settingState = false
         })
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(item.name!)
+        .navigationTitle(item.name ?? "")
         .supportedOrientations(.allButUpsideDown)
         .overrideViewPreference(.unspecified)
         .preferredColorScheme(.none)

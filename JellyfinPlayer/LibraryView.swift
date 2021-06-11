@@ -123,12 +123,12 @@ struct LibraryView: View {
                                                 .foregroundColor(.primary)
                                                 .lineLimit(1)
                                             if item.productionYear != nil {
-                                                Text(String(item.productionYear ?? 0))
+                                                Text(String(item.productionYear!))
                                                     .foregroundColor(.secondary)
                                                     .font(.caption)
                                                     .fontWeight(.medium)
                                             } else {
-                                                Text(item.type!)
+                                                Text(item.type ?? "")
                                             }
                                         }.frame(width: 100)
                                     }
