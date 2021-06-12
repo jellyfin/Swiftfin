@@ -79,7 +79,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
 
-    //MARK: IBActions
+    // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
         sendProgressReport(eventName: "pause")
         mediaPlayer.pause()
@@ -258,7 +258,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         dump(event)
     }
 
-    //MARK: viewDidLoad
+    // MARK: viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         // View has loaded.
