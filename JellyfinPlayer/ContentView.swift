@@ -37,7 +37,7 @@ struct ContentView: View {
     @State private var loadState: Int = 2
 
     private var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: ["DateCreated"])
-    
+
     func startup() {
         if viewDidLoad == true {
             return
