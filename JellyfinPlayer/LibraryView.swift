@@ -49,13 +49,13 @@ struct LibraryView: View {
     init(withGenre: NameGuidPair) {
         self.usingParentID = ""
         self.title = withGenre.name ?? ""
-        self.genre = withGenre.id ?? ""
+        self.genre = withGenre.id!
     }
 
     init(withStudio: NameGuidPair) {
         self.usingParentID = ""
         self.title = withStudio.name ?? ""
-        self.studio = withStudio.id ?? ""
+        self.studio = withStudio.id!
     }
 
     func onAppear() {

@@ -176,7 +176,7 @@ struct ConnectToServerView: View {
                                 let server = response
                                 serverName = server.serverName!
                                 server_id = server.id!
-                                if server.startupWizardCompleted! {
+                                if server.startupWizardCompleted ?? true {
                                     isConnected = true
 
                                     UserAPI.getPublicUsers()
