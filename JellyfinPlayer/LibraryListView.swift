@@ -14,7 +14,7 @@ struct LibraryListView: View {
     @State var library_ids: [String] = ["favorites", "genres"]
     @State var library_names: [String: String] = ["favorites": "Favorites", "genres": "Genres"]
     var libraries: [String: String] = [:] // input libraries
-    var withFavorites: LibraryFilters!
+    var withFavorites: LibraryFilters = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
 
     init(libraries: [String: String]) {
         self.libraries = libraries

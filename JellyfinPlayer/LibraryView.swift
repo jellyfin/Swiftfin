@@ -19,7 +19,7 @@ struct LibraryView: View {
 
     private var usingParentID: String = ""
     private var title: String = ""
-    private var filters: LibraryFilters = LibraryFilters()
+    private var filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: ["SortName"])
     private var personId: String = ""
     private var genre: String = ""
     private var studio: String = ""

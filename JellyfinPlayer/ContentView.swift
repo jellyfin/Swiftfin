@@ -131,7 +131,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        if needsToSelectServer == true || globalData.server == nil {
+        if needsToSelectServer == true {
             NavigationView {
                 ConnectToServerView(isActive: $needsToSelectServer)
             }
@@ -146,8 +146,9 @@ struct ContentView: View {
             .environmentObject(globalData)
         } else {
             if !jsi.did {
-                if isLoading {
+                if isLoading || globalData.user == nil || globalData.user.user_id == nil {
                     ProgressView()
+                        .onAppear(perform: startup)
                 } else {
                     VStack {
                         TabView(selection: $tabSelection) {
