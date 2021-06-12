@@ -11,7 +11,7 @@ import JellyfinAPI
 
 struct LibraryFilters: Codable, Hashable {
     var filters: [ItemFilter] = []
-    var sortOrder: [SortOrder] = [.descending]
+    var sortOrder: [APISortOrder] = [.descending]
     var withGenres: [NameGuidPair] = []
     var sortBy: [String] = ["SortName"]
 }

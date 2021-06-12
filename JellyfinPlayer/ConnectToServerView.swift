@@ -155,7 +155,7 @@ struct ConnectToServerView: View {
                     Button {
                         isWorking = true
                         if !uri.contains("http") {
-                            uri = "http://" + uri
+                            uri = "https://" + uri
                         }
                         if uri.last == "/" {
                             uri = String(uri.dropLast())

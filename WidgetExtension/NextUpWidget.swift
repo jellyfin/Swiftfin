@@ -168,14 +168,14 @@ struct NextUpEntryView: View {
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             } else {
                 switch family {
-                case .systemSmall:
-                    small(item: entry.items.first)
-                case .systemMedium:
-                    medium(items: entry.items)
-                case .systemLarge:
-                    large(items: entry.items)
-                @unknown default:
-                    EmptyView()
+                    case .systemSmall:
+                        small(item: entry.items.first)
+                    case .systemMedium:
+                        medium(items: entry.items)
+                    case .systemLarge:
+                        large(items: entry.items)
+                    default:
+                        EmptyView()
                 }
             }
         }

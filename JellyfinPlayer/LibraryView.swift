@@ -17,12 +17,12 @@ struct LibraryView: View {
     @State private var items: [BaseItemDto] = []
     @State private var isLoading: Bool = false
 
-    var usingParentID: String = ""
-    var title: String = ""
-    var filters: LibraryFilters = LibraryFilters()
-    var personId: String = ""
-    var genre: String = ""
-    var studio: String = ""
+    private var usingParentID: String = ""
+    private var title: String = ""
+    private var filters: LibraryFilters = LibraryFilters()
+    private var personId: String = ""
+    private var genre: String = ""
+    private var studio: String = ""
 
     @State private var totalPages: Int = 0
     @State private var currentPage: Int = 0

@@ -20,16 +20,16 @@
         }
       },
       {
-        "package": "JellyfinAPI",
+        "package": "jellyfin-sdk-swift",
         "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
         "state": {
           "branch": "main",
-          "revision": "02fe19f44738341aa2ad7d9452f74ad3464a639d",
+          "revision": "5cdc2419f547b3f31dc96f5eccaf3f303f44184b",
           "version": null
         }
       },
       {
-        "package": "KeychainSwift",
+        "package": "keychain-swift",
         "repositoryURL": "https://github.com/evgenyneu/keychain-swift",
         "state": {
           "branch": null,
@@ -42,21 +42,21 @@
         "repositoryURL": "https://github.com/kean/Nuke.git",
         "state": {
           "branch": null,
-          "revision": "e1e9d056fedafa486508759923a0db61ce46f1bc",
-          "version": "10.1.0"
+          "revision": "69ae6d5b8c4b898450432f94bd35f863d3830cfc",
+          "version": "10.3.0"
         }
       },
       {
         "package": "NukeUI",
         "repositoryURL": "https://github.com/kean/NukeUI",
         "state": {
-          "branch": "main",
-          "revision": "31ef27030d4ebf8fc5a3d5b44d66e281921883ab",
-          "version": null
+          "branch": null,
+          "revision": "d2580b8d22b29c6244418d8e4b568f3162191460",
+          "version": "0.3.0"
         }
       },
       {
-        "package": "Introspect",
+        "package": "SwiftUI-Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {
           "branch": null,

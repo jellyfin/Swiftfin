@@ -25,11 +25,11 @@ struct SettingsView: View {
 
     func onAppear() {
         let defaults = UserDefaults.standard
-        _username.wrappedValue = globalData.user.username!
-        _inNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "InNetworkBandwidth")
-        _outOfNetworkStreamBitrate.wrappedValue = defaults.integer(forKey: "OutOfNetworkBandwidth")
-        _autoSelectSubtitles.wrappedValue = defaults.bool(forKey: "AutoSelectSubtitles")
-        _autoSelectSubtitlesLangcode.wrappedValue = defaults.string(forKey: "AutoSelectSubtitlesLangcode") ?? ""
+        username = globalData.user.username!
+        inNetworkStreamBitrate = defaults.integer(forKey: "InNetworkBandwidth")
+        outOfNetworkStreamBitrate = defaults.integer(forKey: "OutOfNetworkBandwidth")
+        autoSelectSubtitles = defaults.bool(forKey: "AutoSelectSubtitles")
+        autoSelectSubtitlesLangcode = defaults.string(forKey: "AutoSelectSubtitlesLangcode") ?? ""
     }
 
     var body: some View {
