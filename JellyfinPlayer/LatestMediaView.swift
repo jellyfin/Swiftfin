@@ -6,7 +6,6 @@
  */
 
 import SwiftUI
-import NukeUI
 import JellyfinAPI
 
 struct LatestMediaView: View {
@@ -46,13 +45,7 @@ struct LatestMediaView: View {
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
                                     Spacer().frame(height: 10)
-                                    LazyImage(source: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
-                                        .placeholderAndFailure {
-                                            Image(uiImage: UIImage(blurHash: item.getPrimaryImageBlurHash(), size: CGSize(width: 16, height: 20))!)
-                                                .resizable()
-                                                .frame(width: 100, height: 150)
-                                                .cornerRadius(10)
-                                        }
+                                    ImageView(src: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
                                     Spacer().frame(height: 5)

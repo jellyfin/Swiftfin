@@ -224,7 +224,7 @@ struct ContentView: View {
                     .onAppear(perform: {
                         DispatchQueue.main.async { [self] in
                             _viewDidLoad.wrappedValue = false
-                            usleep(500_000)
+                            sleep(1)
                             self.jsi.did = false
                         }
                     })

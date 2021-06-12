@@ -6,7 +6,6 @@
  */
 
 import SwiftUI
-import NukeUI
 import JellyfinAPI
 
 struct MovieItemView: View {
@@ -63,13 +62,7 @@ struct MovieItemView: View {
     }
 
     var portraitHeaderView: some View {
-        LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 1200))
-            .placeholderAndFailure {
-                Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(),
-                    size: CGSize(width: 32, height: 32))!)
-                    .resizable()
-            }
-            .contentMode(.aspectFill)
+        ImageView(src: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: item.getBackdropImageBlurHash())
             .opacity(0.4)
             .blur(radius: 2.0)
     }
@@ -77,24 +70,16 @@ struct MovieItemView: View {
     var portraitHeaderOverlayView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
-                LazyImage(source: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120))
-                    .placeholderAndFailure {
-                        Image(uiImage: UIImage(blurHash: item.getPrimaryImageBlurHash(),
-                            size: CGSize(width: 32, height: 32))!)
-                            .resizable()
-                            .frame(width: 120, height: 180)
-                            .cornerRadius(10)
-                    }
-                    .contentMode(.aspectFill)
+                ImageView(src: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120))
                     .frame(width: 120, height: 180)
                     .cornerRadius(10)
                 VStack(alignment: .leading) {
                     Spacer()
-                    Text(item.name!).font(.headline)
+                    Text(item.name ?? "").font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .offset(y: -4)
+                        .lineLimit(1)
+                        .offset(y: 5)
                     HStack {
                         if item.productionYear != nil {
                             Text(String(item.productionYear ?? 0)).font(.subheadline)
@@ -159,7 +144,7 @@ struct MovieItemView: View {
                         }
                     }
                 }
-            }
+            }.padding(.top, 8)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? -189 : -64)
@@ -207,17 +192,7 @@ struct MovieItemView: View {
                                                     LibraryView(withPerson: person)
                                                 }) {
                                                     VStack {
-                                                        LazyImage(source: person.getImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
-                                                            .placeholderAndFailure {
-                                                                Image(uiImage: UIImage(blurHash: person.getBlurHash(),
-                                                                    size: CGSize(width: 16,
-                                                                                 height: 16))!)
-                                                                    .resizable()
-                                                                    .aspectRatio(contentMode: .fill)
-                                                                    .frame(width: 100, height: 100)
-                                                                    .cornerRadius(10)
-                                                            }
-                                                            .contentMode(.aspectFill)
+                                                        ImageView(src: person.getImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
                                                             .frame(width: 100, height: 100)
                                                             .cornerRadius(10)
                                                         Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
@@ -256,18 +231,7 @@ struct MovieItemView: View {
             } else {
                 GeometryReader { geometry in
                     ZStack {
-                        LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 200))
-                            .placeholderAndFailure {
-                                Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(),
-                                    size: CGSize(width: 16, height: 16))!)
-                                    .resizable()
-                                    .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets
-                                        .trailing,
-                                        height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets
-                                            .bottom)
-                            }
-                            .contentMode(.aspectFill)
-
+                        ImageView(src: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 200), bh: item.getBackdropImageBlurHash())
                             .opacity(0.3)
                             .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                    height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
@@ -275,16 +239,9 @@ struct MovieItemView: View {
                             .blur(radius: 4)
                         HStack {
                             VStack {
-                                LazyImage(source: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120))
-                                    .placeholderAndFailure {
-                                        Image(uiImage: UIImage(blurHash: item.getPrimaryImageBlurHash(),
-                                            size: CGSize(width: 16, height: 16))!)
-                                            .resizable()
-                                            .frame(width: 120, height: 180)
-                                    }
+                                ImageView(src: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120), bh: item.getPrimaryImageBlurHash())
                                     .frame(width: 120, height: 180)
                                     .cornerRadius(10)
-                                    .shadow(radius: 5)
                                 Spacer().frame(height: 15)
                                 Button {
                                     self.playbackInfo.itemToPlay = item
@@ -408,17 +365,7 @@ struct MovieItemView: View {
                                                                 LibraryView(withPerson: person)
                                                             }) {
                                                                 VStack {
-                                                                    LazyImage(source: person.getImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
-                                                                        .placeholderAndFailure {
-                                                                            Image(uiImage: UIImage(blurHash: person.getBlurHash(),
-                                                                                size: CGSize(width: 16,
-                                                                                             height: 16))!)
-                                                                                .resizable()
-                                                                                .aspectRatio(contentMode: .fill)
-                                                                                .frame(width: 100, height: 100)
-                                                                                .cornerRadius(10)
-                                                                        }
-                                                                        .contentMode(.aspectFill)
+                                                                    ImageView(src: person.getImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
                                                                         .frame(width: 100, height: 100)
                                                                         .cornerRadius(10)
                                                                     Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)

@@ -8,7 +8,6 @@
 import SwiftUI
 import CoreData
 import KeychainSwift
-import NukeUI
 import JellyfinAPI
 
 struct ConnectToServerView: View {
@@ -290,11 +289,9 @@ struct ConnectToServerView: View {
                                         Text(publicUser.name ?? "").font(.subheadline).fontWeight(.semibold)
                                         Spacer()
                                         if publicUser.primaryImageTag != nil {
-                                            LazyImage(source: URL(string: "\(uri)/Users/\(publicUser.id ?? "")/Images/Primary?width=200&quality=80&tag=\(publicUser.primaryImageTag!)"))
-                                                .contentMode(.aspectFill)
+                                            ImageView(src: URL(string: "\(uri)/Users/\(publicUser.id ?? "")/Images/Primary?width=200&quality=80&tag=\(publicUser.primaryImageTag!)")!)
                                                 .frame(width: 60, height: 60)
                                                 .cornerRadius(30.0)
-                                                .shadow(radius: 6)
                                         } else {
                                             Image(systemName: "person.fill")
                                                 .foregroundColor(Color(red: 1, green: 1, blue: 1).opacity(0.8))

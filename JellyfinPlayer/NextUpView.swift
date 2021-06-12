@@ -6,7 +6,6 @@
  */
 
 import SwiftUI
-import NukeUI
 import JellyfinAPI
 
 struct NextUpView: View {
@@ -45,13 +44,7 @@ struct NextUpView: View {
                         ForEach(items, id: \.id) { item in
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
-                                    LazyImage(source: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
-                                        .placeholderAndFailure {
-                                            Image(uiImage: UIImage(blurHash: item.getSeriesPrimaryImageBlurHash(), size: CGSize(width: 16, height: 20))!)
-                                                .resizable()
-                                                .frame(width: 100, height: 150)
-                                                .cornerRadius(10)
-                                        }
+                                    ImageView(src: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
                                     Spacer().frame(height: 5)

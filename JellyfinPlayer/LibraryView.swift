@@ -107,14 +107,7 @@ struct LibraryView: View {
                                 ForEach(items, id: \.id) { item in
                                     NavigationLink(destination: ItemView(item: item)) {
                                         VStack(alignment: .leading) {
-                                            LazyImage(source: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100))
-                                                .placeholderAndFailure {
-                                                    Image(uiImage: UIImage(blurHash: item.getPrimaryImageBlurHash(),
-                                                        size: CGSize(width: 32, height: 32))!)
-                                                        .resizable()
-                                                        .frame(width: 100, height: 150)
-                                                        .cornerRadius(10)
-                                                }
+                                            ImageView(src: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
                                                 .frame(width: 100, height: 150)
                                                 .cornerRadius(10)
                                             Text(item.name ?? "")
@@ -200,3 +193,4 @@ struct LibraryView: View {
 }
 
 // stream BM^S by nicki!
+//

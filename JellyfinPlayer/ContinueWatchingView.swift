@@ -1,4 +1,5 @@
-/* JellyfinPlayer/Swiftfin is subject to the terms of the Mozilla Public
+/*
+ * JellyfinPlayer/Swiftfin is subject to the terms of the Mozilla Public
  * License, v2.0. If a copy of the MPL was not distributed with this
  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
  *
@@ -6,7 +7,6 @@
  */
 
 import SwiftUI
-import NukeUI
 import JellyfinAPI
 
 struct ProgressBar: Shape {
@@ -56,15 +56,7 @@ struct ContinueWatchingView: View {
                         NavigationLink(destination: ItemView(item: item)) {
                             VStack(alignment: .leading) {
                                 Spacer().frame(height: 10)
-                                LazyImage(source: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 320))
-                                    .placeholderAndFailure {
-                                        Image(uiImage: UIImage(blurHash: item.getBackdropImageBlurHash(), size: CGSize(width: 48, height: 32))!)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 320, height: 180)
-                                            .cornerRadius(10)
-                                    }
-                                    .aspectRatio(contentMode: .fill)
+                                ImageView(src: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 320), bh: item.getBackdropImageBlurHash())
                                     .frame(width: 320, height: 180)
                                     .cornerRadius(10)
                                     .overlay(
