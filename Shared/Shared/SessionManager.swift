@@ -12,26 +12,17 @@ import CoreData
 import KeychainSwift
 import UIKit
 
-final class WidgetEnvironment {
-    static let shared = WidgetEnvironment()
-
-    var server: Server?
+final class SessionManager {
+    
+    static let shared = SessionManager()
     var user: SignedInUser?
-    var header: String?
-
+    var authHeader: String?
+    
     init() {
-        update()
-    }
-
-    func update() {
-        let serverRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
-        let servers = try? PersistenceController.shared.container.viewContext.fetch(serverRequest) as? [Server]
         let savedUserRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SignedInUser")
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest) as? [SignedInUser]
-
-        server = servers?.first
         user = savedUsers?.first
-
+        
         let keychain = KeychainSwift()
         // need prefix
         keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
@@ -51,6 +42,6 @@ final class WidgetEnvironment {
         header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
         header.append("Token=\"\(authToken)\"")
 
-        self.header = header
+        self.authHeader = header
     }
 }
