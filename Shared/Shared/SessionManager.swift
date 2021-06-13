@@ -41,7 +41,7 @@ final class SessionManager {
         updateHeader(with: authToken)
     }
 
-    func updateHeader(with authToken: String?) {
+    fileprivate func updateHeader(with authToken: String?) {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         var deviceName = UIDevice.current.name
         deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
