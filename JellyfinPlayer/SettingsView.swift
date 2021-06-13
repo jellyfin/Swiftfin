@@ -11,7 +11,6 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
-    @EnvironmentObject var globalData: GlobalData
     @EnvironmentObject var jsi: justSignedIn
 
     @ObservedObject var viewModel: SettingsViewModel

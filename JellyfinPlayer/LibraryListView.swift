@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 struct LibraryListView: View {
-    @EnvironmentObject var globalData: GlobalData
 
     @State var library_ids: [String] = ["favorites", "genres"]
     @State var library_names: [String: String] = ["favorites": "Favorites", "genres": "Genres"]

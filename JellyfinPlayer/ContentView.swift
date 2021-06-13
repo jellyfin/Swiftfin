@@ -17,8 +17,6 @@ struct ContentView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     @EnvironmentObject var jsi: justSignedIn
 
-    @StateObject private var globalData = GlobalData()
-
     @State private var needsToSelectServer = false
     @State private var isLoading = false
     @State private var tabSelection: String = "Home"

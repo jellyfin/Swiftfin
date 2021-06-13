@@ -9,7 +9,6 @@ import SwiftUI
 import JellyfinAPI
 
 struct SeriesItemView: View {
-    @EnvironmentObject private var globalData: GlobalData
     @EnvironmentObject private var orientationInfo: OrientationInfo
 
     var item: BaseItemDto

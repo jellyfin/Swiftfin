@@ -12,7 +12,6 @@ import JellyfinAPI
 
 struct ConnectToServerView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject var globalData: GlobalData
     @EnvironmentObject var jsi: justSignedIn
 
     @State private var uri = ""

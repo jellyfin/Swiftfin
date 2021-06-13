@@ -39,7 +39,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     weak var delegate: PlayerViewControllerDelegate?
 
     var mediaPlayer = VLCMediaPlayer()
-    var globalData = GlobalData()
 
     @IBOutlet weak var timeText: UILabel!
     @IBOutlet weak var videoContentView: UIView!

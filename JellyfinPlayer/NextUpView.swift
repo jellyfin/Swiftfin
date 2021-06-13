@@ -9,7 +9,6 @@ import SwiftUI
 import JellyfinAPI
 
 struct NextUpView: View {
-    @EnvironmentObject var globalData: GlobalData
 
     @State private var items: [BaseItemDto] = []
     @State private var viewDidLoad: Bool = false
