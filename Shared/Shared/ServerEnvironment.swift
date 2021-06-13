@@ -13,7 +13,7 @@ import Foundation
 import JellyfinAPI
 
 final class ServerEnvironment {
-    static let shared = ServerEnvironment()
+    static let current = ServerEnvironment()
     fileprivate(set) var server: Server!
 
     init() {

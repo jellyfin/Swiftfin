@@ -15,7 +15,7 @@ import KeychainSwift
 import UIKit
 
 final class SessionManager {
-    static let shared = SessionManager()
+    static let current = SessionManager()
     fileprivate(set) var user: SignedInUser!
     fileprivate(set) var authHeader: String!
     fileprivate(set) var deviceIDString: String
