@@ -130,7 +130,7 @@ struct ConnectToServerView: View {
 
                 globalData.expiredCredentials = false
                 globalData.networkError = false
-                
+
                 do {
                     try viewContext.save()
                     DispatchQueue.main.async { [self] in
