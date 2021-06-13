@@ -145,12 +145,12 @@ struct ConnectToServerView: View {
                     DispatchQueue.main.async { [self] in
                         globalData.authHeader = authHeader
                         _rootIsActive.wrappedValue = false
-                        
+
                         globalData.expiredCredentials = false
                         globalData.networkError = false
                         globalData.user = newUser
                         globalData.server = newServer
-                        
+
                         jsi.did = true
                         print("logged in")
                     }
