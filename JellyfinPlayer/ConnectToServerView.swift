@@ -128,6 +128,9 @@ struct ConnectToServerView: View {
                 let keychain = KeychainSwift()
                 keychain.set(response.accessToken!, forKey: "AccessToken_\(newUser.user_id!)")
 
+                globalData.expiredCredentials = false
+                globalData.networkError = false
+                
                 do {
                     try viewContext.save()
                     DispatchQueue.main.async { [self] in

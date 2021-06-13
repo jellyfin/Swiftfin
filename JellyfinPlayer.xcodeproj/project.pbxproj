@@ -1042,7 +1042,7 @@
 			repositoryURL = "https://github.com/kean/NukeUI";
 			requirement = {
 				kind = exactVersion;
-				version = 0.6.1;
+				version = 0.3.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

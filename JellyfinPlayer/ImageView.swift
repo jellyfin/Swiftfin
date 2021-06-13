@@ -24,16 +24,14 @@ struct ImageView: View {
     }
 
     var body: some View {
-        LazyImage(source: source, content: { state in
-            if let image = state.image {
-                image.resizingMode(.aspectFill)
-            } else if state.error != nil {
-                Image(uiImage: UIImage(blurHash: "001fC^", size: CGSize(width: 1, height: 1))!)
-                    .resizable()
-            } else {
+        LazyImage(source: source)
+            .placeholder {
                 Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 16, height: 16))!)
                     .resizable()
             }
-        })
+            .failure {
+                Rectangle()
+                    .background(Color.gray)
+            }
     }
 }
