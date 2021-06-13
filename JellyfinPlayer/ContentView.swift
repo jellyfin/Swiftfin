@@ -19,12 +19,6 @@ struct ContentView: View {
 
     @StateObject private var globalData = GlobalData()
 
-    @FetchRequest(entity: Server.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Server.name, ascending: true)])
-        private var servers: FetchedResults<Server>
-
-    @FetchRequest(entity: SignedInUser.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \SignedInUser.username, ascending: true)])
-        private var savedUsers: FetchedResults<SignedInUser>
-
     @State private var needsToSelectServer = false
     @State private var isLoading = false
     @State private var tabSelection: String = "Home"
@@ -35,6 +29,12 @@ struct ContentView: View {
     @State private var showSettingsPopover: Bool = false
     @State private var viewDidLoad: Bool = false
     @State private var loadState: Int = 2
+    
+    @FetchRequest(entity: Server.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Server.name, ascending: true)])
+        var servers: FetchedResults<Server>
+
+    @FetchRequest(entity: SignedInUser.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \SignedInUser.username, ascending: true)])
+        var savedUsers: FetchedResults<SignedInUser>
 
     private var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: ["DateCreated"])
 
@@ -43,15 +43,13 @@ struct ContentView: View {
             return
         }
 
-        viewDidLoad = true
-
         let size = UIScreen.main.bounds.size
         if size.width < size.height {
             orientationInfo.orientation = .portrait
         } else {
             orientationInfo.orientation = .landscape
         }
-
+        
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
@@ -99,6 +97,7 @@ struct ContentView: View {
 
                         if loadState == 1 {
                             isLoading = false
+                            viewDidLoad = true
                         }
                     })
                     .store(in: &globalData.pendingAPIRequests)
@@ -114,6 +113,7 @@ struct ContentView: View {
 
                         if loadState == 1 {
                             isLoading = false
+                            viewDidLoad = true
                         }
                     })
                     .store(in: &globalData.pendingAPIRequests)
@@ -131,12 +131,13 @@ struct ContentView: View {
     }
 
     var body: some View {
-        if needsToSelectServer == true {
+        if needsToSelectServer == true || globalData.user == nil || globalData.server == nil {
             NavigationView {
                 ConnectToServerView(isActive: $needsToSelectServer)
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .environmentObject(globalData)
+            .onAppear(perform: startup)
         } else if globalData.expiredCredentials == true {
             NavigationView {
                 ConnectToServerView(skip_server: true, skip_server_prefill: globalData.server,
@@ -144,6 +145,7 @@ struct ContentView: View {
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .environmentObject(globalData)
+            .onAppear(perform: startup)
         } else {
             if !jsi.did {
                 if isLoading || globalData.user == nil || globalData.user.user_id == nil {

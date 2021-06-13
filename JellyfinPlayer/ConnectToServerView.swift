@@ -93,10 +93,22 @@ struct ConnectToServerView: View {
 
         UserAPI.authenticateUserByName(authenticateUserByName: x)
             .sink(receiveCompletion: { completion in
-                isWorking = false
-                HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        isWorking = false
+                        if let err = error as? ErrorResponse {
+                            switch err {
+                                case .error(401, _, _, _):
+                                    isSignInErrored = true
+                                case .error:
+                                    globalData.networkError = true
+                            }
+                        }
+                        break
+                }
             }, receiveValue: { response in
-                isWorking = true
                 let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
@@ -128,17 +140,19 @@ struct ConnectToServerView: View {
                 let keychain = KeychainSwift()
                 keychain.set(response.accessToken!, forKey: "AccessToken_\(newUser.user_id!)")
 
-                globalData.expiredCredentials = false
-                globalData.networkError = false
-
                 do {
                     try viewContext.save()
                     DispatchQueue.main.async { [self] in
                         globalData.authHeader = authHeader
                         _rootIsActive.wrappedValue = false
+                        
+                        globalData.expiredCredentials = false
+                        globalData.networkError = false
+                        globalData.user = newUser
+                        globalData.server = newServer
+                        
                         jsi.did = true
                         print("logged in")
-                        isWorking = false
                     }
                 } catch {
                     print("Couldn't store objects to CoreData")
