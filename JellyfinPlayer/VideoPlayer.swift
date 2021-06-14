@@ -298,7 +298,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 }, receiveValue: { [self] response in
                     playSessionId = response.playSessionId ?? ""
 
-                    if(response.mediaSources == nil) {
+                    if response.mediaSources == nil {
                         delegate?.exitPlayer(self)
                         return
                     }
