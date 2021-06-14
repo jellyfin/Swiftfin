@@ -29,7 +29,7 @@ struct ContentView: View {
     @State private var showSettingsPopover: Bool = false
     @State private var viewDidLoad: Bool = false
     @State private var loadState: Int = 2
-    
+
     @FetchRequest(entity: Server.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Server.name, ascending: true)])
         var servers: FetchedResults<Server>
 
@@ -49,7 +49,7 @@ struct ContentView: View {
         } else {
             orientationInfo.orientation = .landscape
         }
-        
+
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
