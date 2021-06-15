@@ -9,11 +9,12 @@
 import SwiftUI
 import NukeUI
 import JellyfinAPI
+import Combine
 
 struct LibraryView: View {
-    @EnvironmentObject var globalData: GlobalData
-    @EnvironmentObject var orientationInfo: OrientationInfo
 
+    @StateObject
+    var tempViewModel = ViewModel()
     @State private var items: [BaseItemDto] = []
     @State private var isLoading: Bool = false
 
@@ -69,9 +70,9 @@ struct LibraryView: View {
         items = []
 
         DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
+            ItemsAPI.getItemsByUserId(userId: SessionManager.current.userID!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
                 .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    print(completion)
                     isLoading = false
                 }, receiveValue: { response in
                     let x = ceil(Double(response.totalRecordCount!) / 100.0)
@@ -80,7 +81,7 @@ struct LibraryView: View {
                     isLoading = false
                     viewDidLoad = true
                 })
-                .store(in: &globalData.pendingAPIRequests)
+                .store(in: &tempViewModel.cancellables)
         }
     }
 
@@ -107,7 +108,7 @@ struct LibraryView: View {
                                 ForEach(items, id: \.id) { item in
                                     NavigationLink(destination: ItemView(item: item)) {
                                         VStack(alignment: .leading) {
-                                            ImageView(src: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
+                                            ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
                                                 .frame(width: 100, height: 150)
                                                 .cornerRadius(10)
                                             Text(item.name ?? "")
@@ -126,7 +127,7 @@ struct LibraryView: View {
                                         }.frame(width: 100)
                                     }
                                 }
-                            }.onChange(of: orientationInfo.orientation) { _ in
+                            }.onRotate { _ in
                                 recalcTracks()
                             }
                             if totalPages > 1 {

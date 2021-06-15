@@ -7,10 +7,12 @@
 
 import SwiftUI
 import JellyfinAPI
+import Combine
 
 struct LatestMediaView: View {
-    @EnvironmentObject var globalData: GlobalData
 
+    @StateObject
+    var tempViewModel = ViewModel()
     @State var items: [BaseItemDto] = []
     private var library_id: String = ""
     @State private var viewDidLoad: Bool = false
@@ -26,13 +28,13 @@ struct LatestMediaView: View {
         viewDidLoad = true
 
         DispatchQueue.global(qos: .userInitiated).async {
-            UserLibraryAPI.getLatestMedia(userId: globalData.user.user_id!, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true, limit: 12)
+            UserLibraryAPI.getLatestMedia(userId: SessionManager.current.userID!, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true, limit: 12)
                 .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    print(completion)
                 }, receiveValue: { response in
                     items = response
                 })
-                .store(in: &globalData.pendingAPIRequests)
+                .store(in: &tempViewModel.cancellables)
         }
     }
 
@@ -45,7 +47,7 @@ struct LatestMediaView: View {
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
                                     Spacer().frame(height: 10)
-                                    ImageView(src: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
+                                    ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
                                     Spacer().frame(height: 5)

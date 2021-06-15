@@ -6,30 +6,12 @@
  */
 
 import SwiftUI
+import Combine
 import JellyfinAPI
 
 struct NextUpView: View {
-    @EnvironmentObject var globalData: GlobalData
 
-    @State private var items: [BaseItemDto] = []
-    @State private var viewDidLoad: Bool = false
-
-    func onAppear() {
-        if viewDidLoad == true {
-            return
-        }
-        viewDidLoad = true
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getNextUp(userId: globalData.user.user_id!, limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
-                .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                }, receiveValue: { response in
-                    items = response.items ?? []
-                })
-                .store(in: &globalData.pendingAPIRequests)
-        }
-    }
+    var items: [BaseItemDto]
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -44,7 +26,7 @@ struct NextUpView: View {
                         ForEach(items, id: \.id) { item in
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
-                                    ImageView(src: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
+                                    ImageView(src: item.getSeriesPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
                                     Spacer().frame(height: 5)
@@ -67,7 +49,6 @@ struct NextUpView: View {
                 .frame(height: 200)
             }
         }
-        .onAppear(perform: onAppear)
         .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
     }
 }

@@ -8,6 +8,7 @@
 
 import SwiftUI
 import JellyfinAPI
+import Combine
 
 struct ProgressBar: Shape {
     func path(in rect: CGRect) -> Path {
@@ -31,21 +32,7 @@ struct ProgressBar: Shape {
 }
 
 struct ContinueWatchingView: View {
-    @EnvironmentObject var globalData: GlobalData
-
-    @State private var items: [BaseItemDto] = []
-
-    func onAppear() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getResumeItems(userId: globalData.user.user_id!, limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
-                .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
-                }, receiveValue: { response in
-                    items = response.items ?? []
-                })
-                .store(in: &globalData.pendingAPIRequests)
-        }
-    }
+    var items: [BaseItemDto]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -56,7 +43,7 @@ struct ContinueWatchingView: View {
                         NavigationLink(destination: ItemView(item: item)) {
                             VStack(alignment: .leading) {
                                 Spacer().frame(height: 10)
-                                ImageView(src: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 320), bh: item.getBackdropImageBlurHash())
+                                ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 320), bh: item.getBackdropImageBlurHash())
                                     .frame(width: 320, height: 180)
                                     .cornerRadius(10)
                                     .overlay(
@@ -96,6 +83,6 @@ struct ContinueWatchingView: View {
             } else {
                 EmptyView()
             }
-        }.onAppear(perform: onAppear)
+        }
     }
 }

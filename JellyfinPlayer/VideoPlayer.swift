@@ -9,6 +9,7 @@ import SwiftUI
 import MobileVLCKit
 import JellyfinAPI
 import MediaPlayer
+import Combine
 
 struct Subtitle {
     var name: String
@@ -38,8 +39,8 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
     weak var delegate: PlayerViewControllerDelegate?
 
+    var cancellables = Set<AnyCancellable>()
     var mediaPlayer = VLCMediaPlayer()
-    var globalData = GlobalData()
 
     @IBOutlet weak var timeText: UILabel!
     @IBOutlet weak var videoContentView: UIView!
@@ -281,20 +282,21 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
         // Fetch max bitrate from UserDefaults depending on current connection mode
         let defaults = UserDefaults.standard
-        let maxBitrate = globalData.isInNetwork ? defaults.integer(forKey: "InNetworkBandwidth") : defaults.integer(forKey: "OutOfNetworkBandwidth")
+        // globalData.isInNetwork ? defaults.integer(forKey: "InNetworkBandwidth") : defaults.integer(forKey: "OutOfNetworkBandwidth")
+        let maxBitrate = defaults.integer(forKey: "InNetworkBandwidth")
 
         // Build a device profile
         let builder = DeviceProfileBuilder()
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
 
-        let playbackInfo = PlaybackInfoDto(userId: globalData.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
+        let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.userID!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
 
         DispatchQueue.global(qos: .userInitiated).async { [self] in
             delegate?.showLoadingView(self)
-            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: globalData.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
-                .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.userID!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
+                .sink(receiveCompletion: { result in
+                    print(result)
                 }, receiveValue: { [self] response in
                     playSessionId = response.playSessionId ?? ""
 
@@ -306,7 +308,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                     let mediaSource = response.mediaSources!.first.self!
                     if mediaSource.transcodingUrl != nil {
                         // Item is being transcoded by request of server
-                        let streamURL = URL(string: "\(globalData.server.baseURI!)\(mediaSource.transcodingUrl!)")
+                        let streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(mediaSource.transcodingUrl!)")
                         let item = PlaybackItem()
                         item.videoType = .transcode
                         item.videoUrl = streamURL!
@@ -319,7 +321,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
-                                    deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
+                                    deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl!)")!
                                 } else {
                                     deliveryUrl = nil
                                 }
@@ -346,7 +348,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         playbackItem = item
                     } else {
                         // Item will be directly played by the client.
-                        let streamURL: URL = URL(string: "\(globalData.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(globalData.user.device_uuid!)&api_key=\(globalData.authToken)&Tag=\(mediaSource.eTag!)")!
+                        let streamURL: URL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.authToken)&Tag=\(mediaSource.eTag!)")!
 
                         let item = PlaybackItem()
                         item.videoUrl = streamURL
@@ -360,7 +362,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
-                                    deliveryUrl = URL(string: "\(globalData.server.baseURI!)\(stream.deliveryUrl!)")!
+                                    deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl!)")!
                                 } else {
                                     deliveryUrl = nil
                                 }
@@ -416,7 +418,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                     mediaPlayer.pause()
                     mediaPlayer.play()
                 })
-                .store(in: &globalData.pendingAPIRequests)
+                .store(in: &cancellables)
         }
     }
 
@@ -521,12 +523,12 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
             PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
-                .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+                .sink(receiveCompletion: { result in
+                    print(result)
                 }, receiveValue: { _ in
                     print("Playback progress report sent!")
                 })
-                .store(in: &globalData.pendingAPIRequests)
+                .store(in: &cancellables)
         }
     }
 
@@ -534,12 +536,12 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         let stopInfo = PlaybackStopInfo(item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), liveStreamId: nil, playSessionId: playSessionId, failed: nil, nextMediaType: nil, playlistItemId: "playlistItem0", nowPlayingQueue: [])
 
         PlaystateAPI.reportPlaybackStopped(playbackStopInfo: stopInfo)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+            .sink(receiveCompletion: { result in
+                print(result)
             }, receiveValue: { _ in
                 print("Playback stop report sent!")
             })
-            .store(in: &globalData.pendingAPIRequests)
+            .store(in: &cancellables)
     }
 
     func sendPlayReport() {
@@ -548,19 +550,18 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         let startInfo = PlaybackStartInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: false, isMuted: false, positionTicks: manifest.userData?.playbackPositionTicks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
         PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
-            .sink(receiveCompletion: { completion in
-                HandleAPIRequestCompletion(globalData: self.globalData, completion: completion)
+            .sink(receiveCompletion: { result in
+                print(result)
             }, receiveValue: { _ in
                 print("Playback start report sent!")
             })
-            .store(in: &globalData.pendingAPIRequests)
+            .store(in: &cancellables)
     }
 }
 
 struct VLCPlayerWithControls: UIViewControllerRepresentable {
     var item: BaseItemDto
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject private var globalData: GlobalData
 
     var loadBinding: Binding<Bool>
     var pBinding: Binding<Bool>
@@ -597,7 +598,6 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
         let customViewController = storyboard.instantiateViewController(withIdentifier: "VideoPlayer") as! PlayerViewController
         customViewController.manifest = item
         customViewController.delegate = context.coordinator
-        customViewController.globalData = globalData
         return customViewController
     }
 
