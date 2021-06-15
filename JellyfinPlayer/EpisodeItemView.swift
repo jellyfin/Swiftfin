@@ -10,7 +10,11 @@ import JellyfinAPI
 import Combine
 
 struct EpisodeItemView: View {
+    @StateObject
+    var tempViewModel = ViewModel()
     @State private var orientation = UIDeviceOrientation.unknown
+    @Environment(\.horizontalSizeClass) var hSizeClass
+    @Environment(\.verticalSizeClass) var vSizeClass
     @EnvironmentObject private var playbackInfo: VideoPlayerItem
 
     var item: BaseItemDto
@@ -18,7 +22,6 @@ struct EpisodeItemView: View {
     @State private var settingState: Bool = true
     @State private var watched: Bool = false {
         didSet {
-            var tempCancellables = Set<AnyCancellable>()
             if !settingState {
                 if watched == true {
                     PlaystateAPI.markPlayedItem(userId: SessionManager.current.userID!, itemId: item.id!)
@@ -26,14 +29,14 @@ struct EpisodeItemView: View {
                             print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &tempCancellables)
+                        .store(in: &tempViewModel.cancellables)
                 } else {
                     PlaystateAPI.markUnplayedItem(userId: SessionManager.current.userID!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
                             print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &tempCancellables)
+                        .store(in: &tempViewModel.cancellables)
                 }
             }
         }
@@ -42,7 +45,6 @@ struct EpisodeItemView: View {
     @State
     private var favorite: Bool = false {
         didSet {
-            var tempCancellables = Set<AnyCancellable>()
             if !settingState {
                 if favorite == true {
                     UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.userID!, itemId: item.id!)
@@ -50,14 +52,14 @@ struct EpisodeItemView: View {
                             print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &tempCancellables)
+                        .store(in: &tempViewModel.cancellables)
                 } else {
                     UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.userID!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
                             print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &tempCancellables)
+                        .store(in: &tempViewModel.cancellables)
                 }
             }
         }
@@ -152,7 +154,7 @@ struct EpisodeItemView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if orientation == .portrait {
+            if hSizeClass == .compact && vSizeClass == .regular {
                 ParallaxHeaderScrollView(header: portraitHeaderView, staticOverlayView: portraitHeaderOverlayView, overlayAlignment: .bottomLeading, headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds.width * 0.5625) {
                     VStack(alignment: .leading) {
                         Spacer()

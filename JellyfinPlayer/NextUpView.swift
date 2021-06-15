@@ -11,27 +11,7 @@ import JellyfinAPI
 
 struct NextUpView: View {
 
-    @State private var items: [BaseItemDto] = []
-    @State private var viewDidLoad: Bool = false
-
-    func onAppear() {
-        if viewDidLoad == true {
-            return
-        }
-        viewDidLoad = true
-
-        var tempCancellables = Set<AnyCancellable>()
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getNextUp(userId: SessionManager.current.userID!, limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
-                .sink(receiveCompletion: { result in
-                    print(result)
-                }, receiveValue: { response in
-                    items = response.items ?? []
-                })
-                .store(in: &tempCancellables)
-        }
-    }
+    var items: [BaseItemDto]
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -69,7 +49,6 @@ struct NextUpView: View {
                 .frame(height: 200)
             }
         }
-        .onAppear(perform: onAppear)
         .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
     }
 }

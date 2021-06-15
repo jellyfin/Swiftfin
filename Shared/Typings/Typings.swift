@@ -22,7 +22,3 @@ public enum SortBy: String, Codable, CaseIterable {
     case name = "SortName"
     case dateAdded = "DateCreated"
 }
-
-class justSignedIn: ObservableObject {
-    @Published var did: Bool = false
-}

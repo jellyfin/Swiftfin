@@ -13,6 +13,8 @@ import Combine
 
 struct LibraryView: View {
 
+    @StateObject
+    var tempViewModel = ViewModel()
     @State private var items: [BaseItemDto] = []
     @State private var isLoading: Bool = false
 
@@ -66,8 +68,6 @@ struct LibraryView: View {
 
         isLoading = true
         items = []
-        
-        var tempCancellables = Set<AnyCancellable>()
 
         DispatchQueue.global(qos: .userInitiated).async {
             ItemsAPI.getItemsByUserId(userId: SessionManager.current.userID!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: (personId == "" ? nil : [personId]), studioIds: (studio == "" ? nil : [studio]), genreIds: (genre == "" ? nil : [genre]), enableImages: true)
@@ -81,7 +81,7 @@ struct LibraryView: View {
                     isLoading = false
                     viewDidLoad = true
                 })
-                .store(in: &tempCancellables)
+                .store(in: &tempViewModel.cancellables)
         }
     }
 

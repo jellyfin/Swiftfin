@@ -10,6 +10,8 @@ import JellyfinAPI
 import Combine
 
 struct SeriesItemView: View {
+    @StateObject
+    var tempViewModel = ViewModel()
 
     var item: BaseItemDto
 
@@ -25,7 +27,6 @@ struct SeriesItemView: View {
 
         isLoading = true
         
-        var tempCancellables = Set<AnyCancellable>()
 
         DispatchQueue.global(qos: .userInitiated).async {
             TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
@@ -36,7 +37,7 @@ struct SeriesItemView: View {
                     viewDidLoad = true
                     seasons = response.items ?? []
                 })
-                .store(in: &tempCancellables)
+                .store(in: &tempViewModel.cancellables)
         }
     }
 

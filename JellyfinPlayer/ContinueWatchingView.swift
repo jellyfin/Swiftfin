@@ -32,21 +32,7 @@ struct ProgressBar: Shape {
 }
 
 struct ContinueWatchingView: View {
-    @State private var items: [BaseItemDto] = []
-
-    func onAppear() {
-        var tempCancellables = Set<AnyCancellable>()
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getResumeItems(userId: SessionManager.current.userID!, limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
-                .sink(receiveCompletion: { completion in
-                    print(completion)
-                }, receiveValue: { response in
-                    items = response.items ?? []
-                })
-                .store(in: &tempCancellables)
-        }
-    }
+    var items: [BaseItemDto]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -97,6 +83,6 @@ struct ContinueWatchingView: View {
             } else {
                 EmptyView()
             }
-        }.onAppear(perform: onAppear)
+        }
     }
 }

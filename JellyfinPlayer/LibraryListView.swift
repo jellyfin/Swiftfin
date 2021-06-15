@@ -9,51 +9,33 @@ import Foundation
 import SwiftUI
 
 struct LibraryListView: View {
-
-    @State var library_ids: [String] = ["favorites", "genres"]
-    @State var library_names: [String: String] = ["favorites": "Favorites", "genres": "Genres"]
-    var libraries: [String: String] = [:] // input libraries
-    var withFavorites: LibraryFilters = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
-
-    init(libraries: [String: String]) {
-        self.libraries = libraries
-    }
-
-    func onAppear() {
-        if library_ids.count == 2 {
-            libraries.forEach { k, v in
-                print("\(k): \(v)")
-                _library_ids.wrappedValue.append(k)
-                _library_names.wrappedValue[k] = v
-            }
-        }
-    }
+    @StateObject
+    var viewModel = LibraryListViewModel()
 
     var body: some View {
-        List(library_ids, id: \.self) { key in
-            switch key {
-                case "favorites":
-                    NavigationLink(destination: LazyView {
-                        LibraryView(usingParentID: "", title: library_names[key] ?? "", usingFilters: withFavorites)
-                    }) {
-                        Text(library_names[key] ?? "")
-                    }
-                case "genres":
-                    NavigationLink(destination: LazyView {
-                        EmptyView()
-                    }) {
-                        Text(library_names[key] ?? "")
-                    }
-                default:
-                    NavigationLink(destination: LazyView {
-                        LibraryView(usingParentID: key, title: library_names[key] ?? "")
-                    }) {
-                        Text(library_names[key] ?? "")
-                    }
+        List(viewModel.libraries, id: \.self) { library in
+            switch library.id {
+            case "favorites":
+                NavigationLink(destination: LazyView {
+                    LibraryView(usingParentID: "", title: library.name ?? "", usingFilters: viewModel.withFavorites)
+                }) {
+                    Text(library.name ?? "")
+                }
+            case "genres":
+                NavigationLink(destination: LazyView {
+                    EmptyView()
+                }) {
+                    Text(library.name ?? "")
+                }
+            default:
+                NavigationLink(destination: LazyView {
+                    LibraryView(usingParentID: library.id ?? "", title: library.name ?? "")
+                }) {
+                    Text(library.name ?? "")
+                }
             }
         }
         .navigationTitle("All Media")
-        .onAppear(perform: onAppear)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 NavigationLink(destination: LazyView {

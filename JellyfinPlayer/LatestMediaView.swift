@@ -11,6 +11,8 @@ import Combine
 
 struct LatestMediaView: View {
 
+    @StateObject
+    var tempViewModel = ViewModel()
     @State var items: [BaseItemDto] = []
     private var library_id: String = ""
     @State private var viewDidLoad: Bool = false
@@ -24,8 +26,6 @@ struct LatestMediaView: View {
             return
         }
         viewDidLoad = true
-        
-        var tempCancellables = Set<AnyCancellable>()
 
         DispatchQueue.global(qos: .userInitiated).async {
             UserLibraryAPI.getLatestMedia(userId: SessionManager.current.userID!, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true, limit: 12)
@@ -34,7 +34,7 @@ struct LatestMediaView: View {
                 }, receiveValue: { response in
                     items = response
                 })
-                .store(in: &tempCancellables)
+                .store(in: &tempViewModel.cancellables)
         }
     }
 

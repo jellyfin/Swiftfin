@@ -11,6 +11,8 @@ import Combine
 
 struct LibrarySearchView: View {
 
+    @StateObject
+    var tempViewModel = ViewModel()
     @State private var items: [BaseItemDto] = []
     @State private var searchQuery: String = ""
     @State private var isLoading: Bool = false
@@ -28,7 +30,6 @@ struct LibrarySearchView: View {
 
     func requestSearch(query: String) {
         isLoading = true
-        var tempCancellables = Set<AnyCancellable>()
         DispatchQueue.global(qos: .userInitiated).async {
             ItemsAPI.getItemsByUserId(userId: SessionManager.current.userID!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
                 .sink(receiveCompletion: { completion in
@@ -37,7 +38,7 @@ struct LibrarySearchView: View {
                     items = response.items ?? []
                     isLoading = false
                 })
-                .store(in: &tempCancellables)
+                .store(in: &tempViewModel.cancellables)
         }
     }
 

@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "ActivityIndicator",
+        "repositoryURL": "https://github.com/duyquang91/ActivityIndicator",
+        "state": {
+          "branch": null,
+          "revision": "0101a02196f6a67cf26f6434b007d3db6bd07fee",
+          "version": "1.1.0"
+        }
+      },
+      {
         "package": "AnyCodable",
         "repositoryURL": "https://github.com/Flight-School/AnyCodable",
         "state": {

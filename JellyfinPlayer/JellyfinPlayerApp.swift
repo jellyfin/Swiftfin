@@ -141,15 +141,13 @@ extension View {
 @main
 struct JellyfinPlayerApp: App {
     let persistenceController = PersistenceController.shared
-    @StateObject private var jsi = justSignedIn()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(jsi)
                 .withHostingWindow { window in
-                    window?.rootViewController = PreferenceUIHostingController(wrappedView: ContentView().environment(\.managedObjectContext, persistenceController.container.viewContext).environmentObject(jsi))
+                    window?.rootViewController = PreferenceUIHostingController(wrappedView: SplashView().environment(\.managedObjectContext, persistenceController.container.viewContext))
                 }
         }
     }

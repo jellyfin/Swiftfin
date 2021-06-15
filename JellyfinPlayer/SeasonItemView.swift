@@ -10,10 +10,15 @@ import Combine
 import JellyfinAPI
 
 struct SeasonItemView: View {
+    @StateObject
+    var tempViewModel = ViewModel()
     @State private var orientation = UIDeviceOrientation.unknown
+    @Environment(\.horizontalSizeClass) var hSizeClass
+    @Environment(\.verticalSizeClass) var vSizeClass
 
     var item: BaseItemDto = BaseItemDto()
     @State private var episodes: [BaseItemDto] = []
+    
 
     @State private var isLoading: Bool = true
     @State private var viewDidLoad: Bool = false
@@ -26,7 +31,6 @@ struct SeasonItemView: View {
         if viewDidLoad {
             return
         }
-        var tempCancellables = Set<AnyCancellable>()
 
         DispatchQueue.global(qos: .userInitiated).async {
             TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.userID!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seasonId: item.id ?? "")
@@ -37,7 +41,7 @@ struct SeasonItemView: View {
                     viewDidLoad = true
                     episodes = response.items ?? []
                 })
-                .store(in: &tempCancellables)
+                .store(in: &tempViewModel.cancellables)
         }
     }
 
@@ -76,7 +80,7 @@ struct SeasonItemView: View {
 
     @ViewBuilder
     var innerBody: some View {
-        if orientation == .portrait {
+        if hSizeClass == .compact && vSizeClass == .regular {
             ParallaxHeaderScrollView(header: portraitHeaderView,
                                      staticOverlayView: portraitHeaderOverlayView,
                                      overlayAlignment: .bottomLeading,

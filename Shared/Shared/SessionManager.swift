@@ -21,7 +21,7 @@ final class SessionManager {
     fileprivate(set) var authToken: String!
     fileprivate(set) var deviceID: String
     var userID: String? {
-        user.user_id
+        user?.user_id
     }
 
     init() {

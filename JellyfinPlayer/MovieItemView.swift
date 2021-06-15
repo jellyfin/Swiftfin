@@ -5,21 +5,29 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
-import JellyfinAPI
 import Combine
+import JellyfinAPI
+import SwiftUI
 
 struct MovieItemView: View {
-    @State private var orientation = UIDeviceOrientation.unknown
-    @EnvironmentObject private var playbackInfo: VideoPlayerItem
+    @StateObject
+    var tempViewModel = ViewModel()
+    @State
+    private var orientation = UIDeviceOrientation.unknown
+    @Environment(\.horizontalSizeClass)
+    var hSizeClass
+    @Environment(\.verticalSizeClass)
+    var vSizeClass
+    @EnvironmentObject
+    private var playbackInfo: VideoPlayerItem
 
     var item: BaseItemDto
 
-    @State private var settingState: Bool = true
-    @State private var watched: Bool = false {
+    @State
+    private var settingState: Bool = true
+    @State
+    private var watched: Bool = false {
         didSet {
-            var tempCancellables = Set<AnyCancellable>()
-            
             if !settingState {
                 if watched == true {
                     PlaystateAPI.markPlayedItem(userId: SessionManager.current.userID!, itemId: item.id!)
@@ -27,14 +35,14 @@ struct MovieItemView: View {
                             print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &tempCancellables)
+                        .store(in: &tempViewModel.cancellables)
                 } else {
                     PlaystateAPI.markUnplayedItem(userId: SessionManager.current.userID!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
                             print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &tempCancellables)
+                        .store(in: &tempViewModel.cancellables)
                 }
             }
         }
@@ -43,8 +51,6 @@ struct MovieItemView: View {
     @State
     private var favorite: Bool = false {
         didSet {
-            var tempCancellables = Set<AnyCancellable>()
-            
             if !settingState {
                 if favorite == true {
                     UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.userID!, itemId: item.id!)
@@ -52,21 +58,24 @@ struct MovieItemView: View {
                             print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &tempCancellables)
+                        .store(in: &tempViewModel.cancellables)
                 } else {
                     UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.userID!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
                             print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &tempCancellables)
+                        .store(in: &tempViewModel.cancellables)
                 }
             }
         }
     }
 
     var portraitHeaderView: some View {
-        ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: item.getBackdropImageBlurHash())
+        ImageView(src: item
+            .getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!,
+                              maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
+            bh: item.getBackdropImageBlurHash())
             .opacity(0.4)
             .blur(radius: 2.0)
     }
@@ -156,8 +165,11 @@ struct MovieItemView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if orientation == .portrait {
-                ParallaxHeaderScrollView(header: portraitHeaderView, staticOverlayView: portraitHeaderOverlayView, overlayAlignment: .bottomLeading, headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds.width * 0.5625) {
+            if hSizeClass == .compact && vSizeClass == .regular {
+                ParallaxHeaderScrollView(header: portraitHeaderView, staticOverlayView: portraitHeaderOverlayView,
+                                         overlayAlignment: .bottomLeading,
+                                         headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds
+                                             .width * 0.5625) {
                     VStack(alignment: .leading) {
                         Spacer()
                             .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 135 : 40)
@@ -196,7 +208,9 @@ struct MovieItemView: View {
                                                     LibraryView(withPerson: person)
                                                 }) {
                                                     VStack {
-                                                        ImageView(src: person.getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
+                                                        ImageView(src: person
+                                                            .getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100),
+                                                            bh: person.getBlurHash())
                                                             .frame(width: 100, height: 100)
                                                             .cornerRadius(10)
                                                         Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
@@ -235,7 +249,8 @@ struct MovieItemView: View {
             } else {
                 GeometryReader { geometry in
                     ZStack {
-                        ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 200), bh: item.getBackdropImageBlurHash())
+                        ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 200),
+                                  bh: item.getBackdropImageBlurHash())
                             .opacity(0.3)
                             .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                    height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
@@ -243,7 +258,8 @@ struct MovieItemView: View {
                             .blur(radius: 4)
                         HStack {
                             VStack {
-                                ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 120), bh: item.getPrimaryImageBlurHash())
+                                ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 120),
+                                          bh: item.getPrimaryImageBlurHash())
                                     .frame(width: 120, height: 180)
                                     .cornerRadius(10)
                                 Spacer().frame(height: 15)
@@ -369,10 +385,14 @@ struct MovieItemView: View {
                                                                 LibraryView(withPerson: person)
                                                             }) {
                                                                 VStack {
-                                                                    ImageView(src: person.getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
+                                                                    ImageView(src: person
+                                                                        .getImage(baseURL: ServerEnvironment.current.server.baseURI!,
+                                                                                  maxWidth: 100),
+                                                                        bh: person.getBlurHash())
                                                                         .frame(width: 100, height: 100)
                                                                         .cornerRadius(10)
-                                                                    Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
+                                                                    Text(person.name ?? "").font(.footnote).fontWeight(.regular)
+                                                                        .lineLimit(1)
                                                                         .frame(width: 100).foregroundColor(Color.primary)
                                                                     if person.role != "" {
                                                                         Text(person.role!).font(.caption).fontWeight(.medium).lineLimit(1)
