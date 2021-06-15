@@ -80,8 +80,7 @@ final class SessionManager {
                 user = response
                 _ = try? PersistenceController.shared.container.viewContext.save()
                 if let userID = user.user_id,
-                   let token = accessToken
-                {
+                   let token = accessToken {
                     let keychain = KeychainSwift()
                     keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
                     keychain.set(token, forKey: "AccessToken_\(userID)")

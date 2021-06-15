@@ -24,7 +24,6 @@ final class ConnectToServerViewModel: ViewModel {
     var username = ""
     @Published
     var password = ""
-    
 
     override init() {
         super.init()
@@ -49,7 +48,7 @@ final class ConnectToServerViewModel: ViewModel {
                 .store(in: &cancellables)
         }
     }
-    
+
     func connectToServer() {
         ServerEnvironment.current.setUp(with: uri)
             .sink(receiveCompletion: { result in

@@ -22,7 +22,7 @@ final class HomeViewModel: ViewModel {
     var resumeItems = [BaseItemDto]()
     @Published
     var nextUpItems = [BaseItemDto]()
-    
+
     // temp
     var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: ["DateCreated"])
 

@@ -26,7 +26,6 @@ struct SeriesItemView: View {
         }
 
         isLoading = true
-        
 
         DispatchQueue.global(qos: .userInitiated).async {
             TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
