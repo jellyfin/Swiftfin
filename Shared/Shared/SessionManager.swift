@@ -18,7 +18,11 @@ final class SessionManager {
     static let current = SessionManager()
     fileprivate(set) var user: SignedInUser!
     fileprivate(set) var authHeader: String!
-    fileprivate(set) var deviceIDString: String
+    fileprivate(set) var authToken: String!
+    fileprivate(set) var deviceID: String
+    var userID: String? {
+        user.user_id
+    }
 
     init() {
         let savedUserRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SignedInUser")
@@ -27,11 +31,11 @@ final class SessionManager {
 
         let keychain = KeychainSwift()
         keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
-        if let deviceID = keychain.get("DeviceIDString") {
-            self.deviceIDString = deviceID
+        if let deviceID = keychain.get("DeviceID") {
+            self.deviceID = deviceID
         } else {
-            self.deviceIDString = UUID().uuidString
-            keychain.set(deviceIDString, forKey: "DeviceIDString")
+            self.deviceID = UUID().uuidString
+            keychain.set(deviceID, forKey: "DeviceID")
         }
 
         guard let authToken = keychain.get("AccessToken_\(user?.user_id ?? "")") else {
@@ -50,9 +54,10 @@ final class SessionManager {
         var header = "MediaBrowser "
         header.append("Client=\"SwiftFin\", ")
         header.append("Device=\"\(deviceName)\", ")
-        header.append("DeviceId=\"\(deviceIDString)\", ")
+        header.append("DeviceId=\"\(deviceID)\", ")
         header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
         if let token = authToken {
+            self.authToken = token
             header.append("Token=\"\(token)\"")
         }
 
@@ -66,7 +71,7 @@ final class SessionManager {
         return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
             .map { [unowned self] response -> (SignedInUser, String?) in
                 let user = SignedInUser(context: PersistenceController.shared.container.viewContext)
-                user.device_uuid = deviceIDString
+                user.device_uuid = deviceID
                 user.username = response.user?.name
                 user.user_id = response.user?.id
                 return (user, response.accessToken)

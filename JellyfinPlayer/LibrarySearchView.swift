@@ -7,9 +7,9 @@
 
 import SwiftUI
 import JellyfinAPI
+import Combine
 
 struct LibrarySearchView: View {
-    @EnvironmentObject var globalData: GlobalData
     @EnvironmentObject var orientationInfo: OrientationInfo
 
     @State private var items: [BaseItemDto] = []
@@ -29,16 +29,16 @@ struct LibrarySearchView: View {
 
     func requestSearch(query: String) {
         isLoading = true
-
+        var tempCancellables = Set<AnyCancellable>()
         DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getItemsByUserId(userId: globalData.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
+            ItemsAPI.getItemsByUserId(userId: SessionManager.current.userID!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
                 .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    print(completion)
                 }, receiveValue: { response in
                     items = response.items ?? []
                     isLoading = false
                 })
-                .store(in: &globalData.pendingAPIRequests)
+                .store(in: &tempCancellables)
         }
     }
 
@@ -68,7 +68,7 @@ struct LibrarySearchView: View {
                             ForEach(items, id: \.id) { item in
                                 NavigationLink(destination: ItemView(item: item)) {
                                     VStack(alignment: .leading) {
-                                        ImageView(src: item.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
+                                        ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
                                             .frame(width: 100, height: 150)
                                             .cornerRadius(10)
                                         Text(item.name ?? "")

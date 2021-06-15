@@ -15,7 +15,6 @@ class VideoPlayerItem: ObservableObject {
 }
 
 struct ItemView: View {
-    @EnvironmentObject private var globalData: GlobalData
     private var item: BaseItemDto
 
     @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()

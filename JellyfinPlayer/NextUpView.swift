@@ -6,6 +6,7 @@
  */
 
 import SwiftUI
+import Combine
 import JellyfinAPI
 
 struct NextUpView: View {
@@ -19,14 +20,16 @@ struct NextUpView: View {
         }
         viewDidLoad = true
 
+        var tempCancellables = Set<AnyCancellable>()
+        
         DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getNextUp(userId: globalData.user.user_id!, limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
-                .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+            TvShowsAPI.getNextUp(userId: SessionManager.current.userID!, limit: 12, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
+                .sink(receiveCompletion: { result in
+                    print(result)
                 }, receiveValue: { response in
                     items = response.items ?? []
                 })
-                .store(in: &globalData.pendingAPIRequests)
+                .store(in: &tempCancellables)
         }
     }
 
@@ -43,7 +46,7 @@ struct NextUpView: View {
                         ForEach(items, id: \.id) { item in
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
-                                    ImageView(src: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
+                                    ImageView(src: item.getSeriesPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
                                     Spacer().frame(height: 5)

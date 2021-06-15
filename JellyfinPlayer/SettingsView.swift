@@ -24,7 +24,7 @@ struct SettingsView: View {
 
     func onAppear() {
         let defaults = UserDefaults.standard
-        username = globalData.user.username!
+        username = SessionManager.current.user.username!
         inNetworkStreamBitrate = defaults.integer(forKey: "InNetworkBandwidth")
         outOfNetworkStreamBitrate = defaults.integer(forKey: "OutOfNetworkBandwidth")
         autoSelectSubtitles = defaults.bool(forKey: "AutoSelectSubtitles")

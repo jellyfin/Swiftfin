@@ -79,13 +79,13 @@ struct ContentView: View {
             header.append("Token=\"\(globalData.authToken)\"")
 
             globalData.authHeader = header
-            JellyfinAPI.basePath = globalData.server.baseURI ?? ""
+            JellyfinAPI.basePath = ServerEnvironment.current.server.baseURI ?? ""
             JellyfinAPI.customHeaders = ["X-Emby-Authorization": globalData.authHeader]
 
             DispatchQueue.global(qos: .userInitiated).async {
                 UserAPI.getCurrentUser()
                     .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        print(completion)
                         loadState = loadState - 1
                     }, receiveValue: { response in
                         libraries = response.configuration?.orderedViews ?? []
@@ -100,9 +100,9 @@ struct ContentView: View {
                     })
                     .store(in: &globalData.pendingAPIRequests)
 
-                UserViewsAPI.getUserViews(userId: globalData.user.user_id ?? "")
+                UserViewsAPI.getUserViews(userId: SessionManager.current.userID ?? "")
                     .sink(receiveCompletion: { completion in
-                        HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                        print(completion)
                         loadState = loadState - 1
                     }, receiveValue: { response in
                         response.items?.forEach({ item in
@@ -146,7 +146,7 @@ struct ContentView: View {
             .onAppear(perform: startup)
         } else {
             if !jsi.did {
-                if isLoading || globalData.user == nil || globalData.user.user_id == nil {
+                if isLoading || globalData.user == nil || SessionManager.current.userID == nil {
                     ProgressView()
                         .onAppear(perform: startup)
                 } else {

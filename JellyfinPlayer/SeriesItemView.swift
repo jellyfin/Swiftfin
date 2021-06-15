@@ -7,6 +7,7 @@
 
 import SwiftUI
 import JellyfinAPI
+import Combine
 
 struct SeriesItemView: View {
     @EnvironmentObject private var orientationInfo: OrientationInfo
@@ -24,17 +25,19 @@ struct SeriesItemView: View {
         }
 
         isLoading = true
+        
+        var tempCancellables = Set<AnyCancellable>()
 
         DispatchQueue.global(qos: .userInitiated).async {
             TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
                 .sink(receiveCompletion: { completion in
-                    HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                    print(completion)
                 }, receiveValue: { response in
                     isLoading = false
                     viewDidLoad = true
                     seasons = response.items ?? []
                 })
-                .store(in: &globalData.pendingAPIRequests)
+                .store(in: &tempCancellables)
         }
     }
 
@@ -59,7 +62,7 @@ struct SeriesItemView: View {
                     ForEach(seasons, id: \.id) { season in
                         NavigationLink(destination: ItemView(item: season)) {
                             VStack(alignment: .leading) {
-                                ImageView(src: season.getPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: season.getPrimaryImageBlurHash())
+                                ImageView(src: season.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: season.getPrimaryImageBlurHash())
                                     .frame(width: 100, height: 150)
                                     .cornerRadius(10)
                                     .shadow(radius: 5)

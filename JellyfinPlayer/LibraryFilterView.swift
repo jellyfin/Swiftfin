@@ -9,7 +9,6 @@ import SwiftUI
 import JellyfinAPI
 
 struct LibraryFilterView: View {
-    @EnvironmentObject var globalData: GlobalData
     @Binding var filter: LibraryFilters
 
     var body: some View {

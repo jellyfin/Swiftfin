@@ -7,9 +7,9 @@
 
 import SwiftUI
 import JellyfinAPI
+import Combine
 
 struct EpisodeItemView: View {
-    @EnvironmentObject private var globalData: GlobalData
     @EnvironmentObject private var orientationInfo: OrientationInfo
     @EnvironmentObject private var playbackInfo: VideoPlayerItem
 
@@ -18,21 +18,22 @@ struct EpisodeItemView: View {
     @State private var settingState: Bool = true
     @State private var watched: Bool = false {
         didSet {
+            var tempCancellables = Set<AnyCancellable>()
             if !settingState {
                 if watched == true {
-                    PlaystateAPI.markPlayedItem(userId: globalData.user.user_id!, itemId: item.id!)
+                    PlaystateAPI.markPlayedItem(userId: SessionManager.current.userID!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
-                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                            print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &globalData.pendingAPIRequests)
+                        .store(in: &tempCancellables)
                 } else {
-                    PlaystateAPI.markUnplayedItem(userId: globalData.user.user_id!, itemId: item.id!)
+                    PlaystateAPI.markUnplayedItem(userId: SessionManager.current.userID!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
-                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                            print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &globalData.pendingAPIRequests)
+                        .store(in: &tempCancellables)
                 }
             }
         }
@@ -41,28 +42,29 @@ struct EpisodeItemView: View {
     @State
     private var favorite: Bool = false {
         didSet {
+            var tempCancellables = Set<AnyCancellable>()
             if !settingState {
                 if favorite == true {
-                    UserLibraryAPI.markFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
+                    UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.userID!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
-                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                            print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &globalData.pendingAPIRequests)
+                        .store(in: &tempCancellables)
                 } else {
-                    UserLibraryAPI.unmarkFavoriteItem(userId: globalData.user.user_id!, itemId: item.id!)
+                    UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.userID!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
-                            HandleAPIRequestCompletion(globalData: globalData, completion: completion)
+                            print(completion)
                         }, receiveValue: { _ in
                         })
-                        .store(in: &globalData.pendingAPIRequests)
+                        .store(in: &tempCancellables)
                 }
             }
         }
     }
 
     var portraitHeaderView: some View {
-        ImageView(src: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: item.getBackdropImageBlurHash())
+        ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: item.getBackdropImageBlurHash())
             .opacity(0.4)
             .blur(radius: 2.0)
     }
@@ -70,7 +72,7 @@ struct EpisodeItemView: View {
     var portraitHeaderOverlayView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
-                ImageView(src: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120), bh: item.getSeriesPrimaryImageBlurHash())
+                ImageView(src: item.getSeriesPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 120), bh: item.getSeriesPrimaryImageBlurHash())
                     .frame(width: 120, height: 180)
                     .cornerRadius(10)
                 VStack(alignment: .leading) {
@@ -190,7 +192,7 @@ struct EpisodeItemView: View {
                                                     LibraryView(withPerson: person)
                                                 }) {
                                                     VStack {
-                                                        ImageView(src: person.getImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
+                                                        ImageView(src: person.getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
                                                             .frame(width: 100, height: 100)
                                                             .cornerRadius(10)
                                                         Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
@@ -229,7 +231,7 @@ struct EpisodeItemView: View {
             } else {
                 GeometryReader { geometry in
                     ZStack {
-                        ImageView(src: item.getBackdropImage(baseURL: globalData.server.baseURI!, maxWidth: 200), bh: item.getBackdropImageBlurHash())
+                        ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 200), bh: item.getBackdropImageBlurHash())
                             .opacity(0.3)
                             .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                    height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
@@ -237,7 +239,7 @@ struct EpisodeItemView: View {
                             .blur(radius: 4)
                         HStack {
                             VStack {
-                                ImageView(src: item.getSeriesPrimaryImage(baseURL: globalData.server.baseURI!, maxWidth: 120), bh: item.getSeriesPrimaryImageBlurHash())
+                                ImageView(src: item.getSeriesPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 120), bh: item.getSeriesPrimaryImageBlurHash())
                                     .frame(width: 120, height: 180)
                                     .cornerRadius(10)
                                 Spacer().frame(height: 15)
@@ -361,7 +363,7 @@ struct EpisodeItemView: View {
                                                                 LibraryView(withPerson: person)
                                                             }) {
                                                                 VStack {
-                                                                    ImageView(src: person.getImage(baseURL: globalData.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
+                                                                    ImageView(src: person.getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
                                                                         .frame(width: 100, height: 100)
                                                                         .cornerRadius(10)
                                                                     Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
