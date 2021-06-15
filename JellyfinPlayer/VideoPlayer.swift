@@ -299,6 +299,12 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                     print(result)
                 }, receiveValue: { [self] response in
                     playSessionId = response.playSessionId ?? ""
+
+                    if(response.mediaSources == nil) {
+                        delegate?.exitPlayer(self)
+                        return
+                    }
+
                     let mediaSource = response.mediaSources!.first.self!
                     if mediaSource.transcodingUrl != nil {
                         // Item is being transcoded by request of server
@@ -498,7 +504,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                     self.videoControlsView.isHidden = true
                     self.videoControlsView.alpha = 1
                 })
-                controlsAppearTime = 10000000000000000000000
+                controlsAppearTime = 999_999_999_999_999
             }
         } else {
             paused = true

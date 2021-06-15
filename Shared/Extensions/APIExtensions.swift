@@ -107,7 +107,7 @@ extension BaseItemDto {
 
     // MARK: Calculations
     func getItemRuntime() -> String {
-        let seconds: Int = Int(self.runTimeTicks!) / 10_000_000
+        let seconds: Int = Int(self.runTimeTicks ?? 0) / 10_000_000
         let hours = (seconds / 3600)
         let minutes = ((seconds - (hours * 3600)) / 60)
         if hours != 0 {
@@ -122,7 +122,7 @@ extension BaseItemDto {
             return ""
         }
 
-        let remainingSecs = Int(self.runTimeTicks! - (self.userData?.playbackPositionTicks!)!) / 10_000_000
+        let remainingSecs = Int(self.runTimeTicks ?? 0 - (self.userData?.playbackPositionTicks ?? 0)) / 10_000_000
         let proghours = Int(remainingSecs / 3600)
         let progminutes = Int((Int(remainingSecs) - (proghours * 3600)) / 60)
         if proghours != 0 {
