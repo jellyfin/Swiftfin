@@ -28,8 +28,6 @@
 		5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5358708C2669D7A800D05A09 /* KeychainSwift */; };
 		535870912669D7A800D05A09 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 535870902669D7A800D05A09 /* Introspect */; };
 		5358709B2669D7A800D05A09 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5358709A2669D7A800D05A09 /* NukeUI */; };
-		5358709D2669D82900D05A09 /* TVVLCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5358709C2669D82900D05A09 /* TVVLCKit.framework */; };
-		5358709E2669D82900D05A09 /* TVVLCKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5358709C2669D82900D05A09 /* TVVLCKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		535870A32669D89F00D05A09 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBFF263B596B003A4E83 /* Model.xcdatamodeld */; };
 		535870A52669D8AE00D05A09 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
 		535870A62669D8AE00D05A09 /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
@@ -78,6 +76,8 @@
 		625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */; };
 		625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 625CB5792678C4A400530A6E /* ActivityIndicator */; };
 		625CB57C2678CE1000530A6E /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB57B2678CE1000530A6E /* ViewModel.swift */; };
+		625CB57E2678E81E00530A6E /* TVVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */; };
+		625CB57F2678E81E00530A6E /* TVVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6267B3D42671024A00A7371D /* APIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* APIExtensions.swift */; };
 		6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
 		6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
@@ -104,7 +104,6 @@
 		62EC353126766848000E9F2D /* ServerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352B26766675000E9F2D /* ServerEnvironment.swift */; };
 		62EC353226766849000E9F2D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352E267666A5000E9F2D /* SessionManager.swift */; };
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
-		62EC353526766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 /* End PBXBuildFile section */
 
@@ -128,13 +127,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5358709F2669D82900D05A09 /* Embed Frameworks */ = {
+		625CB5802678E81E00530A6E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5358709E2669D82900D05A09 /* TVVLCKit.framework in Embed Frameworks */,
+				625CB57F2678E81E00530A6E /* TVVLCKit.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -169,7 +168,6 @@
 		5321753A2671BCFC005491E6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = VideoPlayer.storyboard; sourceTree = "<group>"; };
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
-		533A8E6526748B4F00719967 /* MobileVLCKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileVLCKit.framework; path = "Carthage/Build/MobileVLCKit.xcframework/ios-arm64_armv7_armv7s/MobileVLCKit.framework"; sourceTree = "<group>"; };
 		535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JellyfinPlayer tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinPlayer_tvOSApp.swift; sourceTree = "<group>"; };
 		535870642669D21600D05A09 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -178,7 +176,6 @@
 		5358706B2669D21700D05A09 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		5358706E2669D21700D05A09 /* JellyfinPlayer_tvOS.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = JellyfinPlayer_tvOS.xcdatamodel; sourceTree = "<group>"; };
 		535870702669D21700D05A09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5358709C2669D82900D05A09 /* TVVLCKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVVLCKit.framework; path = "Carthage/Build/TVVLCKit.xcframework/tvos-arm64/TVVLCKit.framework"; sourceTree = "<group>"; };
 		535870AC2669D8DD00D05A09 /* Typings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typings.swift; sourceTree = "<group>"; };
 		535BAE9E2649E569005FA86D /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		535BAEA4264A151C005FA86D /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
@@ -221,6 +218,7 @@
 		625CB5742678C33500530A6E /* LibraryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListViewModel.swift; sourceTree = "<group>"; };
 		625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerViewModel.swift; sourceTree = "<group>"; };
 		625CB57B2678CE1000530A6E /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = Carthage/Build/TVVLCKit.xcframework; sourceTree = "<group>"; };
 		6267B3D526710B8900A7371D /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		6267B3D92671138200A7371D /* ImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtensions.swift; sourceTree = "<group>"; };
 		628B95202670CABD0091AF3B /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -244,8 +242,8 @@
 			files = (
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
+				625CB57E2678E81E00530A6E /* TVVLCKit.xcframework in Frameworks */,
 				5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */,
-				5358709D2669D82900D05A09 /* TVVLCKit.framework in Frameworks */,
 				5358709B2669D7A800D05A09 /* NukeUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -405,8 +403,7 @@
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				533A8E6526748B4F00719967 /* MobileVLCKit.framework */,
-				5358709C2669D82900D05A09 /* TVVLCKit.framework */,
+				625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */,
 				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
 				628B95212670CABD0091AF3B /* WidgetKit.framework */,
 				628B95232670CABD0091AF3B /* SwiftUI.framework */,
@@ -477,7 +474,7 @@
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
-				5358709F2669D82900D05A09 /* Embed Frameworks */,
+				625CB5802678E81E00530A6E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -642,7 +639,6 @@
 				5321753F2671DEA6005491E6 /* SettingsViewModel.swift in Sources */,
 				535870AA2669D8AE00D05A09 /* BlurHashDecode.swift in Sources */,
 				535870652669D21600D05A09 /* ContentView.swift in Sources */,
-				62EC353526766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */,
 				535870A62669D8AE00D05A09 /* LazyView.swift in Sources */,
 				5358706F2669D21700D05A09 /* JellyfinPlayer_tvOS.xcdatamodeld in Sources */,
 				5321753E2671DE9C005491E6 /* Typings.swift in Sources */,
