@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict/>
+<dict>
+	<key>com.apple.developer.user-management</key>
+	<array>
+		<string>get-current-user</string>
+		<string>runs-as-current-user</string>
+	</array>
+</dict>
 </plist>
