@@ -10,7 +10,6 @@ import JellyfinAPI
 import Combine
 
 struct LibrarySearchView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
 
     @State private var items: [BaseItemDto] = []
     @State private var searchQuery: String = ""
@@ -89,7 +88,7 @@ struct LibrarySearchView: View {
                             }
                         }
                         Spacer().frame(height: 16)
-                            .onChange(of: orientationInfo.orientation) { _ in
+                            .onRotate { _ in
                             recalcTracks()
                         }
                     }

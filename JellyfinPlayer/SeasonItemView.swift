@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 
 struct SeasonItemView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
+    @State private var orientation = UIDeviceOrientation.unknown
 
     var item: BaseItemDto = BaseItemDto()
     @State private var episodes: [BaseItemDto] = []
@@ -76,7 +76,7 @@ struct SeasonItemView: View {
 
     @ViewBuilder
     var innerBody: some View {
-        if orientationInfo.orientation == .portrait {
+        if orientation == .portrait {
             ParallaxHeaderScrollView(header: portraitHeaderView,
                                      staticOverlayView: portraitHeaderOverlayView,
                                      overlayAlignment: .bottomLeading,
@@ -245,15 +245,18 @@ struct SeasonItemView: View {
             }
         }
     }
-
+    
     var body: some View {
         if isLoading {
             ProgressView()
-            .onAppear(perform: onAppear)
+                .onAppear(perform: onAppear)
         } else {
             innerBody
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("\(item.name ?? "") - \(item.seriesName ?? "")")
+                .onRotate {
+                    orientation = $0
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("\(item.name ?? "") - \(item.seriesName ?? "")")
         }
     }
 }

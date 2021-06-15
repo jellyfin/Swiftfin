@@ -10,7 +10,6 @@ import JellyfinAPI
 import Combine
 
 struct SeriesItemView: View {
-    @EnvironmentObject private var orientationInfo: OrientationInfo
 
     var item: BaseItemDto
 
@@ -81,7 +80,7 @@ struct SeriesItemView: View {
                         }
                     }
                     Spacer().frame(height: 2)
-                }.onChange(of: orientationInfo.orientation) { _ in
+                }.onRotate { _ in
                     recalcTracks()
                 }
             }

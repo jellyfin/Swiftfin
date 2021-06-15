@@ -12,7 +12,6 @@ import JellyfinAPI
 import Combine
 
 struct LibraryView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
 
     @State private var items: [BaseItemDto] = []
     @State private var isLoading: Bool = false
@@ -128,7 +127,7 @@ struct LibraryView: View {
                                         }.frame(width: 100)
                                     }
                                 }
-                            }.onChange(of: orientationInfo.orientation) { _ in
+                            }.onRotate { _ in
                                 recalcTracks()
                             }
                             if totalPages > 1 {

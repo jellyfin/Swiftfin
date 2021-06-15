@@ -10,7 +10,7 @@ import JellyfinAPI
 import Combine
 
 struct EpisodeItemView: View {
-    @EnvironmentObject private var orientationInfo: OrientationInfo
+    @State private var orientation = UIDeviceOrientation.unknown
     @EnvironmentObject private var playbackInfo: VideoPlayerItem
 
     var item: BaseItemDto
@@ -152,7 +152,7 @@ struct EpisodeItemView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if orientationInfo.orientation == .portrait {
+            if orientation == .portrait {
                 ParallaxHeaderScrollView(header: portraitHeaderView, staticOverlayView: portraitHeaderOverlayView, overlayAlignment: .bottomLeading, headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds.width * 0.5625) {
                     VStack(alignment: .leading) {
                         Spacer()
@@ -411,6 +411,9 @@ struct EpisodeItemView: View {
             favorite = item.userData?.isFavorite ?? false
             watched = item.userData?.played ?? false
             settingState = false
+        })
+        .onRotate(perform: { orientation in
+            self.orientation = orientation
         })
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("\(item.seriesName ?? "") - S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))")

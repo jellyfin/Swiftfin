@@ -14,9 +14,10 @@ import WidgetKit
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject var orientationInfo: OrientationInfo
     @EnvironmentObject var jsi: justSignedIn
 
+    @State private var orientation = UIDeviceOrientation.unknown
+    
     @State private var needsToSelectServer = false
     @State private var isLoading = false
     @State private var tabSelection: String = "Home"
@@ -39,13 +40,6 @@ struct ContentView: View {
     func startup() {
         if viewDidLoad == true {
             return
-        }
-
-        let size = UIScreen.main.bounds.size
-        if size.width < size.height {
-            orientationInfo.orientation = .portrait
-        } else {
-            orientationInfo.orientation = .landscape
         }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
@@ -155,7 +149,7 @@ struct ContentView: View {
                             NavigationView {
                                 VStack(alignment: .leading) {
                                     ScrollView {
-                                        Spacer().frame(height: orientationInfo.orientation == .portrait ? 0 : 16)
+                                        Spacer().frame(height: orientation == .portrait ? 0 : 16)
                                         ContinueWatchingView()
                                         NextUpView()
 
@@ -217,6 +211,9 @@ struct ContentView: View {
                     .onAppear(perform: startup)
                     .alert(isPresented: $globalData.networkError) {
                         Alert(title: Text("Network Error"), message: Text("An error occured while performing a network request"), dismissButton: .default(Text("Ok")))
+                    }
+                    .onRotate { orientation in
+                        self.orientation = orientation
                     }
                 }
             } else {

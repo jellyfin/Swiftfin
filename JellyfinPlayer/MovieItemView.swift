@@ -10,7 +10,7 @@ import JellyfinAPI
 import Combine
 
 struct MovieItemView: View {
-    @EnvironmentObject private var orientationInfo: OrientationInfo
+    @State private var orientation = UIDeviceOrientation.unknown
     @EnvironmentObject private var playbackInfo: VideoPlayerItem
 
     var item: BaseItemDto
@@ -156,7 +156,7 @@ struct MovieItemView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if orientationInfo.orientation == .portrait {
+            if orientation == .portrait {
                 ParallaxHeaderScrollView(header: portraitHeaderView, staticOverlayView: portraitHeaderOverlayView, overlayAlignment: .bottomLeading, headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds.width * 0.5625) {
                     VStack(alignment: .leading) {
                         Spacer()
@@ -418,6 +418,9 @@ struct MovieItemView: View {
             watched = item.userData?.played ?? false
             settingState = false
         })
+        .onRotate {
+            orientation = $0
+        }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(item.name ?? "")
         .supportedOrientations(.allButUpsideDown)
