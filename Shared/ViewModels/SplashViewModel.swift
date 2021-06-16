@@ -10,7 +10,10 @@
 import Foundation
 import Combine
 import Nuke
+
+#if !os(tvOS)
 import WidgetKit
+#endif
 
 final class SplashViewModel: ViewModel {
  
@@ -24,7 +27,9 @@ final class SplashViewModel: ViewModel {
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
         
+        #if !os(tvOS)
         WidgetCenter.shared.reloadAllTimelines()
+        #endif
         
         let defaults = UserDefaults.standard
         if defaults.integer(forKey: "InNetworkBandwidth") == 0 {

@@ -24,6 +24,8 @@ final class ConnectToServerViewModel: ViewModel {
     var username = ""
     @Published
     var password = ""
+    @Published
+    var lastPublicUsers = [UserDto]()
     
 
     override init() {
@@ -50,6 +52,16 @@ final class ConnectToServerViewModel: ViewModel {
         }
     }
     
+    func hidePublicUsers() {
+        self.lastPublicUsers = publicUsers;
+        publicUsers = [];
+    }
+    
+    func showPublicUsers() {
+        self.publicUsers = lastPublicUsers;
+        lastPublicUsers = [];
+    }
+    
     func connectToServer() {
         ServerEnvironment.current.setUp(with: uri)
             .sink(receiveCompletion: { result in
@@ -63,7 +75,7 @@ final class ConnectToServerViewModel: ViewModel {
                 guard response.server_id != nil else {
                     return
                 }
-                self.isConnectedServer = true
+                self.refresh()
             })
             .store(in: &cancellables)
     }

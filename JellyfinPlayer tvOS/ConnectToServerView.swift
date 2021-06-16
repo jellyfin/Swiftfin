@@ -14,97 +14,96 @@ struct ConnectToServerView: View {
     @Binding var isLoggedIn: Bool
 
     var body: some View {
-        ZStack {
-            Form {
-                if viewModel.isConnectedServer {
-                    if viewModel.publicUsers.isEmpty {
-                        Section(header: Text("Login to \(ServerEnvironment.current.server.name ?? "")")) {
+        VStack(alignment: .leading) {
+            if viewModel.isConnectedServer {
+                if viewModel.publicUsers.isEmpty {
+                    Section(header: Text(viewModel.lastPublicUsers.isEmpty || viewModel.username == "" ? "Login to \(ServerEnvironment.current.server.name ?? "")": "Password for \(viewModel.username)")) {
+                        if(viewModel.lastPublicUsers.isEmpty || viewModel.username == "") {
                             TextField("Username", text: $viewModel.username)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
-                            SecureField("Password", text: $viewModel.password)
-                                .disableAutocorrection(true)
-                                .autocapitalization(.none)
+                        }
+                        SecureField("Password (optional)", text: $viewModel.password)
+                            .disableAutocorrection(true)
+                            .autocapitalization(.none)
+                    }
+                    
+                    Section {
+                        HStack() {
+                            Button {
+                                if(!viewModel.lastPublicUsers.isEmpty) {
+                                    viewModel.username = ""
+                                    viewModel.showPublicUsers()
+                                } else {
+                                    viewModel.isConnectedServer = false
+                                }
+                            } label: {
+                                Spacer()
+                                HStack {
+                                    Text("Back")
+                                }
+                                Spacer()
+                            }
+                            
                             Button {
                                 viewModel.login()
                             } label: {
-                                HStack {
+                                Spacer()
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                } else {
                                     Text("Login")
-                                    Spacer()
-                                    if viewModel.isLoading {
-                                        ProgressView()
-                                    }
                                 }
+                                Spacer()
                             }.disabled(viewModel.isLoading || viewModel.username.isEmpty)
                         }
-
-                        Section {
-                            Button {
-                                viewModel.isConnectedServer = false
-                            } label: {
-                                HStack {
-                                    HStack {
-                                        Image(systemName: "chevron.left")
-                                        Text("Change Server")
-                                    }
-                                    Spacer()
-                                }
-                            }
-                        }
-                    } else {
-                        Section(header: Text("Login to \(ServerEnvironment.current.server.name ?? "")")) {
-                            ForEach(viewModel.publicUsers, id: \.id) { publicUser in
-                                HStack {
-                                    Button(action: {
-                                        viewModel.username = publicUser.name ?? ""
-                                        viewModel.publicUsers.removeAll()
-                                        if !(publicUser.hasPassword ?? true) {
-                                            viewModel.password = ""
-                                            viewModel.login()
-                                        }
-                                    }) {
-                                        HStack {
-                                            Text(publicUser.name ?? "").font(.subheadline).fontWeight(.semibold)
-                                            Spacer()
-                                            if publicUser.primaryImageTag != nil {
-                                                ImageView(src: URL(string: "\(ServerEnvironment.current.server.baseURI ?? "")/Users/\(publicUser.id ?? "")/Images/Primary?width=200&quality=80&tag=\(publicUser.primaryImageTag!)")!)
-                                                    .frame(width: 60, height: 60)
-                                                    .cornerRadius(30.0)
-                                            } else {
-                                                Image(systemName: "person.fill")
-                                                    .foregroundColor(Color(red: 1, green: 1, blue: 1).opacity(0.8))
-                                                    .font(.system(size: 35))
-                                                    .frame(width: 60, height: 60)
-                                                    .background(Color(red: 98 / 255, green: 121 / 255, blue: 205 / 255))
-                                                    .cornerRadius(30.0)
-                                                    .shadow(radius: 6)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Section {
-                            Button {
-                                viewModel.publicUsers.removeAll()
-                                viewModel.username = ""
-                            } label: {
-                                HStack {
-                                    Text("Other User").font(.subheadline).fontWeight(.semibold)
-                                    Spacer()
-                                    Image(systemName: "person.fill.questionmark")
-                                        .foregroundColor(Color(red: 1, green: 1, blue: 1).opacity(0.8))
-                                        .font(.system(size: 35))
-                                        .frame(width: 60, height: 60)
-                                        .background(Color(red: 98 / 255, green: 121 / 255, blue: 205 / 255))
-                                        .cornerRadius(30.0)
-                                        .shadow(radius: 6)
-                                }
-                            }
-                        }
+                        Text("Logging in will link this user to your Apple TV profile").font(.caption).foregroundColor(.secondary)
                     }
                 } else {
+                    VStack() {
+                        HStack() {
+                            ForEach(viewModel.publicUsers, id: \.id) { publicUser in
+                                Button(action: {
+                                    viewModel.username = publicUser.name ?? ""
+                                    viewModel.hidePublicUsers()
+                                    if !(publicUser.hasPassword ?? true) {
+                                        viewModel.password = ""
+                                        viewModel.login()
+                                    }
+                                }) {
+                                    VStack {
+                                        if publicUser.primaryImageTag != nil {
+                                            ImageView(src: URL(string: "\(ServerEnvironment.current.server.baseURI ?? "")/Users/\(publicUser.id ?? "")/Images/Primary?width=500&quality=80&tag=\(publicUser.primaryImageTag!)")!)
+                                                .frame(width: 250, height: 250)
+                                                .cornerRadius(125.0)
+                                        } else {
+                                            Image(systemName: "person.fill")
+                                                .foregroundColor(Color(red: 1, green: 1, blue: 1).opacity(0.8))
+                                                .font(.system(size: 35))
+                                                .frame(width: 250, height: 250)
+                                                .background(Color(red: 98 / 255, green: 121 / 255, blue: 205 / 255))
+                                                .cornerRadius(125.0)
+                                                .shadow(radius: 6)
+                                        }
+                                        Text(publicUser.name ?? "").font(.headline).fontWeight(.semibold)
+                                    }
+                                }
+                            }
+                        }
+                        HStack() {
+                            Spacer()
+                            Button {
+                                viewModel.hidePublicUsers()
+                                viewModel.username = ""
+                            } label: {
+                                Text("Other User").font(.headline).fontWeight(.semibold)
+                            }
+                            Spacer()
+                        }.padding(.top, 12)
+                    }
+                }
+            } else {
+                Form {
                     Section(header: Text("Server Information")) {
                         TextField("Jellyfin Server URL", text: $viewModel.uri)
                             .disableAutocorrection(true)
@@ -126,11 +125,11 @@ struct ConnectToServerView: View {
             }
         }
         .alert(item: $viewModel.errorMessage) { _ in
-            Alert(title: Text("Error"), message: Text("message"), dismissButton: .default(Text("Try again")))
+            Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("Ok")))
         }
         .onReceive(viewModel.$isLoggedIn, perform: { flag in
             isLoggedIn = flag
         })
-        .navigationTitle("Connect to Server")
+        .navigationTitle(viewModel.isConnectedServer ? "Who's watching?" : "Connect to Jellyfin")
     }
 }
