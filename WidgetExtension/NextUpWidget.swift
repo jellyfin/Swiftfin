@@ -28,7 +28,7 @@ struct NextUpWidgetProvider: TimelineProvider {
         let server = ServerEnvironment.current.server!
         let savedUser = SessionManager.current.user!
         var tempCancellables = Set<AnyCancellable>()
-        
+
         JellyfinAPI.basePath = server.baseURI ?? ""
         TvShowsAPI.getNextUp(userId: savedUser.user_id, limit: 3,
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
@@ -69,7 +69,7 @@ struct NextUpWidgetProvider: TimelineProvider {
         let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
         let server = ServerEnvironment.current.server!
         let savedUser = SessionManager.current.user!
-        
+
         var tempCancellables = Set<AnyCancellable>()
         JellyfinAPI.basePath = server.baseURI ?? ""
         TvShowsAPI.getNextUp(userId: savedUser.user_id, limit: 3,

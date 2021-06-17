@@ -12,7 +12,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel = HomeViewModel()
-    
+
     @State var showingSettings = false
 
     var body: some View {

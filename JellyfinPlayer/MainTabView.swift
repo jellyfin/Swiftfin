@@ -12,7 +12,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var tabSelection: Tab = .home
-    
+
     var body: some View {
         TabView(selection: $tabSelection) {
             NavigationView {
@@ -38,11 +38,11 @@ struct MainTabView: View {
 }
 
 extension MainTabView {
-    
+
     enum Tab: String {
         case home
         case allMedia
-        
+
         var localized: String {
             switch self {
             case .home:

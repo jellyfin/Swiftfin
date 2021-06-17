@@ -15,12 +15,12 @@ struct MainTabView: View {
     @StateObject private var viewModel = MainTabViewModel()
     @State private var backdropAnim: Bool = false
     @State private var lastBackdropAnim: Bool = false
-    
+
     var body: some View {
-        ZStack() {
-            //please do not touch my magical crossfading.
-            if(viewModel.backgroundURL != nil) {
-                if(viewModel.lastBackgroundURL != nil) {
+        ZStack {
+            // please do not touch my magical crossfading.
+            if viewModel.backgroundURL != nil {
+                if viewModel.lastBackgroundURL != nil {
                     ImageView(src: viewModel.lastBackgroundURL!, bh: viewModel.backgroundBlurHash)
                         .frame(width: UIScreen.main.currentMode?.size.width, height: UIScreen.main.currentMode?.size.height)
                         .blur(radius: 2)
@@ -51,7 +51,7 @@ struct MainTabView: View {
                     Image(systemName: "house")
                 }
                 .tag(Tab.home)
-                
+
                 Text("Library")
                 .navigationViewStyle(StackNavigationViewStyle())
                 .tabItem {
@@ -68,7 +68,7 @@ extension MainTabView {
     enum Tab: String {
         case home
         case allMedia
-        
+
         var localized: String {
             switch self {
             case .home:
