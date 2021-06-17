@@ -11,15 +11,28 @@ import SwiftUI
 
 struct SplashView: View {
     @StateObject var viewModel = SplashViewModel()
-
+    @State var showingAlert: Bool = false
+    
     var body: some View {
-        if viewModel.isLoggedIn {
-            Text("home")
-        } else {
-            NavigationView {
-                ConnectToServerView(isLoggedIn: $viewModel.isLoggedIn)
+        Group {
+            if viewModel.isLoggedIn {
+                NavigationView() {
+                    MainTabView()
+                }
+                .padding(.leading, -60)
+                .padding(.trailing, -60)
+            } else {
+                NavigationView {
+                    ConnectToServerView(isLoggedIn: $viewModel.isLoggedIn)
+                }
+                .navigationViewStyle(StackNavigationViewStyle())
             }
-            .navigationViewStyle(StackNavigationViewStyle())
+        }
+        .alert(isPresented: $showingAlert) {
+            Alert(title: Text("Important message"), message: Text("\(ServerEnvironment.current.errorMessage)"), dismissButton: .default(Text("Got it!")))
+        }
+        .onChange(of: ServerEnvironment.current.hasErrorMessage) { hEM in
+            self.showingAlert = hEM
         }
     }
 }

@@ -17,11 +17,19 @@ struct ConnectToServerView: View {
         VStack(alignment: .leading) {
             if viewModel.isConnectedServer {
                 if viewModel.publicUsers.isEmpty {
-                    Section(header: Text(viewModel.lastPublicUsers.isEmpty || viewModel.username == "" ? "Login to \(ServerEnvironment.current.server.name ?? "")": "Password for \(viewModel.username)")) {
+                    Section(header: Text(viewModel.lastPublicUsers.isEmpty || viewModel.username == "" ? "Login to \(ServerEnvironment.current.server.name ?? "")": "")) {
                         if(viewModel.lastPublicUsers.isEmpty || viewModel.username == "") {
                             TextField("Username", text: $viewModel.username)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
+                        } else {
+                            HStack() {
+                                Spacer()
+                                ImageView(src: URL(string: "\(ServerEnvironment.current.server.baseURI ?? "")/Users/\(viewModel.selectedPublicUser.id ?? "")/Images/Primary?width=500&quality=80&tag=\(viewModel.selectedPublicUser.primaryImageTag ?? "")")!)
+                                    .frame(width: 250, height: 250)
+                                    .cornerRadius(125.0)
+                                Spacer()
+                            }
                         }
                         SecureField("Password (optional)", text: $viewModel.password)
                             .disableAutocorrection(true)
@@ -57,18 +65,22 @@ struct ConnectToServerView: View {
                                 Spacer()
                             }.disabled(viewModel.isLoading || viewModel.username.isEmpty)
                         }
-                        Text("Logging in will link this user to your Apple TV profile").font(.caption).foregroundColor(.secondary)
                     }
                 } else {
                     VStack() {
                         HStack() {
                             ForEach(viewModel.publicUsers, id: \.id) { publicUser in
                                 Button(action: {
-                                    viewModel.username = publicUser.name ?? ""
-                                    viewModel.hidePublicUsers()
-                                    if !(publicUser.hasPassword ?? true) {
-                                        viewModel.password = ""
-                                        viewModel.login()
+                                    if(!viewModel.userHasSavedCredentials(userID: publicUser.id!)) {
+                                        viewModel.username = publicUser.name ?? ""
+                                        viewModel.selectedPublicUser = publicUser
+                                        viewModel.hidePublicUsers()
+                                        if !(publicUser.hasPassword ?? true) {
+                                            viewModel.password = ""
+                                            viewModel.login()
+                                        }
+                                    } else {
+                                        viewModel.loginWithSavedCredentials(user: publicUser)
                                     }
                                 }) {
                                     VStack {
@@ -124,6 +136,8 @@ struct ConnectToServerView: View {
                 }
             }
         }
+        .padding(.leading, 90)
+        .padding(.trailing, 90)
         .alert(item: $viewModel.errorMessage) { _ in
             Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("Ok")))
         }

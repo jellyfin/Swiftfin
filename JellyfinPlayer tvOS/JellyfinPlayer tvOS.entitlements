@@ -7,5 +7,9 @@
 		<string>get-current-user</string>
 		<string>runs-as-current-user</string>
 	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)me.vigue.jellyfin.sharedKeychain</string>
+	</array>
 </dict>
 </plist>
