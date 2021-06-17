@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20E241" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19141.11" systemVersion="21A5248p" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Server" representedClassName="Server" syncable="YES" codeGenerationType="class">
         <attribute name="baseURI" attributeType="String" defaultValueString=""/>
         <attribute name="name" attributeType="String" defaultValueString=""/>
         <attribute name="server_id" attributeType="String" defaultValueString=""/>
     </entity>
     <entity name="SignedInUser" representedClassName="SignedInUser" syncable="YES" codeGenerationType="class">
-        <attribute name="device_uuid" attributeType="String" defaultValueString=""/>
+        <attribute name="appletv_id" optional="YES" attributeType="String"/>
         <attribute name="user_id" attributeType="String" defaultValueString=""/>
         <attribute name="username" attributeType="String" defaultValueString=""/>
     </entity>

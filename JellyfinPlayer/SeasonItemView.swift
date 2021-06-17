@@ -33,7 +33,7 @@ struct SeasonItemView: View {
         }
 
         DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.userID!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seasonId: item.id ?? "")
+            TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seasonId: item.id ?? "")
                 .sink(receiveCompletion: { completion in
                     print(completion)
                     isLoading = false

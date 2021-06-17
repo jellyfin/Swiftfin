@@ -83,14 +83,8 @@ struct SettingsView: View {
                                 // TODO: handle the error
                             }
                             
-                            do {
-                                try SessionManager.current.logout()
-                                try ServerEnvironment.current.reset()
-                            } catch {
-                                print(error)
-                            }
-                            // TODO: This should redirect to the server selection screen
-                            exit(-1)
+                            SessionManager.current.logout()
+                            ServerEnvironment.current.reset()
                         } label: {
                             Text("Log out").font(.callout)
                         }

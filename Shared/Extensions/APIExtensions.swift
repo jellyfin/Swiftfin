@@ -126,7 +126,7 @@ extension BaseItemDto {
         let proghours = Int(remainingSecs / 3600)
         let progminutes = Int((Int(remainingSecs) - (proghours * 3600)) / 60)
         if proghours != 0 {
-            return "\(proghours):\(String(progminutes).leftPad(toWidth: 2, withString: "0"))"
+            return "\(proghours)h \(String(progminutes).leftPad(toWidth: 2, withString: "0"))m"
         } else {
             return "\(String(progminutes).leftPad(toWidth: 2, withString: "0"))m"
         }
