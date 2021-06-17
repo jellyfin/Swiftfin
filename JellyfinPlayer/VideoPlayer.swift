@@ -290,11 +290,11 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
 
-        let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.userID!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
+        let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
 
         DispatchQueue.global(qos: .userInitiated).async { [self] in
             delegate?.showLoadingView(self)
-            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.userID!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
+            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
                 .sink(receiveCompletion: { result in
                     print(result)
                 }, receiveValue: { [self] response in
@@ -348,7 +348,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                         playbackItem = item
                     } else {
                         // Item will be directly played by the client.
-                        let streamURL: URL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.authToken)&Tag=\(mediaSource.eTag!)")!
+                        let streamURL: URL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
 
                         let item = PlaybackItem()
                         item.videoUrl = streamURL

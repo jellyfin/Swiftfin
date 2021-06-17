@@ -13,37 +13,31 @@ import JellyfinAPI
 
 final class ConnectToServerViewModel: ViewModel {
     @Published
-    var publicUsers = [UserDto]()
-    @Published
     var isConnectedServer = false
-    @Published
-    var isLoggedIn = false
     @Published
     var uri = ""
     @Published
     var username = ""
     @Published
     var password = ""
+    
     @Published
     var lastPublicUsers = [UserDto]()
-    
+    @Published
+    var publicUsers = [UserDto]()
+    @Published
+    var selectedPublicUser = UserDto()
 
     override init() {
         super.init()
-
-        refresh()
+        getPublicUsers()
     }
 
-    func refresh() {
+    func getPublicUsers() {
         if ServerEnvironment.current.server != nil {
             UserAPI.getPublicUsers()
                 .sink(receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        break
-                    case .failure:
-                        self.isConnectedServer = false
-                    }
+                    HandleAPIRequestCompletion(completion: completion, vm: self)
                 }, receiveValue: { response in
                     self.publicUsers = response
                     self.isConnectedServer = true
@@ -63,37 +57,26 @@ final class ConnectToServerViewModel: ViewModel {
     }
     
     func connectToServer() {
-        ServerEnvironment.current.setUp(with: uri)
+        ServerEnvironment.current.create(with: uri)
             .sink(receiveCompletion: { result in
                 switch result {
-                case let .failure(error):
-                    self.errorMessage = error.localizedDescription
-                default:
-                    break
+                    case let .failure(error):
+                        self.errorMessage = error.localizedDescription
+                    default:
+                        break
                 }
             }, receiveValue: { response in
-                guard response.server_id != nil else {
-                    return
-                }
-                self.refresh()
+                self.getPublicUsers()
             })
             .store(in: &cancellables)
     }
 
     func login() {
         SessionManager.current.login(username: username, password: password)
-            .sink(receiveCompletion: { result in
-                switch result {
-                case let .failure(error):
-                    self.errorMessage = error.localizedDescription
-                default:
-                    break
-                }
-            }, receiveValue: { response in
-                guard response.user_id != nil else {
-                    return
-                }
-                self.isLoggedIn = true
+            .sink(receiveCompletion: { completion in
+                HandleAPIRequestCompletion(completion: completion, vm: self)
+            }, receiveValue: { _ in
+                
             })
             .store(in: &cancellables)
     }

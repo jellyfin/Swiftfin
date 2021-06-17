@@ -24,14 +24,14 @@ struct EpisodeItemView: View {
         didSet {
             if !settingState {
                 if watched == true {
-                    PlaystateAPI.markPlayedItem(userId: SessionManager.current.userID!, itemId: item.id!)
+                    PlaystateAPI.markPlayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
                             print(completion)
                         }, receiveValue: { _ in
                         })
                         .store(in: &tempViewModel.cancellables)
                 } else {
-                    PlaystateAPI.markUnplayedItem(userId: SessionManager.current.userID!, itemId: item.id!)
+                    PlaystateAPI.markUnplayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
                             print(completion)
                         }, receiveValue: { _ in
@@ -47,14 +47,14 @@ struct EpisodeItemView: View {
         didSet {
             if !settingState {
                 if favorite == true {
-                    UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.userID!, itemId: item.id!)
+                    UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
                             print(completion)
                         }, receiveValue: { _ in
                         })
                         .store(in: &tempViewModel.cancellables)
                 } else {
-                    UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.userID!, itemId: item.id!)
+                    UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                         .sink(receiveCompletion: { completion in
                             print(completion)
                         }, receiveValue: { _ in

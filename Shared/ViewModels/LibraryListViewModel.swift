@@ -26,7 +26,7 @@ final class LibraryListViewModel: ViewModel {
     }
 
     func refresh() {
-        UserViewsAPI.getUserViews(userId: SessionManager.current.userID ?? "")
+        UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 print(completion)

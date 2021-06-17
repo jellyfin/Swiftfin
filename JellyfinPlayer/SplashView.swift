@@ -18,7 +18,7 @@ struct SplashView: View {
             MainTabView()
         } else {
             NavigationView {
-                ConnectToServerView(isLoggedIn: $viewModel.isLoggedIn)
+                ConnectToServerView()
             }
             .navigationViewStyle(StackNavigationViewStyle())
         }

@@ -31,7 +31,7 @@ struct LibrarySearchView: View {
     func requestSearch(query: String) {
         isLoading = true
         DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getItemsByUserId(userId: SessionManager.current.userID!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
+            ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
                 .sink(receiveCompletion: { completion in
                     print(completion)
                 }, receiveValue: { response in

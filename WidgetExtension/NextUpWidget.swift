@@ -25,24 +25,11 @@ struct NextUpWidgetProvider: TimelineProvider {
 
     func getSnapshot(in context: Context, completion: @escaping (NextUpEntry) -> Void) {
         let currentDate = Date()
-        guard let server = ServerEnvironment.current.server else { return
-            DispatchQueue.main.async {
-                completion(NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyServer))
-            }
-        }
-        guard let savedUser = SessionManager.current.user else { return
-            DispatchQueue.main.async {
-                completion(NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyUser))
-            }
-        }
-        guard let header = SessionManager.current.authHeader else { return
-            DispatchQueue.main.async {
-                completion(NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyHeader))
-            }
-        }
+        let server = ServerEnvironment.current.server!
+        let savedUser = SessionManager.current.user!
         var tempCancellables = Set<AnyCancellable>()
+        
         JellyfinAPI.basePath = server.baseURI ?? ""
-        JellyfinAPI.customHeaders = ["X-Emby-Authorization": header]
         TvShowsAPI.getNextUp(userId: savedUser.user_id, limit: 3,
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                              imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
@@ -80,27 +67,11 @@ struct NextUpWidgetProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
         let currentDate = Date()
         let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
-        guard let server = ServerEnvironment.current.server else { return
-            DispatchQueue.main.async {
-                completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyServer)],
-                                    policy: .after(entryDate)))
-            }
-        }
-        guard let savedUser = SessionManager.current.user else { return
-            DispatchQueue.main.async {
-                completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyUser)],
-                                    policy: .after(entryDate)))
-            }
-        }
-        guard let header = SessionManager.current.authHeader else { return
-            DispatchQueue.main.async {
-                completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: WidgetError.emptyHeader)],
-                                    policy: .after(entryDate)))
-            }
-        }
+        let server = ServerEnvironment.current.server!
+        let savedUser = SessionManager.current.user!
+        
         var tempCancellables = Set<AnyCancellable>()
         JellyfinAPI.basePath = server.baseURI ?? ""
-        JellyfinAPI.customHeaders = ["X-Emby-Authorization": header]
         TvShowsAPI.getNextUp(userId: savedUser.user_id, limit: 3,
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                              imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])

@@ -11,8 +11,6 @@ import SwiftUI
 struct ConnectToServerView: View {
     @StateObject var viewModel = ConnectToServerViewModel()
 
-    @Binding var isLoggedIn: Bool
-
     var body: some View {
         VStack(alignment: .leading) {
             if viewModel.isConnectedServer {
@@ -31,6 +29,7 @@ struct ConnectToServerView: View {
                                 Spacer()
                             }
                         }
+                        
                         SecureField("Password (optional)", text: $viewModel.password)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
@@ -71,7 +70,10 @@ struct ConnectToServerView: View {
                         HStack() {
                             ForEach(viewModel.publicUsers, id: \.id) { publicUser in
                                 Button(action: {
-                                    if(!viewModel.userHasSavedCredentials(userID: publicUser.id!)) {
+                                    if(SessionManager.current.doesUserHaveSavedSession(userID: publicUser.id!)) {
+                                        let user = SessionManager.current.getSavedSession(userID: publicUser.id!)
+                                        SessionManager.current.loginWithSavedSession(user: user)
+                                    } else {
                                         viewModel.username = publicUser.name ?? ""
                                         viewModel.selectedPublicUser = publicUser
                                         viewModel.hidePublicUsers()
@@ -79,8 +81,6 @@ struct ConnectToServerView: View {
                                             viewModel.password = ""
                                             viewModel.login()
                                         }
-                                    } else {
-                                        viewModel.loginWithSavedCredentials(user: publicUser)
                                     }
                                 }) {
                                     VStack {
@@ -141,9 +141,6 @@ struct ConnectToServerView: View {
         .alert(item: $viewModel.errorMessage) { _ in
             Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("Ok")))
         }
-        .onReceive(viewModel.$isLoggedIn, perform: { flag in
-            isLoggedIn = flag
-        })
         .navigationTitle(viewModel.isConnectedServer ? "Who's watching?" : "Connect to Jellyfin")
     }
 }

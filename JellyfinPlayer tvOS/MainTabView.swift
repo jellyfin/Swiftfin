@@ -12,24 +12,54 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var tabSelection: Tab = .home
+    @StateObject private var viewModel = MainTabViewModel()
+    @State private var backdropAnim: Bool = false
+    @State private var lastBackdropAnim: Bool = false
     
     var body: some View {
-        TabView(selection: $tabSelection) {
-            HomeView()
-            .navigationViewStyle(StackNavigationViewStyle())
-            .tabItem {
-                Text(Tab.home.localized)
-                Image(systemName: "house")
+        ZStack() {
+            //please do not touch my magical crossfading.
+            if(viewModel.backgroundURL != nil) {
+                if(viewModel.lastBackgroundURL != nil) {
+                    ImageView(src: viewModel.lastBackgroundURL!, bh: viewModel.backgroundBlurHash)
+                        .frame(width: UIScreen.main.currentMode?.size.width, height: UIScreen.main.currentMode?.size.height)
+                        .blur(radius: 2)
+                        .opacity(lastBackdropAnim ? 0.4 : 0)
+                        .onChange(of: viewModel.backgroundURL) { _ in
+                            withAnimation(.linear(duration: 0.15)) {
+                                lastBackdropAnim = false
+                            }
+                        }
+                }
+                ImageView(src: viewModel.backgroundURL!, bh: viewModel.backgroundBlurHash)
+                    .frame(width: UIScreen.main.currentMode?.size.width, height: UIScreen.main.currentMode?.size.height)
+                    .blur(radius: 2)
+                    .opacity(backdropAnim ? 0.4 : 0)
+                    .onChange(of: viewModel.backgroundURL) { _ in
+                        lastBackdropAnim = true
+                        backdropAnim = false
+                        withAnimation(.linear(duration: 0.15)) {
+                            backdropAnim = true
+                        }
+                    }
             }
-            .tag(Tab.home)
-            
-            Text("Library")
-            .navigationViewStyle(StackNavigationViewStyle())
-            .tabItem {
-                Text(Tab.allMedia.localized)
-                Image(systemName: "folder")
+            TabView(selection: $tabSelection) {
+                HomeView()
+                .navigationViewStyle(StackNavigationViewStyle())
+                .tabItem {
+                    Text(Tab.home.localized)
+                    Image(systemName: "house")
+                }
+                .tag(Tab.home)
+                
+                Text("Library")
+                .navigationViewStyle(StackNavigationViewStyle())
+                .tabItem {
+                    Text(Tab.allMedia.localized)
+                    Image(systemName: "folder")
+                }
+                .tag(Tab.allMedia)
             }
-            .tag(Tab.allMedia)
         }
     }
 }

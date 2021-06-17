@@ -11,7 +11,6 @@ import SwiftUI
 
 struct SplashView: View {
     @StateObject var viewModel = SplashViewModel()
-    @State var showingAlert: Bool = false
     
     var body: some View {
         Group {
@@ -23,16 +22,10 @@ struct SplashView: View {
                 .padding(.trailing, -60)
             } else {
                 NavigationView {
-                    ConnectToServerView(isLoggedIn: $viewModel.isLoggedIn)
+                    ConnectToServerView()
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
             }
-        }
-        .alert(isPresented: $showingAlert) {
-            Alert(title: Text("Important message"), message: Text("\(ServerEnvironment.current.errorMessage)"), dismissButton: .default(Text("Got it!")))
-        }
-        .onChange(of: ServerEnvironment.current.hasErrorMessage) { hEM in
-            self.showingAlert = hEM
         }
     }
 }

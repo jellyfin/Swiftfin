@@ -45,7 +45,7 @@ final class HomeViewModel: ViewModel {
             })
             .store(in: &cancellables)
 
-        UserViewsAPI.getUserViews(userId: SessionManager.current.userID ?? "")
+        UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 print(completion)
@@ -54,7 +54,7 @@ final class HomeViewModel: ViewModel {
             })
             .store(in: &cancellables)
 
-        ItemsAPI.getResumeItems(userId: SessionManager.current.userID!, limit: 12,
+        ItemsAPI.getResumeItems(userId: SessionManager.current.user.user_id!, limit: 12,
                                 fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                 mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
             .trackActivity(loading)
@@ -65,7 +65,7 @@ final class HomeViewModel: ViewModel {
             })
             .store(in: &cancellables)
 
-        TvShowsAPI.getNextUp(userId: SessionManager.current.userID!, limit: 12,
+        TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, limit: 12,
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { result in

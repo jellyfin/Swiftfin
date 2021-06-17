@@ -11,11 +11,7 @@ import KeychainSwift
 import SwiftUI
 
 struct ConnectToServerView: View {
-    @StateObject
-    var viewModel = ConnectToServerViewModel()
-
-    @Binding
-    var isLoggedIn: Bool
+    @StateObject var viewModel = ConnectToServerViewModel()
 
     var body: some View {
         ZStack {
@@ -132,9 +128,6 @@ struct ConnectToServerView: View {
         .alert(item: $viewModel.errorMessage) { _ in
             Alert(title: Text("Error"), message: Text("message"), dismissButton: .default(Text("Try again")))
         }
-        .onReceive(viewModel.$isLoggedIn, perform: { flag in
-            isLoggedIn = flag
-        })
         .navigationTitle("Connect to Server")
     }
 }

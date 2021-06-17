@@ -28,7 +28,7 @@ struct LatestMediaView: View {
         viewDidLoad = true
 
         DispatchQueue.global(qos: .userInitiated).async {
-            UserLibraryAPI.getLatestMedia(userId: SessionManager.current.userID!, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true, limit: 12)
+            UserLibraryAPI.getLatestMedia(userId: SessionManager.current.user.user_id!, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true, limit: 12)
                 .sink(receiveCompletion: { completion in
                     print(completion)
                 }, receiveValue: { response in

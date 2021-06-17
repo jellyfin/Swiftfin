@@ -17,14 +17,16 @@ final class ServerEnvironment {
     fileprivate(set) var server: Server!
 
     init() {
-        let serverRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Server")
-        let servers = try? PersistenceController.shared.container.viewContext.fetch(serverRequest) as? [Server]
-        server = servers?.first
-        guard let baseURI = server?.baseURI else { return }
-        JellyfinAPI.basePath = baseURI
+        let serverRequest = Server.fetchRequest()
+        let servers = try? PersistenceController.shared.container.viewContext.fetch(serverRequest)
+        
+        if(servers?.count != 0) {
+            server = servers?.first
+            JellyfinAPI.basePath = server.baseURI!
+        }
     }
 
-    func setUp(with uri: String) -> AnyPublisher<Server, Error> {
+    func create(with uri: String) -> AnyPublisher<Server, Error> {
         var uri = uri
         if !uri.contains("http") {
             uri = "https://" + uri
@@ -32,6 +34,7 @@ final class ServerEnvironment {
         if uri.last == "/" {
             uri = String(uri.dropLast())
         }
+        
         JellyfinAPI.basePath = uri
         return SystemAPI.getPublicSystemInfo()
             .map { response in
@@ -47,13 +50,14 @@ final class ServerEnvironment {
             }).eraseToAnyPublisher()
     }
 
-    func reset() throws {
+    func reset() {
         JellyfinAPI.basePath = ""
         server = nil
 
-        let serverRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
+        let serverRequest: NSFetchRequest<NSFetchRequestResult> = Server.fetchRequest()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: serverRequest)
-
-        try PersistenceController.shared.container.viewContext.execute(deleteRequest)
+        
+        //coredata will theoretically never throw
+        _ = try? PersistenceController.shared.container.viewContext.execute(deleteRequest)
     }
 }

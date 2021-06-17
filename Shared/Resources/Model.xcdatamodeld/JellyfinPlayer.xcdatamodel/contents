@@ -7,12 +7,11 @@
     </entity>
     <entity name="SignedInUser" representedClassName="SignedInUser" syncable="YES" codeGenerationType="class">
         <attribute name="appletv_id" optional="YES" attributeType="String"/>
-        <attribute name="device_uuid" attributeType="String" defaultValueString=""/>
         <attribute name="user_id" attributeType="String" defaultValueString=""/>
         <attribute name="username" attributeType="String" defaultValueString=""/>
     </entity>
     <elements>
         <element name="Server" positionX="-63" positionY="-9" width="128" height="74"/>
-        <element name="SignedInUser" positionX="-63" positionY="9" width="128" height="89"/>
+        <element name="SignedInUser" positionX="-63" positionY="9" width="128" height="74"/>
     </elements>
 </model>

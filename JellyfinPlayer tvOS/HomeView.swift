@@ -24,10 +24,10 @@ struct HomeView: View {
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(items: viewModel.resumeItems)
                     }
-                    /*
                     if !viewModel.nextUpItems.isEmpty {
                         NextUpView(items: viewModel.nextUpItems)
                     }
+                    /*
                     if !viewModel.librariesShowRecentlyAddedIDs.isEmpty {
                         ForEach(viewModel.librariesShowRecentlyAddedIDs, id: \.self) { libraryID in
                             VStack(alignment: .leading) {

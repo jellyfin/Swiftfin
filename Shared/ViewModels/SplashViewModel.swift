@@ -17,8 +17,7 @@ import WidgetKit
 
 final class SplashViewModel: ViewModel {
  
-    @Published
-    var isLoggedIn: Bool
+    @Published var isLoggedIn: Bool = false
     
     override init() {
         isLoggedIn = ServerEnvironment.current.server != nil && SessionManager.current.user != nil
@@ -38,5 +37,19 @@ final class SplashViewModel: ViewModel {
         if defaults.integer(forKey: "OutOfNetworkBandwidth") == 0 {
             defaults.setValue(40_000_000, forKey: "OutOfNetworkBandwidth")
         }
+        
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(didLogIn), name: Notification.Name("didSignIn"), object: nil)
+        nc.addObserver(self, selector: #selector(didLogOut), name: Notification.Name("didSignOut"), object: nil)
+    }
+    
+    @objc func didLogIn() {
+        print("didLogIn")
+        isLoggedIn = true
+    }
+    
+    @objc func didLogOut() {
+        print("didLogOut")
+        isLoggedIn = false
     }
 }

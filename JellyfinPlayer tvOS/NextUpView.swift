@@ -10,13 +10,13 @@ import SwiftUI
 import JellyfinAPI
 import Combine
 
-struct ContinueWatchingView: View {
+struct NextUpView: View {
     var items: [BaseItemDto]
 
     var body: some View {
         VStack(alignment: .leading) {
             if items.count > 0 {
-                Text("Continue Watching")
+                Text("Next Up")
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.leading, 135)
@@ -25,7 +25,7 @@ struct ContinueWatchingView: View {
                         Spacer().frame(width: 90)
                         ForEach(items, id: \.id) { item in
                             NavigationLink(destination: Text("itemv")) {
-                                ContinueWatchingItem(item: item)
+                                LandscapeItemElement(item: item)
                             }.buttonStyle(PlainNavigationLinkButtonStyle())
                         }
                         Spacer().frame(width: 90)

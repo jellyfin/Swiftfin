@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import JellyfinAPI
 
-func HandleAPIRequestCompletion(completion: Subscribers.Completion<Error>) {
+func HandleAPIRequestCompletion(completion: Subscribers.Completion<Error>, vm: ViewModel) {
     switch completion {
         case .finished:
             break
@@ -17,12 +17,10 @@ func HandleAPIRequestCompletion(completion: Subscribers.Completion<Error>) {
             if let err = error as? ErrorResponse {
                 switch err {
                     case .error(401, _, _, _):
-                        ServerEnvironment.current.errorMessage = "User unauthorized."
-                        ServerEnvironment.current.hasErrorMessage = true
+                        vm.errorMessage = err.localizedDescription
                         SessionManager.current.logout()
                     case .error:
-                        ServerEnvironment.current.errorMessage = err.localizedDescription
-                        ServerEnvironment.current.hasErrorMessage = true
+                        vm.errorMessage = err.localizedDescription
                 }
             }
             break
