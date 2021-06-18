@@ -47,29 +47,27 @@ struct LandscapeItemElement: View {
                 .frame(width: 445, height: 250)
                 .cornerRadius(10)
                 .overlay(
-                    Group {
+                    ZStack(alignment: .leading) {
                         if focused && item.userData?.playedPercentage != nil {
-                            ZStack(alignment: .leading) {
-                                Rectangle()
-                                    .fill(LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top))
-                                    .frame(width: 445, height: 90)
-                                    .mask(CutOffShadow())
-                                VStack(alignment: .leading) {
-                                    Text("CONTINUE • \(item.getItemProgressString())")
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                        .offset(y: 5)
-                                    ZStack(alignment: .leading) {
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .fill(Color.gray)
-                                            .opacity(0.4)
-                                            .frame(minWidth: 100, maxWidth: .infinity, minHeight: 12, maxHeight: 12)
-                                        RoundedRectangle(cornerRadius: 6)
-                                             .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
-                                             .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 4.45 - 0.16), height: 12)
-                                     }
-                                }.padding(12)
-                            }
+                            Rectangle()
+                                .fill(LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top))
+                                .frame(width: 445, height: 90)
+                                .mask(CutOffShadow())
+                            VStack(alignment: .leading) {
+                                Text("CONTINUE • \(item.getItemProgressString())")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .offset(y: 5)
+                                ZStack(alignment: .leading) {
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.gray)
+                                        .opacity(0.4)
+                                        .frame(minWidth: 100, maxWidth: .infinity, minHeight: 12, maxHeight: 12)
+                                    RoundedRectangle(cornerRadius: 6)
+                                         .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
+                                         .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 4.45 - 0.16), height: 12)
+                                 }
+                            }.padding(12)
                         } else {
                             EmptyView()
                         }

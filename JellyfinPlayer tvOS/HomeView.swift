@@ -40,7 +40,7 @@ struct HomeView: View {
                                         .fontWeight(.semibold)
                                         Image(systemName: "chevron.forward.circle.fill")
                                     }
-                                }.padding(EdgeInsets(top: 0, leading: 135, bottom: 0, trailing: 0))
+                                }.padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
                                 LatestMediaView(usingParentID: libraryID)
                             }
                         }

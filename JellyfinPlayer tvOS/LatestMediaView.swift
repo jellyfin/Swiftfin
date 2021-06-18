@@ -41,13 +41,13 @@ struct LatestMediaView: View {
     var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
-                    Spacer().frame(width: 90)
+                    Spacer().frame(width: 45)
                     ForEach(items, id: \.id) { item in
                         NavigationLink(destination: Text("itemv")) {
                             PortraitItemElement(item: item)
                         }.buttonStyle(PlainNavigationLinkButtonStyle())
                     }
-                    Spacer().frame(width: 90)
+                    Spacer().frame(width: 45)
                 }
             }.frame(height: 350)
             .onAppear(perform: onAppear)

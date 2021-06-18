@@ -326,7 +326,10 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                                     deliveryUrl = nil
                                 }
                                 let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt")
-                                subtitleTrackArray.append(subtitle)
+                                
+                                if(subtitle.delivery != .encode) {
+                                    subtitleTrackArray.append(subtitle)
+                                }
                             }
 
                             if stream.type == .audio {
@@ -367,7 +370,10 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                                     deliveryUrl = nil
                                 }
                                 let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt")
-                                subtitleTrackArray.append(subtitle)
+                                
+                                if(subtitle.delivery != .encode) {
+                                    subtitleTrackArray.append(subtitle)
+                                }
                             }
 
                             if stream.type == .audio {

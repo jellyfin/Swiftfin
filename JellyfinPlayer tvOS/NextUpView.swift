@@ -19,16 +19,16 @@ struct NextUpView: View {
                 Text("Next Up")
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .padding(.leading, 135)
+                    .padding(.leading, 90)
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack {
-                        Spacer().frame(width: 90)
+                        Spacer().frame(width: 45)
                         ForEach(items, id: \.id) { item in
                             NavigationLink(destination: Text("itemv")) {
                                 LandscapeItemElement(item: item)
                             }.buttonStyle(PlainNavigationLinkButtonStyle())
                         }
-                        Spacer().frame(width: 90)
+                        Spacer().frame(width: 45)
                     }
                 }.frame(height: 330)
                 .offset(y: -10)
