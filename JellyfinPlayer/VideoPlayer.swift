@@ -258,8 +258,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     override func remoteControlReceived(with event: UIEvent?) {
         dump(event)
     }
-    
-    
 
     // MARK: viewDidLoad
     override func viewDidLoad() {
@@ -268,14 +266,14 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         } else {
             titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
         }
-        
+
         super.viewDidLoad()
-        if(!UIDevice.current.orientation.isLandscape) {
+        if !UIDevice.current.orientation.isLandscape {
             let value = UIInterfaceOrientation.landscapeLeft.rawValue
             UIDevice.current.setValue(value, forKey: "orientation")
         }
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         overrideUserInterfaceStyle = .dark
@@ -393,9 +391,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                                 selectedAudioTrack = audioTrackArray[0].id
                             }
                         }
-                        
+
                         print("gotToEnd")
-                        
+
                         self.sendPlayReport()
                         playbackItem = item
                     }
@@ -414,8 +412,8 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
                     // Pause and load captions into memory.
                     mediaPlayer.pause()
-                    
-                    var shouldHaveSubtitleTracks = 0;
+
+                    var shouldHaveSubtitleTracks = 0
                     subtitleTrackArray.forEach { sub in
                         if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
                             shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
@@ -556,9 +554,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
     func sendPlayReport() {
         startTime = Int(Date().timeIntervalSince1970) * 10000000
-        
+
         print("sending play report!")
-        
+
         let startInfo = PlaybackStartInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: false, isMuted: false, positionTicks: manifest.userData?.playbackPositionTicks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
         PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
