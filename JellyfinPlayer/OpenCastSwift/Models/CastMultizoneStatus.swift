@@ -11,19 +11,19 @@ import SwiftyJSON
 
 public class CastMultizoneStatus {
   public let devices: [CastMultizoneDevice]
-  
+
   public init(devices: [CastMultizoneDevice]) {
     self.devices = devices
   }
 }
 
 extension CastMultizoneStatus {
-  
+
   convenience init(json: JSON) {
     let status = json[CastJSONPayloadKeys.status]
     let devices = status[CastJSONPayloadKeys.devices].array?.map(CastMultizoneDevice.init) ?? []
-    
+
     self.init(devices: devices)
   }
-  
+
 }

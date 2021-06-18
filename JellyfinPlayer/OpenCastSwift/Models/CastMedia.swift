@@ -20,13 +20,13 @@ public final class CastMedia: NSObject {
     public let title: String
     public let url: URL
     public let poster: URL?
-    
+
     public let autoplay: Bool
     public let currentTime: Double
-    
+
     public let contentType: String
     public let streamType: CastMediaStreamType
-    
+
     public init(title: String, url: URL, poster: URL? = nil, contentType: String, streamType: CastMediaStreamType = .buffered, autoplay: Bool = true, currentTime: Double = 0) {
         self.title = title
         self.url = url
@@ -36,7 +36,7 @@ public final class CastMedia: NSObject {
         self.autoplay = autoplay
         self.currentTime = currentTime
     }
-    
+
 //    public convenience init(title: String, url: URL, poster: URL, contentType: String, streamType: String, autoplay: Bool, currentTime: Double) {
 //        guard let type = CastMediaStreamType(rawValue: streamType) else {
 //            fatalError("Invalid media stream type \(streamType)")
@@ -47,7 +47,7 @@ public final class CastMedia: NSObject {
 }
 
 extension CastMedia {
-    
+
     var dict: [String: Any] {
       if let poster = poster {
         return [
@@ -88,5 +88,5 @@ extension CastMedia {
         ]
       }
     }
-    
+
 }
