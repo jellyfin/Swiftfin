@@ -141,24 +141,14 @@ extension View {
 @main
 struct JellyfinPlayerApp: App {
     let persistenceController = PersistenceController.shared
-
-    func test_cast() {
-        let scanner = CastDeviceScanner()
-
-        NotificationCenter.default.addObserver(forName: CastDeviceScanner.deviceListDidChange, object: scanner, queue: nil) { _ in
-            dump(scanner.devices)
-        }
-
-        scanner.startScanning()
-    }
-
+    
     var body: some Scene {
         WindowGroup {
             SplashView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .withHostingWindow { window in
                     window?.rootViewController = PreferenceUIHostingController(wrappedView: SplashView().environment(\.managedObjectContext, persistenceController.container.viewContext))
-                }.onAppear(perform: test_cast)
+                }
         }
     }
 }
