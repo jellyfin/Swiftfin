@@ -15,7 +15,7 @@ public class CastMultizoneDevice {
   public let isMuted: Bool
   public let capabilities: DeviceCapabilities
   public let id: String
-  
+
   public init(name: String, volume: Float, isMuted: Bool, capabilitiesMask: Int, id: String) {
     self.name = name
     self.volume = volume
@@ -28,15 +28,15 @@ public class CastMultizoneDevice {
 extension CastMultizoneDevice {
   convenience init(json: JSON) {
     let name = json[CastJSONPayloadKeys.name].stringValue
-    
+
     let volumeValues = json[CastJSONPayloadKeys.volume]
-    
+
     let volume = volumeValues[CastJSONPayloadKeys.level].floatValue
     let isMuted = volumeValues[CastJSONPayloadKeys.muted].boolValue
     let capabilitiesMask = json[CastJSONPayloadKeys.capabilities].intValue
     let deviceId = json[CastJSONPayloadKeys.deviceId].stringValue
-    
+
     self.init(name: name, volume: volume, isMuted: isMuted, capabilitiesMask: capabilitiesMask, id: deviceId)
   }
-  
+
 }

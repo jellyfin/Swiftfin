@@ -18,7 +18,7 @@ import SwiftProtobuf
 // incompatible with the version of SwiftProtobuf to which you are linking.
 // Please ensure that your are building against the same version of the API
 // that was used to generate this file.
-fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAPIVersionCheck {
+private struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAPIVersionCheck {
   struct _2: SwiftProtobuf.ProtobufAPIVersion_2 {}
   typealias Version = _2
 }
@@ -221,13 +221,13 @@ struct Extensions_Api_CastChannel_CastMessage: SwiftProtobuf.Message {
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  fileprivate var _protocolVersion: Extensions_Api_CastChannel_CastMessage.ProtocolVersion? = nil
-  fileprivate var _sourceID: String? = nil
-  fileprivate var _destinationID: String? = nil
-  fileprivate var _namespace: String? = nil
-  fileprivate var _payloadType: Extensions_Api_CastChannel_CastMessage.PayloadType? = nil
-  fileprivate var _payloadUtf8: String? = nil
-  fileprivate var _payloadBinary: Data? = nil
+  fileprivate var _protocolVersion: Extensions_Api_CastChannel_CastMessage.ProtocolVersion?
+  fileprivate var _sourceID: String?
+  fileprivate var _destinationID: String?
+  fileprivate var _namespace: String?
+  fileprivate var _payloadType: Extensions_Api_CastChannel_CastMessage.PayloadType?
+  fileprivate var _payloadUtf8: String?
+  fileprivate var _payloadBinary: Data?
 }
 
 /// Messages for authentication protocol between a sender and a receiver.
@@ -321,8 +321,8 @@ struct Extensions_Api_CastChannel_AuthResponse: SwiftProtobuf.Message {
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  fileprivate var _signature: Data? = nil
-  fileprivate var _clientAuthCertificate: Data? = nil
+  fileprivate var _signature: Data?
+  fileprivate var _clientAuthCertificate: Data?
 }
 
 struct Extensions_Api_CastChannel_AuthError: SwiftProtobuf.Message {
@@ -398,7 +398,7 @@ struct Extensions_Api_CastChannel_AuthError: SwiftProtobuf.Message {
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  fileprivate var _errorType: Extensions_Api_CastChannel_AuthError.ErrorType? = nil
+  fileprivate var _errorType: Extensions_Api_CastChannel_AuthError.ErrorType?
 }
 
 struct Extensions_Api_CastChannel_DeviceAuthMessage: SwiftProtobuf.Message {
@@ -487,7 +487,7 @@ struct Extensions_Api_CastChannel_DeviceAuthMessage: SwiftProtobuf.Message {
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
-fileprivate let _protobuf_package = "extensions.api.cast_channel"
+private let _protobuf_package = "extensions.api.cast_channel"
 
 extension Extensions_Api_CastChannel_CastMessage: SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -497,7 +497,7 @@ extension Extensions_Api_CastChannel_CastMessage: SwiftProtobuf._MessageImplemen
     4: .same(proto: "namespace"),
     5: .standard(proto: "payload_type"),
     6: .standard(proto: "payload_utf8"),
-    7: .standard(proto: "payload_binary"),
+    7: .standard(proto: "payload_binary")
   ]
 
   func _protobuf_generated_isEqualTo(other: Extensions_Api_CastChannel_CastMessage) -> Bool {
@@ -515,14 +515,14 @@ extension Extensions_Api_CastChannel_CastMessage: SwiftProtobuf._MessageImplemen
 
 extension Extensions_Api_CastChannel_CastMessage.ProtocolVersion: SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "CASTV2_1_0"),
+    0: .same(proto: "CASTV2_1_0")
   ]
 }
 
 extension Extensions_Api_CastChannel_CastMessage.PayloadType: SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "STRING"),
-    1: .same(proto: "BINARY"),
+    1: .same(proto: "BINARY")
   ]
 }
 
@@ -539,7 +539,7 @@ extension Extensions_Api_CastChannel_AuthResponse: SwiftProtobuf._MessageImpleme
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "signature"),
     2: .standard(proto: "client_auth_certificate"),
-    3: .standard(proto: "client_ca"),
+    3: .standard(proto: "client_ca")
   ]
 
   func _protobuf_generated_isEqualTo(other: Extensions_Api_CastChannel_AuthResponse) -> Bool {
@@ -553,7 +553,7 @@ extension Extensions_Api_CastChannel_AuthResponse: SwiftProtobuf._MessageImpleme
 
 extension Extensions_Api_CastChannel_AuthError: SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "error_type"),
+    1: .standard(proto: "error_type")
   ]
 
   func _protobuf_generated_isEqualTo(other: Extensions_Api_CastChannel_AuthError) -> Bool {
@@ -566,7 +566,7 @@ extension Extensions_Api_CastChannel_AuthError: SwiftProtobuf._MessageImplementa
 extension Extensions_Api_CastChannel_AuthError.ErrorType: SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "INTERNAL_ERROR"),
-    1: .same(proto: "NO_TLS"),
+    1: .same(proto: "NO_TLS")
   ]
 }
 
@@ -574,13 +574,13 @@ extension Extensions_Api_CastChannel_DeviceAuthMessage: SwiftProtobuf._MessageIm
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "challenge"),
     2: .same(proto: "response"),
-    3: .same(proto: "error"),
+    3: .same(proto: "error")
   ]
 
   fileprivate class _StorageClass {
-    var _challenge: Extensions_Api_CastChannel_AuthChallenge? = nil
-    var _response: Extensions_Api_CastChannel_AuthResponse? = nil
-    var _error: Extensions_Api_CastChannel_AuthError? = nil
+    var _challenge: Extensions_Api_CastChannel_AuthChallenge?
+    var _response: Extensions_Api_CastChannel_AuthResponse?
+    var _error: Extensions_Api_CastChannel_AuthError?
 
     static let defaultInstance = _StorageClass()
 
