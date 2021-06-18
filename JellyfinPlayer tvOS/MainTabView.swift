@@ -40,7 +40,7 @@ struct MainTabView: View {
 
             TabView(selection: $tabSelection) {
                 HomeView()
-                    .offset(y: -1) //don't remove this. it breaks tabview on 4K displays.
+                    .offset(y: -1) // don't remove this. it breaks tabview on 4K displays.
                 .tabItem {
                     Text(Tab.home.localized)
                     Image(systemName: "house")
@@ -74,4 +74,4 @@ extension MainTabView {
     }
 }
 
-//stream ancient dreams in a modern land by MARINA!
+// stream ancient dreams in a modern land by MARINA!
