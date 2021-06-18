@@ -16,12 +16,12 @@ struct ConnectToServerView: View {
             if viewModel.isConnectedServer {
                 if viewModel.publicUsers.isEmpty {
                     Section(header: Text(viewModel.lastPublicUsers.isEmpty || viewModel.username == "" ? "Login to \(ServerEnvironment.current.server.name ?? "")": "")) {
-                        if(viewModel.lastPublicUsers.isEmpty || viewModel.username == "") {
+                        if viewModel.lastPublicUsers.isEmpty || viewModel.username == "" {
                             TextField("Username", text: $viewModel.username)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
                         } else {
-                            HStack() {
+                            HStack {
                                 Spacer()
                                 ImageView(src: URL(string: "\(ServerEnvironment.current.server.baseURI ?? "")/Users/\(viewModel.selectedPublicUser.id ?? "")/Images/Primary?width=500&quality=80&tag=\(viewModel.selectedPublicUser.primaryImageTag ?? "")")!)
                                     .frame(width: 250, height: 250)
@@ -29,16 +29,16 @@ struct ConnectToServerView: View {
                                 Spacer()
                             }
                         }
-                        
+
                         SecureField("Password (optional)", text: $viewModel.password)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
                     }
-                    
+
                     Section {
-                        HStack() {
+                        HStack {
                             Button {
-                                if(!viewModel.lastPublicUsers.isEmpty) {
+                                if !viewModel.lastPublicUsers.isEmpty {
                                     viewModel.username = ""
                                     viewModel.showPublicUsers()
                                 } else {
@@ -51,7 +51,7 @@ struct ConnectToServerView: View {
                                 }
                                 Spacer()
                             }
-                            
+
                             Button {
                                 viewModel.login()
                             } label: {
@@ -66,11 +66,11 @@ struct ConnectToServerView: View {
                         }
                     }
                 } else {
-                    VStack() {
-                        HStack() {
+                    VStack {
+                        HStack {
                             ForEach(viewModel.publicUsers, id: \.id) { publicUser in
                                 Button(action: {
-                                    if(SessionManager.current.doesUserHaveSavedSession(userID: publicUser.id!)) {
+                                    if SessionManager.current.doesUserHaveSavedSession(userID: publicUser.id!) {
                                         let user = SessionManager.current.getSavedSession(userID: publicUser.id!)
                                         SessionManager.current.loginWithSavedSession(user: user)
                                     } else {
@@ -87,7 +87,7 @@ struct ConnectToServerView: View {
                                 }.buttonStyle(PlainNavigationLinkButtonStyle())
                             }
                         }.padding(.bottom, 20)
-                        HStack() {
+                        HStack {
                             Spacer()
                             Button {
                                 viewModel.hidePublicUsers()

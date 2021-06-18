@@ -21,17 +21,16 @@ final class BackgroundManager {
     func setBackground(to: URL, hash: String) {
         self.backgroundURL = to
         self.blurhash = hash
-        
+
         let nc = NotificationCenter.default
         nc.post(name: Notification.Name("backgroundDidChange"), object: nil)
     }
-    
+
     func clearBackground() {
         self.backgroundURL = nil
         self.blurhash = "001fC^"
-        
+
         let nc = NotificationCenter.default
         nc.post(name: Notification.Name("backgroundDidChange"), object: nil)
     }
 }
-

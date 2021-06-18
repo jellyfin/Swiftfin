@@ -11,7 +11,7 @@ import UIKit
 @main
 struct JellyfinPlayer_tvOSApp: App {
     let persistenceController = PersistenceController.shared
-    
+
     var body: some Scene {
         WindowGroup {
             SplashView()

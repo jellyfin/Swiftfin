@@ -15,16 +15,16 @@ struct MainTabView: View {
     @StateObject private var viewModel = MainTabViewModel()
     @State private var backdropAnim: Bool = true
     @State private var lastBackdropAnim: Bool = false
-    
+
     var body: some View {
-        ZStack() {
-            //please do not touch my magical crossfading. i will wave my magical github wand and cry
-            if(viewModel.lastBackgroundURL != nil) {
+        ZStack {
+            // please do not touch my magical crossfading. i will wave my magical github wand and cry
+            if viewModel.lastBackgroundURL != nil {
                 ImageView(src: viewModel.lastBackgroundURL!, bh: viewModel.backgroundBlurHash)
                     .frame(minWidth: 100, maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
                     .opacity(lastBackdropAnim ? 0.4 : 0)
             }
-            if(viewModel.backgroundURL != nil) {
+            if viewModel.backgroundURL != nil {
                 ImageView(src: viewModel.backgroundURL!, bh: viewModel.backgroundBlurHash)
                     .frame(minWidth: 100, maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
                     .opacity(backdropAnim ? 0.4 : 0)
@@ -37,7 +37,7 @@ struct MainTabView: View {
                         }
                     }
             }
-            
+
             TabView(selection: $tabSelection) {
                 HomeView()
                     .offset(y: -20)
@@ -46,7 +46,7 @@ struct MainTabView: View {
                     Image(systemName: "house")
                 }
                 .tag(Tab.home)
-                
+
                 Text("Library")
                 .tabItem {
                     Text(Tab.allMedia.localized)
@@ -62,7 +62,7 @@ extension MainTabView {
     enum Tab: String {
         case home
         case allMedia
-        
+
         var localized: String {
             switch self {
             case .home:

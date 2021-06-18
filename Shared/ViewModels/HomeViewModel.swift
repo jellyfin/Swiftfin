@@ -22,7 +22,7 @@ final class HomeViewModel: ViewModel {
     var resumeItems = [BaseItemDto]()
     @Published
     var nextUpItems = [BaseItemDto]()
-    
+
     // temp
     var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: ["DateCreated"])
 
@@ -39,18 +39,18 @@ final class HomeViewModel: ViewModel {
                 self.HandleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 response.items!.forEach { item in
-                    if(item.collectionType == "movies" || item.collectionType == "tvshows") {
+                    if item.collectionType == "movies" || item.collectionType == "tvshows" {
                         self.libraries.append(item)
                     }
                 }
-                
+
                 UserAPI.getCurrentUser()
                     .trackActivity(self.loading)
                     .sink(receiveCompletion: { completion in
                         self.HandleAPIRequestCompletion(completion: completion)
                     }, receiveValue: { response in
                         self.libraries.forEach { library in
-                            if(!(response.configuration?.latestItemsExcludes?.contains(library.id!))!) {
+                            if !(response.configuration?.latestItemsExcludes?.contains(library.id!))! {
                                 self.librariesShowRecentlyAddedIDs.append(library.id!)
                             }
                         }

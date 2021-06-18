@@ -21,7 +21,7 @@ final class MainTabViewModel: ViewModel {
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(backgroundDidChange), name: Notification.Name("backgroundDidChange"), object: nil)
     }
-    
+
     @objc func backgroundDidChange() {
         self.lastBackgroundURL = self.backgroundURL
         self.backgroundURL = BackgroundManager.current.backgroundURL

@@ -10,19 +10,19 @@
 import SwiftUI
 import JellyfinAPI
 
-fileprivate struct CutOffShadow: Shape {
-    let radius = 6.0;
-    
+private struct CutOffShadow: Shape {
+    let radius = 6.0
+
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         let tl = CGPoint(x: rect.minX, y: rect.minY)
         let tr = CGPoint(x: rect.maxX, y: rect.minY)
         let brs = CGPoint(x: rect.maxX, y: rect.maxY - radius)
         let brc = CGPoint(x: rect.maxX - radius, y: rect.maxY - radius)
         let bls = CGPoint(x: rect.minX + radius, y: rect.maxY)
         let blc = CGPoint(x: rect.minX + radius, y: rect.maxY - radius)
-        
+
         path.move(to: tl)
         path.addLine(to: tr)
         path.addLine(to: brs)
@@ -31,29 +31,29 @@ fileprivate struct CutOffShadow: Shape {
         path.addLine(to: bls)
         path.addRelativeArc(center: blc, radius: radius,
           startAngle: Angle.degrees(90), delta: Angle.degrees(90))
-        
+
         return path
     }
 }
 
 struct LandscapeItemElement: View {
     @Environment(\.isFocused) var envFocused: Bool
-    @State var focused: Bool = false;
-    @State var backgroundURL: URL?;
-    
-    var item: BaseItemDto;
-    
+    @State var focused: Bool = false
+    @State var backgroundURL: URL?
+
+    var item: BaseItemDto
+
     var body: some View {
-        VStack() {
+        VStack {
             ImageView(src: (item.type == "Episode" ? item.getSeriesBackdropImage(maxWidth: 445) : item.getBackdropImage(maxWidth: 445)), bh: item.type == "Episode" ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
                 .frame(width: 445, height: 250)
                 .cornerRadius(10)
                 .overlay(
                     Group {
-                        if(focused && item.userData?.playedPercentage != nil) {
+                        if focused && item.userData?.playedPercentage != nil {
                             ZStack(alignment: .leading) {
                                 Rectangle()
-                                    .fill(LinearGradient(colors: [.black,.clear], startPoint: .bottom, endPoint: .top))
+                                    .fill(LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top))
                                     .frame(width: 445, height: 90)
                                     .mask(CutOffShadow())
                                 VStack(alignment: .leading) {
@@ -79,7 +79,7 @@ struct LandscapeItemElement: View {
                 )
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
-            if(focused) {
+            if focused {
                 Text(item.type == "Episode" ? "\(item.seriesName ?? "") • S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))" : item.name ?? "")
                     .font(.callout)
                     .fontWeight(.semibold)
@@ -93,11 +93,11 @@ struct LandscapeItemElement: View {
             withAnimation(.linear(duration: 0.15)) {
                 self.focused = envFocus
             }
-            
-            if(envFocus == true) {
+
+            if envFocus == true {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     // your code here
-                    if(self.focused == true) {
+                    if self.focused == true {
                         backgroundURL = item.getBackdropImage(maxWidth: 1080)
                         BackgroundManager.current.setBackground(to: backgroundURL!, hash: item.getBackdropImageBlurHash())
                     }
