@@ -39,7 +39,7 @@ struct LibraryListView: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 NavigationLink(destination: LazyView {
-                    LibrarySearchView(usingParentID: "")
+                    LibrarySearchView(viewModel: .init(parentID: nil))
                 }) {
                     Image(systemName: "magnifyingglass")
                 }

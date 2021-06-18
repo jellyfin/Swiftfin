@@ -184,7 +184,7 @@ struct LibraryView: View {
                     }
                 }
                 if usingParentID != "" {
-                    NavigationLink(destination: LibrarySearchView(usingParentID: usingParentID)) {
+                    NavigationLink(destination: LibrarySearchView(viewModel: .init(parentID: usingParentID))) {
                         Image(systemName: "magnifyingglass")
                     }
                 }
