@@ -25,9 +25,9 @@ final class LibraryViewModel: ViewModel {
     @Published
     var currentPage = 0
     @Published
-    var isCanNextPaging = false
+    var hasNextPage = false
     @Published
-    var isCanPreviousPaging = false
+    var hasPreviousPage = false
 
     // temp
     @Published
@@ -55,11 +55,11 @@ final class LibraryViewModel: ViewModel {
         super.init()
 
         $filters
-            .sink(receiveValue: refresh(with:))
+            .sink(receiveValue: requestItems(with:))
             .store(in: &cancellables)
     }
 
-    func refresh(with filters: LibraryFilters) {
+    func requestItems(with filters: LibraryFilters) {
         let personIDs: [String] = [person].compactMap(\.?.id)
         let studioIDs: [String] = [studio].compactMap(\.?.id)
         let genreIDs: [String]
@@ -82,8 +82,8 @@ final class LibraryViewModel: ViewModel {
                 guard let self = self else { return }
                 let totalPages = ceil(Double(response.totalRecordCount ?? 0) / 100.0)
                 self.totalPages = Int(totalPages)
-                self.isCanPreviousPaging = self.currentPage > 0
-                self.isCanNextPaging = self.currentPage < self.totalPages - 1
+                self.hasPreviousPage = self.currentPage > 0
+                self.hasNextPage = self.currentPage < self.totalPages - 1
                 self.items = response.items ?? []
             })
             .store(in: &cancellables)
@@ -91,11 +91,11 @@ final class LibraryViewModel: ViewModel {
 
     func requestNextPage() {
         currentPage += 1
-        refresh(with: filters)
+        requestItems(with: filters)
     }
 
     func requestPreviousPage() {
         currentPage -= 1
-        refresh(with: filters)
+        requestItems(with: filters)
     }
 }

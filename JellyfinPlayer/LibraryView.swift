@@ -64,7 +64,7 @@ struct LibraryView: View {
                         }.onRotate { _ in
                             recalcTracks()
                         }
-                        if viewModel.isCanNextPaging || viewModel.isCanPreviousPaging {
+                        if viewModel.hasNextPage || viewModel.hasPreviousPage {
                             HStack {
                                 Spacer()
                                 HStack {
@@ -73,7 +73,7 @@ struct LibraryView: View {
                                     } label: {
                                         Image(systemName: "chevron.left")
                                             .font(.system(size: 25))
-                                    }.disabled(viewModel.isCanPreviousPaging)
+                                    }.disabled(viewModel.hasPreviousPage)
                                     Text("Page \(String(viewModel.currentPage + 1)) of \(String(viewModel.totalPages))")
                                         .font(.headline)
                                         .fontWeight(.semibold)
@@ -82,7 +82,7 @@ struct LibraryView: View {
                                     } label: {
                                         Image(systemName: "chevron.right")
                                             .font(.system(size: 25))
-                                    }.disabled(viewModel.isCanNextPaging)
+                                    }.disabled(viewModel.hasNextPage)
                                 }
                                 Spacer()
                             }
@@ -97,14 +97,14 @@ struct LibraryView: View {
         .navigationBarTitle(title, displayMode: .inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if viewModel.isCanPreviousPaging {
+                if viewModel.hasPreviousPage {
                     Button {
                         viewModel.requestPreviousPage()
                     } label: {
                         Image(systemName: "chevron.left")
                     }
                 }
-                if viewModel.isCanNextPaging {
+                if viewModel.hasNextPage {
                     Button {
                         viewModel.requestNextPage()
                     } label: {

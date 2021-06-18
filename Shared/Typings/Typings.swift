@@ -28,38 +28,36 @@ extension SortBy {
     var localized: String {
         switch self {
         case .productionYear:
-            return "Production year"
+            return "Release Year"
         case .premiereDate:
             return "Premiere date"
         case .name:
-            return "Name"
+            return "Title"
         case .dateAdded:
-            return "Date created"
+            return "Date added"
         }
     }
 }
 
 extension ItemFilter {
+    static var supportedTypes: [ItemFilter] {
+        [.isUnplayed, isPlayed, .isFavorite, .likes, .isFavoriteOrLikes]
+    }
+
     var localized: String {
         switch self {
-        case .isFolder:
-            return "Is folder"
-        case .isNotFolder:
-            return "Is not folder"
         case .isUnplayed:
-            return "Is unplayed"
+            return "Unplayed"
         case .isPlayed:
-            return "Is played"
+            return "Played"
         case .isFavorite:
-            return "Is favorite"
-        case .isResumable:
-            return "Is resumable"
+            return "Favorites"
         case .likes:
-            return "Likes"
-        case .dislikes:
-            return "Dislikes"
+            return "Liked"
         case .isFavoriteOrLikes:
-            return "Is favorite or likes"
+            return "Favorites or Liked"
+        default:
+            return ""
         }
     }
 }

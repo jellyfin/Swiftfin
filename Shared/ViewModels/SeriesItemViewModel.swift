@@ -22,10 +22,10 @@ final class SeriesItemViewModel: ViewModel {
         self.item = item
         super.init()
 
-        refresh()
+        requestSeasons()
     }
 
-    func refresh() {
+    func requestSeasons() {
         TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in

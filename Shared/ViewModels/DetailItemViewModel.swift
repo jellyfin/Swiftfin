@@ -28,9 +28,8 @@ class DetailItemViewModel: ViewModel {
     }
 
     func updateWatchState() {
-        guard let id = item.id else { return }
         if isWatched {
-            PlaystateAPI.markUnplayedItem(userId: SessionManager.current.user.user_id!, itemId: id)
+            PlaystateAPI.markUnplayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
                     self?.handleAPIRequestCompletion(completion: completion)
@@ -39,7 +38,7 @@ class DetailItemViewModel: ViewModel {
                 })
                 .store(in: &cancellables)
         } else {
-            PlaystateAPI.markPlayedItem(userId: SessionManager.current.user.user_id!, itemId: id)
+            PlaystateAPI.markPlayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
                     self?.handleAPIRequestCompletion(completion: completion)
@@ -51,9 +50,8 @@ class DetailItemViewModel: ViewModel {
     }
 
     func updateFavoriteState() {
-        guard let id = item.id else { return }
         if isFavorited {
-            UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: id)
+            UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
                     self?.handleAPIRequestCompletion(completion: completion)
@@ -62,7 +60,7 @@ class DetailItemViewModel: ViewModel {
                 })
                 .store(in: &cancellables)
         } else {
-            UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: id)
+            UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
                     self?.handleAPIRequestCompletion(completion: completion)

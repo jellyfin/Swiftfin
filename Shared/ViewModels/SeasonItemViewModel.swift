@@ -22,10 +22,10 @@ final class SeasonItemViewModel: ViewModel {
         self.item = item
         super.init()
 
-        refresh()
+        requestEpisodes()
     }
 
-    func refresh() {
+    func requestEpisodes() {
         TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.user.user_id!,
                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                seasonId: item.id ?? "")

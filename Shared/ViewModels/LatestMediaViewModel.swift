@@ -21,10 +21,10 @@ final class LatestMediaViewModel: ViewModel {
         self.libraryID = libraryID
         super.init()
         
-        refresh()
+        requestLatestMedia()
     }
 
-    func refresh() {
+    func requestLatestMedia() {
         UserLibraryAPI.getLatestMedia(userId: SessionManager.current.user.user_id!, parentId: libraryID,
                                       fields: [
                                           .primaryImageAspectRatio,

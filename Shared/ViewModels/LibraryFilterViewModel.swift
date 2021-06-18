@@ -24,15 +24,15 @@ final class LibraryFilterViewModel: ViewModel {
     var modifyedFilters = LibraryFilters()
 
     @Published
-    var allGenres = [NameGuidPair]()
+    var possibleGenres = [NameGuidPair]()
     @Published
-    var allTags = [String]()
+    var possibleTags = [String]()
     @Published
-    var allSortOrders = APISortOrder.allCases
+    var possibleSortOrders = APISortOrder.allCases
     @Published
-    var allSortBys = SortBy.allCases
+    var possibleSortBys = SortBy.allCases
     @Published
-    var allItemFilters = ItemFilter.allCases
+    var possibleItemFilters = ItemFilter.supportedTypes
     @Published
     var enabledFilterType: [FilterType]
 
@@ -43,18 +43,18 @@ final class LibraryFilterViewModel: ViewModel {
         if let filters = filters {
             self.modifyedFilters = filters
         }
-        refresh()
+        requestQueryFilters()
     }
 
-    func refresh() {
+    func requestQueryFilters() {
         FilterAPI.getQueryFilters(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestCompletion(completion: completion)
-            }, receiveValue: { [weak self] quertFilters in
+            }, receiveValue: { [weak self] queryFilters in
                 guard let self = self else { return }
-                self.allGenres = quertFilters.genres ?? []
-                self.allTags = quertFilters.tags ?? []
+                self.possibleGenres = queryFilters.genres ?? []
+                self.possibleTags = queryFilters.tags ?? []
             })
             .store(in: &cancellables)
     }

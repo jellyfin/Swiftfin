@@ -28,31 +28,31 @@ struct LibraryFilterView: View {
                 Form {
                     if viewModel.enabledFilterType.contains(.genre) {
                         MultiSelector(label: "Genres",
-                                      options: viewModel.allGenres,
+                                      options: viewModel.possibleGenres,
                                       optionToString: { $0.name ?? "" },
                                       selected: $viewModel.modifyedFilters.withGenres)
                     }
                     if viewModel.enabledFilterType.contains(.filter) {
                         MultiSelector(label: "Filters",
-                                      options: viewModel.allItemFilters,
+                                      options: viewModel.possibleItemFilters,
                                       optionToString: { $0.localized },
                                       selected: $viewModel.modifyedFilters.filters)
                     }
                     if viewModel.enabledFilterType.contains(.tag) {
                         MultiSelector(label: "Tags",
-                                      options: viewModel.allTags,
+                                      options: viewModel.possibleTags,
                                       optionToString: { $0 },
                                       selected: $viewModel.modifyedFilters.tags)
                     }
                     if viewModel.enabledFilterType.contains(.sortBy) {
                         MultiSelector(label: "Sort by",
-                                      options: viewModel.allSortBys,
+                                      options: viewModel.possibleSortBys,
                                       optionToString: { $0.localized },
                                       selected: $viewModel.modifyedFilters.sortBy)
                     }
                     if viewModel.enabledFilterType.contains(.sortOrder) {
                         MultiSelector(label: "Sort Order",
-                                      options: viewModel.allSortOrders,
+                                      options: viewModel.possibleSortOrders,
                                       optionToString: { $0.localized },
                                       selected: $viewModel.modifyedFilters.sortOrder)
                     }
