@@ -31,7 +31,7 @@ final class SeasonItemViewModel: ViewModel {
                                seasonId: item.id ?? "")
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.HandleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.episodes = response.items ?? []
             })

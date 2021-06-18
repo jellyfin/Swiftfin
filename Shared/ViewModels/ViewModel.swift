@@ -32,7 +32,7 @@ class ViewModel: ObservableObject {
         loading.loading.assign(to: \.isLoading, on: self).store(in: &cancellables)
     }
 
-    func HandleAPIRequestCompletion(completion: Subscribers.Completion<Error>) {
+    func handleAPIRequestCompletion(completion: Subscribers.Completion<Error>) {
         switch completion {
             case .finished:
                 break

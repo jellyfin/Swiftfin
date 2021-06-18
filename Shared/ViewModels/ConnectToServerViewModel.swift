@@ -37,7 +37,7 @@ final class ConnectToServerViewModel: ViewModel {
         if ServerEnvironment.current.server != nil {
             UserAPI.getPublicUsers()
                 .sink(receiveCompletion: { completion in
-                    self.HandleAPIRequestCompletion(completion: completion)
+                    self.handleAPIRequestCompletion(completion: completion)
                 }, receiveValue: { response in
                     self.publicUsers = response
                     self.isConnectedServer = true
@@ -74,7 +74,7 @@ final class ConnectToServerViewModel: ViewModel {
     func login() {
         SessionManager.current.login(username: username, password: password)
             .sink(receiveCompletion: { completion in
-                self.HandleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { _ in
 
             })

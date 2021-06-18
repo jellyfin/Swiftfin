@@ -29,7 +29,7 @@ final class SeriesItemViewModel: ViewModel {
         TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.HandleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.seasons = response.items ?? []
             })

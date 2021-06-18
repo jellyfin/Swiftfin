@@ -30,13 +30,22 @@ final class LibraryViewModel: ViewModel {
     var isCanPreviousPaging = false
 
     // temp
+    @Published
     var filters: LibraryFilters
+
+    var enabledFilterType: [FilterType] {
+        if genre == nil {
+            return [.tag, .genre, .sortBy, .sortOrder, .filter]
+        } else {
+            return [.tag, .sortBy, .sortOrder, .filter]
+        }
+    }
 
     init(parentID: String? = nil,
          person: BaseItemPerson? = nil,
          genre: NameGuidPair? = nil,
          studio: NameGuidPair? = nil,
-         filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: ["SortName"]))
+         filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]))
     {
         self.parentID = parentID
         self.person = person
@@ -45,18 +54,30 @@ final class LibraryViewModel: ViewModel {
         self.filters = filters
         super.init()
 
-        refresh()
+        $filters
+            .sink(receiveValue: refresh(with:))
+            .store(in: &cancellables)
     }
-    
-    func refresh() {
+
+    func refresh(with filters: LibraryFilters) {
         let personIDs: [String] = [person].compactMap(\.?.id)
         let studioIDs: [String] = [studio].compactMap(\.?.id)
-        let genreIDs: [String] = [genre].compactMap(\.?.id)
-        
-        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true, searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], filters: filters.filters, sortBy: filters.sortBy, enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
+        let genreIDs: [String]
+        if filters.withGenres.isEmpty {
+            genreIDs = [genre].compactMap(\.?.id)
+        } else {
+            genreIDs = filters.withGenres.compactMap(\.id)
+        }
+        let sortBy = filters.sortBy.map(\.rawValue)
+
+        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true,
+                                  searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
+                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                                  includeItemTypes: ["Movie", "Series"], filters: filters.filters, sortBy: sortBy, tags: filters.tags,
+                                  enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.HandleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
                 guard let self = self else { return }
                 let totalPages = ceil(Double(response.totalRecordCount ?? 0) / 100.0)
@@ -67,14 +88,14 @@ final class LibraryViewModel: ViewModel {
             })
             .store(in: &cancellables)
     }
-    
+
     func requestNextPage() {
         currentPage += 1
-        refresh()
+        refresh(with: filters)
     }
-    
+
     func requestPreviousPage() {
         currentPage -= 1
-        refresh()
+        refresh(with: filters)
     }
 }

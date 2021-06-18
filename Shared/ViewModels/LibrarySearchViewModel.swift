@@ -36,7 +36,7 @@ final class LibrarySearchViewModel: ViewModel {
                                   includeItemTypes: ["Movie", "Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.HandleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.items = response.items ?? []
             })

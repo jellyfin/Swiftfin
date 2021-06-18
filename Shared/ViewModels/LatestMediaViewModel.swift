@@ -37,7 +37,7 @@ final class LatestMediaViewModel: ViewModel {
                                       enableUserData: true, limit: 12)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.HandleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.items = response
             })

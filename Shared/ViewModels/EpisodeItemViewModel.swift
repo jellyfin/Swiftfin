@@ -33,7 +33,7 @@ final class EpisodeItemViewModel: ViewModel {
             PlaystateAPI.markUnplayedItem(userId: SessionManager.current.user.user_id!, itemId: id)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
-                    self?.HandleAPIRequestCompletion(completion: completion)
+                    self?.handleAPIRequestCompletion(completion: completion)
                 }, receiveValue: { [weak self] _ in
                     self?.isWatched = false
                 })
@@ -42,7 +42,7 @@ final class EpisodeItemViewModel: ViewModel {
             PlaystateAPI.markPlayedItem(userId: SessionManager.current.user.user_id!, itemId: id)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
-                    self?.HandleAPIRequestCompletion(completion: completion)
+                    self?.handleAPIRequestCompletion(completion: completion)
                 }, receiveValue: { [weak self] _ in
                     self?.isWatched = true
                 })
@@ -56,7 +56,7 @@ final class EpisodeItemViewModel: ViewModel {
             UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: id)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
-                    self?.HandleAPIRequestCompletion(completion: completion)
+                    self?.handleAPIRequestCompletion(completion: completion)
                 }, receiveValue: { [weak self] _ in
                     self?.isFavorited = false
                 })
@@ -65,7 +65,7 @@ final class EpisodeItemViewModel: ViewModel {
             UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: id)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
-                    self?.HandleAPIRequestCompletion(completion: completion)
+                    self?.handleAPIRequestCompletion(completion: completion)
                 }, receiveValue: { [weak self] _ in
                     self?.isFavorited = true
                 })

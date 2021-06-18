@@ -20,6 +20,8 @@ struct LibraryView: View {
 
     @State
     var isShowingSearchView = false
+    @State
+    var isShowingFilterView = false
 
     @State
     private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
@@ -110,11 +112,19 @@ struct LibraryView: View {
                     }
                 }
                 Button(action: {
+                    isShowingFilterView = true
+                }) {
+                    Image(systemName: "line.horizontal.3.decrease.circle")
+                }
+                Button(action: {
                     isShowingSearchView = true
                 }) {
                     Image(systemName: "magnifyingglass")
                 }
             }
+        }
+        .sheet(isPresented: $isShowingFilterView) {
+            LibraryFilterView(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType)
         }
         .background(
             NavigationLink(destination: LibrarySearchView(viewModel: .init(parentID: viewModel.parentID)),
