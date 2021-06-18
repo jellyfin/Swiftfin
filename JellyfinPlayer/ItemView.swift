@@ -45,7 +45,7 @@ struct ItemView: View {
                 } else if item.type == "Series" {
                     SeriesItemView(item: item)
                 } else if item.type == "Episode" {
-                    EpisodeItemView(item: item)
+                    EpisodeItemView(viewModel: .init(item: item))
                 } else {
                     Text("Type: \(item.type ?? "") not implemented yet :(")
                 }
