@@ -129,6 +129,8 @@
 		62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632E5267D3F5B0063E547 /* EpisodeItemViewModel.swift */; };
 		62E632E9267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632E8267D3FF50063E547 /* SeasonItemViewModel.swift */; };
 		62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632E8267D3FF50063E547 /* SeasonItemViewModel.swift */; };
+		62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */; };
+		62E632ED267D410B0063E547 /* SeriesItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */; };
 		62EC3527267665D8000E9F2D /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		62EC3528267665D8000E9F2D /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62EC352C26766675000E9F2D /* ServerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352B26766675000E9F2D /* ServerEnvironment.swift */; };
@@ -283,6 +285,7 @@
 		62E632E2267D3BA60063E547 /* MovieItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieItemViewModel.swift; sourceTree = "<group>"; };
 		62E632E5267D3F5B0063E547 /* EpisodeItemViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EpisodeItemViewModel.swift; sourceTree = "<group>"; };
 		62E632E8267D3FF50063E547 /* SeasonItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonItemViewModel.swift; sourceTree = "<group>"; };
+		62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeriesItemViewModel.swift; sourceTree = "<group>"; };
 		62EC352B26766675000E9F2D /* ServerEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerEnvironment.swift; sourceTree = "<group>"; };
 		62EC352E267666A5000E9F2D /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRotationViewModifier.swift; sourceTree = "<group>"; };
@@ -350,6 +353,7 @@
 				62E632E2267D3BA60063E547 /* MovieItemViewModel.swift */,
 				62E632E5267D3F5B0063E547 /* EpisodeItemViewModel.swift */,
 				62E632E8267D3FF50063E547 /* SeasonItemViewModel.swift */,
+				62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -725,6 +729,7 @@
 				531690F7267ACC00005D8AB9 /* LandscapeItemElement.swift in Sources */,
 				62E632E1267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
 				535870A82669D8AE00D05A09 /* StringExtensions.swift in Sources */,
+				62E632ED267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				53ABFDE6267974EF00886593 /* SettingsViewModel.swift in Sources */,
 				6267B3D826710B9800A7371D /* CollectionExtensions.swift in Sources */,
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
@@ -760,6 +765,7 @@
 				5364F455266CA0DC0026ECBA /* APIExtensions.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
+				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				625CB5732678C32A00530A6E /* HomeViewModel.swift in Sources */,
 				62E632DC267D2E130063E547 /* LibrarySearchViewModel.swift in Sources */,
 				5377CBFE263B596B003A4E83 /* PersistenceController.swift in Sources */,
