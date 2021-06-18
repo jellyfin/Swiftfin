@@ -27,34 +27,24 @@ struct HomeView: View {
                     if !viewModel.nextUpItems.isEmpty {
                         NextUpView(items: viewModel.nextUpItems)
                     }
-                    /*
+
                     if !viewModel.librariesShowRecentlyAddedIDs.isEmpty {
                         ForEach(viewModel.librariesShowRecentlyAddedIDs, id: \.self) { libraryID in
                             VStack(alignment: .leading) {
                                 let library = viewModel.libraries.first(where: { $0.id == libraryID })
-                                HStack {
-                                    Text("Latest \(library?.name ?? "")")
-                                        .font(.title2)
-                                        .fontWeight(.bold)
-                                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
-                                    Spacer()
-                                    NavigationLink(destination: LazyView {
-                                        //LibraryView(usingParentID: libraryID, title: library?.name ?? "", usingFilters: viewModel.recentFilterSet)
-                                        Text("library here")
-                                    }) {
-                                        HStack {
-                                            Text("See All").font(.subheadline).fontWeight(.bold)
-                                            Image(systemName: "chevron.right").font(Font.subheadline.bold())
-                                        }
+                                
+                                NavigationLink(destination: Text("library_latest")) {
+                                    HStack() {
+                                        Text("Latest \(library?.name ?? "")")
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                        Image(systemName: "chevron.forward.circle.fill")
                                     }
-                                }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                //LatestMediaView(usingParentID: libraryID)
-                            }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                                }.padding(EdgeInsets(top: 0, leading: 135, bottom: 0, trailing: 0))
+                                LatestMediaView(usingParentID: libraryID)
+                            }
                         }
                     }
-
-                    Spacer().frame(height: 16)
-                    */
                 }
             }
         }

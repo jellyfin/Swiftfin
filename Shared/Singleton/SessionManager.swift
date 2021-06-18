@@ -109,12 +109,14 @@ final class SessionManager {
         
         self.user = user
         generateAuthHeader(with: accessToken)
-
+        print(JellyfinAPI.customHeaders)
         let nc = NotificationCenter.default
         nc.post(name: Notification.Name("didSignIn"), object: nil)
     }
 
     func login(username: String, password: String) -> AnyPublisher<SignedInUser, Error> {
+        generateAuthHeader(with: nil)
+        
         return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
             .map { response -> (SignedInUser, String?) in
                 let user = SignedInUser(context: PersistenceController.shared.container.viewContext)
@@ -147,7 +149,7 @@ final class SessionManager {
     func logout() {
         let keychain = KeychainSwift()
         keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
-        keychain.delete("AccessToken_\(user.user_id ?? "")")
+        keychain.delete("AccessToken_\(user?.user_id ?? "")")
         generateAuthHeader(with: nil)
 
         let deleteRequest = NSBatchDeleteRequest(objectIDs: [user.objectID])

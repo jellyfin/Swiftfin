@@ -65,6 +65,15 @@
         }
       },
       {
+        "package": "ParallaxView",
+        "repositoryURL": "https://github.com/PGSSoft/ParallaxView",
+        "state": {
+          "branch": null,
+          "revision": "a4165b0edd9c9c923a1d6e3e4c9a807302a1a475",
+          "version": "3.1.2"
+        }
+      },
+      {
         "package": "SwiftUI-Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {

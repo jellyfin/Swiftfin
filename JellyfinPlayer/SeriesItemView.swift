@@ -62,7 +62,7 @@ struct SeriesItemView: View {
                     ForEach(seasons, id: \.id) { season in
                         NavigationLink(destination: ItemView(item: season)) {
                             VStack(alignment: .leading) {
-                                ImageView(src: season.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: season.getPrimaryImageBlurHash())
+                                ImageView(src: season.getPrimaryImage(maxWidth: 100), bh: season.getPrimaryImageBlurHash())
                                     .frame(width: 100, height: 150)
                                     .cornerRadius(10)
                                     .shadow(radius: 5)

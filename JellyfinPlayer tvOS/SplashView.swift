@@ -17,9 +17,7 @@ struct SplashView: View {
             if viewModel.isLoggedIn {
                 NavigationView() {
                     MainTabView()
-                }
-                .padding(.leading, -60)
-                .padding(.trailing, -60)
+                }.padding(.all, -1)
             } else {
                 NavigationView {
                     ConnectToServerView()

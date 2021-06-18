@@ -50,7 +50,7 @@ struct SeasonItemView: View {
         if isLoading {
             EmptyView()
         } else {
-            ImageView(src: item.getSeriesBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: item.getSeriesBackdropImageBlurHash())
+            ImageView(src: item.getSeriesBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: item.getSeriesBackdropImageBlurHash())
                 .opacity(0.4)
                 .blur(radius: 2.0)
         }
@@ -58,7 +58,7 @@ struct SeasonItemView: View {
 
     var portraitHeaderOverlayView: some View {
         HStack(alignment: .bottom, spacing: 12) {
-            ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 120), bh: item.getPrimaryImageBlurHash())
+            ImageView(src: item.getPrimaryImage(maxWidth: 120), bh: item.getPrimaryImageBlurHash())
                 .frame(width: 120, height: 180)
                 .cornerRadius(10)
             VStack(alignment: .leading) {
@@ -97,7 +97,7 @@ struct SeasonItemView: View {
                     ForEach(episodes, id: \.id) { episode in
                         NavigationLink(destination: ItemView(item: episode)) {
                             HStack {
-                                ImageView(src: episode.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
+                                ImageView(src: episode.getPrimaryImage(maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
                                     .shadow(radius: 5)
                                     .frame(width: 150, height: 90)
                                     .cornerRadius(10)
@@ -156,7 +156,7 @@ struct SeasonItemView: View {
         } else {
             GeometryReader { geometry in
                 ZStack {
-                    ImageView(src: item.getSeriesBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 200), bh: item.getSeriesBackdropImageBlurHash())
+                    ImageView(src: item.getSeriesBackdropImage(maxWidth: 200), bh: item.getSeriesBackdropImageBlurHash())
                         .opacity(0.4)
                         .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
@@ -165,7 +165,7 @@ struct SeasonItemView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             Spacer().frame(height: 16)
-                            ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 120), bh: item.getPrimaryImageBlurHash())
+                            ImageView(src: item.getPrimaryImage(maxWidth: 120), bh: item.getPrimaryImageBlurHash())
                                 .frame(width: 120, height: 180)
                                 .cornerRadius(10)
                             Spacer().frame(height: 4)
@@ -190,7 +190,7 @@ struct SeasonItemView: View {
                                 ForEach(episodes, id: \.id) { episode in
                                     NavigationLink(destination: ItemView(item: episode)) {
                                         HStack {
-                                            ImageView(src: episode.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
+                                            ImageView(src: episode.getPrimaryImage(maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
                                                 .shadow(radius: 5)
                                                 .frame(width: 150, height: 90)
                                                 .cornerRadius(10)

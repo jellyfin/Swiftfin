@@ -73,8 +73,7 @@ struct MovieItemView: View {
 
     var portraitHeaderView: some View {
         ImageView(src: item
-            .getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!,
-                              maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
+            .getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
             bh: item.getBackdropImageBlurHash())
             .opacity(0.4)
             .blur(radius: 2.0)
@@ -83,7 +82,7 @@ struct MovieItemView: View {
     var portraitHeaderOverlayView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
-                ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 120))
+                ImageView(src: item.getPrimaryImage(maxWidth: 120))
                     .frame(width: 120, height: 180)
                     .cornerRadius(10)
                 VStack(alignment: .leading) {
@@ -249,7 +248,7 @@ struct MovieItemView: View {
             } else {
                 GeometryReader { geometry in
                     ZStack {
-                        ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 200),
+                        ImageView(src: item.getBackdropImage(maxWidth: 200),
                                   bh: item.getBackdropImageBlurHash())
                             .opacity(0.3)
                             .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
@@ -258,7 +257,7 @@ struct MovieItemView: View {
                             .blur(radius: 4)
                         HStack {
                             VStack {
-                                ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 120),
+                                ImageView(src: item.getPrimaryImage(maxWidth: 120),
                                           bh: item.getPrimaryImageBlurHash())
                                     .frame(width: 120, height: 180)
                                     .cornerRadius(10)

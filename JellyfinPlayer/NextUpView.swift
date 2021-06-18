@@ -26,7 +26,7 @@ struct NextUpView: View {
                         ForEach(items, id: \.id) { item in
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
-                                    ImageView(src: item.getSeriesPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
+                                    ImageView(src: item.getSeriesPrimaryImage(maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
                                     Spacer().frame(height: 5)

@@ -43,7 +43,7 @@ struct ContinueWatchingView: View {
                         NavigationLink(destination: ItemView(item: item)) {
                             VStack(alignment: .leading) {
                                 Spacer().frame(height: 10)
-                                ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 320), bh: item.getBackdropImageBlurHash())
+                                ImageView(src: item.getBackdropImage(maxWidth: 320), bh: item.getBackdropImageBlurHash())
                                     .frame(width: 320, height: 180)
                                     .cornerRadius(10)
                                     .overlay(

@@ -10,6 +10,7 @@
 import Combine
 import Foundation
 import ActivityIndicator
+import JellyfinAPI
 
 typealias ErrorMessage = String
 
@@ -29,5 +30,23 @@ class ViewModel: ObservableObject {
     
     init() {
         loading.loading.assign(to: \.isLoading, on: self).store(in: &cancellables)
+    }
+    
+    func HandleAPIRequestCompletion(completion: Subscribers.Completion<Error>) {
+        switch completion {
+            case .finished:
+                break
+            case .failure(let error):
+                if let err = error as? ErrorResponse {
+                    switch err {
+                        case .error(401, _, _, _):
+                            self.errorMessage = err.localizedDescription
+                            SessionManager.current.logout()
+                        case .error:
+                            self.errorMessage = err.localizedDescription
+                    }
+                }
+                break
+        }
     }
 }

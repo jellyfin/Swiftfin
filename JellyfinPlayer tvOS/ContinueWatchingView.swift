@@ -12,6 +12,7 @@ import Combine
 
 struct ContinueWatchingView: View {
     var items: [BaseItemDto]
+    @Namespace private var namespace
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -27,11 +28,11 @@ struct ContinueWatchingView: View {
                             NavigationLink(destination: Text("itemv")) {
                                 LandscapeItemElement(item: item)
                             }.buttonStyle(PlainNavigationLinkButtonStyle())
+                                .prefersDefaultFocus(item == items.first, in: namespace)
                         }
                         Spacer().frame(width: 90)
                     }
                 }.frame(height: 330)
-                .offset(y: -10)
             } else {
                 EmptyView()
             }

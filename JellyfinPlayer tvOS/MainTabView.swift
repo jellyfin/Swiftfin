@@ -13,39 +13,34 @@ import SwiftUI
 struct MainTabView: View {
     @State private var tabSelection: Tab = .home
     @StateObject private var viewModel = MainTabViewModel()
-    @State private var backdropAnim: Bool = false
+    @State private var backdropAnim: Bool = true
     @State private var lastBackdropAnim: Bool = false
     
     var body: some View {
         ZStack() {
-            //please do not touch my magical crossfading.
+            //please do not touch my magical crossfading. i will wave my magical github wand and cry
+            if(viewModel.lastBackgroundURL != nil) {
+                ImageView(src: viewModel.lastBackgroundURL!, bh: viewModel.backgroundBlurHash)
+                    .frame(minWidth: 100, maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
+                    .opacity(lastBackdropAnim ? 0.4 : 0)
+            }
             if(viewModel.backgroundURL != nil) {
-                if(viewModel.lastBackgroundURL != nil) {
-                    ImageView(src: viewModel.lastBackgroundURL!, bh: viewModel.backgroundBlurHash)
-                        .frame(width: UIScreen.main.currentMode?.size.width, height: UIScreen.main.currentMode?.size.height)
-                        .blur(radius: 2)
-                        .opacity(lastBackdropAnim ? 0.4 : 0)
-                        .onChange(of: viewModel.backgroundURL) { _ in
-                            withAnimation(.linear(duration: 0.15)) {
-                                lastBackdropAnim = false
-                            }
-                        }
-                }
                 ImageView(src: viewModel.backgroundURL!, bh: viewModel.backgroundBlurHash)
-                    .frame(width: UIScreen.main.currentMode?.size.width, height: UIScreen.main.currentMode?.size.height)
-                    .blur(radius: 2)
+                    .frame(minWidth: 100, maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
                     .opacity(backdropAnim ? 0.4 : 0)
                     .onChange(of: viewModel.backgroundURL) { _ in
                         lastBackdropAnim = true
                         backdropAnim = false
-                        withAnimation(.linear(duration: 0.15)) {
+                        withAnimation(.linear(duration: 0.33)) {
+                            lastBackdropAnim = false
                             backdropAnim = true
                         }
                     }
             }
+            
             TabView(selection: $tabSelection) {
                 HomeView()
-                .navigationViewStyle(StackNavigationViewStyle())
+                    .offset(y: -20)
                 .tabItem {
                     Text(Tab.home.localized)
                     Image(systemName: "house")
@@ -53,7 +48,6 @@ struct MainTabView: View {
                 .tag(Tab.home)
                 
                 Text("Library")
-                .navigationViewStyle(StackNavigationViewStyle())
                 .tabItem {
                     Text(Tab.allMedia.localized)
                     Image(systemName: "folder")

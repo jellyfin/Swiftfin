@@ -47,7 +47,7 @@ struct NextUpWidgetProvider: TimelineProvider {
                 var downloadedItems = [(BaseItemDto, UIImage?)]()
                 items.enumerated().forEach { _, item in
                     dispatchGroup.enter()
-                    ImagePipeline.shared.loadImage(with: item.getBackdropImage(baseURL: server.baseURI ?? "", maxWidth: 320)) { result in
+                    ImagePipeline.shared.loadImage(with: item.getBackdropImage(maxWidth: 320)) { result in
                         guard case let .success(image) = result else {
                             dispatchGroup.leave()
                             return
@@ -89,7 +89,7 @@ struct NextUpWidgetProvider: TimelineProvider {
                 var downloadedItems = [(BaseItemDto, UIImage?)]()
                 items.enumerated().forEach { _, item in
                     dispatchGroup.enter()
-                    ImagePipeline.shared.loadImage(with: item.getBackdropImage(baseURL: server.baseURI ?? "", maxWidth: 320)) { result in
+                    ImagePipeline.shared.loadImage(with: item.getBackdropImage(maxWidth: 320)) { result in
                         guard case let .success(image) = result else {
                             dispatchGroup.leave()
                             return

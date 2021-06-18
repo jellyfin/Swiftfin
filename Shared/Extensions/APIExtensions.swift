@@ -15,30 +15,30 @@ extension BaseItemDto {
 
     // MARK: Images
     func getSeriesBackdropImageBlurHash() -> String {
-        let rawImgURL = self.getSeriesBackdropImage(baseURL: "", maxWidth: 1).absoluteString
+        let rawImgURL = self.getSeriesBackdropImage(maxWidth: 1).absoluteString
         let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
 
         return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
     }
 
     func getSeriesPrimaryImageBlurHash() -> String {
-        let rawImgURL = self.getSeriesPrimaryImage(baseURL: "", maxWidth: 1).absoluteString
+        let rawImgURL = self.getSeriesPrimaryImage(maxWidth: 1).absoluteString
         let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
 
         return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^"
     }
 
     func getPrimaryImageBlurHash() -> String {
-        let rawImgURL = self.getPrimaryImage(baseURL: "", maxWidth: 1).absoluteString
+        let rawImgURL = self.getPrimaryImage(maxWidth: 1).absoluteString
         let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
 
         return self.imageBlurHashes?.primary?[imgTag] ?? "001fC^"
     }
 
     func getBackdropImageBlurHash() -> String {
-        let rawImgURL = self.getBackdropImage(baseURL: "", maxWidth: 1).absoluteString
+        let rawImgURL = self.getBackdropImage(maxWidth: 1).absoluteString
         let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
-
+        
         if rawImgURL.contains("Backdrop") {
             return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
         } else {
@@ -46,7 +46,7 @@ extension BaseItemDto {
         }
     }
 
-    func getBackdropImage(baseURL: String, maxWidth: Int) -> URL {
+    func getBackdropImage(maxWidth: Int) -> URL {
         var imageType = ""
         var imageTag = ""
 
@@ -68,31 +68,28 @@ extension BaseItemDto {
         }
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
-    func getSeriesBackdropImage(baseURL: String, maxWidth: Int) -> URL {
+    func getSeriesBackdropImage(maxWidth: Int) -> URL {
         let imageType = "Backdrop"
         let imageTag = (self.parentBackdropImageTags ?? [""])[0]
 
-        print(imageType)
-        print(imageTag)
-
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(baseURL)/Items/\(self.parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
-    func getSeriesPrimaryImage(baseURL: String, maxWidth: Int) -> URL {
+    func getSeriesPrimaryImage(maxWidth: Int) -> URL {
         let imageType = "Primary"
         let imageTag = self.seriesPrimaryImageTag ?? ""
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(baseURL)/Items/\(self.seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
-    func getPrimaryImage(baseURL: String, maxWidth: Int) -> URL {
+    func getPrimaryImage(maxWidth: Int) -> URL {
         let imageType = "Primary"
         var imageTag = self.imageTags?["Primary"] ?? ""
 
@@ -101,7 +98,7 @@ extension BaseItemDto {
         }
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 

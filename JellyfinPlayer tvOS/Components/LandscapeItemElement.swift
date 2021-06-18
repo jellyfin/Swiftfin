@@ -1,5 +1,5 @@
 //
- /* 
+ /*
   * SwiftFin is subject to the terms of the Mozilla Public
   * License, v2.0. If a copy of the MPL was not distributed with this
   * file, you can obtain one at https://mozilla.org/MPL/2.0/.
@@ -45,8 +45,8 @@ struct LandscapeItemElement: View {
     
     var body: some View {
         VStack() {
-            ImageView(src: item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 375), bh: item.getBackdropImageBlurHash())
-                .frame(width: 375, height: 250)
+            ImageView(src: (item.type == "Episode" ? item.getSeriesBackdropImage(maxWidth: 445) : item.getBackdropImage(maxWidth: 445)), bh: item.type == "Episode" ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
+                .frame(width: 445, height: 250)
                 .cornerRadius(10)
                 .overlay(
                     Group {
@@ -54,7 +54,7 @@ struct LandscapeItemElement: View {
                             ZStack(alignment: .leading) {
                                 Rectangle()
                                     .fill(LinearGradient(colors: [.black,.clear], startPoint: .bottom, endPoint: .top))
-                                    .frame(width: 375, height: 90)
+                                    .frame(width: 445, height: 90)
                                     .mask(CutOffShadow())
                                 VStack(alignment: .leading) {
                                     Text("CONTINUE • \(item.getItemProgressString())")
@@ -68,9 +68,9 @@ struct LandscapeItemElement: View {
                                             .frame(minWidth: 100, maxWidth: .infinity, minHeight: 12, maxHeight: 12)
                                         RoundedRectangle(cornerRadius: 6)
                                              .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
-                                             .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 3.59), height: 12)
+                                             .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 4.45 - 0.16), height: 12)
                                      }
-                                }.padding(8)
+                                }.padding(12)
                             }
                         } else {
                             EmptyView()
@@ -80,11 +80,11 @@ struct LandscapeItemElement: View {
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
             if(focused) {
-                Text(item.seriesName ?? item.name ?? "")
+                Text(item.type == "Episode" ? "\(item.seriesName ?? "") • S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))" : item.name ?? "")
                     .font(.callout)
                     .fontWeight(.semibold)
                     .lineLimit(1)
-                    .frame(width: 375)
+                    .frame(width: 445)
             } else {
                 Spacer().frame(height: 25)
             }
@@ -95,12 +95,11 @@ struct LandscapeItemElement: View {
             }
             
             if(envFocus == true) {
-                backgroundURL = item.getBackdropImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: Int((UIScreen.main.currentMode?.size.width)!))
-                BackgroundManager.current.setBackground(to: backgroundURL!, hash: item.getBackdropImageBlurHash())
-            } else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                    if(BackgroundManager.current.backgroundURL == backgroundURL) {
-                        BackgroundManager.current.clearBackground()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    // your code here
+                    if(self.focused == true) {
+                        backgroundURL = item.getBackdropImage(maxWidth: 1080)
+                        BackgroundManager.current.setBackground(to: backgroundURL!, hash: item.getBackdropImageBlurHash())
                     }
                 }
             }

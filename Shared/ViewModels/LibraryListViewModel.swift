@@ -29,7 +29,7 @@ final class LibraryListViewModel: ViewModel {
         UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                print(completion)
+                self.HandleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 self.libraries.append(contentsOf: response.items ?? [])
             })

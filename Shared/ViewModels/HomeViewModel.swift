@@ -33,24 +33,29 @@ final class HomeViewModel: ViewModel {
     }
 
     func refresh() {
-        UserAPI.getCurrentUser()
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                print(completion)
-            }, receiveValue: { response in
-                let libraries = response.configuration?.orderedViews ?? []
-                self.librariesShowRecentlyAddedIDs = libraries.filter { element in
-                    !(response.configuration?.latestItemsExcludes?.contains(element))!
-                }
-            })
-            .store(in: &cancellables)
-
         UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                print(completion)
+                self.HandleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
-                self.libraries = response.items ?? []
+                response.items!.forEach { item in
+                    if(item.collectionType == "movies" || item.collectionType == "tvshows") {
+                        self.libraries.append(item)
+                    }
+                }
+                
+                UserAPI.getCurrentUser()
+                    .trackActivity(self.loading)
+                    .sink(receiveCompletion: { completion in
+                        self.HandleAPIRequestCompletion(completion: completion)
+                    }, receiveValue: { response in
+                        self.libraries.forEach { library in
+                            if(!(response.configuration?.latestItemsExcludes?.contains(library.id!))!) {
+                                self.librariesShowRecentlyAddedIDs.append(library.id!)
+                            }
+                        }
+                    })
+                    .store(in: &self.cancellables)
             })
             .store(in: &cancellables)
 
@@ -59,7 +64,7 @@ final class HomeViewModel: ViewModel {
                                 mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                print(completion)
+                self.HandleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 self.resumeItems = response.items ?? []
             })
@@ -68,8 +73,8 @@ final class HomeViewModel: ViewModel {
         TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, limit: 12,
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
-            .sink(receiveCompletion: { result in
-                print(result)
+            .sink(receiveCompletion: { completion in
+                self.HandleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 self.nextUpItems = response.items ?? []
             })

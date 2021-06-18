@@ -47,7 +47,7 @@ struct LatestMediaView: View {
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
                                     Spacer().frame(height: 10)
-                                    ImageView(src: item.getPrimaryImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: item.getPrimaryImageBlurHash())
+                                    ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
                                         .frame(width: 100, height: 150)
                                         .cornerRadius(10)
                                     Spacer().frame(height: 5)
