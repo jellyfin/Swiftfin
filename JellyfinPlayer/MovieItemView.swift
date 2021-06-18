@@ -442,9 +442,5 @@ struct MovieItemView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(item.name ?? "")
-        .supportedOrientations(.allButUpsideDown)
-        .overrideViewPreference(.unspecified)
-        .preferredColorScheme(.none)
-        .prefersHomeIndicatorAutoHidden(false)
     }
 }

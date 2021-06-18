@@ -84,7 +84,8 @@ struct ConnectToServerView: View {
                                     }
                                 }) {
                                     PublicUserButton(publicUser: publicUser)
-                                }.buttonStyle(PlainNavigationLinkButtonStyle())
+                                }
+                                .buttonStyle(PlainNavigationLinkButtonStyle())
                             }
                         }.padding(.bottom, 20)
                         HStack {

@@ -28,44 +28,34 @@ struct ItemView: View {
 
     var body: some View {
         VStack {
-            if videoPlayerItem.shouldShowPlayer {
-                LoadingViewNoBlur(isShowing: $videoIsLoading) {
-                    VLCPlayerWithControls(item: videoPlayerItem.itemToPlay, loadBinding: $videoIsLoading, pBinding: _videoPlayerItem.projectedValue.shouldShowPlayer)
-                }.navigationBarHidden(true)
-                .navigationBarBackButtonHidden(true)
-                .statusBar(hidden: true)
-                .prefersHomeIndicatorAutoHidden(true)
-                .preferredColorScheme(.dark)
-                .edgesIgnoringSafeArea(.all)
-                .overrideViewPreference(.unspecified)
-                .supportedOrientations(.landscape)
-            } else {
-                VStack {
-                    if item.type == "Movie" {
-                        MovieItemView(item: item)
-                    } else if item.type == "Season" {
-                        SeasonItemView(item: item)
-                    } else if item.type == "Series" {
-                        SeriesItemView(item: item)
-                    } else if item.type == "Episode" {
-                        EpisodeItemView(item: item)
-                    } else {
-                        Text("Type: \(item.type ?? "") not implemented yet :(")
-                    }
-                }
-                .introspectTabBarController { (UITabBarController) in
-                    UITabBarController.tabBar.isHidden = false
-                }
-                .navigationBarHidden(false)
-                .navigationBarBackButtonHidden(false)
-                .statusBar(hidden: false)
-                .prefersHomeIndicatorAutoHidden(false)
-                .preferredColorScheme(.none)
-                .edgesIgnoringSafeArea([])
-                .overrideViewPreference(.unspecified)
-                .supportedOrientations(.allButUpsideDown)
-                .environmentObject(videoPlayerItem)
+            NavigationLink(destination: LoadingViewNoBlur(isShowing: $videoIsLoading) { VLCPlayerWithControls(item: videoPlayerItem.itemToPlay, loadBinding: $videoIsLoading, pBinding: _videoPlayerItem.projectedValue.shouldShowPlayer)
+                    .navigationBarHidden(true)
+                    .navigationBarBackButtonHidden(true)
+                    .statusBar(hidden: true)
+                    .edgesIgnoringSafeArea(.all)
+                    .prefersHomeIndicatorAutoHidden(true)
+              }, isActive: $videoPlayerItem.shouldShowPlayer) {
+                EmptyView()
             }
+            VStack {
+                if item.type == "Movie" {
+                    MovieItemView(item: item)
+                } else if item.type == "Season" {
+                    SeasonItemView(item: item)
+                } else if item.type == "Series" {
+                    SeriesItemView(item: item)
+                } else if item.type == "Episode" {
+                    EpisodeItemView(item: item)
+                } else {
+                    Text("Type: \(item.type ?? "") not implemented yet :(")
+                }
+            }
+            .introspectTabBarController { (UITabBarController) in
+                UITabBarController.tabBar.isHidden = false
+            }
+            .navigationBarHidden(false)
+            .navigationBarBackButtonHidden(false)
+            .environmentObject(videoPlayerItem)
         }
     }
 }

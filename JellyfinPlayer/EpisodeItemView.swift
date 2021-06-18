@@ -419,9 +419,5 @@ struct EpisodeItemView: View {
         })
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("\(item.seriesName ?? "") - S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))")
-        .supportedOrientations(.allButUpsideDown)
-        .overrideViewPreference(.unspecified)
-        .preferredColorScheme(.none)
-        .prefersHomeIndicatorAutoHidden(false)
     }
 }

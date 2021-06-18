@@ -51,7 +51,7 @@ class DeviceProfileBuilder {
 
             // Device supports Dolby Digital (AC3, EAC3)
             if supportsFeature(minimumSupported: .A8X) {
-                if supportsFeature(minimumSupported: .A10) {
+                if supportsFeature(minimumSupported: .A9) {
                     directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "hevc,h264,hev1", type: .video)] // HEVC/H.264 with Dolby Digital
                 } else {
                     directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "ac3,eac3,aac,mp3,wav,opus", videoCodec: "h264", type: .video)] // H.264 with Dolby Digital
@@ -60,12 +60,12 @@ class DeviceProfileBuilder {
 
             // Device supports Dolby Vision?
             if supportsFeature(minimumSupported: .A10X) {
-                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "dvhe,dvh1,dva1,dvav,h264,hevc,hev1", type: .video)] // H.264/HEVC with Dolby Digital - No Atmos - Vision
+                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "dvhe,dvh1,h264,hevc,hev1", type: .video)] // H.264/HEVC with Dolby Digital - No Atmos - Vision
             }
 
             // Device supports Dolby Atmos?
             if supportsFeature(minimumSupported: .A12) {
-                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", videoCodec: "h264,hevc,dvhe,dvh1,dva1,dvav,h264,hevc,hev1", type: .video)] // H.264/HEVC with Dolby Digital & Atmos - Vision
+                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", videoCodec: "h264,hevc,dvhe,dvh1,h264,hevc,hev1", type: .video)] // H.264/HEVC with Dolby Digital & Atmos - Vision
             }
 
         // Build transcoding profiles
@@ -74,8 +74,8 @@ class DeviceProfileBuilder {
 
             // Device supports Dolby Digital (AC3, EAC3)
             if supportsFeature(minimumSupported: .A8X) {
-                if supportsFeature(minimumSupported: .A10) {
-                    transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "aac,mp3,wav,eac3,ac3,flac,opus", audioCodec: "h264,hevc,hev1", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
+                if supportsFeature(minimumSupported: .A9) {
+                    transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264,hevc,hev1", audioCodec: "aac,mp3,wav,eac3,ac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
                 } else {
                     transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264", audioCodec: "aac,mp3,wav,eac3,ac3,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
                 }
@@ -83,12 +83,12 @@ class DeviceProfileBuilder {
 
             // Device supports Dolby Vision?
             if supportsFeature(minimumSupported: .A10X) {
-                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
+                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dvhe,dvh1,hevc,h264,hev1", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
             }
 
             // Device supports Dolby Atmos?
             if supportsFeature(minimumSupported: .A12) {
-                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dva1,dvav,dvhe,dvh1,hevc,h264,hev1", audioCodec: "aac,mp3,wav,ac3,eac3,flac,dts,truehd,dca,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
+                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dvhe,dvh1,hevc,h264,hev1", audioCodec: "aac,mp3,wav,ac3,eac3,flac,dts,truehd,dca,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
             }
 
         var codecProfiles: [CodecProfile] = []
@@ -106,19 +106,27 @@ class DeviceProfileBuilder {
 
         codecProfiles.append(CodecProfile(type: .video, applyConditions: h264CodecConditions, codec: "h264"))
 
-        if supportsFeature(minimumSupported: .A10) {
+        if supportsFeature(minimumSupported: .A9) {
             codecProfiles.append(CodecProfile(type: .video, applyConditions: hevcCodecConditions, codec: "hevc"))
         }
 
         var subtitleProfiles: [SubtitleProfile] = []
+
+        subtitleProfiles.append(SubtitleProfile(format: "ass", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "subrip", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "sub", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "pgssub", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "pgs", method: .embed))
+        subtitleProfiles.append(SubtitleProfile(format: "subrip", method: .external))
+        subtitleProfiles.append(SubtitleProfile(format: "sub", method: .external))
+        subtitleProfiles.append(SubtitleProfile(format: "pgssub", method: .external))
+        subtitleProfiles.append(SubtitleProfile(format: "pgs", method: .external))
+        subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
+        subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
         subtitleProfiles.append(SubtitleProfile(format: "vtt", method: .external))
         subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
         subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
-        subtitleProfiles.append(SubtitleProfile(format: "pgssub", method: .embed))
-        subtitleProfiles.append(SubtitleProfile(format: "sub", method: .embed))
-        subtitleProfiles.append(SubtitleProfile(format: "rip", method: .embed))
-        subtitleProfiles.append(SubtitleProfile(format: "srt", method: .embed))
-        subtitleProfiles.append(SubtitleProfile(format: "pgs", method: .embed))
 
         let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", type: .video, mimeType: "video/mp4")]
 
@@ -196,6 +204,7 @@ class DeviceProfileBuilder {
         case "iPad13,1", "iPad13,2":                                 return .A14
         case "AppleTV5,3":                                           return .A8
         case "AppleTV6,2":                                           return .A10X
+        case "AppleTV11,1":                                           return .A12
         case "AudioAccessory1,1":                                    return .A8
         default:                                                     return .A99
         }

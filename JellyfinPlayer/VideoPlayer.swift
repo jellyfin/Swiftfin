@@ -258,15 +258,29 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     override func remoteControlReceived(with event: UIEvent?) {
         dump(event)
     }
+    
+    
 
     // MARK: viewDidLoad
     override func viewDidLoad() {
+        if manifest.type == "Movie" {
+            titleLabel.text = manifest.name ?? ""
+        } else {
+            titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
+        }
+        
         super.viewDidLoad()
+        if(!UIDevice.current.orientation.isLandscape) {
+            let value = UIInterfaceOrientation.landscapeLeft.rawValue
+            UIDevice.current.setValue(value, forKey: "orientation")
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        overrideUserInterfaceStyle = .dark
+        self.tabBarController?.tabBar.isHidden = true
         // View has loaded.
-
-        // Rotate to landscape only if necessary
-
-        UIViewController.attemptRotationToDeviceOrientation()
 
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         // mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
@@ -274,15 +288,8 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         mediaPlayer.delegate = self
         mediaPlayer.drawable = videoContentView
 
-        if manifest.type == "Movie" {
-            titleLabel.text = manifest.name ?? ""
-        } else {
-            titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
-        }
-
         // Fetch max bitrate from UserDefaults depending on current connection mode
         let defaults = UserDefaults.standard
-        // globalData.isInNetwork ? defaults.integer(forKey: "InNetworkBandwidth") : defaults.integer(forKey: "OutOfNetworkBandwidth")
         let maxBitrate = defaults.integer(forKey: "InNetworkBandwidth")
 
         // Build a device profile
@@ -298,13 +305,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 .sink(receiveCompletion: { result in
                     print(result)
                 }, receiveValue: { [self] response in
+                    videoContentView.setNeedsLayout()
+                    videoContentView.setNeedsDisplay()
                     playSessionId = response.playSessionId ?? ""
-
-                    if response.mediaSources == nil {
-                        delegate?.exitPlayer(self)
-                        return
-                    }
-
                     let mediaSource = response.mediaSources!.first.self!
                     if mediaSource.transcodingUrl != nil {
                         // Item is being transcoded by request of server
@@ -390,7 +393,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                                 selectedAudioTrack = audioTrackArray[0].id
                             }
                         }
-
+                        
+                        print("gotToEnd")
+                        
                         self.sendPlayReport()
                         playbackItem = item
                     }
@@ -409,15 +414,19 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
                     // Pause and load captions into memory.
                     mediaPlayer.pause()
+                    
+                    var shouldHaveSubtitleTracks = 0;
                     subtitleTrackArray.forEach { sub in
                         if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
+                            shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
                             mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                         }
                     }
 
                     // Wait for captions to load
                     delegate?.showLoadingView(self)
-                    while mediaPlayer.numberOfSubtitlesTracks != subtitleTrackArray.count - 1 {}
+
+                    while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {}
 
                     // Select default track & resume playback
                     mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
@@ -426,11 +435,6 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 })
                 .store(in: &cancellables)
         }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.tabBarController?.tabBar.isHidden = true
     }
 
     // MARK: VideoPlayerSettings Delegate
@@ -552,7 +556,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
     func sendPlayReport() {
         startTime = Int(Date().timeIntervalSince1970) * 10000000
-
+        
+        print("sending play report!")
+        
         let startInfo = PlaybackStartInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: false, isMuted: false, positionTicks: manifest.userData?.playbackPositionTicks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
         PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)

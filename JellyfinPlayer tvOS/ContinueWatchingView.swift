@@ -27,8 +27,8 @@ struct ContinueWatchingView: View {
                         ForEach(items, id: \.id) { item in
                             NavigationLink(destination: Text("itemv")) {
                                 LandscapeItemElement(item: item)
-                            }.buttonStyle(PlainNavigationLinkButtonStyle())
-                                .prefersDefaultFocus(item == items.first, in: namespace)
+                            }
+                            .buttonStyle(PlainNavigationLinkButtonStyle())
                         }
                         Spacer().frame(width: 45)
                     }
