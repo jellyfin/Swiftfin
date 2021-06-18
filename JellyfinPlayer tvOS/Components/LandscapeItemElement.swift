@@ -11,25 +11,23 @@ import SwiftUI
 import JellyfinAPI
 
 private struct CutOffShadow: Shape {
-    let radius = 6.0
-
     func path(in rect: CGRect) -> Path {
         var path = Path()
 
         let tl = CGPoint(x: rect.minX, y: rect.minY)
         let tr = CGPoint(x: rect.maxX, y: rect.minY)
-        let brs = CGPoint(x: rect.maxX, y: rect.maxY - radius)
-        let brc = CGPoint(x: rect.maxX - radius, y: rect.maxY - radius)
-        let bls = CGPoint(x: rect.minX + radius, y: rect.maxY)
-        let blc = CGPoint(x: rect.minX + radius, y: rect.maxY - radius)
+        let brs = CGPoint(x: rect.maxX, y: rect.maxY - 6)
+        let brc = CGPoint(x: rect.maxX - 6, y: rect.maxY - 6)
+        let bls = CGPoint(x: rect.minX + 6, y: rect.maxY)
+        let blc = CGPoint(x: rect.minX + 6, y: rect.maxY - 6)
 
         path.move(to: tl)
         path.addLine(to: tr)
         path.addLine(to: brs)
-        path.addRelativeArc(center: brc, radius: radius,
+        path.addRelativeArc(center: brc, radius: 6,
           startAngle: Angle.degrees(0), delta: Angle.degrees(90))
         path.addLine(to: bls)
-        path.addRelativeArc(center: blc, radius: radius,
+        path.addRelativeArc(center: blc, radius: 6,
           startAngle: Angle.degrees(90), delta: Angle.degrees(90))
 
         return path

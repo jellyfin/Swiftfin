@@ -29,7 +29,7 @@ final class SessionManager {
     #endif
 
     init() {
-        let savedUserRequest = SignedInUser.fetchRequest()
+        let savedUserRequest: NSFetchRequest<SignedInUser> = SignedInUser.fetchRequest()
 
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
 
@@ -86,7 +86,7 @@ final class SessionManager {
     }
 
     func doesUserHaveSavedSession(userID: String) -> Bool {
-        let savedUserRequest = SignedInUser.fetchRequest()
+        let savedUserRequest: NSFetchRequest<SignedInUser> = SignedInUser.fetchRequest()
         savedUserRequest.predicate = NSPredicate(format: "user_id == %@", userID)
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
 
@@ -98,7 +98,7 @@ final class SessionManager {
     }
 
     func getSavedSession(userID: String) -> SignedInUser {
-        let savedUserRequest = SignedInUser.fetchRequest()
+        let savedUserRequest: NSFetchRequest<SignedInUser> = SignedInUser.fetchRequest()
         savedUserRequest.predicate = NSPredicate(format: "user_id == %@", userID)
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
         return savedUsers!.first!

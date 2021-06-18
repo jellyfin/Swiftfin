@@ -17,7 +17,7 @@ final class ServerEnvironment {
     fileprivate(set) var server: Server!
 
     init() {
-        let serverRequest = Server.fetchRequest()
+        let serverRequest: NSFetchRequest<Server> = Server.fetchRequest()
         let servers = try? PersistenceController.shared.container.viewContext.fetch(serverRequest)
 
         if servers?.count != 0 {
