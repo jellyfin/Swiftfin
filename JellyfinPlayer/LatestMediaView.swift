@@ -5,44 +5,20 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
-import JellyfinAPI
 import Combine
+import JellyfinAPI
+import SwiftUI
 
 struct LatestMediaView: View {
-
     @StateObject
-    var tempViewModel = ViewModel()
-    @State var items: [BaseItemDto] = []
-    private var library_id: String = ""
-    @State private var viewDidLoad: Bool = false
-
-    init(usingParentID: String) {
-        library_id = usingParentID
-    }
-
-    func onAppear() {
-        if viewDidLoad == true {
-            return
-        }
-        viewDidLoad = true
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            UserLibraryAPI.getLatestMedia(userId: SessionManager.current.user.user_id!, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true, limit: 12)
-                .sink(receiveCompletion: { completion in
-                    print(completion)
-                }, receiveValue: { response in
-                    items = response
-                })
-                .store(in: &tempViewModel.cancellables)
-        }
-    }
+    var viewModel: LatestMediaViewModel
 
     var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
+        ScrollView(.horizontal, showsIndicators: false) {
+            ZStack {
                 LazyHStack {
                     Spacer().frame(width: 16)
-                    ForEach(items, id: \.id) { item in
+                    ForEach(viewModel.items, id: \.id) { item in
                         if item.type == "Series" || item.type == "Movie" {
                             NavigationLink(destination: ItemView(item: item)) {
                                 VStack(alignment: .leading) {
@@ -69,10 +45,13 @@ struct LatestMediaView: View {
                             }
                         }
                     }
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
                 }
-                .frame(height: 190)
             }
-            .onAppear(perform: onAppear)
-            .padding(EdgeInsets(top: -2, leading: 0, bottom: 0, trailing: 0)).frame(height: 190)
+            .frame(height: 190)
+        }
+        .padding(EdgeInsets(top: -2, leading: 0, bottom: 0, trailing: 0)).frame(height: 190)
     }
 }

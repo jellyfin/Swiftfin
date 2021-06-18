@@ -53,7 +53,7 @@ struct HomeView: View {
                                         }
                                     }
                                 }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                LatestMediaView(usingParentID: libraryID)
+                                LatestMediaView(viewModel: .init(libraryID: libraryID))
                             }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                         }
                     }

@@ -117,6 +117,7 @@
 		628B95382670CDAB0091AF3B /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBFF263B596B003A4E83 /* Model.xcdatamodeld */; };
 		628B953A2670CE250091AF3B /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 628B95392670CE250091AF3B /* KeychainSwift */; };
 		628B953C2670D2430091AF3B /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
+		62E632DA267D2BC40063E547 /* LatestMediaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632D9267D2BC40063E547 /* LatestMediaViewModel.swift */; };
 		62EC3527267665D8000E9F2D /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		62EC3528267665D8000E9F2D /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62EC352C26766675000E9F2D /* ServerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352B26766675000E9F2D /* ServerEnvironment.swift */; };
@@ -265,6 +266,7 @@
 		628B952A2670CABE0091AF3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		628B95362670CB800091AF3B /* JellyfinWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinWidget.swift; sourceTree = "<group>"; };
 		628B953B2670D1FC0091AF3B /* WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetExtension.entitlements; sourceTree = "<group>"; };
+		62E632D9267D2BC40063E547 /* LatestMediaViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaViewModel.swift; sourceTree = "<group>"; };
 		62EC352B26766675000E9F2D /* ServerEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerEnvironment.swift; sourceTree = "<group>"; };
 		62EC352E267666A5000E9F2D /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRotationViewModifier.swift; sourceTree = "<group>"; };
@@ -326,6 +328,7 @@
 				625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */,
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
 				536D3D75267BA9BB0004248C /* MainTabViewModel.swift */,
+				62E632D9267D2BC40063E547 /* LatestMediaViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -742,6 +745,7 @@
 				53F8377D265FF67C00F456B3 /* VideoPlayerSettingsView.swift in Sources */,
 				53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */,
 				62133890265F83A900A81A2A /* LibraryListView.swift in Sources */,
+				62E632DA267D2BC40063E547 /* LatestMediaViewModel.swift in Sources */,
 				625CB56F2678C23300530A6E /* HomeView.swift in Sources */,
 				53892770263C25230035E14B /* NextUpView.swift in Sources */,
 				625CB5682678B6FB00530A6E /* SplashView.swift in Sources */,
