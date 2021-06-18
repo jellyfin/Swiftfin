@@ -27,23 +27,23 @@ final class SessionManager {
     #if os(tvOS)
     let tvUserManager = TVUserManager()
     #endif
-    
+
     init() {
         let savedUserRequest = SignedInUser.fetchRequest()
-        
+
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
 
         #if os(tvOS)
-        savedUsers?.forEach() { savedUser in
-            if(savedUser.appletv_id == tvUserManager.currentUserIdentifier ?? "") {
+        savedUsers?.forEach { savedUser in
+            if savedUser.appletv_id == tvUserManager.currentUserIdentifier ?? "" {
                 self.user = savedUser
             }
         }
         #else
         user = savedUsers?.first
         #endif
-        
-        if(user != nil) {
+
+        if user != nil {
             let authToken = getAuthToken(userID: user.user_id!)
             generateAuthHeader(with: authToken)
         }
@@ -70,43 +70,43 @@ final class SessionManager {
         deviceID = "iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(user?.user_id ?? "")"
         #endif
         header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
-        
-        if(authToken != nil) {
+
+        if authToken != nil {
             header.append("Token=\"\(authToken!)\"")
             accessToken = authToken!
         }
 
         JellyfinAPI.customHeaders["X-Emby-Authorization"] = header
     }
-    
+
     fileprivate func getAuthToken(userID: String) -> String? {
         let keychain = KeychainSwift()
         keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
         return keychain.get("AccessToken_\(userID)")
     }
-    
+
     func doesUserHaveSavedSession(userID: String) -> Bool {
         let savedUserRequest = SignedInUser.fetchRequest()
         savedUserRequest.predicate = NSPredicate(format: "user_id == %@", userID)
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
-        
-        if(savedUsers!.isEmpty) {
+
+        if savedUsers!.isEmpty {
             return false
         }
-        
+
         return true
     }
-    
+
     func getSavedSession(userID: String) -> SignedInUser {
         let savedUserRequest = SignedInUser.fetchRequest()
         savedUserRequest.predicate = NSPredicate(format: "user_id == %@", userID)
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
         return savedUsers!.first!
     }
-    
+
     func loginWithSavedSession(user: SignedInUser) {
         let accessToken = getAuthToken(userID: user.user_id!)
-        
+
         self.user = user
         generateAuthHeader(with: accessToken)
         print(JellyfinAPI.customHeaders)
@@ -116,29 +116,29 @@ final class SessionManager {
 
     func login(username: String, password: String) -> AnyPublisher<SignedInUser, Error> {
         generateAuthHeader(with: nil)
-        
+
         return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
             .map { response -> (SignedInUser, String?) in
                 let user = SignedInUser(context: PersistenceController.shared.container.viewContext)
                 user.username = response.user?.name
                 user.user_id = response.user?.id
-                
+
                 #if os(tvOS)
-                //user.appletv_id = tvUserManager.currentUserIdentifier ?? ""
+                // user.appletv_id = tvUserManager.currentUserIdentifier ?? ""
                 #endif
-                
+
                 return (user, response.accessToken)
             }
             .handleEvents(receiveOutput: { [unowned self] response, accessToken in
                 user = response
                 _ = try? PersistenceController.shared.container.viewContext.save()
-                
+
                 let keychain = KeychainSwift()
                 keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
                 keychain.set(accessToken!, forKey: "AccessToken_\(user.user_id!)")
-                
+
                 generateAuthHeader(with: accessToken)
-                
+
                 let nc = NotificationCenter.default
                 nc.post(name: Notification.Name("didSignIn"), object: nil)
             })
@@ -155,7 +155,7 @@ final class SessionManager {
         let deleteRequest = NSBatchDeleteRequest(objectIDs: [user.objectID])
         user = nil
         _ = try? PersistenceController.shared.container.viewContext.execute(deleteRequest)
-        
+
         let nc = NotificationCenter.default
         nc.post(name: Notification.Name("didSignOut"), object: nil)
     }

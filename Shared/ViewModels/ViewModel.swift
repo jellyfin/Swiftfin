@@ -27,11 +27,11 @@ class ViewModel: ObservableObject {
     let loading = ActivityIndicator()
     @Published
     var errorMessage: ErrorMessage?
-    
+
     init() {
         loading.loading.assign(to: \.isLoading, on: self).store(in: &cancellables)
     }
-    
+
     func HandleAPIRequestCompletion(completion: Subscribers.Completion<Error>) {
         switch completion {
             case .finished:

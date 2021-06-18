@@ -13,9 +13,9 @@ import CoreMedia
 
 struct PublicUserButton: View {
     @Environment(\.isFocused) var envFocused: Bool
-    @State var focused: Bool = false;
+    @State var focused: Bool = false
     var publicUser: UserDto
-    
+
     var body: some View {
         VStack {
             if publicUser.primaryImageTag != nil {
@@ -31,7 +31,7 @@ struct PublicUserButton: View {
                     .cornerRadius(125.0)
                     .shadow(radius: 6)
             }
-            if(focused) {
+            if focused {
                 Text(publicUser.name ?? "").font(.headline).fontWeight(.semibold)
             } else {
                 Spacer().frame(height: 60)

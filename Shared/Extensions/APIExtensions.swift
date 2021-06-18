@@ -38,7 +38,7 @@ extension BaseItemDto {
     func getBackdropImageBlurHash() -> String {
         let rawImgURL = self.getBackdropImage(maxWidth: 1).absoluteString
         let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
-        
+
         if rawImgURL.contains("Backdrop") {
             return self.imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
         } else {

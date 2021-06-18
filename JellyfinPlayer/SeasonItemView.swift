@@ -18,7 +18,6 @@ struct SeasonItemView: View {
 
     var item: BaseItemDto = BaseItemDto()
     @State private var episodes: [BaseItemDto] = []
-    
 
     @State private var isLoading: Bool = true
     @State private var viewDidLoad: Bool = false
@@ -249,7 +248,7 @@ struct SeasonItemView: View {
             }
         }
     }
-    
+
     var body: some View {
         if isLoading {
             ProgressView()

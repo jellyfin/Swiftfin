@@ -10,19 +10,19 @@
 import SwiftUI
 import JellyfinAPI
 
-fileprivate struct CutOffShadow: Shape {
-    let radius = 6.0;
-    
+private struct CutOffShadow: Shape {
+    let radius = 6.0
+
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         let tl = CGPoint(x: rect.minX, y: rect.minY)
         let tr = CGPoint(x: rect.maxX, y: rect.minY)
         let brs = CGPoint(x: rect.maxX, y: rect.maxY - radius)
         let brc = CGPoint(x: rect.maxX - radius, y: rect.maxY - radius)
         let bls = CGPoint(x: rect.minX + radius, y: rect.maxY)
         let blc = CGPoint(x: rect.minX + radius, y: rect.maxY - radius)
-        
+
         path.move(to: tl)
         path.addLine(to: tr)
         path.addLine(to: brs)
@@ -31,20 +31,20 @@ fileprivate struct CutOffShadow: Shape {
         path.addLine(to: bls)
         path.addRelativeArc(center: blc, radius: radius,
           startAngle: Angle.degrees(90), delta: Angle.degrees(90))
-        
+
         return path
     }
 }
 
 struct PortraitItemElement: View {
     @Environment(\.isFocused) var envFocused: Bool
-    @State var focused: Bool = false;
-    @State var backgroundURL: URL?;
-    
-    var item: BaseItemDto;
-    
+    @State var focused: Bool = false
+    @State var backgroundURL: URL?
+
+    var item: BaseItemDto
+
     var body: some View {
-        VStack() {
+        VStack {
             ImageView(src: item.type == "Episode" ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200), bh: item.type == "Episode" ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())
                 .frame(width: 200, height: 300)
                 .cornerRadius(10)
@@ -55,11 +55,11 @@ struct PortraitItemElement: View {
             withAnimation(.linear(duration: 0.15)) {
                 self.focused = envFocus
             }
-            
-            if(envFocus == true) {
+
+            if envFocus == true {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     // your code here
-                    if(self.focused == true) {
+                    if self.focused == true {
                         backgroundURL = item.getBackdropImage(maxWidth: 1080)
                         BackgroundManager.current.setBackground(to: backgroundURL!, hash: item.getBackdropImageBlurHash())
                     }

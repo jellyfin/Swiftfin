@@ -12,7 +12,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel = HomeViewModel()
-    
+
     @State var showingSettings = false
 
     var body: some View {
@@ -32,9 +32,9 @@ struct HomeView: View {
                         ForEach(viewModel.librariesShowRecentlyAddedIDs, id: \.self) { libraryID in
                             VStack(alignment: .leading) {
                                 let library = viewModel.libraries.first(where: { $0.id == libraryID })
-                                
+
                                 NavigationLink(destination: Text("library_latest")) {
-                                    HStack() {
+                                    HStack {
                                         Text("Latest \(library?.name ?? "")")
                                         .font(.headline)
                                         .fontWeight(.semibold)

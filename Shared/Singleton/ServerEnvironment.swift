@@ -19,8 +19,8 @@ final class ServerEnvironment {
     init() {
         let serverRequest = Server.fetchRequest()
         let servers = try? PersistenceController.shared.container.viewContext.fetch(serverRequest)
-        
-        if(servers?.count != 0) {
+
+        if servers?.count != 0 {
             server = servers?.first
             JellyfinAPI.basePath = server.baseURI!
         }
@@ -34,7 +34,7 @@ final class ServerEnvironment {
         if uri.last == "/" {
             uri = String(uri.dropLast())
         }
-        
+
         JellyfinAPI.basePath = uri
         return SystemAPI.getPublicSystemInfo()
             .map { response in
@@ -56,8 +56,8 @@ final class ServerEnvironment {
 
         let serverRequest: NSFetchRequest<NSFetchRequestResult> = Server.fetchRequest()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: serverRequest)
-        
-        //coredata will theoretically never throw
+
+        // coredata will theoretically never throw
         _ = try? PersistenceController.shared.container.viewContext.execute(deleteRequest)
     }
 }

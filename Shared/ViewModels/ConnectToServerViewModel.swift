@@ -20,7 +20,7 @@ final class ConnectToServerViewModel: ViewModel {
     var username = ""
     @Published
     var password = ""
-    
+
     @Published
     var lastPublicUsers = [UserDto]()
     @Published
@@ -45,17 +45,17 @@ final class ConnectToServerViewModel: ViewModel {
                 .store(in: &cancellables)
         }
     }
-    
+
     func hidePublicUsers() {
-        self.lastPublicUsers = publicUsers;
-        publicUsers = [];
+        self.lastPublicUsers = publicUsers
+        publicUsers = []
     }
-    
+
     func showPublicUsers() {
-        self.publicUsers = lastPublicUsers;
-        lastPublicUsers = [];
+        self.publicUsers = lastPublicUsers
+        lastPublicUsers = []
     }
-    
+
     func connectToServer() {
         ServerEnvironment.current.create(with: uri)
             .sink(receiveCompletion: { result in
@@ -65,7 +65,7 @@ final class ConnectToServerViewModel: ViewModel {
                     default:
                         break
                 }
-            }, receiveValue: { response in
+            }, receiveValue: { _ in
                 self.getPublicUsers()
             })
             .store(in: &cancellables)
@@ -76,7 +76,7 @@ final class ConnectToServerViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 self.HandleAPIRequestCompletion(completion: completion)
             }, receiveValue: { _ in
-                
+
             })
             .store(in: &cancellables)
     }
