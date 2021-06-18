@@ -41,7 +41,7 @@ struct ItemView: View {
                 if item.type == "Movie" {
                     MovieItemView(viewModel: .init(item: item))
                 } else if item.type == "Season" {
-                    SeasonItemView(item: item)
+                    SeasonItemView(viewModel: .init(item: item))
                 } else if item.type == "Series" {
                     SeriesItemView(item: item)
                 } else if item.type == "Episode" {

@@ -11,45 +11,17 @@ import JellyfinAPI
 
 struct SeasonItemView: View {
     @StateObject
-    var tempViewModel = ViewModel()
+    var viewModel: SeasonItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
     @Environment(\.verticalSizeClass) var vSizeClass
 
-    var item: BaseItemDto = BaseItemDto()
-    @State private var episodes: [BaseItemDto] = []
-
-    @State private var isLoading: Bool = true
-    @State private var viewDidLoad: Bool = false
-
-    init(item: BaseItemDto) {
-        self.item = item
-    }
-
-    func onAppear() {
-        if viewDidLoad {
-            return
-        }
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seasonId: item.id ?? "")
-                .sink(receiveCompletion: { completion in
-                    print(completion)
-                    isLoading = false
-                }, receiveValue: { response in
-                    viewDidLoad = true
-                    episodes = response.items ?? []
-                })
-                .store(in: &tempViewModel.cancellables)
-        }
-    }
-
     @ViewBuilder
     var portraitHeaderView: some View {
-        if isLoading {
+        if viewModel.isLoading {
             EmptyView()
         } else {
-            ImageView(src: item.getSeriesBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: item.getSeriesBackdropImageBlurHash())
+            ImageView(src: viewModel.item.getSeriesBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: viewModel.item.getSeriesBackdropImageBlurHash())
                 .opacity(0.4)
                 .blur(radius: 2.0)
         }
@@ -57,17 +29,17 @@ struct SeasonItemView: View {
 
     var portraitHeaderOverlayView: some View {
         HStack(alignment: .bottom, spacing: 12) {
-            ImageView(src: item.getPrimaryImage(maxWidth: 120), bh: item.getPrimaryImageBlurHash())
+            ImageView(src: viewModel.item.getPrimaryImage(maxWidth: 120), bh: viewModel.item.getPrimaryImageBlurHash())
                 .frame(width: 120, height: 180)
                 .cornerRadius(10)
             VStack(alignment: .leading) {
-                Text(item.name ?? "").font(.headline)
+                Text(viewModel.item.name ?? "").font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
                     .offset(y: -4)
-                if item.productionYear != nil {
-                    Text(String(item.productionYear!)).font(.subheadline)
+                if viewModel.item.productionYear != nil {
+                    Text(String(viewModel.item.productionYear!)).font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
@@ -85,15 +57,15 @@ struct SeasonItemView: View {
                                      overlayAlignment: .bottomLeading,
                                      headerHeight: UIScreen.main.bounds.width * 0.5625) {
                 LazyVStack(alignment: .leading) {
-                    if !(item.taglines ?? []).isEmpty {
-                        Text(item.taglines!.first!).font(.body).italic().padding(.top, 7)
+                    if !(viewModel.item.taglines ?? []).isEmpty {
+                        Text(viewModel.item.taglines!.first!).font(.body).italic().padding(.top, 7)
                             .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
                             .padding(.trailing, 16)
                     }
-                    Text(item.overview ?? "").font(.footnote).padding(.top, 3)
+                    Text(viewModel.item.overview ?? "").font(.footnote).padding(.top, 3)
                         .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
                         .padding(.trailing, 16)
-                    ForEach(episodes, id: \.id) { episode in
+                    ForEach(viewModel.episodes, id: \.id) { episode in
                         NavigationLink(destination: ItemView(item: episode)) {
                             HStack {
                                 ImageView(src: episode.getPrimaryImage(maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
@@ -133,11 +105,11 @@ struct SeasonItemView: View {
                             }.offset(x: 12, y: 0)
                         }
                     }
-                    if !(item.studios ?? []).isEmpty {
+                    if !(viewModel.item.studios ?? []).isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
                                 Text("Studios:").font(.callout).fontWeight(.semibold)
-                                ForEach(item.studios!, id: \.id) { studio in
+                                ForEach(viewModel.item.studios!, id: \.id) { studio in
                                     NavigationLink(destination: LazyView {
                                             LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                     }) {
@@ -155,7 +127,7 @@ struct SeasonItemView: View {
         } else {
             GeometryReader { geometry in
                 ZStack {
-                    ImageView(src: item.getSeriesBackdropImage(maxWidth: 200), bh: item.getSeriesBackdropImageBlurHash())
+                    ImageView(src: viewModel.item.getSeriesBackdropImage(maxWidth: 200), bh: viewModel.item.getSeriesBackdropImageBlurHash())
                         .opacity(0.4)
                         .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
@@ -164,12 +136,12 @@ struct SeasonItemView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             Spacer().frame(height: 16)
-                            ImageView(src: item.getPrimaryImage(maxWidth: 120), bh: item.getPrimaryImageBlurHash())
+                            ImageView(src: viewModel.item.getPrimaryImage(maxWidth: 120), bh: viewModel.item.getPrimaryImageBlurHash())
                                 .frame(width: 120, height: 180)
                                 .cornerRadius(10)
                             Spacer().frame(height: 4)
-                            if item.productionYear != nil {
-                                Text(String(item.productionYear!)).font(.subheadline)
+                            if viewModel.item.productionYear != nil {
+                                Text(String(viewModel.item.productionYear!)).font(.subheadline)
                                     .fontWeight(.medium)
                                     .foregroundColor(.secondary)
                             }
@@ -178,15 +150,15 @@ struct SeasonItemView: View {
                         ScrollView {
                             Spacer().frame(height: 16)
                             LazyVStack(alignment: .leading) {
-                                if !(item.taglines ?? []).isEmpty {
-                                    Text(item.taglines!.first!).font(.body).italic().padding(.top, 7)
+                                if !(viewModel.item.taglines ?? []).isEmpty {
+                                    Text(viewModel.item.taglines!.first!).font(.body).italic().padding(.top, 7)
                                         .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
                                         .padding(.trailing, 16)
                                 }
-                                Text(item.overview ?? "").font(.footnote).padding(.top, 3)
+                                Text(viewModel.item.overview ?? "").font(.footnote).padding(.top, 3)
                                     .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
                                     .padding(.trailing, 16)
-                                ForEach(episodes, id: \.id) { episode in
+                                ForEach(viewModel.episodes, id: \.id) { episode in
                                     NavigationLink(destination: ItemView(item: episode)) {
                                         HStack {
                                             ImageView(src: episode.getPrimaryImage(maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
@@ -226,11 +198,11 @@ struct SeasonItemView: View {
                                         }.offset(x: 12, y: 0)
                                     }
                                 }
-                                if !(item.studios ?? []).isEmpty {
+                                if !(viewModel.item.studios ?? []).isEmpty {
                                     ScrollView(.horizontal, showsIndicators: false) {
                                         HStack {
                                             Text("Studios:").font(.callout).fontWeight(.semibold)
-                                            ForEach(item.studios!, id: \.id) { studio in
+                                            ForEach(viewModel.item.studios!, id: \.id) { studio in
                                                 NavigationLink(destination: LazyView {
                                                     LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                                 }) {
@@ -250,16 +222,15 @@ struct SeasonItemView: View {
     }
 
     var body: some View {
-        if isLoading {
+        if viewModel.isLoading {
             ProgressView()
-                .onAppear(perform: onAppear)
         } else {
             innerBody
                 .onRotate {
                     orientation = $0
                 }
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle("\(item.name ?? "") - \(item.seriesName ?? "")")
+                .navigationTitle("\(viewModel.item.name ?? "") - \(viewModel.item.seriesName ?? "")")
         }
     }
 }
