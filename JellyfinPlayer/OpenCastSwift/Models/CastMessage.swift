@@ -15,22 +15,22 @@ extension CastMessage {
     message.sourceID = sourceId
     message.destinationID = destinationId
     message.namespace = namespace
-    
+
     switch payload {
     case .json(let payload):
       let json = try JSONSerialization.data(withJSONObject: payload, options: [])
-      
+
       guard let jsonString = String(data: json, encoding: .utf8) else {
         fatalError("error forming json string")
       }
-      
+
       message.payloadType = .string
       message.payloadUtf8 = jsonString
     case .data(let payload):
       message.payloadType = .binary
       message.payloadBinary = payload
     }
-    
+
     return try message.serializedData()
   }
 }

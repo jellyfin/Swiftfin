@@ -151,7 +151,7 @@ struct JellyfinPlayerApp: App {
 
         scanner.startScanning()
     }
-    
+
     var body: some Scene {
         WindowGroup {
             SplashView()

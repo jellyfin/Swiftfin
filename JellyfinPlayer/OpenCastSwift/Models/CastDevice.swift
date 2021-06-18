@@ -8,12 +8,10 @@
 
 import Foundation
 
-
-public struct DeviceCapabilities : OptionSet
-{
+public struct DeviceCapabilities: OptionSet {
   public let rawValue: Int
   public init(rawValue: Int) { self.rawValue = rawValue }
-  
+
   public static let none = DeviceCapabilities([])
   public static let videoOut = DeviceCapabilities(rawValue: 1 << 0)
   public static let videoIn = DeviceCapabilities(rawValue: 1 << 1)
@@ -25,7 +23,7 @@ public struct DeviceCapabilities : OptionSet
 }
 
 public final class CastDevice: NSObject, NSCopying {
-  
+
   public private(set) var id: String
   public private(set) var name: String
   public private(set) var modelName: String
@@ -35,7 +33,7 @@ public final class CastDevice: NSObject, NSCopying {
   public private(set) var capabilities: DeviceCapabilities
   public private(set) var status: String
   public private(set) var iconPath: String
-  
+
   init(id: String, name: String, modelName: String, hostName: String, ipAddress: String, port: Int, capabilitiesMask: Int, status: String, iconPath: String) {
     self.id = id
     self.name = name
@@ -49,7 +47,7 @@ public final class CastDevice: NSObject, NSCopying {
 
     super.init()
   }
-  
+
   public func copy(with zone: NSZone? = nil) -> Any {
     return CastDevice(id: self.id,
                       name: self.name,
@@ -61,7 +59,7 @@ public final class CastDevice: NSObject, NSCopying {
                       status: self.status,
                       iconPath: iconPath)
   }
-  
+
   public override var description: String {
     return "CastDevice(id: \(id), name: \(name), hostName:\(hostName), ipAddress:\(ipAddress), port:\(port))"
   }
