@@ -110,7 +110,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="riN-y1-ABZ">
-                                        <rect key="frame" x="801" y="24" width="56" height="56"/>
+                                        <rect key="frame" x="817" y="32" width="40" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" image="gear" catalog="system">
@@ -130,6 +130,20 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="highlightedColor" systemColor="labelColor"/>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="XVc-27-uDe" userLabel="Cast Button">
+                                        <rect key="frame" x="766" y="32" width="40" height="40"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <imageReference key="image" image="CastDisconnected"/>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="castButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="LwK-pi-uQ2"/>
+                                            <action selector="settingsButtonTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="snD-hW-TSY"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.5954241071428571" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
@@ -173,6 +187,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="castButton" destination="XVc-27-uDe" id="FII-I9-nHf"/>
                         <outlet property="jumpBackButton" destination="bYM-Xp-bZO" id="K2u-5Q-dkm"/>
                         <outlet property="jumpForwardButton" destination="An8-jF-FAY" id="4hN-YB-yVd"/>
                         <outlet property="mainActionButton" destination="t2L-Oz-fe9" id="nQR-2e-64l"/>
@@ -196,10 +211,11 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="129.38388625592415" y="72.307692307692307"/>
+            <point key="canvasLocation" x="129.24107142857142" y="71.014492753623188"/>
         </scene>
     </scenes>
     <resources>
+        <image name="CastDisconnected" width="20" height="20"/>
         <image name="chevron.backward" catalog="system" width="96" height="128"/>
         <image name="gear" catalog="system" width="128" height="119"/>
         <image name="gobackward.15" catalog="system" width="121" height="128"/>
