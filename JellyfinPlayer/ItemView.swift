@@ -39,7 +39,7 @@ struct ItemView: View {
             }
             VStack {
                 if item.type == "Movie" {
-                    MovieItemView(item: item)
+                    MovieItemView(viewModel: .init(item: item))
                 } else if item.type == "Season" {
                     SeasonItemView(item: item)
                 } else if item.type == "Series" {
