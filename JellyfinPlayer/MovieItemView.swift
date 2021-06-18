@@ -187,7 +187,7 @@ struct MovieItemView: View {
                                     Text("Genres:").font(.callout).fontWeight(.semibold)
                                     ForEach(item.genreItems!, id: \.id) { genre in
                                         NavigationLink(destination: LazyView {
-                                            LibraryView(withGenre: genre)
+                                            LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
                                         }) {
                                             Text(genre.name ?? "").font(.footnote)
                                         }
@@ -204,7 +204,7 @@ struct MovieItemView: View {
                                         ForEach(item.people!, id: \.self) { person in
                                             if person.type! == "Actor" {
                                                 NavigationLink(destination: LazyView {
-                                                    LibraryView(withPerson: person)
+                                                    LibraryView(viewModel: .init(person: person), title: person.name ?? "")
                                                 }) {
                                                     VStack {
                                                         ImageView(src: person
@@ -234,7 +234,8 @@ struct MovieItemView: View {
                                     Text("Studios:").font(.callout).fontWeight(.semibold)
                                     ForEach(item.studios!, id: \.id) { studio in
                                         NavigationLink(destination: LazyView {
-                                            LibraryView(withStudio: studio)
+                                            
+                                                    LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                         }) {
                                             Text(studio.name ?? "").font(.footnote)
                                         }
@@ -362,7 +363,7 @@ struct MovieItemView: View {
                                                 Text("Genres:").font(.callout).fontWeight(.semibold)
                                                 ForEach(item.genreItems!, id: \.id) { genre in
                                                     NavigationLink(destination: LazyView {
-                                                        LibraryView(withGenre: genre)
+                                                        LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
                                                     }) {
                                                         Text(genre.name ?? "").font(.footnote)
                                                     }
@@ -381,7 +382,7 @@ struct MovieItemView: View {
                                                     ForEach(item.people!, id: \.self) { person in
                                                         if person.type! == "Actor" {
                                                             NavigationLink(destination: LazyView {
-                                                                LibraryView(withPerson: person)
+                                                                LibraryView(viewModel: .init(person: person), title: person.name ?? "")
                                                             }) {
                                                                 VStack {
                                                                     ImageView(src: person
@@ -413,7 +414,7 @@ struct MovieItemView: View {
                                                 Text("Studios:").font(.callout).fontWeight(.semibold)
                                                 ForEach(item.studios!, id: \.id) { studio in
                                                     NavigationLink(destination: LazyView {
-                                                        LibraryView(withStudio: studio)
+                                                        LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                                     }) {
                                                         Text(studio.name ?? "").font(.footnote)
                                                     }

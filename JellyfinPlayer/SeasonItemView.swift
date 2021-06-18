@@ -139,7 +139,7 @@ struct SeasonItemView: View {
                                 Text("Studios:").font(.callout).fontWeight(.semibold)
                                 ForEach(item.studios!, id: \.id) { studio in
                                     NavigationLink(destination: LazyView {
-                                        LibraryView(withStudio: studio)
+                                            LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                     }) {
                                         Text(studio.name ?? "").font(.footnote)
                                     }
@@ -232,7 +232,7 @@ struct SeasonItemView: View {
                                             Text("Studios:").font(.callout).fontWeight(.semibold)
                                             ForEach(item.studios!, id: \.id) { studio in
                                                 NavigationLink(destination: LazyView {
-                                                    LibraryView(withStudio: studio)
+                                                    LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                                 }) {
                                                     Text(studio.name ?? "").font(.footnote)
                                                 }

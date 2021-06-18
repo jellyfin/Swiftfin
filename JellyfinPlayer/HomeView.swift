@@ -44,8 +44,7 @@ struct HomeView: View {
                                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
                                     Spacer()
                                     NavigationLink(destination: LazyView {
-                                        LibraryView(usingParentID: libraryID,
-                                                    title: library?.name ?? "", usingFilters: viewModel.recentFilterSet)
+                                        LibraryView(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? "")
                                     }) {
                                         HStack {
                                             Text("See All").font(.subheadline).fontWeight(.bold)

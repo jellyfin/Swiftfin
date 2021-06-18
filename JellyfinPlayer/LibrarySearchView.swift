@@ -17,7 +17,7 @@ struct LibrarySearchView: View {
 
     @State
     private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
-    
+
     func recalcTracks() {
         tracks = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
     }
@@ -26,47 +26,44 @@ struct LibrarySearchView: View {
         VStack {
             Spacer().frame(height: 6)
             SearchBar(text: $viewModel.searchQuery)
-            ZStack {
-                ScrollView(.vertical) {
-                    if !viewModel.items.isEmpty {
-                        Spacer().frame(height: 16)
-                        LazyVGrid(columns: tracks) {
-                            ForEach(viewModel.items, id: \.id) { item in
-                                NavigationLink(destination: ItemView(item: item)) {
-                                    VStack(alignment: .leading) {
-                                        ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
-                                            .frame(width: 100, height: 150)
-                                            .cornerRadius(10)
-                                        Text(item.name ?? "")
-                                            .font(.caption)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.primary)
-                                            .lineLimit(1)
-                                        if item.productionYear != nil {
-                                            Text(String(item.productionYear!))
-                                                .foregroundColor(.secondary)
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                        } else {
-                                            Text(item.type ?? "")
-                                        }
-                                    }.frame(width: 100)
-                                }
-                            }
-                            Spacer().frame(height: 16)
-                        }
-                    } else {
-                        Text("No results :(")
-                    }
-                }
+            ScrollView(.vertical) {
                 if viewModel.isLoading {
                     ProgressView()
+                } else if !viewModel.items.isEmpty {
+                    Spacer().frame(height: 16)
+                    LazyVGrid(columns: tracks) {
+                        ForEach(viewModel.items, id: \.id) { item in
+                            NavigationLink(destination: ItemView(item: item)) {
+                                VStack(alignment: .leading) {
+                                    ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
+                                        .frame(width: 100, height: 150)
+                                        .cornerRadius(10)
+                                    Text(item.name ?? "")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                    if item.productionYear != nil {
+                                        Text(String(item.productionYear!))
+                                            .foregroundColor(.secondary)
+                                            .font(.caption)
+                                            .fontWeight(.medium)
+                                    } else {
+                                        Text(item.type ?? "")
+                                    }
+                                }.frame(width: 100)
+                            }
+                        }
+                        Spacer().frame(height: 16)
+                    }
+                    .onRotate { _ in
+                        recalcTracks()
+                    }
+                } else {
+                    Text("No results :(")
                 }
             }
         }
         .navigationBarTitle("Search", displayMode: .inline)
-        .onRotate { _ in
-            recalcTracks()
-        }
     }
 }
