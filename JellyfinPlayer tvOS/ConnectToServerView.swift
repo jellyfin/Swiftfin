@@ -10,12 +10,9 @@ import SwiftUI
 
 struct ConnectToServerView: View {
     @StateObject var viewModel = ConnectToServerViewModel()
-    @State
-    var username = ""
-    @State
-    var password = ""
-    @State
-    var uri = ""
+    @State var username = ""
+    @State var password = ""
+    @State var uri = ""
 
     var body: some View {
         VStack(alignment: .leading) {

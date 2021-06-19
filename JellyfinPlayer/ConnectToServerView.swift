@@ -11,14 +11,10 @@ import KeychainSwift
 import SwiftUI
 
 struct ConnectToServerView: View {
-    @StateObject
-    var viewModel = ConnectToServerViewModel()
-    @State
-    var username = ""
-    @State
-    var password = ""
-    @State
-    var uri = ""
+    @StateObject var viewModel = ConnectToServerViewModel()
+    @State var username = ""
+    @State var password = ""
+    @State var uri = ""
 
     var body: some View {
         ZStack {

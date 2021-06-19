@@ -10,14 +10,11 @@ import JellyfinAPI
 import SwiftUI
 
 struct LibrarySearchView: View {
-    @StateObject
-    var viewModel: LibrarySearchViewModel
-    @State
-    var searchQuery = ""
+    @StateObject var viewModel: LibrarySearchViewModel
+    @State var searchQuery = ""
     // MARK: tracks for grid
 
-    @State
-    private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
+    @State private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
 
     func recalcTracks() {
         tracks = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)

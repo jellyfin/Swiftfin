@@ -10,11 +10,9 @@ import JellyfinAPI
 import Combine
 
 struct SeriesItemView: View {
-    @StateObject
-    var viewModel: SeriesItemViewModel
+    @StateObject var viewModel: SeriesItemViewModel
 
-    @State
-    private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
+    @State private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
 
     func recalcTracks() {
         tracks = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
