@@ -141,7 +141,6 @@
                                         </state>
                                         <connections>
                                             <action selector="castButtonPressed:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="LwK-pi-uQ2"/>
-                                            <action selector="settingsButtonTapped:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="snD-hW-TSY"/>
                                         </connections>
                                     </button>
                                 </subviews>

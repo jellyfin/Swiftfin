@@ -8,8 +8,8 @@
 import Foundation
 import SwiftUI
 
-class VideoPlayerSettingsView: UIViewController {
-    private var contentView: UIHostingController<VideoPlayerSettings>!
+class VideoPlayerCastDeviceSelectorView: UIViewController {
+    private var contentView: UIHostingController<VideoPlayerCastDeviceSelector>!
     weak var delegate: PlayerViewController?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -18,7 +18,7 @@ class VideoPlayerSettingsView: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        contentView = UIHostingController(rootView: VideoPlayerSettings(delegate: self.delegate ?? PlayerViewController()))
+        contentView = UIHostingController(rootView: VideoPlayerCastDeviceSelector(delegate: self.delegate ?? PlayerViewController()))
         self.view.addSubview(contentView.view)
         contentView.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
@@ -29,14 +29,12 @@ class VideoPlayerSettingsView: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.delegate?.settingsPopoverDismissed()
+        self.delegate?.castPopoverDismissed()
     }
 }
 
-struct VideoPlayerSettings: View {
+struct VideoPlayerCastDeviceSelector: View {
     weak var delegate: PlayerViewController!
-    @State var captionTrack: Int32 = -99
-    @State var audioTrack: Int32 = -99
 
     init(delegate: PlayerViewController) {
         self.delegate = delegate
@@ -44,29 +42,16 @@ struct VideoPlayerSettings: View {
 
     var body: some View {
         NavigationView {
-            Form {
-                Picker("Closed Captions", selection: $captionTrack) {
-                    ForEach(delegate.subtitleTrackArray, id: \.id) { caption in
-                        Text(caption.name).tag(caption.id)
-                    }
-                }
-                .onChange(of: captionTrack) { track in
-                    self.delegate.subtitleTrackChanged(newTrackID: track)
-                }
-                Picker("Audio Track", selection: $audioTrack) {
-                    ForEach(delegate.audioTrackArray, id: \.id) { caption in
-                        Text(caption.name).tag(caption.id).lineLimit(1)
-                    }
-                }.onChange(of: audioTrack) { track in
-                    self.delegate.audioTrackChanged(newTrackID: track)
-                }
-            }.navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Audio & Captions")
+            List(delegate.discoveredCastDevices, id: \.id) { device in
+                Text(device.name)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Select Cast Destination")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if UIDevice.current.userInterfaceIdiom == .phone {
                         Button {
-                            self.delegate.settingsPopoverDismissed()
+                            self.delegate?.castPopoverDismissed()
                         } label: {
                             HStack {
                                 Image(systemName: "chevron.left")
@@ -77,9 +62,6 @@ struct VideoPlayerSettings: View {
                 }
             }
         }.offset(y: UIDevice.current.userInterfaceIdiom == .pad ? 14 : 0)
-        .onAppear(perform: {
-            _captionTrack.wrappedValue = self.delegate.selectedCaptionTrack
-            _audioTrack.wrappedValue = self.delegate.selectedAudioTrack
-        })
     }
 }
+

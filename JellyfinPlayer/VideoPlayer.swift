@@ -56,11 +56,13 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var ssTargetValueOffset: Int = 0
     var ssStartValue: Int = 0
     var optionsVC: VideoPlayerSettingsView?
+    var castDeviceVC: VideoPlayerCastDeviceSelectorView?
 
     var paused: Bool = true
     var lastTime: Float = 0.0
     var startTime: Int = 0
     var controlsAppearTime: Double = 0
+    var discoveredCastDevices: [CastDevice] = []
 
     var selectedAudioTrack: Int32 = -1 {
         didSet {
@@ -175,7 +177,24 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
 
     @IBAction func castButtonPressed(_ sender: Any) {
+        castDeviceVC = VideoPlayerCastDeviceSelectorView()
+        castDeviceVC?.delegate = self
 
+        castDeviceVC?.modalPresentationStyle = .popover
+        castDeviceVC?.popoverPresentationController?.sourceView = castButton
+
+        // Present the view controller (in a popover).
+        self.present(castDeviceVC!, animated: true) {
+            print("popover visible, pause playback")
+            self.mediaPlayer.pause()
+            self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
+        }
+    }
+    
+    func castPopoverDismissed() {
+        castDeviceVC?.dismiss(animated: true, completion: nil)
+        self.mediaPlayer.play()
+        self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
     }
 
     func settingsPopoverDismissed() {
@@ -283,7 +302,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         let scanner = CastDeviceScanner()
 
         NotificationCenter.default.addObserver(forName: CastDeviceScanner.deviceListDidChange, object: scanner, queue: nil) { _ in
-            dump(scanner.devices)
+            self.discoveredCastDevices = scanner.devices
             if !scanner.devices.isEmpty {
                 self.castButton.isEnabled = true
                 self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)

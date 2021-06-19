@@ -19,6 +19,7 @@
 		5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5321753A2671BCFC005491E6 /* SettingsViewModel.swift */; };
 		5321753E2671DE9C005491E6 /* Typings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* Typings.swift */; };
 		532175402671EE4F005491E6 /* LibraryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */; };
+		532E68CF267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */; };
 		53313B90265EEA6D00947AA3 /* VideoPlayer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */; };
 		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
@@ -242,6 +243,7 @@
 		53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileBuilder.swift; sourceTree = "<group>"; };
 		531AC8BE26750DE20091C7EB /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		5321753A2671BCFC005491E6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerCastDeviceSelector.swift; sourceTree = "<group>"; };
 		53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = VideoPlayer.storyboard; sourceTree = "<group>"; };
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JellyfinPlayer tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -649,6 +651,7 @@
 				625CB5672678B6FB00530A6E /* SplashView.swift */,
 				625CB56B2678C0FD00530A6E /* MainTabView.swift */,
 				625CB56E2678C23300530A6E /* HomeView.swift */,
+				532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */,
 			);
 			path = JellyfinPlayer;
 			sourceTree = "<group>";
@@ -992,6 +995,7 @@
 				535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
+				532E68CF267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift in Sources */,
 				532175402671EE4F005491E6 /* LibraryFilterView.swift in Sources */,
 				5362E50A267D4707000E2F71 /* RequestSink.swift in Sources */,
 				5377CC01263B596B003A4E83 /* Model.xcdatamodeld in Sources */,
