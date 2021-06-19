@@ -12,7 +12,7 @@ private struct MultiSelectionView<Selectable: Hashable>: View {
     let optionToString: (Selectable) -> String
     let label: String
 
-    @Binding var selected: Array<Selectable>
+    @Binding var selected: [Selectable]
 
     var body: some View {
         List {
@@ -44,7 +44,7 @@ struct MultiSelector<Selectable: Hashable>: View {
     let options: [Selectable]
     let optionToString: (Selectable) -> String
 
-    var selected: Binding<Array<Selectable>>
+    var selected: Binding<[Selectable]>
 
     private var formattedSelectedListString: String {
         ListFormatter.localizedString(byJoining: selected.wrappedValue.map { optionToString($0) })
