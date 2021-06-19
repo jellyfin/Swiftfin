@@ -50,7 +50,11 @@ struct LandscapeItemElement: View {
                     ZStack(alignment: .leading) {
                         if focused && item.userData?.playedPercentage != nil {
                             Rectangle()
-                                .fill(LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top))
+                                .fill(LinearGradient(
+                                    gradient: Gradient(colors: [.black, .clear]),
+                                    startPoint: .bottom,
+                                    endPoint: .top
+                                ))
                                 .frame(width: 445, height: 90)
                                 .mask(CutOffShadow())
                             VStack(alignment: .leading) {

@@ -476,7 +476,6 @@
 		535870752669D60C00D05A09 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				62E632F1267D53B00063E547 /* Protocols */,
 				62EC352A26766657000E9F2D /* Singleton */,
 				532175392671BCED005491E6 /* ViewModels */,
 				621338912660106C00A81A2A /* Extensions */,
@@ -718,13 +717,6 @@
 				628B952A2670CABE0091AF3B /* Info.plist */,
 			);
 			path = WidgetExtension;
-			sourceTree = "<group>";
-		};
-		62E632F1267D53B00063E547 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Protocols;
 			sourceTree = "<group>";
 		};
 		62EC352A26766657000E9F2D /* Singleton */ = {
