@@ -15,15 +15,14 @@ final class LibrarySearchViewModel: ViewModel {
     @Published
     var items = [BaseItemDto]()
 
-    @Published
-    var searchQuery = ""
+    var searchQuerySubject = CurrentValueSubject<String, Never>("")
     var parentID: String?
 
     init(parentID: String?) {
         self.parentID = parentID
         super.init()
 
-        $searchQuery
+        searchQuerySubject
             .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .sink(receiveValue: search(with:))
             .store(in: &cancellables)

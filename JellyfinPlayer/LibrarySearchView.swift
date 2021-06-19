@@ -12,7 +12,8 @@ import SwiftUI
 struct LibrarySearchView: View {
     @StateObject
     var viewModel: LibrarySearchViewModel
-
+    @State
+    var searchQuery = ""
     // MARK: tracks for grid
 
     @State
@@ -25,7 +26,7 @@ struct LibrarySearchView: View {
     var body: some View {
         VStack {
             Spacer().frame(height: 6)
-            SearchBar(text: $viewModel.searchQuery)
+            SearchBar(text: $searchQuery)
             ZStack {
                 ScrollView(.vertical) {
                     if !viewModel.items.isEmpty {
@@ -66,6 +67,9 @@ struct LibrarySearchView: View {
                     ProgressView()
                 }
             }
+        }
+        .onChange(of: searchQuery) { query in
+            viewModel.searchQuerySubject.send(query)
         }
         .navigationBarTitle("Search", displayMode: .inline)
     }
