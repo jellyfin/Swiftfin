@@ -15,7 +15,7 @@ class VideoPlayerCastDeviceSelectorView: UIViewController {
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
             .landscape
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         contentView = UIHostingController(rootView: VideoPlayerCastDeviceSelector(delegate: self.delegate ?? PlayerViewController()))
@@ -64,4 +64,3 @@ struct VideoPlayerCastDeviceSelector: View {
         }.offset(y: UIDevice.current.userInterfaceIdiom == .pad ? 14 : 0)
     }
 }
-

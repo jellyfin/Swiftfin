@@ -190,7 +190,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
         }
     }
-    
+
     func castPopoverDismissed() {
         castDeviceVC?.dismiss(animated: true, completion: nil)
         self.mediaPlayer.play()
