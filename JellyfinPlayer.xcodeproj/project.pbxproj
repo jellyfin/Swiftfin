@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		093BD93C267DCAF400A47192 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		09833E9E267D86AF005F4FFD /* InfoTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09833E9A267D86AF005F4FFD /* InfoTabBarViewController.swift */; };
 		09833E9F267D86AF005F4FFD /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09833E9B267D86AF005F4FFD /* VideoPlayer.swift */; };
 		09833EA0267D86AF005F4FFD /* VideoPlayerStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09833E9C267D86AF005F4FFD /* VideoPlayerStoryboard.storyboard */; };
@@ -646,7 +647,6 @@
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
 				5389276D263C25100035E14B /* ContinueWatchingView.swift */,
-				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
 				53987CA72657424A00E7EA70 /* EpisodeItemView.swift */,
 				5377CC02263B596B003A4E83 /* Info.plist */,
 				535BAE9E2649E569005FA86D /* ItemView.swift */,
@@ -745,6 +745,7 @@
 		62EC352A26766657000E9F2D /* Singleton */ = {
 			isa = PBXGroup;
 			children = (
+				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
 				62EC352B26766675000E9F2D /* ServerEnvironment.swift */,
 				62EC352E267666A5000E9F2D /* SessionManager.swift */,
 				536D3D73267BA8170004248C /* BackgroundManager.swift */,
@@ -979,6 +980,7 @@
 				536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */,
 				535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */,
 				53ABFDE4267974EF00886593 /* LibraryListViewModel.swift in Sources */,
+				093BD93C267DCAF400A47192 /* DeviceProfileBuilder.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* APIExtensions.swift in Sources */,
 				531690FA267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift in Sources */,
 				535870A32669D89F00D05A09 /* Model.xcdatamodeld in Sources */,

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="18122" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="appleTV" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Image references" minToolsVersion="12.0"/>
@@ -167,7 +166,7 @@
                         <outlet property="scrubLabel" destination="HfD-p0-JMA" id="R28-Fa-v9d"/>
                         <outlet property="scrubberView" destination="yrg-ru-QSH" id="ylv-C7-RNl"/>
                         <outlet property="transportBarView" destination="CQO-wl-bxv" id="tQv-bp-jYq"/>
-                        <outlet property="videoPlayerView" destination="Ibg-CP-gb2" id="vnQ-7F-8AU"/>
+                        <outlet property="videoContentView" destination="Ibg-CP-gb2" id="vnQ-7F-8AU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7uX-ET-Cqw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

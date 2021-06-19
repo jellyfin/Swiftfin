@@ -8,10 +8,31 @@
 import TVUIKit
 import TVVLCKit
 import MediaPlayer
+import JellyfinAPI
+import Combine
+
+struct Subtitle {
+    var name: String
+    var id: Int32
+    var url: URL?
+    var delivery: SubtitleDeliveryMethod
+    var codec: String
+}
+
+struct AudioTrack {
+    var name: String
+    var id: Int32
+}
+
+class PlaybackItem: ObservableObject {
+    @Published var videoType: PlayMethod = .directPlay
+    @Published var videoUrl: URL = URL(string: "https://example.com")!
+}
+
 
 class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMediaDelegate, UIGestureRecognizerDelegate  {
     
-    @IBOutlet weak var videoPlayerView: UIView!
+    @IBOutlet weak var videoContentView: UIView!
     @IBOutlet weak var controlsView: UIView!
     
     @IBOutlet weak var transportBarView: UIView!
@@ -30,13 +51,34 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
     var showingInfoPanel : Bool = false
     
     var mediaPlayer = VLCMediaPlayer()
-        
+    
+    var selectedAudioTrack: Int32 = -1 {
+        didSet {
+            print(selectedAudioTrack)
+        }
+    }
+    var selectedCaptionTrack: Int32 = -1 {
+        didSet {
+            print(selectedCaptionTrack)
+        }
+    }
+    
+    var subtitleTrackArray: [Subtitle] = []
+    var audioTrackArray: [AudioTrack] = []
+
     var playing: Bool = false
     var seeking: Bool = false
     
     var initialSeekPos : CGFloat = 0
     var videoPos: Double = 0
     var videoDuration: Double = 0
+    
+    var manifest: BaseItemDto = BaseItemDto()
+    var playbackItem = PlaybackItem()
+    var playSessionId: String = ""
+
+    var cancellables = Set<AnyCancellable>()
+
         
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
         
@@ -61,7 +103,7 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
         super.viewDidLoad()
                 
         mediaPlayer.delegate = self
-        mediaPlayer.drawable = videoPlayerView
+        mediaPlayer.drawable = videoContentView
         
         setPlayerMedia()
         
@@ -86,10 +128,130 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
         
         setupGestures()
         
+        fetchVideo()
+        
         setupNowPlayingCC()
         
         play()
         
+    }
+    
+    func fetchVideo() {
+        // Fetch max bitrate from UserDefaults depending on current connection mode
+        let defaults = UserDefaults.standard
+        let maxBitrate = defaults.integer(forKey: "InNetworkBandwidth")
+
+        // Build a device profile
+        let builder = DeviceProfileBuilder()
+        builder.setMaxBitrate(bitrate: maxBitrate)
+        let profile = builder.buildProfile()
+
+        let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
+
+        DispatchQueue.global(qos: .userInitiated).async { [self] in
+//            delegate?.showLoadingView(self)
+            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
+                .sink(receiveCompletion: { result in
+                    print(result)
+                }, receiveValue: { [self] response in
+                    
+                    videoContentView.setNeedsLayout()
+                    videoContentView.setNeedsDisplay()
+                    
+                    playSessionId = response.playSessionId ?? ""
+                    
+                    let mediaSource = response.mediaSources!.first.self!
+                    
+                    let item = PlaybackItem()
+                    let streamURL : URL?
+                    
+                    // Item is being transcoded by request of server
+                    if mediaSource.transcodingUrl != nil
+                    {
+                        item.videoType = .transcode
+                        streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(mediaSource.transcodingUrl!)")
+                    }
+                    // Item will be directly played by the client
+                    else
+                    {
+                        item.videoType = .directPlay
+                        streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
+                    }
+                    
+                    item.videoUrl = streamURL!
+                    
+                    let disableSubtitleTrack = Subtitle(name: "None", id: -1, url: nil, delivery: .embed, codec: "")
+                    subtitleTrackArray.append(disableSubtitleTrack)
+                    
+                    // Loop through media streams and add to array
+                    for stream in mediaSource.mediaStreams! {
+                        if stream.type == .subtitle {
+                            var deliveryUrl: URL? = nil
+                            
+                            if stream.deliveryMethod == .external {
+                                deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl!)")!
+                            }
+                            
+                            let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt")
+
+                            if subtitle.delivery != .encode {
+                                subtitleTrackArray.append(subtitle)
+                            }
+                        }
+
+                        if stream.type == .audio {
+                            let subtitle = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
+                            if stream.isDefault! == true {
+                                selectedAudioTrack = Int32(stream.index!)
+                            }
+                            audioTrackArray.append(subtitle)
+                        }
+                    }
+
+                    // If no default audio tracks select the first one
+                    if selectedAudioTrack == -1 && !audioTrackArray.isEmpty{
+                        selectedAudioTrack = audioTrackArray.first!.id
+                    }
+
+//                        self.sendPlayReport()
+                    playbackItem = item
+
+                    mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
+                    mediaPlayer.media.delegate = self
+                    mediaPlayer.play()
+
+                    // 1 second = 10,000,000 ticks
+
+                    let rawStartTicks = manifest.userData?.playbackPositionTicks ?? 0
+
+                    if rawStartTicks != 0 {
+                        let startSeconds = rawStartTicks / 10_000_000
+                        mediaPlayer.jumpForward(Int32(startSeconds))
+                    }
+
+                    // Pause and load captions into memory.
+                    mediaPlayer.pause()
+
+                    var shouldHaveSubtitleTracks = 0
+                    subtitleTrackArray.forEach { sub in
+                        if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
+                            shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
+                            mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
+                        }
+                    }
+
+                    // Wait for captions to load
+//                    delegate?.showLoadingView(self)
+
+                    while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {}
+
+                    // Select default track & resume playback
+                    mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
+                    mediaPlayer.pause()
+                    mediaPlayer.play()
+                })
+                .store(in: &cancellables)
+        }
     }
     
     func setupNowPlayingCC() {
