@@ -156,7 +156,7 @@ public final class CastClient: NSObject, RequestDispatchable, Channelable {
           kCFStreamPropertyShouldCloseNativeSocket as String: true
         ]
 
-        CFStreamCreatePairWithSocketToHost(nil, self.device.hostName as CFString, UInt32(self.device.port), &readStream, &writeStream)
+          CFStreamCreatePairWithSocketToHost(nil, self.device.hostName as CFString, UInt32(self.device.port), &readStream, &writeStream)
 
         guard let readStreamRetained = readStream?.takeRetainedValue() else {
           throw CastError.connection("Unable to create input stream")
@@ -255,7 +255,6 @@ public final class CastClient: NSObject, RequestDispatchable, Channelable {
         let message = try CastMessage(serializedData: payload)
 
         guard let channel = channels[message.namespace] else {
-          print("No channel attached for namespace \(message.namespace)")
           return
         }
 
@@ -346,7 +345,6 @@ public final class CastClient: NSObject, RequestDispatchable, Channelable {
                                                        namespace: request.namespace,
                                                        sourceId: senderName,
                                                        destinationId: request.destinationId)
-
       try write(data: messageData)
     } catch {
       callResponseHandler(for: request.id, with: Result(error: .request(error.localizedDescription)))

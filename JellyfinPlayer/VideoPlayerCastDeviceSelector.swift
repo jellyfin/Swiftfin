@@ -43,7 +43,25 @@ struct VideoPlayerCastDeviceSelector: View {
     var body: some View {
         NavigationView {
             List(delegate.discoveredCastDevices, id: \.id) { device in
-                Text(device.name)
+                HStack() {
+                    Text("\(device.name)")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    Spacer()
+                    Button {
+                        delegate.selectedCastDevice = device
+                        self.delegate?.castDeviceChanged()
+                        self.delegate?.castPopoverDismissed()
+                    } label: {
+                        HStack() {
+                            Text("Connect")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                            Image(systemName: "bonjour")
+                                .font(.caption)
+                        }
+                    }
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Select Cast Destination")

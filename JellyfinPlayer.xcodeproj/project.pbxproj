@@ -646,12 +646,12 @@
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
 				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
 				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
+				532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */,
 				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
 				53DE4BD1267098F300739748 /* SearchBarView.swift */,
 				625CB5672678B6FB00530A6E /* SplashView.swift */,
 				625CB56B2678C0FD00530A6E /* MainTabView.swift */,
 				625CB56E2678C23300530A6E /* HomeView.swift */,
-				532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */,
 			);
 			path = JellyfinPlayer;
 			sourceTree = "<group>";

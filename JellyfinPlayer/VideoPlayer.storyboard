@@ -17,6 +17,30 @@
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IQg-r0-AeH">
                         <rect key="frame" x="0.0" y="0.0" width="896" height="414"/>
                         <subviews>
+                            <view autoresizesSubviews="NO" tag="1" contentMode="scaleToFill" fixedFrame="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fa2-nx-Dzx" userLabel="VideoCastingContentView">
+                                <rect key="frame" x="31" y="0.0" width="834" height="414"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Streaming to Chromecast" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="CJ6-bw-cyX">
+                                        <rect key="frame" x="224" y="105" width="387" height="128"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="128" id="W6f-zI-T4b"/>
+                                        </constraints>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                </subviews>
+                                <viewLayoutGuide key="safeArea" id="by1-Hb-CaQ"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstItem="CJ6-bw-cyX" firstAttribute="leading" secondItem="by1-Hb-CaQ" secondAttribute="leading" constant="211" id="7lb-qN-MqL"/>
+                                    <constraint firstItem="by1-Hb-CaQ" firstAttribute="trailing" secondItem="CJ6-bw-cyX" secondAttribute="trailing" constant="210" id="lKv-tL-HF2"/>
+                                    <constraint firstItem="CJ6-bw-cyX" firstAttribute="top" secondItem="by1-Hb-CaQ" secondAttribute="top" constant="105" id="xTG-rr-kLR"/>
+                                </constraints>
+                            </view>
                             <view autoresizesSubviews="NO" tag="1" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tsh-rC-BwO" userLabel="VideoContentView">
                                 <rect key="frame" x="31" y="0.0" width="834" height="414"/>
                                 <viewLayoutGuide key="safeArea" id="aVY-BC-PZU"/>
@@ -214,7 +238,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="CastDisconnected" width="20" height="20"/>
+        <image name="CastDisconnected" width="24" height="24"/>
         <image name="chevron.backward" catalog="system" width="96" height="128"/>
         <image name="gear" catalog="system" width="128" height="119"/>
         <image name="gobackward.15" catalog="system" width="121" height="128"/>

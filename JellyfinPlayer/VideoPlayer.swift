@@ -10,6 +10,7 @@ import MobileVLCKit
 import JellyfinAPI
 import MediaPlayer
 import Combine
+import SwiftyJSON
 
 struct Subtitle {
     var name: String
@@ -24,6 +25,11 @@ struct AudioTrack {
     var id: Int32
 }
 
+enum PlayerDestination {
+    case remote
+    case local
+}
+
 class PlaybackItem: ObservableObject {
     @Published var videoType: PlayMethod = .directPlay
     @Published var videoUrl: URL = URL(string: "https://example.com")!
@@ -35,7 +41,7 @@ protocol PlayerViewControllerDelegate: AnyObject {
     func exitPlayer(_ viewController: PlayerViewController)
 }
 
-class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate {
+class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate, CastClientDelegate {
 
     weak var delegate: PlayerViewControllerDelegate?
 
@@ -62,7 +68,15 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var lastTime: Float = 0.0
     var startTime: Int = 0
     var controlsAppearTime: Double = 0
-    var discoveredCastDevices: [CastDevice] = []
+    
+    var discoveredCastDevices: [CastDevice] = [] //not private due to VPCDS using it.
+    var selectedCastDevice: CastDevice? //same here
+    private var castClient: CastClient?
+    private var playerDestination: PlayerDestination = .local;
+    private var castAppTransportID: String = "";
+    private var remotePlayIsPlaying: Bool = false;
+    private var remotePlaySeekState: Int = 0;
+    private let castScanner: CastDeviceScanner = CastDeviceScanner();
 
     var selectedAudioTrack: Int32 = -1 {
         didSet {
@@ -85,8 +99,10 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
     // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
-        sendProgressReport(eventName: "pause")
-        mediaPlayer.pause()
+        if(playerDestination == .local) {
+            sendProgressReport(eventName: "pause")
+            mediaPlayer.pause()
+        }
     }
 
     @IBAction func seekSliderValueChanged(_ sender: Any) {
@@ -111,53 +127,87 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         // Scrub is value from 0..1 - find position in video and add / or remove.
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration)
         let offset = secondsScrubbedTo - videoPosition
-        mediaPlayer.play()
-        if offset > 0 {
-            mediaPlayer.jumpForward(Int32(offset)/1000)
-        } else {
-            mediaPlayer.jumpBackward(Int32(abs(offset))/1000)
+        
+        if(playerDestination == .local) {
+            mediaPlayer.play()
+            if offset > 0 {
+                mediaPlayer.jumpForward(Int32(offset)/1000)
+            } else {
+                mediaPlayer.jumpBackward(Int32(abs(offset))/1000)
+            }
+            sendProgressReport(eventName: "unpause")
         }
-        sendProgressReport(eventName: "unpause")
     }
 
     @IBAction func exitButtonPressed(_ sender: Any) {
         sendStopReport()
         mediaPlayer.stop()
+        
+        if(playerDestination == .remote) {
+            castClient?.stopCurrentApp()
+            castClient?.disconnect()
+            castClient = nil
+            selectedCastDevice = nil
+            playerDestination = .local
+        }
+        
         delegate?.exitPlayer(self)
     }
 
     @IBAction func controlViewTapped(_ sender: Any) {
-        videoControlsView.isHidden = true
+        if(playerDestination == .local) {
+            videoControlsView.isHidden = true
+        }
     }
 
     @IBAction func contentViewTapped(_ sender: Any) {
-        videoControlsView.isHidden = false
-        controlsAppearTime = CACurrentMediaTime()
+        if(playerDestination == .local) {
+            videoControlsView.isHidden = false
+            controlsAppearTime = CACurrentMediaTime()
+        }
     }
 
     @IBAction func jumpBackTapped(_ sender: Any) {
         if paused == false {
-            mediaPlayer.jumpBackward(15)
+            if(playerDestination == .local) {
+                mediaPlayer.jumpBackward(15)
+            } else {
+                
+            }
         }
     }
 
     @IBAction func jumpForwardTapped(_ sender: Any) {
         if paused == false {
-            mediaPlayer.jumpForward(30)
+            if(playerDestination == .local) {
+                mediaPlayer.jumpForward(30)
+            } else {
+            }
         }
     }
 
     @IBOutlet weak var mainActionButton: UIButton!
     @IBAction func mainActionButtonPressed(_ sender: Any) {
-        print(mediaPlayer.state.rawValue)
         if paused {
-            mediaPlayer.play()
-            mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
-            paused = false
+            if(playerDestination == .local) {
+                mediaPlayer.play()
+                mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
+                paused = false
+            } else {
+                sendCastCommand(cmd: "Unpause")
+                mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
+                paused = false
+            }
         } else {
-            mediaPlayer.pause()
-            mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
-            paused = true
+            if(playerDestination == .local) {
+                mediaPlayer.pause()
+                mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
+                paused = true
+            } else {
+                sendCastCommand(cmd: "Pause")
+                mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
+                paused = true
+            }
         }
     }
 
@@ -175,19 +225,32 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
         }
     }
-
+    
+    //MARK: Cast start
     @IBAction func castButtonPressed(_ sender: Any) {
-        castDeviceVC = VideoPlayerCastDeviceSelectorView()
-        castDeviceVC?.delegate = self
+        if(selectedCastDevice == nil) {
+            castDeviceVC = VideoPlayerCastDeviceSelectorView()
+            castDeviceVC?.delegate = self
 
-        castDeviceVC?.modalPresentationStyle = .popover
-        castDeviceVC?.popoverPresentationController?.sourceView = castButton
+            castDeviceVC?.modalPresentationStyle = .popover
+            castDeviceVC?.popoverPresentationController?.sourceView = castButton
 
-        // Present the view controller (in a popover).
-        self.present(castDeviceVC!, animated: true) {
-            print("popover visible, pause playback")
-            self.mediaPlayer.pause()
-            self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
+            // Present the view controller (in a popover).
+            self.present(castDeviceVC!, animated: true) {
+                print("popover visible, pause playback")
+                self.mediaPlayer.pause()
+                self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
+            }
+        } else {
+            castClient?.stopCurrentApp()
+            castClient?.disconnect()
+            selectedCastDevice = nil;
+            castClient = nil;
+            self.castButton.isEnabled = true
+            self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
+            
+            //disconnect cast device.
+            
         }
     }
     
@@ -196,11 +259,105 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         self.mediaPlayer.play()
         self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
     }
-
+    
+    func castDeviceChanged() {
+        if(selectedCastDevice != nil) {
+            castClient = CastClient(device: selectedCastDevice!)
+            castClient!.delegate = self
+            castClient!.connect()
+        }
+    }
+    
+    func sendCastCommand(cmd: String) {
+        let payload: [String: Any] = [
+            "options": [],
+            "command": cmd,
+            "userId": SessionManager.current.user.user_id!,
+            "deviceId": SessionManager.current.deviceID,
+            "accessToken": SessionManager.current.accessToken,
+            "serverAddress": ServerEnvironment.current.server.baseURI!,
+            "serverId": ServerEnvironment.current.server.server_id!,
+            "serverVersion": "10.8.0",
+            "receiverName": self.selectedCastDevice!.name
+        ]
+        let req = CastRequest(id: castClient!.nextRequestId(), namespace: "urn:x-cast:com.connectsdk", destinationId: castAppTransportID, payload: payload)
+        castClient!.send(req, response: nil)
+    }
+    
+    func castClient(_ client: CastClient, connectionTo device: CastDevice, didFailWith error: Error?) {
+        dump(error)
+    }
+    
+    func castClient(_ client: CastClient, willConnectTo device: CastDevice) {
+        print("Connecting")
+        mediaPlayer.pause()
+        castScanner.stopScanning()
+        self.castButton.setImage(UIImage(named: "CastConnecting1"), for: .normal)
+    }
+    
+    func castClient(_ client: CastClient, didConnectTo device: CastDevice) {
+        print("Connected")
+        self.castButton.setImage(UIImage(named: "CastConnected"), for: .normal)
+        
+        //Launch player
+        client.launch(appId: "F007D354") { result in
+                switch result {
+                    case .success(let app):
+                    // here you would probably call client.load() to load some media
+                        let payload: [String: Any] = [
+                            "options": [
+                                "items": [[
+                                    "Id": self.manifest.id!,
+                                    "ServerId": ServerEnvironment.current.server.server_id!,
+                                    "Name": self.manifest.name!,
+                                    "Type": self.manifest.type!,
+                                    "MediaType": self.manifest.mediaType!,
+                                    "IsFolder": self.manifest.isFolder!
+                                ]]
+                            ],
+                            "command": "PlayNow",
+                            "userId": SessionManager.current.user.user_id!,
+                            "deviceId": SessionManager.current.deviceID,
+                            "accessToken": SessionManager.current.accessToken,
+                            "serverAddress": ServerEnvironment.current.server.baseURI!,
+                            "serverId": ServerEnvironment.current.server.server_id!,
+                            "serverVersion": "10.8.0",
+                            "receiverName": self.selectedCastDevice!.name,
+                            "subtitleBurnIn": false
+                        ]
+                        self.castAppTransportID = app.transportId
+                        let req = CastRequest(id: client.nextRequestId(), namespace: "urn:x-cast:com.connectsdk", destinationId: app.transportId, payload: payload)
+                        client.send(req, response: self.castResponseHandler)
+                    case .failure(let error):
+                        print(error)
+                }
+        }
+        
+        //Hide VLC player
+        videoContentView.isHidden = true;
+        playerDestination = .remote;
+        
+    }
+    
+    func castClient(_ client: CastClient, didDisconnectFrom device: CastDevice) {
+        print("Disconnected")
+        castScanner.startScanning()
+        playerDestination = .local;
+        videoContentView.isHidden = false;
+        self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
+    }
+                            
+    func castResponseHandler(result: Result<JSON, CastError>) {
+        dump(result)
+    }
+    
+    //MARK: Cast End
     func settingsPopoverDismissed() {
         optionsVC?.dismiss(animated: true, completion: nil)
-        self.mediaPlayer.play()
-        self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
+        if(playerDestination == .local) {
+            self.mediaPlayer.play()
+            self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
+        }
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -221,31 +378,45 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
         // Add handler for Pause Command
         commandCenter.pauseCommand.addTarget { _ in
-            self.mediaPlayer.pause()
-            self.sendProgressReport(eventName: "pause")
+            if(self.playerDestination == .local) {
+                self.mediaPlayer.pause()
+                self.sendProgressReport(eventName: "pause")
+            } else {
+                self.sendCastCommand(cmd: "Pause")
+            }
             self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
             return .success
         }
 
         // Add handler for Play command
         commandCenter.playCommand.addTarget { _ in
-            self.mediaPlayer.play()
-            self.sendProgressReport(eventName: "unpause")
+            if(self.playerDestination == .local) {
+                self.mediaPlayer.play()
+                self.sendProgressReport(eventName: "unpause")
+            } else {
+                self.sendCastCommand(cmd: "Unpause")
+            }
             self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
             return .success
         }
 
         // Add handler for FF command
         commandCenter.seekForwardCommand.addTarget { _ in
-            self.mediaPlayer.jumpForward(30)
-            self.sendProgressReport(eventName: "timeupdate")
+            if(self.playerDestination == .local) {
+                self.mediaPlayer.jumpForward(30)
+                self.sendProgressReport(eventName: "timeupdate")
+            } else {
+                
+            }
             return .success
         }
 
         // Add handler for RW command
         commandCenter.seekBackwardCommand.addTarget { _ in
-            self.mediaPlayer.jumpBackward(15)
-            self.sendProgressReport(eventName: "timeupdate")
+            if(self.playerDestination == .local) {
+                self.mediaPlayer.jumpBackward(15)
+                self.sendProgressReport(eventName: "timeupdate")
+            }
             return .success
         }
 
@@ -255,15 +426,20 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
 
             if let event = remoteEvent as? MPChangePlaybackPositionCommandEvent {
                 let targetSeconds = event.positionTime
-
+                
                 let videoPosition = Double(self.mediaPlayer.time.intValue)
                 let offset = targetSeconds - videoPosition
-                if offset > 0 {
-                    self.mediaPlayer.jumpForward(Int32(offset)/1000)
+                
+                if(self.playerDestination == .local) {
+                    if offset > 0 {
+                        self.mediaPlayer.jumpForward(Int32(offset)/1000)
+                    } else {
+                        self.mediaPlayer.jumpBackward(Int32(abs(offset))/1000)
+                    }
+                    self.sendProgressReport(eventName: "unpause")
                 } else {
-                    self.mediaPlayer.jumpBackward(Int32(abs(offset))/1000)
+                    
                 }
-                self.sendProgressReport(eventName: "unpause")
 
                 return .success
             } else {
@@ -299,11 +475,9 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
 
     func mediaHasStartedPlaying() {
-        let scanner = CastDeviceScanner()
-
-        NotificationCenter.default.addObserver(forName: CastDeviceScanner.deviceListDidChange, object: scanner, queue: nil) { _ in
-            self.discoveredCastDevices = scanner.devices
-            if !scanner.devices.isEmpty {
+        NotificationCenter.default.addObserver(forName: CastDeviceScanner.deviceListDidChange, object: castScanner, queue: nil) { _ in
+            self.discoveredCastDevices = self.castScanner.devices
+            if !self.castScanner.devices.isEmpty {
                 self.castButton.isEnabled = true
                 self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
             } else {
@@ -312,7 +486,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             }
         }
 
-        scanner.startScanning()
+        castScanner.startScanning()
     }
 
     override func viewDidAppear(_ animated: Bool) {
