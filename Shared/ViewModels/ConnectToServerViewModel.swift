@@ -14,12 +14,10 @@ import JellyfinAPI
 final class ConnectToServerViewModel: ViewModel {
     @Published
     var isConnectedServer = false
-    @Published
-    var uri = ""
-    @Published
-    var username = ""
-    @Published
-    var password = ""
+    
+    var uriSubject = CurrentValueSubject<String, Never>("")
+    var usernameSubject = CurrentValueSubject<String, Never>("")
+    var passwordSubject = CurrentValueSubject<String, Never>("")
 
     @Published
     var lastPublicUsers = [UserDto]()
@@ -57,7 +55,7 @@ final class ConnectToServerViewModel: ViewModel {
     }
 
     func connectToServer() {
-        ServerEnvironment.current.create(with: uri)
+        ServerEnvironment.current.create(with: uriSubject.value)
             .sink(receiveCompletion: { result in
                 switch result {
                     case let .failure(error):
@@ -72,7 +70,7 @@ final class ConnectToServerViewModel: ViewModel {
     }
 
     func login() {
-        SessionManager.current.login(username: username, password: password)
+        SessionManager.current.login(username: usernameSubject.value, password: passwordSubject.value)
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { _ in

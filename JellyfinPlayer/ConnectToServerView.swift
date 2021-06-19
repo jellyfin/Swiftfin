@@ -12,6 +12,9 @@ import SwiftUI
 
 struct ConnectToServerView: View {
     @StateObject var viewModel = ConnectToServerViewModel()
+    @State var username = ""
+    @State var password = ""
+    @State var uri = ""
 
     var body: some View {
         ZStack {
@@ -19,10 +22,10 @@ struct ConnectToServerView: View {
                 if viewModel.isConnectedServer {
                     if viewModel.publicUsers.isEmpty {
                         Section(header: Text("Login to \(ServerEnvironment.current.server.name ?? "")")) {
-                            TextField("Username", text: $viewModel.username)
+                            TextField("Username", text: $username)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
-                            SecureField("Password", text: $viewModel.password)
+                            SecureField("Password", text: $password)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
                             Button {
@@ -35,7 +38,7 @@ struct ConnectToServerView: View {
                                         ProgressView()
                                     }
                                 }
-                            }.disabled(viewModel.isLoading || viewModel.username.isEmpty)
+                            }.disabled(viewModel.isLoading || username.isEmpty)
                         }
 
                         Section {
@@ -56,10 +59,10 @@ struct ConnectToServerView: View {
                             ForEach(viewModel.publicUsers, id: \.id) { publicUser in
                                 HStack {
                                     Button(action: {
-                                        viewModel.username = publicUser.name ?? ""
+                                        username = publicUser.name ?? ""
                                         viewModel.publicUsers.removeAll()
                                         if !(publicUser.hasPassword ?? true) {
-                                            viewModel.password = ""
+                                            password = ""
                                             viewModel.login()
                                         }
                                     }) {
@@ -88,7 +91,7 @@ struct ConnectToServerView: View {
                         Section {
                             Button {
                                 viewModel.publicUsers.removeAll()
-                                viewModel.username = ""
+                                username = ""
                             } label: {
                                 HStack {
                                     Text("Other User").font(.subheadline).fontWeight(.semibold)
@@ -106,7 +109,7 @@ struct ConnectToServerView: View {
                     }
                 } else {
                     Section(header: Text("Server Information")) {
-                        TextField("Jellyfin Server URL", text: $viewModel.uri)
+                        TextField("Jellyfin Server URL", text: $uri)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
                         Button {
@@ -120,10 +123,19 @@ struct ConnectToServerView: View {
                                 ProgressView()
                             }
                         }
-                        .disabled(viewModel.isLoading || viewModel.uri.isEmpty)
+                        .disabled(viewModel.isLoading || uri.isEmpty)
                     }
                 }
             }
+        }
+        .onChange(of: uri) { uri in
+            viewModel.uriSubject.send(uri)
+        }
+        .onChange(of: username) { username in
+            viewModel.usernameSubject.send(username)
+        }
+        .onChange(of: password) { password in
+            viewModel.passwordSubject.send(password)
         }
         .alert(item: $viewModel.errorMessage) { _ in
             Alert(title: Text("Error"), message: Text("message"), dismissButton: .default(Text("Try again")))

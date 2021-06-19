@@ -12,19 +12,15 @@ import NukeUI
 import SwiftUI
 
 struct LibraryView: View {
-    @StateObject
-    var viewModel: LibraryViewModel
+    @StateObject var viewModel: LibraryViewModel
     var title: String
 
     // MARK: tracks for grid
 
-    @State
-    var isShowingSearchView = false
-    @State
-    var isShowingFilterView = false
+    @State var isShowingSearchView = false
+    @State var isShowingFilterView = false
 
-    @State
-    private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
+    @State private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
 
     func recalcTracks() {
         tracks = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)

@@ -10,14 +10,17 @@ import SwiftUI
 
 struct ConnectToServerView: View {
     @StateObject var viewModel = ConnectToServerViewModel()
+    @State var username = ""
+    @State var password = ""
+    @State var uri = ""
 
     var body: some View {
         VStack(alignment: .leading) {
             if viewModel.isConnectedServer {
                 if viewModel.publicUsers.isEmpty {
-                    Section(header: Text(viewModel.lastPublicUsers.isEmpty || viewModel.username == "" ? "Login to \(ServerEnvironment.current.server.name ?? "")": "")) {
-                        if viewModel.lastPublicUsers.isEmpty || viewModel.username == "" {
-                            TextField("Username", text: $viewModel.username)
+                    Section(header: Text(viewModel.lastPublicUsers.isEmpty || username == "" ? "Login to \(ServerEnvironment.current.server.name ?? "")": "")) {
+                        if viewModel.lastPublicUsers.isEmpty || username == "" {
+                            TextField("Username", text: $username)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
                         } else {
@@ -30,7 +33,7 @@ struct ConnectToServerView: View {
                             }
                         }
 
-                        SecureField("Password (optional)", text: $viewModel.password)
+                        SecureField("Password (optional)", text: $password)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
                     }
@@ -39,7 +42,7 @@ struct ConnectToServerView: View {
                         HStack {
                             Button {
                                 if !viewModel.lastPublicUsers.isEmpty {
-                                    viewModel.username = ""
+                                    username = ""
                                     viewModel.showPublicUsers()
                                 } else {
                                     viewModel.isConnectedServer = false
@@ -62,7 +65,7 @@ struct ConnectToServerView: View {
                                     Text("Login")
                                 }
                                 Spacer()
-                            }.disabled(viewModel.isLoading || viewModel.username.isEmpty)
+                            }.disabled(viewModel.isLoading || username.isEmpty)
                         }
                     }
                 } else {
@@ -74,11 +77,11 @@ struct ConnectToServerView: View {
                                         let user = SessionManager.current.getSavedSession(userID: publicUser.id!)
                                         SessionManager.current.loginWithSavedSession(user: user)
                                     } else {
-                                        viewModel.username = publicUser.name ?? ""
+                                        username = publicUser.name ?? ""
                                         viewModel.selectedPublicUser = publicUser
                                         viewModel.hidePublicUsers()
                                         if !(publicUser.hasPassword ?? true) {
-                                            viewModel.password = ""
+                                            password = ""
                                             viewModel.login()
                                         }
                                     }
@@ -92,7 +95,7 @@ struct ConnectToServerView: View {
                             Spacer()
                             Button {
                                 viewModel.hidePublicUsers()
-                                viewModel.username = ""
+                                username = ""
                             } label: {
                                 Text("Other User").font(.headline).fontWeight(.semibold)
                             }
@@ -103,7 +106,7 @@ struct ConnectToServerView: View {
             } else {
                 Form {
                     Section(header: Text("Server Information")) {
-                        TextField("Jellyfin Server URL", text: $viewModel.uri)
+                        TextField("Jellyfin Server URL", text: $uri)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
                         Button {
@@ -117,7 +120,7 @@ struct ConnectToServerView: View {
                                 ProgressView()
                             }
                         }
-                        .disabled(viewModel.isLoading || viewModel.uri.isEmpty)
+                        .disabled(viewModel.isLoading || uri.isEmpty)
                     }
                 }
             }
@@ -126,6 +129,15 @@ struct ConnectToServerView: View {
         .padding(.trailing, 90)
         .alert(item: $viewModel.errorMessage) { _ in
             Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("Ok")))
+        }
+        .onChange(of: uri) { uri in
+            viewModel.uriSubject.send(uri)
+        }
+        .onChange(of: username) { username in
+            viewModel.usernameSubject.send(username)
+        }
+        .onChange(of: password) { password in
+            viewModel.passwordSubject.send(password)
         }
         .navigationTitle(viewModel.isConnectedServer ? "Who's watching?" : "Connect to Jellyfin")
     }

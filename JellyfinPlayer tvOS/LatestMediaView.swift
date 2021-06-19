@@ -11,8 +11,7 @@ import Combine
 
 struct LatestMediaView: View {
 
-    @StateObject
-    var tempViewModel = ViewModel()
+    @StateObject var tempViewModel = ViewModel()
     @State var items: [BaseItemDto] = []
     private var library_id: String = ""
     @State private var viewDidLoad: Bool = false

@@ -10,8 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 struct LatestMediaView: View {
-    @StateObject
-    var viewModel: LatestMediaViewModel
+    @StateObject var viewModel: LatestMediaViewModel
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
