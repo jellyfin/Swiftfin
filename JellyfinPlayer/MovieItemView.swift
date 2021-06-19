@@ -186,7 +186,7 @@ struct MovieItemView: View {
                                     Text("Studios:").font(.callout).fontWeight(.semibold)
                                     ForEach(viewModel.item.studios!, id: \.id) { studio in
                                         NavigationLink(destination: LazyView {
-                                            
+
                                                     LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                         }) {
                                             Text(studio.name ?? "").font(.footnote)

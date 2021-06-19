@@ -51,7 +51,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     @IBOutlet weak var jumpForwardButton: UIButton!
     @IBOutlet weak var playerSettingsButton: UIButton!
     @IBOutlet weak var castButton: UIButton!
-    
+
     var shouldShowLoadingScreen: Bool = false
     var ssTargetValueOffset: Int = 0
     var ssStartValue: Int = 0
@@ -173,11 +173,11 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
         }
     }
-    
+
     @IBAction func castButtonPressed(_ sender: Any) {
-        
+
     }
-    
+
     func settingsPopoverDismissed() {
         optionsVC?.dismiss(animated: true, completion: nil)
         self.mediaPlayer.play()
@@ -278,24 +278,24 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
             UIDevice.current.setValue(value, forKey: "orientation")
         }
     }
-    
+
     func mediaHasStartedPlaying() {
         let scanner = CastDeviceScanner()
 
         NotificationCenter.default.addObserver(forName: CastDeviceScanner.deviceListDidChange, object: scanner, queue: nil) { _ in
             dump(scanner.devices)
-            if(!scanner.devices.isEmpty) {
-                self.castButton.isEnabled = true;
+            if !scanner.devices.isEmpty {
+                self.castButton.isEnabled = true
                 self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
             } else {
-                self.castButton.isEnabled = false;
+                self.castButton.isEnabled = false
                 self.castButton.setImage(nil, for: .normal)
             }
         }
 
         scanner.startScanning()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         overrideUserInterfaceStyle = .dark

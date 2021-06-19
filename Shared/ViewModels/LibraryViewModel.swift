@@ -45,8 +45,7 @@ final class LibraryViewModel: ViewModel {
          person: BaseItemPerson? = nil,
          genre: NameGuidPair? = nil,
          studio: NameGuidPair? = nil,
-         filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]))
-    {
+         filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name])) {
         self.parentID = parentID
         self.person = person
         self.genre = genre
