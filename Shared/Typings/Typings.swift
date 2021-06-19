@@ -5,15 +5,16 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import Foundation
 import Combine
+import Foundation
 import JellyfinAPI
 
 struct LibraryFilters: Codable, Hashable {
     var filters: [ItemFilter] = []
     var sortOrder: [APISortOrder] = [.descending]
     var withGenres: [NameGuidPair] = []
-    var sortBy: [String] = ["SortName"]
+    var tags: [String] = []
+    var sortBy: [SortBy] = [.name]
 }
 
 public enum SortBy: String, Codable, CaseIterable {
@@ -21,4 +22,53 @@ public enum SortBy: String, Codable, CaseIterable {
     case premiereDate = "PremiereDate"
     case name = "SortName"
     case dateAdded = "DateCreated"
+}
+
+extension SortBy {
+    var localized: String {
+        switch self {
+        case .productionYear:
+            return "Release Year"
+        case .premiereDate:
+            return "Premiere date"
+        case .name:
+            return "Title"
+        case .dateAdded:
+            return "Date added"
+        }
+    }
+}
+
+extension ItemFilter {
+    static var supportedTypes: [ItemFilter] {
+        [.isUnplayed, isPlayed, .isFavorite, .likes, .isFavoriteOrLikes]
+    }
+
+    var localized: String {
+        switch self {
+        case .isUnplayed:
+            return "Unplayed"
+        case .isPlayed:
+            return "Played"
+        case .isFavorite:
+            return "Favorites"
+        case .likes:
+            return "Liked"
+        case .isFavoriteOrLikes:
+            return "Favorites or Liked"
+        default:
+            return ""
+        }
+    }
+}
+
+extension APISortOrder {
+    var localized: String {
+        switch self {
+        case .ascending:
+            return "Ascending"
+        case .descending:
+            return "Descending"
+        }
+    }
 }

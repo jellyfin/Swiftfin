@@ -11,62 +11,14 @@ import Combine
 
 struct EpisodeItemView: View {
     @StateObject
-    var tempViewModel = ViewModel()
+    var viewModel: EpisodeItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
     @Environment(\.verticalSizeClass) var vSizeClass
     @EnvironmentObject private var playbackInfo: VideoPlayerItem
 
-    var item: BaseItemDto
-
-    @State private var settingState: Bool = true
-    @State private var watched: Bool = false {
-        didSet {
-            if !settingState {
-                if watched == true {
-                    PlaystateAPI.markPlayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
-                        .sink(receiveCompletion: { completion in
-                            print(completion)
-                        }, receiveValue: { _ in
-                        })
-                        .store(in: &tempViewModel.cancellables)
-                } else {
-                    PlaystateAPI.markUnplayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
-                        .sink(receiveCompletion: { completion in
-                            print(completion)
-                        }, receiveValue: { _ in
-                        })
-                        .store(in: &tempViewModel.cancellables)
-                }
-            }
-        }
-    }
-
-    @State
-    private var favorite: Bool = false {
-        didSet {
-            if !settingState {
-                if favorite == true {
-                    UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
-                        .sink(receiveCompletion: { completion in
-                            print(completion)
-                        }, receiveValue: { _ in
-                        })
-                        .store(in: &tempViewModel.cancellables)
-                } else {
-                    UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
-                        .sink(receiveCompletion: { completion in
-                            print(completion)
-                        }, receiveValue: { _ in
-                        })
-                        .store(in: &tempViewModel.cancellables)
-                }
-            }
-        }
-    }
-
     var portraitHeaderView: some View {
-        ImageView(src: item.getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: item.getBackdropImageBlurHash())
+        ImageView(src: viewModel.item.getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: viewModel.item.getBackdropImageBlurHash())
             .opacity(0.4)
             .blur(radius: 2.0)
     }
@@ -74,27 +26,27 @@ struct EpisodeItemView: View {
     var portraitHeaderOverlayView: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
-                ImageView(src: item.getSeriesPrimaryImage(maxWidth: 120), bh: item.getSeriesPrimaryImageBlurHash())
+                ImageView(src: viewModel.item.getSeriesPrimaryImage(maxWidth: 120), bh: viewModel.item.getSeriesPrimaryImageBlurHash())
                     .frame(width: 120, height: 180)
                     .cornerRadius(10)
                 VStack(alignment: .leading) {
                     Spacer()
-                    Text(item.name ?? "").font(.headline)
+                    Text(viewModel.item.name ?? "").font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                         .offset(y: 5)
                     HStack {
-                        Text(String(item.productionYear ?? 0)).font(.subheadline)
+                        Text(String(viewModel.item.productionYear ?? 0)).font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                        Text(item.getItemRuntime()).font(.subheadline)
+                        Text(viewModel.item.getItemRuntime()).font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                        if item.officialRating != nil {
-                            Text(item.officialRating!).font(.subheadline)
+                        if viewModel.item.officialRating != nil {
+                            Text(viewModel.item.officialRating!).font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
@@ -109,11 +61,11 @@ struct EpisodeItemView: View {
             HStack {
                 // Play button
                 Button {
-                    self.playbackInfo.itemToPlay = item
+                    self.playbackInfo.itemToPlay = viewModel.item
                     self.playbackInfo.shouldShowPlayer = true
                 } label: {
                     HStack {
-                        Text(item.getItemProgressString() == "" ? "Play" : "\(item.getItemProgressString()) left")
+                        Text(viewModel.item.getItemProgressString() == "" ? "Play" : "\(viewModel.item.getItemProgressString()) left")
                             .foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
                         Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
                     }
@@ -125,19 +77,21 @@ struct EpisodeItemView: View {
                 Spacer()
                 HStack {
                     Button {
-                        favorite.toggle()
+                        viewModel.updateFavoriteState()
                     } label: {
-                        if !favorite {
-                            Image(systemName: "heart").foregroundColor(Color.primary).font(.system(size: 20))
-                        } else {
+                        if viewModel.isFavorited {
                             Image(systemName: "heart.fill").foregroundColor(Color(UIColor.systemRed))
+                                .font(.system(size: 20))
+                        } else {
+                            Image(systemName: "heart").foregroundColor(Color.primary)
                                 .font(.system(size: 20))
                         }
                     }
+                    .disabled(viewModel.isLoading)
                     Button {
-                        watched.toggle()
+                        viewModel.updateWatchState()
                     } label: {
-                        if watched {
+                        if viewModel.isWatched {
                             Image(systemName: "checkmark.rectangle.fill").foregroundColor(Color.primary)
                                 .font(.system(size: 20))
                         } else {
@@ -145,6 +99,7 @@ struct EpisodeItemView: View {
                                 .font(.system(size: 20))
                         }
                     }
+                    .disabled(viewModel.isLoading)
                 }
             }.padding(.top, 8)
         }
@@ -160,21 +115,21 @@ struct EpisodeItemView: View {
                         Spacer()
                             .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 135 : 40)
                             .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 54 : 24)
-                        if !(item.taglines ?? []).isEmpty {
-                            Text(item.taglines!.first!).font(.body).italic().padding(.top, 7)
+                        if !(viewModel.item.taglines ?? []).isEmpty {
+                            Text(viewModel.item.taglines!.first!).font(.body).italic().padding(.top, 7)
                                 .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
                                 .padding(.trailing, 16)
                         }
-                        Text(item.overview ?? "").font(.footnote).padding(.top, 3)
+                        Text(viewModel.item.overview ?? "").font(.footnote).padding(.top, 3)
                             .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
                             .padding(.trailing, 16)
-                        if !(item.genreItems ?? []).isEmpty {
+                        if !(viewModel.item.genreItems ?? []).isEmpty {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack {
                                     Text("Genres:").font(.callout).fontWeight(.semibold)
-                                    ForEach(item.genreItems!, id: \.id) { genre in
+                                    ForEach(viewModel.item.genreItems!, id: \.id) { genre in
                                         NavigationLink(destination: LazyView {
-                                            LibraryView(withGenre: genre)
+                                                LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
                                         }) {
                                             Text(genre.name ?? "").font(.footnote)
                                         }
@@ -182,16 +137,16 @@ struct EpisodeItemView: View {
                                 }.padding(.leading, 16).padding(.trailing, 16)
                             }
                         }
-                        if !(item.people ?? []).isEmpty {
+                        if !(viewModel.item.people ?? []).isEmpty {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 VStack {
                                     Spacer().frame(height: 8)
                                     HStack {
                                         Spacer().frame(width: 16)
-                                        ForEach(item.people!, id: \.self) { person in
+                                        ForEach(viewModel.item.people!, id: \.self) { person in
                                             if person.type! == "Actor" {
                                                 NavigationLink(destination: LazyView {
-                                                    LibraryView(withPerson: person)
+                                                    LibraryView(viewModel: .init(person: person), title: person.name ?? "")
                                                 }) {
                                                     VStack {
                                                         ImageView(src: person.getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
@@ -213,13 +168,13 @@ struct EpisodeItemView: View {
                                 }
                             }.padding(.top, -3)
                         }
-                        if !(item.studios ?? []).isEmpty {
+                        if !(viewModel.item.studios ?? []).isEmpty {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack {
                                     Text("Studios:").font(.callout).fontWeight(.semibold)
-                                    ForEach(item.studios!, id: \.id) { studio in
+                                    ForEach(viewModel.item.studios!, id: \.id) { studio in
                                         NavigationLink(destination: LazyView {
-                                            LibraryView(withStudio: studio)
+                                            LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                         }) {
                                             Text(studio.name ?? "").font(.footnote)
                                         }
@@ -233,7 +188,7 @@ struct EpisodeItemView: View {
             } else {
                 GeometryReader { geometry in
                     ZStack {
-                        ImageView(src: item.getBackdropImage(maxWidth: 200), bh: item.getBackdropImageBlurHash())
+                        ImageView(src: viewModel.item.getBackdropImage(maxWidth: 200), bh: viewModel.item.getBackdropImageBlurHash())
                             .opacity(0.3)
                             .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                    height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
@@ -241,16 +196,16 @@ struct EpisodeItemView: View {
                             .blur(radius: 4)
                         HStack {
                             VStack {
-                                ImageView(src: item.getSeriesPrimaryImage(maxWidth: 120), bh: item.getSeriesPrimaryImageBlurHash())
+                                ImageView(src: viewModel.item.getSeriesPrimaryImage(maxWidth: 120), bh: viewModel.item.getSeriesPrimaryImageBlurHash())
                                     .frame(width: 120, height: 180)
                                     .cornerRadius(10)
                                 Spacer().frame(height: 15)
                                 Button {
-                                    self.playbackInfo.itemToPlay = item
+                                    self.playbackInfo.itemToPlay = viewModel.item
                                     self.playbackInfo.shouldShowPlayer = true
                                 } label: {
                                     HStack {
-                                        Text(item.getItemProgressString() == "" ? "Play" : "\(item.getItemProgressString()) left")
+                                        Text(viewModel.item.getItemProgressString() == "" ? "Play" : "\(viewModel.item.getItemProgressString()) left")
                                             .foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
                                         Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
                                     }
@@ -265,23 +220,23 @@ struct EpisodeItemView: View {
                                 VStack(alignment: .leading) {
                                     HStack {
                                         VStack(alignment: .leading) {
-                                            Text(item.name ?? "").font(.headline)
+                                            Text(viewModel.item.name ?? "").font(.headline)
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(.primary)
                                                 .fixedSize(horizontal: false, vertical: true)
                                                 .offset(x: 14, y: 0)
                                             Spacer().frame(height: 1)
                                             HStack {
-                                                Text(String(item.productionYear ?? 0)).font(.subheadline)
+                                                Text(String(viewModel.item.productionYear ?? 0)).font(.subheadline)
                                                     .fontWeight(.medium)
                                                     .foregroundColor(.secondary)
                                                     .lineLimit(1)
-                                                Text(item.getItemRuntime()).font(.subheadline)
+                                                Text(viewModel.item.getItemRuntime()).font(.subheadline)
                                                     .fontWeight(.medium)
                                                     .foregroundColor(.secondary)
                                                     .lineLimit(1)
-                                                if item.officialRating != nil {
-                                                    Text(item.officialRating!).font(.subheadline)
+                                                if viewModel.item.officialRating != nil {
+                                                    Text(viewModel.item.officialRating!).font(.subheadline)
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(.secondary)
                                                         .lineLimit(1)
@@ -289,10 +244,10 @@ struct EpisodeItemView: View {
                                                         .overlay(RoundedRectangle(cornerRadius: 2)
                                                             .stroke(Color.secondary, lineWidth: 1))
                                                 }
-                                                if item.communityRating != nil {
+                                                if viewModel.item.communityRating != nil {
                                                     HStack {
                                                         Image(systemName: "star").foregroundColor(.secondary)
-                                                        Text(String(item.communityRating!)).font(.subheadline)
+                                                        Text(String(viewModel.item.communityRating!)).font(.subheadline)
                                                             .fontWeight(.semibold)
                                                             .foregroundColor(.secondary)
                                                             .lineLimit(1)
@@ -306,20 +261,21 @@ struct EpisodeItemView: View {
                                         Spacer()
                                         HStack {
                                             Button {
-                                                favorite.toggle()
+                                                viewModel.updateFavoriteState()
                                             } label: {
-                                                if !favorite {
-                                                    Image(systemName: "heart").foregroundColor(Color.primary)
+                                                if viewModel.isFavorited {
+                                                    Image(systemName: "heart.fill").foregroundColor(Color(UIColor.systemRed))
                                                         .font(.system(size: 20))
                                                 } else {
-                                                    Image(systemName: "heart.fill").foregroundColor(Color(UIColor.systemRed))
+                                                    Image(systemName: "heart").foregroundColor(Color.primary)
                                                         .font(.system(size: 20))
                                                 }
                                             }
+                                            .disabled(viewModel.isLoading)
                                             Button {
-                                                watched.toggle()
+                                                viewModel.updateWatchState()
                                             } label: {
-                                                if watched {
+                                                if viewModel.isWatched {
                                                     Image(systemName: "checkmark.rectangle.fill").foregroundColor(Color.primary)
                                                         .font(.system(size: 20))
                                                 } else {
@@ -327,23 +283,24 @@ struct EpisodeItemView: View {
                                                         .font(.system(size: 20))
                                                 }
                                             }
+                                            .disabled(viewModel.isLoading)
                                         }
                                     }.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                    if !(item.taglines ?? []).isEmpty {
-                                        Text(item.taglines!.first!).font(.body).italic().padding(.top, 3)
+                                    if !(viewModel.item.taglines ?? []).isEmpty {
+                                        Text(viewModel.item.taglines!.first!).font(.body).italic().padding(.top, 3)
                                             .fixedSize(horizontal: false, vertical: true).padding(.leading, 16)
                                             .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                     }
-                                    Text(item.overview ?? "").font(.footnote).padding(.top, 3)
+                                    Text(viewModel.item.overview ?? "").font(.footnote).padding(.top, 3)
                                         .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
                                         .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-                                    if !(item.genreItems ?? []).isEmpty {
+                                    if !(viewModel.item.genreItems ?? []).isEmpty {
                                         ScrollView(.horizontal, showsIndicators: false) {
                                             HStack {
                                                 Text("Genres:").font(.callout).fontWeight(.semibold)
-                                                ForEach(item.genreItems!, id: \.id) { genre in
+                                                ForEach(viewModel.item.genreItems!, id: \.id) { genre in
                                                     NavigationLink(destination: LazyView {
-                                                        LibraryView(withGenre: genre)
+                                                        LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
                                                     }) {
                                                         Text(genre.name ?? "").font(.footnote)
                                                     }
@@ -353,16 +310,16 @@ struct EpisodeItemView: View {
                                             .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                         }
                                     }
-                                    if !(item.people ?? []).isEmpty {
+                                    if !(viewModel.item.people ?? []).isEmpty {
                                         ScrollView(.horizontal, showsIndicators: false) {
                                             VStack {
                                                 Spacer().frame(height: 8)
                                                 HStack {
                                                     Spacer().frame(width: 16)
-                                                    ForEach(item.people!, id: \.self) { person in
+                                                    ForEach(viewModel.item.people!, id: \.self) { person in
                                                         if person.type! == "Actor" {
                                                             NavigationLink(destination: LazyView {
-                                                                LibraryView(withPerson: person)
+                                                                LibraryView(viewModel: .init(person: person), title: person.name ?? "")
                                                             }) {
                                                                 VStack {
                                                                     ImageView(src: person.getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
@@ -384,13 +341,13 @@ struct EpisodeItemView: View {
                                             }
                                         }.padding(.top, -3)
                                     }
-                                    if !(item.studios ?? []).isEmpty {
+                                    if !(viewModel.item.studios ?? []).isEmpty {
                                         ScrollView(.horizontal, showsIndicators: false) {
                                             HStack {
                                                 Text("Studios:").font(.callout).fontWeight(.semibold)
-                                                ForEach(item.studios!, id: \.id) { studio in
+                                                ForEach(viewModel.item.studios!, id: \.id) { studio in
                                                     NavigationLink(destination: LazyView {
-                                                        LibraryView(withStudio: studio)
+                                                        LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                                     }) {
                                                         Text(studio.name ?? "").font(.footnote)
                                                     }
@@ -409,15 +366,10 @@ struct EpisodeItemView: View {
                 }
             }
         }
-        .onAppear(perform: {
-            favorite = item.userData?.isFavorite ?? false
-            watched = item.userData?.played ?? false
-            settingState = false
-        })
         .onRotate(perform: { orientation in
             self.orientation = orientation
         })
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle("\(item.seriesName ?? "") - S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))")
+        .navigationTitle("\(viewModel.item.seriesName ?? "") - S\(String(viewModel.item.parentIndexNumber ?? 0)):E\(String(viewModel.item.indexNumber ?? 0))")
     }
 }

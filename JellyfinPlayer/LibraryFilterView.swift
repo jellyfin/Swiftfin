@@ -5,75 +5,80 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 struct LibraryFilterView: View {
-    @Binding var filter: LibraryFilters
+    @Environment(\.presentationMode)
+    var presentationMode
+    @Binding
+    var filters: LibraryFilters
+
+    @StateObject
+    var viewModel: LibraryFilterViewModel
+
+    init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType]) {
+        _filters = filters
+        _viewModel = StateObject(wrappedValue: .init(filters: filters.wrappedValue, enabledFilterType: enabledFilterType))
+    }
 
     var body: some View {
-        EmptyView()
-        /*
         NavigationView {
-            LoadingView(isShowing: $isLoading) {
+            ZStack {
                 Form {
-                    Toggle("Only show unplayed items", isOn: $onlyUnplayed)
-                        .onChange(of: onlyUnplayed) { value in
-                            if value {
-                                filter.filterTypes.append(.isUnplayed)
-                            } else {
-                                filter.filterTypes.removeAll { $0 == .isUnplayed }
-                            }
-                        }
-                    MultiSelector(label: "Genres",
-                                  options: allGenres,
-                                  optionToString: { $0.name },
-                                  selected: $selectedGenres)
-                        .onChange(of: selectedGenres) { genres in
-                            filter.genres = genres.map(\.id)
-                        }
-                    MultiSelector(label: "Parental Ratings",
-                                  options: allRatings,
-                                  optionToString: { $0.name },
-                                  selected: $selectedRatings)
-                        .onChange(of: selectedRatings) { ratings in
-                            filter.officialRatings = ratings.map(\.id)
-                        }
-
-                    Section(header: Text("Sort settings")) {
-                        Picker("Sort by", selection: $sortBySelection) {
-                            Text("Name").tag("SortName")
-                            Text("Date Added").tag("DateCreated")
-                            Text("Date Played").tag("DatePlayed")
-                            Text("Date Released").tag("PremiereDate")
-                            Text("Runtime").tag("Runtime")
-                        }.onChange(of: sortBySelection) { value in
-                            guard let sort = SortType(rawValue: value) else { return }
-                            filter.sort = sort
-                        }
-                        Picker("Sort order", selection: $sortOrder) {
-                            Text("Ascending").tag("Ascending")
-                            Text("Descending").tag("Descending")
-                        }.onChange(of: sortOrder) { order in
-                            guard let asc = ASC(rawValue: order) else { return }
-                            filter.asc = asc
-                        }
+                    if viewModel.enabledFilterType.contains(.genre) {
+                        MultiSelector(label: "Genres",
+                                      options: viewModel.possibleGenres,
+                                      optionToString: { $0.name ?? "" },
+                                      selected: $viewModel.modifyedFilters.withGenres)
+                    }
+                    if viewModel.enabledFilterType.contains(.filter) {
+                        MultiSelector(label: "Filters",
+                                      options: viewModel.possibleItemFilters,
+                                      optionToString: { $0.localized },
+                                      selected: $viewModel.modifyedFilters.filters)
+                    }
+                    if viewModel.enabledFilterType.contains(.tag) {
+                        MultiSelector(label: "Tags",
+                                      options: viewModel.possibleTags,
+                                      optionToString: { $0 },
+                                      selected: $viewModel.modifyedFilters.tags)
+                    }
+                    if viewModel.enabledFilterType.contains(.sortBy) {
+                        MultiSelector(label: "Sort by",
+                                      options: viewModel.possibleSortBys,
+                                      optionToString: { $0.localized },
+                                      selected: $viewModel.modifyedFilters.sortBy)
+                    }
+                    if viewModel.enabledFilterType.contains(.sortOrder) {
+                        MultiSelector(label: "Sort Order",
+                                      options: viewModel.possibleSortOrders,
+                                      optionToString: { $0.localized },
+                                      selected: $viewModel.modifyedFilters.sortOrder)
                     }
                 }
-            }.onAppear(perform: onAppear)
-                .navigationBarTitle("Filters", displayMode: .inline)
-                .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarLeading) {
-                        Button {
-                            presentationMode.wrappedValue.dismiss()
-                        } label: {
-                            HStack {
-                                Text("Back").font(.callout)
-                            }
-                        }
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+            }
+            .navigationBarTitle("Filters", displayMode: .inline)
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button {
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
                     }
                 }
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button {
+                        self.filters = viewModel.modifyedFilters
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        Text("Apply")
+                    }
+                }
+            }
         }
-         */
     }
 }

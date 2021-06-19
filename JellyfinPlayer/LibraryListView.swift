@@ -17,7 +17,7 @@ struct LibraryListView: View {
             switch library.id {
             case "favorites":
                 NavigationLink(destination: LazyView {
-                    LibraryView(usingParentID: "", title: library.name ?? "", usingFilters: viewModel.withFavorites)
+                    LibraryView(viewModel: .init(filters: viewModel.withFavorites), title: library.name ?? "")
                 }) {
                     Text(library.name ?? "")
                 }
@@ -29,7 +29,7 @@ struct LibraryListView: View {
                 }
             default:
                 NavigationLink(destination: LazyView {
-                    LibraryView(usingParentID: library.id ?? "", title: library.name ?? "")
+                    LibraryView(viewModel: .init(parentID: library.id), title: library.name ?? "")
                 }) {
                     Text(library.name ?? "")
                 }
@@ -39,7 +39,7 @@ struct LibraryListView: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 NavigationLink(destination: LazyView {
-                    LibrarySearchView(usingParentID: "")
+                    LibrarySearchView(viewModel: .init(parentID: nil))
                 }) {
                     Image(systemName: "magnifyingglass")
                 }

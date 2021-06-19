@@ -22,14 +22,14 @@ final class LibraryListViewModel: ViewModel {
 
         libraries.append(.init(name: "Favorites", id: "favorites"))
         libraries.append(.init(name: "Genres", id: "genres"))
-        refresh()
+        requsetLibraries()
     }
 
-    func refresh() {
+    func requsetLibraries() {
         UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.HandleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 self.libraries.append(contentsOf: response.items ?? [])
             })

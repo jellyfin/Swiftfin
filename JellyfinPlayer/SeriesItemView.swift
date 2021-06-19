@@ -11,54 +11,23 @@ import Combine
 
 struct SeriesItemView: View {
     @StateObject
-    var tempViewModel = ViewModel()
+    var viewModel: SeriesItemViewModel
 
-    var item: BaseItemDto
+    @State
+    private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
 
-    @State private var seasons: [BaseItemDto] = []
-    @State private var isLoading: Bool = true
-    @State private var viewDidLoad: Bool = false
-
-    func onAppear() {
-        recalcTracks()
-        if viewDidLoad {
-            return
-        }
-
-        isLoading = true
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            TvShowsAPI.getSeasons(seriesId: item.id ?? "", fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
-                .sink(receiveCompletion: { completion in
-                    print(completion)
-                }, receiveValue: { response in
-                    isLoading = false
-                    viewDidLoad = true
-                    seasons = response.items ?? []
-                })
-                .store(in: &tempViewModel.cancellables)
-        }
-    }
-
-    // MARK: Grid tracks
     func recalcTracks() {
-        let trkCnt: Int = Int(floor(UIScreen.main.bounds.size.width / 125))
-        tracks = []
-        for _ in (0..<trkCnt) {
-            tracks.append(GridItem.init(.flexible()))
-        }
+        tracks = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
     }
-    @State private var tracks: [GridItem] = []
 
     var body: some View {
-        if isLoading {
+        if viewModel.isLoading {
             ProgressView()
-            .onAppear(perform: onAppear)
         } else {
             ScrollView(.vertical) {
                 Spacer().frame(height: 16)
                 LazyVGrid(columns: tracks) {
-                    ForEach(seasons, id: \.id) { season in
+                    ForEach(viewModel.seasons, id: \.id) { season in
                         NavigationLink(destination: ItemView(item: season)) {
                             VStack(alignment: .leading) {
                                 ImageView(src: season.getPrimaryImage(maxWidth: 100), bh: season.getPrimaryImageBlurHash())
@@ -85,7 +54,7 @@ struct SeriesItemView: View {
                 }
             }
             .overrideViewPreference(.unspecified)
-            .navigationTitle(item.name ?? "")
+            .navigationTitle(viewModel.item.name ?? "")
             .navigationBarTitleDisplayMode(.inline)
         }
     }

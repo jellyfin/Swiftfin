@@ -7,44 +7,44 @@
 
 import SwiftUI
 
-private struct MultiSelectionView<Selectable: Identifiable & Hashable>: View {
+private struct MultiSelectionView<Selectable: Hashable>: View {
     let options: [Selectable]
     let optionToString: (Selectable) -> String
     let label: String
 
-    @Binding var selected: Set<Selectable>
+    @Binding var selected: Array<Selectable>
 
     var body: some View {
         List {
-            ForEach(options) { selectable in
+            ForEach(options, id: \.self) { selectable in
                 Button(action: { toggleSelection(selectable: selectable) }) {
                     HStack {
                         Text(optionToString(selectable)).foregroundColor(Color.primary)
                         Spacer()
-                        if selected.contains { $0.id == selectable.id } {
+                        if selected.contains { $0 == selectable } {
                             Image(systemName: "checkmark").foregroundColor(.accentColor)
                         }
                     }
-                }.tag(selectable.id)
+                }.tag(selectable)
             }
         }.listStyle(GroupedListStyle())
     }
 
     private func toggleSelection(selectable: Selectable) {
-        if let existingIndex = selected.firstIndex(where: { $0.id == selectable.id }) {
+        if let existingIndex = selected.firstIndex(where: { $0 == selectable }) {
             selected.remove(at: existingIndex)
         } else {
-            selected.insert(selectable)
+            selected.append(selectable)
         }
     }
 }
 
-struct MultiSelector<Selectable: Identifiable & Hashable>: View {
+struct MultiSelector<Selectable: Hashable>: View {
     let label: String
     let options: [Selectable]
     let optionToString: (Selectable) -> String
 
-    var selected: Binding<Set<Selectable>>
+    var selected: Binding<Array<Selectable>>
 
     private var formattedSelectedListString: String {
         ListFormatter.localizedString(byJoining: selected.wrappedValue.map { optionToString($0) })

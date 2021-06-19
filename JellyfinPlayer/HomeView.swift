@@ -44,8 +44,7 @@ struct HomeView: View {
                                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
                                     Spacer()
                                     NavigationLink(destination: LazyView {
-                                        LibraryView(usingParentID: libraryID,
-                                                    title: library?.name ?? "", usingFilters: viewModel.recentFilterSet)
+                                        LibraryView(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? "")
                                     }) {
                                         HStack {
                                             Text("See All").font(.subheadline).fontWeight(.bold)
@@ -53,7 +52,7 @@ struct HomeView: View {
                                         }
                                     }
                                 }.padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                LatestMediaView(usingParentID: libraryID)
+                                LatestMediaView(viewModel: .init(libraryID: libraryID))
                             }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                         }
                     }

@@ -5,67 +5,33 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
-import JellyfinAPI
 import Combine
+import JellyfinAPI
+import SwiftUI
 
 struct LibrarySearchView: View {
-
     @StateObject
-    var tempViewModel = ViewModel()
-    @State private var items: [BaseItemDto] = []
-    @State private var searchQuery: String = ""
-    @State private var isLoading: Bool = false
-    private var usingParentID: String = ""
-    @State private var lastSearchTime: Double = CACurrentMediaTime()
-
-    init(usingParentID: String) {
-        self.usingParentID = usingParentID
-    }
-
-    func onAppear() {
-        recalcTracks()
-        requestSearch(query: "")
-    }
-
-    func requestSearch(query: String) {
-        isLoading = true
-        DispatchQueue.global(qos: .userInitiated).async {
-            ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, limit: 60, recursive: true, searchTerm: query, sortOrder: [.ascending], parentId: (usingParentID != "" ? usingParentID : nil), fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: ["Movie", "Series"], sortBy: ["SortName"], enableUserData: true, enableImages: true)
-                .sink(receiveCompletion: { completion in
-                    print(completion)
-                }, receiveValue: { response in
-                    items = response.items ?? []
-                    isLoading = false
-                })
-                .store(in: &tempViewModel.cancellables)
-        }
-    }
+    var viewModel: LibrarySearchViewModel
 
     // MARK: tracks for grid
-    @State private var tracks: [GridItem] = []
+
+    @State
+    private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
+
     func recalcTracks() {
-        let trkCnt = Int(floor(UIScreen.main.bounds.size.width / 125))
-        tracks = []
-        for _ in 0 ..< trkCnt {
-            tracks.append(GridItem(.flexible()))
-        }
+        tracks = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
     }
 
     var body: some View {
         VStack {
             Spacer().frame(height: 6)
-            SearchBar(text: $searchQuery)
-            if isLoading == true {
-                Spacer()
-                ProgressView()
-                Spacer()
-            } else {
-                if !items.isEmpty {
-                    ScrollView(.vertical) {
+            SearchBar(text: $viewModel.searchQuery)
+            ZStack {
+                ScrollView(.vertical) {
+                    if !viewModel.items.isEmpty {
                         Spacer().frame(height: 16)
                         LazyVGrid(columns: tracks) {
-                            ForEach(items, id: \.id) { item in
+                            ForEach(viewModel.items, id: \.id) { item in
                                 NavigationLink(destination: ItemView(item: item)) {
                                     VStack(alignment: .leading) {
                                         ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
@@ -87,26 +53,20 @@ struct LibrarySearchView: View {
                                     }.frame(width: 100)
                                 }
                             }
+                            Spacer().frame(height: 16)
                         }
-                        Spacer().frame(height: 16)
-                            .onRotate { _ in
+                        .onRotate { _ in
                             recalcTracks()
                         }
+                    } else if !viewModel.isLoading {
+                        Text("No results :(")
                     }
-                } else {
-                    Text("No results :(")
+                }
+                if viewModel.isLoading {
+                    ProgressView()
                 }
             }
         }
-        .onAppear(perform: onAppear)
         .navigationBarTitle("Search", displayMode: .inline)
-        .onChange(of: searchQuery) { query in
-            if CACurrentMediaTime() - lastSearchTime > 0.5 {
-                lastSearchTime = CACurrentMediaTime()
-                requestSearch(query: query)
-            }
-        }
     }
 }
-
-// stream NM5 by nicki!

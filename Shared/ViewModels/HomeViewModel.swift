@@ -24,7 +24,7 @@ final class HomeViewModel: ViewModel {
     var nextUpItems = [BaseItemDto]()
 
     // temp
-    var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: ["DateCreated"])
+    var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: [.dateAdded])
 
     override init() {
         super.init()
@@ -36,7 +36,7 @@ final class HomeViewModel: ViewModel {
         UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.HandleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 response.items!.forEach { item in
                     if item.collectionType == "movies" || item.collectionType == "tvshows" {
@@ -47,7 +47,7 @@ final class HomeViewModel: ViewModel {
                 UserAPI.getCurrentUser()
                     .trackActivity(self.loading)
                     .sink(receiveCompletion: { completion in
-                        self.HandleAPIRequestCompletion(completion: completion)
+                        self.handleAPIRequestCompletion(completion: completion)
                     }, receiveValue: { response in
                         self.libraries.forEach { library in
                             if !(response.configuration?.latestItemsExcludes?.contains(library.id!))! {
@@ -64,7 +64,7 @@ final class HomeViewModel: ViewModel {
                                 mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.HandleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 self.resumeItems = response.items ?? []
             })
@@ -74,7 +74,7 @@ final class HomeViewModel: ViewModel {
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.HandleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 self.nextUpItems = response.items ?? []
             })

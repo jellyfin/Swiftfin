@@ -39,13 +39,13 @@ struct ItemView: View {
             }
             VStack {
                 if item.type == "Movie" {
-                    MovieItemView(item: item)
+                    MovieItemView(viewModel: .init(item: item))
                 } else if item.type == "Season" {
-                    SeasonItemView(item: item)
+                    SeasonItemView(viewModel: .init(item: item))
                 } else if item.type == "Series" {
-                    SeriesItemView(item: item)
+                    SeriesItemView(viewModel: .init(item: item))
                 } else if item.type == "Episode" {
-                    EpisodeItemView(item: item)
+                    EpisodeItemView(viewModel: .init(item: item))
                 } else {
                     Text("Type: \(item.type ?? "") not implemented yet :(")
                 }
