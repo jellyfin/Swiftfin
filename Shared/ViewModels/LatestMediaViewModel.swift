@@ -20,7 +20,7 @@ final class LatestMediaViewModel: ViewModel {
     init(libraryID: String) {
         self.libraryID = libraryID
         super.init()
-        
+
         requestLatestMedia()
     }
 
@@ -32,7 +32,7 @@ final class LatestMediaViewModel: ViewModel {
                                           .seasonUserData,
                                           .overview,
                                           .genres,
-                                          .people,
+                                          .people
                                       ],
                                       enableUserData: true, limit: 12)
             .trackActivity(loading)
