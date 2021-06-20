@@ -9,13 +9,10 @@ import JellyfinAPI
 import SwiftUI
 
 struct LibraryFilterView: View {
-    @Environment(\.presentationMode)
-    var presentationMode
-    @Binding
-    var filters: LibraryFilters
+    @Environment(\.presentationMode) var presentationMode
+    @Binding var filters: LibraryFilters
 
-    @StateObject
-    var viewModel: LibraryFilterViewModel
+    @StateObject var viewModel: LibraryFilterViewModel
 
     init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType]) {
         _filters = filters

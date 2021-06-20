@@ -10,8 +10,7 @@ import JellyfinAPI
 import Combine
 
 struct EpisodeItemView: View {
-    @StateObject
-    var viewModel: EpisodeItemViewModel
+    @StateObject var viewModel: EpisodeItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
     @Environment(\.verticalSizeClass) var vSizeClass

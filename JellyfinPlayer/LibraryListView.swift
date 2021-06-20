@@ -9,8 +9,7 @@ import Foundation
 import SwiftUI
 
 struct LibraryListView: View {
-    @StateObject
-    var viewModel = LibraryListViewModel()
+    @StateObject var viewModel = LibraryListViewModel()
 
     var body: some View {
         List(viewModel.libraries, id: \.self) { library in

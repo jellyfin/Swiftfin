@@ -10,10 +10,8 @@ import JellyfinAPI
 import SwiftUI
 
 struct MovieItemView: View {
-    @StateObject
-    var viewModel: MovieItemViewModel
-    @State
-    private var orientation = UIDeviceOrientation.unknown
+    @StateObject var viewModel: MovieItemViewModel
+    @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass)
     var hSizeClass
     @Environment(\.verticalSizeClass)

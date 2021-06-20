@@ -11,16 +11,11 @@ import Foundation
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject
-    var viewModel = HomeViewModel()
-    @State
-    private var orientation = UIDevice.current.orientation
-    @Environment(\.horizontalSizeClass)
-    var hSizeClass
-    @Environment(\.verticalSizeClass)
-    var vSizeClass
-    @State
-    var showingSettings = false
+    @StateObject var viewModel = HomeViewModel()
+    @State private var orientation = UIDevice.current.orientation
+    @Environment(\.horizontalSizeClass) var hSizeClass
+    @Environment(\.verticalSizeClass) var vSizeClass
+    @State var showingSettings = false
 
     var body: some View {
         ZStack {
