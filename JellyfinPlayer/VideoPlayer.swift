@@ -69,6 +69,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var lastTime: Float = 0.0
     var startTime: Int = 0
     var controlsAppearTime: Double = 0
+    var isSeeking: Bool = false
     
     var playerDestination: PlayerDestination = .local;
     var discoveredCastDevices: [GCKDevice] = [];
@@ -81,6 +82,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     private var castSessionManager: GCKSessionManager {
         return GCKCastContext.sharedInstance().sessionManager
     }
+    var hasSentRemoteSeek: Bool = false;
 
     var selectedAudioTrack: Int32 = -1
     var selectedCaptionTrack: Int32 = -1
@@ -91,6 +93,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
+    var remoteTimeUpdateTimer: Timer?
     
 
     // MARK: IBActions
@@ -98,6 +101,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         if(playerDestination == .local) {
             sendProgressReport(eventName: "pause")
             mediaPlayer.pause()
+        } else {
+            isSeeking = true
         }
     }
 
@@ -117,6 +122,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 
     @IBAction func seekSliderEnd(_ sender: Any) {
+        isSeeking = false
         let videoPosition = playerDestination == .local ? Double(mediaPlayer.time.intValue / 1000) : Double(remotePositionTicks / Int(10_000_000))
         let videoDuration = Double(manifest.runTimeTicks! / Int64(10_000_000))
         // Scrub is value from 0..1 - find position in video and add / or remove.
@@ -137,11 +143,9 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             mediaPlayer.play()
             sendProgressReport(eventName: "unpause")
         } else {
-            /*
             sendJellyfinCommand(command: "Seek", options: [
                 "position": secondsScrubbedTo
             ])
-             */
         }
     }
 
@@ -552,16 +556,27 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 
     func startLocalPlaybackEngine() {
+        print("Local playback engine starting.")
+        mediaPlayer = VLCMediaPlayer()
+        mediaPlayer.delegate = self;
+        mediaPlayer.drawable = videoContentView;
+        
         mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
         mediaPlayer.play()
 
         // 1 second = 10,000,000 ticks
 
-        let rawStartTicks = manifest.userData?.playbackPositionTicks ?? 0
+        if(remotePositionTicks == 0) {
+            print("Using server-reported start time")
+            let rawStartTicks = manifest.userData?.playbackPositionTicks ?? 0
 
-        if rawStartTicks != 0 {
-            let startSeconds = rawStartTicks / 10_000_000
-            mediaPlayer.jumpForward(Int32(startSeconds))
+            if rawStartTicks != 0 {
+                let startSeconds = rawStartTicks / 10_000_000
+                mediaPlayer.jumpForward(Int32(startSeconds))
+            }
+        } else {
+            print("Using remote-reported start time")
+            mediaPlayer.jumpForward(Int32(remotePositionTicks / 10_000_000))
         }
 
         // Pause and load captions into memory.
@@ -586,6 +601,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         mediaPlayer.play()
         self.mediaHasStartedPlaying()
         delegate?.hideLoadingView(self)
+        print("Local engine started.")
     }
 
     // MARK: VideoPlayerSettings Delegate
@@ -602,36 +618,44 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
 //MARK: - GCKGenericChannelDelegate
 extension PlayerViewController: GCKGenericChannelDelegate {
-    func cast(_ channel: GCKGenericChannel, didReceiveTextMessage message: String, withNamespace protocolNamespace: String) {
-        print("~~~~~~~~~~~~~~~~~")
-        print(message)
-        print("~~~~~~~~~~~~~~~~~")
-        print("")
+    @objc func updateRemoteTime() {
+        paused = false;
+        castButton.setImage(UIImage(named: "CastConnected"), for: .normal)
+        remotePositionTicks = remotePositionTicks + 2_000_000; //add 0.2 secs every timer evt.
         
+        if(isSeeking == false) {
+            let remainingTime = (manifest.runTimeTicks! - Int64(remotePositionTicks))/10_000_000
+            let hours = remainingTime / 3600
+            let minutes = (remainingTime % 3600) / 60
+            let seconds = (remainingTime % 3600) % 60
+            var timeTextStr = ""
+            if hours != 0 {
+                timeTextStr = "\(Int(hours)):\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
+            } else {
+                timeTextStr = "\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
+            }
+            timeText.text = timeTextStr
+            
+            let playbackProgress = Int64(remotePositionTicks) / manifest.runTimeTicks!
+            seekSlider.setValue(Float(playbackProgress), animated: true)
+        }
+    }
+    
+    func cast(_ channel: GCKGenericChannel, didReceiveTextMessage message: String, withNamespace protocolNamespace: String) {
         if let data = message.data(using: .utf8) {
             if let json = try? JSON(data: data) {
                 let messageType = json["type"].string ?? ""
                 if(messageType == "playbackprogress") {
-                    print("Playback progress received from Cast!");
-                    
-                    self.remotePositionTicks = json["data"]["PlayState"]["PositionTicks"].int ?? 0;
-                    print(remotePositionTicks)
-                    
-                    let remainingTime = (manifest.runTimeTicks! - Int64(remotePositionTicks))/10_000_000
-                    print(remainingTime)
-                    let hours = remainingTime / 3600
-                    let minutes = (remainingTime % 3600) / 60
-                    let seconds = (remainingTime % 3600) % 60
-                    var timeTextStr = ""
-                    if hours != 0 {
-                        timeTextStr = "\(Int(hours)):\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
-                    } else {
-                        timeTextStr = "\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
+                    if(hasSentRemoteSeek == false) {
+                        hasSentRemoteSeek = true;
+                        sendJellyfinCommand(command: "Seek", options: [
+                            "position": Int(Float(manifest.runTimeTicks! / 10_000_000) * mediaPlayer.position)
+                        ])
                     }
-                    timeText.text = timeTextStr
-                    
-                    let playbackProgress = Int64(remotePositionTicks) / manifest.runTimeTicks!
-                    seekSlider.setValue(Float(playbackProgress), animated: true)
+                    self.remotePositionTicks = json["data"]["PlayState"]["PositionTicks"].int ?? 0;
+                    if(remoteTimeUpdateTimer == nil) {
+                        remoteTimeUpdateTimer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(updateRemoteTime), userInfo: nil, repeats: true)
+                    }
                 }
             }
         }
@@ -650,6 +674,7 @@ extension PlayerViewController: GCKGenericChannelDelegate {
             "receiverName": castSessionManager.currentCastSession!.device.friendlyName!,
             "subtitleBurnIn": false
         ]
+        print(payload)
         let jsonData = JSON(payload)
         
         jellyfinCastChannel?.sendTextMessage(jsonData.rawString()!, error: nil)
@@ -686,9 +711,6 @@ extension PlayerViewController: GCKSessionManagerListener {
             ]]
         ]
         sendJellyfinCommand(command: "PlayNow", options: playNowOptions)
-        sendJellyfinCommand(command: "Seek", options: [
-            "position": (manifest.runTimeTicks! - (Int64(mediaPlayer.remainingTime.intValue) * 10000)) / 10_000_000
-        ])
     }
     
     func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKCastSession) {
@@ -712,6 +734,7 @@ extension PlayerViewController: GCKSessionManagerListener {
         print("didEnd")
         playerDestination = .local;
         videoContentView.isHidden = false;
+        remoteTimeUpdateTimer?.invalidate()
         castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
         startLocalPlaybackEngine()
     }
@@ -720,17 +743,9 @@ extension PlayerViewController: GCKSessionManagerListener {
         print("didSuspend")
         playerDestination = .local;
         videoContentView.isHidden = false;
+        remoteTimeUpdateTimer?.invalidate()
         castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
         startLocalPlaybackEngine()
-    }
-    
-    func sessionManager(_ sessionManager: GCKSessionManager, castSession session: GCKCastSession, didReceiveDeviceStatus statusText: String?) {
-        print("96")
-        dump(statusText)
-    }
-    
-    func sessionManager(_ sessionManager: GCKSessionManager, castSession session: GCKCastSession, didReceiveDeviceVolume volume: Float, muted: Bool) {
-        print("100")
     }
 }
 
