@@ -104,13 +104,13 @@ extension BaseItemDto {
 
     // MARK: Calculations
     func getItemRuntime() -> String {
-        let seconds: Int = Int(self.runTimeTicks ?? 0) / 10_000_000
+        let seconds = (self.runTimeTicks ?? 0) / 10_000_000
         let hours = (seconds / 3600)
         let minutes = ((seconds - (hours * 3600)) / 60)
         if hours != 0 {
             return "\(hours):\(String(minutes).leftPad(toWidth: 2, withString: "0"))"
         } else {
-            return "\(String(minutes).leftPad(toWidth: 2, withString: "0"))m"
+            return "\(String(minutes))m"
         }
     }
 
@@ -119,13 +119,13 @@ extension BaseItemDto {
             return ""
         }
 
-        let remainingSecs = Int(self.runTimeTicks ?? 0 - (self.userData?.playbackPositionTicks ?? 0)) / 10_000_000
+        let remainingSecs = ((self.runTimeTicks ?? 0) - (self.userData?.playbackPositionTicks ?? 0)) / 10_000_000
         let proghours = Int(remainingSecs / 3600)
         let progminutes = Int((Int(remainingSecs) - (proghours * 3600)) / 60)
         if proghours != 0 {
             return "\(proghours)h \(String(progminutes).leftPad(toWidth: 2, withString: "0"))m"
         } else {
-            return "\(String(progminutes).leftPad(toWidth: 2, withString: "0"))m"
+            return "\(String(progminutes))m"
         }
     }
 }

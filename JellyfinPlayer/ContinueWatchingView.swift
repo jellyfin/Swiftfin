@@ -63,7 +63,7 @@ struct ContinueWatchingView: View {
                                         Rectangle()
                                             .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
                                             .mask(ProgressBar())
-                                            .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 3.2), height: 7)
+                                            .frame(width: CGFloat((item.userData?.playedPercentage ?? 0) * 3.2), height: 7)
                                             .padding(0), alignment: .bottomLeading
                                     )
                                 Text(item.seriesName ?? item.name ?? "")

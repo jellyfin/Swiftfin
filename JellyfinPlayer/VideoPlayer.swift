@@ -144,7 +144,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             sendProgressReport(eventName: "unpause")
         } else {
             sendJellyfinCommand(command: "Seek", options: [
-                "position": secondsScrubbedTo
+                "position": Int(secondsScrubbedTo)
             ])
         }
     }
@@ -253,7 +253,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             self.castButton.isEnabled = true
             self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
             playerDestination = .local
-            startLocalPlaybackEngine()
         }
     }
     
@@ -549,56 +548,63 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         self.sendPlayReport()
                         playbackItem = item
                     }
-                    startLocalPlaybackEngine()
+                    startLocalPlaybackEngine(true)
                 })
                 .store(in: &cancellables)
         }
     }
 
-    func startLocalPlaybackEngine() {
+    func startLocalPlaybackEngine(_ fetchCaptions: Bool) {
         print("Local playback engine starting.")
-        mediaPlayer = VLCMediaPlayer()
-        mediaPlayer.delegate = self;
-        mediaPlayer.drawable = videoContentView;
-        
         mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
         mediaPlayer.play()
 
         // 1 second = 10,000,000 ticks
-
+        var startTicks: Int64 = 0;
         if(remotePositionTicks == 0) {
             print("Using server-reported start time")
-            let rawStartTicks = manifest.userData?.playbackPositionTicks ?? 0
-
-            if rawStartTicks != 0 {
-                let startSeconds = rawStartTicks / 10_000_000
-                mediaPlayer.jumpForward(Int32(startSeconds))
-            }
+            startTicks = manifest.userData?.playbackPositionTicks ?? 0
         } else {
             print("Using remote-reported start time")
-            mediaPlayer.jumpForward(Int32(remotePositionTicks / 10_000_000))
+            startTicks = Int64(remotePositionTicks)
         }
-
-        // Pause and load captions into memory.
-        mediaPlayer.pause()
-
-        var shouldHaveSubtitleTracks = 0
-        subtitleTrackArray.forEach { sub in
-            if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
-                shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
-                mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
+        
+        if startTicks != 0 {
+            let videoPosition = Double(mediaPlayer.time.intValue / 1000);
+            let secondsScrubbedTo = startTicks / 10_000_000
+            let offset = secondsScrubbedTo - Int64(videoPosition)
+            print("Seeking to position: \(secondsScrubbedTo)")
+            if offset > 0 {
+                mediaPlayer.jumpForward(Int32(offset))
+            } else {
+                mediaPlayer.jumpBackward(Int32(abs(offset)))
             }
         }
+        
+        if(fetchCaptions) {
+            // Pause and load captions into memory.
+            mediaPlayer.pause()
+            var shouldHaveSubtitleTracks = 1
+            subtitleTrackArray.forEach { sub in
+                if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
+                    shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
+                    mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
+                }
+            }
 
-        // Wait for captions to load
-        delegate?.showLoadingView(self)
+            // Wait for captions to load
+            delegate?.showLoadingView(self)
 
-        while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {}
+            while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {
+                print("waiting \(String(mediaPlayer.numberOfSubtitlesTracks)) != \(String(shouldHaveSubtitleTracks))")
+            }
 
-        // Select default track & resume playback
-        mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
-        mediaPlayer.pause()
-        mediaPlayer.play()
+            // Select default track & resume playback
+            mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
+            mediaPlayer.pause()
+            mediaPlayer.play()
+        }
+        
         self.mediaHasStartedPlaying()
         delegate?.hideLoadingView(self)
         print("Local engine started.")
@@ -619,9 +625,10 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 //MARK: - GCKGenericChannelDelegate
 extension PlayerViewController: GCKGenericChannelDelegate {
     @objc func updateRemoteTime() {
-        paused = false;
         castButton.setImage(UIImage(named: "CastConnected"), for: .normal)
-        remotePositionTicks = remotePositionTicks + 2_000_000; //add 0.2 secs every timer evt.
+        if(!paused) {
+            remotePositionTicks = remotePositionTicks + 2_000_000; //add 0.2 secs every timer evt.
+        }
         
         if(isSeeking == false) {
             let remainingTime = (manifest.runTimeTicks! - Int64(remotePositionTicks))/10_000_000
@@ -637,6 +644,7 @@ extension PlayerViewController: GCKGenericChannelDelegate {
             timeText.text = timeTextStr
             
             let playbackProgress = Int64(remotePositionTicks) / manifest.runTimeTicks!
+            print(playbackProgress)
             seekSlider.setValue(Float(playbackProgress), animated: true)
         }
     }
@@ -652,6 +660,7 @@ extension PlayerViewController: GCKGenericChannelDelegate {
                             "position": Int(Float(manifest.runTimeTicks! / 10_000_000) * mediaPlayer.position)
                         ])
                     }
+                    paused = json["data"]["PlayState"]["IsPaused"].boolValue
                     self.remotePositionTicks = json["data"]["PlayState"]["PositionTicks"].int ?? 0;
                     if(remoteTimeUpdateTimer == nil) {
                         remoteTimeUpdateTimer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(updateRemoteTime), userInfo: nil, repeats: true)
@@ -736,7 +745,7 @@ extension PlayerViewController: GCKSessionManagerListener {
         videoContentView.isHidden = false;
         remoteTimeUpdateTimer?.invalidate()
         castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
-        startLocalPlaybackEngine()
+        startLocalPlaybackEngine(false)
     }
     
     func sessionManager(_ sessionManager: GCKSessionManager, didSuspend session: GCKCastSession, with reason: GCKConnectionSuspendReason) {
@@ -745,7 +754,7 @@ extension PlayerViewController: GCKSessionManagerListener {
         videoContentView.isHidden = false;
         remoteTimeUpdateTimer?.invalidate()
         castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
-        startLocalPlaybackEngine()
+        startLocalPlaybackEngine(false)
     }
 }
 
