@@ -43,6 +43,7 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
     @IBOutlet weak var remainingTimeLabel: UILabel!
     
     @IBOutlet weak var infoViewContainer: UIView!
+    
     var infoPanelDisplayPoint : CGPoint = .zero
     var infoPanelHiddenPoint : CGPoint = .zero
     
@@ -51,6 +52,10 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
     var showingInfoPanel : Bool = false
     
     var mediaPlayer = VLCMediaPlayer()
+    
+    var lastProgressReportTime: Double = 0
+    var lastTime: Float = 0.0
+    var startTime: Int = 0
     
     var selectedAudioTrack: Int32 = -1 {
         didSet {
@@ -185,6 +190,7 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
                     
                     // Loop through media streams and add to array
                     for stream in mediaSource.mediaStreams! {
+                        
                         if stream.type == .subtitle {
                             var deliveryUrl: URL? = nil
                             
@@ -213,7 +219,7 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
                         selectedAudioTrack = audioTrackArray.first!.id
                     }
 
-//                        self.sendPlayReport()
+                        self.sendPlayReport()
                     playbackItem = item
 
                     mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
@@ -249,6 +255,7 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
                     mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
                     mediaPlayer.pause()
                     mediaPlayer.play()
+
                 })
                 .store(in: &cancellables)
         }
@@ -265,28 +272,26 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
         // Add handler for Pause Command
         commandCenter.pauseCommand.addTarget { _ in
             self.pause()
-//            self.sendProgressReport(eventName: "pause")
             return .success
         }
 
         // Add handler for Play command
         commandCenter.playCommand.addTarget { _ in
             self.play()
-            //            self.sendProgressReport(eventName: "unpause")
             return .success
         }
 
         // Add handler for FF command
         commandCenter.seekForwardCommand.addTarget { _ in
             self.mediaPlayer.jumpForward(30)
-//            self.sendProgressReport(eventName: "timeupdate")
+            self.sendProgressReport(eventName: "timeupdate")
             return .success
         }
 
         // Add handler for RW command
         commandCenter.seekBackwardCommand.addTarget { _ in
             self.mediaPlayer.jumpBackward(15)
-//            self.sendProgressReport(eventName: "timeupdate")
+            self.sendProgressReport(eventName: "timeupdate")
             return .success
         }
 
@@ -304,7 +309,7 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
                 } else {
                     self.mediaPlayer.jumpBackward(Int32(abs(offset))/1000)
                 }
-//                self.sendProgressReport(eventName: "unpause")
+                self.sendProgressReport(eventName: "unpause")
 
                 return .success
             } else {
@@ -315,8 +320,10 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = [
             MPMediaItemPropertyTitle: "TestVideo",
-            MPNowPlayingInfoPropertyPlaybackRate : 0,
-            MPNowPlayingInfoPropertyMediaType : AVMediaType.video
+            MPNowPlayingInfoPropertyPlaybackRate : 1.0,
+            MPNowPlayingInfoPropertyMediaType : AVMediaType.video,
+            MPMediaItemPropertyPlaybackDuration : videoDuration,
+            MPNowPlayingInfoPropertyElapsedPlaybackTime : mediaPlayer.time.intValue/1000
         ]
 
         UIApplication.shared.beginReceivingRemoteControlEvents()
@@ -346,19 +353,6 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
         case .error:
             break
         case .esAdded:
-            // esAdded is called 3 times, need to wait til 3rd time when video stream is added to play the video
-            print("es added")
-            if videoDuration == 0 && mediaPlayer.remainingTime.intValue != 0 {
-                videoDuration = Double(abs(mediaPlayer.remainingTime.intValue)/1000)
-                
-                print(videoDuration)
-                var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [String: Any]()
-                info[MPMediaItemPropertyPlaybackDuration] = videoDuration
-                info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = mediaPlayer.position
-                info[MPNowPlayingInfoPropertyPlaybackRate] = 1.0
-                
-                MPNowPlayingInfoCenter.default().nowPlayingInfo = info
-            }
             break
         default:
             print("default")
@@ -371,16 +365,30 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
     // Move time along transport bar
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
         
-        self.currentTimeLabel.text = formatSecondsToHMS(Double(mediaPlayer.time.intValue/1000))
-        self.remainingTimeLabel.text = "-" + formatSecondsToHMS(Double(abs(mediaPlayer.remainingTime.intValue/1000)))
-
-        self.videoPos = Double(mediaPlayer.position)
-    
-        let newPos = videoPos * Double(self.transportBarView.frame.width)
-        if !newPos.isNaN && self.playing {
-            self.scrubberView.frame = CGRect(x: newPos, y: 0, width: 2, height: 10)
-            self.currentTimeLabel.frame = CGRect(x: CGFloat(newPos)+50, y: currentTimeLabel.frame.minY, width: currentTimeLabel.frame.width, height: currentTimeLabel.frame.height)
+        let time = mediaPlayer.position
+        if time != lastTime {
+            if videoDuration == 0 && mediaPlayer.remainingTime.intValue != 0 {
+                videoDuration = Double(abs(mediaPlayer.remainingTime.intValue)/1000)
+            }
             
+            self.currentTimeLabel.text = formatSecondsToHMS(Double(mediaPlayer.time.intValue/1000))
+            self.remainingTimeLabel.text = "-" + formatSecondsToHMS(Double(abs(mediaPlayer.remainingTime.intValue/1000)))
+
+            self.videoPos = Double(mediaPlayer.position)
+        
+            let newPos = videoPos * Double(self.transportBarView.frame.width)
+            if !newPos.isNaN && self.playing {
+                self.scrubberView.frame = CGRect(x: newPos, y: 0, width: 2, height: 10)
+                self.currentTimeLabel.frame = CGRect(x: CGFloat(newPos)+50, y: currentTimeLabel.frame.minY, width: currentTimeLabel.frame.width, height: currentTimeLabel.frame.height)
+                
+            }
+        }
+        
+        lastTime = time
+
+        if CACurrentMediaTime() - lastProgressReportTime > 5 {
+            sendProgressReport(eventName: "timeupdate")
+            lastProgressReportTime = CACurrentMediaTime()
         }
     }
     
@@ -416,8 +424,10 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
         playing = false
         mediaPlayer.pause()
         
+        self.sendProgressReport(eventName: "pause")
+
         animateScrubber()
-                
+
         self.scrubLabel.frame = CGRect(x: self.scrubberView.frame.minX - self.scrubLabel.frame.width/2, y: -90,
                                        width: self.scrubLabel.frame.width, height: self.scrubLabel.frame.height)
     }
@@ -425,6 +435,8 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
     func play () {
         playing = true
         mediaPlayer.play()
+        
+        self.sendProgressReport(eventName: "unpause")
         
         animateScrubber()
     }
@@ -444,11 +456,24 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
     
     func setupGestures() {
         
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.selectButtonTapped))
-        let pressType = UIPress.PressType.playPause
-        tapGestureRecognizer.allowedPressTypes = [NSNumber(value: pressType.rawValue)];
-        view.addGestureRecognizer(tapGestureRecognizer)
+        let playPauseGesture = UITapGestureRecognizer(target: self, action: #selector(self.selectButtonTapped))
+        let playPauseType = UIPress.PressType.playPause
+        playPauseGesture.allowedPressTypes = [NSNumber(value: playPauseType.rawValue)];
+        view.addGestureRecognizer(playPauseGesture)
+        
+        let selectGesture = UITapGestureRecognizer(target: self, action: #selector(self.selectButtonTapped))
+        let selectType = UIPress.PressType.select
+        selectGesture.allowedPressTypes = [NSNumber(value: selectType.rawValue)];
+        view.addGestureRecognizer(selectGesture)
 
+        let backTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.backButtonPressed(tap:)))
+        let backPress = UIPress.PressType.menu
+        backTapGesture.allowedPressTypes = [NSNumber(value: backPress.rawValue)];
+        view.addGestureRecognizer(backTapGesture)
+        
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.userPanned(panGestureRecognizer:)))
+        view.addGestureRecognizer(panGestureRecognizer)
+        
         
         let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipe(swipe:)))
         swipeRecognizer.direction = .right
@@ -457,19 +482,6 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
         let swipeRecognizerl = UISwipeGestureRecognizer(target: self, action: #selector(self.swipe(swipe:)))
         swipeRecognizerl.direction = .left
         view.addGestureRecognizer(swipeRecognizerl)
-        
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.userPanned(panGestureRecognizer:)))
-        view.addGestureRecognizer(panGestureRecognizer)
-        
-        let touchGesture = UITapGestureRecognizer(target: self, action: #selector(self.selectButtonTapped))
-        let touchType = UIPress.PressType.select
-        touchGesture.allowedPressTypes = [NSNumber(value: touchType.rawValue)];
-        view.addGestureRecognizer(touchGesture)
-
-        let backTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.backButtonPressed(tap:)))
-        let backPress = UIPress.PressType.menu
-        backTapGesture.allowedPressTypes = [NSNumber(value: backPress.rawValue)];
-        view.addGestureRecognizer(backTapGesture)
 
     }
     
@@ -482,6 +494,11 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
             })
             play()
             seeking = false
+        }
+        else
+        {
+            sendStopReport()
+            self.navigationController?.popViewController(animated: true)
         }
     }
     
@@ -584,6 +601,49 @@ class VideoPlayerViewController: UIViewController, VLCMediaPlayerDelegate, VLCMe
         playing ? pause() : play()
     }
     
+    
+    // MARK: Jellyfin Playstate updates
+    func sendProgressReport(eventName: String) {
+        if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
+            let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (!playing), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
+
+            PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
+                .sink(receiveCompletion: { result in
+                    print(result)
+                }, receiveValue: { _ in
+                    print("Playback progress report sent!")
+                })
+                .store(in: &cancellables)
+        }
+    }
+
+    func sendStopReport() {
+        let stopInfo = PlaybackStopInfo(item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), liveStreamId: nil, playSessionId: playSessionId, failed: nil, nextMediaType: nil, playlistItemId: "playlistItem0", nowPlayingQueue: [])
+
+        PlaystateAPI.reportPlaybackStopped(playbackStopInfo: stopInfo)
+            .sink(receiveCompletion: { result in
+                print(result)
+            }, receiveValue: { _ in
+                print("Playback stop report sent!")
+            })
+            .store(in: &cancellables)
+    }
+
+    func sendPlayReport() {
+        startTime = Int(Date().timeIntervalSince1970) * 10000000
+
+        print("sending play report!")
+
+        let startInfo = PlaybackStartInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: false, isMuted: false, positionTicks: manifest.userData?.playbackPositionTicks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
+
+        PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
+            .sink(receiveCompletion: { result in
+                print(result)
+            }, receiveValue: { _ in
+                print("Playback start report sent!")
+            })
+            .store(in: &cancellables)
+    }
     
     
     private var timeHMSFormatter: DateComponentsFormatter = {

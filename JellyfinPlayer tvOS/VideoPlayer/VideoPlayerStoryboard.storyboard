@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="18122" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="appleTV" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Image references" minToolsVersion="12.0"/>
@@ -67,13 +68,13 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CvN-pY-pIL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3571" y="1897"/>
+            <point key="canvasLocation" x="-4135" y="1613"/>
         </scene>
         <!--Info Tab Bar View Controller-->
         <scene sceneID="NE2-Ez-3qW">
             <objects>
-                <tabBarController id="odZ-Ww-zvF" customClass="InfoTabBarViewController" customModule="CustomPlayer" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBar key="tabBar" opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="YVR-nj-bPt">
+                <tabBarController id="odZ-Ww-zvF" customClass="InfoTabBarViewController" customModule="JellyfinPlayer_tvOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBar key="tabBar" opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="YVR-nj-bPt">
                         <rect key="frame" x="0.0" y="0.0" width="1920" height="68"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -82,7 +83,8 @@
                     <connections>
                         <segue destination="VLe-gO-KCX" kind="relationship" relationship="viewControllers" id="69d-HU-A7F"/>
                         <segue destination="cTi-fm-IaD" kind="relationship" relationship="viewControllers" id="gU9-Vs-W1G"/>
-                        <segue destination="k9t-FV-Old" kind="relationship" relationship="viewControllers" id="jDF-2c-aoJ"/>
+                        <segue destination="k9t-FV-Old" kind="relationship" relationship="viewControllers" id="Byf-EM-KXq"/>
+                        <segue destination="9oQ-EY-Bt5" kind="relationship" relationship="viewControllers" id="0NI-XS-qzo"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LdX-BO-e71" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -92,7 +94,7 @@
         <!--Video Player View Controller-->
         <scene sceneID="9lE-WX-96o">
             <objects>
-                <viewController storyboardIdentifier="VideoPlayer" id="Xgj-up-wSf" customClass="VideoPlayerViewController" customModule="CustomPlayer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VideoPlayer" id="Xgj-up-wSf" customClass="VideoPlayerViewController" customModule="JellyfinPlayer_tvOS" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="aTn-mJ-5lt"/>
                         <viewControllerLayoutGuide type="bottom" id="BrO-eL-FPV"/>
@@ -227,6 +229,38 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KWg-O7-tlM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-7825" y="1896.5"/>
+        </scene>
+        <!--Subtitles-->
+        <scene sceneID="N61-7B-vD4">
+            <objects>
+                <viewController title="Subtitles" id="9oQ-EY-Bt5" userLabel="Subtitles" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="T9C-En-Pha"/>
+                        <viewControllerLayoutGuide type="bottom" id="9vW-YQ-FpB"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="cZn-BR-99g">
+                        <rect key="frame" x="0.0" y="0.0" width="1614" height="475"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Subtitles" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j0g-Py-g8M">
+                                <rect key="frame" x="783" y="47" width="149" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" sectionHeaderHeight="66" sectionFooterHeight="66" translatesAutoresizingMaskIntoConstraints="NO" id="wRJ-sx-hw0">
+                                <rect key="frame" x="627" y="145" width="461" height="310"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="WyG-oz-wBW"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Subtitles" id="2re-qg-1A2"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SO9-e9-ocf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2400" y="1612.5"/>
         </scene>
     </scenes>
     <resources>
