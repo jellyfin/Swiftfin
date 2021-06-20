@@ -44,9 +44,6 @@ struct LatestMediaView: View {
                             }
                         }
                     }
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
                 }
             }
             .frame(height: 190)

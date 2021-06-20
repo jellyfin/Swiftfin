@@ -70,7 +70,7 @@ struct MovieItemView: View {
                     self.playbackInfo.shouldShowPlayer = true
                 } label: {
                     HStack {
-                        Text(viewModel.item.getItemProgressString() == "" ? "Play" : "\(viewModel.item.getItemProgressString()) left")
+                        Text(viewModel.item.getItemProgressString() == "" ? "Play" : viewModel.item.getItemProgressString())
                             .foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
                         Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
                     }

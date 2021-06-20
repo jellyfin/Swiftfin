@@ -42,25 +42,34 @@ struct VideoPlayerCastDeviceSelector: View {
 
     var body: some View {
         NavigationView {
-            List(delegate.discoveredCastDevices, id: \.id) { device in
-                HStack() {
-                    Text("\(device.name)")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                    Spacer()
-                    Button {
-                        delegate.selectedCastDevice = device
-                        self.delegate?.castDeviceChanged()
-                        self.delegate?.castPopoverDismissed()
-                    } label: {
+            Group {
+                if(!delegate.discoveredCastDevices.isEmpty) {
+                    List(delegate.discoveredCastDevices, id: \.deviceID) { device in
                         HStack() {
-                            Text("Connect")
-                                .font(.caption)
+                            Text(device.friendlyName!)
+                                .font(.subheadline)
                                 .fontWeight(.medium)
-                            Image(systemName: "bonjour")
-                                .font(.caption)
+                            Spacer()
+                            Button {
+                                delegate.selectedCastDevice = device
+                                delegate?.castDeviceChanged()
+                                delegate?.castPopoverDismissed()
+                            } label: {
+                                HStack() {
+                                    Text("Connect")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                    Image(systemName: "bonjour")
+                                        .font(.caption)
+                                }
+                            }
                         }
                     }
+                } else {
+                    Text("No Cast devices found..")
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -69,7 +78,7 @@ struct VideoPlayerCastDeviceSelector: View {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if UIDevice.current.userInterfaceIdiom == .phone {
                         Button {
-                            self.delegate?.castPopoverDismissed()
+                            delegate?.castPopoverDismissed()
                         } label: {
                             HStack {
                                 Image(systemName: "chevron.left")

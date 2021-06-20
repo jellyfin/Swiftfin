@@ -10,6 +10,7 @@ import MobileVLCKit
 import JellyfinAPI
 import MediaPlayer
 import Combine
+import GoogleCast
 import SwiftyJSON
 
 struct Subtitle {
@@ -41,7 +42,7 @@ protocol PlayerViewControllerDelegate: AnyObject {
     func exitPlayer(_ viewController: PlayerViewController)
 }
 
-class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDelegate, CastClientDelegate {
+class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRemoteMediaClientListener {
 
     weak var delegate: PlayerViewControllerDelegate?
 
@@ -69,33 +70,28 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     var startTime: Int = 0
     var controlsAppearTime: Double = 0
     
-    var discoveredCastDevices: [CastDevice] = [] //not private due to VPCDS using it.
-    var selectedCastDevice: CastDevice? //same here
-    private var castClient: CastClient?
-    private var playerDestination: PlayerDestination = .local;
-    private var castAppTransportID: String = "";
-    private var remotePlayIsPlaying: Bool = false;
-    private var remotePlaySeekState: Int = 0;
-    private let castScanner: CastDeviceScanner = CastDeviceScanner();
+    var playerDestination: PlayerDestination = .local;
+    var discoveredCastDevices: [GCKDevice] = [];
+    var selectedCastDevice: GCKDevice?;
+    var jellyfinCastChannel: GCKGenericChannel?
+    var remotePositionTicks: Int = 0
+    private var castDiscoveryManager: GCKDiscoveryManager {
+        return GCKCastContext.sharedInstance().discoveryManager
+    }
+    private var castSessionManager: GCKSessionManager {
+        return GCKCastContext.sharedInstance().sessionManager
+    }
 
-    var selectedAudioTrack: Int32 = -1 {
-        didSet {
-            print(selectedAudioTrack)
-        }
-    }
-    var selectedCaptionTrack: Int32 = -1 {
-        didSet {
-            print(selectedCaptionTrack)
-        }
-    }
+    var selectedAudioTrack: Int32 = -1
+    var selectedCaptionTrack: Int32 = -1
     var playSessionId: String = ""
     var lastProgressReportTime: Double = 0
-
     var subtitleTrackArray: [Subtitle] = []
     var audioTrackArray: [AudioTrack] = []
 
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
+    
 
     // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
@@ -106,7 +102,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
 
     @IBAction func seekSliderValueChanged(_ sender: Any) {
-        let videoDuration = Double(mediaPlayer.time.intValue + abs(mediaPlayer.remainingTime.intValue))/1000
+        let videoDuration: Double = Double(manifest.runTimeTicks! / Int64(10_000_000))
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration)
         let scrubRemaining = videoDuration - secondsScrubbedTo
         let remainingTime = scrubRemaining
@@ -121,21 +117,31 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
 
     @IBAction func seekSliderEnd(_ sender: Any) {
-        print("ss end")
-        let videoPosition = Double(mediaPlayer.time.intValue)
-        let videoDuration = Double(mediaPlayer.time.intValue + abs(mediaPlayer.remainingTime.intValue))
+        let videoPosition = playerDestination == .local ? Double(mediaPlayer.time.intValue / 1000) : Double(remotePositionTicks / Int(10_000_000))
+        let videoDuration = Double(manifest.runTimeTicks! / Int64(10_000_000))
         // Scrub is value from 0..1 - find position in video and add / or remove.
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration)
         let offset = secondsScrubbedTo - videoPosition
         
+        print(videoPosition)
+        print(videoDuration)
+        print(secondsScrubbedTo)
+        print(offset)
+        
         if(playerDestination == .local) {
-            mediaPlayer.play()
             if offset > 0 {
-                mediaPlayer.jumpForward(Int32(offset)/1000)
+                mediaPlayer.jumpForward(Int32(offset))
             } else {
-                mediaPlayer.jumpBackward(Int32(abs(offset))/1000)
+                mediaPlayer.jumpBackward(Int32(abs(offset)))
             }
+            mediaPlayer.play()
             sendProgressReport(eventName: "unpause")
+        } else {
+            /*
+            sendJellyfinCommand(command: "Seek", options: [
+                "position": secondsScrubbedTo
+            ])
+             */
         }
     }
 
@@ -143,12 +149,8 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         sendStopReport()
         mediaPlayer.stop()
         
-        if(playerDestination == .remote) {
-            castClient?.stopCurrentApp()
-            castClient?.disconnect()
-            castClient = nil
-            selectedCastDevice = nil
-            playerDestination = .local
+        if(castSessionManager.hasConnectedCastSession()) {
+            castSessionManager.endSessionAndStopCasting(true)
         }
         
         delegate?.exitPlayer(self)
@@ -194,7 +196,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
                 paused = false
             } else {
-                sendCastCommand(cmd: "Unpause")
+                sendJellyfinCommand(command: "Unpause", options: [:])
                 mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
                 paused = false
             }
@@ -204,7 +206,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
                 paused = true
             } else {
-                sendCastCommand(cmd: "Pause")
+                sendJellyfinCommand(command: "Pause", options: [:])
                 mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
                 paused = true
             }
@@ -226,7 +228,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         }
     }
     
-    //MARK: Cast start
+    //MARK: Cast methods
     @IBAction func castButtonPressed(_ sender: Any) {
         if(selectedCastDevice == nil) {
             castDeviceVC = VideoPlayerCastDeviceSelectorView()
@@ -242,113 +244,29 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
             }
         } else {
-            castClient?.stopCurrentApp()
-            castClient?.disconnect()
+            castSessionManager.endSessionAndStopCasting(true)
             selectedCastDevice = nil;
-            castClient = nil;
             self.castButton.isEnabled = true
             self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
-            
-            //disconnect cast device.
-            
+            playerDestination = .local
+            startLocalPlaybackEngine()
         }
     }
     
     func castPopoverDismissed() {
         castDeviceVC?.dismiss(animated: true, completion: nil)
-        self.mediaPlayer.play()
+        if(playerDestination == .local) {
+            self.mediaPlayer.play()
+        }
         self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
     }
     
     func castDeviceChanged() {
         if(selectedCastDevice != nil) {
-            castClient = CastClient(device: selectedCastDevice!)
-            castClient!.delegate = self
-            castClient!.connect()
+            playerDestination = .remote
+            castSessionManager.add(self)
+            castSessionManager.startSession(with: selectedCastDevice!)
         }
-    }
-    
-    func sendCastCommand(cmd: String) {
-        let payload: [String: Any] = [
-            "options": [],
-            "command": cmd,
-            "userId": SessionManager.current.user.user_id!,
-            "deviceId": SessionManager.current.deviceID,
-            "accessToken": SessionManager.current.accessToken,
-            "serverAddress": ServerEnvironment.current.server.baseURI!,
-            "serverId": ServerEnvironment.current.server.server_id!,
-            "serverVersion": "10.8.0",
-            "receiverName": self.selectedCastDevice!.name
-        ]
-        let req = CastRequest(id: castClient!.nextRequestId(), namespace: "urn:x-cast:com.connectsdk", destinationId: castAppTransportID, payload: payload)
-        castClient!.send(req, response: nil)
-    }
-    
-    func castClient(_ client: CastClient, connectionTo device: CastDevice, didFailWith error: Error?) {
-        dump(error)
-    }
-    
-    func castClient(_ client: CastClient, willConnectTo device: CastDevice) {
-        print("Connecting")
-        mediaPlayer.pause()
-        castScanner.stopScanning()
-        self.castButton.setImage(UIImage(named: "CastConnecting1"), for: .normal)
-    }
-    
-    func castClient(_ client: CastClient, didConnectTo device: CastDevice) {
-        print("Connected")
-        self.castButton.setImage(UIImage(named: "CastConnected"), for: .normal)
-        
-        //Launch player
-        client.launch(appId: "F007D354") { result in
-                switch result {
-                    case .success(let app):
-                    // here you would probably call client.load() to load some media
-                        let payload: [String: Any] = [
-                            "options": [
-                                "items": [[
-                                    "Id": self.manifest.id!,
-                                    "ServerId": ServerEnvironment.current.server.server_id!,
-                                    "Name": self.manifest.name!,
-                                    "Type": self.manifest.type!,
-                                    "MediaType": self.manifest.mediaType!,
-                                    "IsFolder": self.manifest.isFolder!
-                                ]]
-                            ],
-                            "command": "PlayNow",
-                            "userId": SessionManager.current.user.user_id!,
-                            "deviceId": SessionManager.current.deviceID,
-                            "accessToken": SessionManager.current.accessToken,
-                            "serverAddress": ServerEnvironment.current.server.baseURI!,
-                            "serverId": ServerEnvironment.current.server.server_id!,
-                            "serverVersion": "10.8.0",
-                            "receiverName": self.selectedCastDevice!.name,
-                            "subtitleBurnIn": false
-                        ]
-                        self.castAppTransportID = app.transportId
-                        let req = CastRequest(id: client.nextRequestId(), namespace: "urn:x-cast:com.connectsdk", destinationId: app.transportId, payload: payload)
-                        client.send(req, response: self.castResponseHandler)
-                    case .failure(let error):
-                        print(error)
-                }
-        }
-        
-        //Hide VLC player
-        videoContentView.isHidden = true;
-        playerDestination = .remote;
-        
-    }
-    
-    func castClient(_ client: CastClient, didDisconnectFrom device: CastDevice) {
-        print("Disconnected")
-        castScanner.startScanning()
-        playerDestination = .local;
-        videoContentView.isHidden = false;
-        self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
-    }
-                            
-    func castResponseHandler(result: Result<JSON, CastError>) {
-        dump(result)
     }
     
     //MARK: Cast End
@@ -382,7 +300,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 self.mediaPlayer.pause()
                 self.sendProgressReport(eventName: "pause")
             } else {
-                self.sendCastCommand(cmd: "Pause")
+                self.sendJellyfinCommand(command: "Pause", options: [:])
             }
             self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
             return .success
@@ -394,7 +312,7 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 self.mediaPlayer.play()
                 self.sendProgressReport(eventName: "unpause")
             } else {
-                self.sendCastCommand(cmd: "Unpause")
+                self.sendJellyfinCommand(command: "Unpause", options: [:])
             }
             self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
             return .success
@@ -475,20 +393,37 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
     }
 
     func mediaHasStartedPlaying() {
-        NotificationCenter.default.addObserver(forName: CastDeviceScanner.deviceListDidChange, object: castScanner, queue: nil) { _ in
-            self.discoveredCastDevices = self.castScanner.devices
-            if !self.castScanner.devices.isEmpty {
-                self.castButton.isEnabled = true
-                self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
-            } else {
-                self.castButton.isEnabled = false
-                self.castButton.setImage(nil, for: .normal)
+        castButton.isHidden = true;
+        let discoveryCriteria = GCKDiscoveryCriteria(applicationID: "F007D354")
+        let gckCastOptions = GCKCastOptions(discoveryCriteria: discoveryCriteria)
+        GCKCastContext.setSharedInstanceWith(gckCastOptions)
+        castDiscoveryManager.passiveScan = true
+        castDiscoveryManager.add(self)
+        castDiscoveryManager.startDiscovery()
+    }
+    
+    func didUpdateDeviceList() {
+        let totalDevices = castDiscoveryManager.deviceCount;
+        discoveredCastDevices = []
+        if(totalDevices > 0) {
+            for i in 0...totalDevices-1 {
+                let device = castDiscoveryManager.device(at: i)
+                discoveredCastDevices.append(device)
             }
         }
 
-        castScanner.startScanning()
+        if !discoveredCastDevices.isEmpty {
+            castButton.isHidden = false
+            castButton.isEnabled = true
+            castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
+        } else {
+            castButton.isHidden = true
+            castButton.isEnabled = false
+            castButton.setImage(nil, for: .normal)
+        }
     }
-
+    
+    //MARK: viewDidAppear
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         overrideUserInterfaceStyle = .dark
@@ -606,49 +541,51 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                                 selectedAudioTrack = audioTrackArray[0].id
                             }
                         }
-
-                        print("gotToEnd")
-
+                        
                         self.sendPlayReport()
                         playbackItem = item
                     }
-
-                    mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
-                    mediaPlayer.play()
-
-                    // 1 second = 10,000,000 ticks
-
-                    let rawStartTicks = manifest.userData?.playbackPositionTicks ?? 0
-
-                    if rawStartTicks != 0 {
-                        let startSeconds = rawStartTicks / 10_000_000
-                        mediaPlayer.jumpForward(Int32(startSeconds))
-                    }
-
-                    // Pause and load captions into memory.
-                    mediaPlayer.pause()
-
-                    var shouldHaveSubtitleTracks = 0
-                    subtitleTrackArray.forEach { sub in
-                        if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
-                            shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
-                            mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
-                        }
-                    }
-
-                    // Wait for captions to load
-                    delegate?.showLoadingView(self)
-
-                    while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {}
-
-                    // Select default track & resume playback
-                    mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
-                    mediaPlayer.pause()
-                    mediaPlayer.play()
-                    self.mediaHasStartedPlaying()
+                    startLocalPlaybackEngine()
                 })
                 .store(in: &cancellables)
         }
+    }
+
+    func startLocalPlaybackEngine() {
+        mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
+        mediaPlayer.play()
+
+        // 1 second = 10,000,000 ticks
+
+        let rawStartTicks = manifest.userData?.playbackPositionTicks ?? 0
+
+        if rawStartTicks != 0 {
+            let startSeconds = rawStartTicks / 10_000_000
+            mediaPlayer.jumpForward(Int32(startSeconds))
+        }
+
+        // Pause and load captions into memory.
+        mediaPlayer.pause()
+
+        var shouldHaveSubtitleTracks = 0
+        subtitleTrackArray.forEach { sub in
+            if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
+                shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
+                mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
+            }
+        }
+
+        // Wait for captions to load
+        delegate?.showLoadingView(self)
+
+        while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {}
+
+        // Select default track & resume playback
+        mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
+        mediaPlayer.pause()
+        mediaPlayer.play()
+        self.mediaHasStartedPlaying()
+        delegate?.hideLoadingView(self)
     }
 
     // MARK: VideoPlayerSettings Delegate
@@ -661,8 +598,144 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
         selectedAudioTrack = newTrackID
         mediaPlayer.currentAudioTrackIndex = newTrackID
     }
+}
 
-    // MARK: VLCMediaPlayer Delegates
+//MARK: - GCKGenericChannelDelegate
+extension PlayerViewController: GCKGenericChannelDelegate {
+    func cast(_ channel: GCKGenericChannel, didReceiveTextMessage message: String, withNamespace protocolNamespace: String) {
+        print("~~~~~~~~~~~~~~~~~")
+        print(message)
+        print("~~~~~~~~~~~~~~~~~")
+        print("")
+        
+        if let data = message.data(using: .utf8) {
+            if let json = try? JSON(data: data) {
+                let messageType = json["type"].string ?? ""
+                if(messageType == "playbackprogress") {
+                    print("Playback progress received from Cast!");
+                    
+                    self.remotePositionTicks = json["data"]["PlayState"]["PositionTicks"].int ?? 0;
+                    print(remotePositionTicks)
+                    
+                    let remainingTime = (manifest.runTimeTicks! - Int64(remotePositionTicks))/10_000_000
+                    print(remainingTime)
+                    let hours = remainingTime / 3600
+                    let minutes = (remainingTime % 3600) / 60
+                    let seconds = (remainingTime % 3600) % 60
+                    var timeTextStr = ""
+                    if hours != 0 {
+                        timeTextStr = "\(Int(hours)):\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
+                    } else {
+                        timeTextStr = "\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
+                    }
+                    timeText.text = timeTextStr
+                    
+                    let playbackProgress = Int64(remotePositionTicks) / manifest.runTimeTicks!
+                    seekSlider.setValue(Float(playbackProgress), animated: true)
+                }
+            }
+        }
+    }
+    
+    func sendJellyfinCommand(command: String, options: [String: Any]) {
+        let payload: [String: Any] = [
+            "options": options,
+            "command": command,
+            "userId": SessionManager.current.user.user_id!,
+            "deviceId": SessionManager.current.deviceID,
+            "accessToken": SessionManager.current.accessToken,
+            "serverAddress": ServerEnvironment.current.server.baseURI!,
+            "serverId": ServerEnvironment.current.server.server_id!,
+            "serverVersion": "10.8.0",
+            "receiverName": castSessionManager.currentCastSession!.device.friendlyName!,
+            "subtitleBurnIn": false
+        ]
+        let jsonData = JSON(payload)
+        
+        jellyfinCastChannel?.sendTextMessage(jsonData.rawString()!, error: nil)
+    }
+}
+
+//MARK: - GCKSessionManagerListener
+extension PlayerViewController: GCKSessionManagerListener {
+    func sessionDidStart(manager: GCKSessionManager, didStart session: GCKCastSession) {
+        self.sendStopReport()
+        mediaPlayer.stop()
+        
+        playerDestination = .remote
+        videoContentView.isHidden = true;
+        videoControlsView.isHidden = false;
+        castButton.setImage(UIImage(named: "CastConnected"), for: .normal)
+        manager.currentCastSession?.start()
+        
+        jellyfinCastChannel!.delegate = self
+        session.add(jellyfinCastChannel!)
+        
+        if let client = session.remoteMediaClient {
+            client.add(self)
+        }
+        
+        let playNowOptions: [String: Any] = [
+            "items": [[
+                "Id": self.manifest.id!,
+                "ServerId": ServerEnvironment.current.server.server_id!,
+                "Name": self.manifest.name!,
+                "Type": self.manifest.type!,
+                "MediaType": self.manifest.mediaType!,
+                "IsFolder": self.manifest.isFolder!
+            ]]
+        ]
+        sendJellyfinCommand(command: "PlayNow", options: playNowOptions)
+        sendJellyfinCommand(command: "Seek", options: [
+            "position": (manifest.runTimeTicks! - (Int64(mediaPlayer.remainingTime.intValue) * 10000)) / 10_000_000
+        ])
+    }
+    
+    func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKCastSession) {
+        print("starting session")
+        self.jellyfinCastChannel = GCKGenericChannel(namespace: "urn:x-cast:com.connectsdk")
+        self.sessionDidStart(manager: sessionManager, didStart: session)
+    }
+    
+    func sessionManager(_ sessionManager: GCKSessionManager, didResumeCastSession session: GCKCastSession) {
+        self.jellyfinCastChannel = GCKGenericChannel(namespace: "urn:x-cast:com.connectsdk")
+        print("resuming session")
+        self.sessionDidStart(manager: sessionManager, didStart: session)
+    }
+    
+    func sessionManager(_ sessionManager: GCKSessionManager, didFailToStart session: GCKCastSession, withError error: Error) {
+        dump(error)
+    }
+    
+
+    func sessionManager(_ sessionManager: GCKSessionManager, didEnd session: GCKCastSession, withError error: Error?) {
+        print("didEnd")
+        playerDestination = .local;
+        videoContentView.isHidden = false;
+        castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
+        startLocalPlaybackEngine()
+    }
+    
+    func sessionManager(_ sessionManager: GCKSessionManager, didSuspend session: GCKCastSession, with reason: GCKConnectionSuspendReason) {
+        print("didSuspend")
+        playerDestination = .local;
+        videoContentView.isHidden = false;
+        castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
+        startLocalPlaybackEngine()
+    }
+    
+    func sessionManager(_ sessionManager: GCKSessionManager, castSession session: GCKCastSession, didReceiveDeviceStatus statusText: String?) {
+        print("96")
+        dump(statusText)
+    }
+    
+    func sessionManager(_ sessionManager: GCKSessionManager, castSession session: GCKCastSession, didReceiveDeviceVolume volume: Float, muted: Bool) {
+        print("100")
+    }
+}
+
+//MARK: - VLCMediaPlayer Delegates
+extension PlayerViewController: VLCMediaPlayerDelegate {
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
             let currentState: VLCMediaPlayerState = mediaPlayer.state
             switch currentState {
@@ -690,7 +763,8 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 mediaPlayer.pause()
                 usleep(10000)
                 mediaPlayer.play()
-
+                delegate?.hideLoadingView(self)
+                paused = false
             case .error :
                 print("Video has error)")
                 sendStopReport()
@@ -700,26 +774,16 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 break
             }
     }
-
+    
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
         let time = mediaPlayer.position
-        if time != lastTime {
+        if abs(time-lastTime) > 0.00005 {
             paused = false
             mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
             seekSlider.setValue(mediaPlayer.position, animated: true)
             delegate?.hideLoadingView(self)
 
-            let remainingTime = abs(mediaPlayer.remainingTime.intValue)/1000
-            let hours = remainingTime / 3600
-            let minutes = (remainingTime % 3600) / 60
-            let seconds = (remainingTime % 3600) % 60
-            var timeTextStr = ""
-            if hours != 0 {
-                timeTextStr = "\(Int(hours)):\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
-            } else {
-                timeTextStr = "\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
-            }
-            timeText.text = timeTextStr
+            timeText.text = String(mediaPlayer.remainingTime.stringValue.dropFirst())
 
             if CACurrentMediaTime() - controlsAppearTime > 5 {
                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
@@ -730,61 +794,28 @@ class PlayerViewController: UIViewController, VLCMediaDelegate, VLCMediaPlayerDe
                 })
                 controlsAppearTime = 999_999_999_999_999
             }
-        } else {
-            paused = true
+            lastTime = time
         }
-        lastTime = time
 
         if CACurrentMediaTime() - lastProgressReportTime > 5 {
             sendProgressReport(eventName: "timeupdate")
             lastProgressReportTime = CACurrentMediaTime()
         }
     }
-
-    // MARK: Jellyfin Playstate updates
-    func sendProgressReport(eventName: String) {
-        if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
-            let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
-
-            PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
-                .sink(receiveCompletion: { result in
-                    print(result)
-                }, receiveValue: { _ in
-                    print("Playback progress report sent!")
-                })
-                .store(in: &cancellables)
-        }
-    }
-
-    func sendStopReport() {
-        let stopInfo = PlaybackStopInfo(item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), liveStreamId: nil, playSessionId: playSessionId, failed: nil, nextMediaType: nil, playlistItemId: "playlistItem0", nowPlayingQueue: [])
-
-        PlaystateAPI.reportPlaybackStopped(playbackStopInfo: stopInfo)
-            .sink(receiveCompletion: { result in
-                print(result)
-            }, receiveValue: { _ in
-                print("Playback stop report sent!")
-            })
-            .store(in: &cancellables)
-    }
-
-    func sendPlayReport() {
-        startTime = Int(Date().timeIntervalSince1970) * 10000000
-
-        print("sending play report!")
-
-        let startInfo = PlaybackStartInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: false, isMuted: false, positionTicks: manifest.userData?.playbackPositionTicks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
-
-        PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
-            .sink(receiveCompletion: { result in
-                print(result)
-            }, receiveValue: { _ in
-                print("Playback start report sent!")
-            })
-            .store(in: &cancellables)
-    }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+//MARK: End VideoPlayerVC
 struct VLCPlayerWithControls: UIViewControllerRepresentable {
     var item: BaseItemDto
     @Environment(\.presentationMode) var presentationMode
@@ -828,5 +859,50 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: VLCPlayerWithControls.UIViewControllerType, context: UIViewControllerRepresentableContext<VLCPlayerWithControls>) {
+    }
+}
+
+//MARK: - Play State Update Methods
+extension PlayerViewController {
+    func sendProgressReport(eventName: String) {
+        if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
+            let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
+
+            PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
+                .sink(receiveCompletion: { result in
+                    print(result)
+                }, receiveValue: { _ in
+                    print("Playback progress report sent!")
+                })
+                .store(in: &cancellables)
+        }
+    }
+
+    func sendStopReport() {
+        let stopInfo = PlaybackStopInfo(item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), liveStreamId: nil, playSessionId: playSessionId, failed: nil, nextMediaType: nil, playlistItemId: "playlistItem0", nowPlayingQueue: [])
+
+        PlaystateAPI.reportPlaybackStopped(playbackStopInfo: stopInfo)
+            .sink(receiveCompletion: { result in
+                print(result)
+            }, receiveValue: { _ in
+                print("Playback stop report sent!")
+            })
+            .store(in: &cancellables)
+    }
+
+    func sendPlayReport() {
+        startTime = Int(Date().timeIntervalSince1970) * 10000000
+
+        print("sending play report!")
+
+        let startInfo = PlaybackStartInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: false, isMuted: false, positionTicks: manifest.userData?.playbackPositionTicks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
+
+        PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
+            .sink(receiveCompletion: { result in
+                print(result)
+            }, receiveValue: { _ in
+                print("Playback start report sent!")
+            })
+            .store(in: &cancellables)
     }
 }

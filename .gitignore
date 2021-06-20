@@ -6,6 +6,8 @@
 build/
 DerivedData/
 
+Pods/
+Podfile.lock
 dynatraceSymbols.zip
 Cartfile.resolved
 Gemfile.lock
