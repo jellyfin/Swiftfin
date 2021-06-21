@@ -12,13 +12,14 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel = HomeViewModel()
-    @State private var orientation = UIDevice.current.orientation
     @Environment(\.horizontalSizeClass) var hSizeClass
     @Environment(\.verticalSizeClass) var vSizeClass
     @State var showingSettings = false
 
     var body: some View {
-        ZStack {
+        if(viewModel.isLoading) {
+            ProgressView()
+        } else {
             ScrollView {
                 LazyVStack(alignment: .leading) {
                     Spacer().frame(height: hSizeClass == .compact && vSizeClass == .regular ? 0 : 16)
@@ -55,25 +56,19 @@ struct HomeView: View {
                     Spacer().frame(height: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
                 }
             }
-            if viewModel.isLoading {
-                ProgressView()
-            }
-        }
-        .onRotate {
-            orientation = $0
-        }
-        .navigationTitle(MainTabView.Tab.home.localized)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button {
-                    showingSettings = true
-                } label: {
-                    Image(systemName: "gear")
+            .navigationTitle(MainTabView.Tab.home.localized)
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Image(systemName: "gear")
+                    }
                 }
             }
-        }
-        .fullScreenCover(isPresented: $showingSettings) {
-            SettingsView(viewModel: SettingsViewModel(), close: $showingSettings)
+            .fullScreenCover(isPresented: $showingSettings) {
+                SettingsView(viewModel: SettingsViewModel(), close: $showingSettings)
+            }
         }
     }
 }

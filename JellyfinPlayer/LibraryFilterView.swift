@@ -27,31 +27,32 @@ struct LibraryFilterView: View {
                         MultiSelector(label: "Genres",
                                       options: viewModel.possibleGenres,
                                       optionToString: { $0.name ?? "" },
-                                      selected: $viewModel.modifyedFilters.withGenres)
+                                      selected: $viewModel.modifiedFilters.withGenres)
                     }
                     if viewModel.enabledFilterType.contains(.filter) {
                         MultiSelector(label: "Filters",
                                       options: viewModel.possibleItemFilters,
                                       optionToString: { $0.localized },
-                                      selected: $viewModel.modifyedFilters.filters)
+                                      selected: $viewModel.modifiedFilters.filters)
                     }
                     if viewModel.enabledFilterType.contains(.tag) {
                         MultiSelector(label: "Tags",
                                       options: viewModel.possibleTags,
                                       optionToString: { $0 },
-                                      selected: $viewModel.modifyedFilters.tags)
+                                      selected: $viewModel.modifiedFilters.tags)
                     }
                     if viewModel.enabledFilterType.contains(.sortBy) {
                         MultiSelector(label: "Sort by",
                                       options: viewModel.possibleSortBys,
                                       optionToString: { $0.localized },
-                                      selected: $viewModel.modifyedFilters.sortBy)
+                                      selected: $viewModel.modifiedFilters.sortBy)
                     }
                     if viewModel.enabledFilterType.contains(.sortOrder) {
-                        MultiSelector(label: "Sort Order",
-                                      options: viewModel.possibleSortOrders,
-                                      optionToString: { $0.localized },
-                                      selected: $viewModel.modifyedFilters.sortOrder)
+                        Picker(selection: $viewModel.modifiedFilters.sortOrder, label: Text("Order")) {
+                            ForEach(viewModel.possibleSortOrders, id: \.self) { so in
+                                Text("\(so.rawValue)").tag(so.rawValue)
+                            }
+                        }
                     }
                 }
                 if viewModel.isLoading {
@@ -69,7 +70,7 @@ struct LibraryFilterView: View {
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
-                        self.filters = viewModel.modifyedFilters
+                        self.filters = viewModel.modifiedFilters
                         presentationMode.wrappedValue.dismiss()
                     } label: {
                         Text("Apply")

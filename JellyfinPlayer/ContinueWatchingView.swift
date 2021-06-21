@@ -80,8 +80,6 @@ struct ContinueWatchingView: View {
                     Spacer().frame(width: 2)
                 }.frame(height: 215)
                 .padding(.bottom, 10)
-            } else {
-                EmptyView()
             }
         }
     }

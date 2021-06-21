@@ -21,7 +21,7 @@ enum FilterType {
 
 final class LibraryFilterViewModel: ViewModel {
     @Published
-    var modifyedFilters = LibraryFilters()
+    var modifiedFilters = LibraryFilters()
 
     @Published
     var possibleGenres = [NameGuidPair]()
@@ -41,7 +41,7 @@ final class LibraryFilterViewModel: ViewModel {
         self.enabledFilterType = enabledFilterType
         super.init()
         if let filters = filters {
-            self.modifyedFilters = filters
+            self.modifiedFilters = filters
         }
         requestQueryFilters()
     }

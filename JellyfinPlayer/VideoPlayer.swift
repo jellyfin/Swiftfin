@@ -558,6 +558,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         print("Local playback engine starting.")
         mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
         mediaPlayer.play()
+        sendPlayReport()
 
         // 1 second = 10,000,000 ticks
         var startTicks: Int64 = 0;
@@ -595,9 +596,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             // Wait for captions to load
             delegate?.showLoadingView(self)
 
-            while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {
-                print("waiting \(String(mediaPlayer.numberOfSubtitlesTracks)) != \(String(shouldHaveSubtitleTracks))")
-            }
+            while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {}
 
             // Select default track & resume playback
             mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
@@ -643,9 +642,8 @@ extension PlayerViewController: GCKGenericChannelDelegate {
             }
             timeText.text = timeTextStr
             
-            let playbackProgress = Int64(remotePositionTicks) / manifest.runTimeTicks!
-            print(playbackProgress)
-            seekSlider.setValue(Float(playbackProgress), animated: true)
+            let playbackProgress = Float(remotePositionTicks) / Float(manifest.runTimeTicks!)
+            seekSlider.setValue(playbackProgress, animated: true)
         }
     }
     
@@ -654,11 +652,14 @@ extension PlayerViewController: GCKGenericChannelDelegate {
             if let json = try? JSON(data: data) {
                 let messageType = json["type"].string ?? ""
                 if(messageType == "playbackprogress") {
-                    if(hasSentRemoteSeek == false) {
-                        hasSentRemoteSeek = true;
-                        sendJellyfinCommand(command: "Seek", options: [
-                            "position": Int(Float(manifest.runTimeTicks! / 10_000_000) * mediaPlayer.position)
-                        ])
+                    dump(json)
+                    if(remotePositionTicks > 100) {
+                        if(hasSentRemoteSeek == false) {
+                            hasSentRemoteSeek = true;
+                            sendJellyfinCommand(command: "Seek", options: [
+                                "position": Int(Float(manifest.runTimeTicks! / 10_000_000) * mediaPlayer.position)
+                            ])
+                        }
                     }
                     paused = json["data"]["PlayState"]["IsPaused"].boolValue
                     self.remotePositionTicks = json["data"]["PlayState"]["PositionTicks"].int ?? 0;
@@ -687,6 +688,20 @@ extension PlayerViewController: GCKGenericChannelDelegate {
         let jsonData = JSON(payload)
         
         jellyfinCastChannel?.sendTextMessage(jsonData.rawString()!, error: nil)
+        
+        if(command == "Seek") {
+            remotePositionTicks = remotePositionTicks + ((options["position"] as! Int) * 10_000_000)
+            //Send playback report as Jellyfin Chromecast isn't smarter than a rock.
+            let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: paused, isMuted: false, positionTicks: Int64(remotePositionTicks), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
+
+            PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
+                .sink(receiveCompletion: { result in
+                    print(result)
+                }, receiveValue: { _ in
+                    print("Playback progress report sent!")
+                })
+                .store(in: &cancellables)
+        }
     }
 }
 

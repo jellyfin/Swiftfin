@@ -34,14 +34,14 @@ extension SortBy {
         case .name:
             return "Title"
         case .dateAdded:
-            return "Date added"
+            return "Date Added"
         }
     }
 }
 
 extension ItemFilter {
     static var supportedTypes: [ItemFilter] {
-        [.isUnplayed, isPlayed, .isFavorite, .likes, .isFavoriteOrLikes]
+        [.isUnplayed, isPlayed, .isFavorite, .likes]
     }
 
     var localized: String {
@@ -53,9 +53,7 @@ extension ItemFilter {
         case .isFavorite:
             return "Favorites"
         case .likes:
-            return "Liked"
-        case .isFavoriteOrLikes:
-            return "Favorites or Liked"
+            return "Liked Items"
         default:
             return ""
         }
