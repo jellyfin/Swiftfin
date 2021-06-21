@@ -12,6 +12,8 @@
 		09833E9F267D86AF005F4FFD /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09833E9B267D86AF005F4FFD /* VideoPlayer.swift */; };
 		09833EA0267D86AF005F4FFD /* VideoPlayerStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09833E9C267D86AF005F4FFD /* VideoPlayerStoryboard.storyboard */; };
 		09833EA1267D86AF005F4FFD /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09833E9D267D86AF005F4FFD /* VideoPlayerViewController.swift */; };
+		09876D10267F54E600FBBE31 /* SubtitlesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09876D0F267F54E600FBBE31 /* SubtitlesViewController.swift */; };
+		099EA7692680526F005DCD8A /* AudioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099EA7682680526F005DCD8A /* AudioViewController.swift */; };
 		531690E5267ABD5C005D8AB9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E4267ABD5C005D8AB9 /* MainTabView.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */; };
@@ -242,6 +244,8 @@
 		09833E9B267D86AF005F4FFD /* VideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		09833E9C267D86AF005F4FFD /* VideoPlayerStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = VideoPlayerStoryboard.storyboard; sourceTree = "<group>"; };
 		09833E9D267D86AF005F4FFD /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
+		09876D0F267F54E600FBBE31 /* SubtitlesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitlesViewController.swift; sourceTree = "<group>"; };
+		099EA7682680526F005DCD8A /* AudioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioViewController.swift; sourceTree = "<group>"; };
 		531690E4267ABD5C005D8AB9 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
@@ -437,6 +441,8 @@
 				09833E9B267D86AF005F4FFD /* VideoPlayer.swift */,
 				09833E9C267D86AF005F4FFD /* VideoPlayerStoryboard.storyboard */,
 				09833E9D267D86AF005F4FFD /* VideoPlayerViewController.swift */,
+				09876D0F267F54E600FBBE31 /* SubtitlesViewController.swift */,
+				099EA7682680526F005DCD8A /* AudioViewController.swift */,
 			);
 			path = VideoPlayer;
 			sourceTree = "<group>";
@@ -959,6 +965,7 @@
 				6267B3D826710B9800A7371D /* CollectionExtensions.swift in Sources */,
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				535870A52669D8AE00D05A09 /* ParallaxHeader.swift in Sources */,
+				09876D10267F54E600FBBE31 /* SubtitlesViewController.swift in Sources */,
 				531690F0267ABF72005D8AB9 /* NextUpView.swift in Sources */,
 				535870A72669D8AE00D05A09 /* MultiSelectorView.swift in Sources */,
 				09833E9E267D86AF005F4FFD /* InfoTabBarViewController.swift in Sources */,
@@ -976,6 +983,7 @@
 				535870A62669D8AE00D05A09 /* LazyView.swift in Sources */,
 				5321753E2671DE9C005491E6 /* Typings.swift in Sources */,
 				53ABFDEB2679753200886593 /* ConnectToServerView.swift in Sources */,
+				099EA7692680526F005DCD8A /* AudioViewController.swift in Sources */,
 				536D3D76267BA9BB0004248C /* MainTabViewModel.swift in Sources */,
 				536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */,
 				535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */,

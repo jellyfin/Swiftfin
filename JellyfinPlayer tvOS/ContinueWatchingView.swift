@@ -25,7 +25,7 @@ struct ContinueWatchingView: View {
                     LazyHStack {
                         Spacer().frame(width: 45)
                         ForEach(items, id: \.id) { item in
-                            NavigationLink(destination: Text("itemv")) {
+                            NavigationLink(destination: VideoPlayerView(item: item)) {
                                 LandscapeItemElement(item: item)
                             }
                             .buttonStyle(PlainNavigationLinkButtonStyle())
