@@ -25,6 +25,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       
+      - uses: actions/cache@v2
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+            
+      - name: Install pods
+        run: pod install
+      
       - name: Cache Swift packages
         uses: actions/cache@v2
         with:
