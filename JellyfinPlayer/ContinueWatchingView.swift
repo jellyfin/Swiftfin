@@ -8,7 +8,6 @@
 
 import SwiftUI
 import JellyfinAPI
-import Combine
 
 struct ProgressBar: Shape {
     func path(in rect: CGRect) -> Path {

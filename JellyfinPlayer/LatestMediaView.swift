@@ -5,8 +5,6 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import Combine
-import JellyfinAPI
 import SwiftUI
 
 struct LatestMediaView: View {

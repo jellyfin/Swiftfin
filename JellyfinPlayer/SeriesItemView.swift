@@ -6,8 +6,6 @@
  */
 
 import SwiftUI
-import JellyfinAPI
-import Combine
 
 struct SeriesItemView: View {
     @StateObject var viewModel: SeriesItemViewModel

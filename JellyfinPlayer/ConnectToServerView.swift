@@ -5,9 +5,6 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import CoreData
-import JellyfinAPI
-import KeychainSwift
 import SwiftUI
 
 struct ConnectToServerView: View {
