@@ -34,7 +34,6 @@ jobs:
             ${{ runner.os }}-pods-
             
       - name: Install pods
-        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: pod install
       
       - name: Cache Swift packages
