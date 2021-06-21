@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@v1
       
       - uses: actions/cache@v2
+        id: cocoapods-cache
         with:
           path: Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
@@ -33,6 +34,7 @@ jobs:
             ${{ runner.os }}-pods-
             
       - name: Install pods
+        if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: pod install
       
       - name: Cache Swift packages
@@ -51,7 +53,7 @@ jobs:
       
       - name: xcodebuild!
         run: |
-          xcodebuild build -project "JellyfinPlayer.xcodeproj" \
+          xcodebuild build -workspace "JellyfinPlayer.xcworkspace" \
           -scheme "${{ matrix.scheme }}" \
           CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO          
       
