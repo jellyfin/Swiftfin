@@ -72,7 +72,20 @@ final class ConnectToServerViewModel: ViewModel {
     func login() {
         SessionManager.current.login(username: usernameSubject.value, password: passwordSubject.value)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestCompletion(completion: completion)
+                switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        if let err = error as? ErrorResponse {
+                            switch err {
+                                case .error(401, _, _, _):
+                                    self.errorMessage = "Invalid credentials"
+                                case .error:
+                                    self.errorMessage = err.localizedDescription
+                            }
+                        }
+                        break
+                }
             }, receiveValue: { _ in
 
             })

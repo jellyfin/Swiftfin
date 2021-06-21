@@ -53,6 +53,9 @@ struct LibraryView: View {
                                                 .fontWeight(.medium)
                                         } else {
                                             Text(item.type ?? "")
+                                                .foregroundColor(.secondary)
+                                                .font(.caption)
+                                                .fontWeight(.medium)
                                         }
                                     }.frame(width: 100)
                                 }
@@ -69,7 +72,7 @@ struct LibraryView: View {
                                     } label: {
                                         Image(systemName: "chevron.left")
                                             .font(.system(size: 25))
-                                    }.disabled(viewModel.hasPreviousPage)
+                                    }.disabled(!viewModel.hasPreviousPage)
                                     Text("Page \(String(viewModel.currentPage + 1)) of \(String(viewModel.totalPages))")
                                         .font(.headline)
                                         .fontWeight(.semibold)
@@ -78,7 +81,7 @@ struct LibraryView: View {
                                     } label: {
                                         Image(systemName: "chevron.right")
                                             .font(.system(size: 25))
-                                    }.disabled(viewModel.hasNextPage)
+                                    }.disabled(!viewModel.hasNextPage)
                                 }
                                 Spacer()
                             }

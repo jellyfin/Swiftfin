@@ -523,7 +523,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                                 } else {
                                     deliveryUrl = nil
                                 }
-                                let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt")
+                                let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!)
 
                                 if subtitle.delivery != .encode {
                                     subtitleTrackArray.append(subtitle)
@@ -548,6 +548,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         self.sendPlayReport()
                         playbackItem = item
                     }
+                    dump(playbackItem)
                     startLocalPlaybackEngine(true)
                 })
                 .store(in: &cancellables)
@@ -583,29 +584,22 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
         
         if(fetchCaptions) {
+            print("Fetching captions.")
             // Pause and load captions into memory.
             mediaPlayer.pause()
-            var shouldHaveSubtitleTracks = 1
             subtitleTrackArray.forEach { sub in
-                if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
-                    shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
+                if sub.id != -1 && sub.delivery == .external {
                     mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                 }
             }
-
-            // Wait for captions to load
-            delegate?.showLoadingView(self)
-
-            while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {}
-
-            // Select default track & resume playback
-            mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
-            mediaPlayer.pause()
-            mediaPlayer.play()
         }
         
         self.mediaHasStartedPlaying()
         delegate?.hideLoadingView(self)
+        
+        mediaPlayer.pause()
+        mediaPlayer.play()
+        
         print("Local engine started.")
     }
 
@@ -837,6 +831,7 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
         }
 
         if CACurrentMediaTime() - lastProgressReportTime > 5 {
+            mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
             sendProgressReport(eventName: "timeupdate")
             lastProgressReportTime = CACurrentMediaTime()
         }
