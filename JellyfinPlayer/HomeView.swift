@@ -17,7 +17,7 @@ struct HomeView: View {
     @State var showingSettings = false
 
     var body: some View {
-        if(viewModel.isLoading) {
+        if viewModel.isLoading {
             ProgressView()
         } else {
             ScrollView {
