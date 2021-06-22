@@ -104,14 +104,16 @@ extension BaseItemDto {
 
     // MARK: Calculations
     func getItemRuntime() -> String {
-        let seconds = (self.runTimeTicks ?? 0) / 10_000_000
-        let hours = (seconds / 3600)
-        let minutes = ((seconds - (hours * 3600)) / 60)
-        if hours != 0 {
-            return "\(hours):\(String(minutes).leftPad(toWidth: 2, withString: "0"))"
-        } else {
-            return "\(String(minutes))m"
-        }
+        let timeHMSFormatter: DateComponentsFormatter = {
+            let formatter = DateComponentsFormatter()
+            formatter.unitsStyle = .brief
+            formatter.allowedUnits = [.hour, .minute]
+            return formatter
+        }()
+
+        let text = timeHMSFormatter.string(from: Double(self.runTimeTicks! / 10_000_000)) ?? ""
+
+        return text
     }
 
     func getItemProgressString() -> String {
