@@ -14,6 +14,8 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
     var subtitleViewController : SubtitlesViewController? = nil
     var audioViewController : AudioViewController? = nil
     var mediaInfoController : MediaInfoViewController? = nil
+    var infoContainerPos : CGRect? = nil
+    var tabBarHeight : CGFloat = 0
 
     
     override func viewDidLoad() {
@@ -22,6 +24,9 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
         audioViewController = AudioViewController()
         subtitleViewController = SubtitlesViewController()
 
+        tabBarHeight = tabBar.frame.size.height
+        
+        
         viewControllers = [mediaInfoController!, audioViewController!, subtitleViewController!]
 
     }
@@ -34,6 +39,64 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
         
         subtitleViewController?.prepareSubtitleView(subtitleTracks: subtitleTracks, selectedTrack: selectedSubtitleTrack, delegate: delegate)
         
+        if let videoPlayer = videoPlayer {
+            infoContainerPos = CGRect(x: 88, y: 57, width: videoPlayer.infoViewContainer.frame.width, height: videoPlayer.infoViewContainer.frame.height)
+            
+        }
+        
+       
+        
+    }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        guard let pos = infoContainerPos else {
+            return
+        }
+        
+        print(item.title!)
+
+        switch item.title {
+        case "Audio":
+            if var height = audioViewController?.height {
+                print(height)
+
+                height += tabBarHeight
+                
+                UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseOut) { [self] in
+                    videoPlayer?.infoViewContainer.frame = CGRect(x: pos.minX, y: pos.minY, width: pos.width, height: height)
+
+                }
+
+                
+            }
+            break
+        case "Info":
+            if var height = mediaInfoController?.height {
+                print(height)
+
+                height += tabBarHeight
+                UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseOut) { [self] in
+                    videoPlayer?.infoViewContainer.frame = CGRect(x: pos.minX, y: pos.minY, width: pos.width, height: height)
+
+                }
+
+            }
+             break
+        case "Subtitles":
+            if var height = subtitleViewController?.height{
+                print(height)
+
+                height += tabBarHeight
+                UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseOut) { [self] in
+                    videoPlayer?.infoViewContainer.frame = CGRect(x: pos.minX, y: pos.minY, width: pos.width, height: height)
+
+                }
+
+            }
+            break
+        default:
+            break
+        }
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {

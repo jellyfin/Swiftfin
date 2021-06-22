@@ -11,6 +11,9 @@ import SwiftUI
 
 class SubtitlesViewController: UIViewController {
     
+    var height : CGFloat = 400
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -143,6 +146,7 @@ struct SubtitleView: View {
                 }
             }
             .frame(width: 400)
+            .frame(maxHeight: 400)
             
         }
     }

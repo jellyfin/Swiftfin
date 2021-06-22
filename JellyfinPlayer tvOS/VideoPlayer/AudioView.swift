@@ -11,6 +11,9 @@ import SwiftUI
 
 class AudioViewController: UIViewController {
     
+    var height : CGFloat = 400
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -72,7 +75,7 @@ struct AudioView: View {
                 }
             }
             .frame(width: 400)
-            
+            .frame(maxHeight: 400)
         }
     }
 }

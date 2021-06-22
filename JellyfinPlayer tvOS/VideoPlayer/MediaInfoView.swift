@@ -13,6 +13,8 @@ import JellyfinAPI
 class MediaInfoViewController: UIViewController {
     private var contentView: UIHostingController<MediaInfoView>!
     
+    var height : CGFloat = 0
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +31,8 @@ class MediaInfoViewController: UIViewController {
         contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         contentView.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         contentView.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        
+        height = self.view.frame.height
         
     }
 }
