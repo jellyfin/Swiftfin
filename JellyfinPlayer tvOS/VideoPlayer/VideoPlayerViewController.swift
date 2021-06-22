@@ -349,8 +349,13 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = playbackTicks
         
         if let imageData = NSData(contentsOf: manifest.getPrimaryImage(maxWidth: 200)) {
-            let artworkImage = UIImage(data: imageData as Data)
-            nowPlayingInfo[MPMediaItemPropertyArtwork] =  artworkImage
+            if let artworkImage = UIImage(data: imageData as Data) {
+                let artwork = MPMediaItemArtwork.init(boundsSize: artworkImage.size, requestHandler: { (size) -> UIImage in
+                        return artworkImage
+                })
+            nowPlayingInfo[MPMediaItemPropertyArtwork] =  artwork
+                print("set artwork")
+            }
         }
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo

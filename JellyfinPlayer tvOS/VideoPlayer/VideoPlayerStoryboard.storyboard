@@ -80,17 +80,17 @@
                                         </subviews>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
+                                    <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lie-K8-LNT">
+                                        <rect key="frame" x="88" y="57" width="1744" height="635"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                        <color key="backgroundColor" red="0.10195661340000001" green="0.1019650772" blue="0.1060298011" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <connections>
+                                            <segue destination="odZ-Ww-zvF" kind="embed" identifier="infoView" id="i7y-hI-hVh"/>
+                                        </connections>
+                                    </containerView>
                                 </subviews>
                                 <viewLayoutGuide key="safeArea" id="IS7-IU-teh"/>
                             </view>
-                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lie-K8-LNT">
-                                <rect key="frame" x="152" y="68" width="1615" height="635"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <color key="backgroundColor" red="0.10195661340000001" green="0.1019650772" blue="0.1060298011" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <connections>
-                                    <segue destination="odZ-Ww-zvF" kind="embed" identifier="infoView" id="i7y-hI-hVh"/>
-                                </connections>
-                            </containerView>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="WHW-kl-wkr">
                                 <rect key="frame" x="928" y="508" width="64" height="64"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
