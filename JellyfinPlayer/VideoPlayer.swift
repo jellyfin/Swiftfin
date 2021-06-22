@@ -129,11 +129,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration)
         let offset = secondsScrubbedTo - videoPosition
         
-        print(videoPosition)
-        print(videoDuration)
-        print(secondsScrubbedTo)
-        print(offset)
-        
         if(playerDestination == .local) {
             if offset > 0 {
                 mediaPlayer.jumpForward(Int32(offset))
@@ -178,7 +173,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             if(playerDestination == .local) {
                 mediaPlayer.jumpBackward(15)
             } else {
-                
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)-15])
             }
         }
     }
@@ -188,6 +183,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             if(playerDestination == .local) {
                 mediaPlayer.jumpForward(30)
             } else {
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)+30])
             }
         }
     }
@@ -280,13 +276,9 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
         }
     }
-
+    
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .landscape
-    }
-
-    override var shouldAutorotate: Bool {
-        return true
     }
 
     func setupNowPlayingCC() {
@@ -327,7 +319,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 self.mediaPlayer.jumpForward(30)
                 self.sendProgressReport(eventName: "timeupdate")
             } else {
-                
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (self.remotePositionTicks/10_000_000)+30])
             }
             return .success
         }
@@ -337,6 +329,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             if(self.playerDestination == .local) {
                 self.mediaPlayer.jumpBackward(15)
                 self.sendProgressReport(eventName: "timeupdate")
+            } else {
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (self.remotePositionTicks/10_000_000)-15])
             }
             return .success
         }
@@ -389,10 +383,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
 
         super.viewDidLoad()
-        if !UIDevice.current.orientation.isLandscape {
-            let value = UIInterfaceOrientation.landscapeLeft.rawValue
-            UIDevice.current.setValue(value, forKey: "orientation")
-        }
     }
 
     func mediaHasStartedPlaying() {
@@ -431,7 +421,13 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         super.viewDidAppear(animated)
         overrideUserInterfaceStyle = .dark
         self.tabBarController?.tabBar.isHidden = true
-        // View has loaded.
+        self.navigationController?.isNavigationBarHidden = true
+        self.setNeedsUpdateOfHomeIndicatorAutoHidden()
+
+        if !UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat {
+            let value = UIInterfaceOrientation.landscapeLeft.rawValue
+            UIDevice.current.setValue(value, forKey: "orientation")
+        }
 
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         // mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
@@ -456,8 +452,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 .sink(receiveCompletion: { result in
                     print(result)
                 }, receiveValue: { [self] response in
-                    videoContentView.setNeedsLayout()
-                    videoContentView.setNeedsDisplay()
                     playSessionId = response.playSessionId ?? ""
                     let mediaSource = response.mediaSources!.first.self!
                     if mediaSource.transcodingUrl != nil {
@@ -471,11 +465,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         subtitleTrackArray.append(disableSubtitleTrack)
 
                         // Loop through media streams and add to array
-                        for stream in mediaSource.mediaStreams! {
+                        for stream in mediaSource.mediaStreams ?? [] {
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
-                                    deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl!)")!
+                                    deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl ?? "")")!
                                 } else {
                                     deliveryUrl = nil
                                 }
@@ -505,7 +499,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         playbackItem = item
                     } else {
                         // Item will be directly played by the client.
-                        let streamURL: URL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
+                        let streamURL: URL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag ?? "")")!
 
                         let item = PlaybackItem()
                         item.videoUrl = streamURL
@@ -515,7 +509,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         subtitleTrackArray.append(disableSubtitleTrack)
 
                         // Loop through media streams and add to array
-                        for stream in mediaSource.mediaStreams! {
+                        for stream in mediaSource.mediaStreams ?? [] {
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
@@ -548,7 +542,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         self.sendPlayReport()
                         playbackItem = item
                     }
-                    dump(playbackItem)
+
                     startLocalPlaybackEngine(true)
                 })
                 .store(in: &cancellables)
@@ -596,6 +590,13 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         
         self.mediaHasStartedPlaying()
         delegate?.hideLoadingView(self)
+        
+        videoContentView.setNeedsLayout()
+        videoContentView.setNeedsDisplay()
+        self.view.setNeedsLayout()
+        self.view.setNeedsDisplay()
+        self.videoControlsView.setNeedsLayout()
+        self.videoControlsView.setNeedsDisplay()
         
         mediaPlayer.pause()
         mediaPlayer.play()
@@ -793,11 +794,6 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
             case .buffering :
                 print("Video is buffering)")
                 delegate?.showLoadingView(self)
-                mediaPlayer.pause()
-                usleep(10000)
-                mediaPlayer.play()
-                delegate?.hideLoadingView(self)
-                paused = false
             case .error :
                 print("Video has error)")
                 sendStopReport()
@@ -925,7 +921,7 @@ extension PlayerViewController {
     }
 
     func sendPlayReport() {
-        startTime = Int(Date().timeIntervalSince1970) * 10000000
+        startTime = Int(Date().timeIntervalSince1970) * 10_000_000
 
         print("sending play report!")
 
@@ -938,5 +934,11 @@ extension PlayerViewController {
                 print("Playback start report sent!")
             })
             .store(in: &cancellables)
+    }
+}
+
+extension UINavigationController {
+    open override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
     }
 }

@@ -147,6 +147,9 @@ final class SessionManager {
     }
 
     func logout() {
+        let nc = NotificationCenter.default
+        nc.post(name: Notification.Name("didSignOut"), object: nil)
+        
         let keychain = KeychainSwift()
         keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
         keychain.delete("AccessToken_\(user?.user_id ?? "")")
@@ -155,8 +158,5 @@ final class SessionManager {
         let deleteRequest = NSBatchDeleteRequest(objectIDs: [user.objectID])
         user = nil
         _ = try? PersistenceController.shared.container.viewContext.execute(deleteRequest)
-
-        let nc = NotificationCenter.default
-        nc.post(name: Notification.Name("didSignOut"), object: nil)
     }
 }
