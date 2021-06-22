@@ -15,6 +15,8 @@
 		09389CC326814DF600AE350E /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CBC26814DF600AE350E /* VideoPlayerViewController.swift */; };
 		09389CC426814DF600AE350E /* AudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CBD26814DF600AE350E /* AudioView.swift */; };
 		09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
+		09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
+		09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
 		531690E5267ABD5C005D8AB9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E4267ABD5C005D8AB9 /* MainTabView.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */; };
@@ -196,6 +198,7 @@
 		09389CBB26814DF600AE350E /* VideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		09389CBC26814DF600AE350E /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		09389CBD26814DF600AE350E /* AudioView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioView.swift; sourceTree = "<group>"; };
+		09389CC626819B4500AE350E /* VideoPlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerModel.swift; sourceTree = "<group>"; };
 		3773C07648173CE7FEC083D5 /* Pods-JellyfinPlayer iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		3F905C1D3D3A0C9E13E7A0BC /* Pods_JellyfinPlayer_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JellyfinPlayer_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		531690E4267ABD5C005D8AB9 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -393,6 +396,7 @@
 				62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */,
 				62E632EE267D43320063E547 /* LibraryFilterViewModel.swift */,
 				62E632F2267D54030063E547 /* DetailItemViewModel.swift */,
+				09389CC626819B4500AE350E /* VideoPlayerModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -939,6 +943,7 @@
 				531690FA267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift in Sources */,
 				535870A32669D89F00D05A09 /* Model.xcdatamodeld in Sources */,
 				09389CC426814DF600AE350E /* AudioView.swift in Sources */,
+				09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -995,6 +1000,7 @@
 				625CB56C2678C0FD00530A6E /* MainTabView.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
+				09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */,
 				53AD124D267029D60094A276 /* SeriesItemView.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,

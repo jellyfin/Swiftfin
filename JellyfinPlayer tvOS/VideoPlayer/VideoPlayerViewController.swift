@@ -11,24 +11,6 @@ import MediaPlayer
 import JellyfinAPI
 import Combine
 
-struct Subtitle {
-    var name: String
-    var id: Int32
-    var url: URL?
-    var delivery: SubtitleDeliveryMethod
-    var codec: String
-}
-
-struct AudioTrack {
-    var name: String
-    var id: Int32
-}
-
-class PlaybackItem: ObservableObject {
-    @Published var videoType: PlayMethod = .directPlay
-    @Published var videoUrl: URL = URL(string: "https://example.com")!
-}
-
 protocol VideoPlayerSettingsDelegate: AnyObject {
     func selectNew(audioTrack id: Int32)
     func selectNew(subtitleTrack id: Int32)
@@ -167,7 +149,6 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
         
         DispatchQueue.global(qos: .userInitiated).async { [self] in
-            //            delegate?.showLoadingView(self)
             MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
                 .sink(receiveCompletion: { result in
                     print(result)
