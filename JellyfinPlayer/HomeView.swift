@@ -15,16 +15,17 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) var hSizeClass
     @Environment(\.verticalSizeClass) var vSizeClass
     @State var showingSettings = false
-
-    var body: some View {
+    
+    @ViewBuilder
+    var innerBody: some View {
         if(viewModel.isLoading) {
             ProgressView()
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading) {
-                    Spacer().frame(height: hSizeClass == .compact && vSizeClass == .regular ? 0 : 16)
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(items: viewModel.resumeItems)
+                            .padding(.top, hSizeClass == .compact && vSizeClass == .regular ? 0 : 16)
                     }
                     if !viewModel.nextUpItems.isEmpty {
                         NextUpView(items: viewModel.nextUpItems)
@@ -52,10 +53,15 @@ struct HomeView: View {
                             }.padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                         }
                     }
-
-                    Spacer().frame(height: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
                 }
+                .padding(.top, hSizeClass == .compact && vSizeClass == .regular ? 0 : 16)
+                .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
             }
+        }
+    }
+    
+    var body: some View {
+        innerBody
             .navigationTitle(MainTabView.Tab.home.localized)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -69,6 +75,5 @@ struct HomeView: View {
             .fullScreenCover(isPresented: $showingSettings) {
                 SettingsView(viewModel: SettingsViewModel(), close: $showingSettings)
             }
-        }
     }
 }

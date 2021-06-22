@@ -8,38 +8,36 @@
 import SwiftUI
 
 struct LatestMediaView: View {
-    @StateObject var viewModel: LatestMediaViewModel
-
+    @ObservedObject var viewModel: LatestMediaViewModel
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            ZStack {
-                LazyHStack {
-                    Spacer().frame(width: 16)
-                    ForEach(viewModel.items, id: \.id) { item in
-                        if item.type == "Series" || item.type == "Movie" {
-                            NavigationLink(destination: ItemView(item: item)) {
-                                VStack(alignment: .leading) {
-                                    Spacer().frame(height: 10)
-                                    ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
-                                        .frame(width: 100, height: 150)
-                                        .cornerRadius(10)
-                                    Spacer().frame(height: 5)
-                                    Text(item.seriesName ?? item.name ?? "")
+            LazyHStack {
+                Spacer().frame(width: 16)
+                ForEach(viewModel.items, id: \.id) { item in
+                    if item.type == "Series" || item.type == "Movie" {
+                        NavigationLink(destination: ItemView(item: item)) {
+                            VStack(alignment: .leading) {
+                                Spacer().frame(height: 10)
+                                ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
+                                    .frame(width: 100, height: 150)
+                                    .cornerRadius(10)
+                                Spacer().frame(height: 5)
+                                Text(item.seriesName ?? item.name ?? "")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                if item.productionYear != nil {
+                                    Text(String(item.productionYear ?? 0))
+                                        .foregroundColor(.secondary)
                                         .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.primary)
-                                        .lineLimit(1)
-                                    if item.productionYear != nil {
-                                        Text(String(item.productionYear ?? 0))
-                                            .foregroundColor(.secondary)
-                                            .font(.caption)
-                                            .fontWeight(.medium)
-                                    } else {
-                                        Text(item.type!)
-                                    }
-                                }.frame(width: 100)
-                                Spacer().frame(width: 15)
-                            }
+                                        .fontWeight(.medium)
+                                } else {
+                                    Text(item.type!)
+                                }
+                            }.frame(width: 100)
+                            Spacer().frame(width: 15)
                         }
                     }
                 }

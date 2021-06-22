@@ -34,6 +34,7 @@ final class ConnectToServerViewModel: ViewModel {
     func getPublicUsers() {
         if ServerEnvironment.current.server != nil {
             UserAPI.getPublicUsers()
+                .trackActivity(loading)
                 .sink(receiveCompletion: { completion in
                     self.handleAPIRequestCompletion(completion: completion)
                 }, receiveValue: { response in
@@ -56,6 +57,7 @@ final class ConnectToServerViewModel: ViewModel {
 
     func connectToServer() {
         ServerEnvironment.current.create(with: uriSubject.value)
+            .trackActivity(loading)
             .sink(receiveCompletion: { result in
                 switch result {
                     case let .failure(error):
@@ -71,6 +73,7 @@ final class ConnectToServerViewModel: ViewModel {
 
     func login() {
         SessionManager.current.login(username: usernameSubject.value, password: passwordSubject.value)
+            .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 switch completion {
                     case .finished:
