@@ -124,6 +124,14 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         infoViewContainer.center = infoPanelHiddenPoint
         infoViewContainer.layer.cornerRadius = 40
         
+        let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+        blurEffectView.frame = infoViewContainer.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurEffectView.layer.cornerRadius = 40
+        blurEffectView.clipsToBounds = true
+        infoViewContainer.addSubview(blurEffectView)
+        infoViewContainer.sendSubviewToBack(blurEffectView)
+        
         transportBarView.layer.cornerRadius = CGFloat(5)
         
         setupGestures()

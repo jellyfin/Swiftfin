@@ -83,7 +83,6 @@
                                     <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lie-K8-LNT">
                                         <rect key="frame" x="88" y="57" width="1744" height="635"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                        <color key="backgroundColor" red="0.10195661340000001" green="0.1019650772" blue="0.1060298011" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <connections>
                                             <segue destination="odZ-Ww-zvF" kind="embed" identifier="infoView" id="i7y-hI-hVh"/>
                                         </connections>

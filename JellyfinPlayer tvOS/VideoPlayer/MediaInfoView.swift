@@ -109,7 +109,7 @@ struct MediaInfoView: View {
                                 
             }
             .padding(.leading, 350)
-            .padding(.trailing, 200)
+            .padding(.trailing, 125)
         }
         else {
             EmptyView()

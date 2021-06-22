@@ -11,7 +11,7 @@ import SwiftUI
 
 class AudioViewController: UIViewController {
     
-    var height : CGFloat = 400
+    var height : CGFloat = 420
 
     
     override func viewDidLoad() {

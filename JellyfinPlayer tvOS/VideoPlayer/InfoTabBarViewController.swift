@@ -18,17 +18,36 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
     var tabBarHeight : CGFloat = 0
 
     
+//    override func viewWillAppear(_ animated: Bool) {
+//        tabBar.standardAppearance.backgroundColor = .clear
+//        tabBar.standardAppearance.backgroundImage = UIImage()
+//        tabBar.standardAppearance.backgroundEffect = .none
+//        tabBar.barTintColor = .clear
+//        for view in tabBar.subviews {
+//            print(view.description)
+////            if view.description.contains("_UIBarBackground") {
+////
+////                view.removeFromSuperview()
+////            }
+//        }
+//
+//    }
+//
     override func viewDidLoad() {
         super.viewDidLoad()
         mediaInfoController = MediaInfoViewController()
         audioViewController = AudioViewController()
         subtitleViewController = SubtitlesViewController()
-
-        tabBarHeight = tabBar.frame.size.height
-        
         
         viewControllers = [mediaInfoController!, audioViewController!, subtitleViewController!]
 
+        tabBarHeight = tabBar.frame.size.height
+        
+        tabBar.standardAppearance.backgroundColor = .clear
+        tabBar.standardAppearance.backgroundImage = UIImage()
+        tabBar.standardAppearance.backgroundEffect = .none
+        tabBar.barTintColor = .clear
+        
     }
     
     func setupInfoViews(mediaItem: BaseItemDto, subtitleTracks: [Subtitle], selectedSubtitleTrack : Int32,  audioTracks: [AudioTrack], selectedAudioTrack: Int32, delegate: VideoPlayerSettingsDelegate) {
