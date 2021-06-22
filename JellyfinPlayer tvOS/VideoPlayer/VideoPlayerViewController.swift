@@ -236,7 +236,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     // If no default audio tracks select the first one
                     if selectedAudioTrack == -1 && !audioTrackArray.isEmpty{
                         selectedAudioTrack = audioTrackArray.first!.id
-                    }                    
+                    }
                     
                     
                     self.sendPlayReport()
@@ -291,6 +291,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         commandCenter.seekForwardCommand.isEnabled = true
         commandCenter.seekBackwardCommand.isEnabled = true
         commandCenter.changePlaybackPositionCommand.isEnabled = true
+        commandCenter.enableLanguageOptionCommand.isEnabled = true
         
         // Add handler for Pause Command
         commandCenter.pauseCommand.addTarget { _ in
@@ -340,16 +341,56 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
             }
         }
         
+//        commandCenter.enableLanguageOptionCommand.addTarget { [weak self](remoteEvent) in
+//            guard let self = self else {return .commandFailed}
+//
+//
+//
+//        }
         
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = [
-            MPMediaItemPropertyTitle: "TestVideo",
-            MPNowPlayingInfoPropertyPlaybackRate : 1.0,
-            MPNowPlayingInfoPropertyMediaType : AVMediaType.video,
-            MPMediaItemPropertyPlaybackDuration : manifest.runTimeTicks ?? 0 / 10_000_000,
-            MPNowPlayingInfoPropertyElapsedPlaybackTime : mediaPlayer.time.intValue/1000
-        ]
+        var runTicks = 0
+        var playbackTicks = 0
+        
+        if let ticks = manifest.runTimeTicks {
+            runTicks = Int(ticks / 10_000_000)
+        }
+        
+        if let ticks = manifest.userData?.playbackPositionTicks {
+            playbackTicks = Int(ticks / 10_000_000)
+        }
+        
+        var nowPlayingInfo = [String: Any]()
+
+        nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name!
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] =  0.0
+        nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = AVMediaType.video
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = runTicks
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = playbackTicks
+        
+        if let imageData = NSData(contentsOf: manifest.getPrimaryImage(maxWidth: 200)) {
+            let artworkImage = UIImage(data: imageData as Data)
+            nowPlayingInfo[MPMediaItemPropertyArtwork] =  artworkImage
+        }
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+
         
         UIApplication.shared.beginReceivingRemoteControlEvents()
+    }
+    
+    func updateNowPlayingCenter(time : Double?, playing : Bool?) {
+        
+        var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [String: Any]()
+
+        if let playing = playing {
+            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = playing ? 1.0 : 0.0
+        }
+        if let time = time {
+            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = time
+        }
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+
     }
     
     
@@ -381,6 +422,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         
         self.sendProgressReport(eventName: "pause")
         
+        self.updateNowPlayingCenter(time: nil, playing: false)
+        
         animateScrubber()
         
         self.scrubLabel.frame = CGRect(x: self.scrubberView.frame.minX - self.scrubLabel.frame.width/2, y:self.scrubLabel.frame.minY, width: self.scrubLabel.frame.width, height: self.scrubLabel.frame.height)
@@ -390,6 +433,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         playing = true
         mediaPlayer.play()
         
+        self.updateNowPlayingCenter(time: nil, playing: true)
+
         self.sendProgressReport(eventName: "unpause")
         
         animateScrubber()
@@ -696,6 +741,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                 activityIndicator.isHidden = true
                 activityIndicator.stopAnimating()
             }
+            updateNowPlayingCenter(time: nil, playing: true)
         }
         
         let time = mediaPlayer.position
