@@ -58,6 +58,7 @@ struct MovieItemView: View {
                                     .stroke(Color.secondary, lineWidth: 1))
                         }
                     }
+                    .padding(.top, 1)
                 }
                 .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 30)
             }
@@ -95,10 +96,10 @@ struct MovieItemView: View {
                         viewModel.updateWatchState()
                     } label: {
                         if viewModel.isWatched {
-                            Image(systemName: "checkmark.rectangle.fill").foregroundColor(Color.primary)
+                            Image(systemName: "checkmark.circle.fill").foregroundColor(Color.primary)
                                 .font(.system(size: 20))
                         } else {
-                            Image(systemName: "xmark.rectangle").foregroundColor(Color.primary)
+                            Image(systemName: "checkmark.circle").foregroundColor(Color.primary)
                                 .font(.system(size: 20))
                         }
                     }
@@ -270,6 +271,7 @@ struct MovieItemView: View {
                                                 Spacer()
                                             }.frame(maxWidth: .infinity, alignment: .leading)
                                                 .offset(x: 14)
+                                            .padding(.top, 1)
                                         }.frame(maxWidth: .infinity, alignment: .leading)
                                         Spacer()
                                         HStack {
@@ -289,10 +291,10 @@ struct MovieItemView: View {
                                                 viewModel.updateWatchState()
                                             } label: {
                                                 if viewModel.isWatched {
-                                                    Image(systemName: "checkmark.rectangle.fill").foregroundColor(Color.primary)
+                                                    Image(systemName: "checkmark.circle.fill").foregroundColor(Color.primary)
                                                         .font(.system(size: 20))
                                                 } else {
-                                                    Image(systemName: "xmark.rectangle").foregroundColor(Color.primary)
+                                                    Image(systemName: "checkmark.circle").foregroundColor(Color.primary)
                                                         .font(.system(size: 20))
                                                 }
                                             }
