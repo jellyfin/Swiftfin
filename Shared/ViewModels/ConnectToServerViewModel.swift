@@ -25,7 +25,11 @@ final class ConnectToServerViewModel: ViewModel {
     var publicUsers = [UserDto]()
     @Published
     var selectedPublicUser = UserDto()
-
+    
+    private let discovery: ServerDiscovery = ServerDiscovery()
+    @Published var servers: [ServerDiscovery.ServerLookupResponse] = []
+    @Published var searching = false
+    
     override init() {
         super.init()
         getPublicUsers()
@@ -69,6 +73,38 @@ final class ConnectToServerViewModel: ViewModel {
                 self.getPublicUsers()
             })
             .store(in: &cancellables)
+    }
+    
+    func connectToServer(at url : URL) {
+        ServerEnvironment.current.create(with: url.absoluteString)
+            .trackActivity(loading)
+            .sink(receiveCompletion: { result in
+                switch result {
+                    case let .failure(error):
+                        self.errorMessage = error.localizedDescription
+                    default:
+                        break
+                }
+            }, receiveValue: { _ in
+                self.getPublicUsers()
+            })
+            .store(in: &cancellables)
+    }
+    
+    func discoverServers() {
+        searching = true
+        
+        // Timeout after 5 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.searching = false
+        }
+        
+        discovery.locateServer { [self] (server) in
+            if let server = server, !servers.contains(server) {
+                servers.append(server)
+            }
+            searching = false
+        }
     }
 
     func login() {
