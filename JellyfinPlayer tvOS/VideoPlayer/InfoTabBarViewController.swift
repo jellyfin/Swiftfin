@@ -72,15 +72,10 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
             return
         }
         
-        print(item.title!)
-
         switch item.title {
         case "Audio":
             if var height = audioViewController?.height {
-                print(height)
-
                 height += tabBarHeight
-                
                 UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseOut) { [self] in
                     videoPlayer?.infoViewContainer.frame = CGRect(x: pos.minX, y: pos.minY, width: pos.width, height: height)
 
@@ -91,8 +86,6 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
             break
         case "Info":
             if var height = mediaInfoController?.height {
-                print(height)
-
                 height += tabBarHeight
                 UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseOut) { [self] in
                     videoPlayer?.infoViewContainer.frame = CGRect(x: pos.minX, y: pos.minY, width: pos.width, height: height)
@@ -103,8 +96,6 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
              break
         case "Subtitles":
             if var height = subtitleViewController?.height{
-                print(height)
-
                 height += tabBarHeight
                 UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseOut) { [self] in
                     videoPlayer?.infoViewContainer.frame = CGRect(x: pos.minX, y: pos.minY, width: pos.width, height: height)

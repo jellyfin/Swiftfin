@@ -140,6 +140,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         
         setupNowPlayingCC()
         
+        // Adjust subtitle size
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 16)
         
     }
@@ -154,10 +155,14 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
         
-        let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
+        guard let currentUser = SessionManager.current.user else {
+            return
+        }
+        
+        let playbackInfo = PlaybackInfoDto(userId: currentUser.user_id ?? "", maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
         
         DispatchQueue.global(qos: .userInitiated).async { [self] in
-            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
+            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: currentUser.user_id ?? "", maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
                 .sink(receiveCompletion: { result in
                     print(result)
                 }, receiveValue: { [self] response in
@@ -167,16 +172,17 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     
                     playSessionId = response.playSessionId ?? ""
                     
-                    let mediaSource = response.mediaSources!.first.self!
+                    guard let mediaSource = response.mediaSources?.first.self else {
+                        return
+                    }
                     
                     let item = PlaybackItem()
-                    let streamURL : URL?
+                    let streamURL : URL
                     
                     // Item is being transcoded by request of server
-                    if mediaSource.transcodingUrl != nil
-                    {
+                    if let transcodiungUrl = mediaSource.transcodingUrl {
                         item.videoType = .transcode
-                        streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(mediaSource.transcodingUrl!)")
+                        streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(transcodiungUrl)")!
                     }
                     // Item will be directly played by the client
                     else
@@ -185,7 +191,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                         streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
                     }
                     
-                    item.videoUrl = streamURL!
+                    item.videoUrl = streamURL
                     
                     let disableSubtitleTrack = Subtitle(name: "None", id: -1, url: nil, delivery: .embed, codec: "")
                     subtitleTrackArray.append(disableSubtitleTrack)
@@ -223,7 +229,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     }
                     
                     // If no default audio tracks select the first one
-                    if selectedAudioTrack == -1 && !audioTrackArray.isEmpty{
+                    if selectedAudioTrack == -1 && !audioTrackArray.isEmpty {
                         selectedAudioTrack = audioTrackArray.first!.id
                     }
                     
@@ -349,8 +355,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         }
         
         var nowPlayingInfo = [String: Any]()
-
-        nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name!
+        
+        nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name ?? "Jellyfin Video"
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] =  0.0
         nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = AVMediaType.video
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = runTicks
@@ -359,10 +365,9 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         if let imageData = NSData(contentsOf: manifest.getPrimaryImage(maxWidth: 200)) {
             if let artworkImage = UIImage(data: imageData as Data) {
                 let artwork = MPMediaItemArtwork.init(boundsSize: artworkImage.size, requestHandler: { (size) -> UIImage in
-                        return artworkImage
+                    return artworkImage
                 })
-            nowPlayingInfo[MPMediaItemPropertyArtwork] =  artwork
-                print("set artwork")
+                nowPlayingInfo[MPMediaItemPropertyArtwork] =  artwork
             }
         }
         
@@ -571,14 +576,14 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         switch swipe.direction {
         case .left:
             print("swiped left")
-            mediaPlayer.pause()
+//            mediaPlayer.pause()
             //            player.seek(to: CMTime(value: Int64(self.currentSeconds) + 10, timescale: 1))
-            mediaPlayer.play()
+//            mediaPlayer.play()
         case .right:
             print("swiped right")
-            mediaPlayer.pause()
+//            mediaPlayer.pause()
             //            player.seek(to: CMTime(value: Int64(self.currentSeconds) + 10, timescale: 1))
-            mediaPlayer.play()
+//            mediaPlayer.play()
         case .up:
             break
         case .down:

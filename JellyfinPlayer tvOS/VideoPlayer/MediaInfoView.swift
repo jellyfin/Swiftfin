@@ -45,7 +45,8 @@ struct MediaInfoView: View {
             HStack(spacing: 30) {
                                 
                 VStack {
-                    ImageView(src: item.type == "Episode" ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200), bh: item.type == "Episode" ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())                    .frame(width: 200, height: 300)
+                    ImageView(src: item.type == "Episode" ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200), bh: item.type == "Episode" ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())
+                        .frame(width: 200, height: 300)
                         .cornerRadius(10)
                     Spacer()
                 }
@@ -68,7 +69,7 @@ struct MediaInfoView: View {
                         if item.type == "Episode" {
                             Text("S\(item.parentIndexNumber ?? 0) • E\(item.indexNumber ?? 0)")
 
-                            if let date = item.premiereDate! {
+                            if let date = item.premiereDate {
                                 Text("•")
                                 Text(formatDate(date: date))
                             }
