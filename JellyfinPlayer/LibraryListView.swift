@@ -57,26 +57,30 @@ struct LibraryListView: View {
                 .padding(.bottom, 15)
                 
                 ForEach(viewModel.libraries, id: \.id) { library in
-                    NavigationLink(destination: LazyView {
-                        LibraryView(viewModel: .init(parentID: library.id), title: library.name ?? "")
-                    }) {
-                        ZStack() {
-                            ImageView(src: library.getPrimaryImage(maxWidth: 500))
-                                .opacity(0.4)
-                            HStack() {
-                                Spacer()
-                                Text(library.name ?? "")
-                                    .foregroundColor(.white)
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                Spacer()
-                            }.padding(32)
-                        }.background(Color.black)
-                        .frame(minWidth: 100, maxWidth: .infinity)
+                    if(library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows") {
+                        NavigationLink(destination: LazyView {
+                            LibraryView(viewModel: .init(parentID: library.id), title: library.name ?? "")
+                            }) {
+                            ZStack() {
+                                ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
+                                    .opacity(0.4)
+                                HStack() {
+                                    Spacer()
+                                    Text(library.name ?? "")
+                                        .foregroundColor(.white)
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+                                    Spacer()
+                                }.padding(32)
+                            }.background(Color.black)
+                            .frame(minWidth: 100, maxWidth: .infinity)
+                        }
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                        .padding(.bottom, 5)
+                    } else {
+                        EmptyView()
                     }
-                    .cornerRadius(10)
-                    .shadow(radius: 5)
-                    .padding(.bottom, 5)
                 }
             }.padding(.leading, 16)
             .padding(.trailing, 16)
