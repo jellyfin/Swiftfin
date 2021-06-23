@@ -276,14 +276,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
         }
     }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .landscape
-    }
-    
-    override var shouldAutorotate: Bool {
-        return false
-    }
 
     func setupNowPlayingCC() {
         let commandCenter = MPRemoteCommandCenter.shared()
@@ -422,12 +414,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         overrideUserInterfaceStyle = .dark
         self.tabBarController?.tabBar.isHidden = true
         self.navigationController?.isNavigationBarHidden = true
-        self.setNeedsUpdateOfHomeIndicatorAutoHidden()
-
-        if !UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat {
-            let value = UIInterfaceOrientation.landscapeLeft.rawValue
-            UIDevice.current.setValue(value, forKey: "orientation")
-        }
 
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         // mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
