@@ -269,9 +269,6 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     
                     setupInfoPanel()
                     
-                    activityIndicator.isHidden = true
-                    loading = false
-                    
                 })
                 .store(in: &cancellables)
             
@@ -449,7 +446,10 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
             scrubLabel.isHidden = true
             UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut, animations: {
                 self.scrubberView.frame = CGRect(x: self.initialSeekPos, y: self.scrubberView.frame.minY, width: 2, height: self.scrubberView.frame.height)
-            })
+            }) { _ in
+                self.scrubLabel.frame = CGRect(x: (self.initialSeekPos - self.scrubLabel.frame.width/2), y: self.scrubLabel.frame.minY, width: self.scrubLabel.frame.width, height: self.scrubLabel.frame.height)
+                self.scrubLabel.text = self.currentTimeLabel.text
+            }
             seeking = false
             
         }

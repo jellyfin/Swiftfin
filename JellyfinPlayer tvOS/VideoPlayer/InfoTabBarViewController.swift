@@ -59,7 +59,7 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
         subtitleViewController?.prepareSubtitleView(subtitleTracks: subtitleTracks, selectedTrack: selectedSubtitleTrack, delegate: delegate)
         
         if let videoPlayer = videoPlayer {
-            infoContainerPos = CGRect(x: 88, y: 57, width: videoPlayer.infoViewContainer.frame.width, height: videoPlayer.infoViewContainer.frame.height)
+            infoContainerPos = CGRect(x: 88, y: 87, width: videoPlayer.infoViewContainer.frame.width, height: videoPlayer.infoViewContainer.frame.height)
             
         }
         
