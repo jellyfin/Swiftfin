@@ -280,6 +280,10 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .landscape
     }
+    
+    override var shouldAutorotate: Bool {
+        return false
+    }
 
     func setupNowPlayingCC() {
         let commandCenter = MPRemoteCommandCenter.shared()
@@ -368,10 +372,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
         UIApplication.shared.beginReceivingRemoteControlEvents()
-    }
-
-    override func remoteControlReceived(with event: UIEvent?) {
-        dump(event)
     }
 
     // MARK: viewDidLoad
