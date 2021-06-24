@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		091B5A892683142E00D78B61 /* UDPBroadcastConnectionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A862683142E00D78B61 /* UDPBroadcastConnectionError.swift */; };
 		091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		091B5A8B2683142E00D78B61 /* UDPBroadCastConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */; };
-		091B5A8C268315D400D78B61 /* UDPBroadcastConnectionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A862683142E00D78B61 /* UDPBroadcastConnectionError.swift */; };
 		091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		091B5A8E268315D400D78B61 /* UDPBroadCastConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */; };
 		531690E5267ABD5C005D8AB9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E4267ABD5C005D8AB9 /* MainTabView.swift */; };
@@ -187,7 +185,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		091B5A862683142E00D78B61 /* UDPBroadcastConnectionError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UDPBroadcastConnectionError.swift; sourceTree = "<group>"; };
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UDPBroadCastConnection.swift; sourceTree = "<group>"; };
 		3773C07648173CE7FEC083D5 /* Pods-JellyfinPlayer iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -357,7 +354,6 @@
 		091B5A852683142E00D78B61 /* ServerLocator */ = {
 			isa = PBXGroup;
 			children = (
-				091B5A862683142E00D78B61 /* UDPBroadcastConnectionError.swift */,
 				091B5A872683142E00D78B61 /* ServerDiscovery.swift */,
 				091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */,
 			);
@@ -884,7 +880,6 @@
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				53ABFDDE267974E300886593 /* SplashView.swift in Sources */,
 				53ABFDE8267974EF00886593 /* SplashViewModel.swift in Sources */,
-				091B5A8C268315D400D78B61 /* UDPBroadcastConnectionError.swift in Sources */,
 				62E632DE267D2E170063E547 /* LatestMediaViewModel.swift in Sources */,
 				536D3D88267C17350004248C /* PublicUserButton.swift in Sources */,
 				62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
@@ -948,7 +943,6 @@
 				53F8377D265FF67C00F456B3 /* VideoPlayerSettingsView.swift in Sources */,
 				53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */,
 				62133890265F83A900A81A2A /* LibraryListView.swift in Sources */,
-				091B5A892683142E00D78B61 /* UDPBroadcastConnectionError.swift in Sources */,
 				62E632DA267D2BC40063E547 /* LatestMediaViewModel.swift in Sources */,
 				625CB56F2678C23300530A6E /* HomeView.swift in Sources */,
 				53892770263C25230035E14B /* NextUpView.swift in Sources */,
