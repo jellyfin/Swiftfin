@@ -122,6 +122,34 @@ struct ConnectToServerView: View {
                         }
                         .disabled(viewModel.isLoading || uri.isEmpty)
                     }
+                    
+                    Section(header: Text("Local Servers")) {
+                        if self.viewModel.searching {
+                            ProgressView()
+                        }
+                        ForEach(self.viewModel.servers, id: \.id) { server in
+                            Button(action: {
+                                print(server.url)
+                                viewModel.connectToServer(at: server.url)
+                            }, label: {
+                                HStack {
+                                VStack {
+                                    Text(server.name)
+                                        .font(.headline)
+                                    Text(server.host)
+                                        .font(.subheadline)
+                        
+                                }
+                                    Spacer()
+                                    if viewModel.isLoading {
+                                        ProgressView()
+                                    }
+                                }
+                            
+                            })
+                        }
+                    }
+                    .onAppear(perform: self.viewModel.discoverServers)
                 }
             }
         }
