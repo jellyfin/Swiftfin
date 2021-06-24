@@ -13,27 +13,10 @@ import Combine
 import GoogleCast
 import SwiftyJSON
 
-struct Subtitle {
-    var name: String
-    var id: Int32
-    var url: URL?
-    var delivery: SubtitleDeliveryMethod
-    var codec: String
-}
-
-struct AudioTrack {
-    var name: String
-    var id: Int32
-}
 
 enum PlayerDestination {
     case remote
     case local
-}
-
-class PlaybackItem: ObservableObject {
-    @Published var videoType: PlayMethod = .directPlay
-    @Published var videoUrl: URL = URL(string: "https://example.com")!
 }
 
 protocol PlayerViewControllerDelegate: AnyObject {
