@@ -373,7 +373,12 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         } else {
             titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
         }
-
+        
+        if(!UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat) {
+            let value = UIInterfaceOrientation.landscapeRight.rawValue
+            UIDevice.current.setValue(value, forKey: "orientation")
+            UIViewController.attemptRotationToDeviceOrientation()
+        }
         super.viewDidLoad()
     }
 
@@ -408,6 +413,13 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = false
+        self.navigationController?.isNavigationBarHidden = false
+        overrideUserInterfaceStyle = .unspecified
+        super.viewWillDisappear(animated)
+    }
+    
     //MARK: viewDidAppear
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -435,8 +447,22 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         DispatchQueue.global(qos: .userInitiated).async { [self] in
             delegate?.showLoadingView(self)
             MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
-                .sink(receiveCompletion: { result in
-                    print(result)
+                .sink(receiveCompletion: { completion in
+                    switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            if let err = error as? ErrorResponse {
+                                switch err {
+                                    case .error(401, _, _, _):
+                                        self.delegate?.exitPlayer(self)
+                                        SessionManager.current.logout()
+                                    case .error:
+                                        self.delegate?.exitPlayer(self)
+                                }
+                            }
+                            break
+                    }
                 }, receiveValue: { [self] response in
                     playSessionId = response.playSessionId ?? ""
                     let mediaSource = response.mediaSources!.first.self!
