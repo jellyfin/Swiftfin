@@ -1,10 +1,12 @@
 //
-//  UDPBroadcastConnection.swift
-//  UDPBroadcast
-//
-//  Created by Gunter Hager on 10.02.16.
-//  Copyright © 2016 Gunter Hager. All rights reserved.
-//
+/*
+ * SwiftFin is subject to the terms of the Mozilla Public
+ * License, v2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Created by Gunter Hager on 10.02.16.
+ * Copyright © 2016 Gunter Hager. All rights reserved.
+ */
 
 import Foundation
 import Darwin
