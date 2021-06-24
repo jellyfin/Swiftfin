@@ -65,26 +65,7 @@ struct SettingsView: View {
                         Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
                         Button {
-                            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Server")
-                            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
-                            do {
-                                try viewContext.execute(deleteRequest)
-                            } catch _ as NSError {
-                                // TODO: handle the error
-                            }
-
-                            let fetchRequest2: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "SignedInUser")
-                            let deleteRequest2 = NSBatchDeleteRequest(fetchRequest: fetchRequest2)
-
-                            do {
-                                try viewContext.execute(deleteRequest2)
-                            } catch _ as NSError {
-                                // TODO: handle the error
-                            }
-
                             SessionManager.current.logout()
-                            ServerEnvironment.current.reset()
                         } label: {
                             Text("Log out").font(.callout)
                         }

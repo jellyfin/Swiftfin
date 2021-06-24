@@ -103,10 +103,10 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     public var _orientations: UIInterfaceOrientationMask = .allButUpsideDown {
         didSet {
-            UIViewController.attemptRotationToDeviceOrientation()
             if _orientations == .landscape {
                 let value = UIInterfaceOrientation.landscapeRight.rawValue
                 UIDevice.current.setValue(value, forKey: "orientation")
+                UIViewController.attemptRotationToDeviceOrientation()
             }
         }
     }

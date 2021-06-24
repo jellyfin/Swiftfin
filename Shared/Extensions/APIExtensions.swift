@@ -49,6 +49,7 @@ extension BaseItemDto {
     func getBackdropImage(maxWidth: Int) -> URL {
         var imageType = ""
         var imageTag = ""
+        var imageItemId = self.id ?? ""
 
         if self.primaryImageAspectRatio ?? 0.0 < 1.0 {
             imageType = "Backdrop"
@@ -60,15 +61,16 @@ extension BaseItemDto {
             imageTag = self.imageTags?["Primary"] ?? ""
         }
 
-        if imageTag == "" {
+        if imageTag == "" || imageItemId == "" {
             imageType = "Backdrop"
             if !(self.parentBackdropImageTags?.isEmpty ?? true) {
                 imageTag = (self.parentBackdropImageTags ?? [""])[0]
+                imageItemId = self.parentBackdropItemId ?? ""
             }
         }
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -92,13 +94,16 @@ extension BaseItemDto {
     func getPrimaryImage(maxWidth: Int) -> URL {
         let imageType = "Primary"
         var imageTag = self.imageTags?["Primary"] ?? ""
-
-        if imageTag == "" {
+        var imageItemId = self.id ?? ""
+        
+        if imageTag == "" || imageItemId == "" {
             imageTag = self.seriesPrimaryImageTag ?? ""
+            imageItemId = self.seriesId ?? ""
         }
+        
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
