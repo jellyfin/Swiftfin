@@ -129,11 +129,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration)
         let offset = secondsScrubbedTo - videoPosition
         
-        print(videoPosition)
-        print(videoDuration)
-        print(secondsScrubbedTo)
-        print(offset)
-        
         if(playerDestination == .local) {
             if offset > 0 {
                 mediaPlayer.jumpForward(Int32(offset))
@@ -178,7 +173,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             if(playerDestination == .local) {
                 mediaPlayer.jumpBackward(15)
             } else {
-                
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)-15])
             }
         }
     }
@@ -188,6 +183,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             if(playerDestination == .local) {
                 mediaPlayer.jumpForward(30)
             } else {
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)+30])
             }
         }
     }
@@ -281,14 +277,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
     }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .landscape
-    }
-
-    override var shouldAutorotate: Bool {
-        return true
-    }
-
     func setupNowPlayingCC() {
         let commandCenter = MPRemoteCommandCenter.shared()
         commandCenter.playCommand.isEnabled = true
@@ -327,7 +315,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 self.mediaPlayer.jumpForward(30)
                 self.sendProgressReport(eventName: "timeupdate")
             } else {
-                
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (self.remotePositionTicks/10_000_000)+30])
             }
             return .success
         }
@@ -337,6 +325,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             if(self.playerDestination == .local) {
                 self.mediaPlayer.jumpBackward(15)
                 self.sendProgressReport(eventName: "timeupdate")
+            } else {
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (self.remotePositionTicks/10_000_000)-15])
             }
             return .success
         }
@@ -376,10 +366,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         UIApplication.shared.beginReceivingRemoteControlEvents()
     }
 
-    override func remoteControlReceived(with event: UIEvent?) {
-        dump(event)
-    }
-
     // MARK: viewDidLoad
     override func viewDidLoad() {
         if manifest.type == "Movie" {
@@ -387,12 +373,13 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         } else {
             titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
         }
-
-        super.viewDidLoad()
-        if !UIDevice.current.orientation.isLandscape {
-            let value = UIInterfaceOrientation.landscapeLeft.rawValue
+        
+        if(!UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat) {
+            let value = UIInterfaceOrientation.landscapeRight.rawValue
             UIDevice.current.setValue(value, forKey: "orientation")
+            UIViewController.attemptRotationToDeviceOrientation()
         }
+        super.viewDidLoad()
     }
 
     func mediaHasStartedPlaying() {
@@ -426,12 +413,19 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = false
+        self.navigationController?.isNavigationBarHidden = false
+        overrideUserInterfaceStyle = .unspecified
+        super.viewWillDisappear(animated)
+    }
+    
     //MARK: viewDidAppear
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         overrideUserInterfaceStyle = .dark
         self.tabBarController?.tabBar.isHidden = true
-        // View has loaded.
+        self.navigationController?.isNavigationBarHidden = true
 
         mediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         // mediaPlayer.wrappedValue.perform(Selector(("setTextRendererFont:")), with: "Copperplate")
@@ -453,11 +447,23 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         DispatchQueue.global(qos: .userInitiated).async { [self] in
             delegate?.showLoadingView(self)
             MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
-                .sink(receiveCompletion: { result in
-                    print(result)
+                .sink(receiveCompletion: { completion in
+                    switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            if let err = error as? ErrorResponse {
+                                switch err {
+                                    case .error(401, _, _, _):
+                                        self.delegate?.exitPlayer(self)
+                                        SessionManager.current.logout()
+                                    case .error:
+                                        self.delegate?.exitPlayer(self)
+                                }
+                            }
+                            break
+                    }
                 }, receiveValue: { [self] response in
-                    videoContentView.setNeedsLayout()
-                    videoContentView.setNeedsDisplay()
                     playSessionId = response.playSessionId ?? ""
                     let mediaSource = response.mediaSources!.first.self!
                     if mediaSource.transcodingUrl != nil {
@@ -471,11 +477,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         subtitleTrackArray.append(disableSubtitleTrack)
 
                         // Loop through media streams and add to array
-                        for stream in mediaSource.mediaStreams! {
+                        for stream in mediaSource.mediaStreams ?? [] {
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
-                                    deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl!)")!
+                                    deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl ?? "")")!
                                 } else {
                                     deliveryUrl = nil
                                 }
@@ -505,7 +511,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         playbackItem = item
                     } else {
                         // Item will be directly played by the client.
-                        let streamURL: URL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
+                        let streamURL: URL = URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag ?? "")")!
 
                         let item = PlaybackItem()
                         item.videoUrl = streamURL
@@ -515,7 +521,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         subtitleTrackArray.append(disableSubtitleTrack)
 
                         // Loop through media streams and add to array
-                        for stream in mediaSource.mediaStreams! {
+                        for stream in mediaSource.mediaStreams ?? [] {
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
@@ -548,7 +554,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         self.sendPlayReport()
                         playbackItem = item
                     }
-                    dump(playbackItem)
+
                     startLocalPlaybackEngine(true)
                 })
                 .store(in: &cancellables)
@@ -596,6 +602,13 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         
         self.mediaHasStartedPlaying()
         delegate?.hideLoadingView(self)
+        
+        videoContentView.setNeedsLayout()
+        videoContentView.setNeedsDisplay()
+        self.view.setNeedsLayout()
+        self.view.setNeedsDisplay()
+        self.videoControlsView.setNeedsLayout()
+        self.videoControlsView.setNeedsDisplay()
         
         mediaPlayer.pause()
         mediaPlayer.play()
@@ -793,11 +806,6 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
             case .buffering :
                 print("Video is buffering)")
                 delegate?.showLoadingView(self)
-                mediaPlayer.pause()
-                usleep(10000)
-                mediaPlayer.play()
-                delegate?.hideLoadingView(self)
-                paused = false
             case .error :
                 print("Video has error)")
                 sendStopReport()
@@ -925,7 +933,7 @@ extension PlayerViewController {
     }
 
     func sendPlayReport() {
-        startTime = Int(Date().timeIntervalSince1970) * 10000000
+        startTime = Int(Date().timeIntervalSince1970) * 10_000_000
 
         print("sending play report!")
 
@@ -938,5 +946,11 @@ extension PlayerViewController {
                 print("Playback start report sent!")
             })
             .store(in: &cancellables)
+    }
+}
+
+extension UINavigationController {
+    open override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
     }
 }

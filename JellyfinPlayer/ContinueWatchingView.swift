@@ -36,14 +36,13 @@ struct ContinueWatchingView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
-                Spacer().frame(width: 14)
                 ForEach(items, id: \.id) { item in
-                    NavigationLink(destination: ItemView(item: item)) {
+                    NavigationLink(destination: LazyView { ItemView(item: item) }) {
                         VStack(alignment: .leading) {
-                            Spacer().frame(height: 10)
                             ImageView(src: item.getBackdropImage(maxWidth: 320), bh: item.getBackdropImageBlurHash())
                                 .frame(width: 320, height: 180)
                                 .cornerRadius(10)
+                                .shadow(radius: 4)
                                 .overlay(
                                     Group {
                                     if item.type == "Episode" {
@@ -70,14 +69,12 @@ struct ContinueWatchingView: View {
                                 .foregroundColor(.primary)
                                 .lineLimit(1)
                                 .frame(width: 320, alignment: .leading)
-                            Spacer().frame(height: 5)
-                        }
+                        }.padding(.top, 10)
+                        .padding(.bottom, 5)
                     }
-                    Spacer().frame(width: 16)
-                }
-                Spacer().frame(width: 2)
+                }.padding(.trailing, 16)
             }.frame(height: 215)
-                .padding(.bottom, 10)
+            .padding(EdgeInsets(top: 8, leading: 20, bottom: 10, trailing: 2))
         }
     }
 }

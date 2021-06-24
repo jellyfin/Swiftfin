@@ -18,17 +18,16 @@ struct NextUpView: View {
             Text("Next Up")
                 .font(.title2)
                 .fontWeight(.bold)
-                .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                .padding(.leading, 16)
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
-                    Spacer().frame(width: 16)
                     ForEach(items, id: \.id) { item in
-                        NavigationLink(destination: ItemView(item: item)) {
+                        NavigationLink(destination: LazyView { ItemView(item: item) }) {
                             VStack(alignment: .leading) {
                                 ImageView(src: item.getSeriesPrimaryImage(maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
                                     .frame(width: 100, height: 150)
                                     .cornerRadius(10)
-                                Spacer().frame(height: 5)
+                                    .shadow(radius: 4)
                                 Text(item.seriesName!)
                                     .font(.caption)
                                     .fontWeight(.semibold)
@@ -40,13 +39,12 @@ struct NextUpView: View {
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
                             }.frame(width: 100)
-                            Spacer().frame(width: 16)
                         }
-                    }
+                    }.padding(.trailing, 16)
                 }
+                .padding(.leading, 20)
             }
             .frame(height: 200)
         }
-        .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
     }
 }

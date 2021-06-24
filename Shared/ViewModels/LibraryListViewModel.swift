@@ -20,8 +20,6 @@ final class LibraryListViewModel: ViewModel {
     override init() {
         super.init()
 
-        libraries.append(.init(name: "Favorites", id: "favorites"))
-        libraries.append(.init(name: "Genres", id: "genres"))
         requestLibraries()
     }
 
