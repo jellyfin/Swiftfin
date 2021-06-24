@@ -104,24 +104,56 @@ struct ConnectToServerView: View {
                     }
                 }
             } else {
-                Form {
-                    Section(header: Text("Server Information")) {
-                        TextField("Jellyfin Server URL", text: $uri)
-                            .disableAutocorrection(true)
-                            .autocapitalization(.none)
-                        Button {
-                            viewModel.connectToServer()
-                        } label: {
-                            HStack {
-                                Text("Connect")
-                                Spacer()
+                if !viewModel.isLoading {
+            
+                    Form {
+                        Section(header: Text("Server Information")) {
+                            TextField("Jellyfin Server URL", text: $uri)
+                                .disableAutocorrection(true)
+                                .autocapitalization(.none)
+                            Button {
+                                viewModel.connectToServer()
+                            } label: {
+                                HStack {
+                                    Text("Connect")
+                                    Spacer()
+                                }
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                }
                             }
-                            if viewModel.isLoading {
+                            .disabled(viewModel.isLoading || uri.isEmpty)
+                        }
+                        Section(header: Text("Local Servers")) {
+                            if self.viewModel.searching {
                                 ProgressView()
                             }
+                            ForEach(self.viewModel.servers, id: \.id) { server in
+                                Button(action: {
+                                    print(server.url)
+                                    viewModel.connectToServer(at: server.url)
+                                }, label: {
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text(server.name)
+                                                .font(.headline)
+                                            Text(server.host)
+                                                .font(.subheadline)
+                                        }
+                                        Spacer()
+                                        Image(systemName: "chevron.forward")
+                                            .padding()
+                                    }
+                                    
+                                })
+                                .disabled(viewModel.isLoading)
+                            }
                         }
-                        .disabled(viewModel.isLoading || uri.isEmpty)
+                        .onAppear(perform: self.viewModel.discoverServers)
                     }
+                }
+                else {
+                    ProgressView()
                 }
             }
         }
