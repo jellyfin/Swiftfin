@@ -341,9 +341,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             }
         }
 
-        var nowPlayingInfo = [String: Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name ?? ""
-        
+        var nowPlayingInfo = [String : Any]()
         
         var runTicks = 0
         var playbackTicks = 0
@@ -355,9 +353,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         if let ticks = manifest.userData?.playbackPositionTicks {
             playbackTicks = Int(ticks / 10_000_000)
         }
-        
-
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
         
         nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name ?? "Jellyfin Video"
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] =  1.0
@@ -374,7 +369,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             }
         }
         
-        print("set up now playing center")
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
         UIApplication.shared.beginReceivingRemoteControlEvents()
     }
