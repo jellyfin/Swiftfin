@@ -66,11 +66,9 @@ public class ServerDiscovery {
     
     public init() {
         func receiveHandler(_ ipAddress: String, _ port: Int, _ response: Data) {
-            print("RECIEVED \(ipAddress):\(String(port)) \(response)")
         }
         
         func errorHandler(error: UDPBroadcastConnection.ConnectionError) {
-            print(error)
         }
         self.broadcastConn = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
     }
@@ -81,7 +79,6 @@ public class ServerDiscovery {
                 let response = try JSONDecoder().decode(ServerLookupResponse.self, from: data)
                 completion(response)
             } catch {
-                print(error)
                 completion(nil)
             }
         }

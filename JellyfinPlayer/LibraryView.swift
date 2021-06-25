@@ -13,6 +13,7 @@ struct LibraryView: View {
     var title: String
 
     // MARK: tracks for grid
+    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
 
     @State var isShowingSearchView = false
     @State var isShowingFilterView = false
@@ -38,6 +39,17 @@ struct LibraryView: View {
                                         ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
                                             .frame(width: 100, height: 150)
                                             .cornerRadius(10)
+                                            .overlay(
+                                                ZStack {
+                                                    if(item.userData!.played ?? false) {
+                                                        Image(systemName: "circle.fill")
+                                                            .foregroundColor(.white)
+                                                        Image(systemName: "checkmark.circle.fill")
+                                                            .foregroundColor(Color(.systemBlue))
+                                                    }
+                                                }.padding(2)
+                                                .opacity(1)
+                                                , alignment: .topTrailing).opacity(1)
                                         Text(item.name ?? "")
                                             .font(.caption)
                                             .fontWeight(.semibold)
@@ -107,14 +119,14 @@ struct LibraryView: View {
                         Image(systemName: "chevron.right")
                     }
                 }
-                Button(action: {
+                Label("Icon One", systemImage: "line.horizontal.3.decrease.circle")
+                .foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
+                .onTapGesture {
                     isShowingFilterView = true
-                }) {
-                    Image(systemName: "line.horizontal.3.decrease.circle")
                 }
-                Button(action: {
+                Button {
                     isShowingSearchView = true
-                }) {
+                } label: {
                     Image(systemName: "magnifyingglass")
                 }
             }

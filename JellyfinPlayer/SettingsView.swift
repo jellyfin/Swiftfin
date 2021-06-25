@@ -65,6 +65,10 @@ struct SettingsView: View {
                         Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
                         Button {
+                            let nc = NotificationCenter.default
+                            nc.post(name: Notification.Name("didSignOut"), object: nil)
+                            
+                            
                             SessionManager.current.logout()
                         } label: {
                             Text("Log out").font(.callout)

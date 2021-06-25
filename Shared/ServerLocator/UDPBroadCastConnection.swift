@@ -123,7 +123,7 @@ open class UDPBroadcastConnection {
         
         // Set up cancel handler
         newResponseSource.setCancelHandler {
-            debugPrint("Closing UDP socket")
+            //debugPrint("Closing UDP socket")
             let UDPSocket = Int32(newResponseSource.handle)
             shutdown(UDPSocket, SHUT_RDWR)
             close(UDPSocket)
@@ -158,12 +158,12 @@ open class UDPBroadcastConnection {
                 
                 guard let endpoint = withUnsafePointer(to: &socketAddress, { self.getEndpointFromSocketAddress(socketAddressPointer: UnsafeRawPointer($0).bindMemory(to: sockaddr.self, capacity: 1)) })
                 else {
-                    debugPrint("Failed to get the address and port from the socket address received from recvfrom")
+                    //debugPrint("Failed to get the address and port from the socket address received from recvfrom")
                     self.closeConnection()
                     return
                 }
                 
-                debugPrint("UDP connection received \(bytesRead) bytes from \(endpoint.host):\(endpoint.port)")
+                //debugPrint("UDP connection received \(bytesRead) bytes from \(endpoint.host):\(endpoint.port)")
                 
                 let responseBytes = Data(response[0..<bytesRead])
                 
@@ -213,7 +213,7 @@ open class UDPBroadcastConnection {
             
             guard sent > 0 else {
                 if let errorString = String(validatingUTF8: strerror(errno)) {
-                    debugPrint("UDP connection failed to send data: \(errorString)")
+                    //debugPrint("UDP connection failed to send data: \(errorString)")
                 }
                 closeConnection()
                 throw ConnectionError.sendingMessageFailed(code: errno)
@@ -221,7 +221,7 @@ open class UDPBroadcastConnection {
             
             if sent == broadcastMessageLength {
                 // Success
-                debugPrint("UDP connection sent \(broadcastMessageLength) bytes")
+                //debugPrint("UDP connection sent \(broadcastMessageLength) bytes")
             }
         }
     }

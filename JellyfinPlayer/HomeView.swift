@@ -20,7 +20,7 @@ struct HomeView: View {
             ProgressView()
         } else {
             ScrollView {
-                LazyVStack(alignment: .leading) {
+                VStack(alignment: .leading) {
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(items: viewModel.resumeItems)
                     }
@@ -57,7 +57,6 @@ struct HomeView: View {
     var body: some View {
         innerBody
             .navigationTitle(MainTabView.Tab.home.localized)
-        /*
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
@@ -70,6 +69,5 @@ struct HomeView: View {
             .fullScreenCover(isPresented: $showingSettings) {
                 SettingsView(viewModel: SettingsViewModel(), close: $showingSettings)
             }
-         */
     }
 }

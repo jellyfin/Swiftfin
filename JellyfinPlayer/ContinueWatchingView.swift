@@ -44,31 +44,28 @@ struct ContinueWatchingView: View {
                                 .cornerRadius(10)
                                 .shadow(radius: 4)
                                 .overlay(
-                                    Group {
-                                    if item.type == "Episode" {
-                                        Text("\(item.name ?? "")")
-                                            .font(.caption)
-                                            .padding(6)
-                                            .foregroundColor(.white)
-                                    }
-                                }.background(Color.black)
-                                        .opacity(0.8)
-                                        .cornerRadius(10.0)
-                                        .padding(6), alignment: .topTrailing
-                                )
-                                .overlay(
                                     Rectangle()
                                         .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
                                         .mask(ProgressBar())
                                         .frame(width: CGFloat((item.userData?.playedPercentage ?? 0) * 3.2), height: 7)
                                         .padding(0), alignment: .bottomLeading
                                 )
-                            Text(item.seriesName ?? item.name ?? "")
-                                .font(.callout)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                                .frame(width: 320, alignment: .leading)
+                            HStack {
+                                Text("\(item.seriesName ?? item.name ?? "")")
+                                    .font(.callout)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                                if(item.type == "Episode") {
+                                    Text("• S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0)) - \(item.name ?? "")")
+                                        .font(.callout)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                        .offset(x: -1.4)
+                                }
+                                Spacer()
+                            }.frame(width: 320, alignment: .leading)
                         }.padding(.top, 10)
                         .padding(.bottom, 5)
                     }

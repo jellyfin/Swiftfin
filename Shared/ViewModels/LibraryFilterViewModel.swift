@@ -35,10 +35,26 @@ final class LibraryFilterViewModel: ViewModel {
     var possibleItemFilters = ItemFilter.supportedTypes
     @Published
     var enabledFilterType: [FilterType]
+    @Published
+    var selectedSortOrder: APISortOrder = .descending
+    @Published
+    var selectedSortBy: SortBy = .name
+    
+    func updateModifiedFilter() {
+        modifiedFilters.sortOrder = [selectedSortOrder]
+        modifiedFilters.sortBy = [selectedSortBy]
+    }
+    
+    func resetFilters() {
+        modifiedFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
+    }
 
     init(filters: LibraryFilters? = nil,
          enabledFilterType: [FilterType] = [.tag, .genre, .sortBy, .sortOrder, .filter]) {
         self.enabledFilterType = enabledFilterType
+        self.selectedSortBy = filters!.sortBy.first!
+        self.selectedSortOrder = filters!.sortOrder.first!
+        
         super.init()
         if let filters = filters {
             self.modifiedFilters = filters

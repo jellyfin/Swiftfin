@@ -105,7 +105,7 @@ struct ConnectToServerView: View {
                         }
                     }
                 } else {
-                    Section(header: Text("Server Information")) {
+                    Section(header: Text("Manual Connection")) {
                         TextField("Jellyfin Server URL", text: $uri)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
@@ -123,23 +123,20 @@ struct ConnectToServerView: View {
                         .disabled(viewModel.isLoading || uri.isEmpty)
                     }
                     
-                    Section(header: Text("Local Servers")) {
+                    Section(header: Text("Discovered Servers")) {
                         if self.viewModel.searching {
                             ProgressView()
                         }
                         ForEach(self.viewModel.servers, id: \.id) { server in
                             Button(action: {
-                                print(server.url)
                                 viewModel.connectToServer(at: server.url)
                             }, label: {
                                 HStack {
-                                VStack {
                                     Text(server.name)
                                         .font(.headline)
-                                    Text(server.host)
+                                    Text("• \(server.host)")
                                         .font(.subheadline)
-                        
-                                }
+                                        .foregroundColor(.secondary)
                                     Spacer()
                                     if viewModel.isLoading {
                                         ProgressView()

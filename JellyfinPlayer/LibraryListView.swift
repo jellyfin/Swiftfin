@@ -74,6 +74,7 @@ struct LibraryListView: View {
                                 }.padding(32)
                             }.background(Color.black)
                             .frame(minWidth: 100, maxWidth: .infinity)
+                            .frame(height: 72)
                         }
                         .cornerRadius(10)
                         .shadow(radius: 5)

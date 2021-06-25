@@ -76,6 +76,17 @@ struct SeasonItemView: View {
                                             .frame(width: CGFloat(episode.userData!.playedPercentage ?? 0 * 1.5), height: 7)
                                             .padding(0), alignment: .bottomLeading
                                     )
+                                    .overlay(
+                                        ZStack {
+                                            if(episode.userData!.played ?? false) {
+                                                Image(systemName: "circle.fill")
+                                                    .foregroundColor(.white)
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .foregroundColor(Color(.systemBlue))
+                                            }
+                                        }.padding(2)
+                                        .opacity(1)
+                                        , alignment: .topTrailing).opacity(1)
                                 VStack(alignment: .leading) {
                                     HStack {
                                         Text("S\(String(episode.parentIndexNumber ?? 0)):E\(String(episode.indexNumber ?? 0))").font(.subheadline)
