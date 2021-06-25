@@ -195,7 +195,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     
                     item.videoUrl = streamURL
                     
-                    let disableSubtitleTrack = Subtitle(name: "None", id: -1, url: nil, delivery: .embed, codec: "")
+                    let disableSubtitleTrack = Subtitle(name: "None", id: -1, url: nil, delivery: .embed, codec: "", langCode: "")
                     subtitleTrackArray.append(disableSubtitleTrack)
                     
                     // Loop through media streams and add to array
@@ -208,7 +208,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                                 deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl!)")!
                             }
                             
-                            let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt")
+                            let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt", langCode: stream.language ?? "")
                             
                             if stream.isDefault == true{
                                 selectedCaptionTrack = Int32(stream.index!)
@@ -220,7 +220,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                         }
                         
                         if stream.type == .audio {
-                            let track = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
+                            let track = AudioTrack(name: stream.displayTitle!, langCode: stream.language ?? "", id: Int32(stream.index!))
                             
                             if stream.isDefault! == true {
                                 selectedAudioTrack = Int32(stream.index!)

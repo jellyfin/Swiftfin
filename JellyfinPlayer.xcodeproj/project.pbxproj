@@ -109,7 +109,6 @@
 		6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
 		6228B1C22670EB010067FD35 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBFD263B596B003A4E83 /* PersistenceController.swift */; };
 		624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C21742685CF60007F1390 /* SearchablePickerView.swift */; };
-		624C21762685CF60007F1390 /* SearchablePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C21742685CF60007F1390 /* SearchablePickerView.swift */; };
 		625CB5682678B6FB00530A6E /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5672678B6FB00530A6E /* SplashView.swift */; };
 		625CB56A2678B71200530A6E /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5692678B71200530A6E /* SplashViewModel.swift */; };
 		625CB56C2678C0FD00530A6E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB56B2678C0FD00530A6E /* MainTabView.swift */; };
@@ -956,7 +955,6 @@
 				536D3D81267BDFC60004248C /* PortraitItemElement.swift in Sources */,
 				531690E5267ABD5C005D8AB9 /* MainTabView.swift in Sources */,
 				5310695B2684E7EE00CFFDBA /* AudioView.swift in Sources */,
-				624C21762685CF60007F1390 /* SearchablePickerView.swift in Sources */,
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
 				53ABFDE7267974EF00886593 /* ConnectToServerViewModel.swift in Sources */,
 				53ABFDEE26799DCD00886593 /* ImageView.swift in Sources */,
