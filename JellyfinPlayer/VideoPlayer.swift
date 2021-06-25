@@ -343,8 +343,38 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
         var nowPlayingInfo = [String: Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name ?? ""
+        
+        
+        var runTicks = 0
+        var playbackTicks = 0
+        
+        if let ticks = manifest.runTimeTicks {
+            runTicks = Int(ticks / 10_000_000)
+        }
+        
+        if let ticks = manifest.userData?.playbackPositionTicks {
+            playbackTicks = Int(ticks / 10_000_000)
+        }
+        
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        
+        nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name ?? "Jellyfin Video"
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] =  1.0
+        nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = AVMediaType.video
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = runTicks
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = playbackTicks
+        
+        if let imageData = NSData(contentsOf: manifest.getPrimaryImage(maxWidth: 200)) {
+            if let artworkImage = UIImage(data: imageData as Data) {
+                let artwork = MPMediaItemArtwork.init(boundsSize: artworkImage.size, requestHandler: { (size) -> UIImage in
+                    return artworkImage
+                })
+                nowPlayingInfo[MPMediaItemPropertyArtwork] =  artwork
+            }
+        }
+        
+        print("set up now playing center")
 
         UIApplication.shared.beginReceivingRemoteControlEvents()
     }
@@ -355,6 +385,38 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             titleLabel.text = manifest.name ?? ""
         } else {
             titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
+            print("ep count \(manifest.episodeCount) current  \(manifest.indexNumber)   end \(manifest.indexNumberEnd)")
+            
+            
+//            TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, season: manifest.parentIndexNumber ?? 0, startIndex: manifest.indexNumber, limit: 1)
+//                .sink(receiveCompletion: { completion in
+//                    print(completion)
+//                }, receiveValue: { response in
+//                    if let item = response.items?.first {
+//                        print(item.name, item.indexNumber)
+//                    }
+//                })
+//                .store(in: &cancellables)
+            
+//            TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, season: manifest.parentIndexNumber ?? 0, startIndex: manifest.indexNumber, limit: 1)
+//                .sink(receiveCompletion: { completion in
+//                    print(completion)
+//                }, receiveValue: { response in
+//                    if let item = response.items?.first {
+//                        print(item.name, item.indexNumber)
+//                    }
+//                })
+//                .store(in: &cancellables)
+//
+//            TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, startIndex: manifest.indexNumber, limit: 1, seriesId: manifest.seriesId)
+//                .sink(receiveCompletion: { completion in
+//                    print(completion)
+//                }, receiveValue: { response in
+//                    print(response.items)
+//                })
+//                .store(in: &cancellables)
+//
+            
         }
         
         if(!UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat) {
@@ -536,6 +598,9 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         
                         self.sendPlayReport()
                         playbackItem = item
+                        
+                        self.setupNowPlayingCC()
+
                     }
 
                     startLocalPlaybackEngine(true)
@@ -774,7 +839,6 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
                 break
             case .playing :
                 print("Video is playing")
-                self.setupNowPlayingCC()
                 sendProgressReport(eventName: "unpause")
                 delegate?.hideLoadingView(self)
                 paused = false
