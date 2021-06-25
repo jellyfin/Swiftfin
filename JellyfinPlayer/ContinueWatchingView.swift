@@ -12,27 +12,27 @@ import JellyfinAPI
 struct ProgressBar: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        
+
         let tl = CGPoint(x: rect.minX, y: rect.minY)
         let tr = CGPoint(x: rect.maxX, y: rect.minY)
         let br = CGPoint(x: rect.maxX, y: rect.maxY)
         let bls = CGPoint(x: rect.minX + 10, y: rect.maxY)
         let blc = CGPoint(x: rect.minX + 10, y: rect.maxY - 10)
-        
+
         path.move(to: tl)
         path.addLine(to: tr)
         path.addLine(to: br)
         path.addLine(to: bls)
         path.addRelativeArc(center: blc, radius: 10,
                             startAngle: Angle.degrees(90), delta: Angle.degrees(90))
-        
+
         return path
     }
 }
 
 struct ContinueWatchingView: View {
     var items: [BaseItemDto]
-    
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
@@ -56,7 +56,7 @@ struct ContinueWatchingView: View {
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
-                                if(item.type == "Episode") {
+                                if item.type == "Episode" {
                                     Text("• S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0)) - \(item.name ?? "")")
                                         .font(.callout)
                                         .fontWeight(.semibold)

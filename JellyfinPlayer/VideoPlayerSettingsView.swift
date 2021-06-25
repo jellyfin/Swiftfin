@@ -15,7 +15,7 @@ class VideoPlayerSettingsView: UIViewController {
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
             .landscape
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         contentView = UIHostingController(rootView: VideoPlayerSettings(delegate: self.delegate ?? PlayerViewController()))

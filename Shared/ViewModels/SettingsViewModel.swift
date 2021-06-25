@@ -26,7 +26,7 @@ struct Bitrates: Codable, Hashable {
 struct TrackLanguage: Hashable {
     var name: String
     var isoCode: String
-    
+
     static let auto = TrackLanguage(name: "Auto", isoCode: "Auto")
 }
 

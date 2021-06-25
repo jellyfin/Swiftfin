@@ -78,15 +78,14 @@ struct SeasonItemView: View {
                                     )
                                     .overlay(
                                         ZStack {
-                                            if(episode.userData!.played ?? false) {
+                                            if episode.userData!.played ?? false {
                                                 Image(systemName: "circle.fill")
                                                     .foregroundColor(.white)
                                                 Image(systemName: "checkmark.circle.fill")
                                                     .foregroundColor(Color(.systemBlue))
                                             }
                                         }.padding(2)
-                                        .opacity(1)
-                                        , alignment: .topTrailing).opacity(1)
+                                        .opacity(1), alignment: .topTrailing).opacity(1)
                                 VStack(alignment: .leading) {
                                     HStack {
                                         Text("S\(String(episode.parentIndexNumber ?? 0)):E\(String(episode.indexNumber ?? 0))").font(.subheadline)

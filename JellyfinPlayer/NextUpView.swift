@@ -10,9 +10,9 @@ import Combine
 import JellyfinAPI
 
 struct NextUpView: View {
-    
+
     var items: [BaseItemDto]
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("Next Up")

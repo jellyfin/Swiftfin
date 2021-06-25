@@ -11,9 +11,9 @@ import Defaults
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    
+
     @ObservedObject var viewModel: SettingsViewModel
-    
+
     @Binding var close: Bool
     @Default(.inNetworkBandwidth) var inNetworkStreamBitrate
     @Default(.outOfNetworkBandwidth) var outOfNetworkStreamBitrate
@@ -21,11 +21,11 @@ struct SettingsView: View {
     @Default(.autoSelectSubtitlesLangCode) var autoSelectSubtitlesLangcode
     @Default(.autoSelectAudioLangCode) var autoSelectAudioLangcode
     @State private var username: String = ""
-    
+
     func onAppear() {
         username = SessionManager.current.user.username ?? ""
     }
-    
+
     var body: some View {
         NavigationView {
             Form {
@@ -35,20 +35,20 @@ struct SettingsView: View {
                             Text(bitrate.name).tag(bitrate.value)
                         }
                     }
-                    
+
                     Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
                         }
                     }
                 }
-                
+
                 Section(header: Text("Accessibility")) {
                     Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
                     SearchablePicker(label: "Preferred subtitle language",
                                      options: viewModel.langs,
                                      optionToString: { $0.name },
-                                     selected:Binding<TrackLanguage>(
+                                     selected: Binding<TrackLanguage>(
                                         get: { viewModel.langs.first(where: { $0.isoCode == autoSelectSubtitlesLangcode }) ?? .auto },
                                         set: {autoSelectSubtitlesLangcode = $0.isoCode}
                                      )
@@ -62,7 +62,7 @@ struct SettingsView: View {
                                      )
                     )
                 }
-                
+
                 Section {
                     HStack {
                         Text("Signed in as \(username)").foregroundColor(.primary)
@@ -70,8 +70,7 @@ struct SettingsView: View {
                         Button {
                             let nc = NotificationCenter.default
                             nc.post(name: Notification.Name("didSignOut"), object: nil)
-                            
-                            
+
                             SessionManager.current.logout()
                         } label: {
                             Text("Log out").font(.callout)
