@@ -16,10 +16,12 @@ struct Subtitle {
     var url: URL?
     var delivery: SubtitleDeliveryMethod
     var codec: String
+    var langCode: String
 }
 
 struct AudioTrack {
     var name: String
+    var langCode: String
     var id: Int32
 }
 

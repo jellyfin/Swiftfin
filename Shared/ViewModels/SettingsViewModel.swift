@@ -45,6 +45,6 @@ final class SettingsViewModel: ObservableObject {
         isoLanguageCodesPair = Locale.isoLanguageCodes.compactMap {
             guard let name = currentLocale.localizedString(forLanguageCode: $0) else { return nil }
             return (name, $0)
-        }
+        }.sorted(by: { $0.name < $1.name })
     }
 }
