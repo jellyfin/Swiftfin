@@ -558,11 +558,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
         
         audioTrackArray.forEach { audio in
-            if Defaults[.autoSelectAudioLangCode] == "Auto",
-               audio.langCode.contains(Locale.current.languageCode ?? "") {
-                selectedAudioTrack = audio.id
-                mediaPlayer.currentAudioTrackIndex = audio.id
-            } else if audio.langCode.contains(Defaults[.autoSelectAudioLangCode]) {
+            if audio.langCode.contains(Defaults[.autoSelectAudioLangCode]) {
                 selectedAudioTrack = audio.id
                 mediaPlayer.currentAudioTrackIndex = audio.id
             }
