@@ -15,16 +15,11 @@ struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     
     @Binding var close: Bool
-    @Default(.inNetworkBandwidth)
-    var inNetworkStreamBitrate
-    @Default(.outOfNetworkBandwidth)
-    var outOfNetworkStreamBitrate
-    @Default(.isAutoSelectSubtitles)
-    var isAutoSelectSubtitles
-    @Default(.autoSelectSubtitlesLangCode)
-    var autoSelectSubtitlesLangcode
-    @Default(.autoSelectAudioLangCode)
-    var autoSelectAudioLangcode
+    @Default(.inNetworkBandwidth) var inNetworkStreamBitrate
+    @Default(.outOfNetworkBandwidth) var outOfNetworkStreamBitrate
+    @Default(.isAutoSelectSubtitles) var isAutoSelectSubtitles
+    @Default(.autoSelectSubtitlesLangCode) var autoSelectSubtitlesLangcode
+    @Default(.autoSelectAudioLangCode) var autoSelectAudioLangcode
     @State private var username: String = ""
     
     func onAppear() {
@@ -50,7 +45,7 @@ struct SettingsView: View {
                 
                 Section(header: Text("Accessibility")) {
                     Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
-                    SearchablePicker(label: "Subtitles language preferences",
+                    SearchablePicker(label: "Preferred subtitle language",
                                      options: viewModel.langs,
                                      optionToString: { $0.name },
                                      selected:Binding<Lang>(
@@ -58,7 +53,7 @@ struct SettingsView: View {
                                         set: {autoSelectSubtitlesLangcode = $0.isoCode}
                                      )
                     )
-                    SearchablePicker(label: "Audio language preferences",
+                    SearchablePicker(label: "Preferred audio language",
                                      options: viewModel.langs,
                                      optionToString: { $0.name },
                                      selected: Binding<Lang>(

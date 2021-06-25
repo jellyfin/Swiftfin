@@ -543,7 +543,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
     }
     
-    func setupTracksForPreferLanguage() {
+    func setupTracksForPreferredDefaults() {
         subtitleTrackArray.forEach { subtitle in
             if Defaults[.isAutoSelectSubtitles] {
                 if Defaults[.autoSelectSubtitlesLangCode] == "Auto",
@@ -616,7 +616,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         
         mediaPlayer.pause()
         mediaPlayer.play()
-        setupTracksForPreferLanguage()
+        setupTracksForPreferredDefaults()
         
         print("Local engine started.")
     }
