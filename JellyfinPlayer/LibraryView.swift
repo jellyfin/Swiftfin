@@ -41,15 +41,14 @@ struct LibraryView: View {
                                             .cornerRadius(10)
                                             .overlay(
                                                 ZStack {
-                                                    if(item.userData!.played ?? false) {
+                                                    if item.userData!.played ?? false {
                                                         Image(systemName: "circle.fill")
                                                             .foregroundColor(.white)
                                                         Image(systemName: "checkmark.circle.fill")
                                                             .foregroundColor(Color(.systemBlue))
                                                     }
                                                 }.padding(2)
-                                                .opacity(1)
-                                                , alignment: .topTrailing).opacity(1)
+                                                .opacity(1), alignment: .topTrailing).opacity(1)
                                         Text(item.name ?? "")
                                             .font(.caption)
                                             .fontWeight(.semibold)

@@ -39,12 +39,12 @@ final class LibraryFilterViewModel: ViewModel {
     var selectedSortOrder: APISortOrder = .descending
     @Published
     var selectedSortBy: SortBy = .name
-    
+
     func updateModifiedFilter() {
         modifiedFilters.sortOrder = [selectedSortOrder]
         modifiedFilters.sortBy = [selectedSortBy]
     }
-    
+
     func resetFilters() {
         modifiedFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
     }
@@ -54,7 +54,7 @@ final class LibraryFilterViewModel: ViewModel {
         self.enabledFilterType = enabledFilterType
         self.selectedSortBy = filters!.sortBy.first!
         self.selectedSortOrder = filters!.sortOrder.first!
-        
+
         super.init()
         if let filters = filters {
             self.modifiedFilters = filters

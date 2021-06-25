@@ -17,7 +17,7 @@ public class ServerDiscovery {
         public let username: String
         public let password: String
         public let deviceId: String
-        
+
         public init(_ host: String, _ port: Int, _ username: String, _ password: String, _ deviceId: String = UUID().uuidString) {
             self.host = host
             self.port = port
@@ -26,17 +26,17 @@ public class ServerDiscovery {
             self.deviceId = deviceId
         }
     }
-    
+
     public struct ServerLookupResponse: Codable, Hashable, Identifiable {
-        
+
         public func hash(into hasher: inout Hasher) {
             return hasher.combine(id)
         }
-        
+
         private let address: String
         public let id: String
         public let name: String
-        
+
         public var url: URL {
             URL(string: self.address)!
         }
@@ -47,7 +47,7 @@ public class ServerDiscovery {
             }
             return self.address
         }
-        
+
         public var port: Int {
             let components = URLComponents(string: self.address)
             if let port = components?.port {
@@ -55,7 +55,7 @@ public class ServerDiscovery {
             }
             return 8096
         }
-        
+
         enum CodingKeys: String, CodingKey {
             case address = "Address"
             case id = "Id"
@@ -63,16 +63,16 @@ public class ServerDiscovery {
         }
     }
     private let broadcastConn: UDPBroadcastConnection
-    
+
     public init() {
         func receiveHandler(_ ipAddress: String, _ port: Int, _ response: Data) {
         }
-        
+
         func errorHandler(error: UDPBroadcastConnection.ConnectionError) {
         }
         self.broadcastConn = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
     }
-    
+
     public func locateServer(completion: @escaping (ServerLookupResponse?) -> Void) {
         func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
             do {

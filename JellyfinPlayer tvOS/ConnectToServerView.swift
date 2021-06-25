@@ -105,7 +105,7 @@ struct ConnectToServerView: View {
                 }
             } else {
                 if !viewModel.isLoading {
-            
+
                     Form {
                         Section(header: Text("Server Information")) {
                             TextField("Jellyfin Server URL", text: $uri)
@@ -144,15 +144,14 @@ struct ConnectToServerView: View {
                                         Image(systemName: "chevron.forward")
                                             .padding()
                                     }
-                                    
+
                                 })
                                 .disabled(viewModel.isLoading)
                             }
                         }
                         .onAppear(perform: self.viewModel.discoverServers)
                     }
-                }
-                else {
+                } else {
                     ProgressView()
                 }
             }
