@@ -11,8 +11,7 @@ import Foundation
 import SwiftUI
 
 private struct SearchablePickerView<Selectable: Hashable>: View {
-    @Environment(\.presentationMode)
-    var presentationMode
+    @Environment(\.presentationMode) var presentationMode
 
     let options: [Selectable]
     let optionToString: (Selectable) -> String

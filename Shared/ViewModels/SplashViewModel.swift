@@ -10,7 +10,6 @@
 import Foundation
 import Combine
 import Nuke
-import Defaults
 
 #if !os(tvOS)
 import WidgetKit
