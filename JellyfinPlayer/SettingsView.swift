@@ -50,7 +50,7 @@ struct SettingsView: View {
                 
                 Section(header: Text("Accessibility")) {
                     Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
-                    SearchablePicker(label: "Subtitles Language preferences",
+                    SearchablePicker(label: "Subtitles language preferences",
                                      options: viewModel.langs,
                                      optionToString: { $0.name },
                                      selected:Binding<Lang>(
@@ -58,7 +58,7 @@ struct SettingsView: View {
                                         set: {autoSelectSubtitlesLangcode = $0.isoCode}
                                      )
                     )
-                    SearchablePicker(label: "Audio Language preferences",
+                    SearchablePicker(label: "Audio language preferences",
                                      options: viewModel.langs,
                                      optionToString: { $0.name },
                                      selected: Binding<Lang>(
