@@ -24,7 +24,9 @@ struct Bitrates: Codable, Hashable {
 }
 
 final class SettingsViewModel: ObservableObject {
+    let currentLocale = Locale.current
     var bitrates: [Bitrates] = []
+    var isoLanguageCodesPair = [(name: String, isoCode: String)]()
 
     init() {
         let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!
@@ -38,6 +40,11 @@ final class SettingsViewModel: ObservableObject {
             }
         } catch {
             print(error)
+        }
+        
+        isoLanguageCodesPair = Locale.isoLanguageCodes.compactMap {
+            guard let name = currentLocale.localizedString(forLanguageCode: $0) else { return nil }
+            return (name, $0)
         }
     }
 }

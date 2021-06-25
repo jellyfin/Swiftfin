@@ -10,6 +10,7 @@
 import Foundation
 import Combine
 import Nuke
+import Defaults
 
 #if !os(tvOS)
 import WidgetKit
@@ -29,14 +30,6 @@ final class SplashViewModel: ViewModel {
         #if !os(tvOS)
         WidgetCenter.shared.reloadAllTimelines()
         #endif
-
-        let defaults = UserDefaults.standard
-        if defaults.integer(forKey: "InNetworkBandwidth") == 0 {
-            defaults.setValue(40_000_000, forKey: "InNetworkBandwidth")
-        }
-        if defaults.integer(forKey: "OutOfNetworkBandwidth") == 0 {
-            defaults.setValue(40_000_000, forKey: "OutOfNetworkBandwidth")
-        }
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(didLogIn), name: Notification.Name("didSignIn"), object: nil)

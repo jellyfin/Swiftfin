@@ -12,6 +12,7 @@ import TVVLCKit
 import MediaPlayer
 import JellyfinAPI
 import Combine
+import Defaults
 
 protocol VideoPlayerSettingsDelegate: AnyObject {
     func selectNew(audioTrack id: Int32)
@@ -149,8 +150,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     
     func fetchVideo() {
         // Fetch max bitrate from UserDefaults depending on current connection mode
-        let defaults = UserDefaults.standard
-        let maxBitrate = defaults.integer(forKey: "InNetworkBandwidth")
+        let maxBitrate = Defaults[.inNetworkBandwidth]
         
         // Build a device profile
         let builder = DeviceProfileBuilder()

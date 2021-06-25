@@ -7,28 +7,30 @@
 
 import CoreData
 import SwiftUI
+import Defaults
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
+    
     @ObservedObject var viewModel: SettingsViewModel
-
+    
     @Binding var close: Bool
-    @State private var inNetworkStreamBitrate: Int = 40_000_000
-    @State private var outOfNetworkStreamBitrate: Int = 40_000_000
-    @State private var autoSelectSubtitles: Bool = false
-    @State private var autoSelectSubtitlesLangcode: String = "none"
+    @Default(.inNetworkBandwidth)
+    var inNetworkStreamBitrate
+    @Default(.outOfNetworkBandwidth)
+    var outOfNetworkStreamBitrate
+    @Default(.isAutoSelectSubtitles)
+    var isAutoSelectSubtitles
+    @Default(.autoSelectSubtitlesLangCode)
+    var autoSelectSubtitlesLangcode
+    @Default(.autoSelectAudioLangCode)
+    var autoSelectAudioLangcode
     @State private var username: String = ""
-
+    
     func onAppear() {
-        let defaults = UserDefaults.standard
         username = SessionManager.current.user.username ?? ""
-        inNetworkStreamBitrate = defaults.integer(forKey: "InNetworkBandwidth")
-        outOfNetworkStreamBitrate = defaults.integer(forKey: "OutOfNetworkBandwidth")
-        autoSelectSubtitles = defaults.bool(forKey: "AutoSelectSubtitles")
-        autoSelectSubtitlesLangcode = defaults.string(forKey: "AutoSelectSubtitlesLangcode") ?? ""
     }
-
+    
     var body: some View {
         NavigationView {
             Form {
@@ -37,29 +39,35 @@ struct SettingsView: View {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
                         }
-                    }.onChange(of: inNetworkStreamBitrate) { _ in
-                        let defaults = UserDefaults.standard
-                        defaults.setValue(_inNetworkStreamBitrate.wrappedValue, forKey: "InNetworkBandwidth")
                     }
-
+                    
                     Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
                         }
-                    }.onChange(of: outOfNetworkStreamBitrate) { _ in
-                        let defaults = UserDefaults.standard
-                        defaults.setValue(_outOfNetworkStreamBitrate.wrappedValue, forKey: "OutOfNetworkBandwidth")
                     }
                 }
-
+                
                 Section(header: Text("Accessibility")) {
-                    Toggle("Automatically show subtitles", isOn: $autoSelectSubtitles).onChange(of: autoSelectSubtitles, perform: { _ in
-                        let defaults = UserDefaults.standard
-                        defaults.setValue(autoSelectSubtitles, forKey: "AutoSelectSubtitles")
-                    })
-                    Picker("Language preferences", selection: $autoSelectSubtitlesLangcode) {}
+                    Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
+                    Picker("Subtitles Language preferences", selection: $autoSelectSubtitlesLangcode) {
+                        Text("Auto")
+                            .tag("Auto")
+                        ForEach(viewModel.isoLanguageCodesPair, id: \.1) {
+                            Text($0.0)
+                                .tag($0.1)
+                        }
+                    }
+                    Picker("Audio Language preferences", selection: $autoSelectAudioLangcode) {
+                        Text("Auto")
+                            .tag("Auto")
+                        ForEach(viewModel.isoLanguageCodesPair, id: \.1) {
+                            Text($0.0)
+                                .tag($0.1)
+                        }
+                    }
                 }
-
+                
                 Section {
                     HStack {
                         Text("Signed in as \(username)").foregroundColor(.primary)

@@ -12,7 +12,7 @@ import MediaPlayer
 import Combine
 import GoogleCast
 import SwiftyJSON
-
+import Defaults
 
 enum PlayerDestination {
     case remote
@@ -417,8 +417,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         mediaPlayer.drawable = videoContentView
 
         // Fetch max bitrate from UserDefaults depending on current connection mode
-        let defaults = UserDefaults.standard
-        let maxBitrate = defaults.integer(forKey: "InNetworkBandwidth")
+        let maxBitrate = Defaults[.inNetworkBandwidth]
 
         // Build a device profile
         let builder = DeviceProfileBuilder()

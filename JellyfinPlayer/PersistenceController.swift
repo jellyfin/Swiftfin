@@ -30,7 +30,7 @@ struct PersistenceController {
     init(inMemory: Bool = false) {
         container = NSPersistentCloudKitContainer(name: "Model")
         container.persistentStoreDescriptions = [NSPersistentStoreDescription(url: FileManager.default
-                                                                                .containerURL(forSecurityApplicationGroupIdentifier: "group.me.vigue.jellyfin.mobileclient")!.appendingPathComponent("\(container.name).sqlite"))]
+                                                                                .containerURL(forSecurityApplicationGroupIdentifier: "group.dev.pangmo5.swiftfin")!.appendingPathComponent("\(container.name).sqlite"))]
 
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
