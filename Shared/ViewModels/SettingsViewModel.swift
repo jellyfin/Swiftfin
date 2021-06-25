@@ -23,17 +23,17 @@ struct Bitrates: Codable, Hashable {
     public var value: Int
 }
 
-struct Lang: Hashable {
+struct TrackLanguage: Hashable {
     var name: String
     var isoCode: String
     
-    static let auto = Lang(name: "Auto", isoCode: "Auto")
+    static let auto = TrackLanguage(name: "Auto", isoCode: "Auto")
 }
 
 final class SettingsViewModel: ObservableObject {
     let currentLocale = Locale.current
     var bitrates: [Bitrates] = []
-    var langs = [Lang]()
+    var langs = [TrackLanguage]()
 
     init() {
         let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!
@@ -51,7 +51,7 @@ final class SettingsViewModel: ObservableObject {
 
         self.langs = Locale.isoLanguageCodes.compactMap {
             guard let name = currentLocale.localizedString(forLanguageCode: $0) else { return nil }
-            return Lang(name: name, isoCode: $0)
+            return TrackLanguage(name: name, isoCode: $0)
         }.sorted(by: { $0.name < $1.name })
         self.langs.insert(.auto, at: 0)
     }
