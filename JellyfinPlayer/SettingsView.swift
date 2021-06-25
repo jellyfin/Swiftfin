@@ -91,7 +91,7 @@ struct SettingsView: View {
                     Button {
                         close = false
                     } label: {
-                        Text("Back").font(.callout)
+                        Image(systemName: "xmark")
                     }
                 }
             }

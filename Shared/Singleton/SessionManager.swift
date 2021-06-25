@@ -81,7 +81,7 @@ final class SessionManager {
 
     fileprivate func getAuthToken(userID: String) -> String? {
         let keychain = KeychainSwift()
-        keychain.accessGroup = "4BHXT8RHFR.dev.pangmo5.swiftfin.sharedKeychain"
+        keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
         return keychain.get("AccessToken_\(userID)")
     }
 
@@ -134,7 +134,7 @@ final class SessionManager {
                 _ = try? PersistenceController.shared.container.viewContext.save()
 
                 let keychain = KeychainSwift()
-                keychain.accessGroup = "4BHXT8RHFR.dev.pangmo5.swiftfin.sharedKeychain"
+                keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
                 keychain.set(accessToken!, forKey: "AccessToken_\(user.user_id!)")
 
                 generateAuthHeader(with: accessToken)
@@ -151,7 +151,7 @@ final class SessionManager {
         nc.post(name: Notification.Name("didSignOut"), object: nil)
         
         let keychain = KeychainSwift()
-        keychain.accessGroup = "4BHXT8RHFR.dev.pangmo5.swiftfin.sharedKeychain"
+        keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
         keychain.delete("AccessToken_\(user?.user_id ?? "")")
         generateAuthHeader(with: nil)
 

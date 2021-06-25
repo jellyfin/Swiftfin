@@ -4,11 +4,11 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.dev.pangmo5.swiftfin</string>
+		<string>group.me.vigue.jellyfin.mobileclient</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)dev.pangmo5.swiftfin.sharedKeychain</string>
+		<string>$(AppIdentifierPrefix)me.vigue.jellyfin.sharedKeychain</string>
 	</array>
 </dict>
 </plist>
