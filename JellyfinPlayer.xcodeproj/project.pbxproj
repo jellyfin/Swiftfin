@@ -108,6 +108,8 @@
 		621C638026672A30004216EA /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 621C637F26672A30004216EA /* NukeUI */; };
 		6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
 		6228B1C22670EB010067FD35 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBFD263B596B003A4E83 /* PersistenceController.swift */; };
+		624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C21742685CF60007F1390 /* SearchablePickerView.swift */; };
+		624C21762685CF60007F1390 /* SearchablePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C21742685CF60007F1390 /* SearchablePickerView.swift */; };
 		625CB5682678B6FB00530A6E /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5672678B6FB00530A6E /* SplashView.swift */; };
 		625CB56A2678B71200530A6E /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5692678B71200530A6E /* SplashViewModel.swift */; };
 		625CB56C2678C0FD00530A6E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB56B2678C0FD00530A6E /* MainTabView.swift */; };
@@ -289,6 +291,7 @@
 		621338922660107500A81A2A /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxHeader.swift; sourceTree = "<group>"; };
+		624C21742685CF60007F1390 /* SearchablePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchablePickerView.swift; sourceTree = "<group>"; };
 		625CB5672678B6FB00530A6E /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		625CB5692678B71200530A6E /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
 		625CB56B2678C0FD00530A6E /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -599,6 +602,7 @@
 				6267B3D92671138200A7371D /* ImageExtensions.swift */,
 				62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */,
 				62CB3F4A2685BB77003D0A6F /* DefaultsExtension.swift */,
+				624C21742685CF60007F1390 /* SearchablePickerView.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -952,6 +956,7 @@
 				536D3D81267BDFC60004248C /* PortraitItemElement.swift in Sources */,
 				531690E5267ABD5C005D8AB9 /* MainTabView.swift in Sources */,
 				5310695B2684E7EE00CFFDBA /* AudioView.swift in Sources */,
+				624C21762685CF60007F1390 /* SearchablePickerView.swift in Sources */,
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
 				53ABFDE7267974EF00886593 /* ConnectToServerViewModel.swift in Sources */,
 				53ABFDEE26799DCD00886593 /* ImageView.swift in Sources */,
@@ -1021,6 +1026,7 @@
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				62E632E0267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
+				624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */,
 				62EC352F267666A5000E9F2D /* SessionManager.swift in Sources */,
 				62E632E3267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,

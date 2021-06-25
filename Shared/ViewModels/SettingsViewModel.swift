@@ -1,11 +1,11 @@
 //
- /* 
-  * SwiftFin is subject to the terms of the Mozilla Public
-  * License, v2.0. If a copy of the MPL was not distributed with this
-  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
-  *
-  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
-  */
+/*
+ * SwiftFin is subject to the terms of the Mozilla Public
+ * License, v2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+ */
 
 import Foundation
 
@@ -23,10 +23,17 @@ struct Bitrates: Codable, Hashable {
     public var value: Int
 }
 
+struct Lang: Hashable {
+    var name: String
+    var isoCode: String
+    
+    static let auto = Lang(name: "Auto", isoCode: "Auto")
+}
+
 final class SettingsViewModel: ObservableObject {
     let currentLocale = Locale.current
     var bitrates: [Bitrates] = []
-    var isoLanguageCodesPair = [(name: String, isoCode: String)]()
+    var langs = [Lang]()
 
     init() {
         let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!
@@ -41,10 +48,11 @@ final class SettingsViewModel: ObservableObject {
         } catch {
             print(error)
         }
-        
-        isoLanguageCodesPair = Locale.isoLanguageCodes.compactMap {
+
+        self.langs = Locale.isoLanguageCodes.compactMap {
             guard let name = currentLocale.localizedString(forLanguageCode: $0) else { return nil }
-            return (name, $0)
+            return Lang(name: name, isoCode: $0)
         }.sorted(by: { $0.name < $1.name })
+        self.langs.insert(.auto, at: 0)
     }
 }

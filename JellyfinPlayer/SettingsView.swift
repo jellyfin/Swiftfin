@@ -50,22 +50,22 @@ struct SettingsView: View {
                 
                 Section(header: Text("Accessibility")) {
                     Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
-                    Picker("Subtitles Language preferences", selection: $autoSelectSubtitlesLangcode) {
-                        Text("Auto")
-                            .tag("Auto")
-                        ForEach(viewModel.isoLanguageCodesPair, id: \.1) {
-                            Text($0.0)
-                                .tag($0.1)
-                        }
-                    }
-                    Picker("Audio Language preferences", selection: $autoSelectAudioLangcode) {
-                        Text("Auto")
-                            .tag("Auto")
-                        ForEach(viewModel.isoLanguageCodesPair, id: \.1) {
-                            Text($0.0)
-                                .tag($0.1)
-                        }
-                    }
+                    SearchablePicker(label: "Subtitles Language preferences",
+                                     options: viewModel.langs,
+                                     optionToString: { $0.name },
+                                     selected:Binding<Lang>(
+                                        get: { viewModel.langs.first(where: { $0.isoCode == autoSelectSubtitlesLangcode }) ?? .auto },
+                                        set: {autoSelectSubtitlesLangcode = $0.isoCode}
+                                     )
+                    )
+                    SearchablePicker(label: "Audio Language preferences",
+                                     options: viewModel.langs,
+                                     optionToString: { $0.name },
+                                     selected: Binding<Lang>(
+                                        get: { viewModel.langs.first(where: { $0.isoCode == autoSelectAudioLangcode }) ?? .auto },
+                                        set: { autoSelectAudioLangcode = $0.isoCode}
+                                     )
+                    )
                 }
                 
                 Section {
