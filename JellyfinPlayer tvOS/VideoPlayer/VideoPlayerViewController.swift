@@ -12,6 +12,7 @@ import TVVLCKit
 import MediaPlayer
 import JellyfinAPI
 import Combine
+import Defaults
 
 protocol VideoPlayerSettingsDelegate: AnyObject {
     func selectNew(audioTrack id: Int32)
@@ -149,8 +150,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     
     func fetchVideo() {
         // Fetch max bitrate from UserDefaults depending on current connection mode
-        let defaults = UserDefaults.standard
-        let maxBitrate = defaults.integer(forKey: "InNetworkBandwidth")
+        let maxBitrate = Defaults[.inNetworkBandwidth]
         
         // Build a device profile
         let builder = DeviceProfileBuilder()
@@ -195,7 +195,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     
                     item.videoUrl = streamURL
                     
-                    let disableSubtitleTrack = Subtitle(name: "None", id: -1, url: nil, delivery: .embed, codec: "")
+                    let disableSubtitleTrack = Subtitle(name: "None", id: -1, url: nil, delivery: .embed, codec: "", languageCode: "")
                     subtitleTrackArray.append(disableSubtitleTrack)
                     
                     // Loop through media streams and add to array
@@ -208,7 +208,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                                 deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl!)")!
                             }
                             
-                            let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt")
+                            let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt", languageCode: stream.language ?? "")
                             
                             if stream.isDefault == true{
                                 selectedCaptionTrack = Int32(stream.index!)
@@ -220,7 +220,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                         }
                         
                         if stream.type == .audio {
-                            let track = AudioTrack(name: stream.displayTitle!, id: Int32(stream.index!))
+                            let track = AudioTrack(name: stream.displayTitle!, languageCode: stream.language ?? "", id: Int32(stream.index!))
                             
                             if stream.isDefault! == true {
                                 selectedAudioTrack = Int32(stream.index!)
