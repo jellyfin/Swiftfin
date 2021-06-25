@@ -455,7 +455,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         item.videoType = .transcode
                         item.videoUrl = streamURL!
 
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: nil, delivery: .embed, codec: "", langCode: "")
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: nil, delivery: .embed, codec: "", languageCode: "")
                         subtitleTrackArray.append(disableSubtitleTrack)
 
                         // Loop through media streams and add to array
@@ -467,7 +467,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                                 } else {
                                     deliveryUrl = nil
                                 }
-                                let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt", langCode: stream.language ?? "")
+                                let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt", languageCode: stream.language ?? "")
 
                                 if subtitle.delivery != .encode {
                                     subtitleTrackArray.append(subtitle)
@@ -475,7 +475,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             }
 
                             if stream.type == .audio {
-                                let subtitle = AudioTrack(name: stream.displayTitle!, langCode: stream.language ?? "", id: Int32(stream.index!))
+                                let subtitle = AudioTrack(name: stream.displayTitle!, languageCode: stream.language ?? "", id: Int32(stream.index!))
                                 if stream.isDefault! == true {
                                     selectedAudioTrack = Int32(stream.index!)
                                 }
@@ -499,7 +499,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         item.videoUrl = streamURL
                         item.videoType = .directPlay
 
-                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: nil, delivery: .embed, codec: "", langCode: "")
+                        let disableSubtitleTrack = Subtitle(name: "Disabled", id: -1, url: nil, delivery: .embed, codec: "", languageCode: "")
                         subtitleTrackArray.append(disableSubtitleTrack)
 
                         // Loop through media streams and add to array
@@ -511,7 +511,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                                 } else {
                                     deliveryUrl = nil
                                 }
-                                let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!, langCode: stream.language ?? "")
+                                let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec!, languageCode: stream.language ?? "")
 
                                 if subtitle.delivery != .encode {
                                     subtitleTrackArray.append(subtitle)
@@ -519,7 +519,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             }
 
                             if stream.type == .audio {
-                                let subtitle = AudioTrack(name: stream.displayTitle!, langCode: stream.language ?? "", id: Int32(stream.index!))
+                                let subtitle = AudioTrack(name: stream.displayTitle!, languageCode: stream.language ?? "", id: Int32(stream.index!))
                                 if stream.isDefault! == true {
                                     selectedAudioTrack = Int32(stream.index!)
                                 }
@@ -547,10 +547,10 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         subtitleTrackArray.forEach { subtitle in
             if Defaults[.isAutoSelectSubtitles] {
                 if Defaults[.autoSelectSubtitlesLangCode] == "Auto",
-                   subtitle.langCode.contains(Locale.current.languageCode ?? "") {
+                   subtitle.languageCode.contains(Locale.current.languageCode ?? "") {
                     selectedCaptionTrack = subtitle.id
                     mediaPlayer.currentVideoSubTitleIndex = subtitle.id
-                } else if subtitle.langCode.contains(Defaults[.autoSelectSubtitlesLangCode]) {
+                } else if subtitle.languageCode.contains(Defaults[.autoSelectSubtitlesLangCode]) {
                     selectedCaptionTrack = subtitle.id
                     mediaPlayer.currentVideoSubTitleIndex = subtitle.id
                 }
@@ -558,7 +558,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
         
         audioTrackArray.forEach { audio in
-            if audio.langCode.contains(Defaults[.autoSelectAudioLangCode]) {
+            if audio.languageCode.contains(Defaults[.autoSelectAudioLangCode]) {
                 selectedAudioTrack = audio.id
                 mediaPlayer.currentAudioTrackIndex = audio.id
             }
