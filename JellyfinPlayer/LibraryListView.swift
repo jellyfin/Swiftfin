@@ -13,12 +13,12 @@ struct LibraryListView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack() {
+            LazyVStack {
                 NavigationLink(destination: LazyView {
                     LibraryView(viewModel: .init(filters: viewModel.withFavorites), title: "Favorites")
                 }) {
-                    ZStack() {
-                        HStack() {
+                    ZStack {
+                        HStack {
                             Spacer()
                             Text("Your Favorites")
                                 .foregroundColor(.black)
@@ -34,12 +34,12 @@ struct LibraryListView: View {
                 .cornerRadius(10)
                 .shadow(radius: 5)
                 .padding(.bottom, 5)
-                
+
                 NavigationLink(destination: LazyView {
                     Text("WIP")
                 }) {
-                    ZStack() {
-                        HStack() {
+                    ZStack {
+                        HStack {
                             Spacer()
                             Text("All Genres")
                                 .foregroundColor(.black)
@@ -55,16 +55,16 @@ struct LibraryListView: View {
                 .cornerRadius(10)
                 .shadow(radius: 5)
                 .padding(.bottom, 15)
-                
+
                 ForEach(viewModel.libraries, id: \.id) { library in
-                    if(library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows") {
+                    if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
                         NavigationLink(destination: LazyView {
                             LibraryView(viewModel: .init(parentID: library.id), title: library.name ?? "")
                             }) {
-                            ZStack() {
+                            ZStack {
                                 ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
                                     .opacity(0.4)
-                                HStack() {
+                                HStack {
                                     Spacer()
                                     Text(library.name ?? "")
                                         .foregroundColor(.white)

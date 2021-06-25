@@ -13,10 +13,10 @@ import SwiftUI
 struct HomeView: View {
     @StateObject var viewModel = HomeViewModel()
     @State var showingSettings = false
-    
+
     @ViewBuilder
     var innerBody: some View {
-        if(viewModel.isLoading) {
+        if viewModel.isLoading {
             ProgressView()
         } else {
             ScrollView {
@@ -53,7 +53,7 @@ struct HomeView: View {
             }
         }
     }
-    
+
     var body: some View {
         innerBody
             .navigationTitle(MainTabView.Tab.home.localized)

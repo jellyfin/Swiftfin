@@ -13,7 +13,6 @@ import Combine
 import GoogleCast
 import SwiftyJSON
 
-
 enum PlayerDestination {
     case remote
     case local
@@ -53,10 +52,10 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var startTime: Int = 0
     var controlsAppearTime: Double = 0
     var isSeeking: Bool = false
-    
-    var playerDestination: PlayerDestination = .local;
-    var discoveredCastDevices: [GCKDevice] = [];
-    var selectedCastDevice: GCKDevice?;
+
+    var playerDestination: PlayerDestination = .local
+    var discoveredCastDevices: [GCKDevice] = []
+    var selectedCastDevice: GCKDevice?
     var jellyfinCastChannel: GCKGenericChannel?
     var remotePositionTicks: Int = 0
     private var castDiscoveryManager: GCKDiscoveryManager {
@@ -65,7 +64,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     private var castSessionManager: GCKSessionManager {
         return GCKCastContext.sharedInstance().sessionManager
     }
-    var hasSentRemoteSeek: Bool = false;
+    var hasSentRemoteSeek: Bool = false
 
     var selectedAudioTrack: Int32 = -1
     var selectedCaptionTrack: Int32 = -1
@@ -77,11 +76,10 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
     var remoteTimeUpdateTimer: Timer?
-    
 
     // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
-        if(playerDestination == .local) {
+        if playerDestination == .local {
             sendProgressReport(eventName: "pause")
             mediaPlayer.pause()
         } else {
@@ -111,8 +109,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         // Scrub is value from 0..1 - find position in video and add / or remove.
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration)
         let offset = secondsScrubbedTo - videoPosition
-        
-        if(playerDestination == .local) {
+
+        if playerDestination == .local {
             if offset > 0 {
                 mediaPlayer.jumpForward(Int32(offset))
             } else {
@@ -130,22 +128,22 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     @IBAction func exitButtonPressed(_ sender: Any) {
         sendStopReport()
         mediaPlayer.stop()
-        
-        if(castSessionManager.hasConnectedCastSession()) {
+
+        if castSessionManager.hasConnectedCastSession() {
             castSessionManager.endSessionAndStopCasting(true)
         }
-        
+
         delegate?.exitPlayer(self)
     }
 
     @IBAction func controlViewTapped(_ sender: Any) {
-        if(playerDestination == .local) {
+        if playerDestination == .local {
             videoControlsView.isHidden = true
         }
     }
 
     @IBAction func contentViewTapped(_ sender: Any) {
-        if(playerDestination == .local) {
+        if playerDestination == .local {
             videoControlsView.isHidden = false
             controlsAppearTime = CACurrentMediaTime()
         }
@@ -153,7 +151,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
     @IBAction func jumpBackTapped(_ sender: Any) {
         if paused == false {
-            if(playerDestination == .local) {
+            if playerDestination == .local {
                 mediaPlayer.jumpBackward(15)
             } else {
                 self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)-15])
@@ -163,7 +161,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
     @IBAction func jumpForwardTapped(_ sender: Any) {
         if paused == false {
-            if(playerDestination == .local) {
+            if playerDestination == .local {
                 mediaPlayer.jumpForward(30)
             } else {
                 self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)+30])
@@ -174,7 +172,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     @IBOutlet weak var mainActionButton: UIButton!
     @IBAction func mainActionButtonPressed(_ sender: Any) {
         if paused {
-            if(playerDestination == .local) {
+            if playerDestination == .local {
                 mediaPlayer.play()
                 mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
                 paused = false
@@ -184,7 +182,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 paused = false
             }
         } else {
-            if(playerDestination == .local) {
+            if playerDestination == .local {
                 mediaPlayer.pause()
                 mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
                 paused = true
@@ -210,10 +208,10 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
         }
     }
-    
-    //MARK: Cast methods
+
+    // MARK: Cast methods
     @IBAction func castButtonPressed(_ sender: Any) {
-        if(selectedCastDevice == nil) {
+        if selectedCastDevice == nil {
             castDeviceVC = VideoPlayerCastDeviceSelectorView()
             castDeviceVC?.delegate = self
 
@@ -228,33 +226,33 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             }
         } else {
             castSessionManager.endSessionAndStopCasting(true)
-            selectedCastDevice = nil;
+            selectedCastDevice = nil
             self.castButton.isEnabled = true
             self.castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
             playerDestination = .local
         }
     }
-    
+
     func castPopoverDismissed() {
         castDeviceVC?.dismiss(animated: true, completion: nil)
-        if(playerDestination == .local) {
+        if playerDestination == .local {
             self.mediaPlayer.play()
         }
         self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
     }
-    
+
     func castDeviceChanged() {
-        if(selectedCastDevice != nil) {
+        if selectedCastDevice != nil {
             playerDestination = .remote
             castSessionManager.add(self)
             castSessionManager.startSession(with: selectedCastDevice!)
         }
     }
-    
-    //MARK: Cast End
+
+    // MARK: Cast End
     func settingsPopoverDismissed() {
         optionsVC?.dismiss(animated: true, completion: nil)
-        if(playerDestination == .local) {
+        if playerDestination == .local {
             self.mediaPlayer.play()
             self.mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
         }
@@ -270,7 +268,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
         // Add handler for Pause Command
         commandCenter.pauseCommand.addTarget { _ in
-            if(self.playerDestination == .local) {
+            if self.playerDestination == .local {
                 self.mediaPlayer.pause()
                 self.sendProgressReport(eventName: "pause")
             } else {
@@ -282,7 +280,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
         // Add handler for Play command
         commandCenter.playCommand.addTarget { _ in
-            if(self.playerDestination == .local) {
+            if self.playerDestination == .local {
                 self.mediaPlayer.play()
                 self.sendProgressReport(eventName: "unpause")
             } else {
@@ -294,7 +292,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
         // Add handler for FF command
         commandCenter.seekForwardCommand.addTarget { _ in
-            if(self.playerDestination == .local) {
+            if self.playerDestination == .local {
                 self.mediaPlayer.jumpForward(30)
                 self.sendProgressReport(eventName: "timeupdate")
             } else {
@@ -305,7 +303,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
         // Add handler for RW command
         commandCenter.seekBackwardCommand.addTarget { _ in
-            if(self.playerDestination == .local) {
+            if self.playerDestination == .local {
                 self.mediaPlayer.jumpBackward(15)
                 self.sendProgressReport(eventName: "timeupdate")
             } else {
@@ -320,11 +318,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
             if let event = remoteEvent as? MPChangePlaybackPositionCommandEvent {
                 let targetSeconds = event.positionTime
-                
+
                 let videoPosition = Double(self.mediaPlayer.time.intValue)
                 let offset = targetSeconds - videoPosition
-                
-                if(self.playerDestination == .local) {
+
+                if self.playerDestination == .local {
                     if offset > 0 {
                         self.mediaPlayer.jumpForward(Int32(offset)/1000)
                     } else {
@@ -332,7 +330,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                     }
                     self.sendProgressReport(eventName: "unpause")
                 } else {
-                    
+
                 }
 
                 return .success
@@ -356,8 +354,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         } else {
             titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
         }
-        
-        if(!UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat) {
+
+        if !UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat {
             let value = UIInterfaceOrientation.landscapeRight.rawValue
             UIDevice.current.setValue(value, forKey: "orientation")
             UIViewController.attemptRotationToDeviceOrientation()
@@ -366,7 +364,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 
     func mediaHasStartedPlaying() {
-        castButton.isHidden = true;
+        castButton.isHidden = true
         let discoveryCriteria = GCKDiscoveryCriteria(applicationID: "F007D354")
         let gckCastOptions = GCKCastOptions(discoveryCriteria: discoveryCriteria)
         GCKCastContext.setSharedInstanceWith(gckCastOptions)
@@ -374,11 +372,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         castDiscoveryManager.add(self)
         castDiscoveryManager.startDiscovery()
     }
-    
+
     func didUpdateDeviceList() {
-        let totalDevices = castDiscoveryManager.deviceCount;
+        let totalDevices = castDiscoveryManager.deviceCount
         discoveredCastDevices = []
-        if(totalDevices > 0) {
+        if totalDevices > 0 {
             for i in 0...totalDevices-1 {
                 let device = castDiscoveryManager.device(at: i)
                 discoveredCastDevices.append(device)
@@ -395,15 +393,15 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             castButton.setImage(nil, for: .normal)
         }
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         self.tabBarController?.tabBar.isHidden = false
         self.navigationController?.isNavigationBarHidden = false
         overrideUserInterfaceStyle = .unspecified
         super.viewWillDisappear(animated)
     }
-    
-    //MARK: viewDidAppear
+
+    // MARK: viewDidAppear
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         overrideUserInterfaceStyle = .dark
@@ -533,7 +531,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                                 selectedAudioTrack = audioTrackArray[0].id
                             }
                         }
-                        
+
                         self.sendPlayReport()
                         playbackItem = item
                     }
@@ -551,17 +549,17 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         sendPlayReport()
 
         // 1 second = 10,000,000 ticks
-        var startTicks: Int64 = 0;
-        if(remotePositionTicks == 0) {
+        var startTicks: Int64 = 0
+        if remotePositionTicks == 0 {
             print("Using server-reported start time")
             startTicks = manifest.userData?.playbackPositionTicks ?? 0
         } else {
             print("Using remote-reported start time")
             startTicks = Int64(remotePositionTicks)
         }
-        
+
         if startTicks != 0 {
-            let videoPosition = Double(mediaPlayer.time.intValue / 1000);
+            let videoPosition = Double(mediaPlayer.time.intValue / 1000)
             let secondsScrubbedTo = startTicks / 10_000_000
             let offset = secondsScrubbedTo - Int64(videoPosition)
             print("Seeking to position: \(secondsScrubbedTo)")
@@ -571,8 +569,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 mediaPlayer.jumpBackward(Int32(abs(offset)))
             }
         }
-        
-        if(fetchCaptions) {
+
+        if fetchCaptions {
             print("Fetching captions.")
             // Pause and load captions into memory.
             mediaPlayer.pause()
@@ -582,20 +580,20 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 }
             }
         }
-        
+
         self.mediaHasStartedPlaying()
         delegate?.hideLoadingView(self)
-        
+
         videoContentView.setNeedsLayout()
         videoContentView.setNeedsDisplay()
         self.view.setNeedsLayout()
         self.view.setNeedsDisplay()
         self.videoControlsView.setNeedsLayout()
         self.videoControlsView.setNeedsDisplay()
-        
+
         mediaPlayer.pause()
         mediaPlayer.play()
-        
+
         print("Local engine started.")
     }
 
@@ -611,15 +609,15 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 }
 
-//MARK: - GCKGenericChannelDelegate
+// MARK: - GCKGenericChannelDelegate
 extension PlayerViewController: GCKGenericChannelDelegate {
     @objc func updateRemoteTime() {
         castButton.setImage(UIImage(named: "CastConnected"), for: .normal)
-        if(!paused) {
-            remotePositionTicks = remotePositionTicks + 2_000_000; //add 0.2 secs every timer evt.
+        if !paused {
+            remotePositionTicks = remotePositionTicks + 2_000_000; // add 0.2 secs every timer evt.
         }
-        
-        if(isSeeking == false) {
+
+        if isSeeking == false {
             let remainingTime = (manifest.runTimeTicks! - Int64(remotePositionTicks))/10_000_000
             let hours = remainingTime / 3600
             let minutes = (remainingTime % 3600) / 60
@@ -631,36 +629,36 @@ extension PlayerViewController: GCKGenericChannelDelegate {
                 timeTextStr = "\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
             }
             timeText.text = timeTextStr
-            
+
             let playbackProgress = Float(remotePositionTicks) / Float(manifest.runTimeTicks!)
             seekSlider.setValue(playbackProgress, animated: true)
         }
     }
-    
+
     func cast(_ channel: GCKGenericChannel, didReceiveTextMessage message: String, withNamespace protocolNamespace: String) {
         if let data = message.data(using: .utf8) {
             if let json = try? JSON(data: data) {
                 let messageType = json["type"].string ?? ""
-                if(messageType == "playbackprogress") {
+                if messageType == "playbackprogress" {
                     dump(json)
-                    if(remotePositionTicks > 100) {
-                        if(hasSentRemoteSeek == false) {
-                            hasSentRemoteSeek = true;
+                    if remotePositionTicks > 100 {
+                        if hasSentRemoteSeek == false {
+                            hasSentRemoteSeek = true
                             sendJellyfinCommand(command: "Seek", options: [
                                 "position": Int(Float(manifest.runTimeTicks! / 10_000_000) * mediaPlayer.position)
                             ])
                         }
                     }
                     paused = json["data"]["PlayState"]["IsPaused"].boolValue
-                    self.remotePositionTicks = json["data"]["PlayState"]["PositionTicks"].int ?? 0;
-                    if(remoteTimeUpdateTimer == nil) {
+                    self.remotePositionTicks = json["data"]["PlayState"]["PositionTicks"].int ?? 0
+                    if remoteTimeUpdateTimer == nil {
                         remoteTimeUpdateTimer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(updateRemoteTime), userInfo: nil, repeats: true)
                     }
                 }
             }
         }
     }
-    
+
     func sendJellyfinCommand(command: String, options: [String: Any]) {
         let payload: [String: Any] = [
             "options": options,
@@ -676,12 +674,12 @@ extension PlayerViewController: GCKGenericChannelDelegate {
         ]
         print(payload)
         let jsonData = JSON(payload)
-        
+
         jellyfinCastChannel?.sendTextMessage(jsonData.rawString()!, error: nil)
-        
-        if(command == "Seek") {
+
+        if command == "Seek" {
             remotePositionTicks = remotePositionTicks + ((options["position"] as! Int) * 10_000_000)
-            //Send playback report as Jellyfin Chromecast isn't smarter than a rock.
+            // Send playback report as Jellyfin Chromecast isn't smarter than a rock.
             let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: paused, isMuted: false, positionTicks: Int64(remotePositionTicks), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
             PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
@@ -695,25 +693,25 @@ extension PlayerViewController: GCKGenericChannelDelegate {
     }
 }
 
-//MARK: - GCKSessionManagerListener
+// MARK: - GCKSessionManagerListener
 extension PlayerViewController: GCKSessionManagerListener {
     func sessionDidStart(manager: GCKSessionManager, didStart session: GCKCastSession) {
         self.sendStopReport()
         mediaPlayer.stop()
-        
+
         playerDestination = .remote
-        videoContentView.isHidden = true;
-        videoControlsView.isHidden = false;
+        videoContentView.isHidden = true
+        videoControlsView.isHidden = false
         castButton.setImage(UIImage(named: "CastConnected"), for: .normal)
         manager.currentCastSession?.start()
-        
+
         jellyfinCastChannel!.delegate = self
         session.add(jellyfinCastChannel!)
-        
+
         if let client = session.remoteMediaClient {
             client.add(self)
         }
-        
+
         let playNowOptions: [String: Any] = [
             "items": [[
                 "Id": self.manifest.id!,
@@ -726,44 +724,43 @@ extension PlayerViewController: GCKSessionManagerListener {
         ]
         sendJellyfinCommand(command: "PlayNow", options: playNowOptions)
     }
-    
+
     func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKCastSession) {
         print("starting session")
         self.jellyfinCastChannel = GCKGenericChannel(namespace: "urn:x-cast:com.connectsdk")
         self.sessionDidStart(manager: sessionManager, didStart: session)
     }
-    
+
     func sessionManager(_ sessionManager: GCKSessionManager, didResumeCastSession session: GCKCastSession) {
         self.jellyfinCastChannel = GCKGenericChannel(namespace: "urn:x-cast:com.connectsdk")
         print("resuming session")
         self.sessionDidStart(manager: sessionManager, didStart: session)
     }
-    
+
     func sessionManager(_ sessionManager: GCKSessionManager, didFailToStart session: GCKCastSession, withError error: Error) {
         dump(error)
     }
-    
 
     func sessionManager(_ sessionManager: GCKSessionManager, didEnd session: GCKCastSession, withError error: Error?) {
         print("didEnd")
-        playerDestination = .local;
-        videoContentView.isHidden = false;
+        playerDestination = .local
+        videoContentView.isHidden = false
         remoteTimeUpdateTimer?.invalidate()
         castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
         startLocalPlaybackEngine(false)
     }
-    
+
     func sessionManager(_ sessionManager: GCKSessionManager, didSuspend session: GCKCastSession, with reason: GCKConnectionSuspendReason) {
         print("didSuspend")
-        playerDestination = .local;
-        videoContentView.isHidden = false;
+        playerDestination = .local
+        videoContentView.isHidden = false
         remoteTimeUpdateTimer?.invalidate()
         castButton.setImage(UIImage(named: "CastDisconnected"), for: .normal)
         startLocalPlaybackEngine(false)
     }
 }
 
-//MARK: - VLCMediaPlayer Delegates
+// MARK: - VLCMediaPlayer Delegates
 extension PlayerViewController: VLCMediaPlayerDelegate {
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
             let currentState: VLCMediaPlayerState = mediaPlayer.state
@@ -798,7 +795,7 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
                 break
             }
     }
-    
+
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
         let time = mediaPlayer.position
         if abs(time-lastTime) > 0.00005 {
@@ -829,18 +826,7 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-//MARK: End VideoPlayerVC
+// MARK: End VideoPlayerVC
 struct VLCPlayerWithControls: UIViewControllerRepresentable {
     var item: BaseItemDto
     @Environment(\.presentationMode) var presentationMode
@@ -887,7 +873,7 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
     }
 }
 
-//MARK: - Play State Update Methods
+// MARK: - Play State Update Methods
 extension PlayerViewController {
     func sendProgressReport(eventName: String) {
         if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {

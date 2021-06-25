@@ -95,12 +95,12 @@ extension BaseItemDto {
         let imageType = "Primary"
         var imageTag = self.imageTags?["Primary"] ?? ""
         var imageItemId = self.id ?? ""
-        
+
         if imageTag == "" || imageItemId == "" {
             imageTag = self.seriesPrimaryImageTag ?? ""
             imageItemId = self.seriesId ?? ""
         }
-        
+
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
         let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"

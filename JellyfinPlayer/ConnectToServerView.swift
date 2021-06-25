@@ -122,7 +122,7 @@ struct ConnectToServerView: View {
                         }
                         .disabled(viewModel.isLoading || uri.isEmpty)
                     }
-                    
+
                     Section(header: Text("Discovered Servers")) {
                         if self.viewModel.searching {
                             ProgressView()
@@ -142,7 +142,7 @@ struct ConnectToServerView: View {
                                         ProgressView()
                                     }
                                 }
-                            
+
                             })
                         }
                     }
