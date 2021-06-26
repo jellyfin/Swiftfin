@@ -394,6 +394,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
             
             setupNextUpView()
+            upNextViewModel.delegate = self
         }
 
         if !UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat {
@@ -454,7 +455,13 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
         mediaPlayer.delegate = self
         mediaPlayer.drawable = videoContentView
+        
+        setupMediaPlayer()
 
+    }
+    
+    func setupMediaPlayer() {
+        
         // Fetch max bitrate from UserDefaults depending on current connection mode
         let maxBitrate = Defaults[.inNetworkBandwidth]
 
@@ -690,16 +697,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
     
     func setupNextUpView() {
-        // Get next episode item
-        TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, season: manifest.parentIndexNumber ?? 0, startIndex: manifest.indexNumber, limit: 1)
-            .sink(receiveCompletion: { completion in
-                print(completion)
-            }, receiveValue: { [self] response in
-                if let item = response.items?.first {
-                    self.upNextViewModel.item = item
-                }
-            })
-            .store(in: &cancellables)
+        getNextEpisode()
         
         // Create the swiftUI view
         let contentView = UIHostingController(rootView: VideoUpNextView(viewModel: upNextViewModel))
@@ -715,6 +713,57 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         smallView = upNextView.frame
         largeView = CGRect(x: 500, y: 90, width: 400, height: 270)
     }
+    
+    func getNextEpisode() {
+        TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, season: manifest.parentIndexNumber ?? 0, startIndex: manifest.indexNumber, limit: 1)
+            .sink(receiveCompletion: { completion in
+                print(completion)
+            }, receiveValue: { [self] response in
+                if let item = response.items?.first {
+                    self.upNextViewModel.item = item
+                }
+            })
+            .store(in: &cancellables)
+    }
+    
+    func setPlayerToNextUp() {
+        mediaPlayer.stop()
+        
+        ssTargetValueOffset = 0
+        ssStartValue = 0
+        
+        paused = true
+        lastTime = 0.0
+        startTime = 0
+        controlsAppearTime = 0
+        isSeeking = false
+
+     
+        remotePositionTicks = 0
+       
+        selectedPlaybackSpeedIndex = 3
+        selectedAudioTrack = -1
+        selectedCaptionTrack = -1
+        playSessionId = ""
+        lastProgressReportTime = 0
+        subtitleTrackArray = []
+        audioTrackArray = []
+        
+        manifest = upNextViewModel.item!
+        playbackItem = PlaybackItem()
+        
+        upNextViewModel.item = nil
+        
+        upNextView.isHidden = true
+        shouldShowLoadingScreen = true
+        videoControlsView.isHidden = true
+
+        titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
+        
+        setupMediaPlayer()
+        getNextEpisode()
+    }
+    
 }
 
 // MARK: - GCKGenericChannelDelegate
@@ -912,7 +961,7 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
             delegate?.hideLoadingView(self)
             
             if manifest.type == "Episode" && upNextViewModel.item != nil{
-                if time > 0.95 {
+                if time > 0.98 {
                     upNextView.isHidden = false
                 } else {
                     upNextView.isHidden = true

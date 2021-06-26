@@ -13,6 +13,7 @@ import JellyfinAPI
 class UpNextViewModel: ObservableObject {
     @Published var largeView: Bool = false
     @Published var item: BaseItemDto? = nil
+    var delegate: PlayerViewController?
     
     func episodeAndSeasonNumber() -> String {
         if let pID = item?.parentIndexNumber, let id = item?.indexNumber {
@@ -27,6 +28,13 @@ class UpNextViewModel: ObservableObject {
         }
         return ""
     }
+    
+    func nextUp() {
+        if delegate != nil {
+            delegate?.setPlayerToNextUp()
+        }
+    }
+    
 }
 
 struct VideoUpNextView: View {
@@ -35,14 +43,12 @@ struct VideoUpNextView: View {
     
     var body: some View {
         
-        Button(action: {
-            print("Next episode")
-        }, label: {
-            
+        Button(action: viewModel.nextUp, label: {
             VStack(alignment: viewModel.largeView ? .leading : .center) {
                 Text("Up Next")
                     .foregroundColor(.white)
                     .font(viewModel.largeView ? .title : .body)
+                    .shadow(radius: 10)
                 
                 image
                 
@@ -52,7 +58,7 @@ struct VideoUpNextView: View {
                         .foregroundColor(.white)
                         .font(.title)
                         .lineLimit(1)
-                    
+                        .shadow(radius: 10)
                 }
             }
             
@@ -65,7 +71,12 @@ struct VideoUpNextView: View {
                 ImageView(src: url)
                     .frame(maxWidth: .infinity)
                     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
-                    .overlay(overlayIndicator, alignment: .topTrailing))
+                    .overlay(overlayIndicator, alignment: .topTrailing)
+                    .cornerRadius(5)
+                    .shadow(radius: 10)
+            )
+            
+            
         }
         else {
             return AnyView(EmptyView())
