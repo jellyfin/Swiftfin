@@ -32,6 +32,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var cancellables = Set<AnyCancellable>()
     var mediaPlayer = VLCMediaPlayer()
 
+    @IBOutlet weak var upNextView: UIView!
     @IBOutlet weak var timeText: UILabel!
     @IBOutlet weak var videoContentView: UIView!
     @IBOutlet weak var videoControlsView: UIView!
@@ -79,7 +80,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
     var remoteTimeUpdateTimer: Timer?
-
+    
+    var smallView : CGRect = .zero
+    var largeView : CGRect = .zero
+    var upNextViewModel: UpNextViewModel = UpNextViewModel()
+    
     // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
         if playerDestination == .local {
@@ -142,6 +147,9 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     @IBAction func controlViewTapped(_ sender: Any) {
         if playerDestination == .local {
             videoControlsView.isHidden = true
+            if manifest.type == "Episode" {
+                smallNextUpView()
+            }
         }
     }
 
@@ -149,6 +157,9 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         if playerDestination == .local {
             videoControlsView.isHidden = false
             controlsAppearTime = CACurrentMediaTime()
+            if manifest.type == "Episode" {
+                largeNextUpView()
+            }
         }
     }
 
@@ -381,38 +392,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             titleLabel.text = manifest.name ?? ""
         } else {
             titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
-            print("ep count \(manifest.episodeCount) current  \(manifest.indexNumber)   end \(manifest.indexNumberEnd)")
             
-            
-//            TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, season: manifest.parentIndexNumber ?? 0, startIndex: manifest.indexNumber, limit: 1)
-//                .sink(receiveCompletion: { completion in
-//                    print(completion)
-//                }, receiveValue: { response in
-//                    if let item = response.items?.first {
-//                        print(item.name, item.indexNumber)
-//                    }
-//                })
-//                .store(in: &cancellables)
-            
-//            TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, season: manifest.parentIndexNumber ?? 0, startIndex: manifest.indexNumber, limit: 1)
-//                .sink(receiveCompletion: { completion in
-//                    print(completion)
-//                }, receiveValue: { response in
-//                    if let item = response.items?.first {
-//                        print(item.name, item.indexNumber)
-//                    }
-//                })
-//                .store(in: &cancellables)
-//
-//            TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, startIndex: manifest.indexNumber, limit: 1, seriesId: manifest.seriesId)
-//                .sink(receiveCompletion: { completion in
-//                    print(completion)
-//                }, receiveValue: { response in
-//                    print(response.items)
-//                })
-//                .store(in: &cancellables)
-//
-            
+            setupNextUpView()
         }
 
         if !UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat {
@@ -697,6 +678,43 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         selectedPlaybackSpeedIndex = index
         mediaPlayer.rate = playbackSpeeds[index]
     }
+    
+    func smallNextUpView() {
+        upNextViewModel.largeView = false
+        upNextView.frame = smallView
+    }
+    
+    func largeNextUpView() {
+        upNextViewModel.largeView = true
+        upNextView.frame = largeView
+    }
+    
+    func setupNextUpView() {
+        // Get next episode item
+        TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, season: manifest.parentIndexNumber ?? 0, startIndex: manifest.indexNumber, limit: 1)
+            .sink(receiveCompletion: { completion in
+                print(completion)
+            }, receiveValue: { [self] response in
+                if let item = response.items?.first {
+                    self.upNextViewModel.item = item
+                }
+            })
+            .store(in: &cancellables)
+        
+        // Create the swiftUI view
+        let contentView = UIHostingController(rootView: VideoUpNextView(viewModel: upNextViewModel))
+        self.upNextView.addSubview(contentView.view)
+        contentView.view.backgroundColor = .clear
+        contentView.view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.view.topAnchor.constraint(equalTo: upNextView.topAnchor).isActive = true
+        contentView.view.bottomAnchor.constraint(equalTo: upNextView.bottomAnchor).isActive = true
+        contentView.view.leftAnchor.constraint(equalTo: upNextView.leftAnchor).isActive = true
+        contentView.view.rightAnchor.constraint(equalTo: upNextView.rightAnchor).isActive = true
+        
+        // Frame sizes depend on if controls are hidden or shown
+        smallView = upNextView.frame
+        largeView = CGRect(x: 500, y: 90, width: 400, height: 270)
+    }
 }
 
 // MARK: - GCKGenericChannelDelegate
@@ -892,12 +910,21 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
             mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
             seekSlider.setValue(mediaPlayer.position, animated: true)
             delegate?.hideLoadingView(self)
-
+            
+            if manifest.type == "Episode" && upNextViewModel.item != nil{
+                if time > 0.95 {
+                    upNextView.isHidden = false
+                } else {
+                    upNextView.isHidden = true
+                }
+            }
+            
             timeText.text = String(mediaPlayer.remainingTime.stringValue.dropFirst())
 
             if CACurrentMediaTime() - controlsAppearTime > 5 {
                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
                     self.videoControlsView.alpha = 0.0
+                    self.smallNextUpView()
                 }, completion: { (_: Bool) in
                     self.videoControlsView.isHidden = true
                     self.videoControlsView.alpha = 1
