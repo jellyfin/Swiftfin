@@ -390,11 +390,11 @@
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				531069502684E7EE00CFFDBA /* InfoTabBarViewController.swift */,
 				531069512684E7EE00CFFDBA /* MediaInfoView.swift */,
 				531069522684E7EE00CFFDBA /* SubtitlesView.swift */,
-				531069532684E7EE00CFFDBA /* VideoPlayer.swift */,
 				531069542684E7EE00CFFDBA /* AudioView.swift */,
+				531069502684E7EE00CFFDBA /* InfoTabBarViewController.swift */,
+				531069532684E7EE00CFFDBA /* VideoPlayer.swift */,
 				531069552684E7EE00CFFDBA /* VideoPlayerViewController.swift */,
 				531069562684E7EE00CFFDBA /* VideoPlayerStoryboard.storyboard */,
 			);

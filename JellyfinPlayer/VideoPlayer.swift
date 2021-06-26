@@ -67,12 +67,14 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
     var hasSentRemoteSeek: Bool = false
 
+    var selectedPlaybackSpeedIndex : Int = 3
     var selectedAudioTrack: Int32 = -1
     var selectedCaptionTrack: Int32 = -1
     var playSessionId: String = ""
     var lastProgressReportTime: Double = 0
     var subtitleTrackArray: [Subtitle] = []
     var audioTrackArray: [AudioTrack] = []
+    let playbackSpeeds : [Float] = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
 
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
@@ -689,6 +691,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     func audioTrackChanged(newTrackID: Int32) {
         selectedAudioTrack = newTrackID
         mediaPlayer.currentAudioTrackIndex = newTrackID
+    }
+    
+    func playbackSpeedChanged(index: Int) {
+        selectedPlaybackSpeedIndex = index
+        mediaPlayer.rate = playbackSpeeds[index]
     }
 }
 
