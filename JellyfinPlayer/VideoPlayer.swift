@@ -687,13 +687,18 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
     
     func smallNextUpView() {
-        upNextViewModel.largeView = false
-        upNextView.frame = smallView
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn) { [self] in
+            upNextViewModel.largeView = false
+            upNextView.frame = smallView
+        }
     }
     
     func largeNextUpView() {
-        upNextViewModel.largeView = true
-        upNextView.frame = largeView
+        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseOut) { [self] in
+            upNextViewModel.largeView = true
+            upNextView.frame = largeView
+        }
+        
     }
     
     func setupNextUpView() {
@@ -973,9 +978,9 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
             timeText.text = String(mediaPlayer.remainingTime.stringValue.dropFirst())
 
             if CACurrentMediaTime() - controlsAppearTime > 5 {
+                self.smallNextUpView()
                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
                     self.videoControlsView.alpha = 0.0
-                    self.smallNextUpView()
                 }, completion: { (_: Bool) in
                     self.videoControlsView.isHidden = true
                     self.videoControlsView.alpha = 1

@@ -76,8 +76,6 @@ struct VideoUpNextView: View {
                     .cornerRadius(5)
                     .shadow(radius: 10)
             )
-            
-            
         }
         else {
             return AnyView(EmptyView())
