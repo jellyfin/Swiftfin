@@ -15,7 +15,7 @@ class VideoPlayerCastDeviceSelectorView: UIViewController {
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
             .landscape
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         contentView = UIHostingController(rootView: VideoPlayerCastDeviceSelector(delegate: self.delegate ?? PlayerViewController()))
@@ -43,9 +43,9 @@ struct VideoPlayerCastDeviceSelector: View {
     var body: some View {
         NavigationView {
             Group {
-                if(!delegate.discoveredCastDevices.isEmpty) {
+                if !delegate.discoveredCastDevices.isEmpty {
                     List(delegate.discoveredCastDevices, id: \.deviceID) { device in
-                        HStack() {
+                        HStack {
                             Text(device.friendlyName!)
                                 .font(.subheadline)
                                 .fontWeight(.medium)
@@ -55,7 +55,7 @@ struct VideoPlayerCastDeviceSelector: View {
                                 delegate?.castDeviceChanged()
                                 delegate?.castPopoverDismissed()
                             } label: {
-                                HStack() {
+                                HStack {
                                     Text("Connect")
                                         .font(.caption)
                                         .fontWeight(.medium)
@@ -91,4 +91,3 @@ struct VideoPlayerCastDeviceSelector: View {
         }.offset(y: UIDevice.current.userInterfaceIdiom == .pad ? 14 : 0)
     }
 }
-

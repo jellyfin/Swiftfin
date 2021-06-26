@@ -24,7 +24,7 @@ struct LibrarySearchView: View {
             Spacer().frame(height: 6)
             SearchBar(text: $searchQuery)
             ZStack {
-                if(!viewModel.isLoading) {
+                if !viewModel.isLoading {
                     ScrollView(.vertical) {
                         if !viewModel.items.isEmpty {
                             Spacer().frame(height: 16)
@@ -35,6 +35,16 @@ struct LibrarySearchView: View {
                                             ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
                                                 .frame(width: 100, height: 150)
                                                 .cornerRadius(10)
+                                                .overlay(
+                                                    ZStack {
+                                                        if item.userData!.played ?? false {
+                                                            Image(systemName: "circle.fill")
+                                                                .foregroundColor(.white)
+                                                            Image(systemName: "checkmark.circle.fill")
+                                                                .foregroundColor(Color(.systemBlue))
+                                                        }
+                                                    }.padding(2)
+                                                    .opacity(1), alignment: .topTrailing).opacity(1)
                                             Text(item.name ?? "")
                                                 .font(.caption)
                                                 .fontWeight(.semibold)

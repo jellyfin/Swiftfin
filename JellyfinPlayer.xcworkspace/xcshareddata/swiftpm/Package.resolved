@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "Defaults",
+        "repositoryURL": "https://github.com/sindresorhus/Defaults",
+        "state": {
+          "branch": null,
+          "revision": "63d93f97ad545c8bceb125a8a36175ea705f7cf5",
+          "version": "5.0.0"
+        }
+      },
+      {
         "package": "Gifu",
         "repositoryURL": "https://github.com/kaishin/Gifu",
         "state": {
@@ -60,8 +69,8 @@
         "repositoryURL": "https://github.com/kean/NukeUI",
         "state": {
           "branch": null,
-          "revision": "d2580b8d22b29c6244418d8e4b568f3162191460",
-          "version": "0.3.0"
+          "revision": "4516371912149ac024dec361827931b46a69c217",
+          "version": "0.6.2"
         }
       },
       {

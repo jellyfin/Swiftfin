@@ -18,7 +18,6 @@ struct LibraryFilters: Codable, Hashable {
 }
 
 public enum SortBy: String, Codable, CaseIterable {
-    case productionYear = "ProductionYear"
     case premiereDate = "PremiereDate"
     case name = "SortName"
     case dateAdded = "DateCreated"
@@ -27,14 +26,12 @@ public enum SortBy: String, Codable, CaseIterable {
 extension SortBy {
     var localized: String {
         switch self {
-        case .productionYear:
-            return "Release Year"
         case .premiereDate:
             return "Premiere date"
         case .name:
-            return "Title"
+            return "Name"
         case .dateAdded:
-            return "Date Added"
+            return "Date added"
         }
     }
 }
