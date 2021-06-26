@@ -61,6 +61,7 @@ struct VideoUpNextView: View {
                         .shadow(radius: 10)
                 }
             }
+            .shadow(radius: 6)
             
         })
     }

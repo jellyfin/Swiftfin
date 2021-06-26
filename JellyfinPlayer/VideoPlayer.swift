@@ -715,11 +715,13 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
     
     func getNextEpisode() {
-        TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, season: manifest.parentIndexNumber ?? 0, startIndex: manifest.indexNumber, limit: 1)
+        TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, startItemId: manifest.id, limit: 2)
             .sink(receiveCompletion: { completion in
                 print(completion)
             }, receiveValue: { [self] response in
-                if let item = response.items?.first {
+                // Returns 2 items, the first is the current episode
+                // The second is the next episode
+                if let item = response.items?.last {
                     self.upNextViewModel.item = item
                 }
             })
