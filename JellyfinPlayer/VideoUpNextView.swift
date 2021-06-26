@@ -42,28 +42,22 @@ struct VideoUpNextView: View {
     @ObservedObject var viewModel: UpNextViewModel
     
     var body: some View {
-        
-        Button(action: viewModel.nextUp, label: {
-            VStack(alignment: viewModel.largeView ? .leading : .center) {
-                Text("Up Next")
+        VStack(alignment: viewModel.largeView ? .leading : .center) {
+            Text("Up Next")
+                .foregroundColor(.white)
+                .font(viewModel.largeView ? .title : .body)
+                
+            Button(action: viewModel.nextUp, label: {image})
+
+            if viewModel.largeView {
+                Text(viewModel.episodeName())
+                    .padding(.trailing, 50)
                     .foregroundColor(.white)
-                    .font(viewModel.largeView ? .title : .body)
-                    .shadow(radius: 10)
-                
-                image
-                
-                if viewModel.largeView {
-                    Text(viewModel.episodeName())
-                        .padding(.trailing, 50)
-                        .foregroundColor(.white)
-                        .font(.title)
-                        .lineLimit(1)
-                        .shadow(radius: 10)
-                }
+                    .minimumScaleFactor(0.1)
             }
-            .shadow(radius: 6)
-            
-        })
+        }
+        .shadow(color: .black, radius: 20)
+
     }
     
     var image : some View {
@@ -74,7 +68,6 @@ struct VideoUpNextView: View {
                     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
                     .overlay(overlayIndicator, alignment: .topTrailing)
                     .cornerRadius(5)
-                    .shadow(radius: 10)
             )
         }
         else {

@@ -716,7 +716,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         
         // Frame sizes depend on if controls are hidden or shown
         smallView = upNextView.frame
-        largeView = CGRect(x: 500, y: 90, width: 400, height: 270)
+        largeView = CGRect(x: 460, y: 90, width: 400, height: 270)
     }
     
     func getNextEpisode() {
@@ -968,10 +968,12 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
             delegate?.hideLoadingView(self)
             
             if manifest.type == "Episode" && upNextViewModel.item != nil{
-                if time > 0.98 {
+                if time > 0.96 {
                     upNextView.isHidden = false
+                    self.jumpForwardButton.isHidden = true
                 } else {
                     upNextView.isHidden = true
+                    self.jumpForwardButton.isHidden = false
                 }
             }
             
