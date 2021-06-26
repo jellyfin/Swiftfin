@@ -73,12 +73,27 @@ struct SeasonItemView: View {
                                         Rectangle()
                                             .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
                                             .mask(ProgressBar())
-                                            .frame(width: CGFloat(episode.userData!.playedPercentage ?? 0 * 1.5), height: 7)
+                                            .frame(width: CGFloat(episode.userData?.playedPercentage ?? 0 * 1.5), height: 7)
                                             .padding(0), alignment: .bottomLeading
                                     )
                                     .overlay(
                                         ZStack {
-                                            if episode.userData!.played ?? false {
+                                            if episode.userData?.isFavorite ?? false {
+                                                Image(systemName: "circle.fill")
+                                                    .foregroundColor(.white)
+                                                    .opacity(0.6)
+                                                Image(systemName: "heart.fill")
+                                                    .foregroundColor(Color(.systemRed))
+                                                    .font(.system(size: 10))
+                                            }
+                                        }
+                                        .padding(.leading, 2)
+                                        .padding(.bottom, episode.userData?.playedPercentage == nil ? 2 : 9)
+                                        .opacity(1)
+                                    , alignment: .bottomLeading)
+                                    .overlay(
+                                        ZStack {
+                                            if episode.userData?.played ?? false {
                                                 Image(systemName: "circle.fill")
                                                     .foregroundColor(.white)
                                                 Image(systemName: "checkmark.circle.fill")

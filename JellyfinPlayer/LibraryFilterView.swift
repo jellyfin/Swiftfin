@@ -11,12 +11,14 @@ import SwiftUI
 struct LibraryFilterView: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var filters: LibraryFilters
+    var parentId: String = ""
 
     @StateObject var viewModel: LibraryFilterViewModel
 
-    init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType]) {
+    init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String) {
         _filters = filters
-        _viewModel = StateObject(wrappedValue: .init(filters: filters.wrappedValue, enabledFilterType: enabledFilterType))
+        self.parentId = parentId
+        _viewModel = StateObject(wrappedValue: .init(filters: filters.wrappedValue, enabledFilterType: enabledFilterType, parentId: parentId))
     }
 
     var body: some View {
