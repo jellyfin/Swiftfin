@@ -65,9 +65,9 @@ struct MediaInfoView: View {
                         if item.type == "Episode" {
                             Text("S\(item.parentIndexNumber ?? 0) • E\(item.indexNumber ?? 0)")
 
-                            if let date = item.premiereDate {
+                            if let dateString = item.premiereDateToString() {
                                 Text("•")
-                                Text(formatDate(date: date))
+                                Text(dateString)
                             }
 
                         } else if let year = item.productionYear {
@@ -110,12 +110,5 @@ struct MediaInfoView: View {
             EmptyView()
         }
 
-    }
-
-    func formatDate(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMM yyyy"
-
-        return formatter.string(from: date)
     }
 }
