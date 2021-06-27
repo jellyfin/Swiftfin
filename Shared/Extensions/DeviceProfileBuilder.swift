@@ -43,7 +43,7 @@ class DeviceProfileBuilder {
     public func buildProfile() -> DeviceProfile {
         let maxStreamingBitrate = bitrate
         let maxStaticBitrate = bitrate
-        let musicStreamingTranscodingBitrate = 384000
+        let musicStreamingTranscodingBitrate = bitrate
 
         // Build direct play profiles
             var directPlayProfiles: [DirectPlayProfile] = []

@@ -457,6 +457,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         
         // Fetch max bitrate from UserDefaults depending on current connection mode
         let maxBitrate = Defaults[.inNetworkBandwidth]
+        print(maxBitrate)
         // Build a device profile
         let builder = DeviceProfileBuilder()
         builder.setMaxBitrate(bitrate: maxBitrate)
