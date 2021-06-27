@@ -15,16 +15,9 @@ class UpNextViewModel: ObservableObject {
     @Published var item: BaseItemDto? = nil
     var delegate: PlayerViewController?
     
-    func episodeAndSeasonNumber() -> String {
-        if let pID = item?.parentIndexNumber, let id = item?.indexNumber {
-            return "S\(pID):E\(id)"
-        }
-        return ""
-    }
-    
-    func episodeName() -> String {
-        if let name = item?.name {
-            return name
+    func getEpisodeLocator() -> String {
+        if let seasonNo = item?.parentIndexNumber, let episodeNo = item?.indexNumber {
+            return "S\(seasonNo):E\(episodeNo)"
         }
         return ""
     }
@@ -34,7 +27,6 @@ class UpNextViewModel: ObservableObject {
             delegate?.setPlayerToNextUp()
         }
     }
-    
 }
 
 struct VideoUpNextView: View {
@@ -50,7 +42,7 @@ struct VideoUpNextView: View {
             Button(action: viewModel.nextUp, label: {image})
 
             if viewModel.largeView {
-                Text(viewModel.episodeName())
+                Text(viewModel.item!.name ?? "")
                     .padding(.trailing, 50)
                     .foregroundColor(.white)
                     .minimumScaleFactor(0.1)
@@ -76,7 +68,7 @@ struct VideoUpNextView: View {
     }
     
     var overlayIndicator : some View {
-        Text(viewModel.episodeAndSeasonNumber())
+        Text(viewModel.getEpisodeLocator())
             .font(viewModel.largeView ? .title3 : .body)
             .foregroundColor(.white)
             .padding(.horizontal, 5)

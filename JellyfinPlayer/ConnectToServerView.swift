@@ -67,7 +67,7 @@ struct ConnectToServerView: View {
                                             Text(publicUser.name ?? "").font(.subheadline).fontWeight(.semibold)
                                             Spacer()
                                             if publicUser.primaryImageTag != nil {
-                                                ImageView(src: URL(string: "\(ServerEnvironment.current.server.baseURI ?? "")/Users/\(publicUser.id ?? "")/Images/Primary?width=180&quality=80&tag=\(publicUser.primaryImageTag!)")!)
+                                                ImageView(src: URL(string: "\(ServerEnvironment.current.server.baseURI ?? "")/Users/\(publicUser.id ?? "")/Images/Primary?width=120&quality=80&tag=\(publicUser.primaryImageTag!)")!)
                                                     .frame(width: 60, height: 60)
                                                     .cornerRadius(30.0)
                                             } else {
@@ -160,7 +160,7 @@ struct ConnectToServerView: View {
             viewModel.passwordSubject.send(password)
         }
         .alert(item: $viewModel.errorMessage) { _ in
-            Alert(title: Text("Error"), message: Text("message"), dismissButton: .default(Text("Try again")))
+            Alert(title: Text("Error"), message: Text($viewModel.errorMessage.wrappedValue!), dismissButton: .default(Text("Try again")))
         }
         .navigationTitle("Connect to Server")
     }

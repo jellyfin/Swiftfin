@@ -15,43 +15,10 @@ struct LatestMediaView: View {
             LazyHStack {
                 ForEach(viewModel.items, id: \.id) { item in
                     if item.type == "Series" || item.type == "Movie" {
-                        NavigationLink(destination: LazyView { ItemView(item: item) }) {
-                            VStack(alignment: .leading) {
-                                ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
-                                    .frame(width: 100, height: 150)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 4)
-                                    .overlay(
-                                        ZStack {
-                                            if item.userData!.played ?? false {
-                                                Image(systemName: "circle.fill")
-                                                    .foregroundColor(.white)
-                                                Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(Color(.systemBlue))
-                                            }
-                                        }.padding(2)
-                                        .opacity(1), alignment: .topTrailing).opacity(1)
-                                Text(item.seriesName ?? item.name ?? "")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .lineLimit(1)
-                                if item.productionYear != nil {
-                                    Text(String(item.productionYear ?? 0))
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                } else {
-                                    Text(item.type!)
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                }
-                            }.frame(width: 100)
-                        }
+                        PortraitItemView(item: item)
                     }
                 }.padding(.trailing, 16)
             }.padding(.leading, 20)
-        }.frame(height: 195)
+        }.frame(height: 200)
     }
 }
