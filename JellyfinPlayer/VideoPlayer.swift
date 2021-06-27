@@ -80,9 +80,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
     var remoteTimeUpdateTimer: Timer?
-    
-    var smallView : CGRect = .zero
-    var largeView : CGRect = .zero
     var upNextViewModel: UpNextViewModel = UpNextViewModel()
     
     // MARK: IBActions
@@ -157,9 +154,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         if playerDestination == .local {
             videoControlsView.isHidden = false
             controlsAppearTime = CACurrentMediaTime()
-            if manifest.type == "Episode" {
-                largeNextUpView()
-            }
         }
     }
 
@@ -457,19 +451,17 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         mediaPlayer.drawable = videoContentView
         
         setupMediaPlayer()
-
     }
     
     func setupMediaPlayer() {
         
         // Fetch max bitrate from UserDefaults depending on current connection mode
         let maxBitrate = Defaults[.inNetworkBandwidth]
-
         // Build a device profile
         let builder = DeviceProfileBuilder()
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
-
+        dump(profile)
         let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
 
         DispatchQueue.global(qos: .userInitiated).async { [self] in
@@ -494,6 +486,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 }, receiveValue: { [self] response in
                     playSessionId = response.playSessionId ?? ""
                     let mediaSource = response.mediaSources!.first.self!
+                    dump(mediaSource)
                     if mediaSource.transcodingUrl != nil {
                         // Item is being transcoded by request of server
                         let streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(mediaSource.transcodingUrl!)")
@@ -582,8 +575,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         self.sendPlayReport()
                         playbackItem = item
                         
-                        self.setupNowPlayingCC()
-
+                        //self.setupNowPlayingCC()
                     }
 
                     startLocalPlaybackEngine(true)
@@ -689,16 +681,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     func smallNextUpView() {
         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn) { [self] in
             upNextViewModel.largeView = false
-            upNextView.frame = smallView
         }
-    }
-    
-    func largeNextUpView() {
-        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseOut) { [self] in
-            upNextViewModel.largeView = true
-            upNextView.frame = largeView
-        }
-        
     }
     
     func setupNextUpView() {
@@ -713,10 +696,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         contentView.view.bottomAnchor.constraint(equalTo: upNextView.bottomAnchor).isActive = true
         contentView.view.leftAnchor.constraint(equalTo: upNextView.leftAnchor).isActive = true
         contentView.view.rightAnchor.constraint(equalTo: upNextView.rightAnchor).isActive = true
-        
-        // Frame sizes depend on if controls are hidden or shown
-        smallView = upNextView.frame
-        largeView = CGRect(x: 460, y: 90, width: 400, height: 270)
     }
     
     func getNextEpisode() {

@@ -34,47 +34,28 @@ struct VideoUpNextView: View {
     @ObservedObject var viewModel: UpNextViewModel
     
     var body: some View {
-        VStack(alignment: viewModel.largeView ? .leading : .center) {
-            Text("Up Next")
-                .foregroundColor(.white)
-                .font(viewModel.largeView ? .title : .body)
-                
-            Button(action: viewModel.nextUp, label: {image})
-
-            if viewModel.largeView {
-                Text(viewModel.item!.name ?? "")
-                    .padding(.trailing, 50)
+        Button {
+            viewModel.nextUp()
+        } label: {
+            HStack {
+                VStack {
+                    Text("Play Next")
+                        .foregroundColor(.white)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    Text(viewModel.getEpisodeLocator())
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+                Image(systemName: "play.fill")
                     .foregroundColor(.white)
-                    .minimumScaleFactor(0.1)
+                    .font(.subheadline)
             }
-        }
+            .frame(width: 120, height: 35)
+            .background(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255))
+            .cornerRadius(10)
+        }.buttonStyle(PlainButtonStyle())
+        .frame(width: 120, height: 35)
         .shadow(color: .black, radius: 20)
-
-    }
-    
-    var image : some View {
-        if let url = viewModel.item?.getPrimaryImage(maxWidth: 100) {
-            return AnyView(
-                ImageView(src: url)
-                    .frame(maxWidth: .infinity)
-                    .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
-                    .overlay(overlayIndicator, alignment: .topTrailing)
-                    .cornerRadius(5)
-            )
-        }
-        else {
-            return AnyView(EmptyView())
-        }
-    }
-    
-    var overlayIndicator : some View {
-        Text(viewModel.getEpisodeLocator())
-            .font(viewModel.largeView ? .title3 : .body)
-            .foregroundColor(.white)
-            .padding(.horizontal, 5)
-            .background(Color.black.opacity(0.6))
-            .cornerRadius(5)
-            .padding(5)
-        
     }
 }

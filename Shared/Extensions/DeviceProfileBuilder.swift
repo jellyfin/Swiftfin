@@ -75,20 +75,15 @@ class DeviceProfileBuilder {
             // Device supports Dolby Digital (AC3, EAC3)
             if supportsFeature(minimumSupported: .A8X) {
                 if supportsFeature(minimumSupported: .A9) {
-                    transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264,hevc,hev1,mpeg4", audioCodec: "aac,mp3,wav,eac3,ac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
+                    transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264,hevc,mpeg4", audioCodec: "aac,mp3,wav,eac3,ac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
                 } else {
                     transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264,mpeg4", audioCodec: "aac,mp3,wav,eac3,ac3,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
                 }
             }
 
-            // Device supports Dolby Vision?
+            // Device supports FLAC?
             if supportsFeature(minimumSupported: .A10X) {
-                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dvhe,dvh1,hevc,h264,hev1,mpeg4", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
-            }
-
-            // Device supports Dolby Atmos?
-            if supportsFeature(minimumSupported: .A12) {
-                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "dvhe,dvh1,hevc,h264,hev1,mpeg4", audioCodec: "aac,mp3,wav,ac3,eac3,flac,dts,truehd,dca,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
+                transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "hevc,h264,mpeg4", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", _protocol: "hls", context: .streaming, maxAudioChannels: "6", minSegments: 2, breakOnNonKeyFrames: true)]
             }
 
         var codecProfiles: [CodecProfile] = []

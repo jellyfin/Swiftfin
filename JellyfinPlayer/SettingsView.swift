@@ -78,7 +78,6 @@ struct SettingsView: View {
                     }
                 }
             }
-            .padding(.top, 12)
             .navigationBarTitle("Settings", displayMode: .inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
