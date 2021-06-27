@@ -69,10 +69,10 @@ final class LibraryViewModel: ViewModel {
         }
         let sortBy = filters.sortBy.map(\.rawValue)
 
-        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: true,
+        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: filters.filters.contains(.isFavorite) ? true : false,
                                   searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-                                  includeItemTypes: ["Movie", "Series"], filters: filters.filters, sortBy: sortBy, tags: filters.tags,
+                                  filters: filters.filters, sortBy: sortBy, tags: filters.tags,
                                   enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in

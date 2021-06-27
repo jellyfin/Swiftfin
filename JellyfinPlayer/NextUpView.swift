@@ -22,24 +22,7 @@ struct NextUpView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     ForEach(items, id: \.id) { item in
-                        NavigationLink(destination: LazyView { ItemView(item: item) }) {
-                            VStack(alignment: .leading) {
-                                ImageView(src: item.getSeriesPrimaryImage(maxWidth: 100), bh: item.getSeriesPrimaryImageBlurHash())
-                                    .frame(width: 100, height: 150)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 4)
-                                Text(item.seriesName!)
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .lineLimit(1)
-                                Text("S\(item.parentIndexNumber ?? 0):E\(item.indexNumber ?? 0)")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
-                            }.frame(width: 100)
-                        }
+                        PortraitItemView(item: item)
                     }.padding(.trailing, 16)
                 }
                 .padding(.leading, 20)

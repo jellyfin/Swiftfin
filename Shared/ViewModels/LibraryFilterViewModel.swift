@@ -39,6 +39,8 @@ final class LibraryFilterViewModel: ViewModel {
     var selectedSortOrder: APISortOrder = .descending
     @Published
     var selectedSortBy: SortBy = .name
+    
+    var parentId: String = ""
 
     func updateModifiedFilter() {
         modifiedFilters.sortOrder = [selectedSortOrder]
@@ -50,10 +52,11 @@ final class LibraryFilterViewModel: ViewModel {
     }
 
     init(filters: LibraryFilters? = nil,
-         enabledFilterType: [FilterType] = [.tag, .genre, .sortBy, .sortOrder, .filter]) {
+         enabledFilterType: [FilterType] = [.tag, .genre, .sortBy, .sortOrder, .filter], parentId: String) {
         self.enabledFilterType = enabledFilterType
         self.selectedSortBy = filters!.sortBy.first!
         self.selectedSortOrder = filters!.sortOrder.first!
+        self.parentId = parentId
 
         super.init()
         if let filters = filters {
@@ -63,7 +66,7 @@ final class LibraryFilterViewModel: ViewModel {
     }
 
     func requestQueryFilters() {
-        FilterAPI.getQueryFilters(userId: SessionManager.current.user.user_id!)
+        FilterAPI.getQueryFilters(userId: SessionManager.current.user.user_id!, parentId: self.parentId)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestCompletion(completion: completion)

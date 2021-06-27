@@ -30,36 +30,7 @@ struct LibrarySearchView: View {
                             Spacer().frame(height: 16)
                             LazyVGrid(columns: tracks) {
                                 ForEach(viewModel.items, id: \.id) { item in
-                                    NavigationLink(destination: ItemView(item: item)) {
-                                        VStack(alignment: .leading) {
-                                            ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
-                                                .frame(width: 100, height: 150)
-                                                .cornerRadius(10)
-                                                .overlay(
-                                                    ZStack {
-                                                        if item.userData!.played ?? false {
-                                                            Image(systemName: "circle.fill")
-                                                                .foregroundColor(.white)
-                                                            Image(systemName: "checkmark.circle.fill")
-                                                                .foregroundColor(Color(.systemBlue))
-                                                        }
-                                                    }.padding(2)
-                                                    .opacity(1), alignment: .topTrailing).opacity(1)
-                                            Text(item.name ?? "")
-                                                .font(.caption)
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(.primary)
-                                                .lineLimit(1)
-                                            if item.productionYear != nil {
-                                                Text(String(item.productionYear!))
-                                                    .foregroundColor(.secondary)
-                                                    .font(.caption)
-                                                    .fontWeight(.medium)
-                                            } else {
-                                                Text(item.type ?? "")
-                                            }
-                                        }.frame(width: 100)
-                                    }
+                                    PortraitItemView(item: item)
                                 }
                                 Spacer().frame(height: 16)
                             }

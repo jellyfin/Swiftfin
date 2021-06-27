@@ -34,38 +34,8 @@ struct LibraryView: View {
                         Spacer().frame(height: 16)
                         LazyVGrid(columns: tracks) {
                             ForEach(viewModel.items, id: \.id) { item in
-                                NavigationLink(destination: ItemView(item: item)) {
-                                    VStack(alignment: .leading) {
-                                        ImageView(src: item.getPrimaryImage(maxWidth: 100), bh: item.getPrimaryImageBlurHash())
-                                            .frame(width: 100, height: 150)
-                                            .cornerRadius(10)
-                                            .overlay(
-                                                ZStack {
-                                                    if item.userData!.played ?? false {
-                                                        Image(systemName: "circle.fill")
-                                                            .foregroundColor(.white)
-                                                        Image(systemName: "checkmark.circle.fill")
-                                                            .foregroundColor(Color(.systemBlue))
-                                                    }
-                                                }.padding(2)
-                                                .opacity(1), alignment: .topTrailing).opacity(1)
-                                        Text(item.name ?? "")
-                                            .font(.caption)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.primary)
-                                            .lineLimit(1)
-                                        if item.productionYear != nil {
-                                            Text(String(item.productionYear!))
-                                                .foregroundColor(.secondary)
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                        } else {
-                                            Text(item.type ?? "")
-                                                .foregroundColor(.secondary)
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                        }
-                                    }.frame(width: 100)
+                                if(item.type != "Folder") {
+                                    PortraitItemView(item: item)
                                 }
                             }
                         }.onRotate { _ in
@@ -82,8 +52,8 @@ struct LibraryView: View {
                                             .font(.system(size: 25))
                                     }.disabled(!viewModel.hasPreviousPage)
                                     Text("Page \(String(viewModel.currentPage + 1)) of \(String(viewModel.totalPages))")
-                                        .font(.headline)
-                                        .fontWeight(.semibold)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
                                     Button {
                                         viewModel.requestNextPage()
                                     } label: {
@@ -109,14 +79,14 @@ struct LibraryView: View {
                         viewModel.requestPreviousPage()
                     } label: {
                         Image(systemName: "chevron.left")
-                    }
+                    }.disabled(viewModel.isLoading)
                 }
                 if viewModel.hasNextPage {
                     Button {
                         viewModel.requestNextPage()
                     } label: {
                         Image(systemName: "chevron.right")
-                    }
+                    }.disabled(viewModel.isLoading)
                 }
                 Label("Icon One", systemImage: "line.horizontal.3.decrease.circle")
                 .foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
@@ -131,7 +101,7 @@ struct LibraryView: View {
             }
         }
         .sheet(isPresented: $isShowingFilterView) {
-            LibraryFilterView(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType)
+            LibraryFilterView(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType, parentId: viewModel.parentID ?? "")
         }
         .background(
             NavigationLink(destination: LibrarySearchView(viewModel: .init(parentID: viewModel.parentID)),

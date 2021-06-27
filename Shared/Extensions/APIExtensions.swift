@@ -111,7 +111,7 @@ extension BaseItemDto {
     func getItemRuntime() -> String {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()
-            formatter.unitsStyle = .brief
+            formatter.unitsStyle = .abbreviated
             formatter.allowedUnits = [.hour, .minute]
             return formatter
         }()

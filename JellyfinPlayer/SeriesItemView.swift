@@ -24,25 +24,7 @@ struct SeriesItemView: View {
                 Spacer().frame(height: 16)
                 LazyVGrid(columns: tracks) {
                     ForEach(viewModel.seasons, id: \.id) { season in
-                        NavigationLink(destination: ItemView(item: season)) {
-                            VStack(alignment: .leading) {
-                                ImageView(src: season.getPrimaryImage(maxWidth: 100), bh: season.getPrimaryImageBlurHash())
-                                    .frame(width: 100, height: 150)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 5)
-                                Text(season.name ?? "")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .lineLimit(1)
-                                if season.productionYear != nil {
-                                    Text(String(season.productionYear!))
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                }
-                            }.frame(width: 100)
-                        }
+                        PortraitItemView(item: season)
                     }
                     Spacer().frame(height: 2)
                 }.onRotate { _ in
