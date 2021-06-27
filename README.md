@@ -20,6 +20,6 @@
 
 ---
 
-[Join the Discord!](https://discord.gg/aWzcSzjjPN)
-
+[Join the Jellyfin Discord!](https://discord.gg/zHBxVSXdBV)
+Also available on Matrix, and IRC. See https://jellyfin.org/contact for options.
 [Beta test!](https://testflight.apple.com/join/WiN0G62Q)
