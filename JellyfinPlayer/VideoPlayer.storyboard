@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19115.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_5" orientation="landscape" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19107.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -170,6 +169,11 @@
                                     <outletCollection property="gestureRecognizers" destination="iQW-fW-KWT" appends="YES" id="H09-88-nzQ"/>
                                 </connections>
                             </view>
+                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CY9-gw-dv8" userLabel="UpNextView">
+                                <rect key="frame" x="675" y="254" width="224" height="161"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="zud-b9-RyD"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -194,6 +198,7 @@
                         <outlet property="seekSlider" destination="e9f-8l-RdN" id="b3H-tn-TPG"/>
                         <outlet property="timeText" destination="qft-iu-f1z" id="pAX-J3-I53"/>
                         <outlet property="titleLabel" destination="o8N-R1-DhT" id="E7D-iU-bMi"/>
+                        <outlet property="upNextView" destination="CY9-gw-dv8" id="BP6-bc-6Vk"/>
                         <outlet property="videoContentView" destination="Tsh-rC-BwO" id="5uR-No-wLy"/>
                         <outlet property="videoControlsView" destination="Qcb-Fb-qZl" id="Z1U-Qr-8ND"/>
                     </connections>
