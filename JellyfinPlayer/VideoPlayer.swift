@@ -81,6 +81,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var playbackItem = PlaybackItem()
     var remoteTimeUpdateTimer: Timer?
     var upNextViewModel: UpNextViewModel = UpNextViewModel()
+    var lastOri: UIDeviceOrientation!
     
     // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
@@ -390,6 +391,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             setupNextUpView()
             upNextViewModel.delegate = self
         }
+        
+        lastOri = UIDevice.current.orientation
 
         if !UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat {
             let value = UIInterfaceOrientation.landscapeRight.rawValue
@@ -434,6 +437,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         self.tabBarController?.tabBar.isHidden = false
         self.navigationController?.isNavigationBarHidden = false
         overrideUserInterfaceStyle = .unspecified
+        UIDevice.current.setValue(lastOri.rawValue, forKey: "orientation")
+        UIViewController.attemptRotationToDeviceOrientation()
         super.viewWillDisappear(animated)
     }
 

@@ -56,6 +56,7 @@ struct ItemView: View {
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(false)
             .environmentObject(videoPlayerItem)
+            .supportedOrientations(.all)
         }
     }
 }
