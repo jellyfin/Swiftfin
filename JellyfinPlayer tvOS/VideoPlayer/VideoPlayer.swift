@@ -15,7 +15,7 @@ struct VideoPlayerView: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> some UIViewController {
 
-        let storyboard = UIStoryboard(name: "VideoPlayerStoryboard", bundle: nil)
+        let storyboard = UIStoryboard(name: "VideoPlayer", bundle: nil)
         let viewController = storyboard.instantiateViewController(withIdentifier: "VideoPlayer") as! VideoPlayerViewController
         viewController.manifest = item
 

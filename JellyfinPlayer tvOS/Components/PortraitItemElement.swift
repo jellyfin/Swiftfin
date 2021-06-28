@@ -24,6 +24,38 @@ struct PortraitItemElement: View {
                 .cornerRadius(10)
                 .shadow(radius: focused ? 10.0 : 0)
                 .shadow(radius: focused ? 10.0 : 0)
+                .overlay(
+                    ZStack {
+                        if item.userData?.isFavorite ?? false {
+                            Image(systemName: "circle.fill")
+                                .foregroundColor(.white)
+                                .opacity(0.6)
+                            Image(systemName: "heart.fill")
+                                .foregroundColor(Color(.systemRed))
+                                .font(.system(size: 10))
+                        }
+                    }
+                    .padding(2)
+                    .opacity(1)
+                , alignment: .bottomLeading)
+                .overlay(
+                    ZStack {
+                        if item.userData?.played ?? false {
+                            Image(systemName: "circle.fill")
+                                .foregroundColor(.white)
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(Color(.systemBlue))
+                        } else {
+                            if(item.userData?.unplayedItemCount != nil) {
+                                Image(systemName: "circle.fill")
+                                    .foregroundColor(Color(.systemBlue))
+                                Text(String(item.userData!.unplayedItemCount ?? 0))
+                                    .foregroundColor(.white)
+                                    .font(.caption2)
+                            }
+                        }
+                    }.padding(2)
+                    .opacity(1), alignment: .topTrailing).opacity(1)
         }
         .onChange(of: envFocused) { envFocus in
             withAnimation(.linear(duration: 0.15)) {

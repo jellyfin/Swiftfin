@@ -244,16 +244,11 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     // Pause and load captions into memory.
                     mediaPlayer.pause()
 
-                    var shouldHaveSubtitleTracks = 0
                     subtitleTrackArray.forEach { sub in
-                        if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
-                            shouldHaveSubtitleTracks = shouldHaveSubtitleTracks + 1
+                        if sub.id != -1 && sub.delivery == .external {
                             mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                         }
                     }
-
-                    // Wait for captions to load
-                    while mediaPlayer.numberOfSubtitlesTracks != shouldHaveSubtitleTracks {}
 
                     // Select default track & resume playback
                     mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
@@ -714,18 +709,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     // Move time along transport bar
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
-
-        if loading {
-            loading = false
-            DispatchQueue.main.async { [self] in
-                activityIndicator.isHidden = true
-                activityIndicator.stopAnimating()
-            }
-            updateNowPlayingCenter(time: nil, playing: true)
-        }
-
         let time = mediaPlayer.position
-        if time != lastTime {
+        if abs(time-lastTime) > 0.00005 {
             self.currentTimeLabel.text = formatSecondsToHMS(Double(mediaPlayer.time.intValue/1000))
             self.remainingTimeLabel.text = "-" + formatSecondsToHMS(Double(abs(mediaPlayer.remainingTime.intValue/1000)))
 
@@ -749,14 +734,22 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     controlsAppearTime = 999_999_999_999_999
                 }
             }
-
+            lastTime = time
         }
 
-        lastTime = time
-
         if CACurrentMediaTime() - lastProgressReportTime > 5 {
+            mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
             sendProgressReport(eventName: "timeupdate")
             lastProgressReportTime = CACurrentMediaTime()
+        }
+        
+        if loading {
+            loading = false
+            DispatchQueue.main.async { [self] in
+                activityIndicator.isHidden = true
+                activityIndicator.stopAnimating()
+            }
+            updateNowPlayingCenter(time: nil, playing: true)
         }
     }
 

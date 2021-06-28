@@ -42,7 +42,7 @@ struct LatestMediaView: View {
                 LazyHStack {
                     Spacer().frame(width: 45)
                     ForEach(items, id: \.id) { item in
-                        NavigationLink(destination: Text("itemv")) {
+                        NavigationLink(destination: LazyView { ItemView(item: item) }) {
                             PortraitItemElement(item: item)
                         }.buttonStyle(PlainNavigationLinkButtonStyle())
                     }

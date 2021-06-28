@@ -87,10 +87,44 @@ final class LibraryViewModel: ViewModel {
             })
             .store(in: &cancellables)
     }
+    
+    func requestItemsAsync(with filters: LibraryFilters) {
+        let personIDs: [String] = [person].compactMap(\.?.id)
+        let studioIDs: [String] = [studio].compactMap(\.?.id)
+        let genreIDs: [String]
+        if filters.withGenres.isEmpty {
+            genreIDs = [genre].compactMap(\.?.id)
+        } else {
+            genreIDs = filters.withGenres.compactMap(\.id)
+        }
+        let sortBy = filters.sortBy.map(\.rawValue)
+
+        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: filters.filters.contains(.isFavorite) ? true : false,
+                                  searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
+                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                                  filters: filters.filters, sortBy: sortBy, tags: filters.tags,
+                                  enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
+            .sink(receiveCompletion: { [weak self] completion in
+                self?.handleAPIRequestCompletion(completion: completion)
+            }, receiveValue: { [weak self] response in
+                guard let self = self else { return }
+                let totalPages = ceil(Double(response.totalRecordCount ?? 0) / 100.0)
+                self.totalPages = Int(totalPages)
+                self.hasPreviousPage = self.currentPage > 0
+                self.hasNextPage = self.currentPage < self.totalPages - 1
+                self.items.append(contentsOf: response.items ?? [])
+            })
+            .store(in: &cancellables)
+    }
 
     func requestNextPage() {
         currentPage += 1
         requestItems(with: filters)
+    }
+    
+    func requestNextPageAsync() {
+        currentPage += 1
+        requestItemsAsync(with: filters)
     }
 
     func requestPreviousPage() {

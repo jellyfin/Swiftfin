@@ -210,16 +210,8 @@ open class UDPBroadcastConnection {
             }
 
             guard sent > 0 else {
-                if let errorString = String(validatingUTF8: strerror(errno)) {
-                    // debugPrint("UDP connection failed to send data: \(errorString)")
-                }
                 closeConnection()
                 throw ConnectionError.sendingMessageFailed(code: errno)
-            }
-
-            if sent == broadcastMessageLength {
-                // Success
-                // debugPrint("UDP connection sent \(broadcastMessageLength) bytes")
             }
         }
     }

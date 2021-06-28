@@ -33,7 +33,9 @@ struct HomeView: View {
                             VStack(alignment: .leading) {
                                 let library = viewModel.libraries.first(where: { $0.id == libraryID })
 
-                                NavigationLink(destination: Text("library_latest")) {
+                                NavigationLink(destination: LazyView {
+                                    LibraryView(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? "")
+                                }) {
                                     HStack {
                                         Text("Latest \(library?.name ?? "")")
                                         .font(.headline)
@@ -45,6 +47,7 @@ struct HomeView: View {
                             }
                         }
                     }
+                    Spacer().frame(height: 30)
                 }
             }
         }

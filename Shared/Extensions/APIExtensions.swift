@@ -70,7 +70,7 @@ extension BaseItemDto {
         }
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -79,7 +79,7 @@ extension BaseItemDto {
         let imageTag = (self.parentBackdropImageTags ?? [""])[0]
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -87,7 +87,7 @@ extension BaseItemDto {
         let imageType = "Primary"
         let imageTag = self.seriesPrimaryImageTag ?? ""
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(self.seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -103,7 +103,7 @@ extension BaseItemDto {
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
