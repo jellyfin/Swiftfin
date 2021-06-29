@@ -41,7 +41,6 @@ struct MediaInfoView: View {
     var body: some View {
         if let item = item {
             HStack(spacing: 30) {
-
                 VStack {
                     ImageView(src: item.type == "Episode" ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200), bh: item.type == "Episode" ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())
                         .frame(width: 200, height: 300)

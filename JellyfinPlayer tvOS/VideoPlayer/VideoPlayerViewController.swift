@@ -49,8 +49,16 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     var lastTime: Float = 0.0
     var startTime: Int = 0
 
-    var selectedAudioTrack: Int32 = -1
-    var selectedCaptionTrack: Int32 = -1
+    var selectedAudioTrack: Int32 = -1 {
+        didSet {
+            print(selectedAudioTrack)
+        }
+    }
+    var selectedCaptionTrack: Int32 = -1 {
+        didSet {
+            print(selectedCaptionTrack)
+        }
+    }
 
     var subtitleTrackArray: [Subtitle] = []
     var audioTrackArray: [AudioTrack] = []
@@ -78,7 +86,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         // Check if focused on the tab bar, allows for swipe up to dismiss the info panel
         if context.nextFocusedView!.description.contains("UITabBarButton") {
             // Set value after half a second so info panel is not dismissed instantly when swiping up from content
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.focusedOnTabBar  = true
             }
         } else {
@@ -95,7 +103,6 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
         mediaPlayer.delegate = self
         mediaPlayer.drawable = videoContentView
-        mediaPlayer.libraryInstance.debugLogging = true;
 
         if let runTimeTicks = manifest.runTimeTicks {
             videoDuration = Double(runTimeTicks / 10_000_000)
@@ -125,7 +132,9 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         transportBarView.layer.cornerRadius = CGFloat(5)
 
         setupGestures()
+
         fetchVideo()
+
         setupNowPlayingCC()
 
         // Adjust subtitle size
@@ -296,13 +305,18 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
             if let event = remoteEvent as? MPChangePlaybackPositionCommandEvent {
                 let targetSeconds = event.positionTime
+                print(targetSeconds)
 
-                let videoPosition = Double(self.mediaPlayer.time.intValue)
+                let videoPosition = Double(self.mediaPlayer.time.intValue / 1000)
+                print(videoPosition)
+                
                 let offset = targetSeconds - videoPosition
+                print(offset)
+                
                 if offset > 0 {
-                    self.mediaPlayer.jumpForward(Int32(offset)/1000)
+                    self.mediaPlayer.jumpForward(Int32(offset))
                 } else {
-                    self.mediaPlayer.jumpBackward(Int32(abs(offset))/1000)
+                    self.mediaPlayer.jumpBackward(Int32(abs(offset)))
                 }
                 self.sendProgressReport(eventName: "unpause")
 
@@ -352,19 +366,18 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         if let playing = playing {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = playing ? 1.0 : 0.0
         }
-        if let time = time {
-            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = time
-        }
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = mediaPlayer.time.intValue / 1000
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
     }
 
-    // Grabs a reference to the info panel view controller
+    // Grabs a refference to the info panel view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "infoView" {
             containerViewController = segue.destination as? InfoTabBarViewController
             containerViewController?.videoPlayer = self
+
         }
     }
 
@@ -386,7 +399,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         self.sendProgressReport(eventName: "pause")
 
         self.updateNowPlayingCenter(time: nil, playing: false)
-        self.toggleInfoContainer()
+
         animateScrubber()
 
         self.scrubLabel.frame = CGRect(x: self.scrubberView.frame.minX - self.scrubLabel.frame.width/2, y: self.scrubLabel.frame.minY, width: self.scrubLabel.frame.width, height: self.scrubLabel.frame.height)
@@ -397,8 +410,9 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         mediaPlayer.play()
 
         self.updateNowPlayingCenter(time: nil, playing: true)
-        self.toggleInfoContainer()
+
         self.sendProgressReport(eventName: "unpause")
+
         animateScrubber()
     }
 
@@ -445,10 +459,19 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.userPanned(panGestureRecognizer:)))
         view.addGestureRecognizer(panGestureRecognizer)
+
+        let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipe(swipe:)))
+        swipeRecognizer.direction = .right
+        view.addGestureRecognizer(swipeRecognizer)
+
+        let swipeRecognizerl = UISwipeGestureRecognizer(target: self, action: #selector(self.swipe(swipe:)))
+        swipeRecognizerl.direction = .left
+        view.addGestureRecognizer(swipeRecognizerl)
+
     }
 
     @objc func backButtonPressed(tap: UITapGestureRecognizer) {
-
+        print("back")
         // Dismiss info panel
         if showingInfoPanel {
             if focusedOnTabBar {
@@ -474,6 +497,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     }
 
     @objc func userPanned(panGestureRecognizer: UIPanGestureRecognizer) {
+        print("pan")
         if loading {
             return
         }
@@ -482,7 +506,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         let velocity = panGestureRecognizer.velocity(in: view)
 
         // Swiped up - Handle dismissing info panel
-        if translation.y < -400 && (focusedOnTabBar && showingInfoPanel) {
+        if translation.y < -700 && (focusedOnTabBar && showingInfoPanel) {
             toggleInfoContainer()
             return
         }
@@ -492,7 +516,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         }
 
         // Swiped down - Show the info panel
-        if translation.y > 400 {
+        if translation.y > 700 {
             toggleInfoContainer()
             return
         }
@@ -522,12 +546,39 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     }
 
+    // Not currently used
+    @objc func swipe(swipe: UISwipeGestureRecognizer!) {
+        print("swiped")
+        switch swipe.direction {
+        case .left:
+            print("swiped left")
+//            mediaPlayer.pause()
+            //            player.seek(to: CMTime(value: Int64(self.currentSeconds) + 10, timescale: 1))
+//            mediaPlayer.play()
+        case .right:
+            print("swiped right")
+//            mediaPlayer.pause()
+            //            player.seek(to: CMTime(value: Int64(self.currentSeconds) + 10, timescale: 1))
+//            mediaPlayer.play()
+        case .up:
+            break
+        case .down:
+            break
+        default:
+            break
+        }
+
+    }
+
     /// Play/Pause or Select is pressed on the AppleTV remote
     @objc func selectButtonTapped() {
-        print("select")
         if loading {
             return
         }
+
+        showingControls = true
+        controlsView.isHidden = false
+        controlsAppearTime = CACurrentMediaTime()
 
         // Move to seeked position
         if seeking {
@@ -558,6 +609,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     // MARK: Jellyfin Playstate updates
     func sendProgressReport(eventName: String) {
+        updateNowPlayingCenter(time: nil, playing: mediaPlayer.state == .playing)
+        
         if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
             let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (!playing), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
@@ -655,8 +708,18 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     // Move time along transport bar
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
+
+        if loading {
+            loading = false
+            DispatchQueue.main.async { [self] in
+                activityIndicator.isHidden = true
+                activityIndicator.stopAnimating()
+            }
+            updateNowPlayingCenter(time: nil, playing: true)
+        }
+
         let time = mediaPlayer.position
-        if abs(time-lastTime) > 0.00005 {
+        if time != lastTime {
             self.currentTimeLabel.text = formatSecondsToHMS(Double(mediaPlayer.time.intValue/1000))
             self.remainingTimeLabel.text = "-" + formatSecondsToHMS(Double(abs(mediaPlayer.remainingTime.intValue/1000)))
 
@@ -680,22 +743,14 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     controlsAppearTime = 999_999_999_999_999
                 }
             }
-            lastTime = time
+
         }
 
+        lastTime = time
+
         if CACurrentMediaTime() - lastProgressReportTime > 5 {
-            mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
             sendProgressReport(eventName: "timeupdate")
             lastProgressReportTime = CACurrentMediaTime()
-        }
-        
-        if loading {
-            loading = false
-            DispatchQueue.main.async { [self] in
-                activityIndicator.isHidden = true
-                activityIndicator.stopAnimating()
-            }
-            updateNowPlayingCenter(time: nil, playing: true)
         }
     }
 
