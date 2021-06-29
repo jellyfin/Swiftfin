@@ -61,7 +61,9 @@ final class SessionManager {
         #else
         header.append("Client=\"SwiftFin iOS\", ")
         #endif
+        
         header.append("Device=\"\(deviceName)\", ")
+        
         #if os(tvOS)
         header.append("DeviceId=\"tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(user?.user_id ?? "")\", ")
         deviceID = "tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(user?.user_id ?? "")"

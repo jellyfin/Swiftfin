@@ -103,7 +103,7 @@ struct SeasonItemView: View {
                                         .opacity(1), alignment: .topTrailing).opacity(1)
                                 VStack(alignment: .leading) {
                                     HStack {
-                                        Text("S\(String(episode.parentIndexNumber ?? 0)):E\(String(episode.indexNumber ?? 0))").font(.subheadline)
+                                        Text(episode.getEpisodeLocator()).font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
                                             .lineLimit(1)

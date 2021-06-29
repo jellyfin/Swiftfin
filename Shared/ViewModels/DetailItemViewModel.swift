@@ -12,19 +12,30 @@ import Foundation
 import JellyfinAPI
 
 class DetailItemViewModel: ViewModel {
-    @Published
-    var item: BaseItemDto
-
-    @Published
-    var isWatched = false
-    @Published
-    var isFavorited = false
+    @Published var item: BaseItemDto
+    @Published var similarItems: [BaseItemDto] = []
+    
+    @Published var isWatched = false
+    @Published var isFavorited = false
 
     init(item: BaseItemDto) {
         self.item = item
         isFavorited = item.userData?.isFavorite ?? false
         isWatched = item.userData?.played ?? false
         super.init()
+        
+        getRelatedItems()
+    }
+    
+    func getRelatedItems() {
+        LibraryAPI.getSimilarItems(itemId: item.id!, userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
+            .trackActivity(loading)
+            .sink(receiveCompletion: { [weak self] completion in
+                self?.handleAPIRequestCompletion(completion: completion)
+            }, receiveValue: { [weak self] response in
+                self?.similarItems = response.items ?? []
+            })
+            .store(in: &cancellables)
     }
 
     func updateWatchState() {

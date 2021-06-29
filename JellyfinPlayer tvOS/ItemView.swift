@@ -27,21 +27,14 @@ struct ItemView: View {
     }
 
     var body: some View {
-        ZStack {
-            NavigationLink(destination: VideoPlayerView(item: videoPlayerItem.itemToPlay), isActive: $videoPlayerItem.shouldShowPlayer) {
-                EmptyView()
+        Group {
+            if item.type == "Movie" {
+                MovieItemView(viewModel: .init(item: item))
+            } else if item.type == "Series" {
+                SeriesItemView(viewModel: .init(item: item))
+            } else {
+                Text("Type: \(item.type ?? "") not implemented yet :(")
             }
-            .buttonStyle(PlainNavigationLinkButtonStyle())
-            .focusable(false)
-            
-            Group {
-                if item.type == "Movie" {
-                    MovieItemView(item: item)
-                } else {
-                    Text("Type: \(item.type ?? "") not implemented yet :(")
-                }
-            }
-            .environmentObject(videoPlayerItem)
         }
     }
 }

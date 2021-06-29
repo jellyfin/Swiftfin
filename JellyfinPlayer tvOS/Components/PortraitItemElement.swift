@@ -19,7 +19,7 @@ struct PortraitItemElement: View {
 
     var body: some View {
         VStack {
-            ImageView(src: item.type == "Episode" ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200), bh: item.type == "Episode" ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())
+            ImageView(src: item.type == "Episode" ? item.getSeriesPrimaryImage(maxWidth: 400) : item.getPrimaryImage(maxWidth: 400), bh: item.type == "Episode" ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())
                 .frame(width: 200, height: 300)
                 .cornerRadius(10)
                 .shadow(radius: focused ? 10.0 : 0)
@@ -65,7 +65,7 @@ struct PortraitItemElement: View {
             if envFocus == true {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     // your code here
-                    if self.focused == true {
+                    if focused == true {
                         backgroundURL = item.getBackdropImage(maxWidth: 1080)
                         BackgroundManager.current.setBackground(to: backgroundURL!, hash: item.getBackdropImageBlurHash())
                     }

@@ -73,6 +73,13 @@ extension BaseItemDto {
         let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         return URL(string: urlString)!
     }
+    
+    func getEpisodeLocator() -> String {
+        if let seasonNo = self.parentIndexNumber, let episodeNo = self.indexNumber {
+            return "S\(seasonNo):E\(episodeNo)"
+        }
+        return ""
+    }
 
     func getSeriesBackdropImage(maxWidth: Int) -> URL {
         let imageType = "Backdrop"
@@ -104,6 +111,7 @@ extension BaseItemDto {
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
         let urlString = "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+        //print(urlString)
         return URL(string: urlString)!
     }
 

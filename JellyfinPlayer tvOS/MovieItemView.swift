@@ -11,9 +11,8 @@ import SwiftUI
 import JellyfinAPI
 
 struct MovieItemView: View {
-    let item: BaseItemDto
-    @EnvironmentObject private var playbackInfo: VideoPlayerItem
-    
+    @ObservedObject var viewModel: MovieItemViewModel
+
     @State var actors: [BaseItemPerson] = [];
     @State var studio: String? = nil;
     @State var director: String? = nil;
@@ -25,9 +24,9 @@ struct MovieItemView: View {
         director = nil
         studio = nil
         var actor_index = 0;
-        item.people?.forEach { person in
+        viewModel.item.people?.forEach { person in
             if(person.type == "Actor") {
-                if(actor_index < 8) {
+                if(actor_index < 4) {
                     actors.append(person)
                 }
                 actor_index = actor_index + 1;
@@ -36,141 +35,153 @@ struct MovieItemView: View {
                 director = person.name ?? ""
             }
         }
+        
+        studio = viewModel.item.studios?.first?.name ?? nil
     }
     
     var body: some View {
         ZStack {
-            ImageView(src: item.getBackdropImage(maxWidth: 1920), bh: item.getBackdropImageBlurHash())
+            ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920), bh: viewModel.item.getBackdropImageBlurHash())
                 .opacity(0.4)
             ScrollView {
-                LazyVStack {
+                LazyVStack(alignment: .leading) {
+                    Spacer() //i hate ficus engine
+                        .frame(width: 1920, height: 2)
+                        .focusable()
+                    Text(viewModel.item.name ?? "")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
                     HStack {
-                        VStack(alignment: .leading) {
-                            Text(item.name ?? "")
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .foregroundColor(.primary)
-                            HStack {
-                                if item.productionYear != nil {
-                                    Text(String(item.productionYear!)).font(.subheadline)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.secondary)
-                                        .lineLimit(1)
-                                }
-                                Text(item.getItemRuntime()).font(.subheadline)
-                                    .fontWeight(.medium)
+                        if viewModel.item.productionYear != nil {
+                            Text(String(viewModel.item.productionYear!)).font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                        Text(viewModel.item.getItemRuntime()).font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                        if viewModel.item.officialRating != nil {
+                            Text(viewModel.item.officialRating!).font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                .overlay(RoundedRectangle(cornerRadius: 2)
+                                    .stroke(Color.secondary, lineWidth: 1))
+                        }
+                    }
+                    
+                    HStack {
+                        VStack(alignment: .trailing) {
+                            if(studio != nil) {
+                                Text("STUDIO")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                Text(studio!)
+                                    .font(.body)
+                                    .fontWeight(.semibold)
                                     .foregroundColor(.secondary)
-                                    .lineLimit(1)
-                                if item.officialRating != nil {
-                                    Text(item.officialRating!).font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.secondary)
-                                        .lineLimit(1)
-                                        .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                                        .overlay(RoundedRectangle(cornerRadius: 2)
-                                            .stroke(Color.secondary, lineWidth: 1))
-                                }
+                                    .padding(.bottom, 40)
                             }
                             
-                            HStack {
-                                VStack(alignment: .trailing) {
-                                    if(studio != nil) {
-                                        Text("STUDIO")
-                                            .font(.body)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.primary)
-                                        Text(studio!)
-                                            .font(.body)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.secondary)
-                                            .padding(.bottom, 40)
-                                    }
-                                    
-                                    if(director != nil) {
-                                        Text("DIRECTOR")
-                                            .font(.body)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.primary)
-                                        Text(director!)
-                                            .font(.body)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.secondary)
-                                            .padding(.bottom, 40)
-                                    }
-                                    
-                                    if(!actors.isEmpty) {
-                                        Text("CAST")
-                                            .font(.body)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.primary)
-                                        ForEach(actors, id: \.id) { person in
-                                            Text(person.name!)
-                                                .font(.body)
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(.secondary)
-                                        }
-                                    }
-                                    Spacer()
-                                }
-                                VStack(alignment: .leading) {
-                                    Text(item.taglines?.first ?? "")
+                            if(director != nil) {
+                                Text("DIRECTOR")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                Text(director!)
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                    .padding(.bottom, 40)
+                            }
+                            
+                            if(!actors.isEmpty) {
+                                Text("CAST")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                ForEach(actors, id: \.id) { person in
+                                    Text(person.name!)
                                         .font(.body)
-                                        .italic()
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.primary)
-                                    
-                                    Text(item.overview ?? "")
-                                        .font(.body)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.primary)
-                                    
-                                    HStack {
-                                        VStack {
-                                            Button {
-                                                playbackInfo.shouldShowPlayer = true
-                                            } label: {
-                                                Image(systemName: "heart.fill")
-                                                    .font(.system(size: 40))
-                                                    .padding(.vertical, 12).padding(.horizontal, 20)
-                                            }
-                                            Text("Favorite")
-                                                .font(.caption)
-                                        }
-                                        VStack {
-                                            Button {
-                                                playbackInfo.itemToPlay = item
-                                                playbackInfo.shouldShowPlayer = true
-                                            } label: {
-                                                Image(systemName: "play.fill")
-                                                    .font(.system(size: 40))
-                                                    .padding(.vertical, 12).padding(.horizontal, 20)
-                                            }.prefersDefaultFocus(in: namespace)
-                                            Text("Play")
-                                                .font(.caption)
-                                        }
-                                        VStack {
-                                            Button {
-                                                playbackInfo.shouldShowPlayer = true
-                                            } label: {
-                                                Image(systemName: "eye.fill")
-                                                    .font(.system(size: 40))
-                                                    .padding(.vertical, 12).padding(.horizontal, 20)
-                                            }
-                                            Text("Mark Watched")
-                                                .font(.caption)
-                                        }
-                                    }.padding(.top, 15)
-                                    Spacer()
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.secondary)
                                 }
-                            }.padding(.top, 50)
-                        }
-                        
-                        VStack {
-                            ImageView(src: item.getPrimaryImage(maxWidth: 450), bh: item.getPrimaryImageBlurHash())
-                                .frame(width: 450, height: 675)
-                                .cornerRadius(10)
+                            }
                             Spacer()
                         }
+                        VStack(alignment: .leading) {
+                            if(!(viewModel.item.taglines ?? []).isEmpty) {
+                                Text(viewModel.item.taglines?.first ?? "")
+                                    .font(.body)
+                                    .italic()
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.primary)
+                            }
+                            Text(viewModel.item.overview ?? "")
+                                .font(.body)
+                                .fontWeight(.medium)
+                                .foregroundColor(.primary)
+                            
+                            HStack {
+                                VStack {
+                                    Button {
+                                        viewModel.updateFavoriteState()
+                                    } label: {
+                                        Image(systemName: "heart.fill")
+                                            .foregroundColor(viewModel.isFavorited ? .red : .primary)
+                                            .font(.system(size: 40))
+                                            .padding(.vertical, 12).padding(.horizontal, 20)
+                                    }
+                                    Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
+                                        .font(.caption)
+                                }
+                                VStack {
+                                    NavigationLink(destination: VideoPlayerView(item: viewModel.item)) {
+                                        Image(systemName: "play.fill")
+                                            .font(.system(size: 40))
+                                            .padding(.vertical, 12).padding(.horizontal, 20)
+                                    }
+                                    Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : "Play")
+                                        .font(.caption)
+                                }
+                                VStack {
+                                    Button {
+                                        viewModel.updateWatchState()
+                                    } label: {
+                                        Image(systemName: "eye.fill")
+                                            .foregroundColor(viewModel.isWatched ? .red : .primary)
+                                            .font(.system(size: 40))
+                                            .padding(.vertical, 12).padding(.horizontal, 20)
+                                    }
+                                    Text(viewModel.isWatched ? "Unwatch" : "Mark Watched")
+                                        .font(.caption)
+                                }
+                            }.padding(.top, 15)
+                            Spacer()
+                        }
+                    }.padding(.top, 50)
+                    
+                    if(!viewModel.similarItems.isEmpty) {
+                        Text("More Like This")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        ScrollView(.horizontal) {
+                            LazyHStack {
+                                Spacer().frame(width: 45)
+                                ForEach(viewModel.similarItems, id: \.id) { similarItems in
+                                    NavigationLink(destination: ItemView(item: similarItems)) {
+                                        PortraitItemElement(item: similarItems)
+                                    }.buttonStyle(PlainNavigationLinkButtonStyle())
+                                }
+                                Spacer().frame(width: 45)
+                            }
+                        }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
+                        .frame(height: 360)
                     }
                 }.padding(EdgeInsets(top: 90, leading: 90, bottom: 0, trailing: 90))
             }

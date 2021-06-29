@@ -11,17 +11,13 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class SeasonItemViewModel: ViewModel {
-    @Published
-    var item: BaseItemDto
+final class SeasonItemViewModel: DetailItemViewModel {
+    @Published var episodes = [BaseItemDto]()
 
-    @Published
-    var episodes = [BaseItemDto]()
-
-    init(item: BaseItemDto) {
+    override init(item: BaseItemDto) {
+        super.init(item: item)
         self.item = item
-        super.init()
-
+        
         requestEpisodes()
     }
 

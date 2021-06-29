@@ -15,13 +15,6 @@ class UpNextViewModel: ObservableObject {
     @Published var item: BaseItemDto? = nil
     var delegate: PlayerViewController?
     
-    func getEpisodeLocator() -> String {
-        if let seasonNo = item?.parentIndexNumber, let episodeNo = item?.indexNumber {
-            return "S\(seasonNo):E\(episodeNo)"
-        }
-        return ""
-    }
-    
     func nextUp() {
         if delegate != nil {
             delegate?.setPlayerToNextUp()
@@ -43,7 +36,7 @@ struct VideoUpNextView: View {
                         .foregroundColor(.white)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                    Text(viewModel.getEpisodeLocator())
+                    Text(viewModel.item.getEpisodeLocator())
                         .foregroundColor(.secondary)
                         .font(.caption)
                 }

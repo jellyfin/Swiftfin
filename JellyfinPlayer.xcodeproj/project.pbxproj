@@ -22,6 +22,8 @@
 		5310695B2684E7EE00CFFDBA /* AudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069542684E7EE00CFFDBA /* AudioView.swift */; };
 		5310695C2684E7EE00CFFDBA /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069552684E7EE00CFFDBA /* VideoPlayerViewController.swift */; };
 		5310695D2684E7EE00CFFDBA /* VideoPlayer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 531069562684E7EE00CFFDBA /* VideoPlayer.storyboard */; };
+		53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A16268B919A003024C9 /* SeriesItemView.swift */; };
+		53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A18268B947A003024C9 /* PlainLinkButton.swift */; };
 		531690E5267ABD5C005D8AB9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E4267ABD5C005D8AB9 /* MainTabView.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */; };
@@ -218,6 +220,8 @@
 		531069542684E7EE00CFFDBA /* AudioView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioView.swift; sourceTree = "<group>"; };
 		531069552684E7EE00CFFDBA /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		531069562684E7EE00CFFDBA /* VideoPlayer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = VideoPlayer.storyboard; sourceTree = "<group>"; };
+		53116A16268B919A003024C9 /* SeriesItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesItemView.swift; sourceTree = "<group>"; };
+		53116A18268B947A003024C9 /* PlainLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlainLinkButton.swift; sourceTree = "<group>"; };
 		531690E4267ABD5C005D8AB9 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
@@ -458,6 +462,7 @@
 				53A83C32268A309300DF3D92 /* LibraryView.swift */,
 				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
 				53CD2A41268A4B38002ABD4E /* MovieItemView.swift */,
+				53116A16268B919A003024C9 /* SeriesItemView.swift */,
 			);
 			path = "JellyfinPlayer tvOS";
 			sourceTree = "<group>";
@@ -497,6 +502,7 @@
 				531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */,
 				536D3D80267BDFC60004248C /* PortraitItemElement.swift */,
 				536D3D87267C17350004248C /* PublicUserButton.swift */,
+				53116A18268B947A003024C9 /* PlainLinkButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -950,11 +956,13 @@
 				6267B3DC2671139500A7371D /* ImageExtensions.swift in Sources */,
 				531069592684E7EE00CFFDBA /* SubtitlesView.swift in Sources */,
 				53ABFDE9267974EF00886593 /* HomeViewModel.swift in Sources */,
+				53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */,
 				62EC352D26766675000E9F2D /* ServerEnvironment.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				53ABFDDE267974E300886593 /* SplashView.swift in Sources */,
 				53ABFDE8267974EF00886593 /* SplashViewModel.swift in Sources */,
 				62E632DE267D2E170063E547 /* LatestMediaViewModel.swift in Sources */,
+				53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */,
 				536D3D88267C17350004248C /* PublicUserButton.swift in Sources */,
 				62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,

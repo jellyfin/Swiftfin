@@ -43,7 +43,7 @@ struct LandscapeItemElement: View {
 
     var body: some View {
         VStack {
-            ImageView(src: (item.type == "Episode" ? item.getSeriesBackdropImage(maxWidth: 445) : item.getBackdropImage(maxWidth: 445)), bh: item.type == "Episode" ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
+            ImageView(src: (item.type == "Episode" ? item.getSeriesBackdropImage(maxWidth: 800) : item.getBackdropImage(maxWidth: 800)), bh: item.type == "Episode" ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
                 .frame(width: 445, height: 250)
                 .cornerRadius(10)
                 .overlay(
@@ -97,7 +97,7 @@ struct LandscapeItemElement: View {
             if envFocus == true {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     // your code here
-                    if self.focused == true {
+                    if focused == true {
                         backgroundURL = item.getBackdropImage(maxWidth: 1080)
                         BackgroundManager.current.setBackground(to: backgroundURL!, hash: item.getBackdropImageBlurHash())
                     }

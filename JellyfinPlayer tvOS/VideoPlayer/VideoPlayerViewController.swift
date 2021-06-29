@@ -49,16 +49,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     var lastTime: Float = 0.0
     var startTime: Int = 0
 
-    var selectedAudioTrack: Int32 = -1 {
-        didSet {
-            print(selectedAudioTrack)
-        }
-    }
-    var selectedCaptionTrack: Int32 = -1 {
-        didSet {
-            print(selectedCaptionTrack)
-        }
-    }
+    var selectedAudioTrack: Int32 = -1
+    var selectedCaptionTrack: Int32 = -1
 
     var subtitleTrackArray: [Subtitle] = []
     var audioTrackArray: [AudioTrack] = []
@@ -86,7 +78,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         // Check if focused on the tab bar, allows for swipe up to dismiss the info panel
         if context.nextFocusedView!.description.contains("UITabBarButton") {
             // Set value after half a second so info panel is not dismissed instantly when swiping up from content
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                 self.focusedOnTabBar  = true
             }
         } else {
@@ -103,6 +95,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
         mediaPlayer.delegate = self
         mediaPlayer.drawable = videoContentView
+        mediaPlayer.libraryInstance.debugLogging = true;
 
         if let runTimeTicks = manifest.runTimeTicks {
             videoDuration = Double(runTimeTicks / 10_000_000)
@@ -132,9 +125,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         transportBarView.layer.cornerRadius = CGFloat(5)
 
         setupGestures()
-
         fetchVideo()
-
         setupNowPlayingCC()
 
         // Adjust subtitle size
@@ -321,13 +312,6 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
             }
         }
 
-//        commandCenter.enableLanguageOptionCommand.addTarget { [weak self](remoteEvent) in
-//            guard let self = self else {return .commandFailed}
-//
-//
-//
-//        }
-
         var runTicks = 0
         var playbackTicks = 0
 
@@ -376,12 +360,11 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     }
 
-    // Grabs a refference to the info panel view controller
+    // Grabs a reference to the info panel view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "infoView" {
             containerViewController = segue.destination as? InfoTabBarViewController
             containerViewController?.videoPlayer = self
-
         }
     }
 
@@ -403,7 +386,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         self.sendProgressReport(eventName: "pause")
 
         self.updateNowPlayingCenter(time: nil, playing: false)
-
+        self.toggleInfoContainer()
         animateScrubber()
 
         self.scrubLabel.frame = CGRect(x: self.scrubberView.frame.minX - self.scrubLabel.frame.width/2, y: self.scrubLabel.frame.minY, width: self.scrubLabel.frame.width, height: self.scrubLabel.frame.height)
@@ -414,9 +397,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         mediaPlayer.play()
 
         self.updateNowPlayingCenter(time: nil, playing: true)
-
+        self.toggleInfoContainer()
         self.sendProgressReport(eventName: "unpause")
-
         animateScrubber()
     }
 
@@ -463,15 +445,6 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.userPanned(panGestureRecognizer:)))
         view.addGestureRecognizer(panGestureRecognizer)
-
-        let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipe(swipe:)))
-        swipeRecognizer.direction = .right
-        view.addGestureRecognizer(swipeRecognizer)
-
-        let swipeRecognizerl = UISwipeGestureRecognizer(target: self, action: #selector(self.swipe(swipe:)))
-        swipeRecognizerl.direction = .left
-        view.addGestureRecognizer(swipeRecognizerl)
-
     }
 
     @objc func backButtonPressed(tap: UITapGestureRecognizer) {
@@ -509,7 +482,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         let velocity = panGestureRecognizer.velocity(in: view)
 
         // Swiped up - Handle dismissing info panel
-        if translation.y < -700 && (focusedOnTabBar && showingInfoPanel) {
+        if translation.y < -400 && (focusedOnTabBar && showingInfoPanel) {
             toggleInfoContainer()
             return
         }
@@ -519,7 +492,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         }
 
         // Swiped down - Show the info panel
-        if translation.y > 700 {
+        if translation.y > 400 {
             toggleInfoContainer()
             return
         }
@@ -549,39 +522,12 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     }
 
-    // Not currently used
-    @objc func swipe(swipe: UISwipeGestureRecognizer!) {
-        print("swiped")
-        switch swipe.direction {
-        case .left:
-            print("swiped left")
-//            mediaPlayer.pause()
-            //            player.seek(to: CMTime(value: Int64(self.currentSeconds) + 10, timescale: 1))
-//            mediaPlayer.play()
-        case .right:
-            print("swiped right")
-//            mediaPlayer.pause()
-            //            player.seek(to: CMTime(value: Int64(self.currentSeconds) + 10, timescale: 1))
-//            mediaPlayer.play()
-        case .up:
-            break
-        case .down:
-            break
-        default:
-            break
-        }
-
-    }
-
     /// Play/Pause or Select is pressed on the AppleTV remote
     @objc func selectButtonTapped() {
+        print("select")
         if loading {
             return
         }
-
-        showingControls = true
-        controlsView.isHidden = false
-        controlsAppearTime = CACurrentMediaTime()
 
         // Move to seeked position
         if seeking {
@@ -786,12 +732,6 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
         return text.hasPrefix("0") && text.count > 4 ?
             .init(text.dropFirst()) : text
-    }
-
-    // When VLC video starts playing a real device can no longer receive gesture recognisers, adding this in hopes to fix the issue but no luck
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        print("recognisesimultaneousvideoplayer")
-        return true
     }
 }
 

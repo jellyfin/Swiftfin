@@ -57,7 +57,7 @@ struct ContinueWatchingView: View {
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
                                 if item.type == "Episode" {
-                                    Text("• S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0)) - \(item.name ?? "")")
+                                    Text("• \(item.getEpisodeLocator()) - \(item.name ?? "")")
                                         .font(.callout)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.secondary)
