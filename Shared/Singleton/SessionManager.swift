@@ -53,8 +53,8 @@ final class SessionManager {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         var deviceName = UIDevice.current.name
         deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
-        deviceName = deviceName.removeRegexMatches(pattern: "[^\\w\\s]")
-
+        deviceName = String(deviceName.unicodeScalars.filter {CharacterSet.urlQueryAllowed.contains($0) })
+        
         var header = "MediaBrowser "
         #if os(tvOS)
         header.append("Client=\"SwiftFin tvOS\", ")
