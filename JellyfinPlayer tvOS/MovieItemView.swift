@@ -9,6 +9,7 @@
 
 import SwiftUI
 import JellyfinAPI
+import SwiftUIFocusGuide
 
 struct MovieItemView: View {
     @ObservedObject var viewModel: MovieItemViewModel
@@ -16,6 +17,10 @@ struct MovieItemView: View {
     @State var actors: [BaseItemPerson] = [];
     @State var studio: String? = nil;
     @State var director: String? = nil;
+    
+    @State var wrappedScrollView: UIScrollView?;
+    
+    @StateObject var focusBag = SwiftUIFocusBag()
     
     @Namespace private var namespace
     
@@ -45,9 +50,6 @@ struct MovieItemView: View {
                 .opacity(0.4)
             ScrollView {
                 LazyVStack(alignment: .leading) {
-                    Spacer() //i hate ficus engine
-                        .frame(width: 1920, height: 2)
-                        .focusable()
                     Text(viewModel.item.name ?? "")
                         .font(.title)
                         .fontWeight(.bold)
@@ -132,19 +134,14 @@ struct MovieItemView: View {
                                     Button {
                                         viewModel.updateFavoriteState()
                                     } label: {
-                                        Image(systemName: "heart.fill")
-                                            .foregroundColor(viewModel.isFavorited ? .red : .primary)
-                                            .font(.system(size: 40))
-                                            .padding(.vertical, 12).padding(.horizontal, 20)
+                                        MediaViewActionButton(icon: "heart.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isFavorited ? .red : .white)
                                     }
                                     Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
                                         .font(.caption)
                                 }
                                 VStack {
                                     NavigationLink(destination: VideoPlayerView(item: viewModel.item)) {
-                                        Image(systemName: "play.fill")
-                                            .font(.system(size: 40))
-                                            .padding(.vertical, 12).padding(.horizontal, 20)
+                                        MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
                                     }
                                     Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : "Play")
                                         .font(.caption)
@@ -153,19 +150,18 @@ struct MovieItemView: View {
                                     Button {
                                         viewModel.updateWatchState()
                                     } label: {
-                                        Image(systemName: "eye.fill")
-                                            .foregroundColor(viewModel.isWatched ? .red : .primary)
-                                            .font(.system(size: 40))
-                                            .padding(.vertical, 12).padding(.horizontal, 20)
+                                        MediaViewActionButton(icon: "eye.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isWatched ? .red : .white)
                                     }
                                     Text(viewModel.isWatched ? "Unwatch" : "Mark Watched")
                                         .font(.caption)
                                 }
-                            }.padding(.top, 15)
-                            Spacer()
+                                Spacer()
+                            }
+                            .padding(.top, 15)
+                            .addFocusGuide(using: focusBag, name: "actionButtons", destinations: [.bottom: "moreLikeThis"], debug: true)
                         }
                     }.padding(.top, 50)
-                    
+
                     if(!viewModel.similarItems.isEmpty) {
                         Text("More Like This")
                             .font(.headline)
@@ -181,11 +177,21 @@ struct MovieItemView: View {
                                 Spacer().frame(width: 45)
                             }
                         }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
+                        .addFocusGuide(using: focusBag, name: "moreLikeThis", destinations: [.top: "actionButtons"], debug: false)
                         .frame(height: 360)
                     }
                 }.padding(EdgeInsets(top: 90, leading: 90, bottom: 0, trailing: 90))
+            }.introspectScrollView { scrollView in
+                wrappedScrollView = scrollView
             }
         }.onAppear(perform: onAppear)
         .focusScope(namespace)
     }
+}
+
+extension UIScrollView {
+    func scrollToTop() {
+        let desiredOffset = CGPoint(x: 0, y: 0)
+        setContentOffset(desiredOffset, animated: true)
+   }
 }

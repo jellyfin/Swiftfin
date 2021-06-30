@@ -9,6 +9,7 @@
 
 import SwiftUI
 import JellyfinAPI
+import SwiftUIFocusGuide
 
 struct SeriesItemView: View {
     @ObservedObject var viewModel: SeriesItemViewModel
@@ -16,6 +17,10 @@ struct SeriesItemView: View {
     @State var actors: [BaseItemPerson] = [];
     @State var studio: String? = nil;
     @State var director: String? = nil;
+    
+    @State var wrappedScrollView: UIScrollView?;
+    
+    @StateObject var focusBag = SwiftUIFocusBag()
     
     @Environment(\.resetFocus) var resetFocus
     @Namespace private var namespace
@@ -45,183 +50,173 @@ struct SeriesItemView: View {
             ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920), bh: viewModel.item.getBackdropImageBlurHash())
                 .opacity(0.4)
             ScrollView {
-                ScrollViewReader { reader in
-                    LazyVStack(alignment: .leading) {
-                        Spacer() //i hate ficus engine
-                            .frame(width: 1920, height: 2)
-                            .focusable()
-                        Text(viewModel.item.name ?? "")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
-                        HStack {
-                            Text(viewModel.getRunYears()).font(.subheadline)
-                                .fontWeight(.medium)
+                LazyVStack(alignment: .leading) {
+                    Text(viewModel.item.name ?? "")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    HStack {
+                        Text(viewModel.getRunYears()).font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                        if viewModel.item.officialRating != nil {
+                            Text(viewModel.item.officialRating!).font(.subheadline)
+                                .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
-                            if viewModel.item.officialRating != nil {
-                                Text(viewModel.item.officialRating!).font(.subheadline)
+                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                .overlay(RoundedRectangle(cornerRadius: 2)
+                                    .stroke(Color.secondary, lineWidth: 1))
+                        }
+                        if viewModel.item.communityRating != nil {
+                            HStack {
+                                Image(systemName: "star.fill")
+                                    .foregroundColor(.yellow)
+                                    .font(.subheadline)
+                                Text(String(viewModel.item.communityRating!)).font(.subheadline)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
-                                    .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                                    .overlay(RoundedRectangle(cornerRadius: 2)
-                                        .stroke(Color.secondary, lineWidth: 1))
-                            }
-                            if viewModel.item.communityRating != nil {
-                                HStack {
-                                    Image(systemName: "star.fill")
-                                        .foregroundColor(.yellow)
-                                        .font(.subheadline)
-                                    Text(String(viewModel.item.communityRating!)).font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.secondary)
-                                        .lineLimit(1)
-                                }
                             }
                         }
-                        
-                        HStack {
-                            VStack(alignment: .trailing) {
-                                if(studio != nil) {
-                                    Text("STUDIO")
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.primary)
-                                    Text(studio!)
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.secondary)
-                                        .padding(.bottom, 40)
-                                }
-                                
-                                if(director != nil) {
-                                    Text("DIRECTOR")
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.primary)
-                                    Text(director!)
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.secondary)
-                                        .padding(.bottom, 40)
-                                }
-                                
-                                if(!actors.isEmpty) {
-                                    Text("CAST")
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.primary)
-                                    ForEach(actors, id: \.id) { person in
-                                        Text(person.name!)
-                                            .font(.body)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                Spacer()
-                            }
-                            VStack(alignment: .leading) {
-                                if(!(viewModel.item.taglines ?? []).isEmpty) {
-                                    Text(viewModel.item.taglines?.first ?? "")
-                                        .font(.body)
-                                        .italic()
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.primary)
-                                }
-                                Text(viewModel.item.overview ?? "")
+                    }
+                    
+                    HStack {
+                        VStack(alignment: .trailing) {
+                            if(studio != nil) {
+                                Text("STUDIO")
                                     .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                Text(studio!)
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                    .padding(.bottom, 40)
+                            }
+                            
+                            if(director != nil) {
+                                Text("DIRECTOR")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                Text(director!)
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                    .padding(.bottom, 40)
+                            }
+                            
+                            if(!actors.isEmpty) {
+                                Text("CAST")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                ForEach(actors, id: \.id) { person in
+                                    Text(person.name!)
+                                        .font(.body)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            Spacer()
+                        }
+                        VStack(alignment: .leading) {
+                            if(!(viewModel.item.taglines ?? []).isEmpty) {
+                                Text(viewModel.item.taglines?.first ?? "")
+                                    .font(.body)
+                                    .italic()
                                     .fontWeight(.medium)
                                     .foregroundColor(.primary)
-                                
-                                HStack {
-                                    VStack {
-                                        Button {
-                                            viewModel.updateFavoriteState()
-                                        } label: {
-                                            Image(systemName: "heart.fill")
-                                                .foregroundColor(viewModel.isFavorited ? .red : .primary)
-                                                .font(.system(size: 40))
-                                                .padding(.vertical, 12).padding(.horizontal, 20)
-                                        }.prefersDefaultFocus(in: namespace)
-                                        Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
-                                            .font(.caption)
-                                    }
-                                    if(viewModel.nextUpItem != nil) {
-                                        VStack {
-                                            NavigationLink(destination: VideoPlayerView(item: viewModel.nextUpItem!)) {
-                                                Image(systemName: "play.fill")
-                                                    .font(.system(size: 40))
-                                                    .padding(.vertical, 12).padding(.horizontal, 20)
-                                            }
-                                            Text("Play • \(viewModel.nextUpItem!.getEpisodeLocator())")
-                                                .font(.caption)
-                                        }
-                                    }
-                                    VStack {
-                                        Button {
-                                            viewModel.updateWatchState()
-                                        } label: {
-                                            Image(systemName: "eye.fill")
-                                                .foregroundColor(viewModel.isWatched ? .red : .primary)
-                                                .font(.system(size: 40))
-                                                .padding(.vertical, 12).padding(.horizontal, 20)
-                                        }
-                                        Text(viewModel.isWatched ? "Unwatch" : "Mark Watched")
-                                            .font(.caption)
-                                    }
-                                }.padding(.top, 15)
-                                Spacer()
                             }
-                        }.padding(.top, 50)
-                        
-                        if(viewModel.nextUpItem != nil) {
-                            Text("Next Up")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                            NavigationLink(destination: ItemView(item: viewModel.nextUpItem!)) {
-                                LandscapeItemElement(item: viewModel.nextUpItem!)
-                            }.buttonStyle(PlainNavigationLinkButtonStyle()).padding(.bottom, 1)
-                        }
-                        
-                        if(!viewModel.seasons.isEmpty) {
-                            Text("Seasons")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                            ScrollView(.horizontal) {
-                                LazyHStack {
-                                    Spacer().frame(width: 45)
-                                    ForEach(viewModel.seasons, id: \.id) { season in
-                                        NavigationLink(destination: ItemView(item: season)) {
-                                            PortraitItemElement(item: season)
-                                        }.buttonStyle(PlainNavigationLinkButtonStyle())
-                                    }
-                                    Spacer().frame(width: 45)
+                            Text(viewModel.item.overview ?? "")
+                                .font(.body)
+                                .fontWeight(.medium)
+                                .foregroundColor(.primary)
+                            
+                            HStack {
+                                VStack {
+                                    Button {
+                                        viewModel.updateFavoriteState()
+                                    } label: {
+                                        MediaViewActionButton(icon: "heart.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isFavorited ? .red : .white)
+                                    }.prefersDefaultFocus(in: namespace)
+                                    Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
+                                        .font(.caption)
                                 }
-                            }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
-                            .frame(height: 360)
-                        }
-                        
-                        if(!viewModel.similarItems.isEmpty) {
-                            Text("More Like This")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                            ScrollView(.horizontal) {
-                                LazyHStack {
-                                    Spacer().frame(width: 45)
-                                    ForEach(viewModel.similarItems, id: \.id) { similarItems in
-                                        NavigationLink(destination: ItemView(item: similarItems)) {
-                                            PortraitItemElement(item: similarItems)
-                                        }.buttonStyle(PlainNavigationLinkButtonStyle())
+                                if(viewModel.nextUpItem != nil) {
+                                    VStack {
+                                        NavigationLink(destination: VideoPlayerView(item: viewModel.nextUpItem!)) {
+                                            MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
+                                        }
+                                        Text("Play • \(viewModel.nextUpItem!.getEpisodeLocator())")
+                                            .font(.caption)
                                     }
-                                    Spacer().frame(width: 45)
                                 }
-                            }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
-                            .frame(height: 360)
+                                VStack {
+                                    Button {
+                                        viewModel.updateWatchState()
+                                    } label: {
+                                        MediaViewActionButton(icon: "eye.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isWatched ? .red : .white)
+                                    }
+                                    Text(viewModel.isWatched ? "Unwatch" : "Mark Watched")
+                                        .font(.caption)
+                                }
+                            }.padding(.top, 15)
+                            Spacer()
                         }
-                    }.padding(EdgeInsets(top: 90, leading: 90, bottom: 45, trailing: 90))
-                }
+                    }.padding(.top, 50)
+                    
+                    if(viewModel.nextUpItem != nil) {
+                        Text("Next Up")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        NavigationLink(destination: ItemView(item: viewModel.nextUpItem!)) {
+                            LandscapeItemElement(item: viewModel.nextUpItem!)
+                        }.buttonStyle(PlainNavigationLinkButtonStyle()).padding(.bottom, 1)
+                    }
+                    
+                    if(!viewModel.seasons.isEmpty) {
+                        Text("Seasons")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        ScrollView(.horizontal) {
+                            LazyHStack {
+                                Spacer().frame(width: 45)
+                                ForEach(viewModel.seasons, id: \.id) { season in
+                                    NavigationLink(destination: ItemView(item: season)) {
+                                        PortraitItemElement(item: season)
+                                    }.buttonStyle(PlainNavigationLinkButtonStyle())
+                                }
+                                Spacer().frame(width: 45)
+                            }
+                        }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
+                        .frame(height: 360)
+                    }
+                    
+                    if(!viewModel.similarItems.isEmpty) {
+                        Text("More Like This")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        ScrollView(.horizontal) {
+                            LazyHStack {
+                                Spacer().frame(width: 45)
+                                ForEach(viewModel.similarItems, id: \.id) { similarItems in
+                                    NavigationLink(destination: ItemView(item: similarItems)) {
+                                        PortraitItemElement(item: similarItems)
+                                    }.buttonStyle(PlainNavigationLinkButtonStyle())
+                                }
+                                Spacer().frame(width: 45)
+                            }
+                        }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
+                        .frame(height: 360)
+                    }
+                }.padding(EdgeInsets(top: 90, leading: 90, bottom: 45, trailing: 90))
             }.focusScope(namespace)
+            .introspectScrollView { scrollView in
+                wrappedScrollView = scrollView
+            }
         }.onAppear(perform: onAppear)
     }
 }

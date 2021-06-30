@@ -49,16 +49,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     var lastTime: Float = 0.0
     var startTime: Int = 0
 
-    var selectedAudioTrack: Int32 = -1 {
-        didSet {
-            print(selectedAudioTrack)
-        }
-    }
-    var selectedCaptionTrack: Int32 = -1 {
-        didSet {
-            print(selectedCaptionTrack)
-        }
-    }
+    var selectedAudioTrack: Int32 = -1
+    var selectedCaptionTrack: Int32 = -1
 
     var subtitleTrackArray: [Subtitle] = []
     var audioTrackArray: [AudioTrack] = []
@@ -240,22 +232,14 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     if let rawStartTicks = manifest.userData?.playbackPositionTicks {
                         mediaPlayer.jumpForward(Int32(rawStartTicks / 10_000_000))
                     }
-
-                    // Pause and load captions into memory.
-                    mediaPlayer.pause()
-
+                    
                     subtitleTrackArray.forEach { sub in
                         if sub.id != -1 && sub.delivery == .external {
                             mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                         }
                     }
 
-                    // Select default track & resume playback
-                    mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
-                    mediaPlayer.pause()
-                    mediaPlayer.play()
                     playing = true
-
                     setupInfoPanel()
 
                 })
@@ -305,14 +289,9 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
             if let event = remoteEvent as? MPChangePlaybackPositionCommandEvent {
                 let targetSeconds = event.positionTime
-                print(targetSeconds)
-
                 let videoPosition = Double(self.mediaPlayer.time.intValue / 1000)
-                print(videoPosition)
-                
                 let offset = targetSeconds - videoPosition
-                print(offset)
-                
+
                 if offset > 0 {
                     self.mediaPlayer.jumpForward(Int32(offset))
                 } else {
@@ -438,40 +417,44 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         }
 
     }
-
+    
     // MARK: Gestures
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        for item in presses {
+            if(item.type == .select) {
+                selectButtonTapped()
+            }
+        }
+    }
+    
     func setupGestures() {
-
+        self.becomeFirstResponder()
+        
+        //vlc crap
+        videoContentView.gestureRecognizers?.forEach { gr in
+            videoContentView.removeGestureRecognizer(gr)
+        }
+        videoContentView.subviews.forEach { sv in
+            sv.gestureRecognizers?.forEach { gr in
+                sv.removeGestureRecognizer(gr)
+            }
+        }
+        
         let playPauseGesture = UITapGestureRecognizer(target: self, action: #selector(self.selectButtonTapped))
         let playPauseType = UIPress.PressType.playPause
         playPauseGesture.allowedPressTypes = [NSNumber(value: playPauseType.rawValue)]
         view.addGestureRecognizer(playPauseGesture)
-
-        let selectGesture = UITapGestureRecognizer(target: self, action: #selector(self.selectButtonTapped))
-        let selectType = UIPress.PressType.select
-        selectGesture.allowedPressTypes = [NSNumber(value: selectType.rawValue)]
-        view.addGestureRecognizer(selectGesture)
-
+        
         let backTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.backButtonPressed(tap:)))
         let backPress = UIPress.PressType.menu
         backTapGesture.allowedPressTypes = [NSNumber(value: backPress.rawValue)]
         view.addGestureRecognizer(backTapGesture)
-
+        
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.userPanned(panGestureRecognizer:)))
         view.addGestureRecognizer(panGestureRecognizer)
-
-        let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipe(swipe:)))
-        swipeRecognizer.direction = .right
-        view.addGestureRecognizer(swipeRecognizer)
-
-        let swipeRecognizerl = UISwipeGestureRecognizer(target: self, action: #selector(self.swipe(swipe:)))
-        swipeRecognizerl.direction = .left
-        view.addGestureRecognizer(swipeRecognizerl)
-
     }
 
     @objc func backButtonPressed(tap: UITapGestureRecognizer) {
-        print("back")
         // Dismiss info panel
         if showingInfoPanel {
             if focusedOnTabBar {
@@ -490,6 +473,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
             seeking = false
         } else {
             // Dismiss view
+            self.resignFirstResponder()
             mediaPlayer.stop()
             sendStopReport()
             self.navigationController?.popViewController(animated: true)
@@ -497,16 +481,17 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     }
 
     @objc func userPanned(panGestureRecognizer: UIPanGestureRecognizer) {
-        print("pan")
         if loading {
             return
         }
 
         let translation = panGestureRecognizer.translation(in: view)
         let velocity = panGestureRecognizer.velocity(in: view)
+        
+        print(translation)
 
         // Swiped up - Handle dismissing info panel
-        if translation.y < -700 && (focusedOnTabBar && showingInfoPanel) {
+        if translation.y < -200 && (focusedOnTabBar && showingInfoPanel) {
             toggleInfoContainer()
             return
         }
@@ -516,7 +501,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         }
 
         // Swiped down - Show the info panel
-        if translation.y > 700 {
+        if translation.y > 200 {
             toggleInfoContainer()
             return
         }
@@ -546,32 +531,9 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     }
 
-    // Not currently used
-    @objc func swipe(swipe: UISwipeGestureRecognizer!) {
-        print("swiped")
-        switch swipe.direction {
-        case .left:
-            print("swiped left")
-//            mediaPlayer.pause()
-            //            player.seek(to: CMTime(value: Int64(self.currentSeconds) + 10, timescale: 1))
-//            mediaPlayer.play()
-        case .right:
-            print("swiped right")
-//            mediaPlayer.pause()
-            //            player.seek(to: CMTime(value: Int64(self.currentSeconds) + 10, timescale: 1))
-//            mediaPlayer.play()
-        case .up:
-            break
-        case .down:
-            break
-        default:
-            break
-        }
-
-    }
-
     /// Play/Pause or Select is pressed on the AppleTV remote
     @objc func selectButtonTapped() {
+        print("select")
         if loading {
             return
         }
