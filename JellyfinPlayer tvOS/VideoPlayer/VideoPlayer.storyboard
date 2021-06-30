@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="19115.3" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="18122" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="appleTV" appearance="light"/>
     <dependencies>
-        <deployment identifier="tvOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19107.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -111,7 +110,7 @@
                         <outlet property="controlsView" destination="OG6-kk-N7Z" id="8Ed-du-EpL"/>
                         <outlet property="currentTimeLabel" destination="CL5-ko-ceu" id="gZB-h5-TGd"/>
                         <outlet property="gradientView" destination="eh8-uG-9Wz" id="fBa-EG-C6z"/>
-                        <outlet property="infoViewContainer" destination="lie-K8-LNT" id="4io-B3-qE3"/>
+                        <outlet property="infoPanelContainerView" destination="lie-K8-LNT" id="4io-B3-qE3"/>
                         <outlet property="remainingTimeLabel" destination="NyZ-z0-56J" id="Opj-7c-cIE"/>
                         <outlet property="scrubLabel" destination="HfD-p0-JMA" id="R28-Fa-v9d"/>
                         <outlet property="scrubberView" destination="yrg-ru-QSH" id="ylv-C7-RNl"/>

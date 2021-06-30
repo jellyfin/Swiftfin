@@ -34,12 +34,9 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     @IBOutlet weak var currentTimeLabel: UILabel!
     @IBOutlet weak var remainingTimeLabel: UILabel!
 
-    @IBOutlet weak var infoViewContainer: UIView!
+    @IBOutlet weak var infoPanelContainerView: UIView!
 
-    var infoPanelDisplayPoint: CGPoint = .zero
-    var infoPanelHiddenPoint: CGPoint = .zero
-
-    var containerViewController: InfoTabBarViewController?
+    var infoTabBarViewController: InfoTabBarViewController?
     var focusedOnTabBar: Bool = false
     var showingInfoPanel: Bool = false
 
@@ -108,18 +105,16 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         gradientLayer.endPoint = CGPoint(x: 0.0, y: 0.0)
         self.gradientView.layer.addSublayer(gradientLayer)
 
-        infoPanelDisplayPoint = infoViewContainer.center
-        infoPanelHiddenPoint = CGPoint(x: infoPanelDisplayPoint.x, y: -infoViewContainer.frame.height)
-        infoViewContainer.center = infoPanelHiddenPoint
-        infoViewContainer.layer.cornerRadius = 40
+        infoPanelContainerView.center = CGPoint(x: infoPanelContainerView.center.x, y: -infoPanelContainerView.frame.height)
+        infoPanelContainerView.layer.cornerRadius = 40
 
         let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-        blurEffectView.frame = infoViewContainer.bounds
+        blurEffectView.frame = infoPanelContainerView.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         blurEffectView.layer.cornerRadius = 40
         blurEffectView.clipsToBounds = true
-        infoViewContainer.addSubview(blurEffectView)
-        infoViewContainer.sendSubviewToBack(blurEffectView)
+        infoPanelContainerView.addSubview(blurEffectView)
+        infoPanelContainerView.sendSubviewToBack(blurEffectView)
 
         transportBarView.layer.cornerRadius = CGFloat(5)
 
@@ -351,11 +346,11 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     }
 
-    // Grabs a refference to the info panel view controller
+    // Grabs a reference to the info panel view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "infoView" {
-            containerViewController = segue.destination as? InfoTabBarViewController
-            containerViewController?.videoPlayer = self
+            infoTabBarViewController = segue.destination as? InfoTabBarViewController
+            infoTabBarViewController?.videoPlayer = self
 
         }
     }
@@ -398,7 +393,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     func toggleInfoContainer() {
         showingInfoPanel.toggle()
 
-        containerViewController?.view.isUserInteractionEnabled = showingInfoPanel
+        infoTabBarViewController?.view.isUserInteractionEnabled = showingInfoPanel
 
         if showingInfoPanel && seeking {
             scrubLabel.isHidden = true
@@ -413,7 +408,10 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         }
 
         UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut) { [self] in
-            infoViewContainer.center = showingInfoPanel ? infoPanelDisplayPoint : infoPanelHiddenPoint
+            let size = infoPanelContainerView.frame.size
+            let y : CGFloat = showingInfoPanel ? 87 : -size.height
+            
+            infoPanelContainerView.frame = CGRect(x: 88, y: y, width: size.width, height: size.height)
         }
 
     }
@@ -728,7 +726,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     }
 
     func setupInfoPanel() {
-        containerViewController?.setupInfoViews(mediaItem: manifest, subtitleTracks: subtitleTrackArray, selectedSubtitleTrack: selectedCaptionTrack, audioTracks: audioTrackArray, selectedAudioTrack: selectedAudioTrack, delegate: self)
+        infoTabBarViewController?.setupInfoViews(mediaItem: manifest, subtitleTracks: subtitleTrackArray, selectedSubtitleTrack: selectedCaptionTrack, audioTracks: audioTrackArray, selectedAudioTrack: selectedAudioTrack, delegate: self)
     }
 
     func formatSecondsToHMS(_ seconds: Double) -> String {
