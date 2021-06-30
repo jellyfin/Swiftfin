@@ -19,21 +19,6 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
     var infoContainerPos: CGRect?
     var tabBarHeight: CGFloat = 0
 
-//    override func viewWillAppear(_ animated: Bool) {
-//        tabBar.standardAppearance.backgroundColor = .clear
-//        tabBar.standardAppearance.backgroundImage = UIImage()
-//        tabBar.standardAppearance.backgroundEffect = .none
-//        tabBar.barTintColor = .clear
-//        for view in tabBar.subviews {
-//            print(view.description)
-////            if view.description.contains("_UIBarBackground") {
-////
-////                view.removeFromSuperview()
-////            }
-//        }
-//
-//    }
-//
     override func viewDidLoad() {
         super.viewDidLoad()
         mediaInfoController = MediaInfoViewController()

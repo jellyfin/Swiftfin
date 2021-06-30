@@ -158,7 +158,7 @@ struct MovieItemView: View {
                                 Spacer()
                             }
                             .padding(.top, 15)
-                            .addFocusGuide(using: focusBag, name: "actionButtons", destinations: [.bottom: "moreLikeThis"], debug: true)
+                            .addFocusGuide(using: focusBag, name: "actionButtons", destinations: [.bottom: "moreLikeThis"], debug: false)
                         }
                     }.padding(.top, 50)
 

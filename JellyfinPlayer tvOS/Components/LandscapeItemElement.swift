@@ -40,10 +40,11 @@ struct LandscapeItemElement: View {
     @State var backgroundURL: URL?
 
     var item: BaseItemDto
+    var inSeasonView: Bool?
 
     var body: some View {
         VStack {
-            ImageView(src: (item.type == "Episode" ? item.getSeriesBackdropImage(maxWidth: 445) : item.getBackdropImage(maxWidth: 445)), bh: item.type == "Episode" ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
+            ImageView(src: (item.type == "Episode" && !(inSeasonView ?? false) ? item.getSeriesBackdropImage(maxWidth: 445) : item.getBackdropImage(maxWidth: 445)), bh: item.type == "Episode" ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
                 .frame(width: 445, height: 250)
                 .cornerRadius(10)
                 .overlay(
@@ -80,11 +81,19 @@ struct LandscapeItemElement: View {
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
             if focused {
-                Text(item.type == "Episode" ? "\(item.seriesName ?? "") • S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))" : item.name ?? "")
-                    .font(.callout)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                    .frame(width: 445)
+                if(inSeasonView ?? false) {
+                    Text("\(item.getEpisodeLocator()) • \(item.name ?? "")")
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .frame(width: 445)
+                } else {
+                    Text(item.type == "Episode" ? "\(item.seriesName ?? "") • \(item.getEpisodeLocator())" : item.name ?? "")
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .frame(width: 445)
+                }
             } else {
                 Spacer().frame(height: 25)
             }

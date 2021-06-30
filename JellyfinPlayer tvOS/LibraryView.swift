@@ -26,7 +26,6 @@ struct LibraryView: View {
                 ProgressView()
             } else if !viewModel.items.isEmpty {
                 ScrollView(.vertical) {
-                    Spacer().frame(height: 16)
                     LazyVGrid(columns: tracks) {
                         ForEach(viewModel.items, id: \.id) { item in
                             if(item.type != "Folder") {
@@ -41,32 +40,13 @@ struct LibraryView: View {
                                     }
                             }
                         }
-                    }
-                    Spacer().frame(height: 16)
+                    }.padding()
                 }
             } else {
                 Text("No results.")
             }
         }
-        .navigationBarTitle(title)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if viewModel.hasPreviousPage {
-                    Button {
-                        viewModel.requestPreviousPage()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                    }.disabled(viewModel.isLoading)
-                }
-                if viewModel.hasNextPage {
-                    Button {
-                        viewModel.requestNextPage()
-                    } label: {
-                        Image(systemName: "chevron.right")
-                    }.disabled(viewModel.isLoading)
-                }
-            }
-        }/*
+        /*
         .sheet(isPresented: $isShowingFilterView) {
             LibraryFilterView(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType, parentId: viewModel.parentID ?? "")
         }

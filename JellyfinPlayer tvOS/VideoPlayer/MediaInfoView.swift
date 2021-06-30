@@ -52,25 +52,27 @@ struct MediaInfoView: View {
                     if item.type == "Episode" {
                         Text(item.seriesName ?? "Series")
                             .fontWeight(.bold)
+                        
+                        HStack {
+                            Text(item.name ?? "Episode")
+                                .foregroundColor(.secondary)
+                            
+                            Text(item.getEpisodeLocator())
 
-                        Text(item.name ?? "Episode")
-                            .foregroundColor(.secondary)
+                            if let date = item.premiereDate {
+                                Text(formatDate(date: date))
+                            }
+                        }
                     } else {
                         Text(item.name ?? "Movie")
                             .fontWeight(.bold)
                     }
 
                     HStack(spacing: 10) {
-                        if item.type == "Episode" {
-                            Text("S\(item.parentIndexNumber ?? 0) • E\(item.indexNumber ?? 0)")
-
-                            if let date = item.premiereDate {
-                                Text("•")
-                                Text(formatDate(date: date))
+                        if(item.type != "Episode") {
+                            if let year = item.productionYear {
+                                Text(String(year))
                             }
-
-                        } else if let year = item.productionYear {
-                            Text(String(year))
                         }
 
                         if item.runTimeTicks != nil {
@@ -113,7 +115,7 @@ struct MediaInfoView: View {
 
     func formatDate(date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "d MMM yyyy"
+        formatter.dateFormat = "MMM d, yyyy"
 
         return formatter.string(from: date)
     }

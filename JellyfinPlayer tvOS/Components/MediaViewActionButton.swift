@@ -13,7 +13,7 @@ struct MediaViewActionButton: View {
     @Environment(\.isFocused) var envFocused: Bool
     @State var focused: Bool = false
     var icon: String
-    @Binding var scrollView: UIScrollView?
+    var scrollView: Binding<UIScrollView?>?
     var iconColor: Color?
     
     var body: some View {
@@ -21,9 +21,9 @@ struct MediaViewActionButton: View {
             .foregroundColor(focused ? .black : iconColor ?? .white)
             .onChange(of: envFocused) { envFocus in
                 if(envFocus == true) {
-                    scrollView?.scrollToTop()
+                    scrollView?.wrappedValue?.scrollToTop()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                        scrollView?.scrollToTop()
+                        scrollView?.wrappedValue?.scrollToTop()
                     }
                 }
                 

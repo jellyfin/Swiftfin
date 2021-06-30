@@ -488,8 +488,6 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         let translation = panGestureRecognizer.translation(in: view)
         let velocity = panGestureRecognizer.velocity(in: view)
         
-        print(translation)
-
         // Swiped up - Handle dismissing info panel
         if translation.y < -200 && (focusedOnTabBar && showingInfoPanel) {
             toggleInfoContainer()

@@ -38,6 +38,8 @@
 		532175402671EE4F005491E6 /* LibraryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */; };
 		53272532268BF09D0035FBF1 /* MediaViewActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272531268BF09D0035FBF1 /* MediaViewActionButton.swift */; };
 		53272535268BF9710035FBF1 /* SwiftUIFocusGuide in Frameworks */ = {isa = PBXBuildFile; productRef = 53272534268BF9710035FBF1 /* SwiftUIFocusGuide */; };
+		53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272536268C1DBB0035FBF1 /* SeasonItemView.swift */; };
+		53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272538268C20100035FBF1 /* EpisodeItemView.swift */; };
 		532E68CF267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */; };
 		53313B90265EEA6D00947AA3 /* VideoPlayer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */; };
 		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
@@ -235,6 +237,8 @@
 		531AC8BE26750DE20091C7EB /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		5321753A2671BCFC005491E6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		53272531268BF09D0035FBF1 /* MediaViewActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaViewActionButton.swift; sourceTree = "<group>"; };
+		53272536268C1DBB0035FBF1 /* SeasonItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonItemView.swift; sourceTree = "<group>"; };
+		53272538268C20100035FBF1 /* EpisodeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeItemView.swift; sourceTree = "<group>"; };
 		532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerCastDeviceSelector.swift; sourceTree = "<group>"; };
 		53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = VideoPlayer.storyboard; sourceTree = "<group>"; };
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
@@ -467,6 +471,8 @@
 				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
 				53CD2A41268A4B38002ABD4E /* MovieItemView.swift */,
 				53116A16268B919A003024C9 /* SeriesItemView.swift */,
+				53272536268C1DBB0035FBF1 /* SeasonItemView.swift */,
+				53272538268C20100035FBF1 /* EpisodeItemView.swift */,
 			);
 			path = "JellyfinPlayer tvOS";
 			sourceTree = "<group>";
@@ -978,6 +984,7 @@
 				091B5A8E268315D400D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
 				62EC3530267666A5000E9F2D /* SessionManager.swift in Sources */,
+				53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */,
 				531690F7267ACC00005D8AB9 /* LandscapeItemElement.swift in Sources */,
 				62E632E1267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
 				535870A82669D8AE00D05A09 /* StringExtensions.swift in Sources */,
@@ -1006,6 +1013,7 @@
 				535870AA2669D8AE00D05A09 /* BlurHashDecode.swift in Sources */,
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
 				531069582684E7EE00CFFDBA /* MediaInfoView.swift in Sources */,
+				53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */,
 				09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */,
 				535870A62669D8AE00D05A09 /* LazyView.swift in Sources */,
 				5321753E2671DE9C005491E6 /* Typings.swift in Sources */,
