@@ -9,9 +9,7 @@
 
 import SwiftUI
 
-class SubtitlesViewController: UIViewController {
-
-    var height: CGFloat = 420
+class SubtitlesViewController: InfoTabViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

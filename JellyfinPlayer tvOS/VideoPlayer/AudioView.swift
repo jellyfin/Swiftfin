@@ -9,10 +9,8 @@
 
 import SwiftUI
 
-class AudioViewController: UIViewController {
-
-    var height: CGFloat = 420
-
+class AudioViewController: InfoTabViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

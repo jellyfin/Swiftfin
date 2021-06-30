@@ -38,7 +38,7 @@
         }
       },
       {
-        "package": "jellyfin-sdk-swift",
+        "package": "JellyfinAPI",
         "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
         "state": {
           "branch": "main",
@@ -47,7 +47,7 @@
         }
       },
       {
-        "package": "keychain-swift",
+        "package": "KeychainSwift",
         "repositoryURL": "https://github.com/evgenyneu/keychain-swift",
         "state": {
           "branch": null,
@@ -83,7 +83,7 @@
         }
       },
       {
-        "package": "SwiftUI-Introspect",
+        "package": "Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {
           "branch": null,

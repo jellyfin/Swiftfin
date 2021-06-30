@@ -10,10 +10,8 @@
 import SwiftUI
 import JellyfinAPI
 
-class MediaInfoViewController: UIViewController {
+class MediaInfoViewController: InfoTabViewController {
     private var contentView: UIHostingController<MediaInfoView>!
-
-    var height: CGFloat = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
