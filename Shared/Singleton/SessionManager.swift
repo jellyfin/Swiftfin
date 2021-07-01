@@ -45,11 +45,11 @@ final class SessionManager {
 
         if user != nil {
             let authToken = getAuthToken(userID: user.user_id!)
-            generateAuthHeader(with: authToken)
+            generateAuthHeader(with: authToken, deviceID: user.device_uuid)
         }
     }
 
-    fileprivate func generateAuthHeader(with authToken: String?) {
+    fileprivate func generateAuthHeader(with authToken: String?, deviceID devID: String?) {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         var deviceName = UIDevice.current.name
         deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
@@ -57,20 +57,28 @@ final class SessionManager {
         
         var header = "MediaBrowser "
         #if os(tvOS)
-        header.append("Client=\"SwiftFin tvOS\", ")
+        header.append("Client=\"Jellyfin tvOS\", ")
         #else
         header.append("Client=\"SwiftFin iOS\", ")
         #endif
         
         header.append("Device=\"\(deviceName)\", ")
         
-        #if os(tvOS)
-        header.append("DeviceId=\"tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(user?.user_id ?? "")\", ")
-        deviceID = "tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(user?.user_id ?? "")"
-        #else
-        header.append("DeviceId=\"iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(user?.user_id ?? "")\", ")
-        deviceID = "iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(user?.user_id ?? "")"
-        #endif
+        if(devID == nil) {
+            #if os(tvOS)
+            header.append("DeviceId=\"tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))\", ")
+            deviceID = "tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))"
+            #else
+            header.append("DeviceId=\"iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))\", ")
+            deviceID = "iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))"
+            #endif
+            print("generated device id: \(deviceID)")
+        } else {
+            print("device id provided: \(devID!)")
+            header.append("DeviceId=\"\(devID!)\", ")
+            deviceID = devID!
+        }
+        
         header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
 
         if authToken != nil {
@@ -108,23 +116,25 @@ final class SessionManager {
 
     func loginWithSavedSession(user: SignedInUser) {
         let accessToken = getAuthToken(userID: user.user_id!)
-
+        print("logging in with saved session");
+        
         self.user = user
-        generateAuthHeader(with: accessToken)
+        generateAuthHeader(with: accessToken, deviceID: user.device_uuid)
         print(JellyfinAPI.customHeaders)
         let nc = NotificationCenter.default
         nc.post(name: Notification.Name("didSignIn"), object: nil)
     }
 
     func login(username: String, password: String) -> AnyPublisher<SignedInUser, Error> {
-        generateAuthHeader(with: nil)
+        generateAuthHeader(with: nil, deviceID: nil)
 
         return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
             .map { response -> (SignedInUser, String?) in
                 let user = SignedInUser(context: PersistenceController.shared.container.viewContext)
                 user.username = response.user?.name
                 user.user_id = response.user?.id
-
+                user.device_uuid = self.deviceID
+                
                 #if os(tvOS)
                 // user.appletv_id = tvUserManager.currentUserIdentifier ?? ""
                 #endif
@@ -139,7 +149,7 @@ final class SessionManager {
                 keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
                 keychain.set(accessToken!, forKey: "AccessToken_\(user.user_id!)")
 
-                generateAuthHeader(with: accessToken)
+                generateAuthHeader(with: accessToken, deviceID: user.device_uuid)
 
                 let nc = NotificationCenter.default
                 nc.post(name: Notification.Name("didSignIn"), object: nil)
@@ -151,11 +161,11 @@ final class SessionManager {
     func logout() {
         let nc = NotificationCenter.default
         nc.post(name: Notification.Name("didSignOut"), object: nil)
-
+        dump(user)
         let keychain = KeychainSwift()
         keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
         keychain.delete("AccessToken_\(user?.user_id ?? "")")
-        generateAuthHeader(with: nil)
+        generateAuthHeader(with: nil, deviceID: nil)
 
         let deleteRequest = NSBatchDeleteRequest(objectIDs: [user.objectID])
         user = nil

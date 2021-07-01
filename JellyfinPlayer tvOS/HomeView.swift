@@ -21,6 +21,19 @@ struct HomeView: View {
                 ProgressView()
             } else {
                 LazyVStack(alignment: .leading) {
+                    Button {
+                        let nc = NotificationCenter.default
+                        nc.post(name: Notification.Name("didSignOut"), object: nil)
+                    } label: {
+                        HStack {
+                            ImageView(src: URL(string: "\(ServerEnvironment.current.server.baseURI ?? "")/Users/\(SessionManager.current.user.user_id!)/Images/Primary?width=500")!)
+                                .frame(width: 50, height: 50)
+                                .cornerRadius(25.0)
+                            Text(SessionManager.current.user.username ?? "")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                        }
+                    }.padding(.leading, 90)
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(items: viewModel.resumeItems)
                     }

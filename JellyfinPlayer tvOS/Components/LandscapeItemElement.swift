@@ -48,6 +48,16 @@ struct LandscapeItemElement: View {
                 .frame(width: 445, height: 250)
                 .cornerRadius(10)
                 .overlay(
+                    ZStack {
+                        if item.userData?.played ?? false {
+                            Image(systemName: "circle.fill")
+                                .foregroundColor(.white)
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(Color(.systemBlue))
+                        }
+                    }.padding(2)
+                    .opacity(1), alignment: .topTrailing).opacity(1)
+                .overlay(
                     ZStack(alignment: .leading) {
                         if focused && item.userData?.playedPercentage != nil {
                             Rectangle()

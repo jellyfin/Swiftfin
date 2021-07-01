@@ -69,9 +69,10 @@ struct EpisodeItemView: View {
                             .overlay(RoundedRectangle(cornerRadius: 2)
                                 .stroke(Color.secondary, lineWidth: 1))
                     }
-                }.padding(.top, 15)
+                    Spacer()
+                }.padding(.top, -15)
                 
-                HStack {
+                HStack(alignment: .top) {
                     VStack(alignment: .trailing) {
                         if(studio != nil) {
                             Text("STUDIO")
@@ -112,13 +113,6 @@ struct EpisodeItemView: View {
                         Spacer()
                     }
                     VStack(alignment: .leading) {
-                        if(!(viewModel.item.taglines ?? []).isEmpty) {
-                            Text(viewModel.item.taglines?.first ?? "")
-                                .font(.body)
-                                .italic()
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-                        }
                         Text(viewModel.item.overview ?? "")
                             .font(.body)
                             .fontWeight(.medium)
@@ -173,6 +167,7 @@ struct EpisodeItemView: View {
                     }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
                     .frame(height: 360)
                 }
+                Spacer()
                 Spacer()
             }.padding(EdgeInsets(top: 90, leading: 90, bottom: 0, trailing: 90))
         }.onAppear(perform: onAppear)
