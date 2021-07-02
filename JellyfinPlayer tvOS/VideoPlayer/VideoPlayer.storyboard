@@ -22,10 +22,10 @@
             </objects>
             <point key="canvasLocation" x="-5664" y="320"/>
         </scene>
-        <!--Video Player View Controller-->
+        <!--Player View Controller-->
         <scene sceneID="9lE-WX-96o">
             <objects>
-                <viewController storyboardIdentifier="VideoPlayer" id="Xgj-up-wSf" customClass="VideoPlayerViewController" customModule="JellyfinPlayer_tvOS" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VideoPlayer" id="Xgj-up-wSf" customClass="PlayerViewController" customModule="JellyfinPlayer_tvOS" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="aTn-mJ-5lt"/>
                         <viewControllerLayoutGuide type="bottom" id="BrO-eL-FPV"/>
@@ -34,6 +34,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FML-rw-pcY" userLabel="Up Next View">
+                                <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" id="Ibg-CP-gb2" userLabel="VideoPlayer">
                                 <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -115,6 +120,7 @@
                         <outlet property="scrubLabel" destination="HfD-p0-JMA" id="R28-Fa-v9d"/>
                         <outlet property="scrubberView" destination="yrg-ru-QSH" id="ylv-C7-RNl"/>
                         <outlet property="transportBarView" destination="CQO-wl-bxv" id="tQv-bp-jYq"/>
+                        <outlet property="upNextView" destination="FML-rw-pcY" id="yqR-Gg-fAI"/>
                         <outlet property="videoContentView" destination="Ibg-CP-gb2" id="vnQ-7F-8AU"/>
                     </connections>
                 </viewController>

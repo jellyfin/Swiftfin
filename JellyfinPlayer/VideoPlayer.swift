@@ -955,10 +955,8 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
             if manifest.type == "Episode" && upNextViewModel.item != nil{
                 if time > 0.96 {
                     upNextView.isHidden = false
-                    self.jumpForwardButton.isHidden = true
                 } else {
                     upNextView.isHidden = true
-                    self.jumpForwardButton.isHidden = false
                 }
             }
             

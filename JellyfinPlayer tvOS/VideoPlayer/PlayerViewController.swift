@@ -7,7 +7,7 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import TVUIKit
+import SwiftUI
 import TVVLCKit
 import MediaPlayer
 import JellyfinAPI
@@ -19,11 +19,12 @@ protocol VideoPlayerSettingsDelegate: AnyObject {
     func selectNew(subtitleTrack id: Int32)
 }
 
-class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, VLCMediaPlayerDelegate, VLCMediaDelegate, UIGestureRecognizerDelegate {
+class PlayerViewController: UIViewController, VideoPlayerSettingsDelegate, VLCMediaPlayerDelegate, VLCMediaDelegate, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var videoContentView: UIView!
     @IBOutlet weak var controlsView: UIView!
-
+    @IBOutlet weak var upNextView: UIView!
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     @IBOutlet weak var transportBarView: UIView!
@@ -63,6 +64,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     var controlsAppearTime: Double = 0
 
     var manifest: BaseItemDto = BaseItemDto()
+    var upNextViewModel: UpNextViewModel = UpNextViewModel()
     var playbackItem = PlaybackItem()
     var playSessionId: String = ""
 
@@ -118,6 +120,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
         transportBarView.layer.cornerRadius = CGFloat(5)
 
+        setupNextUpView()
+        
         setupGestures()
 
         fetchVideo()
@@ -429,6 +433,41 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
     }
     
+    func setupNextUpView() {
+        getNextEpisode()
+        self.upNextViewModel.currentItem = manifest
+        
+        // Create the swiftUI view
+        let contentView = UIHostingController(rootView: VideoPlayerUpNextView(viewModel: upNextViewModel))
+        self.upNextView.addSubview(contentView.view)
+        contentView.view.backgroundColor = .clear
+        contentView.view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.view.topAnchor.constraint(equalTo: upNextView.topAnchor).isActive = true
+        contentView.view.bottomAnchor.constraint(equalTo: upNextView.bottomAnchor).isActive = true
+        contentView.view.leftAnchor.constraint(equalTo: upNextView.leftAnchor).isActive = true
+        contentView.view.rightAnchor.constraint(equalTo: upNextView.rightAnchor).isActive = true
+    }
+    
+    func getNextEpisode() {
+        TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, startItemId: manifest.id, limit: 2)
+            .sink(receiveCompletion: { completion in
+                print(completion)
+            }, receiveValue: { [self] response in
+                // Returns 2 items, the first is the current episode
+                // The second is the next episode
+                if let item = response.items?.last {
+                    self.upNextViewModel.item = item
+                }
+            })
+            .store(in: &cancellables)
+    }
+    
+    
+    
+    func setPlayerToNextUp() {
+        
+    }
+    
     // MARK: Gestures
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         for item in presses {
@@ -695,6 +734,18 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
             self.remainingTimeLabel.text = "-" + formatSecondsToHMS(Double(abs(mediaPlayer.remainingTime.intValue/1000)))
 
             self.videoPos = Double(mediaPlayer.position)
+            
+            if manifest.type == "Episode" && upNextViewModel.item != nil{
+                if time > 0.96 {
+                    print("Showing up next")
+                    upNextView.isHidden = false
+                    UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut) { [self] in
+                        videoContentView.frame = CGRect(x: 95, y: 135, width: 555, height: 310)
+                    }
+                } else {
+                    upNextView.isHidden = true
+                }
+            }
 
             let newPos = videoPos * Double(self.transportBarView.frame.width)
             if !newPos.isNaN && self.playing {

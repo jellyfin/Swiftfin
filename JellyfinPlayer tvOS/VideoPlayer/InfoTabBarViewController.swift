@@ -17,7 +17,7 @@ class InfoTabViewController: UIViewController {
 
 class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate {
 
-    var videoPlayer: VideoPlayerViewController?
+    var videoPlayer: PlayerViewController?
     var subtitleViewController: SubtitlesViewController?
     var audioViewController: AudioViewController?
     var mediaInfoController: MediaInfoViewController?

@@ -29,3 +29,15 @@ class PlaybackItem: ObservableObject {
     @Published var videoType: PlayMethod = .directPlay
     @Published var videoUrl: URL = URL(string: "https://example.com")!
 }
+
+class UpNextViewModel: ObservableObject {
+    @Published var item: BaseItemDto? = nil
+    @Published var currentItem: BaseItemDto? = nil
+    var delegate: PlayerViewController?
+    
+    func nextUp() {
+        if delegate != nil {
+            delegate?.setPlayerToNextUp()
+        }
+    }
+}

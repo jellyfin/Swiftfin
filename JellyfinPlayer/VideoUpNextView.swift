@@ -10,18 +10,6 @@
 import SwiftUI
 import JellyfinAPI
 
-class UpNextViewModel: ObservableObject {
-    @Published var largeView: Bool = false
-    @Published var item: BaseItemDto? = nil
-    var delegate: PlayerViewController?
-    
-    func nextUp() {
-        if delegate != nil {
-            delegate?.setPlayerToNextUp()
-        }
-    }
-}
-
 struct VideoUpNextView: View {
     
     @ObservedObject var viewModel: UpNextViewModel
