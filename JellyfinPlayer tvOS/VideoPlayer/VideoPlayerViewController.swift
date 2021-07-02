@@ -353,10 +353,9 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         if let playing = playing {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = playing ? 1.0 : 0.0
         }
+
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = mediaPlayer.time.intValue / 1000
-
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-
     }
 
     // Grabs a reference to the info panel view controller

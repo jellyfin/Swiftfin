@@ -47,25 +47,25 @@ class DeviceProfileBuilder {
 
         // Build direct play profiles
             var directPlayProfiles: [DirectPlayProfile] = []
-        directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav", videoCodec: "h264,mpeg4", type: .video)]
+        directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv,webm", audioCodec: "aac,mp3,wav", videoCodec: "h264,mpeg4,vp9", type: .video)]
 
             // Device supports Dolby Digital (AC3, EAC3)
             if supportsFeature(minimumSupported: .A8X) {
                 if supportsFeature(minimumSupported: .A9) {
-                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "hevc,h264,hev1,mpeg4", type: .video)] // HEVC/H.264 with Dolby Digital
+                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv,webm", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "hevc,h264,hev1,mpeg4,vp9", type: .video)] // HEVC/H.264 with Dolby Digital
                 } else {
-                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "ac3,eac3,aac,mp3,wav,opus", videoCodec: "h264,mpeg4", type: .video)] // H.264 with Dolby Digital
+                    directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv,webm", audioCodec: "ac3,eac3,aac,mp3,wav,opus", videoCodec: "h264,mpeg4,vp9", type: .video)] // H.264 with Dolby Digital
                 }
             }
 
             // Device supports Dolby Vision?
             if supportsFeature(minimumSupported: .A10X) {
-                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "dvhe,dvh1,h264,hevc,hev1,mpeg4", type: .video)] // H.264/HEVC with Dolby Digital - No Atmos - Vision
+                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv,webm", audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus", videoCodec: "dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9", type: .video)] // H.264/HEVC with Dolby Digital - No Atmos - Vision
             }
 
             // Device supports Dolby Atmos?
             if supportsFeature(minimumSupported: .A12) {
-                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv", audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", videoCodec: "h264,hevc,dvhe,dvh1,h264,hevc,hev1,mpeg4", type: .video)] // H.264/HEVC with Dolby Digital & Atmos - Vision
+                directPlayProfiles = [DirectPlayProfile(container: "mov,mp4,mkv,webm", audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus", videoCodec: "h264,hevc,dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9", type: .video)] // H.264/HEVC with Dolby Digital & Atmos - Vision
             }
 
         // Build transcoding profiles
