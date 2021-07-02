@@ -11,9 +11,8 @@ import TVUIKit
 import JellyfinAPI
 
 class InfoTabViewController: UIViewController {
-    var height : CGFloat = 420
+    var height: CGFloat = 420
 }
-
 
 class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate {
 
@@ -39,11 +38,11 @@ class InfoTabBarViewController: UITabBarController, UIGestureRecognizerDelegate 
         audioViewController?.prepareAudioView(audioTracks: audioTracks, selectedTrack: selectedAudioTrack, delegate: delegate)
 
         subtitleViewController?.prepareSubtitleView(subtitleTracks: subtitleTracks, selectedTrack: selectedSubtitleTrack, delegate: delegate)
-        
+
     }
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        
+
         if let index = tabBar.items?.firstIndex(of: item),
            let tabViewController = viewControllers?[index] as? InfoTabViewController,
            let width = videoPlayer?.infoPanelContainerView.frame.width {
