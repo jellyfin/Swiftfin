@@ -82,6 +82,7 @@ struct SeasonItemView: View {
                                 Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
                                     .font(.caption)
                             }
+
                             VStack {
                                 Button {
                                     viewModel.updateWatchState()

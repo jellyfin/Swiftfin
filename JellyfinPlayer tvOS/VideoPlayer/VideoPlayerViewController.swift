@@ -247,32 +247,42 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         let commandCenter = MPRemoteCommandCenter.shared()
         commandCenter.playCommand.isEnabled = true
         commandCenter.pauseCommand.isEnabled = true
-        commandCenter.seekForwardCommand.isEnabled = true
-        commandCenter.seekBackwardCommand.isEnabled = true
+        
+        commandCenter.skipBackwardCommand.isEnabled = true
+        commandCenter.skipBackwardCommand.preferredIntervals = [15]
+        
+        commandCenter.skipForwardCommand.isEnabled = true
+        commandCenter.skipForwardCommand.preferredIntervals = [30]
+        
         commandCenter.changePlaybackPositionCommand.isEnabled = true
         commandCenter.enableLanguageOptionCommand.isEnabled = true
 
         // Add handler for Pause Command
         commandCenter.pauseCommand.addTarget { _ in
             self.pause()
+            self.showingControls = true
+            self.controlsView.isHidden = false
+            self.controlsAppearTime = CACurrentMediaTime()
             return .success
         }
 
         // Add handler for Play command
         commandCenter.playCommand.addTarget { _ in
             self.play()
+            self.showingControls = false
+            self.controlsView.isHidden = true
             return .success
         }
 
         // Add handler for FF command
-        commandCenter.seekForwardCommand.addTarget { _ in
+        commandCenter.skipForwardCommand.addTarget { skipEvent in
             self.mediaPlayer.jumpForward(30)
             self.sendProgressReport(eventName: "timeupdate")
             return .success
         }
 
         // Add handler for RW command
-        commandCenter.seekBackwardCommand.addTarget { _ in
+        commandCenter.skipBackwardCommand.addTarget { skipEvent in
             self.mediaPlayer.jumpBackward(15)
             self.sendProgressReport(eventName: "timeupdate")
             return .success
@@ -314,12 +324,15 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         var nowPlayingInfo = [String: Any]()
 
         nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name ?? "Jellyfin Video"
+        if(manifest.type == "Episode") {
+            nowPlayingInfo[MPMediaItemPropertyArtist] = "\(manifest.seriesName ?? manifest.name ?? "") • \(manifest.getEpisodeLocator())"
+        }
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] =  0.0
         nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = AVMediaType.video
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = runTicks
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = playbackTicks
 
-        if let imageData = NSData(contentsOf: manifest.getPrimaryImage(maxWidth: 200)) {
+        if let imageData = NSData(contentsOf: manifest.getPrimaryImage(maxWidth: 500)) {
             if let artworkImage = UIImage(data: imageData as Data) {
                 let artwork = MPMediaItemArtwork.init(boundsSize: artworkImage.size, requestHandler: { (_) -> UIImage in
                     return artworkImage
