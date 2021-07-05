@@ -167,8 +167,11 @@ final class SessionManager {
         keychain.delete("AccessToken_\(user?.user_id ?? "")")
         generateAuthHeader(with: nil, deviceID: nil)
 
-        let deleteRequest = NSBatchDeleteRequest(objectIDs: [user.objectID])
-        user = nil
-        _ = try? PersistenceController.shared.container.viewContext.execute(deleteRequest)
+        if user != nil {
+            let deleteRequest = NSBatchDeleteRequest(objectIDs: [user.objectID])
+            user = nil
+            _ = try? PersistenceController.shared.container.viewContext.execute(deleteRequest)
+
+        }
     }
 }
