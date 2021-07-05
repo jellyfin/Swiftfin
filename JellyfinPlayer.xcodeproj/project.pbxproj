@@ -21,7 +21,7 @@
 		531069592684E7EE00CFFDBA /* SubtitlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069522684E7EE00CFFDBA /* SubtitlesView.swift */; };
 		5310695A2684E7EE00CFFDBA /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069532684E7EE00CFFDBA /* VideoPlayer.swift */; };
 		5310695B2684E7EE00CFFDBA /* AudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069542684E7EE00CFFDBA /* AudioView.swift */; };
-		5310695C2684E7EE00CFFDBA /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069552684E7EE00CFFDBA /* PlayerViewController.swift */; };
+		5310695C2684E7EE00CFFDBA /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069552684E7EE00CFFDBA /* VideoPlayerViewController.swift */; };
 		5310695D2684E7EE00CFFDBA /* VideoPlayer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 531069562684E7EE00CFFDBA /* VideoPlayer.storyboard */; };
 		53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A16268B919A003024C9 /* SeriesItemView.swift */; };
 		53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A18268B947A003024C9 /* PlainLinkButton.swift */; };
@@ -224,7 +224,7 @@
 		531069522684E7EE00CFFDBA /* SubtitlesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtitlesView.swift; sourceTree = "<group>"; };
 		531069532684E7EE00CFFDBA /* VideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		531069542684E7EE00CFFDBA /* AudioView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioView.swift; sourceTree = "<group>"; };
-		531069552684E7EE00CFFDBA /* PlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
+		531069552684E7EE00CFFDBA /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		531069562684E7EE00CFFDBA /* VideoPlayer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = VideoPlayer.storyboard; sourceTree = "<group>"; };
 		53116A16268B919A003024C9 /* SeriesItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesItemView.swift; sourceTree = "<group>"; };
 		53116A18268B947A003024C9 /* PlainLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlainLinkButton.swift; sourceTree = "<group>"; };
@@ -419,7 +419,7 @@
 				531069542684E7EE00CFFDBA /* AudioView.swift */,
 				531069502684E7EE00CFFDBA /* InfoTabBarViewController.swift */,
 				531069532684E7EE00CFFDBA /* VideoPlayer.swift */,
-				531069552684E7EE00CFFDBA /* PlayerViewController.swift */,
+				531069552684E7EE00CFFDBA /* VideoPlayerViewController.swift */,
 				531069562684E7EE00CFFDBA /* VideoPlayer.storyboard */,
 				09E470AB268D6D9C00D604C6 /* VideoPlayerUpNextView.swift */,
 			);
@@ -1023,7 +1023,7 @@
 				5321753E2671DE9C005491E6 /* Typings.swift in Sources */,
 				53ABFDEB2679753200886593 /* ConnectToServerView.swift in Sources */,
 				536D3D76267BA9BB0004248C /* MainTabViewModel.swift in Sources */,
-				5310695C2684E7EE00CFFDBA /* PlayerViewController.swift in Sources */,
+				5310695C2684E7EE00CFFDBA /* VideoPlayerViewController.swift in Sources */,
 				536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */,
 				535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */,
 				53ABFDE4267974EF00886593 /* LibraryListViewModel.swift in Sources */,
