@@ -378,8 +378,8 @@ class PlayerViewController: UIViewController, VideoPlayerSettingsDelegate, VLCMe
         
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = mediaPlayer.time.intValue / 1000
         print("Updating time for now playing", formatSecondsToHMS(Double(mediaPlayer.time.intValue) / 1000))
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
 
     // Grabs a reference to the info panel view controller
