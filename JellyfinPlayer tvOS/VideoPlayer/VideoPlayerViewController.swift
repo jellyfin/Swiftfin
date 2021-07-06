@@ -227,7 +227,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     if let rawStartTicks = manifest.userData?.playbackPositionTicks {
                         mediaPlayer.jumpForward(Int32(rawStartTicks / 10_000_000))
                     }
-                    
+
                     subtitleTrackArray.forEach { sub in
                         if sub.id != -1 && sub.delivery == .external {
                             mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
@@ -247,13 +247,13 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         let commandCenter = MPRemoteCommandCenter.shared()
         commandCenter.playCommand.isEnabled = true
         commandCenter.pauseCommand.isEnabled = true
-        
+
         commandCenter.skipBackwardCommand.isEnabled = true
         commandCenter.skipBackwardCommand.preferredIntervals = [15]
-        
+
         commandCenter.skipForwardCommand.isEnabled = true
         commandCenter.skipForwardCommand.preferredIntervals = [30]
-        
+
         commandCenter.changePlaybackPositionCommand.isEnabled = true
         commandCenter.enableLanguageOptionCommand.isEnabled = true
 
@@ -275,14 +275,14 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         }
 
         // Add handler for FF command
-        commandCenter.skipForwardCommand.addTarget { skipEvent in
+        commandCenter.skipForwardCommand.addTarget { _ in
             self.mediaPlayer.jumpForward(30)
             self.sendProgressReport(eventName: "timeupdate")
             return .success
         }
 
         // Add handler for RW command
-        commandCenter.skipBackwardCommand.addTarget { skipEvent in
+        commandCenter.skipBackwardCommand.addTarget { _ in
             self.mediaPlayer.jumpBackward(15)
             self.sendProgressReport(eventName: "timeupdate")
             return .success
@@ -324,7 +324,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         var nowPlayingInfo = [String: Any]()
 
         nowPlayingInfo[MPMediaItemPropertyTitle] = manifest.name ?? "Jellyfin Video"
-        if(manifest.type == "Episode") {
+        if manifest.type == "Episode" {
             nowPlayingInfo[MPMediaItemPropertyArtist] = "\(manifest.seriesName ?? manifest.name ?? "") • \(manifest.getEpisodeLocator())"
         }
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] =  0.0
@@ -421,26 +421,26 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
         UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut) { [self] in
             let size = infoPanelContainerView.frame.size
-            let y : CGFloat = showingInfoPanel ? 87 : -size.height
-            
+            let y: CGFloat = showingInfoPanel ? 87 : -size.height
+
             infoPanelContainerView.frame = CGRect(x: 88, y: y, width: size.width, height: size.height)
         }
 
     }
-    
+
     // MARK: Gestures
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         for item in presses {
-            if(item.type == .select) {
+            if item.type == .select {
                 selectButtonTapped()
             }
         }
     }
-    
+
     func setupGestures() {
         self.becomeFirstResponder()
-        
-        //vlc crap
+
+        // vlc crap
         videoContentView.gestureRecognizers?.forEach { gr in
             videoContentView.removeGestureRecognizer(gr)
         }
@@ -449,17 +449,17 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                 sv.removeGestureRecognizer(gr)
             }
         }
-        
+
         let playPauseGesture = UITapGestureRecognizer(target: self, action: #selector(self.selectButtonTapped))
         let playPauseType = UIPress.PressType.playPause
         playPauseGesture.allowedPressTypes = [NSNumber(value: playPauseType.rawValue)]
         view.addGestureRecognizer(playPauseGesture)
-        
+
         let backTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.backButtonPressed(tap:)))
         let backPress = UIPress.PressType.menu
         backTapGesture.allowedPressTypes = [NSNumber(value: backPress.rawValue)]
         view.addGestureRecognizer(backTapGesture)
-        
+
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.userPanned(panGestureRecognizer:)))
         view.addGestureRecognizer(panGestureRecognizer)
     }
@@ -497,7 +497,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
 
         let translation = panGestureRecognizer.translation(in: view)
         let velocity = panGestureRecognizer.velocity(in: view)
-        
+
         // Swiped up - Handle dismissing info panel
         if translation.y < -200 && (focusedOnTabBar && showingInfoPanel) {
             toggleInfoContainer()
@@ -580,7 +580,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     // MARK: Jellyfin Playstate updates
     func sendProgressReport(eventName: String) {
         updateNowPlayingCenter(time: nil, playing: mediaPlayer.state == .playing)
-        
+
         if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
             let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (!playing), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 

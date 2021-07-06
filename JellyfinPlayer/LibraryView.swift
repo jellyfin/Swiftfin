@@ -34,7 +34,7 @@ struct LibraryView: View {
                         Spacer().frame(height: 16)
                         LazyVGrid(columns: tracks) {
                             ForEach(viewModel.items, id: \.id) { item in
-                                if(item.type != "Folder") {
+                                if item.type != "Folder" {
                                     PortraitItemView(item: item)
                                 }
                             }
