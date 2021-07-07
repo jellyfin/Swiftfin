@@ -39,7 +39,7 @@ final class LibraryFilterViewModel: ViewModel {
     var selectedSortOrder: APISortOrder = .descending
     @Published
     var selectedSortBy: SortBy = .name
-    
+
     var parentId: String = ""
 
     func updateModifiedFilter() {
