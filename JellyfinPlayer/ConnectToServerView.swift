@@ -105,8 +105,8 @@ struct ConnectToServerView: View {
                         }
                     }
                 } else {
-                    Section(header: Text("Manual Connection")) {
-                        TextField("Jellyfin Server URL", text: $uri)
+                    Section(header: Text("Connect Manually")) {
+                        TextField("Server URL", text: $uri)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
                         Button {
@@ -115,9 +115,9 @@ struct ConnectToServerView: View {
                             HStack {
                                 Text("Connect")
                                 Spacer()
-                            }
-                            if viewModel.isLoading {
-                                ProgressView()
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                }
                             }
                         }
                         .disabled(viewModel.isLoading || uri.isEmpty)
