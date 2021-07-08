@@ -36,7 +36,7 @@ struct VideoUpNextView: View {
                         .foregroundColor(.white)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                    Text(viewModel.item!.getEpisodeLocator())
+                    Text(viewModel.item?.getEpisodeLocator() ?? "")
                         .foregroundColor(.secondary)
                         .font(.caption)
                 }
