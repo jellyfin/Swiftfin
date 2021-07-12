@@ -65,6 +65,7 @@ final class ConnectToServerViewModel: ViewModel {
             .sink(receiveCompletion: { result in
                 switch result {
                     case let .failure(error):
+                        print(error)
                         self.errorMessage = error.localizedDescription
                     default:
                         break
