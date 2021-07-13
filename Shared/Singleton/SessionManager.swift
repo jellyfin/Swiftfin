@@ -72,9 +72,7 @@ final class SessionManager {
             header.append("DeviceId=\"iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))\", ")
             deviceID = "iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))"
             #endif
-            print("generated device id: \(deviceID)")
         } else {
-            print("device id provided: \(devID!)")
             header.append("DeviceId=\"\(devID!)\", ")
             deviceID = devID!
         }
@@ -116,7 +114,7 @@ final class SessionManager {
 
     func loginWithSavedSession(user: SignedInUser) {
         let accessToken = getAuthToken(userID: user.user_id!)
-        print("logging in with saved session")
+        
 
         self.user = user
         generateAuthHeader(with: accessToken, deviceID: user.device_uuid)
@@ -161,7 +159,6 @@ final class SessionManager {
     func logout() {
         let nc = NotificationCenter.default
         nc.post(name: Notification.Name("didSignOut"), object: nil)
-        dump(user)
         let keychain = KeychainSwift()
         keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
         keychain.delete("AccessToken_\(user?.user_id ?? "")")

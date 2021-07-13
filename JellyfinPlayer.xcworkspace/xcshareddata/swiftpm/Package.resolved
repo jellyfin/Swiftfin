@@ -38,7 +38,7 @@
         }
       },
       {
-        "package": "JellyfinAPI",
+        "package": "jellyfin-sdk-swift",
         "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
         "state": {
           "branch": "main",
@@ -47,7 +47,7 @@
         }
       },
       {
-        "package": "KeychainSwift",
+        "package": "keychain-swift",
         "repositoryURL": "https://github.com/evgenyneu/keychain-swift",
         "state": {
           "branch": null,
@@ -83,7 +83,25 @@
         }
       },
       {
-        "package": "Introspect",
+        "package": "Puppy",
+        "repositoryURL": "https://github.com/sushichop/Puppy",
+        "state": {
+          "branch": null,
+          "revision": "dc82e65c749cee431ffbb8c0913680b61ccd7e08",
+          "version": "0.2.0"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
+          "version": "1.4.2"
+        }
+      },
+      {
+        "package": "SwiftUI-Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {
           "branch": null,

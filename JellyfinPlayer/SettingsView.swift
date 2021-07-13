@@ -23,7 +23,7 @@ struct SettingsView: View {
     @State private var username: String = ""
 
     func onAppear() {
-        username = SessionManager.current.user.username ?? ""
+        username = SessionManager.current.user?.username ?? ""
     }
 
     var body: some View {
