@@ -36,12 +36,12 @@ final class SplashViewModel: ViewModel {
     }
 
     @objc func didLogIn() {
-        print("didLogIn")
+        LogManager.shared.log.info("Received `didSignIn` from NSNotificationCenter.")
         isLoggedIn = true
     }
 
     @objc func didLogOut() {
-        print("didLogOut")
+        LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
         isLoggedIn = false
     }
 }

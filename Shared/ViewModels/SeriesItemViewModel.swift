@@ -24,6 +24,7 @@ final class SeriesItemViewModel: DetailItemViewModel {
     }
 
     func getNextUp() {
+        LogManager.shared.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
         TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seriesId: self.item.id!, enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
@@ -53,12 +54,14 @@ final class SeriesItemViewModel: DetailItemViewModel {
     }
 
     func requestSeasons() {
+        LogManager.shared.log.debug("Getting seasons of show \(self.item.id!) (\(self.item.name!))")
         TvShowsAPI.getSeasons(seriesId: item.id ?? "", userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.seasons = response.items ?? []
+                LogManager.shared.log.debug("Retrieved \(String(self?.seasons.count ?? 0)) seasons")
             })
             .store(in: &cancellables)
     }

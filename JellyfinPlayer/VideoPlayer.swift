@@ -221,6 +221,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     // MARK: Cast methods
     @IBAction func castButtonPressed(_ sender: Any) {
         if selectedCastDevice == nil {
+            LogManager.shared.log.debug("Presenting Cast modal")
             castDeviceVC = VideoPlayerCastDeviceSelectorView()
             castDeviceVC?.delegate = self
 
@@ -229,11 +230,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
             // Present the view controller (in a popover).
             self.present(castDeviceVC!, animated: true) {
-                print("popover visible, pause playback")
                 self.mediaPlayer.pause()
                 self.mainActionButton.setImage(UIImage(systemName: "play"), for: .normal)
             }
         } else {
+            LogManager.shared.log.info("Stopping casting session: button was pressed.")
             castSessionManager.endSessionAndStopCasting(true)
             selectedCastDevice = nil
             self.castButton.isEnabled = true
@@ -243,6 +244,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 
     func castPopoverDismissed() {
+        LogManager.shared.log.debug("Cast modal dismissed")
         castDeviceVC?.dismiss(animated: true, completion: nil)
         if playerDestination == .local {
             self.mediaPlayer.play()
@@ -251,7 +253,9 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 
     func castDeviceChanged() {
+        LogManager.shared.log.debug("Cast device changed")
         if selectedCastDevice != nil {
+            LogManager.shared.log.debug("New device: \(selectedCastDevice?.friendlyName ?? "UNKNOWN")")
             playerDestination = .remote
             castSessionManager.add(self)
             castSessionManager.startSession(with: selectedCastDevice!)
@@ -613,7 +617,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 
     func startLocalPlaybackEngine(_ fetchCaptions: Bool) {
-        print("Local playback engine starting.")
         mediaPlayer.media = VLCMedia(url: playbackItem.videoUrl)
         mediaPlayer.play()
         sendPlayReport()
@@ -621,10 +624,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         // 1 second = 10,000,000 ticks
         var startTicks: Int64 = 0
         if remotePositionTicks == 0 {
-            print("Using server-reported start time")
             startTicks = manifest.userData?.playbackPositionTicks ?? 0
         } else {
-            print("Using remote-reported start time")
             startTicks = Int64(remotePositionTicks)
         }
 
@@ -632,7 +633,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             let videoPosition = Double(mediaPlayer.time.intValue / 1000)
             let secondsScrubbedTo = startTicks / 10_000_000
             let offset = secondsScrubbedTo - Int64(videoPosition)
-            print("Seeking to position: \(secondsScrubbedTo)")
             if offset > 0 {
                 mediaPlayer.jumpForward(Int32(offset))
             } else {
@@ -641,8 +641,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
 
         if fetchCaptions {
-            print("Fetching captions.")
-            // Pause and load captions into memory.
             mediaPlayer.pause()
             subtitleTrackArray.forEach { sub in
                 if sub.id != -1 && sub.delivery == .external {
@@ -664,8 +662,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         mediaPlayer.pause()
         mediaPlayer.play()
         setupTracksForPreferredDefaults()
-
-        print("Local engine started.")
     }
 
     // MARK: VideoPlayerSettings Delegate
@@ -820,7 +816,6 @@ extension PlayerViewController: GCKGenericChannelDelegate {
             "receiverName": castSessionManager.currentCastSession!.device.friendlyName!,
             "subtitleBurnIn": false
         ]
-        print(payload)
         let jsonData = JSON(payload)
 
         jellyfinCastChannel?.sendTextMessage(jsonData.rawString()!, error: nil)
@@ -874,23 +869,24 @@ extension PlayerViewController: GCKSessionManagerListener {
     }
 
     func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKCastSession) {
-        print("starting session")
         self.jellyfinCastChannel = GCKGenericChannel(namespace: "urn:x-cast:com.connectsdk")
         self.sessionDidStart(manager: sessionManager, didStart: session)
     }
 
     func sessionManager(_ sessionManager: GCKSessionManager, didResumeCastSession session: GCKCastSession) {
         self.jellyfinCastChannel = GCKGenericChannel(namespace: "urn:x-cast:com.connectsdk")
-        print("resuming session")
         self.sessionDidStart(manager: sessionManager, didStart: session)
     }
 
     func sessionManager(_ sessionManager: GCKSessionManager, didFailToStart session: GCKCastSession, withError error: Error) {
-        dump(error)
+        LogManager.shared.log.error((error as NSError).debugDescription)
     }
 
     func sessionManager(_ sessionManager: GCKSessionManager, didEnd session: GCKCastSession, withError error: Error?) {
-        print("didEnd")
+        if(error != nil) {
+            LogManager.shared.log.error((error! as NSError).debugDescription)
+        }
+        
         playerDestination = .local
         videoContentView.isHidden = false
         remoteTimeUpdateTimer?.invalidate()
@@ -899,7 +895,6 @@ extension PlayerViewController: GCKSessionManagerListener {
     }
 
     func sessionManager(_ sessionManager: GCKSessionManager, didSuspend session: GCKCastSession, with reason: GCKConnectionSuspendReason) {
-        print("didSuspend")
         playerDestination = .local
         videoContentView.isHidden = false
         remoteTimeUpdateTimer?.invalidate()
@@ -914,27 +909,26 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
             let currentState: VLCMediaPlayerState = mediaPlayer.state
             switch currentState {
             case .stopped :
+                LogManager.shared.log.debug("Player state changed: STOPPED")
                 break
             case .ended :
+                LogManager.shared.log.debug("Player state changed: ENDED")
                 break
             case .playing :
-                print("Video is playing")
+                LogManager.shared.log.debug("Player state changed: PLAYING")
                 sendProgressReport(eventName: "unpause")
                 delegate?.hideLoadingView(self)
                 paused = false
-
             case .paused :
-                print("Video is paused)")
+                    LogManager.shared.log.debug("Player state changed: PAUSED")
                 paused = true
-
             case .opening :
-                print("Video is opening)")
-
+                    LogManager.shared.log.debug("Player state changed: OPENING")
             case .buffering :
-                print("Video is buffering)")
+                    LogManager.shared.log.debug("Player state changed: BUFFERING")
                 delegate?.showLoadingView(self)
             case .error :
-                print("Video has error)")
+                    LogManager.shared.log.error("Video had error.")
                 sendStopReport()
             case .esAdded:
                 mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)

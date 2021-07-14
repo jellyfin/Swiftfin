@@ -180,6 +180,25 @@ struct EpisodeItemView: View {
                                 }.padding(.leading, 16).padding(.trailing, 16)
                             }
                         }
+                        if !(viewModel.similarItems).isEmpty {
+                            Text("More Like This")
+                                .font(.callout).fontWeight(.semibold).padding(.top, 3).padding(.leading, 16)
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                VStack {
+                                    Spacer().frame(height: 8)
+                                    HStack {
+                                        Spacer().frame(width: 16)
+                                        ForEach(viewModel.similarItems, id: \.self) { similarItem in
+                                            NavigationLink(destination: LazyView { ItemView(item: similarItem) }) {
+                                                PortraitItemView(item: similarItem)
+                                            }
+                                            Spacer().frame(width: 10)
+                                        }
+                                        Spacer().frame(width: 16)
+                                    }
+                                }
+                            }.padding(.top, -5)
+                        }
                         Spacer().frame(height: 3)
                     }
                 }
@@ -356,6 +375,25 @@ struct EpisodeItemView: View {
                                             .padding(.leading, 16)
                                             .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                         }
+                                    }
+                                    if !(viewModel.similarItems).isEmpty {
+                                        Text("More Like This")
+                                            .font(.callout).fontWeight(.semibold).padding(.top, 3).padding(.leading, 16)
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            VStack {
+                                                Spacer().frame(height: 8)
+                                                HStack {
+                                                    Spacer().frame(width: 16)
+                                                    ForEach(viewModel.similarItems, id: \.self) { similarItem in
+                                                        NavigationLink(destination: LazyView { ItemView(item: similarItem) }) {
+                                                            PortraitItemView(item: similarItem)
+                                                        }
+                                                        Spacer().frame(width: 10)
+                                                    }
+                                                    Spacer().frame(width: 16)
+                                                }
+                                            }
+                                        }.padding(.top, -5)
                                     }
                                     Spacer().frame(height: 195)
                                 }.frame(maxHeight: .infinity)

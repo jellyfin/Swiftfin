@@ -43,10 +43,10 @@ final class SettingsViewModel: ObservableObject {
             do {
                 self.bitrates = try JSONDecoder().decode([Bitrates].self, from: jsonData)
             } catch {
-                print(error)
+                LogManager.shared.log.error("Error converting processed JSON into Swift compatible schema.")
             }
         } catch {
-            print(error)
+            LogManager.shared.log.error("Error processing JSON file `bitrates.json`")
         }
 
         self.langs = Locale.isoLanguageCodes.compactMap {

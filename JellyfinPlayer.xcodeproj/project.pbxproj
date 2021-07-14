@@ -66,6 +66,8 @@
 		53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 53649AAE269CFAF600A2D8B7 /* Puppy */; };
 		53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53649AB0269CFB1900A2D8B7 /* LogManager.swift */; };
 		53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53649AB0269CFB1900A2D8B7 /* LogManager.swift */; };
+		53649AB3269D3F5B00A2D8B7 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53649AB0269CFB1900A2D8B7 /* LogManager.swift */; };
+		53649AB5269D423A00A2D8B7 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 53649AB4269D423A00A2D8B7 /* Puppy */; };
 		5364F455266CA0DC0026ECBA /* APIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* APIExtensions.swift */; };
 		5364F456266CA0DC0026ECBA /* APIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* APIExtensions.swift */; };
 		536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536D3D73267BA8170004248C /* BackgroundManager.swift */; };
@@ -398,6 +400,7 @@
 				628B95332670CAEA0091AF3B /* NukeUI in Frameworks */,
 				628B95242670CABD0091AF3B /* SwiftUI.framework in Frameworks */,
 				531ABF6C2671F5CC00C0FE20 /* WidgetKit.framework in Frameworks */,
+				53649AB5269D423A00A2D8B7 /* Puppy in Frameworks */,
 				536D3D7D267BD5F90004248C /* ActivityIndicator in Frameworks */,
 				628B953A2670CE250091AF3B /* KeychainSwift in Frameworks */,
 				628B95352670CAEA0091AF3B /* JellyfinAPI in Frameworks */,
@@ -780,6 +783,7 @@
 				628B95342670CAEA0091AF3B /* JellyfinAPI */,
 				628B95392670CE250091AF3B /* KeychainSwift */,
 				536D3D7C267BD5F90004248C /* ActivityIndicator */,
+				53649AB4269D423A00A2D8B7 /* Puppy */,
 			);
 			productName = WidgetExtensionExtension;
 			productReference = 628B95202670CABD0091AF3B /* WidgetExtension.appex */;
@@ -1115,6 +1119,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53649AB3269D3F5B00A2D8B7 /* LogManager.swift in Sources */,
 				62EC353126766848000E9F2D /* ServerEnvironment.swift in Sources */,
 				6267B3D42671024A00A7371D /* APIExtensions.swift in Sources */,
 				6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */,
@@ -1163,6 +1168,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 14.5;
@@ -1346,6 +1352,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1406,6 +1413,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1597,6 +1605,11 @@
 			productName = Puppy;
 		};
 		53649AAE269CFAF600A2D8B7 /* Puppy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */;
+			productName = Puppy;
+		};
+		53649AB4269D423A00A2D8B7 /* Puppy */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */;
 			productName = Puppy;
