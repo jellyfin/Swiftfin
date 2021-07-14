@@ -70,7 +70,7 @@ final class ConnectToServerViewModel: ViewModel {
             .sink(receiveCompletion: { result in
                 switch result {
                     case let .failure(error):
-                        let err = error as NSError;
+                        let err = error as NSError
                         LogManager.shared.log.critical("Error connecting to server at \"\(self.uriSubject.value)\"", tag: "connectToServer")
                         LogManager.shared.log.critical(err.debugDescription, tag: "login")
                         self.errorMessage = error.localizedDescription
@@ -86,7 +86,7 @@ final class ConnectToServerViewModel: ViewModel {
     }
 
     func connectToServer(at url: URL) {
-        uriSubject.send(url.absoluteString);
+        uriSubject.send(url.absoluteString)
         self.connectToServer()
     }
 
@@ -123,7 +123,7 @@ final class ConnectToServerViewModel: ViewModel {
                                     LogManager.shared.log.critical("User provided invalid credentials, server returned a 401 error.", tag: "login")
                                     self.errorMessage = "Invalid credentials"
                                 case .error:
-                                    let err = error as NSError;
+                                    let err = error as NSError
                                     LogManager.shared.log.critical("Error logging in to server at \"\(self.uriSubject.value)\"", tag: "login")
                                     LogManager.shared.log.critical(err.debugDescription, tag: "login")
                                     self.errorMessage = err.localizedDescription
