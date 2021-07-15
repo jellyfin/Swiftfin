@@ -178,30 +178,30 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
     private override init() {
         //
     }
-    
-    func sendLogs(logURL: URL){
+
+    func sendLogs(logURL: URL) {
         if !MFMailComposeViewController.canSendMail() {
             // Utilities.showErrorBanner(title: "No mail account found", subtitle: "Please setup a mail account")
-            return //EXIT
+            return // EXIT
         }
-        
+
         let picker = MFMailComposeViewController()
-        
+
         let fileManager = FileManager()
         let data = fileManager.contents(atPath: logURL.path)
-        
+
         picker.setSubject("SwiftFin Shake Report")
         picker.setToRecipients(["Aiden Vigue <acvigue@me.com>"])
         picker.addAttachmentData(data!, mimeType: "text/plain", fileName: logURL.lastPathComponent)
         picker.mailComposeDelegate = self
-        
+
         EmailHelper.getRootViewController()?.present(picker, animated: true, completion: nil)
     }
-    
+
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         EmailHelper.getRootViewController()?.dismiss(animated: true, completion: nil)
     }
-    
+
     static func getRootViewController() -> UIViewController? {
         UIApplication.shared.windows.first?.rootViewController
     }

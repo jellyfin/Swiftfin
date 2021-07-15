@@ -883,10 +883,10 @@ extension PlayerViewController: GCKSessionManagerListener {
     }
 
     func sessionManager(_ sessionManager: GCKSessionManager, didEnd session: GCKCastSession, withError error: Error?) {
-        if(error != nil) {
+        if error != nil {
             LogManager.shared.log.error((error! as NSError).debugDescription)
         }
-        
+
         playerDestination = .local
         videoContentView.isHidden = false
         remoteTimeUpdateTimer?.invalidate()
