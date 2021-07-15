@@ -23,7 +23,8 @@ struct LibrarySearchView: View {
         ZStack {
             VStack {
                 SearchBar(text: $searchQuery)
-                    .padding(.vertical, 8)
+                    .padding(.top, 16)
+                    .padding(.bottom, 8)
                 if searchQuery.isEmpty {
                     suggestionsListView
                 } else {
@@ -70,6 +71,7 @@ struct LibrarySearchView: View {
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
+            .padding(.horizontal, 16)
             let items = items(for: viewModel.selectedItemType)
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
