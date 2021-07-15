@@ -65,7 +65,7 @@ final class SessionManager {
         header.append("Device=\"\(deviceName)\", ")
 
         if devID == nil {
-            LogManager.shared.log.info("Generating device ID...");
+            LogManager.shared.log.info("Generating device ID...")
             #if os(tvOS)
             header.append("DeviceId=\"tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))\", ")
             deviceID = "tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))"
@@ -74,7 +74,7 @@ final class SessionManager {
             deviceID = "iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))"
             #endif
         } else {
-            LogManager.shared.log.info("Using stored device ID...");
+            LogManager.shared.log.info("Using stored device ID...")
             header.append("DeviceId=\"\(devID!)\", ")
             deviceID = devID!
         }
@@ -116,7 +116,6 @@ final class SessionManager {
 
     func loginWithSavedSession(user: SignedInUser) {
         let accessToken = getAuthToken(userID: user.user_id!)
-        
 
         self.user = user
         generateAuthHeader(with: accessToken, deviceID: user.device_uuid)

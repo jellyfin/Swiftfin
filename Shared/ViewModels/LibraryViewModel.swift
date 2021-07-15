@@ -68,10 +68,10 @@ final class LibraryViewModel: ViewModel {
             genreIDs = filters.withGenres.compactMap(\.id)
         }
         let sortBy = filters.sortBy.map(\.rawValue)
-        let shouldBeRecursive: Bool = filters.filters.contains(.isFavorite) || personIDs != [] || studioIDs != [] || genreIDs != [];
+        let shouldBeRecursive: Bool = filters.filters.contains(.isFavorite) || personIDs != [] || studioIDs != [] || genreIDs != []
         ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: shouldBeRecursive,
                                   searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
-                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie","Series","Season","Episode"] : ["Movie", "Series"],
+                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
                                   filters: filters.filters, sortBy: sortBy, tags: filters.tags,
                                   enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
             .trackActivity(loading)
@@ -98,10 +98,10 @@ final class LibraryViewModel: ViewModel {
             genreIDs = filters.withGenres.compactMap(\.id)
         }
         let sortBy = filters.sortBy.map(\.rawValue)
-        let shouldBeRecursive: Bool = filters.filters.contains(.isFavorite) || personIDs != [] || studioIDs != [] || genreIDs != [];
+        let shouldBeRecursive: Bool = filters.filters.contains(.isFavorite) || personIDs != [] || studioIDs != [] || genreIDs != []
         ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: shouldBeRecursive,
                                   searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
-                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie","Series","Season","Episode"] : ["Movie", "Series"],
+                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
                                   filters: filters.filters, sortBy: sortBy, tags: filters.tags,
                                   enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
             .sink(receiveCompletion: { [weak self] completion in
