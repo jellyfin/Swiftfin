@@ -10,6 +10,7 @@
 import Foundation
 import Combine
 import Nuke
+import UIKit
 
 #if !os(tvOS)
 import WidgetKit
@@ -28,6 +29,7 @@ final class SplashViewModel: ViewModel {
 
         #if !os(tvOS)
         WidgetCenter.shared.reloadAllTimelines()
+        UIScrollView.appearance().keyboardDismissMode = .onDrag
         #endif
 
         let nc = NotificationCenter.default

@@ -134,6 +134,8 @@
 		625CB5752678C33500530A6E /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5742678C33500530A6E /* LibraryListViewModel.swift */; };
 		625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */; };
 		625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 625CB5792678C4A400530A6E /* ActivityIndicator */; };
+		6260FFF926A09754003FA968 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 6260FFF826A09754003FA968 /* CombineExt */; };
+		6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 6261A0DF26A0AB710072EF1C /* CombineExt */; };
 		6267B3D42671024A00A7371D /* APIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* APIExtensions.swift */; };
 		6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
 		6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
@@ -367,6 +369,7 @@
 				53EC6E1E267E80AC006DD26A /* Pods_JellyfinPlayer_tvOS.framework in Frameworks */,
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
+				6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */,
 				62CB3F482685BB3B003D0A6F /* Defaults in Frameworks */,
 				53272535268BF9710035FBF1 /* SwiftUIFocusGuide in Frameworks */,
 				5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */,
@@ -389,6 +392,7 @@
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				621C638026672A30004216EA /* NukeUI in Frameworks */,
 				625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */,
+				6260FFF926A09754003FA968 /* CombineExt in Frameworks */,
 				53A431BD266B0FF20016769F /* JellyfinAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -727,6 +731,7 @@
 				62CB3F472685BB3B003D0A6F /* Defaults */,
 				53272534268BF9710035FBF1 /* SwiftUIFocusGuide */,
 				53649AAE269CFAF600A2D8B7 /* Puppy */,
+				6261A0DF26A0AB710072EF1C /* CombineExt */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */;
@@ -760,6 +765,7 @@
 				53EC6E24267EB10F006DD26A /* SwiftyJSON */,
 				62CB3F452685BAF7003D0A6F /* Defaults */,
 				53649AAC269CFAEA00A2D8B7 /* Puppy */,
+				6260FFF826A09754003FA968 /* CombineExt */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer iOS.app */;
@@ -832,6 +838,7 @@
 				62CB3F442685BAF7003D0A6F /* XCRemoteSwiftPackageReference "Defaults" */,
 				53272533268BF9710035FBF1 /* XCRemoteSwiftPackageReference "SwiftUIFocusGuide" */,
 				53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */,
+				6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1558,6 +1565,14 @@
 				minimumVersion = 1.1.0;
 			};
 		};
+		6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CombineCommunity/CombineExt";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
 		62CB3F442685BAF7003D0A6F /* XCRemoteSwiftPackageReference "Defaults" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/Defaults";
@@ -1653,6 +1668,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */;
 			productName = ActivityIndicator;
+		};
+		6260FFF826A09754003FA968 /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
+		};
+		6261A0DF26A0AB710072EF1C /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
 		};
 		628B95322670CAEA0091AF3B /* NukeUI */ = {
 			isa = XCSwiftPackageProductDependency;
