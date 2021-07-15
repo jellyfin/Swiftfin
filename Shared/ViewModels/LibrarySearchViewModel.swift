@@ -12,8 +12,9 @@ import Foundation
 import JellyfinAPI
 
 final class LibrarySearchViewModel: ViewModel {
-    @Published
-    var items = [BaseItemDto]()
+    @Published var items = [BaseItemDto]()
+
+    @Published var suggestions = [BaseItemDto]()
 
     var searchQuerySubject = CurrentValueSubject<String, Never>("")
     var parentID: String?
@@ -23,8 +24,28 @@ final class LibrarySearchViewModel: ViewModel {
         super.init()
 
         searchQuerySubject
+            .filter { !$0.isEmpty }
             .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .sink(receiveValue: search(with:))
+            .store(in: &cancellables)
+        
+        requestSuggestions()
+    }
+
+    func requestSuggestions() {
+        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!,
+                                  limit: 20,
+                                  recursive: true,
+                                  parentId: parentID,
+                                  includeItemTypes: ["Movie", "Series", "MusicArtist"],
+                                  sortBy: ["IsFavoriteOrLiked", "Random"],
+                                  imageTypeLimit: 0,
+                                  enableTotalRecordCount: false,
+                                  enableImages: false)
+            .trackActivity(loading)
+            .sink(receiveCompletion: handleAPIRequestCompletion(completion:)) { [weak self] response in
+                self?.suggestions = response.items ?? []
+            }
             .store(in: &cancellables)
     }
 
