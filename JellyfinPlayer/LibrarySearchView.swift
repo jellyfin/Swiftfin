@@ -43,9 +43,10 @@ struct LibrarySearchView: View {
     
     var suggestionsListView: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 8) {
+            LazyVStack(spacing: 8) {
                 Text("Suggestions")
-                    .font(.title)
+                    .font(.headline)
+                    .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .padding(.bottom, 8)
                 ForEach(viewModel.suggestions, id: \.id) { item in
@@ -54,7 +55,6 @@ struct LibrarySearchView: View {
                     } label: {
                         Text(item.name ?? "")
                             .font(.body)
-                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -63,7 +63,8 @@ struct LibrarySearchView: View {
     }
     
     var resultView: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        let items = items(for: viewModel.selectedItemType)
+        return VStack(alignment: .leading, spacing: 16) {
             Picker("ItemType", selection: $viewModel.selectedItemType) {
                 ForEach(viewModel.supportedItemTypeList, id: \.self) {
                     Text($0.localized)
@@ -72,7 +73,6 @@ struct LibrarySearchView: View {
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal, 16)
-            let items = items(for: viewModel.selectedItemType)
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
                     if !items.isEmpty {
@@ -99,6 +99,8 @@ struct LibrarySearchView: View {
             return viewModel.movieItems
         case .series:
             return viewModel.showItems
+        default:
+            return []
         }
     }
 }
@@ -113,6 +115,8 @@ private extension ItemType {
             return "Movies"
         case .series:
             return "Shows"
+        default:
+            return ""
         }
     }
 }

@@ -72,4 +72,5 @@ enum ItemType: String {
     case episode = "Episode"
     case movie = "Movie"
     case series = "Series"
+    case season = "Season"
 }
