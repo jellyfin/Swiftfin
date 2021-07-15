@@ -8,6 +8,7 @@
  */
 
 import Combine
+import CombineExt
 import Foundation
 import JellyfinAPI
 
@@ -15,7 +16,7 @@ final class LibrarySearchViewModel: ViewModel {
     
     @Published var supportedItemTypeList = [ItemType]()
     
-    @Published var selectedItemType = ItemType.movie
+    @Published var selectedItemType: ItemType = .movie
     
     @Published var movieItems = [BaseItemDto]()
     @Published var showItems = [BaseItemDto]()
@@ -35,8 +36,15 @@ final class LibrarySearchViewModel: ViewModel {
             .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .sink(receiveValue: search)
             .store(in: &cancellables)
+        setupPublishersForSupportedItemType()
+        
+        requestSuggestions()
+    }
+    
+    func setupPublishersForSupportedItemType() {
         
         let supportedItemTypeListPublishers = Publishers.CombineLatest3($movieItems, $showItems, $episodeItems)
+            .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .map { arg -> [ItemType] in
                 var typeList = [ItemType]()
                 if !arg.0.isEmpty {
@@ -54,13 +62,18 @@ final class LibrarySearchViewModel: ViewModel {
         supportedItemTypeListPublishers
             .assign(to: \.supportedItemTypeList, on: self)
             .store(in: &cancellables)
+        
         supportedItemTypeListPublishers
-            .compactMap(\.first)
+            .withLatestFrom(supportedItemTypeListPublishers, $selectedItemType)
+            .compactMap { typeList, selectedItemType in
+                if typeList.contains(selectedItemType) {
+                    return selectedItemType
+                } else {
+                    return typeList.first
+                }
+            }
             .assign(to: \.selectedItemType, on: self)
             .store(in: &cancellables)
-            
-        
-        requestSuggestions()
     }
     
     func requestSuggestions() {
