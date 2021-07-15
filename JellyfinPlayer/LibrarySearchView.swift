@@ -27,7 +27,7 @@ struct LibrarySearchView: View {
                 if searchQuery.isEmpty {
                     suggestionsListView
                 } else {
-                    itemsGridView
+                    resultView
                 }
             }
             if viewModel.isLoading {
@@ -61,21 +61,56 @@ struct LibrarySearchView: View {
         }
     }
     
-    var itemsGridView: some View {
-        ScrollView {
-            if !viewModel.items.isEmpty {
-                LazyVGrid(columns: tracks) {
-                    ForEach(viewModel.items, id: \.id) { item in
-                        PortraitItemView(item: item)
+    var resultView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Picker("ItemType", selection: $viewModel.selectedItemType) {
+                ForEach(viewModel.supportedItemTypeList, id: \.self) {
+                    Text($0.localized)
+                        .tag($0)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            let items = items(for: viewModel.selectedItemType)
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 16) {
+                    if !items.isEmpty {
+                        LazyVGrid(columns: tracks) {
+                            ForEach(items, id: \.id) { item in
+                                PortraitItemView(item: item)
+                            }
+                        }
+                        .padding(.bottom, 16)
                     }
                 }
-                .padding(.bottom, 16)
-                .onRotate { _ in
-                    recalcTracks()
-                }
-            } else {
-                Text("Query returned 0 results.")
             }
+        }
+        .onRotate { _ in
+            recalcTracks()
+        }
+    }
+    
+    func items(for type: ItemType) -> [BaseItemDto] {
+        switch type {
+        case .episode:
+            return viewModel.episodeItems
+        case .movie:
+            return viewModel.movieItems
+        case .series:
+            return viewModel.showItems
+        }
+    }
+}
+
+private extension ItemType {
+    
+    var localized: String {
+        switch self {
+        case .episode:
+            return "Episodes"
+        case .movie:
+            return "Movies"
+        case .series:
+            return "Shows"
         }
     }
 }

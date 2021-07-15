@@ -74,7 +74,7 @@ struct PortraitItemView: View {
                         .font(.caption)
                         .fontWeight(.medium)
                 } else {
-                    Text("S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))")
+                    Text("S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0)) - \(item.name ?? "")")
                         .foregroundColor(.secondary)
                         .font(.caption)
                         .fontWeight(.medium)
