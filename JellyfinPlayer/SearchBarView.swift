@@ -11,9 +11,9 @@ import SwiftUI
 
 struct SearchBar: View {
     @Binding var text: String
-    
+
     @State private var isEditing = false
-    
+
     var body: some View {
         HStack(spacing: 8) {
             TextField("Search...", text: $text)

@@ -13,36 +13,36 @@ import Foundation
 import JellyfinAPI
 
 final class LibrarySearchViewModel: ViewModel {
-    
+
     @Published var supportedItemTypeList = [ItemType]()
-    
+
     @Published var selectedItemType: ItemType = .movie
-    
+
     @Published var movieItems = [BaseItemDto]()
     @Published var showItems = [BaseItemDto]()
     @Published var episodeItems = [BaseItemDto]()
-    
+
     @Published var suggestions = [BaseItemDto]()
-    
+
     var searchQuerySubject = CurrentValueSubject<String, Never>("")
     var parentID: String?
-    
+
     init(parentID: String?) {
         self.parentID = parentID
         super.init()
-        
+
         searchQuerySubject
             .filter { !$0.isEmpty }
             .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .sink(receiveValue: search)
             .store(in: &cancellables)
         setupPublishersForSupportedItemType()
-        
+
         requestSuggestions()
     }
-    
+
     func setupPublishersForSupportedItemType() {
-        
+
         let supportedItemTypeListPublishers = Publishers.CombineLatest3($movieItems, $showItems, $episodeItems)
             .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .map { arg -> [ItemType] in
@@ -58,11 +58,11 @@ final class LibrarySearchViewModel: ViewModel {
                 }
                 return typeList
             }
-        
+
         supportedItemTypeListPublishers
             .assign(to: \.supportedItemTypeList, on: self)
             .store(in: &cancellables)
-        
+
         supportedItemTypeListPublishers
             .withLatestFrom(supportedItemTypeListPublishers, $selectedItemType)
             .compactMap { typeList, selectedItemType in
@@ -75,7 +75,7 @@ final class LibrarySearchViewModel: ViewModel {
             .assign(to: \.selectedItemType, on: self)
             .store(in: &cancellables)
     }
-    
+
     func requestSuggestions() {
         ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!,
                                   limit: 20,
@@ -92,7 +92,7 @@ final class LibrarySearchViewModel: ViewModel {
             }
             .store(in: &cancellables)
     }
-    
+
     func search(with query: String) {
         ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, limit: 50, recursive: true, searchTerm: query,
                                   sortOrder: [.ascending], parentId: parentID,
