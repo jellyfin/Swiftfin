@@ -91,6 +91,7 @@ struct LibraryListView: View {
                 }
             }.padding(.leading, 16)
             .padding(.trailing, 16)
+            .padding(.top, 8)
         }
         .navigationTitle("All Media")
         .toolbar {

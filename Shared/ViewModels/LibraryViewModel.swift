@@ -78,6 +78,7 @@ final class LibraryViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
+                LogManager.shared.log.debug("Received \(String(response.items?.count ?? 0)) items in library \(self?.parentID ?? "nil")")
                 guard let self = self else { return }
                 let totalPages = ceil(Double(response.totalRecordCount ?? 0) / 100.0)
                 self.totalPages = Int(totalPages)
