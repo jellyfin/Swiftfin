@@ -73,7 +73,7 @@ struct VideoPlayerCastDeviceSelector: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Select Cast Destination")
+            .navigationTitle(NSLocalizedString("Select Cast Destination", comment: ""))
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if UIDevice.current.userInterfaceIdiom == .phone {

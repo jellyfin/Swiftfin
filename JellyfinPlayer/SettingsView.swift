@@ -70,10 +70,8 @@ struct SettingsView: View {
                         Button {
                             let nc = NotificationCenter.default
                             nc.post(name: Notification.Name("didSignOut"), object: nil)
-
-                            SessionManager.current.logout()
                         } label: {
-                            Text("Log out").font(.callout)
+                            Text("Switch user").font(.callout)
                         }
                     }
                 }

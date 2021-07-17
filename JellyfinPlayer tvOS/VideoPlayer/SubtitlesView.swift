@@ -14,7 +14,7 @@ class SubtitlesViewController: InfoTabViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tabBarItem.title = "Subtitles"
+        tabBarItem.title = NSLocalizedString("Subtitles", comment: "")
 
     }
 

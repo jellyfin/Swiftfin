@@ -29,19 +29,19 @@ struct LibraryFilterView: View {
                 } else {
                     Form {
                         if viewModel.enabledFilterType.contains(.genre) {
-                            MultiSelector(label: "Genres",
+                            MultiSelector(label: NSLocalizedString("Genres", comment: ""),
                                           options: viewModel.possibleGenres,
                                           optionToString: { $0.name ?? "" },
                                           selected: $viewModel.modifiedFilters.withGenres)
                         }
                         if viewModel.enabledFilterType.contains(.filter) {
-                            MultiSelector(label: "Filters",
+                            MultiSelector(label: NSLocalizedString("Filters", comment: ""),
                                           options: viewModel.possibleItemFilters,
                                           optionToString: { $0.localized },
                                           selected: $viewModel.modifiedFilters.filters)
                         }
                         if viewModel.enabledFilterType.contains(.tag) {
-                            MultiSelector(label: "Tags",
+                            MultiSelector(label: NSLocalizedString("Tags", comment: ""),
                                           options: viewModel.possibleTags,
                                           optionToString: { $0 },
                                           selected: $viewModel.modifiedFilters.tags)
@@ -70,7 +70,7 @@ struct LibraryFilterView: View {
                     }
                 }
             }
-            .navigationBarTitle("Filter Results", displayMode: .inline)
+            .navigationBarTitle(NSLocalizedString("Filter Results", comment: ""), displayMode: .inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button {

@@ -19,10 +19,10 @@ struct ConnectToServerView: View {
                 if viewModel.isConnectedServer {
                     if viewModel.publicUsers.isEmpty {
                         Section(header: Text("Login to \(ServerEnvironment.current.server.name ?? "")")) {
-                            TextField("Username", text: $username)
+                            TextField(NSLocalizedString("Username", comment: ""), text: $username)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
-                            SecureField("Password", text: $password)
+                            SecureField(NSLocalizedString("Password", comment: ""), text: $password)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
                             Button {
@@ -106,7 +106,7 @@ struct ConnectToServerView: View {
                     }
                 } else {
                     Section(header: Text("Connect Manually")) {
-                        TextField("Server URL", text: $uri)
+                        TextField(NSLocalizedString("Server URL", comment: ""), text: $uri)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
                         Button {
@@ -162,6 +162,6 @@ struct ConnectToServerView: View {
         .alert(item: $viewModel.errorMessage) { _ in
             Alert(title: Text("Error"), message: Text($viewModel.errorMessage.wrappedValue!), dismissButton: .default(Text("Try again")))
         }
-        .navigationTitle("Connect to Server")
+        .navigationTitle(NSLocalizedString("Connect to Server", comment: ""))
     }
 }

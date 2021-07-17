@@ -20,7 +20,7 @@ struct MainTabView: View {
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .tabItem {
-                Text(Tab.home.localized)
+                Text("Home")
                 Image(systemName: "house")
             }
             .tag(Tab.home)
@@ -29,7 +29,7 @@ struct MainTabView: View {
             }
             .navigationViewStyle(StackNavigationViewStyle())
             .tabItem {
-                Text(Tab.allMedia.localized)
+                Text("All Media")
                 Image(systemName: "folder")
             }
             .tag(Tab.allMedia)
@@ -42,14 +42,5 @@ extension MainTabView {
     enum Tab: String {
         case home
         case allMedia
-
-        var localized: String {
-            switch self {
-            case .home:
-                return "Home"
-            case .allMedia:
-                return "All Media"
-            }
-        }
     }
 }

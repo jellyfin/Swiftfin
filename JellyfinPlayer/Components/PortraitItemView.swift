@@ -18,7 +18,8 @@ struct PortraitItemView: View {
                 ImageView(src: item.type != "Episode" ? item.getPrimaryImage(maxWidth: 100) : item.getSeriesPrimaryImage(maxWidth: 100), bh: item.type != "Episode" ? item.getPrimaryImageBlurHash() : item.getSeriesPrimaryImageBlurHash())
                     .frame(width: 100, height: 150)
                     .cornerRadius(10)
-                    .shadow(radius: 4)
+                    .shadow(radius: 4, y: 2)
+                    .shadow(radius: 4, y: 2)
                     .overlay(
                         Rectangle()
                             .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
@@ -43,20 +44,23 @@ struct PortraitItemView: View {
                     .overlay(
                         ZStack {
                             if item.userData?.played ?? false {
-                                Image(systemName: "circle.fill")
-                                    .foregroundColor(.white)
                                 Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(Color(.systemBlue))
+                                    .foregroundColor(.accentColor)
+                                    .background(Color(.white))
+                                    .cornerRadius(.infinity)
                             } else {
                                 if item.userData?.unplayedItemCount != nil {
-                                    Image(systemName: "circle.fill")
-                                        .foregroundColor(Color(.systemBlue))
+                                    Capsule()
+                                        .fill(Color.accentColor)
+                                        .frame(minWidth: 20, minHeight: 20, maxHeight: 20)
                                     Text(String(item.userData!.unplayedItemCount ?? 0))
                                         .foregroundColor(.white)
                                         .font(.caption2)
+                                        .padding(2)
                                 }
                             }
                         }.padding(2)
+                        .fixedSize()
                         .opacity(1), alignment: .topTrailing).opacity(1)
                 Text(item.seriesName ?? item.name ?? "")
                     .font(.caption)

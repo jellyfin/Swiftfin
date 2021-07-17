@@ -93,7 +93,7 @@ struct LibraryListView: View {
             .padding(.trailing, 16)
             .padding(.top, 8)
         }
-        .navigationTitle("All Media")
+        .navigationTitle(NSLocalizedString("All Media", comment: ""))
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 NavigationLink(destination: LazyView {

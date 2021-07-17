@@ -106,6 +106,9 @@
 		53ABFDEE26799DCD00886593 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531AC8BE26750DE20091C7EB /* ImageView.swift */; };
 		53AD124D267029D60094A276 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA526572F0700E7EA70 /* SeriesItemView.swift */; };
 		53AD124E26702B8A0094A276 /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA326572C1300E7EA70 /* SeasonItemView.swift */; };
+		53AFFDE926A2520800261FD0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53AFFDE726A2520800261FD0 /* Localizable.strings */; };
+		53AFFDEA26A2520800261FD0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53AFFDE726A2520800261FD0 /* Localizable.strings */; };
+		53AFFDEB26A2520800261FD0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53AFFDE726A2520800261FD0 /* Localizable.strings */; };
 		53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CD2A3F268A49C2002ABD4E /* ItemView.swift */; };
 		53CD2A42268A4B38002ABD4E /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CD2A41268A4B38002ABD4E /* MovieItemView.swift */; };
 		53DE4BD02670961400739748 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53987CA72657424A00E7EA70 /* EpisodeItemView.swift */; };
@@ -305,6 +308,8 @@
 		53ABFDDD267974E300886593 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		53ABFDEA2679753200886593 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		53AD124C2670278D0094A276 /* JellyfinPlayer.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = JellyfinPlayer.entitlements; sourceTree = "<group>"; };
+		53AFFDE826A2520800261FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
+		53AFFDEC26A2523300261FD0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		53CD2A3F268A49C2002ABD4E /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		53CD2A41268A4B38002ABD4E /* MovieItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieItemView.swift; sourceTree = "<group>"; };
 		53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = Carthage/Build/MobileVLCKit.xcframework; sourceTree = "<group>"; };
@@ -535,6 +540,7 @@
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
+				53AFFDE626A2520800261FD0 /* en.lproj */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				5377CBF3263B596A003A4E83 /* JellyfinPlayer */,
 				535870612669D21600D05A09 /* JellyfinPlayer tvOS */,
@@ -600,6 +606,14 @@
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
+		};
+		53AFFDE626A2520800261FD0 /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				53AFFDE726A2520800261FD0 /* Localizable.strings */,
+			);
+			path = en.lproj;
+			sourceTree = SOURCE_ROOT;
 		};
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
 			isa = PBXGroup;
@@ -824,7 +838,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
+				es,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -856,6 +870,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53AFFDEA26A2520800261FD0 /* Localizable.strings in Resources */,
 				5310695D2684E7EE00CFFDBA /* VideoPlayer.storyboard in Resources */,
 				5358706A2669D21700D05A09 /* Preview Assets.xcassets in Resources */,
 				535870672669D21700D05A09 /* Assets.xcassets in Resources */,
@@ -867,6 +882,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53AFFDE926A2520800261FD0 /* Localizable.strings in Resources */,
 				5377CBFC263B596B003A4E83 /* Preview Assets.xcassets in Resources */,
 				53313B90265EEA6D00947AA3 /* VideoPlayer.storyboard in Resources */,
 				AE8C3159265D6F90008AA076 /* bitrates.json in Resources */,
@@ -879,6 +895,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				628B95292670CABE0091AF3B /* Assets.xcassets in Resources */,
+				53AFFDEB26A2520800261FD0 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1168,18 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		53AFFDE726A2520800261FD0 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				53AFFDE826A2520800261FD0 /* en */,
+				53AFFDEC26A2523300261FD0 /* es */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1161,7 +1190,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "JellyfinPlayer tvOS/JellyfinPlayer tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_ASSET_PATHS = "\"JellyfinPlayer tvOS/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				ENABLE_PREVIEWS = YES;
@@ -1176,9 +1205,10 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 14.5;
+				TVOS_DEPLOYMENT_TARGET = 14.1;
 			};
 			name = Debug;
 		};
@@ -1191,7 +1221,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "JellyfinPlayer tvOS/JellyfinPlayer tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_ASSET_PATHS = "\"JellyfinPlayer tvOS/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				ENABLE_PREVIEWS = YES;
@@ -1205,9 +1235,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 14.5;
+				TVOS_DEPLOYMENT_TARGET = 14.1;
 			};
 			name = Release;
 		};
@@ -1215,6 +1246,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1278,6 +1310,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1340,7 +1373,7 @@
 				CODE_SIGN_ENTITLEMENTS = JellyfinPlayer/JellyfinPlayer.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				ENABLE_BITCODE = NO;
@@ -1360,6 +1393,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1375,7 +1409,7 @@
 				CODE_SIGN_ENTITLEMENTS = JellyfinPlayer/JellyfinPlayer.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 57;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 9R8RREG67J;
@@ -1395,6 +1429,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1407,7 +1442,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = WidgetExtension/WidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -1421,6 +1456,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1433,7 +1469,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = WidgetExtension/WidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -1446,6 +1482,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
