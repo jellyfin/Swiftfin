@@ -309,7 +309,6 @@
 		53ABFDEA2679753200886593 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		53AD124C2670278D0094A276 /* JellyfinPlayer.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = JellyfinPlayer.entitlements; sourceTree = "<group>"; };
 		53AFFDE826A2520800261FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
-		53AFFDEC26A2523300261FD0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		53CD2A3F268A49C2002ABD4E /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		53CD2A41268A4B38002ABD4E /* MovieItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieItemView.swift; sourceTree = "<group>"; };
 		53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = Carthage/Build/MobileVLCKit.xcframework; sourceTree = "<group>"; };
@@ -838,7 +837,6 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				es,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -1173,7 +1171,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				53AFFDE826A2520800261FD0 /* en */,
-				53AFFDEC26A2523300261FD0 /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

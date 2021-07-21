@@ -191,7 +191,7 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
         let data = fileManager.contents(atPath: logURL.path)
 
         picker.setSubject("SwiftFin Shake Report")
-        picker.setToRecipients(["Aiden Vigue <acvigue@me.com>"])
+        picker.setToRecipients(["SwiftFin Bug Reports <swiftfin-bugs@jellyfin.org>"])
         picker.addAttachmentData(data!, mimeType: "text/plain", fileName: logURL.lastPathComponent)
         picker.mailComposeDelegate = self
 
