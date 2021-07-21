@@ -814,6 +814,7 @@
 		5377CBE9263B596A003A4E83 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = NO;
 				KnownAssetTags = (
 					New,
 				);
