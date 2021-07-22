@@ -63,7 +63,7 @@ struct SettingsView: View {
                     )
                 }
 
-                Section {
+                Section(header: Text(ServerEnvironment.current.server.name ?? "")) {
                     HStack {
                         Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
