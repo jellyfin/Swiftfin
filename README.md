@@ -22,9 +22,9 @@
 
 <a href='https://testflight.apple.com/join/WiN0G62Q'><img height='70' alt='Join the Beta on TestFlight' src='https://anotherlens.app/testflight-badge.png'/></a>
 
-**Don't see Swiftfin in your language?**
+**Don't see SwiftFin in your language?**
 
-Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfin/) to help translate Swiftfin and other projects.
+Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfin/) to help translate SwiftFin and other projects.
 
 <a href="https://translate.jellyfin.org/engage/swiftfin/">
 <img src="https://translate.jellyfin.org/widgets/swiftfin/-/multi-auto.svg"/>
