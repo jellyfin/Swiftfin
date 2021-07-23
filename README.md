@@ -43,6 +43,9 @@ $ sudo gem install cocoapods
 # install dependencies
 $ pod install
 
-# open workspace
+# open workspace and build it
 $ open JellyfinPlayer.xcworkspace
+
+# or build using xcodebuild
+$ xcodebuild build -workspace "JellyfinPlayer.xcworkspace" -scheme "JellyfinPlayer"
 ```
