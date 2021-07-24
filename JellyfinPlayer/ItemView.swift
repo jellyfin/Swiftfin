@@ -34,7 +34,7 @@ struct ItemView: View {
                     .statusBar(hidden: true)
                     .edgesIgnoringSafeArea(.all)
                     .prefersHomeIndicatorAutoHidden(true)
-            }.supportedOrientations(.landscape), isActive: $videoPlayerItem.shouldShowPlayer) {
+            }, isActive: $videoPlayerItem.shouldShowPlayer) {
                 EmptyView()
             }
             VStack {
@@ -56,7 +56,6 @@ struct ItemView: View {
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(false)
             .environmentObject(videoPlayerItem)
-            .supportedOrientations(.all)
         }
     }
 }

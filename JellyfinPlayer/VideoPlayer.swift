@@ -81,7 +81,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var playbackItem = PlaybackItem()
     var remoteTimeUpdateTimer: Timer?
     var upNextViewModel: UpNextViewModel = UpNextViewModel()
-    var lastOri: UIDeviceOrientation!
+    var lastOri: UIInterfaceOrientation!
 
     // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
@@ -387,6 +387,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
     // MARK: viewDidLoad
     override func viewDidLoad() {
+        super.viewDidLoad()
         if manifest.type == "Movie" {
             titleLabel.text = manifest.name ?? ""
         } else {
@@ -396,14 +397,21 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             upNextViewModel.delegate = self
         }
 
-        lastOri = UIDevice.current.orientation
+        DispatchQueue.main.async {
+            self.lastOri = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
+            AppDelegate.orientationLock = .landscape
 
-        if !UIDevice.current.orientation.isLandscape || UIDevice.current.orientation.isFlat {
-            let value = UIInterfaceOrientation.landscapeRight.rawValue
-            UIDevice.current.setValue(value, forKey: "orientation")
-            UIViewController.attemptRotationToDeviceOrientation()
+            if !self.lastOri.isLandscape {
+                UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+                UIViewController.attemptRotationToDeviceOrientation()
+            }
         }
-        super.viewDidLoad()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(didChangedOrientation), name: UIDevice.orientationDidChangeNotification, object: nil)
+    }
+
+    @objc func didChangedOrientation() {
+        lastOri = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
     }
 
     func mediaHasStartedPlaying() {
@@ -438,12 +446,15 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         self.tabBarController?.tabBar.isHidden = false
         self.navigationController?.isNavigationBarHidden = false
         overrideUserInterfaceStyle = .unspecified
-        UIDevice.current.setValue(lastOri.rawValue, forKey: "orientation")
-        UIViewController.attemptRotationToDeviceOrientation()
-        super.viewWillDisappear(animated)
+        DispatchQueue.main.async {
+            AppDelegate.orientationLock = .all
+            UIDevice.current.setValue(self.lastOri.rawValue, forKey: "orientation")
+            UIViewController.attemptRotationToDeviceOrientation()
+        }
     }
 
     // MARK: viewDidAppear
@@ -479,19 +490,19 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
                 .sink(receiveCompletion: { completion in
                     switch completion {
-                        case .finished:
-                            break
-                        case .failure(let error):
-                            if let err = error as? ErrorResponse {
-                                switch err {
-                                    case .error(401, _, _, _):
-                                        self.delegate?.exitPlayer(self)
-                                        SessionManager.current.logout()
-                                    case .error:
-                                        self.delegate?.exitPlayer(self)
-                                }
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        if let err = error as? ErrorResponse {
+                            switch err {
+                            case .error(401, _, _, _):
+                                self.delegate?.exitPlayer(self)
+                                SessionManager.current.logout()
+                            case .error:
+                                self.delegate?.exitPlayer(self)
                             }
-                            break
+                        }
+                        break
                     }
                 }, receiveValue: { [self] response in
                     playSessionId = response.playSessionId ?? ""
@@ -906,35 +917,35 @@ extension PlayerViewController: GCKSessionManagerListener {
 // MARK: - VLCMediaPlayer Delegates
 extension PlayerViewController: VLCMediaPlayerDelegate {
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
-            let currentState: VLCMediaPlayerState = mediaPlayer.state
-            switch currentState {
-            case .stopped :
-                LogManager.shared.log.debug("Player state changed: STOPPED")
-                break
-            case .ended :
-                LogManager.shared.log.debug("Player state changed: ENDED")
-                break
-            case .playing :
-                LogManager.shared.log.debug("Player state changed: PLAYING")
-                sendProgressReport(eventName: "unpause")
-                delegate?.hideLoadingView(self)
-                paused = false
-            case .paused :
-                    LogManager.shared.log.debug("Player state changed: PAUSED")
-                paused = true
-            case .opening :
-                    LogManager.shared.log.debug("Player state changed: OPENING")
-            case .buffering :
-                    LogManager.shared.log.debug("Player state changed: BUFFERING")
-                delegate?.showLoadingView(self)
-            case .error :
-                    LogManager.shared.log.error("Video had error.")
-                sendStopReport()
-            case .esAdded:
-                mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
-            @unknown default:
-                break
-            }
+        let currentState: VLCMediaPlayerState = mediaPlayer.state
+        switch currentState {
+        case .stopped :
+            LogManager.shared.log.debug("Player state changed: STOPPED")
+            break
+        case .ended :
+            LogManager.shared.log.debug("Player state changed: ENDED")
+            break
+        case .playing :
+            LogManager.shared.log.debug("Player state changed: PLAYING")
+            sendProgressReport(eventName: "unpause")
+            delegate?.hideLoadingView(self)
+            paused = false
+        case .paused :
+            LogManager.shared.log.debug("Player state changed: PAUSED")
+            paused = true
+        case .opening :
+            LogManager.shared.log.debug("Player state changed: OPENING")
+        case .buffering :
+            LogManager.shared.log.debug("Player state changed: BUFFERING")
+            delegate?.showLoadingView(self)
+        case .error :
+            LogManager.shared.log.error("Video had error.")
+            sendStopReport()
+        case .esAdded:
+            mainActionButton.setImage(UIImage(systemName: "pause"), for: .normal)
+        @unknown default:
+            break
+        }
     }
 
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
