@@ -210,7 +210,7 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
 @main
 struct JellyfinPlayerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {
@@ -228,7 +228,7 @@ struct JellyfinPlayerApp: App {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-        
+
     static var orientationLock = UIInterfaceOrientationMask.all
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
