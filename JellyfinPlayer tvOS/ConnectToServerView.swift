@@ -111,6 +111,7 @@ struct ConnectToServerView: View {
                             TextField(NSLocalizedString("Server URL", comment: ""), text: $uri)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
+                                .keyboardType(.URL)
                             Button {
                                 viewModel.connectToServer()
                             } label: {

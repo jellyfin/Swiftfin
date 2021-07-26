@@ -12,13 +12,13 @@ import SwiftUI
 struct LibrarySearchView: View {
     @StateObject var viewModel: LibrarySearchViewModel
     @State var searchQuery = ""
-    
+
     @State private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
-    
+
     func recalcTracks() {
         tracks = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
     }
-    
+
     var body: some View {
         ZStack {
             VStack {
@@ -40,7 +40,7 @@ struct LibrarySearchView: View {
         }
         .navigationBarTitle("Search", displayMode: .inline)
     }
-    
+
     var suggestionsListView: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
@@ -61,7 +61,7 @@ struct LibrarySearchView: View {
             .padding(.horizontal, 16)
         }
     }
-    
+
     var resultView: some View {
         let items = items(for: viewModel.selectedItemType)
         return VStack(alignment: .leading, spacing: 16) {
@@ -90,7 +90,7 @@ struct LibrarySearchView: View {
             recalcTracks()
         }
     }
-    
+
     func items(for type: ItemType) -> [BaseItemDto] {
         switch type {
         case .episode:
@@ -106,7 +106,7 @@ struct LibrarySearchView: View {
 }
 
 private extension ItemType {
-    
+
     var localized: String {
         switch self {
         case .episode:
