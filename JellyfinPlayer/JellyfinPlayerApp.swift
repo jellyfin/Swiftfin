@@ -230,7 +230,7 @@ struct JellyfinPlayerApp: App {
                 }
         }
     }
-    
+
     private func setupAppearance() {
         guard let storedAppearance = AppAppearance(rawValue: appAppearance) else { return }
         UIApplication.shared.windows.first?.overrideUserInterfaceStyle = storedAppearance.style
