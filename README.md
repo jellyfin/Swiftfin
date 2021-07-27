@@ -1,25 +1,48 @@
-<h1 align="center">Swiftfin</h1>
-<h3 align="center">Part of the <a href="https://jellyfin.org">Jellyfin Project</a></h3>
-
----
-
 <p align="center">
-<img alt="Logo Banner" src="https://raw.githubusercontent.com/jellyfin/jellyfin-ux/master/branding/SVG/banner-logo-solid.svg?sanitize=true"/>
-<br/>
-<br/>
-<a href="https://github.com/jellyfin/JellyfinPlayer">
-<img src="https://img.shields.io/github/license/jellyfin/swiftfin" alt="MPL 2.0 License" />
-</a>
-<a href="https://github.com/jellyfin/JellyfinPlayer/releases">
-<img src="https://img.shields.io/github/v/release/jellyfin/swiftfin" alt="GitHub release (latest SemVer)" />
-</a>
-<a href="https://matrix.to/#/+jellyfin:matrix.org">
-<img alt="Chat on Matrix" src="https://img.shields.io/matrix/jellyfin:matrix.org.svg?logo=matrix"/>
-</a>
+      <img alt="SwiftFin" height="125" src="https://github.com/jellyfin/SwiftFin/raw/main/JellyfinPlayer/Assets.xcassets/AppIcon.appiconset/152.png">
+  <h2 align="center">SwiftFin</h2>
+  <a href="https://translate.jellyfin.org/engage/swiftfin/">
+    <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
+  </a>
+  <a href="https://matrix.to/#/+jellyfin:matrix.org">
+    <img src="https://img.shields.io/matrix/jellyfin:matrix.org">
+  </a>
+  <a href="https://sonarcloud.io/dashboard?id=jellyfin_SwiftFin">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=jellyfin_SwiftFin&metric=alert_status">
+  </a>
+  <a href="https://discord.gg/zHBxVSXdBV">
+    <img src="https://img.shields.io/badge/Talk%20on-Discord-brightgreen">
+  </a>
+</p>
+<p align="center">
+  <b>SwiftFin</b> is a modern client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
 
----
+## ⚡️ Links!
 
-[Join the Jellyfin Discord!](https://discord.gg/zHBxVSXdBV)
-Also available on Matrix, and IRC. See https://jellyfin.org/contact for options.
-[Beta test!](https://testflight.apple.com/join/WiN0G62Q)
+<a href='https://testflight.apple.com/join/WiN0G62Q'><img height='70' alt='Join the Beta on TestFlight' src='https://anotherlens.app/testflight-badge.png'/></a>
+
+**Don't see SwiftFin in your language?**
+
+Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfin/) to help translate SwiftFin and other projects.
+
+<a href="https://translate.jellyfin.org/engage/swiftfin/">
+<img src="https://translate.jellyfin.org/widgets/swiftfin/-/multi-auto.svg"/>
+</a>
+
+## ⚙️ Development
+
+Xcode 13.0 with command line tools.
+
+### Build Process
+
+```bash
+# install Cocoapods (if not installed)
+$ sudo gem install cocoapods
+
+# install dependencies
+$ pod install
+
+# open workspace and build it
+$ open JellyfinPlayer.xcworkspace
+```

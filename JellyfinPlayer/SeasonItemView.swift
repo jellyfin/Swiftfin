@@ -89,8 +89,7 @@ struct SeasonItemView: View {
                                         }
                                         .padding(.leading, 2)
                                         .padding(.bottom, episode.userData?.playedPercentage == nil ? 2 : 9)
-                                        .opacity(1)
-                                    , alignment: .bottomLeading)
+                                        .opacity(1), alignment: .bottomLeading)
                                     .overlay(
                                         ZStack {
                                             if episode.userData?.played ?? false {

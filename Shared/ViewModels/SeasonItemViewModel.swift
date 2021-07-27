@@ -13,15 +13,16 @@ import JellyfinAPI
 
 final class SeasonItemViewModel: DetailItemViewModel {
     @Published var episodes = [BaseItemDto]()
-    
+
     override init(item: BaseItemDto) {
         super.init(item: item)
         self.item = item
-        
+
         requestEpisodes()
     }
 
     func requestEpisodes() {
+        LogManager.shared.log.debug("Getting episodes in season \(self.item.id!) (\(self.item.name!)) of show \(self.item.seriesId!) (\(self.item.seriesName!))")
         TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.user.user_id!,
                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                seasonId: item.id ?? "")
@@ -30,6 +31,7 @@ final class SeasonItemViewModel: DetailItemViewModel {
                 self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.episodes = response.items ?? []
+                LogManager.shared.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")
             })
             .store(in: &cancellables)
     }

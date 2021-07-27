@@ -40,9 +40,12 @@ class ViewModel: ObservableObject {
                 if let err = error as? ErrorResponse {
                     switch err {
                         case .error(401, _, _, _):
+                            LogManager.shared.log.error("Request failed: User unauthorized, server returned a 401 error code.")
                             self.errorMessage = err.localizedDescription
                             SessionManager.current.logout()
                         case .error:
+                            LogManager.shared.log.error("Request failed.")
+                            LogManager.shared.log.error((err as NSError).debugDescription)
                             self.errorMessage = err.localizedDescription
                     }
                 }

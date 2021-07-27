@@ -56,7 +56,7 @@ struct LibraryListView: View {
                 .shadow(radius: 5)
                 .padding(.bottom, 15)
 
-                if(!viewModel.isLoading) {
+                if !viewModel.isLoading {
                     ForEach(viewModel.libraries, id: \.id) { library in
                         if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
                             NavigationLink(destination: LazyView {
@@ -67,7 +67,7 @@ struct LibraryListView: View {
                                         .opacity(0.4)
                                     HStack {
                                         Spacer()
-                                        VStack() {
+                                        VStack {
                                             Text(library.name ?? "")
                                                 .foregroundColor(.white)
                                                 .font(.title2)
@@ -91,8 +91,9 @@ struct LibraryListView: View {
                 }
             }.padding(.leading, 16)
             .padding(.trailing, 16)
+            .padding(.top, 8)
         }
-        .navigationTitle("All Media")
+        .navigationTitle(NSLocalizedString("All Media", comment: ""))
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 NavigationLink(destination: LazyView {

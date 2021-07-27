@@ -12,9 +12,9 @@ import JellyfinAPI
 
 class UpNextViewModel: ObservableObject {
     @Published var largeView: Bool = false
-    @Published var item: BaseItemDto? = nil
-    var delegate: PlayerViewController?
-    
+    @Published var item: BaseItemDto?
+    weak var delegate: PlayerViewController?
+
     func nextUp() {
         if delegate != nil {
             delegate?.setPlayerToNextUp()
@@ -23,9 +23,9 @@ class UpNextViewModel: ObservableObject {
 }
 
 struct VideoUpNextView: View {
-    
+
     @ObservedObject var viewModel: UpNextViewModel
-    
+
     var body: some View {
         Button {
             viewModel.nextUp()
@@ -36,7 +36,7 @@ struct VideoUpNextView: View {
                         .foregroundColor(.white)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                    Text(viewModel.item!.getEpisodeLocator())
+                    Text(viewModel.item?.getEpisodeLocator() ?? "")
                         .foregroundColor(.secondary)
                         .font(.caption)
                 }

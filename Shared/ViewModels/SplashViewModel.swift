@@ -10,6 +10,7 @@
 import Foundation
 import Combine
 import Nuke
+import UIKit
 
 #if !os(tvOS)
 import WidgetKit
@@ -28,6 +29,7 @@ final class SplashViewModel: ViewModel {
 
         #if !os(tvOS)
         WidgetCenter.shared.reloadAllTimelines()
+        UIScrollView.appearance().keyboardDismissMode = .onDrag
         #endif
 
         let nc = NotificationCenter.default
@@ -36,12 +38,12 @@ final class SplashViewModel: ViewModel {
     }
 
     @objc func didLogIn() {
-        print("didLogIn")
+        LogManager.shared.log.info("Received `didSignIn` from NSNotificationCenter.")
         isLoggedIn = true
     }
 
     @objc func didLogOut() {
-        print("didLogOut")
+        LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
         isLoggedIn = false
     }
 }

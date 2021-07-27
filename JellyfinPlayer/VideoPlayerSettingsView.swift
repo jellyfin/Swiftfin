@@ -37,8 +37,8 @@ struct VideoPlayerSettings: View {
     weak var delegate: PlayerViewController!
     @State var captionTrack: Int32 = -99
     @State var audioTrack: Int32 = -99
-    @State var playbackSpeedSelection : Int = 3
-    
+    @State var playbackSpeedSelection: Int = 3
+
     init(delegate: PlayerViewController) {
         self.delegate = delegate
     }
@@ -46,7 +46,7 @@ struct VideoPlayerSettings: View {
     var body: some View {
         NavigationView {
             Form {
-                Picker("Closed Captions", selection: $captionTrack) {
+                Picker(NSLocalizedString("Closed Captions", comment: ""), selection: $captionTrack) {
                     ForEach(delegate.subtitleTrackArray, id: \.id) { caption in
                         Text(caption.name).tag(caption.id)
                     }
@@ -54,29 +54,24 @@ struct VideoPlayerSettings: View {
                 .onChange(of: captionTrack) { track in
                     self.delegate.subtitleTrackChanged(newTrackID: track)
                 }
-                Picker("Audio Track", selection: $audioTrack) {
+                Picker(NSLocalizedString("Audio Track", comment: ""), selection: $audioTrack) {
                     ForEach(delegate.audioTrackArray, id: \.id) { caption in
                         Text(caption.name).tag(caption.id).lineLimit(1)
                     }
                 }.onChange(of: audioTrack) { track in
                     self.delegate.audioTrackChanged(newTrackID: track)
                 }
-                Picker("Playback Speed", selection: $playbackSpeedSelection) {
+                Picker(NSLocalizedString("Playback Speed", comment: ""), selection: $playbackSpeedSelection) {
                     ForEach(delegate.playbackSpeeds.indices, id: \.self) { speedIndex in
                         let speed = delegate.playbackSpeeds[speedIndex]
-                        if floor(speed) == speed {
-                            Text(String(format: "%.0fx", speed)).tag(speedIndex)
-                        }
-                        else {
-                            Text(String(format: "%.2fx", speed)).tag(speedIndex)
-                        }
+                        Text("\(String(speed))x").tag(speedIndex)
                     }
                 }
                 .onChange(of: playbackSpeedSelection, perform: { index in
                     self.delegate.playbackSpeedChanged(index: index)
                 })
             }.navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Audio & Captions")
+            .navigationTitle(NSLocalizedString("Audio & Captions", comment: ""))
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if UIDevice.current.userInterfaceIdiom == .phone {

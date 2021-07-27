@@ -20,7 +20,7 @@ struct ConnectToServerView: View {
                 if viewModel.publicUsers.isEmpty {
                     Section(header: Text(viewModel.lastPublicUsers.isEmpty || username == "" ? "Login to \(ServerEnvironment.current.server.name ?? "")": "")) {
                         if viewModel.lastPublicUsers.isEmpty || username == "" {
-                            TextField("Username", text: $username)
+                            TextField(NSLocalizedString("Username", comment: ""), text: $username)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
                         } else {
@@ -33,7 +33,7 @@ struct ConnectToServerView: View {
                             }
                         }
 
-                        SecureField("Password (optional)", text: $password)
+                        SecureField(NSLocalizedString("Password", comment: ""), text: $password)
                             .disableAutocorrection(true)
                             .autocapitalization(.none)
                     }
@@ -108,9 +108,10 @@ struct ConnectToServerView: View {
 
                     Form {
                         Section(header: Text("Server Information")) {
-                            TextField("Jellyfin Server URL", text: $uri)
+                            TextField(NSLocalizedString("Server URL", comment: ""), text: $uri)
                                 .disableAutocorrection(true)
                                 .autocapitalization(.none)
+                                .keyboardType(.URL)
                             Button {
                                 viewModel.connectToServer()
                             } label: {
@@ -170,6 +171,6 @@ struct ConnectToServerView: View {
         .onChange(of: password) { password in
             viewModel.passwordSubject.send(password)
         }
-        .navigationTitle(viewModel.isConnectedServer ? "Who's watching?" : "Connect to Jellyfin")
+        .navigationTitle(viewModel.isConnectedServer ? NSLocalizedString("Who's watching?", comment: "") : NSLocalizedString("Connect to Jellyfin", comment: ""))
     }
 }

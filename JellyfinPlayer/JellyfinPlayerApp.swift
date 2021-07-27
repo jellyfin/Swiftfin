@@ -6,6 +6,42 @@
  */
 
 import SwiftUI
+import MessageUI
+import Defaults
+
+// The notification we'll send when a shake gesture happens.
+extension UIDevice {
+    static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
+}
+
+//  Override the default behavior of shake gestures to send our notification instead.
+extension UIWindow {
+     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
+        }
+     }
+}
+
+// A view modifier that detects shaking and calls a function of our choosing.
+struct DeviceShakeViewModifier: ViewModifier {
+    let action: () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear()
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.deviceDidShakeNotification)) { _ in
+                action()
+            }
+    }
+}
+
+// A View extension to make the modifier easier to use.
+extension View {
+    func onShake(perform action: @escaping () -> Void) -> some View {
+        self.modifier(DeviceShakeViewModifier(action: action))
+    }
+}
 
 extension UIDevice {
     var hasNotch: Bool {
@@ -138,17 +174,74 @@ extension View {
     }
 }
 
+class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
+    public static let shared = EmailHelper()
+    private override init() {
+        //
+    }
+
+    func sendLogs(logURL: URL) {
+        if !MFMailComposeViewController.canSendMail() {
+            // Utilities.showErrorBanner(title: "No mail account found", subtitle: "Please setup a mail account")
+            return // EXIT
+        }
+
+        let picker = MFMailComposeViewController()
+
+        let fileManager = FileManager()
+        let data = fileManager.contents(atPath: logURL.path)
+
+        picker.setSubject("SwiftFin Shake Report")
+        picker.setToRecipients(["SwiftFin Bug Reports <swiftfin-bugs@jellyfin.org>"])
+        picker.addAttachmentData(data!, mimeType: "text/plain", fileName: logURL.lastPathComponent)
+        picker.mailComposeDelegate = self
+
+        EmailHelper.getRootViewController()?.present(picker, animated: true, completion: nil)
+    }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        EmailHelper.getRootViewController()?.dismiss(animated: true, completion: nil)
+    }
+
+    static func getRootViewController() -> UIViewController? {
+        UIApplication.shared.windows.first?.rootViewController
+    }
+}
+
 @main
 struct JellyfinPlayerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @Default(.appAppearance) var appAppearance
+
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {
         WindowGroup {
             SplashView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .onAppear(perform: {
+                    setupAppearance()
+                })
                 .withHostingWindow { window in
                     window?.rootViewController = PreferenceUIHostingController(wrappedView: SplashView().environment(\.managedObjectContext, persistenceController.container.viewContext))
                 }
+                .onShake {
+                    EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
+                }
         }
+    }
+
+    private func setupAppearance() {
+        guard let storedAppearance = AppAppearance(rawValue: appAppearance) else { return }
+        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = storedAppearance.style
+    }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+
+    static var orientationLock = UIInterfaceOrientationMask.all
+
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        AppDelegate.orientationLock
     }
 }

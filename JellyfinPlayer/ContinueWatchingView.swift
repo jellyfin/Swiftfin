@@ -42,7 +42,8 @@ struct ContinueWatchingView: View {
                             ImageView(src: item.getBackdropImage(maxWidth: 320), bh: item.getBackdropImageBlurHash())
                                 .frame(width: 320, height: 180)
                                 .cornerRadius(10)
-                                .shadow(radius: 4)
+                                .shadow(radius: 4, y: 2)
+                                .shadow(radius: 4, y: 2)
                                 .overlay(
                                     Rectangle()
                                         .fill(Color(red: 172/255, green: 92/255, blue: 195/255))

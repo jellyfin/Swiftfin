@@ -68,16 +68,17 @@ final class LibraryViewModel: ViewModel {
             genreIDs = filters.withGenres.compactMap(\.id)
         }
         let sortBy = filters.sortBy.map(\.rawValue)
-
-        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: filters.filters.contains(.isFavorite) ? true : false,
+        let shouldBeRecursive: Bool = filters.filters.contains(.isFavorite) || personIDs != [] || studioIDs != [] || genreIDs != []
+        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: shouldBeRecursive,
                                   searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
-                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
                                   filters: filters.filters, sortBy: sortBy, tags: filters.tags,
                                   enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
+                LogManager.shared.log.debug("Received \(String(response.items?.count ?? 0)) items in library \(self?.parentID ?? "nil")")
                 guard let self = self else { return }
                 let totalPages = ceil(Double(response.totalRecordCount ?? 0) / 100.0)
                 self.totalPages = Int(totalPages)
@@ -87,7 +88,7 @@ final class LibraryViewModel: ViewModel {
             })
             .store(in: &cancellables)
     }
-    
+
     func requestItemsAsync(with filters: LibraryFilters) {
         let personIDs: [String] = [person].compactMap(\.?.id)
         let studioIDs: [String] = [studio].compactMap(\.?.id)
@@ -98,10 +99,10 @@ final class LibraryViewModel: ViewModel {
             genreIDs = filters.withGenres.compactMap(\.id)
         }
         let sortBy = filters.sortBy.map(\.rawValue)
-
-        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: filters.filters.contains(.isFavorite) ? true : false,
+        let shouldBeRecursive: Bool = filters.filters.contains(.isFavorite) || personIDs != [] || studioIDs != [] || genreIDs != []
+        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, startIndex: currentPage * 100, limit: 100, recursive: shouldBeRecursive,
                                   searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
-                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
                                   filters: filters.filters, sortBy: sortBy, tags: filters.tags,
                                   enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
             .sink(receiveCompletion: { [weak self] completion in
@@ -121,7 +122,7 @@ final class LibraryViewModel: ViewModel {
         currentPage += 1
         requestItems(with: filters)
     }
-    
+
     func requestNextPageAsync() {
         currentPage += 1
         requestItemsAsync(with: filters)

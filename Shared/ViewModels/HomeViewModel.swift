@@ -33,12 +33,14 @@ final class HomeViewModel: ViewModel {
     }
 
     func refresh() {
+        LogManager.shared.log.debug("Refresh called.")
         UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
                 response.items!.forEach { item in
+                    LogManager.shared.log.debug("Retrieved user view: \(item.id!) (\(item.name ?? "nil")) with type \(item.collectionType ?? "nil")")
                     if item.collectionType == "movies" || item.collectionType == "tvshows" {
                         self.libraries.append(item)
                     }
@@ -51,6 +53,7 @@ final class HomeViewModel: ViewModel {
                     }, receiveValue: { response in
                         self.libraries.forEach { library in
                             if !(response.configuration?.latestItemsExcludes?.contains(library.id!))! {
+                                LogManager.shared.log.debug("Adding library \(library.id!) (\(library.name ?? "nil")) to recently added list")
                                 self.librariesShowRecentlyAddedIDs.append(library.id!)
                             }
                         }
@@ -66,6 +69,7 @@ final class HomeViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
+                LogManager.shared.log.debug("Retrieved \(String(response.items!.count)) resume items")
                 self.resumeItems = response.items ?? []
             })
             .store(in: &cancellables)
@@ -76,6 +80,7 @@ final class HomeViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { response in
+                LogManager.shared.log.debug("Retrieved \(String(response.items!.count)) nextup items")
                 self.nextUpItems = response.items ?? []
             })
             .store(in: &cancellables)

@@ -20,10 +20,11 @@ struct SettingsView: View {
     @Default(.isAutoSelectSubtitles) var isAutoSelectSubtitles
     @Default(.autoSelectSubtitlesLangCode) var autoSelectSubtitlesLangcode
     @Default(.autoSelectAudioLangCode) var autoSelectAudioLangcode
+    @Default(.appAppearance) var appAppearance
     @State private var username: String = ""
 
     func onAppear() {
-        username = SessionManager.current.user.username ?? ""
+        username = SessionManager.current.user?.username ?? ""
     }
 
     var body: some View {
@@ -61,19 +62,25 @@ struct SettingsView: View {
                                         set: { autoSelectAudioLangcode = $0.isoCode}
                                      )
                     )
+                    Picker(NSLocalizedString("Appearance", comment: ""), selection: $appAppearance) {
+                        ForEach(self.viewModel.appearances, id: \.self) { appearance in
+                            Text(appearance.localizedName).tag(appearance.rawValue)
+                        }
+                    }.onChange(of: appAppearance, perform: { value in
+                        guard let appearance = AppAppearance(rawValue: value) else { return }
+                        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appearance.style
+                    })
                 }
 
-                Section {
+                Section(header: Text(ServerEnvironment.current.server.name ?? "")) {
                     HStack {
                         Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
                         Button {
                             let nc = NotificationCenter.default
                             nc.post(name: Notification.Name("didSignOut"), object: nil)
-
-                            SessionManager.current.logout()
                         } label: {
-                            Text("Log out").font(.callout)
+                            Text("Switch user").font(.callout)
                         }
                     }
                 }

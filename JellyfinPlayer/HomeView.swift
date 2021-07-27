@@ -56,7 +56,7 @@ struct HomeView: View {
 
     var body: some View {
         innerBody
-            .navigationTitle(MainTabView.Tab.home.localized)
+            .navigationTitle(NSLocalizedString("Home", comment: ""))
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {

@@ -10,11 +10,11 @@
 import SwiftUI
 
 class AudioViewController: InfoTabViewController {
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tabBarItem.title = "Audio"
+        tabBarItem.title = NSLocalizedString("Audio", comment: "")
 
     }
 

@@ -16,4 +16,5 @@ extension Defaults.Keys {
     static let isAutoSelectSubtitles = Key<Bool>("isAutoSelectSubtitles", default: false)
     static let autoSelectSubtitlesLangCode = Key<String>("AutoSelectSubtitlesLangCode", default: "Auto")
     static let autoSelectAudioLangCode = Key<String>("AutoSelectAudioLangCode", default: "Auto")
+    static let appAppearance = Key<String>("appAppearance", default: AppAppearance.system.rawValue)
 }

@@ -27,6 +27,7 @@ final class ServerEnvironment {
     }
 
     func create(with uri: String) -> AnyPublisher<Server, Error> {
+        LogManager.shared.log.debug("Initializing new Server object with raw URI: \"\(uri)\"")
         var uri = uri
         if !uri.contains("http") {
             uri = "https://" + uri
@@ -34,6 +35,7 @@ final class ServerEnvironment {
         if uri.last == "/" {
             uri = String(uri.dropLast())
         }
+        LogManager.shared.log.debug("Normalized URI: \"\(uri)\", attempting to getPublicSystemInfo()")
 
         JellyfinAPI.basePath = uri
         return SystemAPI.getPublicSystemInfo()

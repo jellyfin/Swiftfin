@@ -31,7 +31,7 @@ struct ImageView: View {
         }
         .failure {
             Rectangle()
-                .background(Color.gray)
+                .fill(Color.gray)
         }
     }
 }

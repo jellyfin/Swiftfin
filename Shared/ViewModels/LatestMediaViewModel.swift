@@ -25,6 +25,7 @@ final class LatestMediaViewModel: ViewModel {
     }
 
     func requestLatestMedia() {
+        LogManager.shared.log.debug("Requesting latest media for user id \(SessionManager.current.user.user_id ?? "NIL")")
         UserLibraryAPI.getLatestMedia(userId: SessionManager.current.user.user_id!, parentId: libraryID,
                                       fields: [
                                           .primaryImageAspectRatio,
@@ -40,6 +41,7 @@ final class LatestMediaViewModel: ViewModel {
                 self?.handleAPIRequestCompletion(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.items = response
+                LogManager.shared.log.debug("Retrieved \(String(self?.items.count ?? 0)) items")
             })
             .store(in: &cancellables)
     }

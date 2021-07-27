@@ -77,6 +77,7 @@ public class ServerDiscovery {
         func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
             do {
                 let response = try JSONDecoder().decode(ServerLookupResponse.self, from: data)
+                LogManager.shared.log.debug("Received JellyfinServer from \"\(response.name)\"", tag: "ServerDiscovery")
                 completion(response)
             } catch {
                 completion(nil)
@@ -85,6 +86,7 @@ public class ServerDiscovery {
         self.broadcastConn.handler = receiveHandler
         do {
             try broadcastConn.sendBroadcast("Who is JellyfinServer?")
+            LogManager.shared.log.debug("Discovery broadcast sent", tag: "ServerDiscovery")
         } catch {
             print(error)
         }

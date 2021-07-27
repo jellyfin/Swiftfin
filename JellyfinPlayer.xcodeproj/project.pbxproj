@@ -45,6 +45,15 @@
 		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
 		5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F756263B7E2E0014BF09 /* KeychainSwift */; };
+		534D4FF026A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
+		534D4FF126A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
+		534D4FF226A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
+		534D4FF326A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FE726A7D7CC000A7A48 /* Localizable.strings */; };
+		534D4FF426A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FE726A7D7CC000A7A48 /* Localizable.strings */; };
+		534D4FF526A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FE726A7D7CC000A7A48 /* Localizable.strings */; };
+		534D4FF626A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEB26A7D7CC000A7A48 /* Localizable.strings */; };
+		534D4FF726A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEB26A7D7CC000A7A48 /* Localizable.strings */; };
+		534D4FF826A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEB26A7D7CC000A7A48 /* Localizable.strings */; };
 		535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */; };
 		535870672669D21700D05A09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870662669D21700D05A09 /* Assets.xcassets */; };
 		5358706A2669D21700D05A09 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870692669D21700D05A09 /* Preview Assets.xcassets */; };
@@ -62,6 +71,12 @@
 		535870AD2669D8DD00D05A09 /* Typings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* Typings.swift */; };
 		535BAE9F2649E569005FA86D /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAE9E2649E569005FA86D /* ItemView.swift */; };
 		535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAEA4264A151C005FA86D /* VideoPlayer.swift */; };
+		53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 53649AAC269CFAEA00A2D8B7 /* Puppy */; };
+		53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 53649AAE269CFAF600A2D8B7 /* Puppy */; };
+		53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53649AB0269CFB1900A2D8B7 /* LogManager.swift */; };
+		53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53649AB0269CFB1900A2D8B7 /* LogManager.swift */; };
+		53649AB3269D3F5B00A2D8B7 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53649AB0269CFB1900A2D8B7 /* LogManager.swift */; };
+		53649AB5269D423A00A2D8B7 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 53649AB4269D423A00A2D8B7 /* Puppy */; };
 		5364F455266CA0DC0026ECBA /* APIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* APIExtensions.swift */; };
 		5364F456266CA0DC0026ECBA /* APIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* APIExtensions.swift */; };
 		536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536D3D73267BA8170004248C /* BackgroundManager.swift */; };
@@ -128,6 +143,8 @@
 		625CB5752678C33500530A6E /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5742678C33500530A6E /* LibraryListViewModel.swift */; };
 		625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */; };
 		625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 625CB5792678C4A400530A6E /* ActivityIndicator */; };
+		6260FFF926A09754003FA968 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 6260FFF826A09754003FA968 /* CombineExt */; };
+		6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 6261A0DF26A0AB710072EF1C /* CombineExt */; };
 		6267B3D42671024A00A7371D /* APIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* APIExtensions.swift */; };
 		6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
 		6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
@@ -242,6 +259,9 @@
 		532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerCastDeviceSelector.swift; sourceTree = "<group>"; };
 		53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = VideoPlayer.storyboard; sourceTree = "<group>"; };
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
+		534D4FE826A7D7CC000A7A48 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
+		534D4FEC26A7D7CC000A7A48 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = Localizable.strings; sourceTree = "<group>"; };
+		534D4FEF26A7D7CC000A7A48 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Localizable.strings; sourceTree = "<group>"; };
 		535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JellyfinPlayer tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinPlayer_tvOSApp.swift; sourceTree = "<group>"; };
 		535870662669D21700D05A09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -268,6 +288,7 @@
 		5362E4C4267D40F0000E2F71 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		5362E4C8267D40F7000E2F71 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		53649AB0269CFB1900A2D8B7 /* LogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		5364F454266CA0DC0026ECBA /* APIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIExtensions.swift; sourceTree = "<group>"; };
 		536D3D73267BA8170004248C /* BackgroundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundManager.swift; sourceTree = "<group>"; };
 		536D3D75267BA9BB0004248C /* MainTabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabViewModel.swift; sourceTree = "<group>"; };
@@ -356,9 +377,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */,
 				53EC6E1E267E80AC006DD26A /* Pods_JellyfinPlayer_tvOS.framework in Frameworks */,
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
+				6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */,
 				62CB3F482685BB3B003D0A6F /* Defaults in Frameworks */,
 				53272535268BF9710035FBF1 /* SwiftUIFocusGuide in Frameworks */,
 				5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */,
@@ -373,6 +396,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */,
 				62CB3F462685BAF7003D0A6F /* Defaults in Frameworks */,
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
 				53EC6E25267EB10F006DD26A /* SwiftyJSON in Frameworks */,
@@ -380,6 +404,7 @@
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				621C638026672A30004216EA /* NukeUI in Frameworks */,
 				625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */,
+				6260FFF926A09754003FA968 /* CombineExt in Frameworks */,
 				53A431BD266B0FF20016769F /* JellyfinAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,6 +416,7 @@
 				628B95332670CAEA0091AF3B /* NukeUI in Frameworks */,
 				628B95242670CABD0091AF3B /* SwiftUI.framework in Frameworks */,
 				531ABF6C2671F5CC00C0FE20 /* WidgetKit.framework in Frameworks */,
+				53649AB5269D423A00A2D8B7 /* Puppy in Frameworks */,
 				536D3D7D267BD5F90004248C /* ActivityIndicator in Frameworks */,
 				628B953A2670CE250091AF3B /* KeychainSwift in Frameworks */,
 				628B95352670CAEA0091AF3B /* JellyfinAPI in Frameworks */,
@@ -445,6 +471,40 @@
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		534D4FE126A7D7CC000A7A48 /* Translations */ = {
+			isa = PBXGroup;
+			children = (
+				534D4FED26A7D7CC000A7A48 /* zh-Hans.lproj */,
+				534D4FE626A7D7CC000A7A48 /* en.lproj */,
+				534D4FEA26A7D7CC000A7A48 /* ko.lproj */,
+			);
+			path = Translations;
+			sourceTree = "<group>";
+		};
+		534D4FE626A7D7CC000A7A48 /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				534D4FE726A7D7CC000A7A48 /* Localizable.strings */,
+			);
+			path = en.lproj;
+			sourceTree = "<group>";
+		};
+		534D4FEA26A7D7CC000A7A48 /* ko.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				534D4FEB26A7D7CC000A7A48 /* Localizable.strings */,
+			);
+			path = ko.lproj;
+			sourceTree = "<group>";
+		};
+		534D4FED26A7D7CC000A7A48 /* zh-Hans.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				534D4FEE26A7D7CC000A7A48 /* Localizable.strings */,
+			);
+			path = "zh-Hans.lproj";
 			sourceTree = "<group>";
 		};
 		535870612669D21600D05A09 /* JellyfinPlayer tvOS */ = {
@@ -521,6 +581,7 @@
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
+				534D4FE126A7D7CC000A7A48 /* Translations */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				5377CBF3263B596A003A4E83 /* JellyfinPlayer */,
 				535870612669D21600D05A09 /* JellyfinPlayer tvOS */,
@@ -664,6 +725,7 @@
 				62EC352B26766675000E9F2D /* ServerEnvironment.swift */,
 				62EC352E267666A5000E9F2D /* SessionManager.swift */,
 				536D3D73267BA8170004248C /* BackgroundManager.swift */,
+				53649AB0269CFB1900A2D8B7 /* LogManager.swift */,
 			);
 			path = Singleton;
 			sourceTree = "<group>";
@@ -715,6 +777,8 @@
 				536D3D83267BEA550004248C /* ParallaxView */,
 				62CB3F472685BB3B003D0A6F /* Defaults */,
 				53272534268BF9710035FBF1 /* SwiftUIFocusGuide */,
+				53649AAE269CFAF600A2D8B7 /* Puppy */,
+				6261A0DF26A0AB710072EF1C /* CombineExt */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */;
@@ -747,6 +811,8 @@
 				625CB5792678C4A400530A6E /* ActivityIndicator */,
 				53EC6E24267EB10F006DD26A /* SwiftyJSON */,
 				62CB3F452685BAF7003D0A6F /* Defaults */,
+				53649AAC269CFAEA00A2D8B7 /* Puppy */,
+				6260FFF826A09754003FA968 /* CombineExt */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer iOS.app */;
@@ -770,6 +836,7 @@
 				628B95342670CAEA0091AF3B /* JellyfinAPI */,
 				628B95392670CE250091AF3B /* KeychainSwift */,
 				536D3D7C267BD5F90004248C /* ActivityIndicator */,
+				53649AB4269D423A00A2D8B7 /* Puppy */,
 			);
 			productName = WidgetExtensionExtension;
 			productReference = 628B95202670CABD0091AF3B /* WidgetExtension.appex */;
@@ -781,6 +848,7 @@
 		5377CBE9263B596A003A4E83 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = NO;
 				KnownAssetTags = (
 					New,
 				);
@@ -804,7 +872,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
+				"zh-Hans",
+				ko,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -817,6 +886,8 @@
 				53EC6E23267EB10F006DD26A /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				62CB3F442685BAF7003D0A6F /* XCRemoteSwiftPackageReference "Defaults" */,
 				53272533268BF9710035FBF1 /* XCRemoteSwiftPackageReference "SwiftUIFocusGuide" */,
+				53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */,
+				6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -834,7 +905,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				534D4FF126A7D7CC000A7A48 /* Localizable.strings in Resources */,
+				534D4FF426A7D7CC000A7A48 /* Localizable.strings in Resources */,
 				5310695D2684E7EE00CFFDBA /* VideoPlayer.storyboard in Resources */,
+				534D4FF726A7D7CC000A7A48 /* Localizable.strings in Resources */,
 				5358706A2669D21700D05A09 /* Preview Assets.xcassets in Resources */,
 				535870672669D21700D05A09 /* Assets.xcassets in Resources */,
 				5358707E2669D64F00D05A09 /* bitrates.json in Resources */,
@@ -845,7 +919,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				534D4FF026A7D7CC000A7A48 /* Localizable.strings in Resources */,
+				534D4FF326A7D7CC000A7A48 /* Localizable.strings in Resources */,
 				5377CBFC263B596B003A4E83 /* Preview Assets.xcassets in Resources */,
+				534D4FF626A7D7CC000A7A48 /* Localizable.strings in Resources */,
 				53313B90265EEA6D00947AA3 /* VideoPlayer.storyboard in Resources */,
 				AE8C3159265D6F90008AA076 /* bitrates.json in Resources */,
 				5377CBF9263B596B003A4E83 /* Assets.xcassets in Resources */,
@@ -857,6 +934,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				628B95292670CABE0091AF3B /* Assets.xcassets in Resources */,
+				534D4FF826A7D7CC000A7A48 /* Localizable.strings in Resources */,
+				534D4FF526A7D7CC000A7A48 /* Localizable.strings in Resources */,
+				534D4FF226A7D7CC000A7A48 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1010,6 +1090,7 @@
 				62CB3F4C2685BB77003D0A6F /* DefaultsExtension.swift in Sources */,
 				62E632E4267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
 				5358706C2669D21700D05A09 /* PersistenceController.swift in Sources */,
+				53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */,
 				535870AA2669D8AE00D05A09 /* BlurHashDecode.swift in Sources */,
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
 				531069582684E7EE00CFFDBA /* MediaInfoView.swift in Sources */,
@@ -1068,6 +1149,7 @@
 				091B5A8B2683142E00D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */,
 				53A089D0264DA9DA00D57806 /* MovieItemView.swift in Sources */,
+				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
 				62E632E9267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				625CB56A2678B71200530A6E /* SplashViewModel.swift in Sources */,
 				62E632F3267D54030063E547 /* DetailItemViewModel.swift in Sources */,
@@ -1102,6 +1184,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53649AB3269D3F5B00A2D8B7 /* LogManager.swift in Sources */,
 				62EC353126766848000E9F2D /* ServerEnvironment.swift in Sources */,
 				6267B3D42671024A00A7371D /* APIExtensions.swift in Sources */,
 				6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */,
@@ -1126,6 +1209,33 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		534D4FE726A7D7CC000A7A48 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				534D4FE826A7D7CC000A7A48 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		534D4FEB26A7D7CC000A7A48 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				534D4FEC26A7D7CC000A7A48 /* ko */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		534D4FEE26A7D7CC000A7A48 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				534D4FEF26A7D7CC000A7A48 /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1133,9 +1243,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "JellyfinPlayer tvOS/JellyfinPlayer tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_ASSET_PATHS = "\"JellyfinPlayer tvOS/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				ENABLE_PREVIEWS = YES;
@@ -1149,9 +1260,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 14.5;
+				TVOS_DEPLOYMENT_TARGET = 14.1;
 			};
 			name = Debug;
 		};
@@ -1161,9 +1274,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "JellyfinPlayer tvOS/JellyfinPlayer tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_ASSET_PATHS = "\"JellyfinPlayer tvOS/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				ENABLE_PREVIEWS = YES;
@@ -1177,9 +1291,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 14.5;
+				TVOS_DEPLOYMENT_TARGET = 14.1;
 			};
 			name = Release;
 		};
@@ -1187,6 +1302,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1250,6 +1366,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1312,7 +1429,7 @@
 				CODE_SIGN_ENTITLEMENTS = JellyfinPlayer/JellyfinPlayer.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				ENABLE_BITCODE = NO;
@@ -1331,6 +1448,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1346,7 +1465,7 @@
 				CODE_SIGN_ENTITLEMENTS = JellyfinPlayer/JellyfinPlayer.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 57;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 9R8RREG67J;
@@ -1366,6 +1485,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1378,7 +1498,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = WidgetExtension/WidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -1391,6 +1511,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1403,7 +1525,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = WidgetExtension/WidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = 9R8RREG67J;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -1416,6 +1538,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1487,6 +1610,14 @@
 				minimumVersion = 19.0.0;
 			};
 		};
+		53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sushichop/Puppy";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 		536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/PGSSoft/ParallaxView";
@@ -1525,6 +1656,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.1.0;
+			};
+		};
+		6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CombineCommunity/CombineExt";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
 			};
 		};
 		62CB3F442685BAF7003D0A6F /* XCRemoteSwiftPackageReference "Defaults" */ = {
@@ -1568,6 +1707,21 @@
 			package = 621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */;
 			productName = NukeUI;
 		};
+		53649AAC269CFAEA00A2D8B7 /* Puppy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */;
+			productName = Puppy;
+		};
+		53649AAE269CFAF600A2D8B7 /* Puppy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */;
+			productName = Puppy;
+		};
+		53649AB4269D423A00A2D8B7 /* Puppy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */;
+			productName = Puppy;
+		};
 		536D3D7C267BD5F90004248C /* ActivityIndicator */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */;
@@ -1607,6 +1761,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */;
 			productName = ActivityIndicator;
+		};
+		6260FFF826A09754003FA968 /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
+		};
+		6261A0DF26A0AB710072EF1C /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
 		};
 		628B95322670CAEA0091AF3B /* NukeUI */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -91,7 +91,7 @@ struct LandscapeItemElement: View {
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
             if focused {
-                if(inSeasonView ?? false) {
+                if inSeasonView ?? false {
                     Text("\(item.getEpisodeLocator()) • \(item.name ?? "")")
                         .font(.callout)
                         .fontWeight(.semibold)
