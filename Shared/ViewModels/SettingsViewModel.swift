@@ -35,11 +35,11 @@ enum AppAppearance: String, CaseIterable {
     case system
     case dark
     case light
-    
+
     var localizedName: String {
         return NSLocalizedString(self.rawValue.capitalized, comment: "")
     }
-    
+
     var style: UIUserInterfaceStyle {
         switch self {
         case .system:
