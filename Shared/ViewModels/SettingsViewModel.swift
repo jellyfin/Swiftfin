@@ -8,6 +8,7 @@
  */
 
 import Foundation
+import SwiftUI
 
 struct UserSettings: Decodable {
     var LocalMaxBitrate: Int
@@ -30,10 +31,32 @@ struct TrackLanguage: Hashable {
     static let auto = TrackLanguage(name: "Auto", isoCode: "Auto")
 }
 
+enum AppAppearance: String, CaseIterable {
+    case system
+    case dark
+    case light
+    
+    var localizedName: String {
+        return NSLocalizedString(self.rawValue.capitalized, comment: "")
+    }
+    
+    var style: UIUserInterfaceStyle {
+        switch self {
+        case .system:
+            return .unspecified
+        case .dark:
+            return .dark
+        case .light:
+            return .light
+        }
+    }
+}
+
 final class SettingsViewModel: ObservableObject {
     let currentLocale = Locale.current
     var bitrates: [Bitrates] = []
     var langs = [TrackLanguage]()
+    let appearances = AppAppearance.allCases
 
     init() {
         let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!

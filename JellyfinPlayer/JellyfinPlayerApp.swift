@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MessageUI
+import Defaults
 
 // The notification we'll send when a shake gesture happens.
 extension UIDevice {
@@ -210,6 +211,7 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
 @main
 struct JellyfinPlayerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @Default(.appAppearance) var appAppearance
 
     let persistenceController = PersistenceController.shared
 
@@ -217,6 +219,9 @@ struct JellyfinPlayerApp: App {
         WindowGroup {
             SplashView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .onAppear(perform: {
+                    setupAppearance()
+                })
                 .withHostingWindow { window in
                     window?.rootViewController = PreferenceUIHostingController(wrappedView: SplashView().environment(\.managedObjectContext, persistenceController.container.viewContext))
                 }
@@ -224,6 +229,11 @@ struct JellyfinPlayerApp: App {
                     EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
                 }
         }
+    }
+    
+    private func setupAppearance() {
+        guard let storedAppearance = AppAppearance(rawValue: appAppearance) else { return }
+        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = storedAppearance.style
     }
 }
 
