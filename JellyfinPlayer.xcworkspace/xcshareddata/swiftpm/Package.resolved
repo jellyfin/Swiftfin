@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/Flight-School/AnyCodable",
         "state": {
           "branch": null,
-          "revision": "876d162385e9862ae8b3c8d65dc301312b040005",
-          "version": "0.6.0"
+          "revision": "69261f239f0fffaf51495dadc4f8483fbfe97025",
+          "version": "0.6.1"
         }
       },
       {
@@ -42,7 +42,7 @@
         "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
         "state": {
           "branch": "main",
-          "revision": "5cdc2419f547b3f31dc96f5eccaf3f303f44184b",
+          "revision": "72e4111470273dff856d0c24ebb0fb30a251b1be",
           "version": null
         }
       },
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/kean/Nuke.git",
         "state": {
           "branch": null,
-          "revision": "69ae6d5b8c4b898450432f94bd35f863d3830cfc",
-          "version": "10.3.0"
+          "revision": "83e1edaa5a30c567eb129c21c6d00f2f552d2c6f",
+          "version": "10.3.1"
         }
       },
       {
