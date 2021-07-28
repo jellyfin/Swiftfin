@@ -56,11 +56,17 @@ struct ConnectToServerView: View {
                             ForEach(viewModel.publicUsers, id: \.id) { publicUser in
                                 HStack {
                                     Button(action: {
-                                        username = publicUser.name ?? ""
-                                        viewModel.publicUsers.removeAll()
-                                        if !(publicUser.hasPassword ?? true) {
-                                            password = ""
-                                            viewModel.login()
+                                        if SessionManager.current.doesUserHaveSavedSession(userID: publicUser.id!) {
+                                            let user = SessionManager.current.getSavedSession(userID: publicUser.id!)
+                                            SessionManager.current.loginWithSavedSession(user: user)
+                                        } else {
+                                            username = publicUser.name ?? ""
+                                            viewModel.selectedPublicUser = publicUser
+                                            viewModel.hidePublicUsers()
+                                            if !(publicUser.hasPassword ?? true) {
+                                                password = ""
+                                                viewModel.login()
+                                            }
                                         }
                                     }) {
                                         HStack {

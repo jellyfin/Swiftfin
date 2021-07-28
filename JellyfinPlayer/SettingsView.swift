@@ -77,11 +77,25 @@ struct SettingsView: View {
                         Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
                         Button {
-                            let nc = NotificationCenter.default
-                            nc.post(name: Notification.Name("didSignOut"), object: nil)
+                            print("logging out");
+                            close = false;
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                let nc = NotificationCenter.default
+                                nc.post(name: Notification.Name("didSignOut"), object: nil)
+                            }
                         } label: {
                             Text("Switch user").font(.callout)
                         }
+                    }
+                    Button {
+                        close = false;
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            SessionManager.current.logout();
+                            let nc = NotificationCenter.default
+                            nc.post(name: Notification.Name("didSignOut"), object: nil)
+                        }
+                    } label: {
+                        Text("Sign out").font(.callout)
                     }
                 }
             }

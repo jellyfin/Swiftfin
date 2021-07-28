@@ -30,20 +30,20 @@
       },
       {
         "package": "CombineExt",
-        "repositoryURL": "https://github.com/CombineCommunity/CombineExt",
+        "repositoryURL": "https://github.com/acvigue/CombineExt",
         "state": {
-          "branch": null,
-          "revision": "5b8a0c0f178527f9204200505c5fefa6847e528f",
-          "version": "1.3.0"
+          "branch": "main",
+          "revision": "f629c5b052d1cb5d03e10890deccc50e4c649e68",
+          "version": null
         }
       },
       {
         "package": "Defaults",
-        "repositoryURL": "https://github.com/sindresorhus/Defaults",
+        "repositoryURL": "https://github.com/acvigue/Defaults",
         "state": {
-          "branch": null,
-          "revision": "63d93f97ad545c8bceb125a8a36175ea705f7cf5",
-          "version": "5.0.0"
+          "branch": "main",
+          "revision": "a4153b523ab3df9f5e3f70e9cfe9c54bed98c7e3",
+          "version": null
         }
       },
       {
@@ -56,7 +56,7 @@
         }
       },
       {
-        "package": "jellyfin-sdk-swift",
+        "package": "JellyfinAPI",
         "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
         "state": {
           "branch": "main",
@@ -65,7 +65,7 @@
         }
       },
       {
-        "package": "keychain-swift",
+        "package": "KeychainSwift",
         "repositoryURL": "https://github.com/evgenyneu/keychain-swift",
         "state": {
           "branch": null,
@@ -119,7 +119,7 @@
         }
       },
       {
-        "package": "SwiftUI-Introspect",
+        "package": "Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {
           "branch": null,
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "603974e3909ad4b48ba04aad7e0ceee4f077a518",
-          "version": "0.1.0"
+          "revision": "152390e9e78ebbf0d767ee52971d41e7f44f39bc",
+          "version": "0.1.1"
         }
       }
     ]
