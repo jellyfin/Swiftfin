@@ -24,7 +24,7 @@ final class LibraryListViewModel: ViewModel {
     }
 
     func requestLibraries() {
-        UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
+        UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id ?? "val was nil")
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestCompletion(completion: completion)
