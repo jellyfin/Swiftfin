@@ -23,14 +23,15 @@ final class SessionManager {
     fileprivate(set) var user: SignedInUser!
     fileprivate(set) var deviceID: String = ""
     fileprivate(set) var accessToken: String = ""
-
+    
     #if os(tvOS)
     let tvUserManager = TVUserManager()
     #endif
+    let userDefaults = UserDefaults()
 
     init() {
         let savedUserRequest: NSFetchRequest<SignedInUser> = SignedInUser.fetchRequest()
-
+        let lastUsedUserID = userDefaults.string(forKey: "lastUsedUserID")
         let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
 
         #if os(tvOS)
@@ -40,7 +41,15 @@ final class SessionManager {
             }
         }
         #else
-        user = savedUsers?.first
+        if(lastUsedUserID != nil) {
+            savedUsers?.forEach { savedUser in
+                if(savedUser.user_id ?? "" == lastUsedUserID!) {
+                    user = savedUser;
+                }
+            }
+        } else {
+            user = savedUsers?.first
+        }
         #endif
 
         if user != nil {
@@ -116,7 +125,7 @@ final class SessionManager {
 
     func loginWithSavedSession(user: SignedInUser) {
         let accessToken = getAuthToken(userID: user.user_id!)
-
+        userDefaults.set(user.user_id!, forKey: "lastUsedUserID")
         self.user = user
         generateAuthHeader(with: accessToken, deviceID: user.device_uuid)
         print(JellyfinAPI.customHeaders)
@@ -135,7 +144,7 @@ final class SessionManager {
                 user.device_uuid = self.deviceID
 
                 #if os(tvOS)
-                // user.appletv_id = tvUserManager.currentUserIdentifier ?? ""
+                user.appletv_id = tvUserManager.currentUserIdentifier ?? ""
                 #endif
 
                 return (user, response.accessToken)

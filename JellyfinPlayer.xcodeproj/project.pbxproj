@@ -71,6 +71,7 @@
 		535870AD2669D8DD00D05A09 /* Typings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* Typings.swift */; };
 		535BAE9F2649E569005FA86D /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAE9E2649E569005FA86D /* ItemView.swift */; };
 		535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAEA4264A151C005FA86D /* VideoPlayer.swift */; };
+		53628C6D26B5AA0D008A64A0 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 53628C6C26B5AA0D008A64A0 /* Defaults */; };
 		53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 53649AAC269CFAEA00A2D8B7 /* Puppy */; };
 		53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 53649AAE269CFAF600A2D8B7 /* Puppy */; };
 		53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53649AB0269CFB1900A2D8B7 /* LogManager.swift */; };
@@ -413,6 +414,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53628C6D26B5AA0D008A64A0 /* Defaults in Frameworks */,
 				628B95332670CAEA0091AF3B /* NukeUI in Frameworks */,
 				628B95242670CABD0091AF3B /* SwiftUI.framework in Frameworks */,
 				531ABF6C2671F5CC00C0FE20 /* WidgetKit.framework in Frameworks */,
@@ -837,6 +839,7 @@
 				628B95392670CE250091AF3B /* KeychainSwift */,
 				536D3D7C267BD5F90004248C /* ActivityIndicator */,
 				53649AB4269D423A00A2D8B7 /* Puppy */,
+				53628C6C26B5AA0D008A64A0 /* Defaults */,
 			);
 			productName = WidgetExtensionExtension;
 			productReference = 628B95202670CABD0091AF3B /* WidgetExtension.appex */;
@@ -1705,6 +1708,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */;
 			productName = NukeUI;
+		};
+		53628C6C26B5AA0D008A64A0 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 62CB3F442685BAF7003D0A6F /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
 		};
 		53649AAC269CFAEA00A2D8B7 /* Puppy */ = {
 			isa = XCSwiftPackageProductDependency;

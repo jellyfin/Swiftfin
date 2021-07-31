@@ -654,7 +654,9 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         if fetchCaptions {
             mediaPlayer.pause()
             subtitleTrackArray.forEach { sub in
-                if sub.id != -1 && sub.delivery == .external {
+                //stupid fxcking jeff decides to re-encode these when added.
+                //only add playback streams when codec not supported by VLC.
+                if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
                     mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                 }
             }
@@ -1013,7 +1015,7 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
         func showLoadingView(_ viewController: PlayerViewController) {
             self.loadBinding.wrappedValue = true
         }
-
+        
         func exitPlayer(_ viewController: PlayerViewController) {
             self.pBinding.wrappedValue = false
         }
