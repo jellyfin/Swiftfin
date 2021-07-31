@@ -65,7 +65,9 @@ struct ConnectToServerView: View {
                                             viewModel.hidePublicUsers()
                                             if !(publicUser.hasPassword ?? true) {
                                                 password = ""
-                                                viewModel.login()
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                                    viewModel.login()
+                                                }
                                             }
                                         }
                                     }) {
