@@ -1,6 +1,6 @@
 <p align="center">
-      <img alt="SwiftFin" height="125" src="https://github.com/jellyfin/SwiftFin/raw/main/JellyfinPlayer/Assets.xcassets/AppIcon.appiconset/152.png">
-  <h2 align="center">SwiftFin</h2>
+      <img alt="Swiftfin" height="125" src="https://github.com/jellyfin/SwiftFin/raw/main/JellyfinPlayer/Assets.xcassets/AppIcon.appiconset/152.png">
+  <h2 align="center">Swiftfin</h2>
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
   </a>
@@ -15,7 +15,7 @@
   </a>
 </p>
 <p align="center">
-  <b>SwiftFin</b> is a modern client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
+  <b>Swiftfin</b> is a modern client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
 
 ## ⚡️ Links!
@@ -24,7 +24,7 @@
 
 **Don't see SwiftFin in your language?**
 
-Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfin/) to help translate SwiftFin and other projects.
+Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfin/) to help translate Swiftfin and other projects.
 
 <a href="https://translate.jellyfin.org/engage/swiftfin/">
 <img src="https://translate.jellyfin.org/widgets/swiftfin/-/multi-auto.svg"/>
