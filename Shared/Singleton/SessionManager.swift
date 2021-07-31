@@ -144,7 +144,12 @@ final class SessionManager {
                 user.device_uuid = self.deviceID
 
                 #if os(tvOS)
-                user.appletv_id = tvUserManager.currentUserIdentifier ?? ""
+                let descriptor: TVAppProfileDescriptor = TVAppProfileDescriptor(name: user.username!)
+                self.tvUserManager.shouldStorePreferenceForCurrentUser(to: descriptor) { should in
+                    if(should) {
+                        user.appletv_id = self.tvUserManager.currentUserIdentifier ?? ""
+                    }
+                }
                 #endif
 
                 return (user, response.accessToken)
