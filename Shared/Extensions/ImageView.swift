@@ -26,7 +26,7 @@ struct ImageView: View {
     var body: some View {
         LazyImage(source: source)
         .placeholder {
-            Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ?? UIImage(blurHash: "001fC^", size: CGSize(width:8,height:8))!)
+            Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ?? UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
                 .resizable()
         }
         .failure {

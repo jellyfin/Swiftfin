@@ -78,7 +78,7 @@ struct SettingsView: View {
                     }
                     Button {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            SessionManager.current.logout();
+                            SessionManager.current.logout()
                             let nc = NotificationCenter.default
                             nc.post(name: Notification.Name("didSignOut"), object: nil)
                         }

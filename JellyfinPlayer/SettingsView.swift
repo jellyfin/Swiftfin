@@ -77,8 +77,8 @@ struct SettingsView: View {
                         Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
                         Button {
-                            print("logging out");
-                            close = false;
+                            print("logging out")
+                            close = false
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 let nc = NotificationCenter.default
                                 nc.post(name: Notification.Name("didSignOut"), object: nil)
@@ -88,9 +88,9 @@ struct SettingsView: View {
                         }
                     }
                     Button {
-                        close = false;
+                        close = false
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            SessionManager.current.logout();
+                            SessionManager.current.logout()
                             let nc = NotificationCenter.default
                             nc.post(name: Notification.Name("didSignOut"), object: nil)
                         }
