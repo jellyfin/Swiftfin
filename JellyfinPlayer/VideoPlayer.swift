@@ -482,7 +482,6 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         let builder = DeviceProfileBuilder()
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
-        dump(profile)
         let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
 
         DispatchQueue.global(qos: .userInitiated).async { [self] in
@@ -505,9 +504,9 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         break
                     }
                 }, receiveValue: { [self] response in
+                    dump(response)
                     playSessionId = response.playSessionId ?? ""
                     let mediaSource = response.mediaSources!.first.self!
-                    dump(mediaSource)
                     if mediaSource.transcodingUrl != nil {
                         // Item is being transcoded by request of server
                         let streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(mediaSource.transcodingUrl!)")
@@ -1042,7 +1041,12 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
 extension PlayerViewController {
     func sendProgressReport(eventName: String) {
         if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
-            let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
+            var ticks: Int64 = Int64(mediaPlayer.position * Float(manifest.runTimeTicks!));
+            if(ticks == 0) {
+                ticks = manifest.userData?.playbackPositionTicks ?? 0
+            }
+            
+            let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: ticks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
             PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
                 .sink(receiveCompletion: { result in
