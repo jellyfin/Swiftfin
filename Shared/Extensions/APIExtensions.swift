@@ -156,7 +156,7 @@ extension BaseItemPerson {
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=60&tag=\(imageTag)"
+        let urlString = "\(baseURL)/Items/\(self.id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 

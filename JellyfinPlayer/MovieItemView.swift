@@ -151,7 +151,7 @@ struct MovieItemView: View {
                                     HStack {
                                         Spacer().frame(width: 16)
                                         ForEach(viewModel.item.people!, id: \.self) { person in
-                                            if person.type! == "Actor" {
+                                            if person.type ?? "" == "Actor" {
                                                 NavigationLink(destination: LazyView {
                                                     LibraryView(viewModel: .init(person: person), title: person.name ?? "")
                                                 }) {
@@ -163,7 +163,7 @@ struct MovieItemView: View {
                                                             .cornerRadius(10)
                                                         Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
                                                             .frame(width: 100).foregroundColor(Color.primary)
-                                                        if person.role != "" {
+                                                        if person.role != nil {
                                                             Text(person.role!).font(.caption).fontWeight(.medium).lineLimit(1)
                                                                 .foregroundColor(Color.secondary).frame(width: 100)
                                                         }
