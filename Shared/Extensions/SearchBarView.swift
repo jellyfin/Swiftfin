@@ -19,7 +19,9 @@ struct SearchBar: View {
             TextField(NSLocalizedString("Search...", comment: ""), text: $text)
                 .padding(8)
                 .padding(.horizontal, 16)
+            #if os(iOS)
                 .background(Color(.systemGray6))
+            #endif
                 .cornerRadius(8)
             if !text.isEmpty {
                 Button(action: {
