@@ -653,8 +653,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         if fetchCaptions {
             mediaPlayer.pause()
             subtitleTrackArray.forEach { sub in
-                //stupid fxcking jeff decides to re-encode these when added.
-                //only add playback streams when codec not supported by VLC.
+                // stupid fxcking jeff decides to re-encode these when added.
+                // only add playback streams when codec not supported by VLC.
                 if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
                     mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                 }
@@ -1014,7 +1014,7 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
         func showLoadingView(_ viewController: PlayerViewController) {
             self.loadBinding.wrappedValue = true
         }
-        
+
         func exitPlayer(_ viewController: PlayerViewController) {
             self.pBinding.wrappedValue = false
         }
@@ -1041,11 +1041,11 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
 extension PlayerViewController {
     func sendProgressReport(eventName: String) {
         if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
-            var ticks: Int64 = Int64(mediaPlayer.position * Float(manifest.runTimeTicks!));
-            if(ticks == 0) {
+            var ticks: Int64 = Int64(mediaPlayer.position * Float(manifest.runTimeTicks!))
+            if ticks == 0 {
                 ticks = manifest.userData?.playbackPositionTicks ?? 0
             }
-            
+
             let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (mediaPlayer.state == .paused), isMuted: false, positionTicks: ticks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
             PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)

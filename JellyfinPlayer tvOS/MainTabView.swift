@@ -53,7 +53,7 @@ struct MainTabView: View {
                     Image(systemName: "folder")
                 }
                 .tag(Tab.allMedia)
-                
+
                 SettingsView(viewModel: SettingsViewModel())
                     .offset(y: -1) // don't remove this. it breaks tabview on 4K displays.
                 .tabItem {
