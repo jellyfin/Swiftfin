@@ -32,7 +32,7 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 
 ## ⚙️ Development
 
-Xcode 13.0 with command line tools.
+Xcode 12.5 with command line tools.
 
 ### Build Process
 
