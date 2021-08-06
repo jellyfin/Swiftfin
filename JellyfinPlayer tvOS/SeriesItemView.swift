@@ -135,35 +135,8 @@ struct SeriesItemView: View {
                                 .fontWeight(.medium)
                                 .foregroundColor(.primary)
 
-                            HStack {
-                                VStack {
-                                    Button {
-                                        viewModel.updateFavoriteState()
-                                    } label: {
-                                        MediaViewActionButton(icon: "heart.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isFavorited ? .red : .white)
-                                    }.prefersDefaultFocus(in: namespace)
-                                    Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
-                                        .font(.caption)
-                                }
-                                if viewModel.nextUpItem != nil {
-                                    VStack {
-                                        NavigationLink(destination: VideoPlayerView(item: viewModel.nextUpItem!)) {
-                                            MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
-                                        }
-                                        Text("Play • \(viewModel.nextUpItem!.getEpisodeLocator())")
-                                            .font(.caption)
-                                    }
-                                }
-                                VStack {
-                                    Button {
-                                        viewModel.updateWatchState()
-                                    } label: {
-                                        MediaViewActionButton(icon: "eye.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isWatched ? .red : .white)
-                                    }
-                                    Text(viewModel.isWatched ? "Unwatch" : "Mark Watched")
-                                        .font(.caption)
-                                }
-                            }.padding(.top, 15)
+                            MediaPlayButtonRowView(viewModel: viewModel, wrappedScrollView: wrappedScrollView)
+                            .padding(.top, 15)
                             Spacer()
                         }
                     }.padding(.top, 50)

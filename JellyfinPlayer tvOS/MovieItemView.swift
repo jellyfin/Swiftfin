@@ -129,7 +129,7 @@ struct MovieItemView: View {
                                 .fontWeight(.medium)
                                 .foregroundColor(.primary)
 
-                            MediaPlayButtonRowView(viewModel: self.viewModel, wrappedScrollView: self.wrappedScrollView)
+                            MediaPlayButtonRowView(viewModel: viewModel, wrappedScrollView: wrappedScrollView)
                             .padding(.top, 15)
                             .addFocusGuide(using: focusBag, name: "actionButtons", destinations: [.bottom: "moreLikeThis"], debug: false)
                         }
