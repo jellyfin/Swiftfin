@@ -69,8 +69,7 @@ struct SeriesItemView: View {
                         .padding(.horizontal, 16)
                 }
                 if let genreItems = viewModel.item.genreItems,
-                   !genreItems.isEmpty
-                {
+                   !genreItems.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 8) {
                             Text("Genres:").font(.callout).fontWeight(.semibold)
@@ -105,8 +104,7 @@ struct SeriesItemView: View {
             .padding(.horizontal, 8)
             LazyVStack(alignment: .leading, spacing: 0) {
                 if let people = viewModel.item.people,
-                   !people.isEmpty
-                {
+                   !people.isEmpty {
                     Text("CAST")
                         .font(.callout).fontWeight(.semibold)
                         .padding(.bottom, 8)
@@ -127,8 +125,7 @@ struct SeriesItemView: View {
                                             Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
                                                 .frame(width: 100).foregroundColor(Color.primary)
                                             if let role = person.role,
-                                               !role.isEmpty
-                                            {
+                                               !role.isEmpty {
                                                 Text(role).font(.caption).fontWeight(.medium).lineLimit(1)
                                                     .foregroundColor(Color.secondary).frame(width: 100)
                                             }
@@ -142,8 +139,7 @@ struct SeriesItemView: View {
                     .padding(.bottom, 16)
                 }
                 if let studios = viewModel.item.studios,
-                   !studios.isEmpty
-                {
+                   !studios.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
                             Text("Studios:").font(.callout).fontWeight(.semibold)
