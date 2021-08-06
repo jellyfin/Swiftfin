@@ -68,7 +68,8 @@ struct SeriesItemView: View {
                         .padding(.bottom, 8)
                 }
                 if let genreItems = viewModel.item.genreItems,
-                   !genreItems.isEmpty {
+                   !genreItems.isEmpty
+                {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 8) {
                             Text("Genres:").font(.callout).fontWeight(.semibold)
@@ -100,7 +101,8 @@ struct SeriesItemView: View {
             .padding(.bottom, 16)
             LazyVStack(alignment: .leading, spacing: 0) {
                 if let people = viewModel.item.people,
-                   !people.isEmpty {
+                   !people.isEmpty
+                {
                     Text("CAST")
                         .font(.callout).fontWeight(.semibold)
                         .padding(.bottom, 8)
@@ -120,7 +122,8 @@ struct SeriesItemView: View {
                                             Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
                                                 .frame(width: 100).foregroundColor(Color.primary)
                                             if let role = person.role,
-                                               !role.isEmpty {
+                                               !role.isEmpty
+                                            {
                                                 Text(role).font(.caption).fontWeight(.medium).lineLimit(1)
                                                     .foregroundColor(Color.secondary).frame(width: 100)
                                             }
@@ -133,7 +136,8 @@ struct SeriesItemView: View {
                     .padding(.bottom, 16)
                 }
                 if let studios = viewModel.item.studios,
-                   !studios.isEmpty {
+                   !studios.isEmpty
+                {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
                             Text("Studios:").font(.callout).fontWeight(.semibold)
@@ -168,6 +172,45 @@ struct SeriesItemView: View {
         }
     }
 
+    var landscapeView: some View {
+        GeometryReader { geometry in
+            ZStack {
+                ImageView(src: viewModel.item.getBackdropImage(maxWidth: 200),
+                          bh: viewModel.item.getBackdropImageBlurHash())
+                    .opacity(0.4)
+                    .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
+                           height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
+                    .edgesIgnoringSafeArea(.all)
+                    .blur(radius: 4)
+                HStack(alignment: .top, spacing: 16) {
+                    VStack(alignment: .leading) {
+                        ImageView(src: viewModel.item.getPrimaryImage(maxWidth: 120),
+                                  bh: viewModel.item.getPrimaryImageBlurHash())
+                            .frame(width: 120, height: 180)
+                            .cornerRadius(10)
+                        HStack {
+                            Text(String(viewModel.item.productionYear ?? 0)).font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                            if let officialRating = viewModel.item.officialRating {
+                                Text(officialRating).font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                                    .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                    .overlay(RoundedRectangle(cornerRadius: 2)
+                                        .stroke(Color.secondary, lineWidth: 1))
+                            }
+                        }
+                    }
+                    .padding(.top, 16)
+                    innerBody
+                }
+            }
+        }
+    }
+
     var body: some View {
         if viewModel.isLoading {
             ProgressView()
@@ -181,18 +224,7 @@ struct SeriesItemView: View {
                         innerBody
                     }
                 } else {
-                    GeometryReader { geometry in
-                        ZStack {
-                            ImageView(src: viewModel.item.getBackdropImage(maxWidth: 200),
-                                      bh: viewModel.item.getBackdropImageBlurHash())
-                                .opacity(0.4)
-                                .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
-                                       height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
-                                .edgesIgnoringSafeArea(.all)
-                                .blur(radius: 4)
-                            innerBody
-                        }
-                    }
+                    landscapeView
                 }
             }
             .onRotate {
