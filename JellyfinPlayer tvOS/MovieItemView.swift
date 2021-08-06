@@ -129,34 +129,7 @@ struct MovieItemView: View {
                                 .fontWeight(.medium)
                                 .foregroundColor(.primary)
 
-                            HStack {
-                                VStack {
-                                    Button {
-                                        viewModel.updateFavoriteState()
-                                    } label: {
-                                        MediaViewActionButton(icon: "heart.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isFavorited ? .red : .white)
-                                    }
-                                    Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
-                                        .font(.caption)
-                                }
-                                VStack {
-                                    NavigationLink(destination: VideoPlayerView(item: viewModel.item)) {
-                                        MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
-                                    }
-                                    Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : "Play")
-                                        .font(.caption)
-                                }
-                                VStack {
-                                    Button {
-                                        viewModel.updateWatchState()
-                                    } label: {
-                                        MediaViewActionButton(icon: "eye.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isWatched ? .red : .white)
-                                    }
-                                    Text(viewModel.isWatched ? "Unwatch" : "Mark Watched")
-                                        .font(.caption)
-                                }
-                                Spacer()
-                            }
+                            MediaPlayButtonRowView(viewModel: viewModel, wrappedScrollView: wrappedScrollView)
                             .padding(.top, 15)
                             .addFocusGuide(using: focusBag, name: "actionButtons", destinations: [.bottom: "moreLikeThis"], debug: false)
                         }
