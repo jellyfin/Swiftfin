@@ -582,11 +582,11 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         updateNowPlayingCenter(time: nil, playing: mediaPlayer.state == .playing)
 
         if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
-            var ticks: Int64 = Int64(mediaPlayer.position * Float(manifest.runTimeTicks!));
-            if(ticks == 0) {
+            var ticks: Int64 = Int64(mediaPlayer.position * Float(manifest.runTimeTicks!))
+            if ticks == 0 {
                 ticks = manifest.userData?.playbackPositionTicks ?? 0
             }
-            
+
             let progressInfo = PlaybackProgressInfo(canSeek: true, item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, audioStreamIndex: Int(selectedAudioTrack), subtitleStreamIndex: Int(selectedCaptionTrack), isPaused: (!playing), isMuted: false, positionTicks: ticks, playbackStartTimeTicks: Int64(startTime), volumeLevel: 100, brightness: 100, aspectRatio: nil, playMethod: playbackItem.videoType, liveStreamId: nil, playSessionId: playSessionId, repeatMode: .repeatNone, nowPlayingQueue: [], playlistItemId: "playlistItem0")
 
             PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)

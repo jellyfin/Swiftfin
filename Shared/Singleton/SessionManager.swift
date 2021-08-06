@@ -23,7 +23,7 @@ final class SessionManager {
     fileprivate(set) var user: SignedInUser!
     fileprivate(set) var deviceID: String = ""
     fileprivate(set) var accessToken: String = ""
-    
+
     #if os(tvOS)
     let tvUserManager = TVUserManager()
     #endif
@@ -41,10 +41,10 @@ final class SessionManager {
             }
         }
         #else
-        if(lastUsedUserID != nil) {
+        if lastUsedUserID != nil {
             savedUsers?.forEach { savedUser in
-                if(savedUser.user_id ?? "" == lastUsedUserID!) {
-                    user = savedUser;
+                if savedUser.user_id ?? "" == lastUsedUserID! {
+                    user = savedUser
                 }
             }
         } else {
@@ -146,7 +146,7 @@ final class SessionManager {
                 #if os(tvOS)
                 let descriptor: TVAppProfileDescriptor = TVAppProfileDescriptor(name: user.username!)
                 self.tvUserManager.shouldStorePreferenceForCurrentUser(to: descriptor) { should in
-                    if(should) {
+                    if should {
                         user.appletv_id = self.tvUserManager.currentUserIdentifier ?? ""
                     }
                 }
@@ -178,7 +178,7 @@ final class SessionManager {
         keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
         keychain.delete("AccessToken_\(user?.user_id ?? "")")
         generateAuthHeader(with: nil, deviceID: nil)
-        if(user != nil) {
+        if user != nil {
             let deleteRequest = NSBatchDeleteRequest(objectIDs: [user.objectID])
             user = nil
             _ = try? PersistenceController.shared.container.viewContext.execute(deleteRequest)

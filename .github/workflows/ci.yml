@@ -42,7 +42,7 @@ jobs:
           path: .build
           key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.scheme }}-spm-
+            ${{ runner.os }}-${{ matrix.scheme }}-spm2-
             
       - name: Cache DerivedData folder
         uses: actions/cache@v2

@@ -192,7 +192,7 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
         let data = fileManager.contents(atPath: logURL.path)
 
         picker.setSubject("[DEV-BUG] SwiftFin")
-        picker.setMessageBody("Please don't edit this email.\n Please don't change the subject. \nUDID: \(UIDevice.current.identifierForVendor?.uuidString ?? "NIL")\n", isHTML: false);
+        picker.setMessageBody("Please don't edit this email.\n Please don't change the subject. \nUDID: \(UIDevice.current.identifierForVendor?.uuidString ?? "NIL")\n", isHTML: false)
         picker.setToRecipients(["SwiftFin Bug Reports <swiftfin-bugs@jellyfin.org>"])
         picker.addAttachmentData(data!, mimeType: "text/plain", fileName: logURL.lastPathComponent)
         picker.mailComposeDelegate = self

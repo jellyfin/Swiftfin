@@ -54,8 +54,8 @@ final class LibraryFilterViewModel: ViewModel {
     init(filters: LibraryFilters? = nil,
          enabledFilterType: [FilterType] = [.tag, .genre, .sortBy, .sortOrder, .filter], parentId: String) {
         self.enabledFilterType = enabledFilterType
-        self.selectedSortBy = filters?.sortBy.first ?? .name;
-        self.selectedSortOrder = filters?.sortOrder.first ?? .descending;
+        self.selectedSortBy = filters?.sortBy.first ?? .name
+        self.selectedSortOrder = filters?.sortOrder.first ?? .descending
         self.parentId = parentId
 
         super.init()

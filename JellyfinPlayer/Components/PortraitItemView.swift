@@ -47,7 +47,7 @@ struct PortraitItemView: View {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.accentColor)
                                     .background(Color(.white))
-                                    .cornerRadius(.infinity)
+                                    .clipShape(Circle().scale(0.8))
                             } else {
                                 if item.userData?.unplayedItemCount != nil {
                                     Capsule()
