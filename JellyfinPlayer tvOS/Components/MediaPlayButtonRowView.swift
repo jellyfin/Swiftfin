@@ -10,10 +10,10 @@
 import SwiftUI
 
 struct MediaPlayButtonRowView: View {
-    
+
     @ObservedObject var viewModel: DetailItemViewModel
     @State var wrappedScrollView: UIScrollView?
-    
+
     var body: some View {
         HStack {
             VStack {
