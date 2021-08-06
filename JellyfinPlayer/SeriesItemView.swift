@@ -40,8 +40,8 @@ struct SeriesItemView: View {
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
-                    if viewModel.item.officialRating != nil {
-                        Text(viewModel.item.officialRating!).font(.subheadline)
+                    if let officialRating = viewModel.item.officialRating {
+                        Text(officialRating).font(.subheadline)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
@@ -62,16 +62,17 @@ struct SeriesItemView: View {
     var innerBody: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
-                if !(viewModel.item.taglines ?? []).isEmpty {
-                    Text(viewModel.item.taglines!.first!).font(.body).italic()
+                if let firstTagline = viewModel.item.taglines?.first {
+                    Text(firstTagline).font(.body).italic()
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.bottom, 8)
                 }
-                if !(viewModel.item.genreItems ?? []).isEmpty {
+                if let genreItems = viewModel.item.genreItems,
+                   !genreItems.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 8) {
                             Text("Genres:").font(.callout).fontWeight(.semibold)
-                            ForEach(viewModel.item.genreItems!, id: \.id) { genre in
+                            ForEach(genreItems, id: \.id) { genre in
                                 NavigationLink(destination: LazyView {
                                     LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
                                 }) {
@@ -98,14 +99,15 @@ struct SeriesItemView: View {
             }
             .padding(.bottom, 16)
             LazyVStack(alignment: .leading, spacing: 0) {
-                if !(viewModel.item.people ?? []).isEmpty {
+                if let people = viewModel.item.people,
+                   !people.isEmpty {
                     Text("CAST")
                         .font(.callout).fontWeight(.semibold)
                         .padding(.bottom, 8)
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
-                            ForEach(viewModel.item.people!, id: \.self) { person in
-                                if person.type! == "Actor" {
+                            ForEach(people, id: \.self) { person in
+                                if person.type == "Actor" {
                                     NavigationLink(destination: LazyView {
                                         LibraryView(viewModel: .init(person: person), title: person.name ?? "")
                                     }) {
@@ -117,8 +119,9 @@ struct SeriesItemView: View {
                                                 .cornerRadius(10)
                                             Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
                                                 .frame(width: 100).foregroundColor(Color.primary)
-                                            if person.role != "" {
-                                                Text(person.role!).font(.caption).fontWeight(.medium).lineLimit(1)
+                                            if let role = person.role,
+                                               !role.isEmpty {
+                                                Text(role).font(.caption).fontWeight(.medium).lineLimit(1)
                                                     .foregroundColor(Color.secondary).frame(width: 100)
                                             }
                                         }
@@ -129,11 +132,12 @@ struct SeriesItemView: View {
                     }
                     .padding(.bottom, 16)
                 }
-                if !(viewModel.item.studios ?? []).isEmpty {
+                if let studios = viewModel.item.studios,
+                   !studios.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
                             Text("Studios:").font(.callout).fontWeight(.semibold)
-                            ForEach(viewModel.item.studios!, id: \.id) { studio in
+                            ForEach(studios, id: \.id) { studio in
                                 NavigationLink(destination: LazyView {
                                     LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                                 }) {
@@ -179,8 +183,8 @@ struct SeriesItemView: View {
                 } else {
                     GeometryReader { geometry in
                         ZStack {
-                            ImageView(src: viewModel.item.getSeriesBackdropImage(maxWidth: 200),
-                                      bh: viewModel.item.getSeriesBackdropImageBlurHash())
+                            ImageView(src: viewModel.item.getBackdropImage(maxWidth: 200),
+                                      bh: viewModel.item.getBackdropImageBlurHash())
                                 .opacity(0.4)
                                 .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                        height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
