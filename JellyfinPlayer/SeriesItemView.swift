@@ -66,6 +66,7 @@ struct SeriesItemView: View {
                     Text(firstTagline).font(.body).italic()
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.bottom, 8)
+                        .padding(.horizontal, 16)
                 }
                 if let genreItems = viewModel.item.genreItems,
                    !genreItems.isEmpty
@@ -81,6 +82,7 @@ struct SeriesItemView: View {
                                 }
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
                     .padding(.bottom, 8)
                 }
@@ -88,10 +90,11 @@ struct SeriesItemView: View {
                     .font(.footnote)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 16)
+                    .padding(.horizontal, 16)
                 Text("Seasons")
                     .font(.callout).fontWeight(.semibold)
+                    .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
             .padding(.top, 24)
             LazyVGrid(columns: tracks) {
                 ForEach(viewModel.seasons, id: \.id) { season in
@@ -99,6 +102,7 @@ struct SeriesItemView: View {
                 }
             }
             .padding(.bottom, 16)
+            .padding(.horizontal, 8)
             LazyVStack(alignment: .leading, spacing: 0) {
                 if let people = viewModel.item.people,
                    !people.isEmpty
@@ -106,6 +110,7 @@ struct SeriesItemView: View {
                     Text("CAST")
                         .font(.callout).fontWeight(.semibold)
                         .padding(.bottom, 8)
+                        .padding(.horizontal, 16)
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
                             ForEach(people, id: \.self) { person in
@@ -132,6 +137,7 @@ struct SeriesItemView: View {
                                 }
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
                     .padding(.bottom, 16)
                 }
@@ -149,6 +155,7 @@ struct SeriesItemView: View {
                                 }
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
                     .padding(.bottom, 16)
                 }
@@ -156,6 +163,7 @@ struct SeriesItemView: View {
                     Text("More Like This")
                         .font(.callout).fontWeight(.semibold)
                         .padding(.bottom, 8)
+                        .padding(.horizontal, 16)
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
                             ForEach(viewModel.similarItems, id: \.self) { similarItem in
@@ -164,11 +172,11 @@ struct SeriesItemView: View {
                                 }
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
                     .padding(.bottom, 16)
                 }
             }
-            .padding(.horizontal, 16)
         }
     }
 
