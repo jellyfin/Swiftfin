@@ -42,17 +42,18 @@ struct MainTabView: View {
                 HomeView()
                     .offset(y: -1) // don't remove this. it breaks tabview on 4K displays.
                 .tabItem {
-                    Text("All Media")
+                    Text("Home")
                     Image(systemName: "house")
+                    
                 }
-                .tag(Tab.home)
+                .tag(Tab.allMedia)
 
                 Text("Library")
                 .tabItem {
-                    Text("Home")
+                    Text("All Media")
                     Image(systemName: "folder")
                 }
-                .tag(Tab.allMedia)
+                .tag(Tab.home)
                 
                 SettingsView(viewModel: SettingsViewModel())
                     .offset(y: -1) // don't remove this. it breaks tabview on 4K displays.

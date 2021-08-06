@@ -229,7 +229,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     }
 
                     subtitleTrackArray.forEach { sub in
-                        if sub.id != -1 && sub.delivery == .external {
+                        if sub.id != -1 && sub.delivery == .external && sub.codec != "subrip" {
                             mediaPlayer.addPlaybackSlave(sub.url!, type: .subtitle, enforce: false)
                         }
                     }

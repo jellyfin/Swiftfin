@@ -9,7 +9,6 @@
 
 import SwiftUI
 import JellyfinAPI
-import SwiftUIFocusGuide
 
 struct SeriesItemView: View {
     @ObservedObject var viewModel: SeriesItemViewModel
@@ -19,8 +18,6 @@ struct SeriesItemView: View {
     @State var director: String?
 
     @State var wrappedScrollView: UIScrollView?
-
-    @StateObject var focusBag = SwiftUIFocusBag()
 
     @Environment(\.resetFocus) var resetFocus
     @Namespace private var namespace

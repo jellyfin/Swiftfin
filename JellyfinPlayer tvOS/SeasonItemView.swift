@@ -9,13 +9,10 @@
 
 import SwiftUI
 import JellyfinAPI
-import SwiftUIFocusGuide
 
 struct SeasonItemView: View {
     @ObservedObject var viewModel: SeasonItemViewModel
     @State var wrappedScrollView: UIScrollView?
-
-    @StateObject var focusBag = SwiftUIFocusBag()
 
     @Environment(\.resetFocus) var resetFocus
     @Namespace private var namespace

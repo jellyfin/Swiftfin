@@ -9,7 +9,6 @@
 
 import SwiftUI
 import JellyfinAPI
-import SwiftUIFocusGuide
 
 struct MovieItemView: View {
     @ObservedObject var viewModel: MovieItemViewModel
@@ -19,8 +18,6 @@ struct MovieItemView: View {
     @State var director: String?
 
     @State var wrappedScrollView: UIScrollView?
-
-    @StateObject var focusBag = SwiftUIFocusBag()
 
     @Namespace private var namespace
 
@@ -158,7 +155,6 @@ struct MovieItemView: View {
                                 Spacer()
                             }
                             .padding(.top, 15)
-                            .addFocusGuide(using: focusBag, name: "actionButtons", destinations: [.bottom: "moreLikeThis"], debug: false)
                         }
                     }.padding(.top, 50)
 
@@ -177,7 +173,6 @@ struct MovieItemView: View {
                                 Spacer().frame(width: 45)
                             }
                         }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
-                        .addFocusGuide(using: focusBag, name: "moreLikeThis", destinations: [.top: "actionButtons"], debug: false)
                         .frame(height: 360)
                     }
                 }.padding(EdgeInsets(top: 90, leading: 90, bottom: 0, trailing: 90))

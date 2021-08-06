@@ -31,15 +31,13 @@ struct SettingsView: View {
                     Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
-                        }.padding(.leading, 90)
-                        .padding(.trailing, 90)
+                        }
                     }
 
                     Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
-                        }.padding(.leading, 90)
-                        .padding(.trailing, 90)
+                        }
                     }
                 }
 
