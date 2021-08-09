@@ -1,0 +1,60 @@
+name: Bug report
+description: Create a bug report
+labels: [ bug ]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: |
+        A clear and concise description of the bug, including steps to reproduce it and the normally expected behavior.
+        You can also attach screenshots or screen recordings to help explain your issue.
+      placeholder: |
+        1. Go to …
+        2. Click on …
+        3. Scroll down to …
+        4. See error / the app crashes
+
+        Instead, I expect …
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: Application version
+      description: The version of the installed Swiftfin app.
+      placeholder: 1.0.0(58)
+    validations:
+      required: true
+  - type: dropdown
+    id: installation-source
+    attributes:
+      label: Where did you install the app from?
+      description: Choose the appropriate app store or installation method.
+      options:
+        - TestFlight
+        - App Store
+  - type: input
+    id: device-info
+    attributes:
+      label: Device information
+      description: model
+      placeholder: iPhone 12 Pro, 12.9-in. iPad Pro (4th generations) 
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: OS version
+      description: Version of the OS and other information
+      placeholder: iOS 14.7, iOS 15 beta 4 (19A5307g), iPadOS 14.7
+    validations:
+      required: true
+  - type: input
+    id: server-version
+    attributes:
+      label: Jellyfin server version
+      description: If on unstable, please specify the commit hash.
+      placeholder: 10.7.6
+    validations:
+      required: true
