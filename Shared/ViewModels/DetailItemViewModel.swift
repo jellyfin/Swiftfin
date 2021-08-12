@@ -12,6 +12,7 @@ import Foundation
 import JellyfinAPI
 
 class DetailItemViewModel: ViewModel {
+    
     @Published var item: BaseItemDto
     @Published var similarItems: [BaseItemDto] = []
 
@@ -31,7 +32,7 @@ class DetailItemViewModel: ViewModel {
         LibraryAPI.getSimilarItems(itemId: item.id!, userId: SessionManager.current.user.user_id!, limit: 20, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.similarItems = response.items ?? []
             })
@@ -43,7 +44,7 @@ class DetailItemViewModel: ViewModel {
             PlaystateAPI.markUnplayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
-                    self?.handleAPIRequestCompletion(completion: completion)
+                    self?.handleAPIRequestError(completion: completion)
                 }, receiveValue: { [weak self] _ in
                     self?.isWatched = false
                 })
@@ -52,7 +53,7 @@ class DetailItemViewModel: ViewModel {
             PlaystateAPI.markPlayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
-                    self?.handleAPIRequestCompletion(completion: completion)
+                    self?.handleAPIRequestError(completion: completion)
                 }, receiveValue: { [weak self] _ in
                     self?.isWatched = true
                 })
@@ -65,7 +66,7 @@ class DetailItemViewModel: ViewModel {
             UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
-                    self?.handleAPIRequestCompletion(completion: completion)
+                    self?.handleAPIRequestError(completion: completion)
                 }, receiveValue: { [weak self] _ in
                     self?.isFavorited = false
                 })
@@ -74,7 +75,7 @@ class DetailItemViewModel: ViewModel {
             UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
-                    self?.handleAPIRequestCompletion(completion: completion)
+                    self?.handleAPIRequestError(completion: completion)
                 }, receiveValue: { [weak self] _ in
                     self?.isFavorited = true
                 })

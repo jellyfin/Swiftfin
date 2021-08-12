@@ -12,19 +12,16 @@ import Foundation
 import JellyfinAPI
 
 final class ConnectToServerViewModel: ViewModel {
-    @Published
-    var isConnectedServer = false
+    
+    @Published var isConnectedServer = false
 
     var uriSubject = CurrentValueSubject<String, Never>("")
     var usernameSubject = CurrentValueSubject<String, Never>("")
     var passwordSubject = CurrentValueSubject<String, Never>("")
 
-    @Published
-    var lastPublicUsers = [UserDto]()
-    @Published
-    var publicUsers = [UserDto]()
-    @Published
-    var selectedPublicUser = UserDto()
+    @Published var lastPublicUsers = [UserDto]()
+    @Published var publicUsers = [UserDto]()
+    @Published var selectedPublicUser = UserDto()
 
     private let discovery: ServerDiscovery = ServerDiscovery()
     @Published var servers: [ServerDiscovery.ServerLookupResponse] = []
@@ -41,7 +38,7 @@ final class ConnectToServerViewModel: ViewModel {
             UserAPI.getPublicUsers()
                 .trackActivity(loading)
                 .sink(receiveCompletion: { completion in
-                    self.handleAPIRequestCompletion(completion: completion)
+                    self.handleAPIRequestError(completion: completion)
                 }, receiveValue: { response in
                     self.publicUsers = response
                     LogManager.shared.log.debug("Received \(String(response.count)) public users.", tag: "getPublicUsers")
@@ -67,17 +64,8 @@ final class ConnectToServerViewModel: ViewModel {
         LogManager.shared.log.debug("Attempting to connect to server at \"\(uriSubject.value)\"", tag: "connectToServer")
         ServerEnvironment.current.create(with: uriSubject.value)
             .trackActivity(loading)
-            .sink(receiveCompletion: { result in
-                switch result {
-                    case let .failure(error):
-                        let err = error as NSError
-                        LogManager.shared.log.critical("Error connecting to server at \"\(self.uriSubject.value)\"", tag: "connectToServer")
-                        LogManager.shared.log.critical(err.debugDescription, tag: "login")
-                        self.errorMessage = error.localizedDescription
-                        break
-                    default:
-                        break
-                }
+            .sink(receiveCompletion: { completion in
+                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer", completion: completion)
             }, receiveValue: { _ in
                 LogManager.shared.log.debug("Connected to server at \"\(self.uriSubject.value)\"", tag: "connectToServer")
                 self.getPublicUsers()
@@ -112,25 +100,7 @@ final class ConnectToServerViewModel: ViewModel {
         SessionManager.current.login(username: usernameSubject.value, password: passwordSubject.value)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                switch completion {
-                    case .finished:
-                        break
-                    case .failure(let error):
-                        if let err = error as? ErrorResponse {
-                            switch err {
-                                case .error(401, _, _, _):
-                                    LogManager.shared.log.critical("Error connecting to server at \"\(self.uriSubject.value)\"", tag: "login")
-                                    LogManager.shared.log.critical("User provided invalid credentials, server returned a 401 error.", tag: "login")
-                                    self.errorMessage = "Invalid credentials"
-                                case .error:
-                                    let err = error as NSError
-                                    LogManager.shared.log.critical("Error logging in to server at \"\(self.uriSubject.value)\"", tag: "login")
-                                    LogManager.shared.log.critical(err.debugDescription, tag: "login")
-                                    self.errorMessage = err.localizedDescription
-                            }
-                        }
-                        break
-                }
+                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login", completion: completion)
             }, receiveValue: { _ in
 
             })
