@@ -10,33 +10,40 @@
 import Foundation
 import JellyfinAPI
 
+
+/**
+ The implementation of the network errors here are a temporary measure.
+ It is very repetitive, messy, and doesn't fulfill the entire specification of "error reporting".
+ The specific kind of errors here should be created and surfaced from within JellyfinAPI on API calls.
+ */
+
 enum NetworkError: Error {
     
     /// For the case that the ErrorResponse object has a code of -1
-    case URLError(response: ErrorResponse, displayMessage: String?, logLevel: LogLevel, tag: String?)
+    case URLError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
     
     /// For the case that the ErrorRespones object has a code of -2
-    case HTTPURLError(response: ErrorResponse, displayMessage: String?, logLevel: LogLevel, tag: String?)
+    case HTTPURLError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
     
     /// For the case that the ErrorResponse object has a positive code
-    case JellyfinError(response: ErrorResponse, displayMessage: String?, logLevel: LogLevel, tag: String?)
+    case JellyfinError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
     
     var errorMessage: ErrorMessage {
         switch self {
-        case .URLError(response: let response, displayMessage: let displayMessage, let logLevel, let tag):
-            return NetworkError.parseURLError(from: response, displayMessage: displayMessage, logLevel: logLevel, logTag: tag)
-        case .HTTPURLError(response: let response, displayMessage: let displayMessage, let logLevel, let tag):
-            return NetworkError.parseHTTPURLError(from: response, displayMessage: displayMessage, logLevel: logLevel, logTag: tag)
-        case .JellyfinError(response: let response, displayMessage: let displayMessage, let logLevel, let tag):
-            return NetworkError.parseJellyfinError(from: response, displayMessage: displayMessage, logLevel: logLevel, logTag: tag)
+        case .URLError(let response, let displayMessage, let logConstructor):
+            return NetworkError.parseURLError(from: response, displayMessage: displayMessage, logConstructor: logConstructor)
+        case .HTTPURLError(let response, let displayMessage, let logConstructor):
+            return NetworkError.parseHTTPURLError(from: response, displayMessage: displayMessage, logConstructor: logConstructor)
+        case .JellyfinError(let response, let displayMessage, let logConstructor):
+            return NetworkError.parseJellyfinError(from: response, displayMessage: displayMessage, logConstructor: logConstructor)
         }
     }
     
     func logMessage() {
-        let errorMessage = self.errorMessage
+        let logConstructor = errorMessage.logConstructor
         let logFunction: (@autoclosure () -> String, String, String, String, UInt) -> Void
         
-        switch errorMessage.logLevel {
+        switch logConstructor.level {
         case .trace:
             logFunction = LogManager.shared.log.trace
         case .debug:
@@ -53,13 +60,14 @@ enum NetworkError: Error {
             logFunction = LogManager.shared.log.debug
         }
         
-        logFunction(errorMessage.logMessage, "", "", "", 0)
+        logFunction(logConstructor.message, logConstructor.tag, logConstructor.function, logConstructor.file, logConstructor.line)
     }
     
-    private static func parseURLError(from response: ErrorResponse, displayMessage: String?, logLevel: LogLevel, logTag: String?) -> ErrorMessage {
+    private static func parseURLError(from response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor) -> ErrorMessage {
         
         let errorMessage: ErrorMessage
         var logMessage = "An error has occurred."
+        var logConstructor = logConstructor
         
         switch response {
         case .error(_, _, _, let err):
@@ -69,56 +77,54 @@ enum NetworkError: Error {
             switch err._code {
             case -1001:
                 logMessage = "Network timed out."
+                logConstructor.message = logMessage
                 errorMessage = ErrorMessage(code: err._code,
                                             title: "Timed Out",
                                             displayMessage: displayMessage,
-                                            logMessage: logMessage,
-                                            logLevel: logLevel,
-                                            logTag: logTag)
+                                            logConstructor: logConstructor)
             case -1004:
                 logMessage = "Cannot connect to host."
+                logConstructor.message = logMessage
                 errorMessage = ErrorMessage(code: err._code,
                                             title: "Error",
                                             displayMessage: displayMessage,
-                                            logMessage: logMessage,
-                                            logLevel: logLevel,
-                                            logTag: logTag)
+                                            logConstructor: logConstructor)
             default:
+                logConstructor.message = logMessage
                 errorMessage = ErrorMessage(code: err._code,
                                             title: "Error",
                                             displayMessage: displayMessage,
-                                            logMessage: logMessage,
-                                            logLevel: logLevel,
-                                            logTag: logTag)
+                                            logConstructor: logConstructor)
             }
         }
         
         return errorMessage
     }
     
-    private static func parseHTTPURLError(from response: ErrorResponse, displayMessage: String?, logLevel: LogLevel, logTag: String?) -> ErrorMessage {
+    private static func parseHTTPURLError(from response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor) -> ErrorMessage {
         
         let errorMessage: ErrorMessage
         let logMessage = "An HTTP URL error has occurred"
+        var logConstructor = logConstructor
         
         // Not implemented as has not run into one of these errors as time of writing
         switch response {
         case .error(_, _, _, _):
+            logConstructor.message = logMessage
             errorMessage = ErrorMessage(code: 0,
                                         title: "Error",
                                         displayMessage: displayMessage,
-                                        logMessage: logMessage,
-                                        logLevel: logLevel,
-                                        logTag: logTag)
+                                        logConstructor: logConstructor)
         }
         
         return errorMessage
     }
     
-    private static func parseJellyfinError(from response: ErrorResponse, displayMessage: String?, logLevel: LogLevel, logTag: String?) -> ErrorMessage {
+    private static func parseJellyfinError(from response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor) -> ErrorMessage {
         
         let errorMessage: ErrorMessage
         var logMessage = "An error has occurred."
+        var logConstructor = logConstructor
         
         switch response {
         case .error(let code, _, _, _):
@@ -127,19 +133,17 @@ enum NetworkError: Error {
             switch code {
             case 401:
                 logMessage = "User is unauthorized."
+                logConstructor.message = logMessage
                 errorMessage = ErrorMessage(code: code,
                                             title: "Unauthorized",
                                             displayMessage: displayMessage,
-                                            logMessage: logMessage,
-                                            logLevel: logLevel,
-                                            logTag: logTag)
+                                            logConstructor: logConstructor)
             default:
+                logConstructor.message = logMessage
                 errorMessage = ErrorMessage(code: code,
                                             title: "Error",
                                             displayMessage: displayMessage,
-                                            logMessage: logMessage,
-                                            logLevel: logLevel,
-                                            logTag: logTag)
+                                            logConstructor: logConstructor)
             }
         }
         

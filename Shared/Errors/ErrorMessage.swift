@@ -15,21 +15,17 @@ struct ErrorMessage: Identifiable {
     let code: Int
     let title: String
     let displayMessage: String
-    let logMessage: String
-    let logLevel: LogLevel
-    let logTag: String
+    let logConstructor: LogConstructor
     
     var id: String {
-        return "\(code)\(title)\(logMessage)"
+        return "\(code)\(title)\(logConstructor.message)"
     }
     
-    /// If the given displayMessage is `nil`, it will be set to the given logMessage
-    init(code: Int, title: String, displayMessage: String?, logMessage: String, logLevel: LogLevel, logTag: String?) {
+    /// If the custom displayMessage is `nil`, it will be set to the given logConstructor's message
+    init(code: Int, title: String, displayMessage: String?, logConstructor: LogConstructor) {
         self.code = code
         self.title = title
-        self.displayMessage = displayMessage ?? logMessage
-        self.logMessage = logMessage
-        self.logLevel = logLevel
-        self.logTag = logTag ?? ""
+        self.displayMessage = displayMessage ?? logConstructor.message
+        self.logConstructor = logConstructor
     }
 }

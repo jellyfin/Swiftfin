@@ -197,6 +197,9 @@
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */; };
+		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
+		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
+		E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
@@ -382,6 +385,7 @@
 		D79953919FED0C4DF72BA578 /* Pods-JellyfinPlayer tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		DE5004F745B19E28744A7DE7 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayButtonRowView.swift; sourceTree = "<group>"; };
+		E131691626C583BC0074BFEE /* LogConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogConstructor.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		EBFE1F64394BCC2EFFF1610D /* Pods_JellyfinPlayer_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JellyfinPlayer_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -773,6 +777,7 @@
 			isa = PBXGroup;
 			children = (
 				E1FCD08726C35A0D007C8DCF /* NetworkError.swift */,
+				E131691626C583BC0074BFEE /* LogConstructor.swift */,
 				E1FCD09526C47118007C8DCF /* ErrorMessage.swift */,
 			);
 			path = Errors;
@@ -1140,6 +1145,7 @@
 				53ABFDE4267974EF00886593 /* LibraryListViewModel.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* APIExtensions.swift in Sources */,
 				531690FA267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift in Sources */,
+				E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */,
 				535870A32669D89F00D05A09 /* Model.xcdatamodeld in Sources */,
 				09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */,
 			);
@@ -1176,6 +1182,7 @@
 				625CB5682678B6FB00530A6E /* SplashView.swift in Sources */,
 				535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
+				E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */,
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
 				532E68CF267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift in Sources */,
 				532175402671EE4F005491E6 /* LibraryFilterView.swift in Sources */,
@@ -1232,6 +1239,7 @@
 				628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */,
 				628B95382670CDAB0091AF3B /* Model.xcdatamodeld in Sources */,
 				E1FCD09926C4F358007C8DCF /* NetworkError.swift in Sources */,
+				E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */,
 				62EC353226766849000E9F2D /* SessionManager.swift in Sources */,
 				536D3D79267BD5D00004248C /* ViewModel.swift in Sources */,
 			);
