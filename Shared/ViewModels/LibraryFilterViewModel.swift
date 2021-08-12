@@ -20,25 +20,17 @@ enum FilterType {
 }
 
 final class LibraryFilterViewModel: ViewModel {
-    @Published
-    var modifiedFilters = LibraryFilters()
+    
+    @Published var modifiedFilters = LibraryFilters()
 
-    @Published
-    var possibleGenres = [NameGuidPair]()
-    @Published
-    var possibleTags = [String]()
-    @Published
-    var possibleSortOrders = APISortOrder.allCases
-    @Published
-    var possibleSortBys = SortBy.allCases
-    @Published
-    var possibleItemFilters = ItemFilter.supportedTypes
-    @Published
-    var enabledFilterType: [FilterType]
-    @Published
-    var selectedSortOrder: APISortOrder = .descending
-    @Published
-    var selectedSortBy: SortBy = .name
+    @Published var possibleGenres = [NameGuidPair]()
+    @Published var possibleTags = [String]()
+    @Published var possibleSortOrders = APISortOrder.allCases
+    @Published var possibleSortBys = SortBy.allCases
+    @Published var possibleItemFilters = ItemFilter.supportedTypes
+    @Published var enabledFilterType: [FilterType]
+    @Published var selectedSortOrder: APISortOrder = .descending
+    @Published var selectedSortBy: SortBy = .name
 
     var parentId: String = ""
 
@@ -69,7 +61,7 @@ final class LibraryFilterViewModel: ViewModel {
         FilterAPI.getQueryFilters(userId: SessionManager.current.user.user_id!, parentId: self.parentId)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] queryFilters in
                 guard let self = self else { return }
                 self.possibleGenres = queryFilters.genres ?? []

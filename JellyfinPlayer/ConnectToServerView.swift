@@ -169,7 +169,9 @@ struct ConnectToServerView: View {
             viewModel.passwordSubject.send(password)
         }
         .alert(item: $viewModel.errorMessage) { _ in
-            Alert(title: Text("Error"), message: Text($viewModel.errorMessage.wrappedValue!), dismissButton: .default(Text("Try again")))
+            Alert(title: Text("\(viewModel.errorMessage?.code ?? -1)\n\(viewModel.errorMessage?.title ?? "Error")"),
+                  message: Text(viewModel.errorMessage?.displayMessage ?? "Error"),
+                  dismissButton: .cancel())
         }
         .navigationTitle(NSLocalizedString("Connect to Server", comment: ""))
     }

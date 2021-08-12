@@ -12,6 +12,7 @@ import Foundation
 import JellyfinAPI
 
 final class SeasonItemViewModel: DetailItemViewModel {
+    
     @Published var episodes = [BaseItemDto]()
 
     override init(item: BaseItemDto) {
@@ -28,7 +29,7 @@ final class SeasonItemViewModel: DetailItemViewModel {
                                seasonId: item.id ?? "")
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.episodes = response.items ?? []
                 LogManager.shared.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")

@@ -12,6 +12,7 @@ import Foundation
 import JellyfinAPI
 
 final class SeriesItemViewModel: DetailItemViewModel {
+    
     @Published var seasons = [BaseItemDto]()
     @Published var nextUpItem: BaseItemDto?
 
@@ -28,7 +29,7 @@ final class SeriesItemViewModel: DetailItemViewModel {
         TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seriesId: self.item.id!, enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.nextUpItem = response.items?.first ?? nil
             })
@@ -58,7 +59,7 @@ final class SeriesItemViewModel: DetailItemViewModel {
         TvShowsAPI.getSeasons(seriesId: item.id ?? "", userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.seasons = response.items ?? []
                 LogManager.shared.log.debug("Retrieved \(String(self?.seasons.count ?? 0)) seasons")

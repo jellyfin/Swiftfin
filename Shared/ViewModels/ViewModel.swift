@@ -12,44 +12,45 @@ import Foundation
 import ActivityIndicator
 import JellyfinAPI
 
-typealias ErrorMessage = String
-
-extension ErrorMessage: Identifiable {
-    public var id: String {
-        self
-    }
-}
-
 class ViewModel: ObservableObject {
-    var cancellables = Set<AnyCancellable>()
-    @Published
-    var isLoading = true
+    
+    @Published var isLoading = true
+    @Published var errorMessage: ErrorMessage?
+    
     let loading = ActivityIndicator()
-    @Published
-    var errorMessage: ErrorMessage?
+    var cancellables = Set<AnyCancellable>()
 
     init() {
         loading.loading.assign(to: \.isLoading, on: self).store(in: &cancellables)
     }
-
-    func handleAPIRequestCompletion(completion: Subscribers.Completion<Error>) {
+    
+    func handleAPIRequestError(displayMessage: String? = nil, logLevel: LogLevel = .error, tag: String = "", completion: Subscribers.Completion<Error>) {
         switch completion {
-            case .finished:
-                break
-            case .failure(let error):
-                if let err = error as? ErrorResponse {
-                    switch err {
-                        case .error(401, _, _, _):
-                            LogManager.shared.log.error("Request failed: User unauthorized, server returned a 401 error code.")
-                            self.errorMessage = err.localizedDescription
-                            SessionManager.current.logout()
-                        case .error:
-                            LogManager.shared.log.error("Request failed.")
-                            LogManager.shared.log.error((err as NSError).debugDescription)
-                            self.errorMessage = err.localizedDescription
-                    }
+        case .finished:
+            break
+        case .failure(let error):
+            if let errorResponse = error as? ErrorResponse {
+                
+                let networkError: NetworkError
+                
+                switch errorResponse {
+                case .error(-1, _, _, _):
+                    networkError = .URLError(response: errorResponse, displayMessage: displayMessage, logLevel: logLevel, tag: tag)
+                    // Use the errorResponse description for debugging, rather than the user-facing friendly description which may not be implemented
+                    LogManager.shared.log.error("Request failed: URL request failed with error \(networkError.errorMessage.code): \(errorResponse.localizedDescription)")
+                case .error(-2, _, _, _):
+                    networkError = .HTTPURLError(response: errorResponse, displayMessage: displayMessage, logLevel: logLevel, tag: tag)
+                    LogManager.shared.log.error("Request failed: HTTP URL request failed with description: \(errorResponse.localizedDescription)")
+                default:
+                    networkError = .JellyfinError(response: errorResponse, displayMessage: displayMessage, logLevel: logLevel, tag: tag)
+                    // Able to use user-facing friendly description here since just HTTP status codes
+                    LogManager.shared.log.error("Request failed: \(networkError.errorMessage.code) - \(networkError.errorMessage.title): \(networkError.errorMessage.logMessage)\n\(error.localizedDescription)")
                 }
-                break
+                
+                self.errorMessage = networkError.errorMessage
+                
+                networkError.logMessage()
+            }
         }
     }
 }

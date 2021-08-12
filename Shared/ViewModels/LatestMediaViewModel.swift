@@ -12,8 +12,8 @@ import Foundation
 import JellyfinAPI
 
 final class LatestMediaViewModel: ViewModel {
-    @Published
-    var items = [BaseItemDto]()
+    
+    @Published var items = [BaseItemDto]()
 
     var libraryID: String
 
@@ -38,7 +38,7 @@ final class LatestMediaViewModel: ViewModel {
                                       enableUserData: true, limit: 12)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.items = response
                 LogManager.shared.log.debug("Retrieved \(String(self?.items.count ?? 0)) items")

@@ -17,21 +17,15 @@ final class LibraryViewModel: ViewModel {
     var genre: NameGuidPair?
     var studio: NameGuidPair?
 
-    @Published
-    var items = [BaseItemDto]()
+    @Published var items = [BaseItemDto]()
 
-    @Published
-    var totalPages = 0
-    @Published
-    var currentPage = 0
-    @Published
-    var hasNextPage = false
-    @Published
-    var hasPreviousPage = false
+    @Published var totalPages = 0
+    @Published var currentPage = 0
+    @Published var hasNextPage = false
+    @Published var hasPreviousPage = false
 
     // temp
-    @Published
-    var filters: LibraryFilters
+    @Published var filters: LibraryFilters
 
     var enabledFilterType: [FilterType] {
         if genre == nil {
@@ -76,7 +70,7 @@ final class LibraryViewModel: ViewModel {
                                   enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 LogManager.shared.log.debug("Received \(String(response.items?.count ?? 0)) items in library \(self?.parentID ?? "nil")")
                 guard let self = self else { return }
@@ -106,7 +100,7 @@ final class LibraryViewModel: ViewModel {
                                   filters: filters.filters, sortBy: sortBy, tags: filters.tags,
                                   enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 guard let self = self else { return }
                 let totalPages = ceil(Double(response.totalRecordCount ?? 0) / 100.0)

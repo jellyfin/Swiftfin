@@ -11,8 +11,8 @@ import Foundation
 import JellyfinAPI
 
 final class LibraryListViewModel: ViewModel {
-    @Published
-    var libraries = [BaseItemDto]()
+    
+    @Published var libraries = [BaseItemDto]()
 
     // temp
     var withFavorites = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
@@ -27,7 +27,7 @@ final class LibraryListViewModel: ViewModel {
         UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id ?? "val was nil")
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
                 self.libraries.append(contentsOf: response.items ?? [])
             })

@@ -14,14 +14,10 @@ import JellyfinAPI
 
 final class HomeViewModel: ViewModel {
 
-    @Published
-    var librariesShowRecentlyAddedIDs = [String]()
-    @Published
-    var libraries = [BaseItemDto]()
-    @Published
-    var resumeItems = [BaseItemDto]()
-    @Published
-    var nextUpItems = [BaseItemDto]()
+    @Published var librariesShowRecentlyAddedIDs = [String]()
+    @Published var libraries = [BaseItemDto]()
+    @Published var resumeItems = [BaseItemDto]()
+    @Published var nextUpItems = [BaseItemDto]()
 
     // temp
     var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: [.dateAdded])
@@ -37,7 +33,7 @@ final class HomeViewModel: ViewModel {
         UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
                 response.items!.forEach { item in
                     LogManager.shared.log.debug("Retrieved user view: \(item.id!) (\(item.name ?? "nil")) with type \(item.collectionType ?? "nil")")
@@ -49,7 +45,7 @@ final class HomeViewModel: ViewModel {
                 UserAPI.getCurrentUser()
                     .trackActivity(self.loading)
                     .sink(receiveCompletion: { completion in
-                        self.handleAPIRequestCompletion(completion: completion)
+                        self.handleAPIRequestError(completion: completion)
                     }, receiveValue: { response in
                         self.libraries.forEach { library in
                             if !(response.configuration?.latestItemsExcludes?.contains(library.id!))! {
@@ -67,7 +63,7 @@ final class HomeViewModel: ViewModel {
                                 mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
                 LogManager.shared.log.debug("Retrieved \(String(response.items!.count)) resume items")
                 self.resumeItems = response.items ?? []
@@ -78,7 +74,7 @@ final class HomeViewModel: ViewModel {
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestCompletion(completion: completion)
+                self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
                 LogManager.shared.log.debug("Retrieved \(String(response.items!.count)) nextup items")
                 self.nextUpItems = response.items ?? []

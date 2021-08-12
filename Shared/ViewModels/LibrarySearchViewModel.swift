@@ -87,9 +87,11 @@ final class LibrarySearchViewModel: ViewModel {
                                   enableTotalRecordCount: false,
                                   enableImages: false)
             .trackActivity(loading)
-            .sink(receiveCompletion: handleAPIRequestCompletion(completion:)) { [weak self] response in
+            .sink(receiveCompletion: { [weak self] completion in
+                self?.handleAPIRequestError(completion: completion)
+            }, receiveValue: { [weak self] response in
                 self?.suggestions = response.items ?? []
-            }
+            })
             .store(in: &cancellables)
     }
 
@@ -100,7 +102,7 @@ final class LibrarySearchViewModel: ViewModel {
                                   includeItemTypes: [ItemType.movie.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.movieItems = response.items ?? []
             })
@@ -111,7 +113,7 @@ final class LibrarySearchViewModel: ViewModel {
                                   includeItemTypes: [ItemType.series.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.showItems = response.items ?? []
             })
@@ -122,7 +124,7 @@ final class LibrarySearchViewModel: ViewModel {
                                   includeItemTypes: [ItemType.episode.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestCompletion(completion: completion)
+                self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
                 self?.episodeItems = response.items ?? []
             })
