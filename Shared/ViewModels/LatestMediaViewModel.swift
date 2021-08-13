@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 
 final class LatestMediaViewModel: ViewModel {
-    
+
     @Published var items = [BaseItemDto]()
 
     var libraryID: String

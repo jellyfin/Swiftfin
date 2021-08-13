@@ -10,7 +10,6 @@
 import Foundation
 import JellyfinAPI
 
-
 /**
  The implementation of the network errors here are a temporary measure.
  It is very repetitive, messy, and doesn't fulfill the entire specification of "error reporting".
@@ -18,16 +17,16 @@ import JellyfinAPI
  */
 
 enum NetworkError: Error {
-    
+
     /// For the case that the ErrorResponse object has a code of -1
     case URLError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
-    
+
     /// For the case that the ErrorRespones object has a code of -2
     case HTTPURLError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
-    
+
     /// For the case that the ErrorResponse object has a positive code
     case JellyfinError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
-    
+
     var errorMessage: ErrorMessage {
         switch self {
         case .URLError(let response, let displayMessage, let logConstructor):
@@ -38,11 +37,11 @@ enum NetworkError: Error {
             return NetworkError.parseJellyfinError(from: response, displayMessage: displayMessage, logConstructor: logConstructor)
         }
     }
-    
+
     func logMessage() {
         let logConstructor = errorMessage.logConstructor
         let logFunction: (@autoclosure () -> String, String, String, String, UInt) -> Void
-        
+
         switch logConstructor.level {
         case .trace:
             logFunction = LogManager.shared.log.trace
@@ -59,19 +58,19 @@ enum NetworkError: Error {
         case ._none:
             logFunction = LogManager.shared.log.debug
         }
-        
+
         logFunction(logConstructor.message, logConstructor.tag, logConstructor.function, logConstructor.file, logConstructor.line)
     }
-    
+
     private static func parseURLError(from response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor) -> ErrorMessage {
-        
+
         let errorMessage: ErrorMessage
         var logMessage = "An error has occurred."
         var logConstructor = logConstructor
-        
+
         switch response {
         case .error(_, _, _, let err):
-            
+
             // These codes are currently referenced from:
             // https://developer.apple.com/documentation/foundation/1508628-url_loading_system_error_codes
             switch err._code {
@@ -97,38 +96,38 @@ enum NetworkError: Error {
                                             logConstructor: logConstructor)
             }
         }
-        
+
         return errorMessage
     }
-    
+
     private static func parseHTTPURLError(from response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor) -> ErrorMessage {
-        
+
         let errorMessage: ErrorMessage
         let logMessage = "An HTTP URL error has occurred"
         var logConstructor = logConstructor
-        
+
         // Not implemented as has not run into one of these errors as time of writing
         switch response {
-        case .error(_, _, _, _):
+        case .error:
             logConstructor.message = logMessage
             errorMessage = ErrorMessage(code: 0,
                                         title: "Error",
                                         displayMessage: displayMessage,
                                         logConstructor: logConstructor)
         }
-        
+
         return errorMessage
     }
-    
+
     private static func parseJellyfinError(from response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor) -> ErrorMessage {
-        
+
         let errorMessage: ErrorMessage
         var logMessage = "An error has occurred."
         var logConstructor = logConstructor
-        
+
         switch response {
         case .error(let code, _, _, _):
-            
+
             // Generic HTTP status codes
             switch code {
             case 401:
@@ -146,7 +145,7 @@ enum NetworkError: Error {
                                             logConstructor: logConstructor)
             }
         }
-        
+
         return errorMessage
     }
 }

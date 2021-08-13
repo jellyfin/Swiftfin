@@ -13,27 +13,27 @@ import ActivityIndicator
 import JellyfinAPI
 
 class ViewModel: ObservableObject {
-    
+
     @Published var isLoading = true
     @Published var errorMessage: ErrorMessage?
-    
+
     let loading = ActivityIndicator()
     var cancellables = Set<AnyCancellable>()
 
     init() {
         loading.loading.assign(to: \.isLoading, on: self).store(in: &cancellables)
     }
-    
+
     func handleAPIRequestError(displayMessage: String? = nil, logLevel: LogLevel = .error, tag: String = "", function: String = #function, file: String = #file, line: UInt = #line, completion: Subscribers.Completion<Error>) {
         switch completion {
         case .finished:
             break
         case .failure(let error):
             if let errorResponse = error as? ErrorResponse {
-                
+
                 let networkError: NetworkError
                 let logConstructor = LogConstructor(message: "__NOTHING__", tag: tag, level: logLevel, function: function, file: file, line: line)
-                
+
                 switch errorResponse {
                 case .error(-1, _, _, _):
                     networkError = .URLError(response: errorResponse, displayMessage: displayMessage, logConstructor: logConstructor)
@@ -47,9 +47,9 @@ class ViewModel: ObservableObject {
                     // Able to use user-facing friendly description here since just HTTP status codes
                     LogManager.shared.log.error("Request failed: \(networkError.errorMessage.code) - \(networkError.errorMessage.title): \(networkError.errorMessage.logConstructor.message)\n\(error.localizedDescription)")
                 }
-                
+
                 self.errorMessage = networkError.errorMessage
-                
+
                 networkError.logMessage()
             }
         }

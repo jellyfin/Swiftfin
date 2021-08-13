@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 
 final class SeasonItemViewModel: DetailItemViewModel {
-    
+
     @Published var episodes = [BaseItemDto]()
 
     override init(item: BaseItemDto) {
