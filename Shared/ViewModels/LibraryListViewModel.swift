@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 
 final class LibraryListViewModel: ViewModel {
-    
+
     @Published var libraries = [BaseItemDto]()
 
     // temp

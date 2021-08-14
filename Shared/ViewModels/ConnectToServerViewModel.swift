@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 
 final class ConnectToServerViewModel: ViewModel {
-    
+
     @Published var isConnectedServer = false
 
     var uriSubject = CurrentValueSubject<String, Never>("")

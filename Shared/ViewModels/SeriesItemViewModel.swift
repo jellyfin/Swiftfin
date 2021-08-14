@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 
 final class SeriesItemViewModel: DetailItemViewModel {
-    
+
     @Published var seasons = [BaseItemDto]()
     @Published var nextUpItem: BaseItemDto?
 

@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 
 class DetailItemViewModel: ViewModel {
-    
+
     @Published var item: BaseItemDto
     @Published var similarItems: [BaseItemDto] = []
 

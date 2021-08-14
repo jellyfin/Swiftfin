@@ -20,7 +20,7 @@ enum FilterType {
 }
 
 final class LibraryFilterViewModel: ViewModel {
-    
+
     @Published var modifiedFilters = LibraryFilters()
 
     @Published var possibleGenres = [NameGuidPair]()

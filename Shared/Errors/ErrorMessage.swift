@@ -11,16 +11,16 @@ import Foundation
 import JellyfinAPI
 
 struct ErrorMessage: Identifiable {
-    
+
     let code: Int
     let title: String
     let displayMessage: String
     let logConstructor: LogConstructor
-    
+
     var id: String {
         return "\(code)\(title)\(logConstructor.message)"
     }
-    
+
     /// If the custom displayMessage is `nil`, it will be set to the given logConstructor's message
     init(code: Int, title: String, displayMessage: String?, logConstructor: LogConstructor) {
         self.code = code
