@@ -208,7 +208,7 @@ struct SeriesItemView: View {
                             }
                         }
                     }
-                    .padding(.top, 16)
+                    .padding([.top, .leading], 16)
                     innerBody
                 }
             }
