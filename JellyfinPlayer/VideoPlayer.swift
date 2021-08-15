@@ -81,7 +81,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var playbackItem = PlaybackItem()
     var remoteTimeUpdateTimer: Timer?
     var upNextViewModel: UpNextViewModel = UpNextViewModel()
-    var lastOri: UIInterfaceOrientation!
+    var lastOri: UIInterfaceOrientation? = nil
 
     // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
@@ -398,12 +398,14 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         }
 
         DispatchQueue.main.async {
-            self.lastOri = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
+            self.lastOri = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation ?? nil
             AppDelegate.orientationLock = .landscape
-
-            if !self.lastOri.isLandscape {
-                UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-                UIViewController.attemptRotationToDeviceOrientation()
+            
+            if(self.lastOri != nil) {
+                if !self.lastOri!.isLandscape {
+                    UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+                    UIViewController.attemptRotationToDeviceOrientation()
+                }
             }
         }
 
@@ -451,9 +453,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         self.navigationController?.isNavigationBarHidden = false
         overrideUserInterfaceStyle = .unspecified
         DispatchQueue.main.async {
-            AppDelegate.orientationLock = .all
-            UIDevice.current.setValue(self.lastOri.rawValue, forKey: "orientation")
-            UIViewController.attemptRotationToDeviceOrientation()
+            if(self.lastOri != nil) {
+                AppDelegate.orientationLock = .all
+                UIDevice.current.setValue(self.lastOri!.rawValue, forKey: "orientation")
+                UIViewController.attemptRotationToDeviceOrientation()
+            }
         }
     }
 

@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/Flight-School/AnyCodable",
         "state": {
           "branch": null,
-          "revision": "876d162385e9862ae8b3c8d65dc301312b040005",
-          "version": "0.6.0"
+          "revision": "69261f239f0fffaf51495dadc4f8483fbfe97025",
+          "version": "0.6.1"
         }
       },
       {
@@ -60,7 +60,7 @@
         "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
         "state": {
           "branch": "main",
-          "revision": "5cdc2419f547b3f31dc96f5eccaf3f303f44184b",
+          "revision": "f315671ced976a7ec75ce6a1f37e00b4880cbf4b",
           "version": null
         }
       },
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/kean/Nuke.git",
         "state": {
           "branch": null,
-          "revision": "69ae6d5b8c4b898450432f94bd35f863d3830cfc",
-          "version": "10.3.0"
+          "revision": "3bd3a1765bdf62d561d4c2e10e1c4fc7a010f44e",
+          "version": "10.3.2"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/sushichop/Puppy",
         "state": {
           "branch": null,
-          "revision": "dc82e65c749cee431ffbb8c0913680b61ccd7e08",
-          "version": "0.2.0"
+          "revision": "d670c669ce2a6ab554a903b815f461d6efc565e4",
+          "version": "0.3.0"
         }
       },
       {
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "152390e9e78ebbf0d767ee52971d41e7f44f39bc",
-          "version": "0.1.1"
+          "revision": "b9eeb1a7ea3fd6fea54ce57dee2f5794b667c8df",
+          "version": "0.2.0"
         }
       }
     ]
