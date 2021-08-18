@@ -337,7 +337,9 @@ struct NextUpWidget: Widget {
         }
         .configurationDisplayName("Next Up")
         .description("Keep watching where you left off or see what's up next.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([])
+        // Removed officially until working
+        // .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
 
