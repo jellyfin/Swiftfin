@@ -17,4 +17,6 @@ extension Defaults.Keys {
     static let autoSelectSubtitlesLangCode = Key<String>("AutoSelectSubtitlesLangCode", default: "Auto")
     static let autoSelectAudioLangCode = Key<String>("AutoSelectAudioLangCode", default: "Auto")
     static let appAppearance = Key<String>("appAppearance", default: AppAppearance.system.rawValue)
+    static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>("videoPlayerJumpForward", default: .thirty)
+    static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>("videoPlayerJumpBackward", default: .thirty)
 }
