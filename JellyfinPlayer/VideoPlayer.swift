@@ -171,7 +171,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             if playerDestination == .local {
                 mediaPlayer.jumpBackward(jumpBackwardLength.rawValue)
             } else {
-                self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)-15])
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000) - jumpBackwardLength.rawValue])
             }
         }
     }
@@ -181,7 +181,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             if playerDestination == .local {
                 mediaPlayer.jumpForward(jumpForwardLength.rawValue)
             } else {
-                self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)+30])
+                self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000) + jumpForwardLength.rawValue])
             }
         }
     }
