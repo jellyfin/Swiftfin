@@ -21,6 +21,8 @@ struct SettingsView: View {
     @Default(.autoSelectSubtitlesLangCode) var autoSelectSubtitlesLangcode
     @Default(.autoSelectAudioLangCode) var autoSelectAudioLangcode
     @Default(.appAppearance) var appAppearance
+    @Default(.videoPlayerJumpForward) var jumpForwardLength
+    @Default(.videoPlayerJumpBackward) var jumpBackwardLength
     @State private var username: String = ""
 
     func onAppear() {
@@ -40,6 +42,18 @@ struct SettingsView: View {
                     Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
+                        }
+                    }
+                    
+                    Picker("Jump Forward Length", selection: $jumpForwardLength) {
+                        ForEach(self.viewModel.videoPlayerJumpLengths, id: \.self) { length in
+                            Text(length.label).tag(length.rawValue)
+                        }
+                    }
+                    
+                    Picker("Jump Backward Length", selection: $jumpBackwardLength) {
+                        ForEach(self.viewModel.videoPlayerJumpLengths, id: \.self) { length in
+                            Text(length.label).tag(length.rawValue)
                         }
                     }
                 }

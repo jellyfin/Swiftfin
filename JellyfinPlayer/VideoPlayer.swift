@@ -76,7 +76,15 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var subtitleTrackArray: [Subtitle] = []
     var audioTrackArray: [AudioTrack] = []
     let playbackSpeeds: [Float] = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
-
+    var jumpForwardLength: VideoPlayerJumpLength {
+        let storedJumpForwardLength = Defaults[.videoPlayerJumpForward]
+        return VideoPlayerJumpLength(rawValue: storedJumpForwardLength)!
+    }
+    var jumpBackwardLength: VideoPlayerJumpLength {
+        let storedJumpBackwardLength = Defaults[.videoPlayerJumpBackward]
+        return VideoPlayerJumpLength(rawValue: storedJumpBackwardLength)!
+    }
+    
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
     var remoteTimeUpdateTimer: Timer?
@@ -161,7 +169,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     @IBAction func jumpBackTapped(_ sender: Any) {
         if paused == false {
             if playerDestination == .local {
-                mediaPlayer.jumpBackward(15)
+                mediaPlayer.jumpBackward(jumpBackwardLength.rawValue)
             } else {
                 self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)-15])
             }
@@ -171,7 +179,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     @IBAction func jumpForwardTapped(_ sender: Any) {
         if paused == false {
             if playerDestination == .local {
-                mediaPlayer.jumpForward(30)
+                mediaPlayer.jumpForward(jumpForwardLength.rawValue)
             } else {
                 self.sendJellyfinCommand(command: "Seek", options: ["position": (remotePositionTicks/10_000_000)+30])
             }
@@ -475,6 +483,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         mediaPlayer.drawable = videoContentView
 
         setupMediaPlayer()
+        setupJumpLengthButtons()
     }
 
     func setupMediaPlayer() {
@@ -606,6 +615,12 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 })
                 .store(in: &cancellables)
         }
+    }
+    
+    private func setupJumpLengthButtons() {
+        let buttonFont = UIFont.systemFont(ofSize: 35, weight: .regular)
+        jumpForwardButton.setImage(jumpForwardLength.generateForwardImage(with: buttonFont), for: .normal)
+        jumpBackButton.setImage(jumpBackwardLength.generateBackwardImage(with: buttonFont), for: .normal)
     }
 
     func setupTracksForPreferredDefaults() {

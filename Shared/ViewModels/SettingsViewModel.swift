@@ -57,6 +57,7 @@ final class SettingsViewModel: ObservableObject {
     var bitrates: [Bitrates] = []
     var langs = [TrackLanguage]()
     let appearances = AppAppearance.allCases
+    let videoPlayerJumpLengths = VideoPlayerJumpLength.allCases
 
     init() {
         let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!
