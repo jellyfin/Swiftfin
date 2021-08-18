@@ -77,12 +77,10 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var audioTrackArray: [AudioTrack] = []
     let playbackSpeeds: [Float] = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
     var jumpForwardLength: VideoPlayerJumpLength {
-        let storedJumpForwardLength = Defaults[.videoPlayerJumpForward]
-        return VideoPlayerJumpLength(rawValue: storedJumpForwardLength)!
+        return Defaults[.videoPlayerJumpForward]
     }
     var jumpBackwardLength: VideoPlayerJumpLength {
-        let storedJumpBackwardLength = Defaults[.videoPlayerJumpBackward]
-        return VideoPlayerJumpLength(rawValue: storedJumpBackwardLength)!
+        return Defaults[.videoPlayerJumpBackward]
     }
     
     var manifest: BaseItemDto = BaseItemDto()

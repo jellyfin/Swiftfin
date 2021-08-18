@@ -8,8 +8,9 @@
   */
 
 import UIKit
+import Defaults
 
-enum VideoPlayerJumpLength: Int32, CaseIterable {
+enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable {
     case thirty = 30
     case fifteen = 15
     case ten = 10
