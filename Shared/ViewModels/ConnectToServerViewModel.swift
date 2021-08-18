@@ -27,11 +27,6 @@ final class ConnectToServerViewModel: ViewModel {
     @Published var servers: [ServerDiscovery.ServerLookupResponse] = []
     @Published var searching = false
 
-    override init() {
-        super.init()
-        getPublicUsers()
-    }
-
     func getPublicUsers() {
         if ServerEnvironment.current.server != nil {
             LogManager.shared.log.debug("Attempting to read public users from \(ServerEnvironment.current.server.baseURI!)", tag: "getPublicUsers")

@@ -14,7 +14,7 @@ import JellyfinAPI
 
 class ViewModel: ObservableObject {
 
-    @Published var isLoading = true
+    @Published var isLoading = false
     @Published var errorMessage: ErrorMessage?
 
     let loading = ActivityIndicator()
