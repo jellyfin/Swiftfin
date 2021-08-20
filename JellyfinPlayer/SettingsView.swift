@@ -23,15 +23,41 @@ struct SettingsView: View {
     @Default(.appAppearance) var appAppearance
     @Default(.videoPlayerJumpForward) var jumpForwardLength
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
-    @State private var username: String = ""
-
-    func onAppear() {
-        username = SessionManager.current.user?.username ?? ""
-    }
 
     var body: some View {
         NavigationView {
             Form {
+                Section(header: Text("")) {
+                    HStack {
+                        Text("User")
+                        Spacer()
+                        Text(SessionManager.current.user.username ?? "")
+                            .foregroundColor(.JellyfinPurple)
+                    }
+                    
+                    NavigationLink(
+                        destination: ServerDetailView(),
+                        label: {
+                            HStack {
+                                Text("Server")
+                                Spacer()
+                                Text(ServerEnvironment.current.server.name ?? "")
+                                    .foregroundColor(.JellyfinPurple)
+                            }
+                        })
+                    
+                    Button {
+                        close = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            SessionManager.current.logout()
+                            let nc = NotificationCenter.default
+                            nc.post(name: Notification.Name("didSignOut"), object: nil)
+                        }
+                    } label: {
+                        Text("Sign out")
+                            .font(.callout)
+                    }
+                }
                 Section(header: Text("Playback settings")) {
                     Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
@@ -85,33 +111,6 @@ struct SettingsView: View {
                         UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appearance.style
                     })
                 }
-
-                Section(header: Text(ServerEnvironment.current.server.name ?? "")) {
-                    HStack {
-                        Text("Signed in as \(username)").foregroundColor(.primary)
-                        Spacer()
-                        Button {
-                            print("logging out")
-                            close = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                let nc = NotificationCenter.default
-                                nc.post(name: Notification.Name("didSignOut"), object: nil)
-                            }
-                        } label: {
-                            Text("Switch user").font(.callout)
-                        }
-                    }
-                    Button {
-                        close = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            SessionManager.current.logout()
-                            let nc = NotificationCenter.default
-                            nc.post(name: Notification.Name("didSignOut"), object: nil)
-                        }
-                    } label: {
-                        Text("Sign out").font(.callout)
-                    }
-                }
             }
             .navigationBarTitle("Settings", displayMode: .inline)
             .toolbar {
@@ -123,6 +122,6 @@ struct SettingsView: View {
                     }
                 }
             }
-        }.onAppear(perform: onAppear)
+        }
     }
 }
