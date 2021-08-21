@@ -27,7 +27,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("")) {
+                Section(header: EmptyView()) {
                     HStack {
                         Text("User")
                         Spacer()
@@ -58,7 +58,7 @@ struct SettingsView: View {
                             .font(.callout)
                     }
                 }
-                Section(header: Text("Playback settings")) {
+                Section(header: Text("Playback")) {
                     Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
