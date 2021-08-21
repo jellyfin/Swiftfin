@@ -222,7 +222,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
     @IBAction func settingsButtonTapped(_ sender: UIButton) {
         optionsVC = VideoPlayerSettingsView()
-        optionsVC?.delegate = self
+        optionsVC?.playerDelegate = self
 
         optionsVC?.modalPresentationStyle = .popover
         optionsVC?.popoverPresentationController?.sourceView = playerSettingsButton
