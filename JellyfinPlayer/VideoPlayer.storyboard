@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19115.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_5" orientation="landscape" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19107.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -30,7 +29,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="896" height="414"/>
                                 <subviews>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="e9f-8l-RdN" userLabel="SeekSlider">
-                                        <rect key="frame" x="50" y="355" width="689" height="31"/>
+                                        <rect key="frame" x="133" y="355" width="630" height="31"/>
                                         <color key="tintColor" red="0.66666666666666663" green="0.36078431372549019" blue="0.76470588235294112" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="thumbTintColor" red="0.66666666666666663" green="0.36078431372549019" blue="0.76470588235294112" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
@@ -39,11 +38,21 @@
                                             <action selector="seekSliderValueChanged:" destination="Y6W-OH-hqX" eventType="valueChanged" id="tfF-Zl-CdU"/>
                                         </connections>
                                     </slider>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-:--:--" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qft-iu-f1z">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-:--:--" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qft-iu-f1z" userLabel="Time Left Text">
                                         <rect key="frame" x="766" y="353" width="91" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="91" id="LbL-h0-EYA"/>
                                             <constraint firstAttribute="height" constant="34" id="OkD-Dr-Ina"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-:--:--" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="knf-PP-UIS" userLabel="Time Text">
+                                        <rect key="frame" x="39" y="353" width="91" height="34"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="91" id="FcP-Mk-OIL"/>
+                                            <constraint firstAttribute="height" constant="34" id="yXx-PI-kXn"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -156,13 +165,16 @@
                                     <constraint firstItem="o8N-R1-DhT" firstAttribute="centerY" secondItem="riN-y1-ABZ" secondAttribute="centerY" id="Hs5-Bc-iPB"/>
                                     <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="NPi-py-0qd"/>
                                     <constraint firstItem="rLx-SN-RHr" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="30" id="Oe7-LK-6Tl"/>
+                                    <constraint firstItem="e9f-8l-RdN" firstAttribute="leading" secondItem="knf-PP-UIS" secondAttribute="trailing" constant="5" id="ShK-80-ij1"/>
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="centerY" secondItem="Qcb-Fb-qZl" secondAttribute="centerY" id="TOk-sG-UXV"/>
+                                    <constraint firstItem="knf-PP-UIS" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="39" id="XNC-Q4-nE0"/>
                                     <constraint firstItem="o8N-R1-DhT" firstAttribute="centerX" secondItem="t2L-Oz-fe9" secondAttribute="centerX" id="a5g-8U-9S5"/>
                                     <constraint firstAttribute="bottom" secondItem="qft-iu-f1z" secondAttribute="bottom" constant="27" id="aOB-Uz-cbQ"/>
-                                    <constraint firstItem="qft-iu-f1z" firstAttribute="leading" secondItem="e9f-8l-RdN" secondAttribute="trailing" constant="29" id="auL-Vv-ZMV"/>
+                                    <constraint firstItem="qft-iu-f1z" firstAttribute="leading" secondItem="e9f-8l-RdN" secondAttribute="trailing" constant="5" id="auL-Vv-ZMV"/>
                                     <constraint firstItem="bYM-Xp-bZO" firstAttribute="top" secondItem="An8-jF-FAY" secondAttribute="top" id="cVS-eI-vv2"/>
-                                    <constraint firstItem="e9f-8l-RdN" firstAttribute="leading" secondItem="Qcb-Fb-qZl" secondAttribute="leading" constant="52" id="ed3-xq-0Ug"/>
                                     <constraint firstItem="t2L-Oz-fe9" firstAttribute="leading" secondItem="bYM-Xp-bZO" secondAttribute="trailing" constant="118.5" id="fci-L5-1f6"/>
+                                    <constraint firstItem="e9f-8l-RdN" firstAttribute="centerX" secondItem="Qcb-Fb-qZl" secondAttribute="centerX" id="jFy-Sb-aYi"/>
+                                    <constraint firstAttribute="bottom" secondItem="knf-PP-UIS" secondAttribute="bottom" constant="27" id="nLN-ju-9qC"/>
                                     <constraint firstItem="o8N-R1-DhT" firstAttribute="leading" secondItem="rLx-SN-RHr" secondAttribute="trailing" constant="16" id="qnV-Qf-y9m"/>
                                     <constraint firstItem="rLx-SN-RHr" firstAttribute="top" secondItem="Qcb-Fb-qZl" secondAttribute="top" constant="22" id="v4G-B1-7y6"/>
                                 </constraints>
@@ -197,7 +209,8 @@
                         <outlet property="mainActionButton" destination="t2L-Oz-fe9" id="nQR-2e-64l"/>
                         <outlet property="playerSettingsButton" destination="riN-y1-ABZ" id="I6r-z9-Jy2"/>
                         <outlet property="seekSlider" destination="e9f-8l-RdN" id="b3H-tn-TPG"/>
-                        <outlet property="timeText" destination="qft-iu-f1z" id="pAX-J3-I53"/>
+                        <outlet property="timeLeftText" destination="qft-iu-f1z" id="cSg-fO-9nF"/>
+                        <outlet property="timeText" destination="knf-PP-UIS" id="KhK-BX-rqT"/>
                         <outlet property="titleLabel" destination="o8N-R1-DhT" id="E7D-iU-bMi"/>
                         <outlet property="upNextView" destination="CY9-gw-dv8" id="BP6-bc-6Vk"/>
                         <outlet property="videoContentView" destination="Tsh-rC-BwO" id="5uR-No-wLy"/>
