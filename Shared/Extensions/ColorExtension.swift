@@ -11,6 +11,6 @@ import SwiftUI
 
 extension Color {
     
-    static let JellyfinPurple = Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255)
+    static let jellyfinPurple = Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255)
     
 }

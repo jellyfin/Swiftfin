@@ -32,7 +32,7 @@ struct SettingsView: View {
                         Text("User")
                         Spacer()
                         Text(SessionManager.current.user.username ?? "")
-                            .foregroundColor(.JellyfinPurple)
+                            .foregroundColor(.jellyfinPurple)
                     }
                     
                     NavigationLink(
@@ -42,7 +42,7 @@ struct SettingsView: View {
                                 Text("Server")
                                 Spacer()
                                 Text(ServerEnvironment.current.server.name ?? "")
-                                    .foregroundColor(.JellyfinPurple)
+                                    .foregroundColor(.jellyfinPurple)
                             }
                         })
                     
