@@ -20,7 +20,7 @@ struct HomeView: View {
             ProgressView()
         } else {
             ScrollView {
-                VStack(alignment: .leading) {
+                LazyVStack(alignment: .leading) {
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(items: viewModel.resumeItems)
                     }

@@ -110,6 +110,15 @@
         }
       },
       {
+        "package": "Stinsen",
+        "repositoryURL": "https://github.com/rundfunk47/stinsen",
+        "state": {
+          "branch": null,
+          "revision": "e72c20b2c4bde0d6c3a911d4eda688fee7aa3bba",
+          "version": "1.1.0"
+        }
+      },
+      {
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {

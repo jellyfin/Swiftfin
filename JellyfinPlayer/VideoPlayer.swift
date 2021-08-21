@@ -13,6 +13,7 @@ import Combine
 import GoogleCast
 import SwiftyJSON
 import Defaults
+import Stinsen
 
 enum PlayerDestination {
     case remote
@@ -27,6 +28,9 @@ protocol PlayerViewControllerDelegate: AnyObject {
 
 class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRemoteMediaClientListener {
 
+    @RouterObject
+    var main: ViewRouter<MainCoordinator.Route>?
+    
     weak var delegate: PlayerViewControllerDelegate?
 
     var cancellables = Set<AnyCancellable>()
@@ -508,6 +512,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             case .error(401, _, _, _):
                                 self.delegate?.exitPlayer(self)
                                 SessionManager.current.logout()
+                                main?.route(to: .connectToServer)
                             case .error:
                                 self.delegate?.exitPlayer(self)
                             }

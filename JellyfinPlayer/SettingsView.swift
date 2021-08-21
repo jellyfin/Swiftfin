@@ -6,10 +6,12 @@
  */
 
 import CoreData
-import SwiftUI
 import Defaults
+import Stinsen
+import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var main: ViewRouter<MainCoordinator.Route>
     @Environment(\.managedObjectContext) private var viewContext
 
     @ObservedObject var viewModel: SettingsViewModel
@@ -44,13 +46,13 @@ struct SettingsView: View {
                             Text(bitrate.name).tag(bitrate.value)
                         }
                     }
-                    
+
                     Picker("Jump Forward Length", selection: $jumpForwardLength) {
                         ForEach(self.viewModel.videoPlayerJumpLengths, id: \.self) { length in
                             Text(length.label).tag(length.rawValue)
                         }
                     }
-                    
+
                     Picker("Jump Backward Length", selection: $jumpBackwardLength) {
                         ForEach(self.viewModel.videoPlayerJumpLengths, id: \.self) { length in
                             Text(length.label).tag(length.rawValue)
@@ -63,19 +65,22 @@ struct SettingsView: View {
                     SearchablePicker(label: "Preferred subtitle language",
                                      options: viewModel.langs,
                                      optionToString: { $0.name },
-                                     selected: Binding<TrackLanguage>(
-                                        get: { viewModel.langs.first(where: { $0.isoCode == autoSelectSubtitlesLangcode }) ?? .auto },
-                                        set: {autoSelectSubtitlesLangcode = $0.isoCode}
-                                     )
-                    )
+                                     selected: Binding<TrackLanguage>(get: {
+                                                                          viewModel.langs
+                                                                              .first(where: { $0.isoCode == autoSelectSubtitlesLangcode
+                                                                              }) ??
+                                                                              .auto
+                                                                      },
+                                                                      set: { autoSelectSubtitlesLangcode = $0.isoCode }))
                     SearchablePicker(label: "Preferred audio language",
                                      options: viewModel.langs,
                                      optionToString: { $0.name },
-                                     selected: Binding<TrackLanguage>(
-                                        get: { viewModel.langs.first(where: { $0.isoCode == autoSelectAudioLangcode }) ?? .auto },
-                                        set: { autoSelectAudioLangcode = $0.isoCode}
-                                     )
-                    )
+                                     selected: Binding<TrackLanguage>(get: {
+                                                                          viewModel.langs
+                                                                              .first(where: { $0.isoCode == autoSelectAudioLangcode }) ??
+                                                                              .auto
+                                                                      },
+                                                                      set: { autoSelectAudioLangcode = $0.isoCode }))
                     Picker(NSLocalizedString("Appearance", comment: ""), selection: $appAppearance) {
                         ForEach(self.viewModel.appearances, id: \.self) { appearance in
                             Text(appearance.localizedName).tag(appearance.rawValue)
@@ -92,22 +97,16 @@ struct SettingsView: View {
                         Spacer()
                         Button {
                             print("logging out")
+                            main.route(to: .connectToServer)
                             close = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                let nc = NotificationCenter.default
-                                nc.post(name: Notification.Name("didSignOut"), object: nil)
-                            }
                         } label: {
                             Text("Switch user").font(.callout)
                         }
                     }
                     Button {
+                        SessionManager.current.logout()
+                        main.route(to: .connectToServer)
                         close = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            SessionManager.current.logout()
-                            let nc = NotificationCenter.default
-                            nc.post(name: Notification.Name("didSignOut"), object: nil)
-                        }
                     } label: {
                         Text("Sign out").font(.callout)
                     }
