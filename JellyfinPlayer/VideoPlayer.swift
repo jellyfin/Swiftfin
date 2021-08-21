@@ -38,6 +38,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
     @IBOutlet weak var upNextView: UIView!
     @IBOutlet weak var timeText: UILabel!
+    @IBOutlet weak var timeLeftText: UILabel!
     @IBOutlet weak var videoContentView: UIView!
     @IBOutlet weak var videoControlsView: UIView!
     @IBOutlet weak var seekSlider: UISlider!
@@ -106,16 +107,26 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     @IBAction func seekSliderValueChanged(_ sender: Any) {
         let videoDuration: Double = Double(manifest.runTimeTicks! / Int64(10_000_000))
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration)
-        let scrubRemaining = videoDuration - secondsScrubbedTo
-        let remainingTime = scrubRemaining
-        let hours = floor(remainingTime / 3600)
-        let minutes = (remainingTime.truncatingRemainder(dividingBy: 3600)) / 60
-        let seconds = (remainingTime.truncatingRemainder(dividingBy: 3600)).truncatingRemainder(dividingBy: 60)
+        let secondsScrubbedRemaining = videoDuration - secondsScrubbedTo
+        
+        timeText.text = calculateTimeText(from: secondsScrubbedTo)
+        timeLeftText.text = calculateTimeText(from: secondsScrubbedRemaining)
+    }
+    
+    private func calculateTimeText(from duration: Double) -> String {
+        let hours = floor(duration / 3600)
+        let minutes = (duration.truncatingRemainder(dividingBy: 3600)) / 60
+        let seconds = (duration.truncatingRemainder(dividingBy: 3600)).truncatingRemainder(dividingBy: 60)
+        
+        let timeText: String
+        
         if hours != 0 {
-            timeText.text = "\(Int(hours)):\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))"
+            timeText = "\(Int(hours)):\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))"
         } else {
-            timeText.text = "\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))"
+            timeText = "\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))"
         }
+        
+        return timeText
     }
 
     @IBAction func seekSliderEnd(_ sender: Any) {
@@ -215,7 +226,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 
     @IBAction func settingsButtonTapped(_ sender: UIButton) {
         optionsVC = VideoPlayerSettingsView()
-        optionsVC?.delegate = self
+        optionsVC?.playerDelegate = self
 
         optionsVC?.modalPresentationStyle = .popover
         optionsVC?.popoverPresentationController?.sourceView = playerSettingsButton
@@ -796,17 +807,11 @@ extension PlayerViewController: GCKGenericChannelDelegate {
         }
 
         if isSeeking == false {
-            let remainingTime = (manifest.runTimeTicks! - Int64(remotePositionTicks))/10_000_000
-            let hours = remainingTime / 3600
-            let minutes = (remainingTime % 3600) / 60
-            let seconds = (remainingTime % 3600) % 60
-            var timeTextStr = ""
-            if hours != 0 {
-                timeTextStr = "\(Int(hours)):\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
-            } else {
-                timeTextStr = "\(String(Int((minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int((seconds))).leftPad(toWidth: 2, withString: "0"))"
-            }
-            timeText.text = timeTextStr
+            let positiveSeconds = Double(remotePositionTicks/10_000_000)
+            let remainingSeconds = Double((manifest.runTimeTicks! - Int64(remotePositionTicks))/10_000_000)
+            
+            timeText.text = calculateTimeText(from: positiveSeconds)
+            timeLeftText.text = calculateTimeText(from: remainingSeconds)
 
             let playbackProgress = Float(remotePositionTicks) / Float(manifest.runTimeTicks!)
             seekSlider.setValue(playbackProgress, animated: true)
@@ -989,7 +994,8 @@ extension PlayerViewController: VLCMediaPlayerDelegate {
                 }
             }
 
-            timeText.text = String(mediaPlayer.remainingTime.stringValue.dropFirst())
+            timeText.text = mediaPlayer.time.stringValue
+            timeLeftText.text = String(mediaPlayer.remainingTime.stringValue.dropFirst())
 
             if CACurrentMediaTime() - controlsAppearTime > 5 {
                 self.smallNextUpView()
