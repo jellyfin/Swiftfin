@@ -44,6 +44,8 @@ final class ServerEnvironment {
                 server.baseURI = uri
                 server.name = response.serverName
                 server.server_id = response.id
+                server.version = response.version
+                server.os = response.operatingSystem
                 return server
             }
             .handleEvents(receiveOutput: { [unowned self] response in

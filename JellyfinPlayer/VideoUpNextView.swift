@@ -45,7 +45,7 @@ struct VideoUpNextView: View {
                     .font(.subheadline)
             }
             .frame(width: 120, height: 35)
-            .background(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255))
+            .background(Color.jellyfinPurple)
             .cornerRadius(10)
         }.buttonStyle(PlainButtonStyle())
         .frame(width: 120, height: 35)

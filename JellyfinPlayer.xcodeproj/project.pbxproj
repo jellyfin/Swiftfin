@@ -239,6 +239,9 @@
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
+		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
+		E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
+		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
 		E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
@@ -440,6 +443,9 @@
 		DE5004F745B19E28744A7DE7 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayButtonRowView.swift; sourceTree = "<group>"; };
 		E131691626C583BC0074BFEE /* LogConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogConstructor.swift; sourceTree = "<group>"; };
+		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
+		E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
@@ -540,6 +546,7 @@
 				62E632E2267D3BA60063E547 /* MovieItemViewModel.swift */,
 				62E632E8267D3FF50063E547 /* SeasonItemViewModel.swift */,
 				62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */,
+				E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
 				625CB5692678B71200530A6E /* SplashViewModel.swift */,
 				09389CC626819B4500AE350E /* VideoPlayerModel.swift */,
@@ -719,6 +726,7 @@
 				53987CA326572C1300E7EA70 /* SeasonItemView.swift */,
 				53987CA526572F0700E7EA70 /* SeriesItemView.swift */,
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+				E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */,
 				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
 				0959A5FC2686D29800C7C9A9 /* VideoUpNextView.swift */,
 				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
@@ -899,6 +907,7 @@
 			isa = PBXGroup;
 			children = (
 				53DE4BD1267098F300739748 /* SearchBarView.swift */,
+				E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */,
 				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				5364F454266CA0DC0026ECBA /* APIExtensions.swift */,
@@ -1410,6 +1419,7 @@
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				62CB3F4B2685BB77003D0A6F /* DefaultsExtension.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
+				E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */,
 				53DE4BD02670961400739748 /* EpisodeItemView.swift in Sources */,
 				53F8377D265FF67C00F456B3 /* VideoPlayerSettingsView.swift in Sources */,
 				53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */,
@@ -1417,6 +1427,7 @@
 				0959A5FD2686D29800C7C9A9 /* VideoUpNextView.swift in Sources */,
 				62E632DA267D2BC40063E547 /* LatestMediaViewModel.swift in Sources */,
 				625CB56F2678C23300530A6E /* HomeView.swift in Sources */,
+				E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */,
 				53892770263C25230035E14B /* NextUpView.swift in Sources */,
 				625CB5682678B6FB00530A6E /* SplashView.swift in Sources */,
 				535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */,
@@ -1441,6 +1452,7 @@
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				62E632E0267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
 				624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */,
+				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
 				62EC352F267666A5000E9F2D /* SessionManager.swift in Sources */,
 				62E632E3267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
