@@ -8,9 +8,9 @@
 import Foundation
 import SwiftUI
 
-class VideoPlayerSettingsView: UIViewController {
+class VideoPlayerSettingsView: UINavigationController {
     private var contentView: UIHostingController<VideoPlayerSettings>!
-    weak var delegate: PlayerViewController?
+    weak var playerDelegate: PlayerViewController?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
             .landscape
@@ -18,18 +18,13 @@ class VideoPlayerSettingsView: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        contentView = UIHostingController(rootView: VideoPlayerSettings(delegate: self.delegate ?? PlayerViewController()))
-        self.view.addSubview(contentView.view)
-        contentView.view.translatesAutoresizingMaskIntoConstraints = false
-        contentView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        contentView.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        contentView.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        
+        self.viewControllers = [UIHostingController(rootView: VideoPlayerSettings(delegate: self.playerDelegate ?? PlayerViewController()))]
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.delegate?.settingsPopoverDismissed()
+        self.playerDelegate?.settingsPopoverDismissed()
     }
 }
 
@@ -44,44 +39,42 @@ struct VideoPlayerSettings: View {
     }
 
     var body: some View {
-        NavigationView {
-            Form {
-                Picker(NSLocalizedString("Closed Captions", comment: ""), selection: $captionTrack) {
-                    ForEach(delegate.subtitleTrackArray, id: \.id) { caption in
-                        Text(caption.name).tag(caption.id)
-                    }
+        Form {
+            Picker(NSLocalizedString("Closed Captions", comment: ""), selection: $captionTrack) {
+                ForEach(delegate.subtitleTrackArray, id: \.id) { caption in
+                    Text(caption.name).tag(caption.id)
                 }
-                .onChange(of: captionTrack) { track in
-                    self.delegate.subtitleTrackChanged(newTrackID: track)
+            }
+            .onChange(of: captionTrack) { track in
+                self.delegate.subtitleTrackChanged(newTrackID: track)
+            }
+            Picker(NSLocalizedString("Audio Track", comment: ""), selection: $audioTrack) {
+                ForEach(delegate.audioTrackArray, id: \.id) { caption in
+                    Text(caption.name).tag(caption.id).lineLimit(1)
                 }
-                Picker(NSLocalizedString("Audio Track", comment: ""), selection: $audioTrack) {
-                    ForEach(delegate.audioTrackArray, id: \.id) { caption in
-                        Text(caption.name).tag(caption.id).lineLimit(1)
-                    }
-                }.onChange(of: audioTrack) { track in
-                    self.delegate.audioTrackChanged(newTrackID: track)
+            }.onChange(of: audioTrack) { track in
+                self.delegate.audioTrackChanged(newTrackID: track)
+            }
+            Picker(NSLocalizedString("Playback Speed", comment: ""), selection: $playbackSpeedSelection) {
+                ForEach(delegate.playbackSpeeds.indices, id: \.self) { speedIndex in
+                    let speed = delegate.playbackSpeeds[speedIndex]
+                    Text("\(String(speed))x").tag(speedIndex)
                 }
-                Picker(NSLocalizedString("Playback Speed", comment: ""), selection: $playbackSpeedSelection) {
-                    ForEach(delegate.playbackSpeeds.indices, id: \.self) { speedIndex in
-                        let speed = delegate.playbackSpeeds[speedIndex]
-                        Text("\(String(speed))x").tag(speedIndex)
-                    }
-                }
-                .onChange(of: playbackSpeedSelection, perform: { index in
-                    self.delegate.playbackSpeedChanged(index: index)
-                })
-            }.navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(NSLocalizedString("Audio & Captions", comment: ""))
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    if UIDevice.current.userInterfaceIdiom == .phone {
-                        Button {
-                            self.delegate.settingsPopoverDismissed()
-                        } label: {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                Text("Back").font(.callout)
-                            }
+            }
+            .onChange(of: playbackSpeedSelection, perform: { index in
+                self.delegate.playbackSpeedChanged(index: index)
+            })
+        }.navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(NSLocalizedString("Audio & Captions", comment: ""))
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    Button {
+                        self.delegate.settingsPopoverDismissed()
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                            Text("Back").font(.callout)
                         }
                     }
                 }

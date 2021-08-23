@@ -160,7 +160,7 @@ struct ConnectToServerView: View {
         .padding(.leading, 90)
         .padding(.trailing, 90)
         .alert(item: $viewModel.errorMessage) { _ in
-            Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""), dismissButton: .default(Text("Ok")))
+            Alert(title: Text("Error"), message: Text(viewModel.errorMessage as? String ?? ""), dismissButton: .default(Text("Ok")))
         }
         .onChange(of: uri) { uri in
             viewModel.uriSubject.send(uri)
