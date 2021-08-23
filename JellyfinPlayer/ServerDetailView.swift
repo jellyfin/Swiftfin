@@ -10,9 +10,9 @@
 import SwiftUI
 
 struct ServerDetailView: View {
-    
+
     @ObservedObject var viewModel = ServerDetailViewModel()
-    
+
     var body: some View {
         Form {
             Section(header: Text("")) {
@@ -22,21 +22,21 @@ struct ServerDetailView: View {
                     Text(ServerEnvironment.current.server.name ?? "")
                         .foregroundColor(.secondary)
                 }
-                
+
                 HStack {
                     Text("URI")
                     Spacer()
                     Text(ServerEnvironment.current.server.baseURI ?? "")
                         .foregroundColor(.secondary)
                 }
-                
+
                 HStack {
                     Text("Version")
                     Spacer()
                     Text(ServerEnvironment.current.server.version ?? "")
                         .foregroundColor(.secondary)
                 }
-                
+
                 HStack {
                     Text("Operating System")
                     Spacer()
@@ -44,7 +44,7 @@ struct ServerDetailView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Button(action: {
                 viewModel.refreshServerLibrary()
             }, label: {
