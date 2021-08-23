@@ -34,7 +34,7 @@ struct SettingsView: View {
                         Text(SessionManager.current.user.username ?? "")
                             .foregroundColor(.jellyfinPurple)
                     }
-                    
+
                     NavigationLink(
                         destination: ServerDetailView(),
                         label: {
@@ -45,7 +45,7 @@ struct SettingsView: View {
                                     .foregroundColor(.jellyfinPurple)
                             }
                         })
-                    
+
                     Button {
                         close = false
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -70,13 +70,13 @@ struct SettingsView: View {
                             Text(bitrate.name).tag(bitrate.value)
                         }
                     }
-                    
+
                     Picker("Jump Forward Length", selection: $jumpForwardLength) {
                         ForEach(self.viewModel.videoPlayerJumpLengths, id: \.self) { length in
                             Text(length.label).tag(length.rawValue)
                         }
                     }
-                    
+
                     Picker("Jump Backward Length", selection: $jumpBackwardLength) {
                         ForEach(self.viewModel.videoPlayerJumpLengths, id: \.self) { length in
                             Text(length.label).tag(length.rawValue)

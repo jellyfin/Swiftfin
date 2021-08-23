@@ -83,12 +83,12 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     var jumpBackwardLength: VideoPlayerJumpLength {
         return Defaults[.videoPlayerJumpBackward]
     }
-    
+
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
     var remoteTimeUpdateTimer: Timer?
     var upNextViewModel: UpNextViewModel = UpNextViewModel()
-    var lastOri: UIInterfaceOrientation? = nil
+    var lastOri: UIInterfaceOrientation?
 
     // MARK: IBActions
     @IBAction func seekSliderStart(_ sender: Any) {
@@ -104,24 +104,24 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         let videoDuration: Double = Double(manifest.runTimeTicks! / Int64(10_000_000))
         let secondsScrubbedTo = round(Double(seekSlider.value) * videoDuration)
         let secondsScrubbedRemaining = videoDuration - secondsScrubbedTo
-        
+
         timeText.text = calculateTimeText(from: secondsScrubbedTo)
         timeLeftText.text = calculateTimeText(from: secondsScrubbedRemaining)
     }
-    
+
     private func calculateTimeText(from duration: Double) -> String {
         let hours = floor(duration / 3600)
         let minutes = (duration.truncatingRemainder(dividingBy: 3600)) / 60
         let seconds = (duration.truncatingRemainder(dividingBy: 3600)).truncatingRemainder(dividingBy: 60)
-        
+
         let timeText: String
-        
+
         if hours != 0 {
             timeText = "\(Int(hours)):\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))"
         } else {
             timeText = "\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))"
         }
-        
+
         return timeText
     }
 
@@ -417,8 +417,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         DispatchQueue.main.async {
             self.lastOri = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation ?? nil
             AppDelegate.orientationLock = .landscape
-            
-            if(self.lastOri != nil) {
+
+            if self.lastOri != nil {
                 if !self.lastOri!.isLandscape {
                     UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
                     UIViewController.attemptRotationToDeviceOrientation()
@@ -470,7 +470,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         self.navigationController?.isNavigationBarHidden = false
         overrideUserInterfaceStyle = .unspecified
         DispatchQueue.main.async {
-            if(self.lastOri != nil) {
+            if self.lastOri != nil {
                 AppDelegate.orientationLock = .all
                 UIDevice.current.setValue(self.lastOri!.rawValue, forKey: "orientation")
                 UIViewController.attemptRotationToDeviceOrientation()
@@ -625,7 +625,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                 .store(in: &cancellables)
         }
     }
-    
+
     private func setupJumpLengthButtons() {
         let buttonFont = UIFont.systemFont(ofSize: 35, weight: .regular)
         jumpForwardButton.setImage(jumpForwardLength.generateForwardImage(with: buttonFont), for: .normal)
@@ -804,7 +804,7 @@ extension PlayerViewController: GCKGenericChannelDelegate {
         if isSeeking == false {
             let positiveSeconds = Double(remotePositionTicks/10_000_000)
             let remainingSeconds = Double((manifest.runTimeTicks! - Int64(remotePositionTicks))/10_000_000)
-            
+
             timeText.text = calculateTimeText(from: positiveSeconds)
             timeLeftText.text = calculateTimeText(from: remainingSeconds)
 

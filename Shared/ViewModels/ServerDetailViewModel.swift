@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 
 class ServerDetailViewModel: ViewModel {
-    
+
     func refreshServerLibrary() {
         LibraryAPI.refreshLibrary()
             .trackActivity(loading)

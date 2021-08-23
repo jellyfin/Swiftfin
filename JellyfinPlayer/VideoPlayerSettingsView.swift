@@ -18,7 +18,7 @@ class VideoPlayerSettingsView: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.viewControllers = [UIHostingController(rootView: VideoPlayerSettings(delegate: self.playerDelegate ?? PlayerViewController()))]
     }
 
