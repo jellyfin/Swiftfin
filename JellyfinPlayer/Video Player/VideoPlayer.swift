@@ -14,17 +14,6 @@ import GoogleCast
 import SwiftyJSON
 import Defaults
 
-enum PlayerDestination {
-    case remote
-    case local
-}
-
-protocol PlayerViewControllerDelegate: AnyObject {
-    func hideLoadingView(_ viewController: PlayerViewController)
-    func showLoadingView(_ viewController: PlayerViewController)
-    func exitPlayer(_ viewController: PlayerViewController)
-}
-
 class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRemoteMediaClientListener {
 
     weak var delegate: PlayerViewControllerDelegate?

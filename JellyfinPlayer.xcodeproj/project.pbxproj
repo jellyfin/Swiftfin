@@ -250,6 +250,10 @@
 		E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
 		E1FCD09926C4F358007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
+		E1FF802C26D4BB4B00FA24A0 /* PlayerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FF802B26D4BB4B00FA24A0 /* PlayerDestination.swift */; };
+		E1FF802E26D4BB7000FA24A0 /* PlayerViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FF802D26D4BB7000FA24A0 /* PlayerViewControllerDelegate.swift */; };
+		E1FF803026D4BBBE00FA24A0 /* VideoPlayerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FF802F26D4BBBE00FA24A0 /* VideoPlayerState.swift */; };
+		E1FF803226D4BD3400FA24A0 /* Reactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FF803126D4BD3400FA24A0 /* Reactor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -449,6 +453,10 @@
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
+		E1FF802B26D4BB4B00FA24A0 /* PlayerDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDestination.swift; sourceTree = "<group>"; };
+		E1FF802D26D4BB7000FA24A0 /* PlayerViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewControllerDelegate.swift; sourceTree = "<group>"; };
+		E1FF802F26D4BBBE00FA24A0 /* VideoPlayerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerState.swift; sourceTree = "<group>"; };
+		E1FF803126D4BD3400FA24A0 /* Reactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reactor.swift; sourceTree = "<group>"; };
 		EBFE1F64394BCC2EFFF1610D /* Pods_JellyfinPlayer_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JellyfinPlayer_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -658,6 +666,7 @@
 		535870AB2669D8D300D05A09 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				E1FF803126D4BD3400FA24A0 /* Reactor.swift */,
 				535870AC2669D8DD00D05A09 /* Typings.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
 			);
@@ -727,11 +736,8 @@
 				53987CA526572F0700E7EA70 /* SeriesItemView.swift */,
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
 				E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */,
-				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
 				0959A5FC2686D29800C7C9A9 /* VideoUpNextView.swift */,
-				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
-				532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */,
-				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
+				E1FF802A26D4BB0E00FA24A0 /* Video Player */,
 				625CB5672678B6FB00530A6E /* SplashView.swift */,
 				625CB56B2678C0FD00530A6E /* MainTabView.swift */,
 				625CB56E2678C23300530A6E /* HomeView.swift */,
@@ -976,6 +982,20 @@
 				E1FCD09526C47118007C8DCF /* ErrorMessage.swift */,
 			);
 			path = Errors;
+			sourceTree = "<group>";
+		};
+		E1FF802A26D4BB0E00FA24A0 /* Video Player */ = {
+			isa = PBXGroup;
+			children = (
+				E1FF802B26D4BB4B00FA24A0 /* PlayerDestination.swift */,
+				E1FF802D26D4BB7000FA24A0 /* PlayerViewControllerDelegate.swift */,
+				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
+				E1FF802F26D4BBBE00FA24A0 /* VideoPlayerState.swift */,
+				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
+				532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */,
+				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
+			);
+			path = "Video Player";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1403,6 +1423,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1FF803226D4BD3400FA24A0 /* Reactor.swift in Sources */,
 				5364F455266CA0DC0026ECBA /* APIExtensions.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
@@ -1423,6 +1444,7 @@
 				53DE4BD02670961400739748 /* EpisodeItemView.swift in Sources */,
 				53F8377D265FF67C00F456B3 /* VideoPlayerSettingsView.swift in Sources */,
 				53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */,
+				E1FF802E26D4BB7000FA24A0 /* PlayerViewControllerDelegate.swift in Sources */,
 				62133890265F83A900A81A2A /* LibraryListView.swift in Sources */,
 				0959A5FD2686D29800C7C9A9 /* VideoUpNextView.swift in Sources */,
 				62E632DA267D2BC40063E547 /* LatestMediaViewModel.swift in Sources */,
@@ -1448,6 +1470,7 @@
 				62E632F3267D54030063E547 /* DetailItemViewModel.swift in Sources */,
 				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
 				53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */,
+				E1FF802C26D4BB4B00FA24A0 /* PlayerDestination.swift in Sources */,
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				62E632E0267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
@@ -1463,6 +1486,7 @@
 				62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */,
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
 				625CB56C2678C0FD00530A6E /* MainTabView.swift in Sources */,
+				E1FF803026D4BBBE00FA24A0 /* VideoPlayerState.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */,
