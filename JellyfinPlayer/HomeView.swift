@@ -12,7 +12,7 @@ import SwiftUI
 import Stinsen
 
 struct HomeView: View {
-    @EnvironmentObject var home: NavigationRouter<HomeCoordinator.Route>
+    @EnvironmentObject var homeRouter: NavigationRouter<HomeCoordinator.Route>
     @StateObject var viewModel = HomeViewModel()
 
     @ViewBuilder
@@ -37,7 +37,7 @@ struct HomeView: View {
                                     .fontWeight(.bold)
                                 Spacer()
                                 Button {
-                                    home.route(to: .library(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
+                                    homeRouter.route(to: .library(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
                                 } label: {
                                     HStack {
                                         Text("See All").font(.subheadline).fontWeight(.bold)
@@ -61,7 +61,7 @@ struct HomeView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
-                        home.route(to: .settings)
+                        homeRouter.route(to: .settings)
                     } label: {
                         Image(systemName: "gear")
                     }

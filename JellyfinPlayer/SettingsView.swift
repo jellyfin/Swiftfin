@@ -11,8 +11,8 @@ import Stinsen
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var main: ViewRouter<MainCoordinator.Route>
-    @EnvironmentObject var settings: NavigationRouter<SettingsCoordinator.Route>
+    @EnvironmentObject var mainRouter: ViewRouter<MainCoordinator.Route>
+    @EnvironmentObject var settingsRouter: NavigationRouter<SettingsCoordinator.Route>
     @Environment(\.managedObjectContext) private var viewContext
 
     @ObservedObject var viewModel: SettingsViewModel
@@ -97,16 +97,16 @@ struct SettingsView: View {
                         Spacer()
                         Button {
                             print("logging out")
-                            main.route(to: .connectToServer)
-                            settings.dismiss()
+                            mainRouter.route(to: .connectToServer)
+                            settingsRouter.dismiss()
                         } label: {
                             Text("Switch user").font(.callout)
                         }
                     }
                     Button {
                         SessionManager.current.logout()
-                        main.route(to: .connectToServer)
-                        settings.dismiss()
+                        mainRouter.route(to: .connectToServer)
+                        settingsRouter.dismiss()
                     } label: {
                         Text("Sign out").font(.callout)
                     }
@@ -116,7 +116,7 @@ struct SettingsView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button {
-                        settings.dismiss()
+                        settingsRouter.dismiss()
                     } label: {
                         Image(systemName: "xmark")
                     }

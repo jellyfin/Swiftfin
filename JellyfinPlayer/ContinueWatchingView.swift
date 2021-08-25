@@ -32,7 +32,7 @@ struct ProgressBar: Shape {
 }
 
 struct ContinueWatchingView: View {
-    @EnvironmentObject var home: NavigationRouter<HomeCoordinator.Route>
+    @EnvironmentObject var homeRouter: NavigationRouter<HomeCoordinator.Route>
     
     var items: [BaseItemDto]
 
@@ -41,7 +41,7 @@ struct ContinueWatchingView: View {
             LazyHStack {
                 ForEach(items, id: \.id) { item in
                     Button {
-                        home.route(to: .item(viewModel: .init(id: item.id!)))
+                        homeRouter.route(to: .item(viewModel: .init(id: item.id!)))
                     } label: {
                         VStack(alignment: .leading) {
                             ImageView(src: item.getBackdropImage(maxWidth: 320), bh: item.getBackdropImageBlurHash())

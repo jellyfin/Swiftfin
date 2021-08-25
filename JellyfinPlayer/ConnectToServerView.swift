@@ -9,7 +9,7 @@ import SwiftUI
 import Stinsen
 
 struct ConnectToServerView: View {
-    @EnvironmentObject var main: ViewRouter<MainCoordinator.Route>
+    @EnvironmentObject var mainRouter: ViewRouter<MainCoordinator.Route>
     @StateObject var viewModel = ConnectToServerViewModel()
     @State var username = ""
     @State var password = ""
@@ -61,7 +61,7 @@ struct ConnectToServerView: View {
                                         if SessionManager.current.doesUserHaveSavedSession(userID: publicUser.id!) {
                                             let user = SessionManager.current.getSavedSession(userID: publicUser.id!)
                                             SessionManager.current.loginWithSavedSession(user: user)
-                                            main.route(to: .mainTab)
+                                            mainRouter.route(to: .mainTab)
                                         } else {
                                             username = publicUser.name ?? ""
                                             viewModel.selectedPublicUser = publicUser

@@ -7,8 +7,10 @@
 
 import JellyfinAPI
 import SwiftUI
+import Stinsen
 
 struct LibraryFilterView: View {
+    @EnvironmentObject var filterRouter: NavigationRouter<FilterCoordinator.Route>
     @Environment(\.presentationMode) var presentationMode
     @Binding var filters: LibraryFilters
     var parentId: String = ""
@@ -64,7 +66,7 @@ struct LibraryFilterView: View {
                     Button {
                         viewModel.resetFilters()
                         self.filters = viewModel.modifiedFilters
-                        presentationMode.wrappedValue.dismiss()
+                        filterRouter.dismiss()
                     } label: {
                         Text("Reset")
                     }
@@ -74,7 +76,7 @@ struct LibraryFilterView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button {
-                        presentationMode.wrappedValue.dismiss()
+                        filterRouter.dismiss()
                     } label: {
                         Image(systemName: "xmark")
                     }
@@ -83,7 +85,7 @@ struct LibraryFilterView: View {
                     Button {
                         viewModel.updateModifiedFilter()
                         self.filters = viewModel.modifiedFilters
-                        presentationMode.wrappedValue.dismiss()
+                        filterRouter.dismiss()
                     } label: {
                         Text("Apply")
                     }

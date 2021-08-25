@@ -9,7 +9,7 @@ import Stinsen
 import SwiftUI
 
 struct EpisodeItemView: View {
-    @EnvironmentObject var item: NavigationRouter<ItemCoordinator.Route>
+    @EnvironmentObject var itemRouter: NavigationRouter<ItemCoordinator.Route>
     @StateObject var viewModel: EpisodeItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
@@ -63,7 +63,6 @@ struct EpisodeItemView: View {
             HStack {
                 // Play button
                 Button {
-                    self.playbackInfo.itemToPlay = viewModel.item
                     self.playbackInfo.shouldShowPlayer = true
                 } label: {
                     HStack {
@@ -134,7 +133,7 @@ struct EpisodeItemView: View {
                                     Text("Genres:").font(.callout).fontWeight(.semibold)
                                     ForEach(viewModel.item.genreItems!, id: \.id) { genre in
                                         Button {
-                                            item.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
+                                            itemRouter.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
                                         } label: {
                                             Text(genre.name ?? "").font(.footnote)
                                         }
@@ -151,7 +150,7 @@ struct EpisodeItemView: View {
                                         ForEach(viewModel.item.people!, id: \.self) { person in
                                             if person.type! == "Actor" {
                                                 Button {
-                                                    item.route(to: .library(viewModel: .init(person: person), title: person.name ?? ""))
+                                                    itemRouter.route(to: .library(viewModel: .init(person: person), title: person.name ?? ""))
                                                 } label: {
                                                     VStack {
                                                         ImageView(src: person
@@ -181,7 +180,7 @@ struct EpisodeItemView: View {
                                     Text("Studios:").font(.callout).fontWeight(.semibold)
                                     ForEach(viewModel.item.studios!, id: \.id) { studio in
                                         Button {
-                                            item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                            itemRouter.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
                                         } label: {
                                             Text(studio.name ?? "").font(.footnote)
                                         }
@@ -199,7 +198,7 @@ struct EpisodeItemView: View {
                                         Spacer().frame(width: 16)
                                         ForEach(viewModel.similarItems, id: \.self) { similarItem in
                                             Button {
-                                                item.route(to: .item(viewModel: .init(id: similarItem.id!)))
+                                                itemRouter.route(to: .item(viewModel: .init(id: similarItem.id!)))
                                             } label: {
                                                 PortraitItemView(item: similarItem)
                                             }
@@ -230,7 +229,6 @@ struct EpisodeItemView: View {
                                     .cornerRadius(10)
                                 Spacer().frame(height: 15)
                                 Button {
-                                    self.playbackInfo.itemToPlay = viewModel.item
                                     self.playbackInfo.shouldShowPlayer = true
                                 } label: {
                                     HStack {
@@ -331,7 +329,7 @@ struct EpisodeItemView: View {
                                                 Text("Genres:").font(.callout).fontWeight(.semibold)
                                                 ForEach(viewModel.item.genreItems!, id: \.id) { genre in
                                                     Button {
-                                                        item.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
+                                                        itemRouter.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
                                                     } label: {
                                                         Text(genre.name ?? "").font(.footnote)
                                                     }
@@ -350,7 +348,7 @@ struct EpisodeItemView: View {
                                                     ForEach(viewModel.item.people!, id: \.self) { person in
                                                         if person.type! == "Actor" {
                                                             Button {
-                                                                item
+                                                                itemRouter
                                                                     .route(to: .library(viewModel: .init(person: person),
                                                                                         title: person.name ?? ""))
                                                             } label: {
@@ -384,7 +382,7 @@ struct EpisodeItemView: View {
                                                 Text("Studios:").font(.callout).fontWeight(.semibold)
                                                 ForEach(viewModel.item.studios!, id: \.id) { studio in
                                                     Button {
-                                                        item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                                        itemRouter.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
                                                     } label: {
                                                         Text(studio.name ?? "").font(.footnote)
                                                     }
@@ -404,7 +402,7 @@ struct EpisodeItemView: View {
                                                     Spacer().frame(width: 16)
                                                     ForEach(viewModel.similarItems, id: \.self) { similarItem in
                                                         Button {
-                                                            item.route(to: .item(viewModel: .init(id: similarItem.id!)))
+                                                            itemRouter.route(to: .item(viewModel: .init(id: similarItem.id!)))
                                                         } label: {
                                                             PortraitItemView(item: similarItem)
                                                         }

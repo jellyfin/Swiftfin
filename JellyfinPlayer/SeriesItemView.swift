@@ -9,7 +9,7 @@ import Stinsen
 import SwiftUI
 
 struct SeriesItemView: View {
-    @EnvironmentObject var item: NavigationRouter<ItemCoordinator.Route>
+    @EnvironmentObject var itemRouter: NavigationRouter<ItemCoordinator.Route>
     @StateObject var viewModel: SeriesItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
@@ -78,7 +78,7 @@ struct SeriesItemView: View {
                             Text("Genres:").font(.callout).fontWeight(.semibold)
                             ForEach(genreItems, id: \.id) { genre in
                                 Button {
-                                    item.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
+                                    itemRouter.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
                                 } label: {
                                     Text(genre.name ?? "").font(.footnote)
                                 }
@@ -101,7 +101,7 @@ struct SeriesItemView: View {
                             Text("Studios:").font(.callout).fontWeight(.semibold)
                             ForEach(studios, id: \.id) { studio in
                                 Button {
-                                    item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                    itemRouter.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
                                 } label: {
                                     Text(studio.name ?? "").font(.footnote)
                                 }
@@ -119,7 +119,7 @@ struct SeriesItemView: View {
             LazyVGrid(columns: tracks) {
                 ForEach(viewModel.seasons, id: \.id) { season in
                     Button {
-                        item.route(to: .item(viewModel: .init(id: season.id!)))
+                        itemRouter.route(to: .item(viewModel: .init(id: season.id!)))
                     } label: {
                         PortraitItemView(item: season)
                     }
@@ -140,7 +140,7 @@ struct SeriesItemView: View {
                             ForEach(people, id: \.self) { person in
                                 if person.type == "Actor" {
                                     Button {
-                                        item
+                                        itemRouter
                                             .route(to: .library(viewModel: .init(person: person),
                                                                 title: person.name ?? ""))
                                     } label: {
@@ -176,7 +176,7 @@ struct SeriesItemView: View {
                         LazyHStack(spacing: 16) {
                             ForEach(viewModel.similarItems, id: \.self) { similarItem in
                                 Button {
-                                    item.route(to: .item(viewModel: .init(id: similarItem.id!)))
+                                    itemRouter.route(to: .item(viewModel: .init(id: similarItem.id!)))
                                 } label: {
                                     PortraitItemView(item: similarItem)
                                 }

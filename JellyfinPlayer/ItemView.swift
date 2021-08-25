@@ -7,14 +7,15 @@
 
 import Introspect
 import JellyfinAPI
+import Stinsen
 import SwiftUI
 
 class VideoPlayerItem: ObservableObject {
     @Published var shouldShowPlayer: Bool = false
-    @Published var itemToPlay = BaseItemDto()
 }
 
 struct ItemView: View {
+    @EnvironmentObject var itemRouter: NavigationRouter<ItemCoordinator.Route>
     @StateObject var viewModel: ItemViewModel
     @StateObject private var videoPlayerItem = VideoPlayerItem()
     @State private var videoIsLoading: Bool = false // This variable is only changed by the underlying VLC view.
@@ -23,20 +24,6 @@ struct ItemView: View {
 
     var body: some View {
         ZStack {
-            NavigationLink(destination: LoadingViewNoBlur(isShowing: $videoIsLoading) {
-                VLCPlayerWithControls(item: videoPlayerItem.itemToPlay,
-                                      loadBinding: $videoIsLoading,
-                                      pBinding: _videoPlayerItem
-                                          .projectedValue
-                                          .shouldShowPlayer)
-                    .navigationBarHidden(true)
-                    .navigationBarBackButtonHidden(true)
-                    .statusBar(hidden: true)
-                    .edgesIgnoringSafeArea(.all)
-                    .prefersHomeIndicatorAutoHidden(true)
-            }, isActive: $videoPlayerItem.shouldShowPlayer) {
-                EmptyView()
-            }
             Group {
                 if let item = viewModel.item {
                     if item.type == "Movie" {
@@ -58,6 +45,11 @@ struct ItemView: View {
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(false)
             .environmentObject(videoPlayerItem)
+        }
+        .onReceive(videoPlayerItem.$shouldShowPlayer) { flag in
+            guard flag,
+                  let item = viewModel.item else { return }
+            self.itemRouter.route(to: .videoPlayer(item: item))
         }
         if viewModel.isLoading {
             ProgressView()

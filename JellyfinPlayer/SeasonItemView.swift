@@ -9,7 +9,7 @@ import Stinsen
 import SwiftUI
 
 struct SeasonItemView: View {
-    @EnvironmentObject var item: NavigationRouter<ItemCoordinator.Route>
+    @EnvironmentObject var itemRouter: NavigationRouter<ItemCoordinator.Route>
     @StateObject var viewModel: SeasonItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
@@ -68,7 +68,7 @@ struct SeasonItemView: View {
                         .padding(.trailing, 16)
                     ForEach(viewModel.episodes, id: \.id) { episode in
                         Button {
-                            item.route(to: .item(viewModel: .init(id: episode.id!)))
+                            itemRouter.route(to: .item(viewModel: .init(id: episode.id!)))
                         } label: {
                             HStack {
                                 ImageView(src: episode.getPrimaryImage(maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
@@ -134,7 +134,7 @@ struct SeasonItemView: View {
                                 Text("Studios:").font(.callout).fontWeight(.semibold)
                                 ForEach(viewModel.item.studios!, id: \.id) { studio in
                                     Button {
-                                        item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                        itemRouter.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
                                     } label: {
                                         Text(studio.name ?? "").font(.footnote)
                                     }
@@ -184,7 +184,7 @@ struct SeasonItemView: View {
                                     .padding(.trailing, 16)
                                 ForEach(viewModel.episodes, id: \.id) { episode in
                                     Button {
-                                        item.route(to: .item(viewModel: .init(id: episode.id!)))
+                                        itemRouter.route(to: .item(viewModel: .init(id: episode.id!)))
                                     } label: {
                                         HStack {
                                             ImageView(src: episode.getPrimaryImage(maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
@@ -229,7 +229,7 @@ struct SeasonItemView: View {
                                             Text("Studios:").font(.callout).fontWeight(.semibold)
                                             ForEach(viewModel.item.studios!, id: \.id) { studio in
                                                 Button {
-                                                    item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                                    itemRouter.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
                                                 } label: {
                                                     Text(studio.name ?? "").font(.footnote)
                                                 }

@@ -8,6 +8,7 @@
  */
 
 import Foundation
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
@@ -22,6 +23,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     enum Route: NavigationRoute {
         case item(viewModel: ItemViewModel)
         case library(viewModel: LibraryViewModel, title: String)
+        case videoPlayer(item: BaseItemDto)
     }
 
     func resolveRoute(route: Route) -> Transition {
@@ -30,6 +32,8 @@ final class ItemCoordinator: NavigationCoordinatable {
             return .push(ItemCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
         case let .library(viewModel, title):
             return .push(LibraryCoordinator(viewModel: viewModel, title: title).eraseToAnyCoordinatable())
+        case let .videoPlayer(item):
+            return .fullScreen(NavigationViewCoordinator(VideoPlayerCoordinator(item: item)).eraseToAnyCoordinatable())
         }
     }
 
