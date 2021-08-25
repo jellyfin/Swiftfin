@@ -14,9 +14,16 @@ import SwiftUI
 final class SettingsCoordinator: NavigationCoordinatable {
     var navigationStack = NavigationStack()
 
-    enum Route: NavigationRoute {}
+    enum Route: NavigationRoute {
+        case serverDetail
+    }
 
-    func resolveRoute(route: Route) -> Transition {}
+    func resolveRoute(route: Route) -> Transition {
+        switch route {
+        case .serverDetail:
+            return .push(ServerDetailView().eraseToAnyView())
+        }
+    }
 
     @ViewBuilder
     func start() -> some View {

@@ -28,7 +28,6 @@ protocol PlayerViewControllerDelegate: AnyObject {
 
 class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRemoteMediaClientListener {
     @RouterObject
-    var main: ViewRouter<MainCoordinator.Route>?
 
     weak var delegate: PlayerViewControllerDelegate?
 

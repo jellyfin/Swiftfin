@@ -23,7 +23,7 @@ final class HomeCoordinator: NavigationCoordinatable {
     func resolveRoute(route: Route) -> Transition {
         switch route {
         case .settings:
-            return .modal(SettingsCoordinator().eraseToAnyCoordinatable())
+            return .modal(NavigationViewCoordinator(SettingsCoordinator()).eraseToAnyCoordinatable())
         case let .library(viewModel, title):
             return .push(LibraryCoordinator(viewModel: viewModel, title: title).eraseToAnyCoordinatable())
         case let .item(viewModel):
