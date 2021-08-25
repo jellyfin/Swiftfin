@@ -11,6 +11,7 @@ import Foundation
 import Stinsen
 import SwiftUI
 
+#if os(iOS)
 final class MainCoordinator: ViewCoordinatable {
     var children = ViewChild()
 
@@ -33,3 +34,29 @@ final class MainCoordinator: ViewCoordinatable {
         SplashView()
     }
 }
+#elseif os(tvOS)
+// temp for fixing build error
+final class MainCoordinator: ViewCoordinatable {
+    var children = ViewChild()
+
+    enum Route: ViewRoute {
+        case mainTab
+        case connectToServer
+    }
+
+    func resolveRoute(route: Route) -> AnyCoordinatable {
+        switch route {
+        case .mainTab:
+            return MainCoordinator().eraseToAnyCoordinatable()
+        case .connectToServer:
+            return MainCoordinator().eraseToAnyCoordinatable()
+        }
+    }
+
+    @ViewBuilder
+    func start() -> some View {
+        SplashView()
+    }
+}
+
+#endif

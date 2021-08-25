@@ -187,6 +187,8 @@
 		6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */; };
 		6220D0C626D62D8700B8E046 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0C526D62D8700B8E046 /* VideoPlayerCoordinator.swift */; };
 		6220D0C726D62D8700B8E046 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0C526D62D8700B8E046 /* VideoPlayerCoordinator.swift */; };
+		6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 6220D0C826D63F3700B8E046 /* Stinsen */; };
+		6220D0CA26D63F4D00B8E046 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29E9E26D1016600C1D2E7 /* MainCoordinator.swift */; };
 		6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
 		6228B1C22670EB010067FD35 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBFD263B596B003A4E83 /* PersistenceController.swift */; };
 		624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C21742685CF60007F1390 /* SearchablePickerView.swift */; };
@@ -488,6 +490,7 @@
 			files = (
 				53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */,
 				53EC6E1E267E80AC006DD26A /* Pods_JellyfinPlayer_tvOS.framework in Frameworks */,
+				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */,
@@ -1057,6 +1060,7 @@
 				53272534268BF9710035FBF1 /* SwiftUIFocusGuide */,
 				53649AAE269CFAF600A2D8B7 /* Puppy */,
 				6261A0DF26A0AB710072EF1C /* CombineExt */,
+				6220D0C826D63F3700B8E046 /* Stinsen */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */;
@@ -1390,6 +1394,7 @@
 				E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */,
 				536D3D88267C17350004248C /* PublicUserButton.swift in Sources */,
+				6220D0CA26D63F4D00B8E046 /* MainCoordinator.swift in Sources */,
 				62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
 				53CD2A42268A4B38002ABD4E /* MovieItemView.swift in Sources */,
@@ -2239,6 +2244,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */;
 			productName = NukeUI;
+		};
+		6220D0C826D63F3700B8E046 /* Stinsen */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
+			productName = Stinsen;
 		};
 		625CB5792678C4A400530A6E /* ActivityIndicator */ = {
 			isa = XCSwiftPackageProductDependency;
