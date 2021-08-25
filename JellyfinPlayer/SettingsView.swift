@@ -44,6 +44,7 @@ struct SettingsView: View {
                         Spacer()
                         Text(ServerEnvironment.current.server.name ?? "")
                             .foregroundColor(.jellyfinPurple)
+                        Image(systemName: "chevron.right")
                     }
                 }
 

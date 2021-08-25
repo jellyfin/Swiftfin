@@ -977,16 +977,16 @@
 		62C29E9D26D0FE5900C1D2E7 /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
+				62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */,
+				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
+				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
+				6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */,
+				6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */,
+				62C29EA726D103D500C1D2E7 /* LibraryListCoordinator.swift */,
 				62C29E9E26D1016600C1D2E7 /* MainCoordinator.swift */,
 				62C29EA026D102A500C1D2E7 /* MainTabCoordinator.swift */,
-				62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */,
-				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
-				62C29EA726D103D500C1D2E7 /* LibraryListCoordinator.swift */,
-				6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */,
-				6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */,
 				6220D0B626D5EE1100B8E046 /* SearchCoordinator.swift */,
-				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
-				6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */,
+				6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */,
 				6220D0C526D62D8700B8E046 /* VideoPlayerCoordinator.swift */,
 			);
 			path = Coordinators;

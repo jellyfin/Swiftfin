@@ -29,10 +29,6 @@ final class ConnectToServerViewModel: ViewModel {
     private let discovery = ServerDiscovery()
     @Published var servers: [ServerDiscovery.ServerLookupResponse] = []
     @Published var searching = false
-    
-    override init() {
-        super.init()
-    }
 
     func getPublicUsers() {
         if ServerEnvironment.current.server != nil {

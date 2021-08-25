@@ -9,7 +9,6 @@
 
 import Foundation
 import Stinsen
-import URLNavigator
 
 final class AppURLHandler {
     static let deepLinkScheme = "jellyfin"
@@ -46,7 +45,6 @@ extension AppURLHandler {
         guard url.scheme == Self.deepLinkScheme || url.scheme == "widget-extension" else {
             return false
         }
-        print(AppURLHandler.shared.appURLState.allowedScheme(with: url))
         if AppURLHandler.shared.appURLState.allowedScheme(with: url) {
             if launchURL == nil {
                 return processURL(url)
@@ -58,8 +56,6 @@ extension AppURLHandler {
     }
     
     func processLaunchedURLIfNeeded() {
-        print("!@#!@#!@#!@#!@#!@")
-        print(launchURL)
         guard let launchURL = launchURL else { return }
         if processDeepLink(url: launchURL) {
             self.launchURL = nil
@@ -67,7 +63,6 @@ extension AppURLHandler {
     }
 
     private func processURL(_ url: URL) -> Bool {
-        print("processURL(_ url: URL) -> Bool")
         if processURLForUser(url: url) {
             return true
         }
@@ -76,15 +71,6 @@ extension AppURLHandler {
     }
 
     private func processURLForUser(url: URL) -> Bool {
-        print("processURLForUser(_ url: URL) -> Bool")
-        print(url)
-        print(url.host)
-        print(url.path)
-        print(url.pathComponents)
-        print(url.pathComponents[safe: 0])
-        print(url.pathComponents[safe: 1])
-        print(url.pathComponents[safe: 2])
-        print(url.pathComponents[safe: 3])
         guard url.host?.lowercased() == "users",
               url.pathComponents[safe: 1]?.isEmpty == false else { return false }
 
@@ -92,7 +78,6 @@ extension AppURLHandler {
         if url.pathComponents[safe: 2]?.lowercased() == "items",
            let itemID = url.pathComponents[safe: 3]
         {
-            print("Passed!@#")
             router?.route(to: .item(viewModel: .init(id: itemID)))
             return true
         }
