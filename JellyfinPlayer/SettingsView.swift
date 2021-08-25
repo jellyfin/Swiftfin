@@ -25,16 +25,42 @@ struct SettingsView: View {
     @Default(.appAppearance) var appAppearance
     @Default(.videoPlayerJumpForward) var jumpForwardLength
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
-    @State private var username: String = ""
-
-    func onAppear() {
-        username = SessionManager.current.user?.username ?? ""
-    }
 
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Playback settings")) {
+                Section(header: EmptyView()) {
+                    HStack {
+                        Text("User")
+                        Spacer()
+                        Text(SessionManager.current.user.username ?? "")
+                            .foregroundColor(.jellyfinPurple)
+                    }
+
+                    NavigationLink(
+                        destination: ServerDetailView(),
+                        label: {
+                            HStack {
+                                Text("Server")
+                                Spacer()
+                                Text(ServerEnvironment.current.server.name ?? "")
+                                    .foregroundColor(.jellyfinPurple)
+                            }
+                        })
+
+                    Button {
+                        close = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            SessionManager.current.logout()
+                            let nc = NotificationCenter.default
+                            nc.post(name: Notification.Name("didSignOut"), object: nil)
+                        }
+                    } label: {
+                        Text("Sign out")
+                            .font(.callout)
+                    }
+                }
+                Section(header: Text("Playback")) {
                     Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
@@ -122,6 +148,6 @@ struct SettingsView: View {
                     }
                 }
             }
-        }.onAppear(perform: onAppear)
+        }
     }
 }
