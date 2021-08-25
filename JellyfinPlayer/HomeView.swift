@@ -8,8 +8,8 @@
  */
 
 import Foundation
-import SwiftUI
 import Stinsen
+import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var homeRouter: NavigationRouter<HomeCoordinator.Route>
@@ -37,7 +37,9 @@ struct HomeView: View {
                                     .fontWeight(.bold)
                                 Spacer()
                                 Button {
-                                    homeRouter.route(to: .library(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
+                                    homeRouter
+                                        .route(to: .library(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet),
+                                                            title: library?.name ?? ""))
                                 } label: {
                                     HStack {
                                         Text("See All").font(.subheadline).fontWeight(.bold)
@@ -45,7 +47,7 @@ struct HomeView: View {
                                     }
                                 }
                             }.padding(.leading, 16)
-                            .padding(.trailing, 16)
+                                .padding(.trailing, 16)
                             LatestMediaView(viewModel: .init(libraryID: libraryID))
                         }
                     }
@@ -65,6 +67,12 @@ struct HomeView: View {
                     } label: {
                         Image(systemName: "gear")
                     }
+                }
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    AppURLHandler.shared.appURLState = .allowed
+                    AppURLHandler.shared.processLaunchedURLIfNeeded()
                 }
             }
     }

@@ -234,6 +234,9 @@ struct JellyfinPlayerApp: App {
                 .onShake {
                     EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
                 }
+                .onOpenURL { url in
+                    AppURLHandler.shared.processDeepLink(url: url)
+                }
         }
     }
 
