@@ -9,10 +9,11 @@
 
 import Foundation
 import SwiftUI
+import Stinsen
 
 struct HomeView: View {
+    @EnvironmentObject var home: NavigationRouter<HomeCoordinator.Route>
     @StateObject var viewModel = HomeViewModel()
-    @State var showingSettings = false
 
     @ViewBuilder
     var innerBody: some View {
@@ -60,14 +61,11 @@ struct HomeView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
-                        showingSettings = true
+                        home.route(to: .settings)
                     } label: {
                         Image(systemName: "gear")
                     }
                 }
-            }
-            .fullScreenCover(isPresented: $showingSettings) {
-                SettingsView(viewModel: SettingsViewModel(), close: $showingSettings)
             }
     }
 }

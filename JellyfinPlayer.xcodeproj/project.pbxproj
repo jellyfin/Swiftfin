@@ -136,6 +136,14 @@
 		621338932660107500A81A2A /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
 		621338B32660A07800A81A2A /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
 		621C638026672A30004216EA /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 621C637F26672A30004216EA /* NukeUI */; };
+		6220D0AD26D5EABB00B8E046 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */; };
+		6220D0AE26D5EABB00B8E046 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */; };
+		6220D0AF26D5EABE00B8E046 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */; };
+		6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */; };
+		6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */; };
+		6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0B626D5EE1100B8E046 /* SearchCoordinator.swift */; };
+		6220D0BA26D6092100B8E046 /* FilterCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0B926D6092100B8E046 /* FilterCoordinator.swift */; };
+		6220D0BB26D6092100B8E046 /* FilterCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0B926D6092100B8E046 /* FilterCoordinator.swift */; };
 		6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
 		6228B1C22670EB010067FD35 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBFD263B596B003A4E83 /* PersistenceController.swift */; };
 		624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C21742685CF60007F1390 /* SearchablePickerView.swift */; };
@@ -353,6 +361,11 @@
 		6213388F265F83A900A81A2A /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		621338922660107500A81A2A /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
+		6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
+		6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryCoordinator.swift; sourceTree = "<group>"; };
+		6220D0B626D5EE1100B8E046 /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
+		6220D0B926D6092100B8E046 /* FilterCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterCoordinator.swift; sourceTree = "<group>"; };
 		6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxHeader.swift; sourceTree = "<group>"; };
 		624C21742685CF60007F1390 /* SearchablePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchablePickerView.swift; sourceTree = "<group>"; };
 		625CB5672678B6FB00530A6E /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -740,6 +753,7 @@
 				62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */,
 				62CB3F4A2685BB77003D0A6F /* DefaultsExtension.swift */,
 				624C21742685CF60007F1390 /* SearchablePickerView.swift */,
+				6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -764,6 +778,10 @@
 				62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */,
 				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
 				62C29EA726D103D500C1D2E7 /* LibraryListCoordinator.swift */,
+				6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */,
+				6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */,
+				6220D0B626D5EE1100B8E046 /* SearchCoordinator.swift */,
+				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
 			);
 			path = Coordinators;
 			sourceTree = "<group>";
@@ -1135,6 +1153,7 @@
 				62E632ED267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				5398514526B64DA100101B49 /* SettingsView.swift in Sources */,
 				62E632F0267D43320063E547 /* LibraryFilterViewModel.swift in Sources */,
+				6220D0BB26D6092100B8E046 /* FilterCoordinator.swift in Sources */,
 				5310695A2684E7EE00CFFDBA /* VideoPlayer.swift in Sources */,
 				53ABFDE6267974EF00886593 /* SettingsViewModel.swift in Sources */,
 				62E632F4267D54030063E547 /* DetailItemViewModel.swift in Sources */,
@@ -1164,6 +1183,7 @@
 				53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */,
 				09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */,
 				535870A62669D8AE00D05A09 /* LazyView.swift in Sources */,
+				6220D0AE26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
 				5321753E2671DE9C005491E6 /* Typings.swift in Sources */,
 				E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				53ABFDEB2679753200886593 /* ConnectToServerView.swift in Sources */,
@@ -1185,6 +1205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5364F455266CA0DC0026ECBA /* APIExtensions.swift in Sources */,
+				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
@@ -1199,6 +1220,7 @@
 				62C29EA126D102A500C1D2E7 /* MainTabCoordinator.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */,
+				6220D0AD26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				62CB3F4B2685BB77003D0A6F /* DefaultsExtension.swift in Sources */,
@@ -1232,6 +1254,7 @@
 				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
 				53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */,
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
+				6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */,
 				62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */,
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				62E632E0267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
@@ -1241,6 +1264,7 @@
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
 				62E632EF267D43320063E547 /* LibraryFilterViewModel.swift in Sources */,
 				535870AD2669D8DD00D05A09 /* Typings.swift in Sources */,
+				6220D0BA26D6092100B8E046 /* FilterCoordinator.swift in Sources */,
 				62EC352C26766675000E9F2D /* ServerEnvironment.swift in Sources */,
 				6267B3DA2671138200A7371D /* ImageExtensions.swift in Sources */,
 				62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */,
@@ -1249,6 +1273,7 @@
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */,
 				53AD124D267029D60094A276 /* SeriesItemView.swift in Sources */,
+				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,
@@ -1271,6 +1296,7 @@
 				6228B1C22670EB010067FD35 /* PersistenceController.swift in Sources */,
 				E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */,
 				628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */,
+				6220D0AF26D5EABE00B8E046 /* ViewExtensions.swift in Sources */,
 				628B95382670CDAB0091AF3B /* Model.xcdatamodeld in Sources */,
 				E1FCD09926C4F358007C8DCF /* NetworkError.swift in Sources */,
 				E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */,

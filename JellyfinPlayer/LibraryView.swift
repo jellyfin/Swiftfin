@@ -6,17 +6,17 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 
 struct LibraryView: View {
+    @EnvironmentObject var library: NavigationRouter<LibraryCoordinator.Route>
     @StateObject var viewModel: LibraryViewModel
     var title: String
 
     // MARK: tracks for grid
-    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
 
-    @State var isShowingSearchView = false
-    @State var isShowingFilterView = false
+    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
 
     @State private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
 
@@ -89,26 +89,19 @@ struct LibraryView: View {
                     }.disabled(viewModel.isLoading)
                 }
                 Label("Icon One", systemImage: "line.horizontal.3.decrease.circle")
-                .foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
-                .onTapGesture {
-                    isShowingFilterView = true
-                }
+                    .foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
+                    .onTapGesture {
+                        library
+                            .route(to: .filter(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType,
+                                               parentId: viewModel.parentID ?? ""))
+                    }
                 Button {
-                    isShowingSearchView = true
+                    library.route(to: .search(viewModel: .init(parentID: viewModel.parentID)))
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
             }
         }
-        .sheet(isPresented: $isShowingFilterView) {
-            LibraryFilterView(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType, parentId: viewModel.parentID ?? "")
-        }
-        .background(
-            NavigationLink(destination: LibrarySearchView(viewModel: .init(parentID: viewModel.parentID)),
-                           isActive: $isShowingSearchView) {
-                EmptyView()
-            }
-        )
     }
 }
 

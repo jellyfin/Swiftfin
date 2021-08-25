@@ -6,17 +6,19 @@
  */
 
 import Foundation
+import Stinsen
 import SwiftUI
 
 struct LibraryListView: View {
+    @EnvironmentObject var libraryList: NavigationRouter<LibraryListCoordinator.Route>
     @StateObject var viewModel = LibraryListViewModel()
 
     var body: some View {
         ScrollView {
             LazyVStack {
-                NavigationLink(destination: LazyView {
-                    LibraryView(viewModel: .init(filters: viewModel.withFavorites), title: "Favorites")
-                }) {
+                Button {
+                    libraryList.route(to: .library(viewModel: .init(filters: viewModel.withFavorites), title: "Favorites"))
+                } label: {
                     ZStack {
                         HStack {
                             Spacer()
@@ -59,9 +61,9 @@ struct LibraryListView: View {
                 if !viewModel.isLoading {
                     ForEach(viewModel.libraries, id: \.id) { library in
                         if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
-                            NavigationLink(destination: LazyView {
-                                LibraryView(viewModel: .init(parentID: library.id), title: library.name ?? "")
-                                }) {
+                            Button {
+                                libraryList.route(to: .library(viewModel: .init(parentID: library.id), title: library.name ?? ""))
+                            } label: {
                                 ZStack {
                                     ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
                                         .opacity(0.4)
@@ -76,8 +78,8 @@ struct LibraryListView: View {
                                         Spacer()
                                     }.padding(32)
                                 }.background(Color.black)
-                                .frame(minWidth: 100, maxWidth: .infinity)
-                                .frame(height: 100)
+                                    .frame(minWidth: 100, maxWidth: .infinity)
+                                    .frame(height: 100)
                             }
                             .cornerRadius(10)
                             .shadow(radius: 5)
@@ -90,15 +92,15 @@ struct LibraryListView: View {
                     ProgressView()
                 }
             }.padding(.leading, 16)
-            .padding(.trailing, 16)
-            .padding(.top, 8)
+                .padding(.trailing, 16)
+                .padding(.top, 8)
         }
         .navigationTitle(NSLocalizedString("All Media", comment: ""))
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                NavigationLink(destination: LazyView {
-                    LibrarySearchView(viewModel: .init(parentID: nil))
-                }) {
+                Button {
+                    libraryList.route(to: .search(viewModel: .init(parentID: nil)))
+                } label: {
                     Image(systemName: "magnifyingglass")
                 }
             }

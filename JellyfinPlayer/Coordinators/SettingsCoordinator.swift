@@ -11,22 +11,15 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class HomeCoordinator: NavigationCoordinatable {
+final class SettingsCoordinator: NavigationCoordinatable {
     var navigationStack = NavigationStack()
 
-    enum Route: NavigationRoute {
-        case settings
-    }
+    enum Route: NavigationRoute {}
 
-    func resolveRoute(route: Route) -> Transition {
-        switch route {
-        case .settings:
-            return .modal(SettingsCoordinator().eraseToAnyCoordinatable())
-        }
-    }
+    func resolveRoute(route: Route) -> Transition {}
 
     @ViewBuilder
     func start() -> some View {
-        HomeView()
+        SettingsView(viewModel: .init())
     }
 }

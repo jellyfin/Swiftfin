@@ -8,10 +8,12 @@
 import Combine
 import JellyfinAPI
 import SwiftUI
+import Stinsen
 
 struct LibrarySearchView: View {
+    @EnvironmentObject var search: NavigationRouter<SearchCoordinator.Route>
     @StateObject var viewModel: LibrarySearchViewModel
-    @State var searchQuery = ""
+    @State private var searchQuery = ""
 
     @State private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
 

@@ -11,22 +11,20 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class HomeCoordinator: NavigationCoordinatable {
+final class SearchCoordinator: NavigationCoordinatable {
     var navigationStack = NavigationStack()
-
-    enum Route: NavigationRoute {
-        case settings
+    var viewModel: LibrarySearchViewModel
+    
+    init(viewModel: LibrarySearchViewModel) {
+        self.viewModel = viewModel
     }
 
-    func resolveRoute(route: Route) -> Transition {
-        switch route {
-        case .settings:
-            return .modal(SettingsCoordinator().eraseToAnyCoordinatable())
-        }
-    }
+    enum Route: NavigationRoute {}
+
+    func resolveRoute(route: Route) -> Transition {}
 
     @ViewBuilder
     func start() -> some View {
-        HomeView()
+        LibrarySearchView(viewModel: self.viewModel)
     }
 }

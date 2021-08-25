@@ -14,9 +14,19 @@ import SwiftUI
 final class LibraryListCoordinator: NavigationCoordinatable {
     var navigationStack = NavigationStack()
 
-    enum Route: NavigationRoute {}
+    enum Route: NavigationRoute {
+        case search(viewModel: LibrarySearchViewModel)
+        case library(viewModel: LibraryViewModel, title: String)
+    }
 
-    func resolveRoute(route: Route) -> Transition {}
+    func resolveRoute(route: Route) -> Transition {
+        switch route {
+        case let .search(viewModel):
+            return .push(SearchCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
+        case let .library(viewModel, title):
+            return .push(LibraryCoordinator(viewModel: viewModel, title: title).eraseToAnyCoordinatable())
+        }
+    }
 
     @ViewBuilder
     func start() -> some View {

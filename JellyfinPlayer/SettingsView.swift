@@ -12,11 +12,11 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var main: ViewRouter<MainCoordinator.Route>
+    @EnvironmentObject var settings: NavigationRouter<SettingsCoordinator.Route>
     @Environment(\.managedObjectContext) private var viewContext
 
     @ObservedObject var viewModel: SettingsViewModel
 
-    @Binding var close: Bool
     @Default(.inNetworkBandwidth) var inNetworkStreamBitrate
     @Default(.outOfNetworkBandwidth) var outOfNetworkStreamBitrate
     @Default(.isAutoSelectSubtitles) var isAutoSelectSubtitles
@@ -98,7 +98,7 @@ struct SettingsView: View {
                         Button {
                             print("logging out")
                             main.route(to: .connectToServer)
-                            close = false
+                            settings.dismiss()
                         } label: {
                             Text("Switch user").font(.callout)
                         }
@@ -106,7 +106,7 @@ struct SettingsView: View {
                     Button {
                         SessionManager.current.logout()
                         main.route(to: .connectToServer)
-                        close = false
+                        settings.dismiss()
                     } label: {
                         Text("Sign out").font(.callout)
                     }
@@ -116,7 +116,7 @@ struct SettingsView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button {
-                        close = false
+                        settings.dismiss()
                     } label: {
                         Image(systemName: "xmark")
                     }
