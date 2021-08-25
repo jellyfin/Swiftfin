@@ -36,9 +36,9 @@ struct HomeView: View {
                                     .font(.title2)
                                     .fontWeight(.bold)
                                 Spacer()
-                                NavigationLink(destination: LazyView {
-                                    LibraryView(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? "")
-                                }) {
+                                Button {
+                                    home.route(to: .library(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
+                                } label: {
                                     HStack {
                                         Text("See All").font(.subheadline).fontWeight(.bold)
                                         Image(systemName: "chevron.right").font(Font.subheadline.bold())

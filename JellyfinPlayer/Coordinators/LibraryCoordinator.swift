@@ -24,6 +24,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
     enum Route: NavigationRoute {
         case search(viewModel: LibrarySearchViewModel)
         case filter(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String)
+        case item(viewModel: ItemViewModel)
     }
 
     func resolveRoute(route: Route) -> Transition {
@@ -35,6 +36,8 @@ final class LibraryCoordinator: NavigationCoordinatable {
                                             enabledFilterType: enabledFilterType,
                                             parentId: parentId)
                     .eraseToAnyCoordinatable())
+        case let .item(viewModel):
+            return .push(ItemCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
         }
     }
 

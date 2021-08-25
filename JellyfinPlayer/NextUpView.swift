@@ -5,11 +5,13 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
 import Combine
 import JellyfinAPI
+import Stinsen
+import SwiftUI
 
 struct NextUpView: View {
+    @EnvironmentObject var home: NavigationRouter<HomeCoordinator.Route>
 
     var items: [BaseItemDto]
 
@@ -22,7 +24,11 @@ struct NextUpView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     ForEach(items, id: \.id) { item in
-                        PortraitItemView(item: item)
+                        Button {
+                            home.route(to: .item(viewModel: .init(id: item.id!)))
+                        } label: {
+                            PortraitItemView(item: item)
+                        }
                     }.padding(.trailing, 16)
                 }
                 .padding(.leading, 20)

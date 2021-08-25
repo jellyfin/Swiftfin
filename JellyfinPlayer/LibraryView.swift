@@ -35,7 +35,11 @@ struct LibraryView: View {
                         LazyVGrid(columns: tracks) {
                             ForEach(viewModel.items, id: \.id) { item in
                                 if item.type != "Folder" {
-                                    PortraitItemView(item: item)
+                                    Button {
+                                        library.route(to: .item(viewModel: .init(id: item.id!)))
+                                    } label: {
+                                        PortraitItemView(item: item)
+                                    }
                                 }
                             }
                         }.onRotate { _ in

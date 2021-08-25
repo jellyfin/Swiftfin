@@ -5,9 +5,11 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 
 struct SeasonItemView: View {
+    @EnvironmentObject var item: NavigationRouter<ItemCoordinator.Route>
     @StateObject var viewModel: SeasonItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
@@ -18,7 +20,9 @@ struct SeasonItemView: View {
         if viewModel.isLoading {
             EmptyView()
         } else {
-            ImageView(src: viewModel.item.getSeriesBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: viewModel.item.getSeriesBackdropImageBlurHash())
+            ImageView(src: viewModel.item
+                .getSeriesBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
+                bh: viewModel.item.getSeriesBackdropImageBlurHash())
                 .opacity(0.4)
                 .blur(radius: 2.0)
         }
@@ -43,7 +47,7 @@ struct SeasonItemView: View {
                 }
             }.offset(y: -32)
         }.padding(.horizontal, 16)
-        .offset(y: 22)
+            .offset(y: 22)
     }
 
     @ViewBuilder
@@ -63,42 +67,40 @@ struct SeasonItemView: View {
                         .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
                         .padding(.trailing, 16)
                     ForEach(viewModel.episodes, id: \.id) { episode in
-                        NavigationLink(destination: ItemView(item: episode)) {
+                        Button {
+                            item.route(to: .item(viewModel: .init(id: episode.id!)))
+                        } label: {
                             HStack {
                                 ImageView(src: episode.getPrimaryImage(maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
                                     .shadow(radius: 5)
                                     .frame(width: 150, height: 90)
                                     .cornerRadius(10)
-                                    .overlay(
-                                        Rectangle()
-                                            .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
-                                            .mask(ProgressBar())
-                                            .frame(width: CGFloat(episode.userData?.playedPercentage ?? 0 * 1.5), height: 7)
-                                            .padding(0), alignment: .bottomLeading
-                                    )
-                                    .overlay(
-                                        ZStack {
-                                            if episode.userData?.isFavorite ?? false {
-                                                Image(systemName: "circle.fill")
-                                                    .foregroundColor(.white)
-                                                    .opacity(0.6)
-                                                Image(systemName: "heart.fill")
-                                                    .foregroundColor(Color(.systemRed))
-                                                    .font(.system(size: 10))
-                                            }
+                                    .overlay(Rectangle()
+                                        .fill(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255))
+                                        .mask(ProgressBar())
+                                        .frame(width: CGFloat(episode.userData?.playedPercentage ?? 0 * 1.5), height: 7)
+                                        .padding(0), alignment: .bottomLeading)
+                                    .overlay(ZStack {
+                                        if episode.userData?.isFavorite ?? false {
+                                            Image(systemName: "circle.fill")
+                                                .foregroundColor(.white)
+                                                .opacity(0.6)
+                                            Image(systemName: "heart.fill")
+                                                .foregroundColor(Color(.systemRed))
+                                                .font(.system(size: 10))
                                         }
-                                        .padding(.leading, 2)
-                                        .padding(.bottom, episode.userData?.playedPercentage == nil ? 2 : 9)
-                                        .opacity(1), alignment: .bottomLeading)
-                                    .overlay(
-                                        ZStack {
-                                            if episode.userData?.played ?? false {
-                                                Image(systemName: "circle.fill")
-                                                    .foregroundColor(.white)
-                                                Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(Color(.systemBlue))
-                                            }
-                                        }.padding(2)
+                                    }
+                                    .padding(.leading, 2)
+                                    .padding(.bottom, episode.userData?.playedPercentage == nil ? 2 : 9)
+                                    .opacity(1), alignment: .bottomLeading)
+                                    .overlay(ZStack {
+                                        if episode.userData?.played ?? false {
+                                            Image(systemName: "circle.fill")
+                                                .foregroundColor(.white)
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundColor(Color(.systemBlue))
+                                        }
+                                    }.padding(2)
                                         .opacity(1), alignment: .topTrailing).opacity(1)
                                 VStack(alignment: .leading) {
                                     HStack {
@@ -131,9 +133,9 @@ struct SeasonItemView: View {
                             HStack {
                                 Text("Studios:").font(.callout).fontWeight(.semibold)
                                 ForEach(viewModel.item.studios!, id: \.id) { studio in
-                                    NavigationLink(destination: LazyView {
-                                            LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
-                                    }) {
+                                    Button {
+                                        item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                    } label: {
                                         Text(studio.name ?? "").font(.footnote)
                                     }
                                 }
@@ -148,7 +150,8 @@ struct SeasonItemView: View {
         } else {
             GeometryReader { geometry in
                 ZStack {
-                    ImageView(src: viewModel.item.getSeriesBackdropImage(maxWidth: 200), bh: viewModel.item.getSeriesBackdropImageBlurHash())
+                    ImageView(src: viewModel.item.getSeriesBackdropImage(maxWidth: 200),
+                              bh: viewModel.item.getSeriesBackdropImageBlurHash())
                         .opacity(0.4)
                         .frame(width: geometry.size.width + geometry.safeAreaInsets.leading + geometry.safeAreaInsets.trailing,
                                height: geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom)
@@ -180,22 +183,23 @@ struct SeasonItemView: View {
                                     .fixedSize(horizontal: false, vertical: true).padding(.bottom, 3).padding(.leading, 16)
                                     .padding(.trailing, 16)
                                 ForEach(viewModel.episodes, id: \.id) { episode in
-                                    NavigationLink(destination: ItemView(item: episode)) {
+                                    Button {
+                                        item.route(to: .item(viewModel: .init(id: episode.id!)))
+                                    } label: {
                                         HStack {
                                             ImageView(src: episode.getPrimaryImage(maxWidth: 150), bh: episode.getPrimaryImageBlurHash())
                                                 .shadow(radius: 5)
                                                 .frame(width: 150, height: 90)
                                                 .cornerRadius(10)
-                                                .overlay(
-                                                    Rectangle()
-                                                        .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
-                                                        .mask(ProgressBar())
-                                                        .frame(width: CGFloat(episode.userData!.playedPercentage ?? 0 * 1.5), height: 7)
-                                                        .padding(0), alignment: .bottomLeading
-                                                )
+                                                .overlay(Rectangle()
+                                                    .fill(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255))
+                                                    .mask(ProgressBar())
+                                                    .frame(width: CGFloat(episode.userData!.playedPercentage ?? 0 * 1.5), height: 7)
+                                                    .padding(0), alignment: .bottomLeading)
                                             VStack(alignment: .leading) {
                                                 HStack {
-                                                    Text("S\(String(episode.parentIndexNumber ?? 0)):E\(String(episode.indexNumber ?? 0))").font(.subheadline)
+                                                    Text("S\(String(episode.parentIndexNumber ?? 0)):E\(String(episode.indexNumber ?? 0))")
+                                                        .font(.subheadline)
                                                         .fontWeight(.medium)
                                                         .foregroundColor(.secondary)
                                                         .lineLimit(1)
@@ -224,9 +228,9 @@ struct SeasonItemView: View {
                                         HStack {
                                             Text("Studios:").font(.callout).fontWeight(.semibold)
                                             ForEach(viewModel.item.studios!, id: \.id) { studio in
-                                                NavigationLink(destination: LazyView {
-                                                    LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
-                                                }) {
+                                                Button {
+                                                    item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                                } label: {
                                                     Text(studio.name ?? "").font(.footnote)
                                                 }
                                             }

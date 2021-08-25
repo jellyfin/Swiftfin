@@ -16,12 +16,18 @@ final class HomeCoordinator: NavigationCoordinatable {
 
     enum Route: NavigationRoute {
         case settings
+        case library(viewModel: LibraryViewModel, title: String)
+        case item(viewModel: ItemViewModel)
     }
 
     func resolveRoute(route: Route) -> Transition {
         switch route {
         case .settings:
             return .modal(SettingsCoordinator().eraseToAnyCoordinatable())
+        case let .library(viewModel, title):
+            return .push(LibraryCoordinator(viewModel: viewModel, title: title).eraseToAnyCoordinatable())
+        case let .item(viewModel):
+            return .push(ItemCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
         }
     }
 

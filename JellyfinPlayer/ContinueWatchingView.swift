@@ -8,6 +8,7 @@
 
 import SwiftUI
 import JellyfinAPI
+import Stinsen
 
 struct ProgressBar: Shape {
     func path(in rect: CGRect) -> Path {
@@ -31,13 +32,17 @@ struct ProgressBar: Shape {
 }
 
 struct ContinueWatchingView: View {
+    @EnvironmentObject var home: NavigationRouter<HomeCoordinator.Route>
+    
     var items: [BaseItemDto]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
                 ForEach(items, id: \.id) { item in
-                    NavigationLink(destination: LazyView { ItemView(item: item) }) {
+                    Button {
+                        home.route(to: .item(viewModel: .init(id: item.id!)))
+                    } label: {
                         VStack(alignment: .leading) {
                             ImageView(src: item.getBackdropImage(maxWidth: 320), bh: item.getBackdropImageBlurHash())
                                 .frame(width: 320, height: 180)

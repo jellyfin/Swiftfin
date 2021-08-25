@@ -7,8 +7,8 @@
 
 import Combine
 import JellyfinAPI
-import SwiftUI
 import Stinsen
+import SwiftUI
 
 struct LibrarySearchView: View {
     @EnvironmentObject var search: NavigationRouter<SearchCoordinator.Route>
@@ -80,7 +80,11 @@ struct LibrarySearchView: View {
                     if !items.isEmpty {
                         LazyVGrid(columns: tracks) {
                             ForEach(items, id: \.id) { item in
-                                PortraitItemView(item: item)
+                                Button {
+                                    search.route(to: .item(viewModel: .init(id: item.id!)))
+                                } label: {
+                                    PortraitItemView(item: item)
+                                }
                             }
                         }
                         .padding(.bottom, 16)
@@ -108,7 +112,6 @@ struct LibrarySearchView: View {
 }
 
 private extension ItemType {
-
     var localized: String {
         switch self {
         case .episode:

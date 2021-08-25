@@ -5,9 +5,11 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 
 struct EpisodeItemView: View {
+    @EnvironmentObject var item: NavigationRouter<ItemCoordinator.Route>
     @StateObject var viewModel: EpisodeItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
@@ -15,7 +17,9 @@ struct EpisodeItemView: View {
     @EnvironmentObject private var playbackInfo: VideoPlayerItem
 
     var portraitHeaderView: some View {
-        ImageView(src: viewModel.item.getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)), bh: viewModel.item.getBackdropImageBlurHash())
+        ImageView(src: viewModel.item
+            .getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
+            bh: viewModel.item.getBackdropImageBlurHash())
             .opacity(0.4)
             .blur(radius: 2.0)
     }
@@ -108,7 +112,10 @@ struct EpisodeItemView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if hSizeClass == .compact && vSizeClass == .regular {
-                ParallaxHeaderScrollView(header: portraitHeaderView, staticOverlayView: portraitHeaderOverlayView, overlayAlignment: .bottomLeading, headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds.width * 0.5625) {
+                ParallaxHeaderScrollView(header: portraitHeaderView, staticOverlayView: portraitHeaderOverlayView,
+                                         overlayAlignment: .bottomLeading,
+                                         headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds
+                                             .width * 0.5625) {
                     VStack(alignment: .leading) {
                         Spacer()
                             .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 135 : 40)
@@ -126,9 +133,9 @@ struct EpisodeItemView: View {
                                 HStack {
                                     Text("Genres:").font(.callout).fontWeight(.semibold)
                                     ForEach(viewModel.item.genreItems!, id: \.id) { genre in
-                                        NavigationLink(destination: LazyView {
-                                                LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
-                                        }) {
+                                        Button {
+                                            item.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
+                                        } label: {
                                             Text(genre.name ?? "").font(.footnote)
                                         }
                                     }
@@ -143,11 +150,13 @@ struct EpisodeItemView: View {
                                         Spacer().frame(width: 16)
                                         ForEach(viewModel.item.people!, id: \.self) { person in
                                             if person.type! == "Actor" {
-                                                NavigationLink(destination: LazyView {
-                                                    LibraryView(viewModel: .init(person: person), title: person.name ?? "")
-                                                }) {
+                                                Button {
+                                                    item.route(to: .library(viewModel: .init(person: person), title: person.name ?? ""))
+                                                } label: {
                                                     VStack {
-                                                        ImageView(src: person.getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
+                                                        ImageView(src: person
+                                                            .getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100),
+                                                            bh: person.getBlurHash())
                                                             .frame(width: 100, height: 100)
                                                             .cornerRadius(10)
                                                         Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
@@ -171,16 +180,16 @@ struct EpisodeItemView: View {
                                 HStack {
                                     Text("Studios:").font(.callout).fontWeight(.semibold)
                                     ForEach(viewModel.item.studios!, id: \.id) { studio in
-                                        NavigationLink(destination: LazyView {
-                                            LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
-                                        }) {
+                                        Button {
+                                            item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                        } label: {
                                             Text(studio.name ?? "").font(.footnote)
                                         }
                                     }
                                 }.padding(.leading, 16).padding(.trailing, 16)
                             }
                         }
-                        if !(viewModel.similarItems).isEmpty {
+                        if !viewModel.similarItems.isEmpty {
                             Text("More Like This")
                                 .font(.callout).fontWeight(.semibold).padding(.top, 3).padding(.leading, 16)
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -189,7 +198,9 @@ struct EpisodeItemView: View {
                                     HStack {
                                         Spacer().frame(width: 16)
                                         ForEach(viewModel.similarItems, id: \.self) { similarItem in
-                                            NavigationLink(destination: LazyView { ItemView(item: similarItem) }) {
+                                            Button {
+                                                item.route(to: .item(viewModel: .init(id: similarItem.id!)))
+                                            } label: {
                                                 PortraitItemView(item: similarItem)
                                             }
                                             Spacer().frame(width: 10)
@@ -213,7 +224,8 @@ struct EpisodeItemView: View {
                             .blur(radius: 4)
                         HStack {
                             VStack {
-                                ImageView(src: viewModel.item.getSeriesPrimaryImage(maxWidth: 120), bh: viewModel.item.getSeriesPrimaryImageBlurHash())
+                                ImageView(src: viewModel.item.getSeriesPrimaryImage(maxWidth: 120),
+                                          bh: viewModel.item.getSeriesPrimaryImageBlurHash())
                                     .frame(width: 120, height: 180)
                                     .cornerRadius(10)
                                 Spacer().frame(height: 15)
@@ -274,7 +286,7 @@ struct EpisodeItemView: View {
                                                 Spacer()
                                             }.frame(maxWidth: .infinity, alignment: .leading)
                                                 .offset(x: 14)
-                                            .padding(.top, 1)
+                                                .padding(.top, 1)
 
                                         }.frame(maxWidth: .infinity, alignment: .leading)
                                         Spacer()
@@ -318,9 +330,9 @@ struct EpisodeItemView: View {
                                             HStack {
                                                 Text("Genres:").font(.callout).fontWeight(.semibold)
                                                 ForEach(viewModel.item.genreItems!, id: \.id) { genre in
-                                                    NavigationLink(destination: LazyView {
-                                                        LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
-                                                    }) {
+                                                    Button {
+                                                        item.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
+                                                    } label: {
                                                         Text(genre.name ?? "").font(.footnote)
                                                     }
                                                 }
@@ -337,14 +349,20 @@ struct EpisodeItemView: View {
                                                     Spacer().frame(width: 16)
                                                     ForEach(viewModel.item.people!, id: \.self) { person in
                                                         if person.type! == "Actor" {
-                                                            NavigationLink(destination: LazyView {
-                                                                LibraryView(viewModel: .init(person: person), title: person.name ?? "")
-                                                            }) {
+                                                            Button {
+                                                                item
+                                                                    .route(to: .library(viewModel: .init(person: person),
+                                                                                        title: person.name ?? ""))
+                                                            } label: {
                                                                 VStack {
-                                                                    ImageView(src: person.getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100), bh: person.getBlurHash())
+                                                                    ImageView(src: person
+                                                                        .getImage(baseURL: ServerEnvironment.current.server.baseURI!,
+                                                                                  maxWidth: 100),
+                                                                        bh: person.getBlurHash())
                                                                         .frame(width: 100, height: 100)
                                                                         .cornerRadius(10)
-                                                                    Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
+                                                                    Text(person.name ?? "").font(.footnote).fontWeight(.regular)
+                                                                        .lineLimit(1)
                                                                         .frame(width: 100).foregroundColor(Color.primary)
                                                                     if person.role != "" {
                                                                         Text(person.role!).font(.caption).fontWeight(.medium).lineLimit(1)
@@ -365,9 +383,9 @@ struct EpisodeItemView: View {
                                             HStack {
                                                 Text("Studios:").font(.callout).fontWeight(.semibold)
                                                 ForEach(viewModel.item.studios!, id: \.id) { studio in
-                                                    NavigationLink(destination: LazyView {
-                                                        LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
-                                                    }) {
+                                                    Button {
+                                                        item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                                    } label: {
                                                         Text(studio.name ?? "").font(.footnote)
                                                     }
                                                 }
@@ -376,7 +394,7 @@ struct EpisodeItemView: View {
                                             .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                         }
                                     }
-                                    if !(viewModel.similarItems).isEmpty {
+                                    if !viewModel.similarItems.isEmpty {
                                         Text("More Like This")
                                             .font(.callout).fontWeight(.semibold).padding(.top, 3).padding(.leading, 16)
                                         ScrollView(.horizontal, showsIndicators: false) {
@@ -385,7 +403,9 @@ struct EpisodeItemView: View {
                                                 HStack {
                                                     Spacer().frame(width: 16)
                                                     ForEach(viewModel.similarItems, id: \.self) { similarItem in
-                                                        NavigationLink(destination: LazyView { ItemView(item: similarItem) }) {
+                                                        Button {
+                                                            item.route(to: .item(viewModel: .init(id: similarItem.id!)))
+                                                        } label: {
                                                             PortraitItemView(item: similarItem)
                                                         }
                                                         Spacer().frame(width: 10)

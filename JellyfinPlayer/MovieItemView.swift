@@ -5,9 +5,11 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 
 struct MovieItemView: View {
+    @EnvironmentObject var item: NavigationRouter<ItemCoordinator.Route>
     @StateObject var viewModel: MovieItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass)
@@ -18,7 +20,8 @@ struct MovieItemView: View {
     private var playbackInfo: VideoPlayerItem
 
     var portraitHeaderView: some View {
-        ImageView(src: viewModel.item.getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
+        ImageView(src: viewModel.item
+            .getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
             bh: viewModel.item.getBackdropImageBlurHash())
             .opacity(0.4)
             .blur(radius: 2.0)
@@ -135,9 +138,9 @@ struct MovieItemView: View {
                                 HStack {
                                     Text("Genres:").font(.callout).fontWeight(.semibold)
                                     ForEach(viewModel.item.genreItems!, id: \.id) { genre in
-                                        NavigationLink(destination: LazyView {
-                                            LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
-                                        }) {
+                                        Button {
+                                            item.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
+                                        } label: {
                                             Text(genre.name ?? "").font(.footnote)
                                         }
                                     }
@@ -152,9 +155,9 @@ struct MovieItemView: View {
                                         Spacer().frame(width: 16)
                                         ForEach(viewModel.item.people!, id: \.self) { person in
                                             if person.type ?? "" == "Actor" {
-                                                NavigationLink(destination: LazyView {
-                                                    LibraryView(viewModel: .init(person: person), title: person.name ?? "")
-                                                }) {
+                                                Button {
+                                                    item.route(to: .library(viewModel: .init(person: person), title: person.name ?? ""))
+                                                } label: {
                                                     VStack {
                                                         ImageView(src: person
                                                             .getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100),
@@ -182,17 +185,16 @@ struct MovieItemView: View {
                                 HStack {
                                     Text("Studios:").font(.callout).fontWeight(.semibold)
                                     ForEach(viewModel.item.studios!, id: \.id) { studio in
-                                        NavigationLink(destination: LazyView {
-
-                                                    LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
-                                        }) {
+                                        Button {
+                                            item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                        } label: {
                                             Text(studio.name ?? "").font(.footnote)
                                         }
                                     }
                                 }.padding(.leading, 16).padding(.trailing, 16)
                             }
                         }
-                        if !(viewModel.similarItems).isEmpty {
+                        if !viewModel.similarItems.isEmpty {
                             Text("More Like This")
                                 .font(.callout).fontWeight(.semibold).padding(.top, 3).padding(.leading, 16)
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -201,7 +203,9 @@ struct MovieItemView: View {
                                     HStack {
                                         Spacer().frame(width: 16)
                                         ForEach(viewModel.similarItems, id: \.self) { similarItem in
-                                            NavigationLink(destination: LazyView { ItemView(item: similarItem) }) {
+                                            Button {
+                                                item.route(to: .item(viewModel: .init(id: similarItem.id!)))
+                                            } label: {
                                                 PortraitItemView(item: similarItem)
                                             }
                                             Spacer().frame(width: 10)
@@ -236,7 +240,8 @@ struct MovieItemView: View {
                                     self.playbackInfo.shouldShowPlayer = true
                                 } label: {
                                     HStack {
-                                        Text(viewModel.item.getItemProgressString() == "" ? "Play" : "\(viewModel.item.getItemProgressString()) left")
+                                        Text(viewModel.item
+                                            .getItemProgressString() == "" ? "Play" : "\(viewModel.item.getItemProgressString()) left")
                                             .foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
                                         Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
                                     }
@@ -290,7 +295,7 @@ struct MovieItemView: View {
                                                 Spacer()
                                             }.frame(maxWidth: .infinity, alignment: .leading)
                                                 .offset(x: 14)
-                                            .padding(.top, 1)
+                                                .padding(.top, 1)
                                         }.frame(maxWidth: .infinity, alignment: .leading)
                                         Spacer()
                                         HStack {
@@ -333,9 +338,9 @@ struct MovieItemView: View {
                                             HStack {
                                                 Text("Genres:").font(.callout).fontWeight(.semibold)
                                                 ForEach(viewModel.item.genreItems!, id: \.id) { genre in
-                                                    NavigationLink(destination: LazyView {
-                                                        LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
-                                                    }) {
+                                                    Button {
+                                                        item.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
+                                                    } label: {
                                                         Text(genre.name ?? "").font(.footnote)
                                                     }
                                                 }
@@ -352,9 +357,11 @@ struct MovieItemView: View {
                                                     Spacer().frame(width: 16)
                                                     ForEach(viewModel.item.people!, id: \.self) { person in
                                                         if person.type! == "Actor" {
-                                                            NavigationLink(destination: LazyView {
-                                                                LibraryView(viewModel: .init(person: person), title: person.name ?? "")
-                                                            }) {
+                                                            Button {
+                                                                item
+                                                                    .route(to: .library(viewModel: .init(person: person),
+                                                                                        title: person.name ?? ""))
+                                                            } label: {
                                                                 VStack {
                                                                     ImageView(src: person
                                                                         .getImage(baseURL: ServerEnvironment.current.server.baseURI!,
@@ -384,9 +391,9 @@ struct MovieItemView: View {
                                             HStack {
                                                 Text("Studios:").font(.callout).fontWeight(.semibold)
                                                 ForEach(viewModel.item.studios!, id: \.id) { studio in
-                                                    NavigationLink(destination: LazyView {
-                                                        LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
-                                                    }) {
+                                                    Button {
+                                                        item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                                    } label: {
                                                         Text(studio.name ?? "").font(.footnote)
                                                     }
                                                 }
@@ -395,7 +402,7 @@ struct MovieItemView: View {
                                             .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                                         }
                                     }
-                                    if !(viewModel.similarItems).isEmpty {
+                                    if !viewModel.similarItems.isEmpty {
                                         Text("More Like This")
                                             .font(.callout).fontWeight(.semibold).padding(.top, 3).padding(.leading, 16)
                                         ScrollView(.horizontal, showsIndicators: false) {
@@ -404,7 +411,9 @@ struct MovieItemView: View {
                                                 HStack {
                                                     Spacer().frame(width: 16)
                                                     ForEach(viewModel.similarItems, id: \.self) { similarItem in
-                                                        NavigationLink(destination: LazyView { ItemView(item: similarItem) }) {
+                                                        Button {
+                                                            item.route(to: .item(viewModel: .init(id: similarItem.id!)))
+                                                        } label: {
                                                             PortraitItemView(item: similarItem)
                                                         }
                                                         Spacer().frame(width: 10)

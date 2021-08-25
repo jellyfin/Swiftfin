@@ -5,9 +5,11 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 
 struct LatestMediaView: View {
+    @EnvironmentObject var home: NavigationRouter<HomeCoordinator.Route>
     @StateObject var viewModel: LatestMediaViewModel
 
     var body: some View {
@@ -15,7 +17,11 @@ struct LatestMediaView: View {
             LazyHStack {
                 ForEach(viewModel.items, id: \.id) { item in
                     if item.type == "Series" || item.type == "Movie" {
-                        PortraitItemView(item: item)
+                        Button {
+                            home.route(to: .item(viewModel: .init(id: item.id!)))
+                        } label: {
+                            PortraitItemView(item: item)
+                        }
                     }
                 }.padding(.trailing, 16)
             }.padding(.leading, 20)

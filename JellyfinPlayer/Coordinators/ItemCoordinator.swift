@@ -11,27 +11,30 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class SearchCoordinator: NavigationCoordinatable {
+final class ItemCoordinator: NavigationCoordinatable {
     var navigationStack = NavigationStack()
-    var viewModel: LibrarySearchViewModel
+    var viewModel: ItemViewModel
 
-    init(viewModel: LibrarySearchViewModel) {
+    init(viewModel: ItemViewModel) {
         self.viewModel = viewModel
     }
 
     enum Route: NavigationRoute {
         case item(viewModel: ItemViewModel)
+        case library(viewModel: LibraryViewModel, title: String)
     }
 
     func resolveRoute(route: Route) -> Transition {
         switch route {
         case let .item(viewModel):
             return .push(ItemCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
+        case let .library(viewModel, title):
+            return .push(LibraryCoordinator(viewModel: viewModel, title: title).eraseToAnyCoordinatable())
         }
     }
 
     @ViewBuilder
     func start() -> some View {
-        LibrarySearchView(viewModel: self.viewModel)
+        ItemView(viewModel: self.viewModel)
     }
 }

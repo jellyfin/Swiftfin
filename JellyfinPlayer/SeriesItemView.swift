@@ -5,9 +5,11 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 
 struct SeriesItemView: View {
+    @EnvironmentObject var item: NavigationRouter<ItemCoordinator.Route>
     @StateObject var viewModel: SeriesItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     @Environment(\.horizontalSizeClass) var hSizeClass
@@ -69,27 +71,46 @@ struct SeriesItemView: View {
                         .padding(.horizontal, 16)
                 }
                 if let genreItems = viewModel.item.genreItems,
-                   !genreItems.isEmpty {
+                   !genreItems.isEmpty
+                {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 8) {
                             Text("Genres:").font(.callout).fontWeight(.semibold)
                             ForEach(genreItems, id: \.id) { genre in
-                                NavigationLink(destination: LazyView {
-                                    LibraryView(viewModel: .init(genre: genre), title: genre.name ?? "")
-                                }) {
+                                Button {
+                                    item.route(to: .library(viewModel: .init(genre: genre), title: genre.name ?? ""))
+                                } label: {
                                     Text(genre.name ?? "").font(.footnote)
                                 }
                             }
                         }
                         .padding(.horizontal, 16)
                     }
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 16)
                 }
                 Text(viewModel.item.overview ?? "")
                     .font(.footnote)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 16)
                     .padding(.horizontal, 16)
+                if let studios = viewModel.item.studios,
+                   !studios.isEmpty
+                {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack(spacing: 16) {
+                            Text("Studios:").font(.callout).fontWeight(.semibold)
+                            ForEach(studios, id: \.id) { studio in
+                                Button {
+                                    item.route(to: .library(viewModel: .init(studio: studio), title: studio.name ?? ""))
+                                } label: {
+                                    Text(studio.name ?? "").font(.footnote)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
+                    .padding(.bottom, 16)
+                }
                 Text("Seasons")
                     .font(.callout).fontWeight(.semibold)
                     .padding(.horizontal, 16)
@@ -97,14 +118,19 @@ struct SeriesItemView: View {
             .padding(.top, 24)
             LazyVGrid(columns: tracks) {
                 ForEach(viewModel.seasons, id: \.id) { season in
-                    PortraitItemView(item: season)
+                    Button {
+                        item.route(to: .item(viewModel: .init(id: season.id!)))
+                    } label: {
+                        PortraitItemView(item: season)
+                    }
                 }
             }
             .padding(.bottom, 16)
             .padding(.horizontal, 8)
             LazyVStack(alignment: .leading, spacing: 0) {
                 if let people = viewModel.item.people,
-                   !people.isEmpty {
+                   !people.isEmpty
+                {
                     Text("CAST")
                         .font(.callout).fontWeight(.semibold)
                         .padding(.bottom, 8)
@@ -113,9 +139,11 @@ struct SeriesItemView: View {
                         LazyHStack(spacing: 16) {
                             ForEach(people, id: \.self) { person in
                                 if person.type == "Actor" {
-                                    NavigationLink(destination: LazyView {
-                                        LibraryView(viewModel: .init(person: person), title: person.name ?? "")
-                                    }) {
+                                    Button {
+                                        item
+                                            .route(to: .library(viewModel: .init(person: person),
+                                                                title: person.name ?? ""))
+                                    } label: {
                                         VStack {
                                             ImageView(src: person
                                                 .getImage(baseURL: ServerEnvironment.current.server.baseURI!, maxWidth: 100),
@@ -125,29 +153,13 @@ struct SeriesItemView: View {
                                             Text(person.name ?? "").font(.footnote).fontWeight(.regular).lineLimit(1)
                                                 .frame(width: 100).foregroundColor(Color.primary)
                                             if let role = person.role,
-                                               !role.isEmpty {
+                                               !role.isEmpty
+                                            {
                                                 Text(role).font(.caption).fontWeight(.medium).lineLimit(1)
                                                     .foregroundColor(Color.secondary).frame(width: 100)
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                    }
-                    .padding(.bottom, 16)
-                }
-                if let studios = viewModel.item.studios,
-                   !studios.isEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack(spacing: 16) {
-                            Text("Studios:").font(.callout).fontWeight(.semibold)
-                            ForEach(studios, id: \.id) { studio in
-                                NavigationLink(destination: LazyView {
-                                    LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
-                                }) {
-                                    Text(studio.name ?? "").font(.footnote)
                                 }
                             }
                         }
@@ -163,7 +175,9 @@ struct SeriesItemView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
                             ForEach(viewModel.similarItems, id: \.self) { similarItem in
-                                NavigationLink(destination: LazyView { ItemView(item: similarItem) }) {
+                                Button {
+                                    item.route(to: .item(viewModel: .init(id: similarItem.id!)))
+                                } label: {
                                     PortraitItemView(item: similarItem)
                                 }
                             }
