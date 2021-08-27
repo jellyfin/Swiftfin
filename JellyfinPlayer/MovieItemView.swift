@@ -10,10 +10,8 @@ import SwiftUI
 struct MovieItemView: View {
     @StateObject var viewModel: MovieItemViewModel
     @State private var orientation = UIDeviceOrientation.unknown
-    @Environment(\.horizontalSizeClass)
-    var hSizeClass
-    @Environment(\.verticalSizeClass)
-    var vSizeClass
+    @Environment(\.horizontalSizeClass) var hSizeClass
+    @Environment(\.verticalSizeClass) var vSizeClass
     @EnvironmentObject
     private var playbackInfo: VideoPlayerItem
 
