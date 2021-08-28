@@ -9,7 +9,9 @@
 
 import SwiftUI
 import JellyfinAPI
+
 struct PortraitItemView: View {
+    
     var item: BaseItemDto
 
     var body: some View {
