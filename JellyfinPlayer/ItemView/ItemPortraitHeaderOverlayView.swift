@@ -12,7 +12,9 @@ import JellyfinAPI
 
 struct PortraitHeaderOverlayView: View {
     
-    @EnvironmentObject var viewModel: DetailItemViewModel
+    @EnvironmentObject private var viewModel: DetailItemViewModel
+    @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
+    
     let item: BaseItemDto
     
     var body: some View {
@@ -64,16 +66,20 @@ struct PortraitHeaderOverlayView: View {
             }
             
             HStack {
-                // Play button
+                
+                // MARK: Play
                 Button {
-                    ()
-//                    self.playbackInfo.itemToPlay = item
-//                    self.playbackInfo.shouldShowPlayer = true
+                    self.videoPlayerItem.itemToPlay = item
+                    self.videoPlayerItem.shouldShowPlayer = true
                 } label: {
                     HStack {
-                        Image(systemName: "play.fill").foregroundColor(Color.white).font(.system(size: 20))
+                        Image(systemName: "play.fill")
+                            .foregroundColor(Color.white)
+                            .font(.system(size: 20))
                         Text(item.getItemProgressString() == "" ? "Play" : item.getItemProgressString())
-                            .foregroundColor(Color.white).font(.callout).fontWeight(.semibold)
+                            .foregroundColor(Color.white)
+                            .font(.callout)
+                            .fontWeight(.semibold)
                     }
                     .frame(width: 130, height: 40)
                     .background(Color.jellyfinPurple)
@@ -82,48 +88,37 @@ struct PortraitHeaderOverlayView: View {
                 
                 Spacer()
                 
+                // MARK: Favorite
                 Button {
-                    print("Heart")
+                    viewModel.updateFavoriteState()
                 } label: {
-                    Image(systemName: "heart").foregroundColor(.primary)
-                        .font(.system(size: 20))
+                    if viewModel.isFavorited {
+                        Image(systemName: "heart.fill")
+                            .foregroundColor(Color(UIColor.systemRed))
+                            .font(.system(size: 20))
+                    } else {
+                        Image(systemName: "heart")
+                            .foregroundColor(Color.primary)
+                            .font(.system(size: 20))
+                    }
                 }
+                .disabled(viewModel.isLoading)
                 
+                // MARK: Watched
                 Button {
-                    print("Check")
+                    viewModel.updateWatchState()
                 } label: {
-                    Image(systemName: "checkmark.circle").foregroundColor(.primary)
-                        .font(.system(size: 20))
+                    if viewModel.isWatched {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Color.jellyfinPurple)
+                            .font(.system(size: 20))
+                    } else {
+                        Image(systemName: "checkmark.circle")
+                            .foregroundColor(Color.primary)
+                            .font(.system(size: 20))
+                    }
                 }
-                    
-                    
-//                    Button {
-//                        updateFavoriteState()
-//                        ()
-//                    } label: {
-//                        if viewModel.isFavorited {
-//                            Image(systemName: "heart.fill").foregroundColor(Color(UIColor.systemRed))
-//                                .font(.system(size: 20))
-//                        } else {
-//                            Image(systemName: "heart").foregroundColor(Color.primary)
-//                                .font(.system(size: 20))
-//                        }
-//                    }
-//                    .disabled(viewModel.isLoading)
-//                    Button {
-//                        viewModel.updateWatchState()
-//                        ()
-//                    } label: {
-//                        if viewModel.isWatched {
-//                            Image(systemName: "checkmark.circle.fill").foregroundColor(Color.primary)
-//                                .font(.system(size: 20))
-//                        } else {
-//                            Image(systemName: "checkmark.circle").foregroundColor(Color.primary)
-//                                .font(.system(size: 20))
-//                        }
-//                    }
-//                    .disabled(viewModel.isLoading)
-//                }
+                .disabled(viewModel.isLoading)
             }.padding(.top, 8)
         }
         .padding(.horizontal, 16)

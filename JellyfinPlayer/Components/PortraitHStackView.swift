@@ -16,20 +16,25 @@ public protocol PortraitImageStackable {
     var blurHash: String { get }
 }
 
-struct PortraitImageHStackView<NavigationView: View, ItemType: PortraitImageStackable>: View {
+struct PortraitImageHStackView<TopBarView: View, NavigationView: View, ItemType: PortraitImageStackable>: View {
     
-    let title: String
     let items: [ItemType]
     let maxWidth: Int
+    let horizontalAlignment: HorizontalAlignment
+    let topBarView: () -> TopBarView
     let navigationView: (ItemType) -> NavigationView
+    
+    init(items: [ItemType], maxWidth: Int, horizontalAlignment: HorizontalAlignment = .leading, topBarView: @escaping () -> TopBarView, navigationView: @escaping (ItemType) -> NavigationView) {
+        self.items = items
+        self.maxWidth = maxWidth
+        self.horizontalAlignment = horizontalAlignment
+        self.topBarView = topBarView
+        self.navigationView = navigationView
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text(title)
-                .font(.callout)
-                .fontWeight(.semibold)
-                .padding(.top, 3)
-                .padding(.leading, 16)
+            topBarView()
             
             ScrollView(.horizontal, showsIndicators: false) {
                 VStack {

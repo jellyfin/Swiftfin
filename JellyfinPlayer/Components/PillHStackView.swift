@@ -34,14 +34,14 @@ struct PillHStackView<NavigationView: View, ItemType: PillStackable>: View {
                             navigationView(item)
                         }) {
                             ZStack {
-                                Color(UIColor.secondarySystemBackground)
+                                Color(UIColor.systemFill)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .cornerRadius(10)
                                 
                                 Text(item.title)
                                     .font(.caption)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.primary)
                                     .fixedSize()
                                     .padding(.leading, 10)
                                     .padding(.trailing, 10)
