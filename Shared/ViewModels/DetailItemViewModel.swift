@@ -11,8 +11,8 @@ import Foundation
 import Foundation
 import JellyfinAPI
 
-class DetailItemViewModel: ViewModel {
-
+class ItemViewModel: ViewModel {
+    
     @Published var item: BaseItemDto
     @Published var similarItems: [BaseItemDto] = []
 
@@ -82,4 +82,8 @@ class DetailItemViewModel: ViewModel {
                 .store(in: &cancellables)
         }
     }
+}
+
+class DetailItemViewModel: ItemViewModel {
+    
 }

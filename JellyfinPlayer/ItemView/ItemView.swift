@@ -23,26 +23,27 @@ struct ItemView: View {
     @Environment(\.horizontalSizeClass) var hSizeClass
     @Environment(\.verticalSizeClass) var vSizeClass
     
-    private let item: BaseItemDto
+    private let viewModel: DetailItemViewModel
     
     init(item: BaseItemDto) {
-        self.item = item
+        self.viewModel = DetailItemViewModel(item: item)
     }
 
     var body: some View {
         if hSizeClass == .compact && vSizeClass == .regular {
-            ItemPortraitBodyView(item: item,
-                                 videoIsLoading: $videoIsLoading,
-                                 portraitHeaderView: { item in
-                                    ImageView(src: item.getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
-                                              bh: item.getBackdropImageBlurHash())
+            ItemPortraitBodyView(videoIsLoading: $videoIsLoading,
+                                 portraitHeaderView: { viewModel in
+                                    ImageView(src: viewModel.item.getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
+                                              bh: viewModel.item.getBackdropImageBlurHash())
                                         .opacity(0.4)
                                         .blur(radius: 2.0)
                                  },
-                                 portraitStaticOverlayView: { item in
-                                    PortraitHeaderOverlayView(item: item)
-                                        .environmentObject(DetailItemViewModel(item: item))
-                                 }).environmentObject(videoPlayerItem)
+                                 portraitStaticOverlayView: { viewModel in
+                                    PortraitHeaderOverlayView()
+                                        .environmentObject(viewModel)
+                                 })
+                .environmentObject(videoPlayerItem)
+                .environmentObject(viewModel)
         } else {
             Text("Hello there")
         }

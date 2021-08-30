@@ -12,16 +12,16 @@ import JellyfinAPI
 
 struct ItemPortraitBodyView<PortraitHeaderView: View, PortraitStaticOverlayView: View>: View {
     
-    @Binding var videoIsLoading: Bool
-    @EnvironmentObject var viewModel: MovieItemViewModel
-    @EnvironmentObject var videoPlayerItem: VideoPlayerItem
+    @Binding private var videoIsLoading: Bool
+    @EnvironmentObject private var viewModel: DetailItemViewModel
+    @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
     
-    private let item: BaseItemDto
-    private let portraitHeaderView: (BaseItemDto) -> PortraitHeaderView
-    private let portraitStaticOverlayView: (BaseItemDto) -> PortraitStaticOverlayView
+    private let portraitHeaderView: (DetailItemViewModel) -> PortraitHeaderView
+    private let portraitStaticOverlayView: (DetailItemViewModel) -> PortraitStaticOverlayView
     
-    init(item: BaseItemDto, videoIsLoading: Binding<Bool>, portraitHeaderView: @escaping (BaseItemDto) -> PortraitHeaderView, portraitStaticOverlayView: @escaping (BaseItemDto) -> PortraitStaticOverlayView) {
-        self.item = item
+    init(videoIsLoading: Binding<Bool>,
+         portraitHeaderView: @escaping (DetailItemViewModel) -> PortraitHeaderView,
+         portraitStaticOverlayView: @escaping (DetailItemViewModel) -> PortraitStaticOverlayView) {
         self._videoIsLoading = videoIsLoading
         self.portraitHeaderView = portraitHeaderView
         self.portraitStaticOverlayView = portraitStaticOverlayView
@@ -43,8 +43,8 @@ struct ItemPortraitBodyView<PortraitHeaderView: View, PortraitStaticOverlayView:
             }
             
             // MARK: Body
-            ParallaxHeaderScrollView(header: portraitHeaderView(item),
-                                     staticOverlayView: portraitStaticOverlayView(item),
+            ParallaxHeaderScrollView(header: portraitHeaderView(viewModel),
+                                     staticOverlayView: portraitStaticOverlayView(viewModel),
                                      overlayAlignment: .bottomLeading,
                                      headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds.width * 0.5625) {
                 VStack {
@@ -53,7 +53,7 @@ struct ItemPortraitBodyView<PortraitHeaderView: View, PortraitStaticOverlayView:
                         .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 54 : 24)
                     
                     // MARK: Overview
-                    Text(item.overview ?? "")
+                    Text(viewModel.item.overview ?? "")
                         .font(.footnote)
                         .padding(.top, 3)
                         .fixedSize(horizontal: false, vertical: true)
@@ -63,12 +63,12 @@ struct ItemPortraitBodyView<PortraitHeaderView: View, PortraitStaticOverlayView:
                     
                     // MARK: Genres
                     PillHStackView(title: "Genres",
-                                   items: item.genreItems ?? []) { genre in
+                                   items: viewModel.item.genreItems ?? []) { genre in
                         LibraryView(viewModel: .init(genre: genre), title: genre.title)
                     }
                     
                     // MARK: Studios
-                    if let studios = item.studios {
+                    if let studios = viewModel.item.studios {
                         PillHStackView(title: "Studios",
                                        items: studios) { studio in
                             LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
@@ -76,7 +76,7 @@ struct ItemPortraitBodyView<PortraitHeaderView: View, PortraitStaticOverlayView:
                     }
                     
                     // MARK: Cast
-                    PortraitImageHStackView(items: item.people?.filter({ $0.type == "Actor" }) ?? [],
+                    PortraitImageHStackView(items: viewModel.item.people?.filter({ $0.type == "Actor" }) ?? [],
                                             maxWidth: 150) {
                                     Text("Cast")
                                         .font(.callout)
