@@ -67,6 +67,7 @@ struct ItemLandscapeMainView: View {
                     // MARK: ItemViewBody
                     if let episodeViewModel = viewModel as? SeasonItemViewModel {
                         CardVStackView(items: episodeViewModel.episodes)
+                            .frame(maxWidth: 400)
                     } else {
                         ItemViewBody()
                             .environmentObject(viewModel)

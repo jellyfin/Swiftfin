@@ -22,7 +22,7 @@ struct ItemPortraitMainView: View {
     
     // MARK: portraitHeaderView
     var portraitHeaderView: some View {
-        ImageView(src: viewModel.item.getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
+        ImageView(src: viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
                   bh: viewModel.item.getBackdropImageBlurHash())
             .opacity(0.4)
             .blur(radius: 2.0)
@@ -54,7 +54,7 @@ struct ItemPortraitMainView: View {
             ParallaxHeaderScrollView(header: portraitHeaderView,
                                      staticOverlayView: portraitStaticOverlayView,
                                      overlayAlignment: .bottomLeading,
-                                     headerHeight: UIDevice.current.userInterfaceIdiom == .pad ? 350 : UIScreen.main.bounds.width * 0.5625) {
+                                     headerHeight: UIScreen.main.bounds.width * 0.5625) {
                 
                 VStack {
                     Spacer()
@@ -64,7 +64,6 @@ struct ItemPortraitMainView: View {
                         Spacer()
                         CardVStackView(items: episodeViewModel.episodes)
                             .padding(.top, 5)
-                            .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 400 : .infinity)
                     } else {
                         ItemViewBody()
                             .environmentObject(viewModel)
