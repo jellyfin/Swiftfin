@@ -14,38 +14,72 @@ class VideoPlayerItem: ObservableObject {
     @Published var itemToPlay: BaseItemDto = BaseItemDto()
 }
 
-struct ItemView: View {
+// Intermediary view for ItemView to set navigation bar settings
+struct ItemNavigationView: View {
+    
+    private let item: BaseItemDto
+    
+    init(item: BaseItemDto) {
+        self.item = item
+    }
+    
+    var body: some View {
+        ItemView(item: item)
+            .navigationBarTitle("", displayMode: .large)
+    }
+}
+
+fileprivate struct ItemView: View {
 
     @State private var videoIsLoading: Bool = false; // This variable is only changed by the underlying VLC view.
     @State private var viewDidLoad: Bool = false
     @State private var orientation: UIDeviceOrientation = .unknown
     @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()
-    @Environment(\.horizontalSizeClass) var hSizeClass
-    @Environment(\.verticalSizeClass) var vSizeClass
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    @Environment(\.verticalSizeClass) private var vSizeClass
     
-    private let viewModel: DetailItemViewModel
+    private let viewModel: ItemViewModel
     
     init(item: BaseItemDto) {
-        self.viewModel = DetailItemViewModel(item: item)
+        switch item.itemType {
+        case .movie:
+            self.viewModel = MovieItemViewModel(item: item)
+        case .season:
+            self.viewModel = SeasonItemViewModel(item: item)
+        case .episode:
+            self.viewModel = EpisodeItemViewModel(item: item)
+        case .series:
+            self.viewModel = SeriesItemViewModel(item: item)
+        default:
+            self.viewModel = ItemViewModel(item: item)
+        }
     }
 
     var body: some View {
         if hSizeClass == .compact && vSizeClass == .regular {
-            ItemPortraitBodyView(videoIsLoading: $videoIsLoading,
-                                 portraitHeaderView: { viewModel in
-                                    ImageView(src: viewModel.item.getBackdropImage(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 622 : Int(UIScreen.main.bounds.width)),
-                                              bh: viewModel.item.getBackdropImageBlurHash())
-                                        .opacity(0.4)
-                                        .blur(radius: 2.0)
-                                 },
-                                 portraitStaticOverlayView: { viewModel in
-                                    PortraitHeaderOverlayView()
-                                        .environmentObject(viewModel)
-                                 })
+            ItemPortraitMainView(videoIsLoading: $videoIsLoading)
                 .environmentObject(videoPlayerItem)
                 .environmentObject(viewModel)
         } else {
-            Text("Hello there")
+            ItemLandscapeMainView(videoIsLoading: $videoIsLoading)
+                .environmentObject(videoPlayerItem)
+                .environmentObject(viewModel)
         }
+    }
+}
+
+extension UINavigationBar {
+    static func changeAppearance(clear: Bool) {
+        let appearance = UINavigationBarAppearance()
+        
+        if clear {
+            appearance.configureWithTransparentBackground()
+        } else {
+            appearance.configureWithDefaultBackground()
+        }
+        
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
 }

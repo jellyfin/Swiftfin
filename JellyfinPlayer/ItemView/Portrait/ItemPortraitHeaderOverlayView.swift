@@ -12,12 +12,14 @@ import JellyfinAPI
 
 struct PortraitHeaderOverlayView: View {
     
-    @EnvironmentObject private var viewModel: DetailItemViewModel
+    @EnvironmentObject private var viewModel: ItemViewModel
     @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
+                
+                // MARK: Portrait Image
                 ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 130))
                     .frame(width: 130, height: 195)
                     .cornerRadius(10)
@@ -25,20 +27,26 @@ struct PortraitHeaderOverlayView: View {
                 VStack(alignment: .leading, spacing: 1) {
                     Spacer()
                     
-                    Text(viewModel.item.name ?? "")
-                        .font(.headline)
+                    // MARK: Name
+                    Text(viewModel.getItemDisplayName())
+                        .font(.title2)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
-                        .offset(y: 5)
+                        .padding(.bottom, 10)
                     
-                    Text(viewModel.item.getItemRuntime())
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                        .padding(.top, 10)
+                    if viewModel.item.itemType.showDetails {
+                        // MARK: Runtime
+                        if viewModel.shouldDisplayRuntime() {
+                            Text(viewModel.item.getItemRuntime())
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
                     
+                    // MARK: Details
                     HStack {
                         if let productionYear = viewModel.item.productionYear {
                             Text(String(productionYear))
@@ -63,30 +71,32 @@ struct PortraitHeaderOverlayView: View {
                 .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 30)
             }
             
-            if viewModel.item.itemType != .series {
-                HStack {
-                    
-                    // MARK: Play
-                    Button {
-                        self.videoPlayerItem.itemToPlay = viewModel.item
+            HStack {
+                
+                // MARK: Play
+                Button {
+                    if let playButtonItem = viewModel.playButtonItem {
+                        self.videoPlayerItem.itemToPlay = playButtonItem
                         self.videoPlayerItem.shouldShowPlayer = true
-                    } label: {
-                        HStack {
-                            Image(systemName: "play.fill")
-                                .foregroundColor(Color.white)
-                                .font(.system(size: 20))
-                            Text(viewModel.item.getItemProgressString() == "" ? "Play" : viewModel.item.getItemProgressString())
-                                .foregroundColor(Color.white)
-                                .font(.callout)
-                                .fontWeight(.semibold)
-                        }
-                        .frame(width: 130, height: 40)
-                        .background(Color.jellyfinPurple)
-                        .cornerRadius(10)
                     }
-                    
-                    Spacer()
-                    
+                } label: {
+                    HStack {
+                        Image(systemName: "play.fill")
+                            .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
+                            .font(.system(size: 20))
+                        Text(viewModel.playButtonText())
+                            .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
+                            .font(.callout)
+                            .fontWeight(.semibold)
+                    }
+                    .frame(width: 130, height: 40)
+                    .background(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
+                    .cornerRadius(10)
+                }.disabled(viewModel.playButtonItem == nil)
+                
+                Spacer()
+                
+                if viewModel.item.itemType.showDetails {
                     // MARK: Favorite
                     Button {
                         viewModel.updateFavoriteState()
@@ -118,8 +128,8 @@ struct PortraitHeaderOverlayView: View {
                         }
                     }
                     .disabled(viewModel.isLoading)
-                }.padding(.top, 8)
-            }
+                }
+            }.padding(.top, 8)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? -189 : -64)

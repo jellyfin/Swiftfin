@@ -15,7 +15,7 @@ struct PortraitItemView: View {
     var item: BaseItemDto
 
     var body: some View {
-        NavigationLink(destination: LazyView { ItemView(item: item) }) {
+        NavigationLink(destination: LazyView { ItemNavigationView(item: item) }) {
             VStack(alignment: .leading) {
                 ImageView(src: item.type != "Episode" ? item.getPrimaryImage(maxWidth: 100) : item.getSeriesPrimaryImage(maxWidth: 100), bh: item.type != "Episode" ? item.getPrimaryImageBlurHash() : item.getSeriesPrimaryImageBlurHash())
                     .frame(width: 100, height: 150)

@@ -13,6 +13,14 @@ import SwiftUI
 struct HomeView: View {
     @StateObject var viewModel = HomeViewModel()
     @State var showingSettings = false
+    
+    init() {
+        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
+        let barAppearance = UINavigationBar.appearance()
+        barAppearance.backIndicatorImage = backButtonBackgroundImage
+        barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
+        barAppearance.tintColor = UIColor(Color.jellyfinPurple)
+    }
 
     @ViewBuilder
     var innerBody: some View {

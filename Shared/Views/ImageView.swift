@@ -11,16 +11,14 @@ import SwiftUI
 import NukeUI
 
 struct ImageView: View {
-    private var source: URL = URL(string: "https://example.com")!
-    private var blurhash: String = "001fC^"
+    private let source: URL
+    private let blurhash: String
+    private let failureInitials: String
 
-    init(src: URL) {
-        self.source = src
-    }
-
-    init(src: URL, bh: String) {
+    init(src: URL, bh: String = "001fC^", failureInitials: String = "") {
         self.source = src
         self.blurhash = bh
+        self.failureInitials = failureInitials
     }
 
     var body: some View {
@@ -30,8 +28,14 @@ struct ImageView: View {
                 .resizable()
         }
         .failure {
-            Rectangle()
-                .fill(Color.gray)
+            ZStack {
+                Rectangle()
+                    .foregroundColor(Color(UIColor.systemFill))
+                
+                Text(failureInitials)
+                    .font(.largeTitle)
+                    .foregroundColor(.secondary)
+            }
         }
     }
 }

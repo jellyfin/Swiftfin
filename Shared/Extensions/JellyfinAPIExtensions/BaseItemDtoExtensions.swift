@@ -78,11 +78,11 @@ public extension BaseItemDto {
         return URL(string: urlString)!
     }
 
-    func getEpisodeLocator() -> String {
+    func getEpisodeLocator() -> String? {
         if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
             return "S\(seasonNo):E\(episodeNo)"
         }
-        return ""
+        return nil
     }
 
     func getSeriesBackdropImage(maxWidth: Int) -> URL {
@@ -162,6 +162,15 @@ public extension BaseItemDto {
         case series = "Series"
         
         case unknown
+        
+        var showDetails: Bool {
+            switch self {
+            case .season, .series:
+                return false
+            default:
+                return true
+            }
+        }
     }
     
     var itemType: ItemType {

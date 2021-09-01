@@ -11,7 +11,7 @@ import SwiftUI
 
 struct MediaPlayButtonRowView: View {
 
-    @ObservedObject var viewModel: DetailItemViewModel
+    @ObservedObject var viewModel: ItemViewModel
     @State var wrappedScrollView: UIScrollView?
 
     var body: some View {

@@ -14,6 +14,7 @@ public protocol PortraitImageStackable {
     var title: String { get }
     var description: String? { get }
     var blurHash: String { get }
+    var failureInitials: String { get }
 }
 
 struct PortraitImageHStackView<TopBarView: View, NavigationView: View, ItemType: PortraitImageStackable>: View {
@@ -39,8 +40,10 @@ struct PortraitImageHStackView<TopBarView: View, NavigationView: View, ItemType:
             ScrollView(.horizontal, showsIndicators: false) {
                 VStack {
                     Spacer().frame(height: 8)
-                    HStack {
+                    HStack(alignment: .top) {
+                        
                         Spacer().frame(width: 16)
+                        
                         ForEach(items, id: \.title) { item in
                             NavigationLink(
                                 destination: LazyView {
@@ -49,7 +52,8 @@ struct PortraitImageHStackView<TopBarView: View, NavigationView: View, ItemType:
                                 label: {
                                     VStack {
                                         ImageView(src: item.imageURLContsructor(maxWidth: maxWidth),
-                                                  bh: item.blurHash)
+                                                  bh: item.blurHash,
+                                                  failureInitials: item.failureInitials)
                                             .frame(width: 100, height: CGFloat(maxWidth))
                                             .cornerRadius(10)
                                             .shadow(radius: 4, y: 2)
@@ -57,17 +61,19 @@ struct PortraitImageHStackView<TopBarView: View, NavigationView: View, ItemType:
                                         Text(item.title)
                                             .font(.footnote)
                                             .fontWeight(.regular)
-                                            .lineLimit(1)
                                             .frame(width: 100)
                                             .foregroundColor(.primary)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(2)
                                         
                                         if let description = item.description {
                                             Text(description)
                                                 .font(.caption)
                                                 .fontWeight(.medium)
-                                                .lineLimit(1)
                                                 .frame(width: 100)
                                                 .foregroundColor(.secondary)
+                                                .multilineTextAlignment(.center)
+                                                .lineLimit(2)
                                         }
                                     }
                                 })
