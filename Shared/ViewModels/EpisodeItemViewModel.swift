@@ -11,5 +11,14 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class EpisodeItemViewModel: DetailItemViewModel {
+final class EpisodeItemViewModel: ItemViewModel {
+    
+    override func getItemDisplayName() -> String {
+        guard let episodeLocator = item.getEpisodeLocator() else { return item.name ?? "" }
+        return "\(episodeLocator)\n\(item.name ?? "")"
+    }
+    
+    override func shouldDisplayRuntime() -> Bool {
+        return false
+    }
 }

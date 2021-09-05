@@ -107,8 +107,7 @@ struct SettingsView: View {
                             Text(appearance.localizedName).tag(appearance.rawValue)
                         }
                     }.onChange(of: appAppearance, perform: { value in
-                        guard let appearance = AppAppearance(rawValue: value) else { return }
-                        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appearance.style
+                        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
                     })
                 }
             }

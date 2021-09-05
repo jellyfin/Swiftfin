@@ -11,32 +11,43 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class SeriesItemViewModel: DetailItemViewModel {
+final class SeriesItemViewModel: ItemViewModel {
 
-    @Published var seasons = [BaseItemDto]()
-    @Published var nextUpItem: BaseItemDto?
+    @Published var seasons: [BaseItemDto] = []
 
     override init(item: BaseItemDto) {
         super.init(item: item)
-        self.item = item
 
         requestSeasons()
         getNextUp()
     }
+    
+    override func playButtonText() -> String {
+        guard let playButtonItem = playButtonItem else { return "Play" }
+        guard let episodeLocator = playButtonItem.getEpisodeLocator() else { return "Play" }
+        return episodeLocator
+    }
+    
+    override func shouldDisplayRuntime() -> Bool {
+        return false
+    }
 
-    func getNextUp() {
+    private func getNextUp() {        
+        
         LogManager.shared.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
         TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seriesId: self.item.id!, enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
-                self?.nextUpItem = response.items?.first ?? nil
+                if let nextUpItem = response.items?.first {
+                    self?.playButtonItem = nextUpItem
+                }
             })
             .store(in: &cancellables)
     }
 
-    func getRunYears() -> String {
+    private func getRunYears() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
 
@@ -54,7 +65,7 @@ final class SeriesItemViewModel: DetailItemViewModel {
         return "\(startYear ?? "Unknown") - \(endYear ?? "Present")"
     }
 
-    func requestSeasons() {
+    private func requestSeasons() {
         LogManager.shared.log.debug("Getting seasons of show \(self.item.id!) (\(self.item.name!))")
         TvShowsAPI.getSeasons(seriesId: item.id ?? "", userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true)
             .trackActivity(loading)

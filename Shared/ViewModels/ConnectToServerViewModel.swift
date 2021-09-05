@@ -56,6 +56,13 @@ final class ConnectToServerViewModel: ViewModel {
     }
 
     func connectToServer() {
+        
+        #if targetEnvironment(simulator)
+        if uriSubject.value == "localhost" {
+            uriSubject.value = "http://localhost:8096"
+        }
+        #endif
+        
         LogManager.shared.log.debug("Attempting to connect to server at \"\(uriSubject.value)\"", tag: "connectToServer")
         ServerEnvironment.current.create(with: uriSubject.value)
             .trackActivity(loading)

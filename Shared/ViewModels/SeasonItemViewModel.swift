@@ -11,9 +11,9 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class SeasonItemViewModel: DetailItemViewModel {
+final class SeasonItemViewModel: ItemViewModel {
 
-    @Published var episodes = [BaseItemDto]()
+    @Published private(set) var episodes: [BaseItemDto] = []
 
     override init(item: BaseItemDto) {
         super.init(item: item)
@@ -21,8 +21,14 @@ final class SeasonItemViewModel: DetailItemViewModel {
 
         requestEpisodes()
     }
+    
+    override func playButtonText() -> String {
+        guard let playButtonItem = playButtonItem else { return "Play" }
+        guard let episodeLocator = playButtonItem.getEpisodeLocator() else { return "Play" }
+        return episodeLocator
+    }
 
-    func requestEpisodes() {
+    private func requestEpisodes() {
         LogManager.shared.log.debug("Getting episodes in season \(self.item.id!) (\(self.item.name!)) of show \(self.item.seriesId!) (\(self.item.seriesName!))")
         TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.user.user_id!,
                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
@@ -33,7 +39,33 @@ final class SeasonItemViewModel: DetailItemViewModel {
             }, receiveValue: { [weak self] response in
                 self?.episodes = response.items ?? []
                 LogManager.shared.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")
+                
+                self?.setNextUpInSeason()
             })
             .store(in: &cancellables)
+    }
+    
+    // Sets the play button item to the "Next up" in the season based upon
+    //     the watched status of episodes in the season.
+    // Default to the first episode of the season if all have been watched.
+    private func setNextUpInSeason() {
+        guard episodes.count > 0 else { return }
+        
+        var firstUnwatchedSearch: BaseItemDto?
+        
+        for episode in episodes {
+            guard let played = episode.userData?.played else { continue }
+            if !played {
+                firstUnwatchedSearch = episode
+                break
+            }
+        }
+        
+        if let firstUnwatched = firstUnwatchedSearch {
+            playButtonItem = firstUnwatched
+        } else {
+            guard let firstEpisode = episodes.first else { return }
+            playButtonItem = firstEpisode
+        }
     }
 }
