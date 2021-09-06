@@ -11,24 +11,43 @@ import Foundation
 import Foundation
 import JellyfinAPI
 
-class DetailItemViewModel: ViewModel {
-
+class ItemViewModel: ViewModel {
+    
     @Published var item: BaseItemDto
+    @Published var playButtonItem: BaseItemDto?
     @Published var similarItems: [BaseItemDto] = []
-
     @Published var isWatched = false
     @Published var isFavorited = false
 
     init(item: BaseItemDto) {
         self.item = item
+        
+        switch item.itemType {
+        case .episode, .movie:
+            self.playButtonItem = item
+        default: ()
+        }
+        
         isFavorited = item.userData?.isFavorite ?? false
         isWatched = item.userData?.played ?? false
         super.init()
 
-        getRelatedItems()
+        getSimilarItems()
     }
-
-    func getRelatedItems() {
+    
+    func playButtonText() -> String {
+        return item.getItemProgressString() == "" ? "Play" : item.getItemProgressString()
+    }
+    
+    func getItemDisplayName() -> String {
+        return item.name ?? ""
+    }
+    
+    func shouldDisplayRuntime() -> Bool {
+        return true
+    }
+    
+    func getSimilarItems() {
         LibraryAPI.getSimilarItems(itemId: item.id!, userId: SessionManager.current.user.user_id!, limit: 20, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in

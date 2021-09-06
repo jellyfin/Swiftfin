@@ -37,7 +37,7 @@ struct ContinueWatchingView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
                 ForEach(items, id: \.id) { item in
-                    NavigationLink(destination: LazyView { ItemView(item: item) }) {
+                    NavigationLink(destination: LazyView { ItemNavigationView(item: item) }) {
                         VStack(alignment: .leading) {
                             ImageView(src: item.getBackdropImage(maxWidth: 320), bh: item.getBackdropImageBlurHash())
                                 .frame(width: 320, height: 180)
@@ -58,7 +58,7 @@ struct ContinueWatchingView: View {
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
                                 if item.type == "Episode" {
-                                    Text("• \(item.getEpisodeLocator()) - \(item.name ?? "")")
+                                    Text("• \(item.getEpisodeLocator() ?? "") - \(item.name ?? "")")
                                         .font(.callout)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.secondary)
