@@ -9,6 +9,7 @@
 
 import Foundation
 import SwiftUI
+import Defaults
 
 struct UserSettings: Decodable {
     var LocalMaxBitrate: Int
@@ -31,7 +32,7 @@ struct TrackLanguage: Hashable {
     static let auto = TrackLanguage(name: "Auto", isoCode: "Auto")
 }
 
-enum AppAppearance: String, CaseIterable {
+enum AppAppearance: String, CaseIterable, Defaults.Serializable {
     case system
     case dark
     case light

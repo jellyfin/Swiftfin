@@ -8,12 +8,19 @@
  */
 
 import Foundation
-import Stinsen
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var homeRouter: NavigationRouter<HomeCoordinator.Route>
     @StateObject var viewModel = HomeViewModel()
+    @State var showingSettings = false
+    
+    init() {
+        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
+        let barAppearance = UINavigationBar.appearance()
+        barAppearance.backIndicatorImage = backButtonBackgroundImage
+        barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
+        barAppearance.tintColor = UIColor(Color.jellyfinPurple)
+    }
 
     @ViewBuilder
     var innerBody: some View {
@@ -21,7 +28,7 @@ struct HomeView: View {
             ProgressView()
         } else {
             ScrollView {
-                LazyVStack(alignment: .leading) {
+                VStack(alignment: .leading) {
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(items: viewModel.resumeItems)
                     }
@@ -36,18 +43,16 @@ struct HomeView: View {
                                     .font(.title2)
                                     .fontWeight(.bold)
                                 Spacer()
-                                Button {
-                                    homeRouter
-                                        .route(to: .library(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet),
-                                                            title: library?.name ?? ""))
-                                } label: {
+                                NavigationLink(destination: LazyView {
+                                    LibraryView(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? "")
+                                }) {
                                     HStack {
                                         Text("See All").font(.subheadline).fontWeight(.bold)
                                         Image(systemName: "chevron.right").font(Font.subheadline.bold())
                                     }
                                 }
                             }.padding(.leading, 16)
-                                .padding(.trailing, 16)
+                            .padding(.trailing, 16)
                             LatestMediaView(viewModel: .init(libraryID: libraryID))
                         }
                     }
@@ -63,17 +68,14 @@ struct HomeView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
-                        homeRouter.route(to: .settings)
+                        showingSettings = true
                     } label: {
                         Image(systemName: "gear")
                     }
                 }
             }
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    AppURLHandler.shared.appURLState = .allowed
-                    AppURLHandler.shared.processLaunchedURLIfNeeded()
-                }
+            .fullScreenCover(isPresented: $showingSettings) {
+                SettingsView(viewModel: SettingsViewModel(), close: $showingSettings)
             }
     }
 }

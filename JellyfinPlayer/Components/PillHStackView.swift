@@ -1,0 +1,60 @@
+//
+ /* 
+  * SwiftFin is subject to the terms of the Mozilla Public
+  * License, v2.0. If a copy of the MPL was not distributed with this
+  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+  *
+  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+  */
+
+import SwiftUI
+
+protocol PillStackable {
+    var title: String { get }
+}
+
+struct PillHStackView<NavigationView: View, ItemType: PillStackable>: View {
+    
+    let title: String
+    let items: [ItemType]
+    let navigationView: (ItemType) -> NavigationView
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(.callout)
+                .fontWeight(.semibold)
+                .padding(.top, 3)
+                .padding(.leading, 16)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(items, id: \.title) { item in
+                        NavigationLink(destination: LazyView {
+                            navigationView(item)
+                        }) {
+                            ZStack {
+                                Color(UIColor.systemFill)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .cornerRadius(10)
+                                
+                                Text(item.title)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .fixedSize()
+                                    .padding(.leading, 10)
+                                    .padding(.trailing, 10)
+                                    .padding(.top, 10)
+                                    .padding(.bottom, 10)
+                            }
+                            .fixedSize()
+                        }
+                    }
+                }
+                .padding(.leading, 16)
+                .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+            }
+        }
+    }
+}

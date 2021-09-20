@@ -182,10 +182,13 @@
                                     <outletCollection property="gestureRecognizers" destination="iQW-fW-KWT" appends="YES" id="H09-88-nzQ"/>
                                 </connections>
                             </view>
-                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CY9-gw-dv8" userLabel="UpNextView">
-                                <rect key="frame" x="675" y="254" width="224" height="160"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CY9-gw-dv8" userLabel="UpNextView">
+                                <rect key="frame" x="672" y="254" width="224" height="160"/>
                                 <color key="backgroundColor" red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="160" id="IyL-p4-Y54"/>
+                                    <constraint firstAttribute="width" constant="224" id="rFU-Nq-Qmj"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="zud-b9-RyD"/>
@@ -194,8 +197,11 @@
                         <constraints>
                             <constraint firstItem="Qcb-Fb-qZl" firstAttribute="top" secondItem="zud-b9-RyD" secondAttribute="top" id="0rU-S8-2ZG"/>
                             <constraint firstItem="Tsh-rC-BwO" firstAttribute="bottom" secondItem="IQg-r0-AeH" secondAttribute="bottom" id="CLQ-xL-eMg"/>
+                            <constraint firstAttribute="trailing" secondItem="CY9-gw-dv8" secondAttribute="trailing" id="GAY-9O-TMP"/>
                             <constraint firstItem="zud-b9-RyD" firstAttribute="trailing" secondItem="Tsh-rC-BwO" secondAttribute="trailing" constant="-13" id="MTY-zG-Jfx"/>
                             <constraint firstAttribute="trailing" secondItem="Qcb-Fb-qZl" secondAttribute="trailing" id="N96-TI-UDZ"/>
+                            <constraint firstAttribute="trailing" secondItem="CY9-gw-dv8" secondAttribute="trailing" id="VY1-j7-qK2"/>
+                            <constraint firstAttribute="bottom" secondItem="CY9-gw-dv8" secondAttribute="bottom" id="Wtk-gJ-gF4"/>
                             <constraint firstItem="Qcb-Fb-qZl" firstAttribute="leading" secondItem="IQg-r0-AeH" secondAttribute="leading" id="ctC-7w-DiS"/>
                             <constraint firstItem="Tsh-rC-BwO" firstAttribute="leading" secondItem="zud-b9-RyD" secondAttribute="leading" constant="-13" id="cw7-9C-iua"/>
                             <constraint firstItem="Tsh-rC-BwO" firstAttribute="top" secondItem="zud-b9-RyD" secondAttribute="top" id="d4Q-bp-K4m"/>
