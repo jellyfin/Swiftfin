@@ -12,14 +12,11 @@ import Stinsen
 import SwiftUI
 
 final class ConnectToServerCoodinator: NavigationCoordinatable {
-    var navigationStack = NavigationStack()
+    let stack = NavigationStack(initial: \ConnectToServerCoodinator.start)
 
-    enum Route: NavigationRoute {}
-
-    func resolveRoute(route: Route) -> Transition {}
-
-    @ViewBuilder
-    func start() -> some View {
+    @Root var start = makeStart
+    
+    @ViewBuilder func makeStart() -> some View {
         ConnectToServerView()
     }
 }

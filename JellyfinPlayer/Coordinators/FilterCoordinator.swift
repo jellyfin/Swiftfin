@@ -11,8 +11,12 @@ import Foundation
 import Stinsen
 import SwiftUI
 
+typealias FilterCoordinatorParams = (filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String)
+
 final class FilterCoordinator: NavigationCoordinatable {
-    var navigationStack = NavigationStack()
+    let stack = NavigationStack(initial: \FilterCoordinator.start)
+    @Root var start = makeStart
+
     @Binding var filters: LibraryFilters
     var enabledFilterType: [FilterType]
     var parentId: String = ""
@@ -23,12 +27,7 @@ final class FilterCoordinator: NavigationCoordinatable {
         self.parentId = parentId
     }
 
-    enum Route: NavigationRoute {}
-
-    func resolveRoute(route: Route) -> Transition {}
-
-    @ViewBuilder
-    func start() -> some View {
+    @ViewBuilder func makeStart() -> some View {
         LibraryFilterView(filters: $filters, enabledFilterType: enabledFilterType, parentId: parentId)
     }
 }

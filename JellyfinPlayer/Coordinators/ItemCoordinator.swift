@@ -13,32 +13,32 @@ import Stinsen
 import SwiftUI
 
 final class ItemCoordinator: NavigationCoordinatable {
-    var navigationStack = NavigationStack()
-    var viewModel: ItemViewModel
+    let stack = NavigationStack(initial: \ItemCoordinator.start)
 
-    init(viewModel: ItemViewModel) {
-        self.viewModel = viewModel
+    @Root var start = makeStart
+    @Route(.push) var item = makeItem
+    @Route(.push) var library = makeLibrary
+    @Route(.fullScreen) var videoPlayer = makeVideoPlayer
+
+    let itemDto: BaseItemDto
+
+    init(item: BaseItemDto) {
+        self.itemDto = item
     }
 
-    enum Route: NavigationRoute {
-        case item(viewModel: ItemViewModel)
-        case library(viewModel: LibraryViewModel, title: String)
-        case videoPlayer(item: BaseItemDto)
+    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
+        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
     }
 
-    func resolveRoute(route: Route) -> Transition {
-        switch route {
-        case let .item(viewModel):
-            return .push(ItemCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
-        case let .library(viewModel, title):
-            return .push(LibraryCoordinator(viewModel: viewModel, title: title).eraseToAnyCoordinatable())
-        case let .videoPlayer(item):
-            return .fullScreen(NavigationViewCoordinator(VideoPlayerCoordinator(item: item)).eraseToAnyCoordinatable())
-        }
+    func makeItem(item: BaseItemDto) -> ItemCoordinator {
+        ItemCoordinator(item: item)
     }
 
-    @ViewBuilder
-    func start() -> some View {
-        ItemView(viewModel: self.viewModel)
+    func makeVideoPlayer(item: BaseItemDto) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+        NavigationViewCoordinator(VideoPlayerCoordinator(item: item))
+    }
+
+    @ViewBuilder func makeStart() -> some View {
+        ItemNavigationView(item: itemDto)
     }
 }

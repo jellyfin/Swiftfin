@@ -5,41 +5,41 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
 import Introspect
 import JellyfinAPI
+import SwiftUI
 
 class VideoPlayerItem: ObservableObject {
     @Published var shouldShowPlayer: Bool = false
-    @Published var itemToPlay: BaseItemDto = BaseItemDto()
+    @Published var itemToPlay = BaseItemDto()
 }
 
 // Intermediary view for ItemView to set navigation bar settings
 struct ItemNavigationView: View {
-    
     private let item: BaseItemDto
-    
+
     init(item: BaseItemDto) {
         self.item = item
     }
-    
+
     var body: some View {
         ItemView(item: item)
             .navigationBarTitle("", displayMode: .inline)
     }
 }
 
-fileprivate struct ItemView: View {
+private struct ItemView: View {
+    @EnvironmentObject var itemRouter: ItemCoordinator.Router
 
-    @State private var videoIsLoading: Bool = false; // This variable is only changed by the underlying VLC view.
+    @State private var videoIsLoading: Bool = false // This variable is only changed by the underlying VLC view.
     @State private var viewDidLoad: Bool = false
     @State private var orientation: UIDeviceOrientation = .unknown
-    @StateObject private var videoPlayerItem: VideoPlayerItem = VideoPlayerItem()
+    @StateObject private var videoPlayerItem = VideoPlayerItem()
     @Environment(\.horizontalSizeClass) private var hSizeClass
     @Environment(\.verticalSizeClass) private var vSizeClass
-    
+
     private let viewModel: ItemViewModel
-    
+
     init(item: BaseItemDto) {
         switch item.itemType {
         case .movie:
@@ -56,14 +56,20 @@ fileprivate struct ItemView: View {
     }
 
     var body: some View {
-        if hSizeClass == .compact && vSizeClass == .regular {
-            ItemPortraitMainView(videoIsLoading: $videoIsLoading)
-                .environmentObject(videoPlayerItem)
-                .environmentObject(viewModel)
-        } else {
-            ItemLandscapeMainView(videoIsLoading: $videoIsLoading)
-                .environmentObject(videoPlayerItem)
-                .environmentObject(viewModel)
+        Group {
+            if hSizeClass == .compact && vSizeClass == .regular {
+                ItemPortraitMainView(videoIsLoading: $videoIsLoading)
+                    .environmentObject(videoPlayerItem)
+                    .environmentObject(viewModel)
+            } else {
+                ItemLandscapeMainView(videoIsLoading: $videoIsLoading)
+                    .environmentObject(videoPlayerItem)
+                    .environmentObject(viewModel)
+            }
+        }
+        .onReceive(videoPlayerItem.$shouldShowPlayer) { flag in
+            guard flag else { return }
+            self.itemRouter.route(to: \.videoPlayer, viewModel.item)
         }
     }
 }

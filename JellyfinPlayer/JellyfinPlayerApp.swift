@@ -28,7 +28,7 @@ extension UIWindow {
 struct DeviceShakeViewModifier: ViewModifier {
     let action: () -> Void
 
-    func body(content: Content) -> some View {
+    func body(content: Self.Content) -> some View {
         content
             .onAppear()
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.deviceDidShakeNotification)) { _ in
@@ -228,7 +228,7 @@ struct JellyfinPlayerApp: App {
                 })
                 .withHostingWindow { window in
                     window?
-                        .rootViewController = PreferenceUIHostingController(wrappedView: CoordinatorView(MainCoordinator())
+                        .rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view()
                             .environment(\.managedObjectContext, persistenceController.container.viewContext))
                 }
                 .onShake {

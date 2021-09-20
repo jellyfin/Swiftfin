@@ -977,7 +977,6 @@
 				6267B3D92671138200A7371D /* ImageExtensions.swift */,
 				E1AD105226D96D5F003E4A08 /* JellyfinAPIExtensions */,
 				621338922660107500A81A2A /* StringExtensions.swift */,
-				624C21742685CF60007F1390 /* SearchablePickerView.swift */,
 				6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */,
 			);
 			path = Extensions;
@@ -1535,7 +1534,7 @@
 				5364F456266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				E1AD105D26D9ABDD003E4A08 /* PillHStackView.swift in Sources */,
 				E188460526DEF04800B0C5B7 /* CardVStackView.swift in Sources */,
-				5364F456266CA0DC0026ECBA /* APIExtensions.swift in Sources */,
+				5364F456266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				6220D0BE26D60D6600B8E046 /* ItemViewModel.swift in Sources */,
 				531690FA267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift in Sources */,
 				E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */,
@@ -1551,7 +1550,7 @@
 			files = (
 				5364F455266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				E18845F526DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */,
-				5364F455266CA0DC0026ECBA /* APIExtensions.swift in Sources */,
+				5364F455266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
@@ -1566,7 +1565,6 @@
 				5389276E263C25100035E14B /* ContinueWatchingView.swift in Sources */,
 				53F866442687A45F00DCD1D7 /* PortraitItemView.swift in Sources */,
 				E1AD105626D981CE003E4A08 /* PortraitHStackView.swift in Sources */,
-				53AD124E26702B8A0094A276 /* SeasonItemView.swift in Sources */,
 				62C29EA126D102A500C1D2E7 /* MainTabCoordinator.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */,
@@ -1607,7 +1605,7 @@
 				625CB56A2678B71200530A6E /* SplashViewModel.swift in Sources */,
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
-				62E632F3267D54030063E547 /* DetailItemViewModel.swift in Sources */,
+				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
 				E14F7D0726DB36EF007C3AE6 /* ItemPortraitMainView.swift in Sources */,
 				E1AD106226D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift in Sources */,
@@ -1636,7 +1634,6 @@
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */,
-				53AD124D267029D60094A276 /* SeriesItemView.swift in Sources */,
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
@@ -2246,7 +2243,7 @@
 			repositoryURL = "https://github.com/rundfunk47/stinsen";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
+				minimumVersion = 2.0.2;
 			};
 		};
 		62CB3F442685BAF7003D0A6F /* XCRemoteSwiftPackageReference "Defaults" */ = {

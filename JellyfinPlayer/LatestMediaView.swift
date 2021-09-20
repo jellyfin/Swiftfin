@@ -9,7 +9,7 @@ import Stinsen
 import SwiftUI
 
 struct LatestMediaView: View {
-    @EnvironmentObject var homeRouter: NavigationRouter<HomeCoordinator.Route>
+    @EnvironmentObject var homeRouter: HomeCoordinator.Router
     @StateObject var viewModel: LatestMediaViewModel
 
     var body: some View {
@@ -18,7 +18,7 @@ struct LatestMediaView: View {
                 ForEach(viewModel.items, id: \.id) { item in
                     if item.type == "Series" || item.type == "Movie" {
                         Button {
-                            homeRouter.route(to: .item(viewModel: .init(id: item.id!)))
+                            homeRouter.route(to: \.item, item)
                         } label: {
                             PortraitItemView(item: item)
                         }

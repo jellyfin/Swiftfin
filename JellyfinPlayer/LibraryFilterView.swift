@@ -10,7 +10,7 @@ import SwiftUI
 import Stinsen
 
 struct LibraryFilterView: View {
-    @EnvironmentObject var filterRouter: NavigationRouter<FilterCoordinator.Route>
+    @EnvironmentObject var filterRouter: FilterCoordinator.Router
     @Environment(\.presentationMode) var presentationMode
     @Binding var filters: LibraryFilters
     var parentId: String = ""
@@ -66,7 +66,7 @@ struct LibraryFilterView: View {
                     Button {
                         viewModel.resetFilters()
                         self.filters = viewModel.modifiedFilters
-                        filterRouter.dismiss()
+                        filterRouter.dismissCoordinator()
                     } label: {
                         Text("Reset")
                     }
@@ -76,7 +76,7 @@ struct LibraryFilterView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button {
-                        filterRouter.dismiss()
+                        filterRouter.dismissCoordinator()
                     } label: {
                         Image(systemName: "xmark")
                     }
@@ -85,7 +85,7 @@ struct LibraryFilterView: View {
                     Button {
                         viewModel.updateModifiedFilter()
                         self.filters = viewModel.modifiedFilters
-                        filterRouter.dismiss()
+                        filterRouter.dismissCoordinator()
                     } label: {
                         Text("Apply")
                     }

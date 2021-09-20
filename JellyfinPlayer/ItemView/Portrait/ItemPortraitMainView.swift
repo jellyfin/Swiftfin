@@ -37,19 +37,6 @@ struct ItemPortraitMainView: View {
     // MARK: body
     var body: some View {
         VStack(alignment: .leading) {
-            NavigationLink(destination: LoadingViewNoBlur(isShowing: $videoIsLoading) {
-                VLCPlayerWithControls(item: videoPlayerItem.itemToPlay,
-                                      loadBinding: $videoIsLoading,
-                                      pBinding: _videoPlayerItem.projectedValue.shouldShowPlayer)
-                    .navigationBarHidden(true)
-                    .navigationBarBackButtonHidden(true)
-                    .statusBar(hidden: true)
-                    .edgesIgnoringSafeArea(.all)
-                    .prefersHomeIndicatorAutoHidden(true)
-            }, isActive: $videoPlayerItem.shouldShowPlayer) {
-                EmptyView()
-            }
-            
             // MARK: ParallaxScrollView
             ParallaxHeaderScrollView(header: portraitHeaderView,
                                      staticOverlayView: portraitStaticOverlayView,

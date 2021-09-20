@@ -13,19 +13,16 @@ import Stinsen
 import SwiftUI
 
 final class VideoPlayerCoordinator: NavigationCoordinatable {
-    var navigationStack = NavigationStack()
+    let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
+
+    @Root var start = makeStart
     var item: BaseItemDto
 
     init(item: BaseItemDto) {
         self.item = item
     }
 
-    enum Route: NavigationRoute {}
-
-    func resolveRoute(route: Route) -> Transition {}
-
-    @ViewBuilder
-    func start() -> some View {
+    @ViewBuilder func makeStart() -> some View {
         VideoPlayerView(item: item)
     }
 }

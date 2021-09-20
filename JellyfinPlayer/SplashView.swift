@@ -11,16 +11,16 @@ import Stinsen
 import SwiftUI
 
 struct SplashView: View {
-    @EnvironmentObject var mainRouter: ViewRouter<MainCoordinator.Route>
+    @EnvironmentObject var mainRouter: MainCoordinator.Router
     @StateObject var viewModel = SplashViewModel()
 
     var body: some View {
         ProgressView()
             .onReceive(viewModel.$isLoggedIn) { flag in
                 if flag {
-                    mainRouter.route(to: .mainTab)
+                    mainRouter.root(\.mainTab)
                 } else {
-                    mainRouter.route(to: .connectToServer)
+                    mainRouter.root(\.connectToServer)
                 }
             }
     }

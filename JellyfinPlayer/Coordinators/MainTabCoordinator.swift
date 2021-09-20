@@ -13,36 +13,29 @@ import SwiftUI
 import Stinsen
 
 final class MainTabCoordinator: TabCoordinatable {
-    lazy var children = TabChild(self, tabRoutes: [.home, .allMedia])
+    var child = TabChild(startingItems: [
+        \MainTabCoordinator.home,
+        \MainTabCoordinator.allMedia,
+    ])
 
-    enum Route: TabRoute {
-        case home
-        case allMedia
+    @Route(tabItem: makeHomeTab) var home = makeHome
+    @Route(tabItem: makeTodosTab) var allMedia = makeTodos
+
+    func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
+        return NavigationViewCoordinator(HomeCoordinator())
     }
 
-    func tabItem(forTab tab: Int) -> some View {
-        switch tab {
-        case 0:
-            Group {
-                Text("Home")
-                Image(systemName: "house")
-            }
-        case 1:
-            Group {
-                Text("Projects")
-                Image(systemName: "folder")
-            }
-        default:
-            fatalError()
-        }
+    @ViewBuilder func makeHomeTab(isActive: Bool) -> some View {
+        Image(systemName: "house")
+        Text("Home")
     }
 
-    func resolveRoute(route: Route) -> AnyCoordinatable {
-        switch route {
-        case .home:
-            return NavigationViewCoordinator(HomeCoordinator()).eraseToAnyCoordinatable()
-        case .allMedia:
-            return NavigationViewCoordinator(LibraryListCoordinator()).eraseToAnyCoordinatable()
-        }
+    func makeTodos() -> NavigationViewCoordinator<LibraryListCoordinator> {
+        return NavigationViewCoordinator(LibraryListCoordinator())
+    }
+
+    @ViewBuilder func makeTodosTab(isActive: Bool) -> some View {
+        Image(systemName: "folder")
+        Text("All Media")
     }
 }

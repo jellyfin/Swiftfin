@@ -28,7 +28,7 @@ protocol PlayerViewControllerDelegate: AnyObject {
 
 class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRemoteMediaClientListener {
     @RouterObject
-    var main: ViewRouter<MainCoordinator.Route>?
+    var main: MainCoordinator.Router?
 
     weak var delegate: PlayerViewControllerDelegate?
 
@@ -538,7 +538,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             case .error(401, _, _, _):
                                 self.delegate?.exitPlayer(self)
                                 SessionManager.current.logout()
-                                main?.route(to: .connectToServer)
+                                main?.root(\.connectToServer)
                             case .error:
                                 self.delegate?.exitPlayer(self)
                             }
@@ -1072,12 +1072,12 @@ struct VideoPlayerView: View {
 
 struct VLCPlayerWithControls: UIViewControllerRepresentable {
     var item: BaseItemDto
-    @RouterObject var playerRouter: NavigationRouter<VideoPlayerCoordinator.Route>?
+    @RouterObject var playerRouter: VideoPlayerCoordinator.Router?
 
     let loadBinding: Binding<Bool>
 
     class Coordinator: NSObject, PlayerViewControllerDelegate {
-        let parent: VLCPlayerWithControls
+        var parent: VLCPlayerWithControls
         let loadBinding: Binding<Bool>
 
         init(parent: VLCPlayerWithControls, loadBinding: Binding<Bool>) {
@@ -1094,7 +1094,7 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
         }
 
         func exitPlayer(_ viewController: PlayerViewController) {
-            parent.playerRouter?.dismiss()
+            parent.playerRouter?.dismissCoordinator()
         }
     }
 

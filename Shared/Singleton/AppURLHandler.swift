@@ -14,7 +14,7 @@ final class AppURLHandler {
     static let deepLinkScheme = "jellyfin"
 
     @RouterObject
-    var router: NavigationRouter<HomeCoordinator.Route>?
+    var router: HomeCoordinator.Router?
 
     enum AppURLState {
         case launched
@@ -54,7 +54,7 @@ extension AppURLHandler {
         }
         return true
     }
-    
+
     func processLaunchedURLIfNeeded() {
         guard let launchURL = launchURL else { return }
         if processDeepLink(url: launchURL) {
@@ -78,7 +78,7 @@ extension AppURLHandler {
         if url.pathComponents[safe: 2]?.lowercased() == "items",
            let itemID = url.pathComponents[safe: 3]
         {
-            router?.route(to: .item(viewModel: .init(id: itemID)))
+//            router?.route(to: \.item(item: item))
             return true
         }
 

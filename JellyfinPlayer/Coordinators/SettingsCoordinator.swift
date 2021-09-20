@@ -12,21 +12,16 @@ import Stinsen
 import SwiftUI
 
 final class SettingsCoordinator: NavigationCoordinatable {
-    var navigationStack = NavigationStack()
+    let stack = NavigationStack(initial: \SettingsCoordinator.start)
 
-    enum Route: NavigationRoute {
-        case serverDetail
+    @Root var start = makeStart
+    @Route(.push) var serverDetail = makeServerDetail
+
+    @ViewBuilder func makeServerDetail() -> some View {
+        ServerDetailView()
     }
 
-    func resolveRoute(route: Route) -> Transition {
-        switch route {
-        case .serverDetail:
-            return .push(ServerDetailView().eraseToAnyView())
-        }
-    }
-
-    @ViewBuilder
-    func start() -> some View {
+    @ViewBuilder func makeStart() -> some View {
         SettingsView(viewModel: .init())
     }
 }

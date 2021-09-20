@@ -11,7 +11,7 @@ import Stinsen
 import SwiftUI
 
 struct NextUpView: View {
-    @EnvironmentObject var homeRouter: NavigationRouter<HomeCoordinator.Route>
+    @EnvironmentObject var homeRouter: HomeCoordinator.Router
 
     var items: [BaseItemDto]
 
@@ -25,7 +25,7 @@ struct NextUpView: View {
                 LazyHStack {
                     ForEach(items, id: \.id) { item in
                         Button {
-                            homeRouter.route(to: .item(viewModel: .init(id: item.id!)))
+                            homeRouter.route(to: \.item, item)
                         } label: {
                             PortraitItemView(item: item)
                         }

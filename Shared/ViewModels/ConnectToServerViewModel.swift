@@ -14,7 +14,7 @@ import Stinsen
 
 final class ConnectToServerViewModel: ViewModel {
     @RouterObject
-    var main: ViewRouter<MainCoordinator.Route>?
+    var main: MainCoordinator.Router?
 
     @Published var isConnectedServer = false
 
@@ -60,13 +60,12 @@ final class ConnectToServerViewModel: ViewModel {
     }
 
     func connectToServer() {
-        
         #if targetEnvironment(simulator)
-        if uriSubject.value == "localhost" {
-            uriSubject.value = "http://localhost:8096"
-        }
+            if uriSubject.value == "localhost" {
+                uriSubject.value = "http://localhost:8096"
+            }
         #endif
-        
+
         LogManager.shared.log.debug("Attempting to connect to server at \"\(uriSubject.value)\"", tag: "connectToServer")
         ServerEnvironment.current.create(with: uriSubject.value)
             .trackActivity(loading)
@@ -112,7 +111,7 @@ final class ConnectToServerViewModel: ViewModel {
                 self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login",
                                            completion: completion)
             }, receiveValue: { [weak self] _ in
-                self?.main?.route(to: .mainTab)
+                self?.main?.root(\.mainTab)
             })
             .store(in: &cancellables)
     }

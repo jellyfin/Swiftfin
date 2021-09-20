@@ -8,55 +8,68 @@
  */
 
 import Foundation
+import Nuke
 import Stinsen
 import SwiftUI
+#if !os(tvOS)
+    import WidgetKit
+#endif
 
 #if os(iOS)
-final class MainCoordinator: ViewCoordinatable {
-    var children = ViewChild()
+    final class MainCoordinator: NavigationCoordinatable {
+        var stack: NavigationStack<MainCoordinator>
 
-    enum Route: ViewRoute {
-        case mainTab
-        case connectToServer
-    }
+        @Root var mainTab = makeMainTab
+        @Root var connectToServer = makeConnectToServer
 
-    func resolveRoute(route: Route) -> AnyCoordinatable {
-        switch route {
-        case .mainTab:
-            return MainTabCoordinator().eraseToAnyCoordinatable()
-        case .connectToServer:
-            return NavigationViewCoordinator(ConnectToServerCoodinator()).eraseToAnyCoordinatable()
+        init() {
+            if ServerEnvironment.current.server != nil, SessionManager.current.user != nil {
+                self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
+            } else {
+                self.stack = NavigationStack(initial: \MainCoordinator.connectToServer)
+            }
+            ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
+            DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
+
+            #if !os(tvOS)
+                WidgetCenter.shared.reloadAllTimelines()
+                UIScrollView.appearance().keyboardDismissMode = .onDrag
+            #endif
+
+            let nc = NotificationCenter.default
+            nc.addObserver(self, selector: #selector(didLogIn), name: Notification.Name("didSignIn"), object: nil)
+            nc.addObserver(self, selector: #selector(didLogOut), name: Notification.Name("didSignOut"), object: nil)
+        }
+
+        @objc func didLogIn() {
+            LogManager.shared.log.info("Received `didSignIn` from NSNotificationCenter.")
+            root(\.mainTab)
+        }
+
+        @objc func didLogOut() {
+            LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
+            root(\.connectToServer)
+        }
+
+        func makeMainTab() -> MainTabCoordinator {
+            MainTabCoordinator()
+        }
+
+        func makeConnectToServer() -> NavigationViewCoordinator<ConnectToServerCoodinator> {
+            NavigationViewCoordinator(ConnectToServerCoodinator())
         }
     }
 
-    @ViewBuilder
-    func start() -> some View {
-        SplashView()
-    }
-}
 #elseif os(tvOS)
-// temp for fixing build error
-final class MainCoordinator: ViewCoordinatable {
-    var children = ViewChild()
+    // temp for fixing build error
+    final class MainCoordinator: NavigationCoordinatable {
+        var stack: NavigationStack<MainCoordinator>
 
-    enum Route: ViewRoute {
-        case mainTab
-        case connectToServer
-    }
+        @Root var mainTab = makeMainTab
+        @Root var connectToServer = makeMainTab
 
-    func resolveRoute(route: Route) -> AnyCoordinatable {
-        switch route {
-        case .mainTab:
-            return MainCoordinator().eraseToAnyCoordinatable()
-        case .connectToServer:
-            return MainCoordinator().eraseToAnyCoordinatable()
+        func makeMainTab() -> NavigationViewCoordinator<MainTabCoordinator> {
+            return NavigationViewCoordinator(MainTabCoordinator())
         }
     }
-
-    @ViewBuilder
-    func start() -> some View {
-        SplashView()
-    }
-}
-
 #endif

@@ -8,31 +8,31 @@
  */
 
 import Foundation
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
 final class HomeCoordinator: NavigationCoordinatable {
-    var navigationStack = NavigationStack()
+    let stack = NavigationStack(initial: \HomeCoordinator.start)
 
-    enum Route: NavigationRoute {
-        case settings
-        case library(viewModel: LibraryViewModel, title: String)
-        case item(viewModel: ItemViewModel)
+    @Root var start = makeStart
+    @Route(.modal) var settings = makeSettings
+    @Route(.push) var library = makeLibrary
+    @Route(.push) var item = makeItem
+
+    func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
+        NavigationViewCoordinator(SettingsCoordinator())
     }
 
-    func resolveRoute(route: Route) -> Transition {
-        switch route {
-        case .settings:
-            return .modal(NavigationViewCoordinator(SettingsCoordinator()).eraseToAnyCoordinatable())
-        case let .library(viewModel, title):
-            return .push(LibraryCoordinator(viewModel: viewModel, title: title).eraseToAnyCoordinatable())
-        case let .item(viewModel):
-            return .push(ItemCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
-        }
+    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
+        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
     }
 
-    @ViewBuilder
-    func start() -> some View {
+    func makeItem(item: BaseItemDto) -> ItemCoordinator {
+        ItemCoordinator(item: item)
+    }
+
+    @ViewBuilder func makeStart() -> some View {
         HomeView()
     }
 }

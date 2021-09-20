@@ -10,14 +10,15 @@ import Stinsen
 import SwiftUI
 
 struct LibraryListView: View {
-    @EnvironmentObject var libraryListRouter: NavigationRouter<LibraryListCoordinator.Route>
+    @EnvironmentObject var libraryListRouter: LibraryListCoordinator.Router
     @StateObject var viewModel = LibraryListViewModel()
 
     var body: some View {
         ScrollView {
             LazyVStack {
                 Button {
-                    libraryListRouter.route(to: .library(viewModel: .init(filters: viewModel.withFavorites), title: "Favorites"))
+                    libraryListRouter.route(to: \.library,
+                                            (viewModel: LibraryViewModel(filters: viewModel.withFavorites), title: "Favorites"))
                 } label: {
                     ZStack {
                         HStack {
@@ -62,7 +63,9 @@ struct LibraryListView: View {
                     ForEach(viewModel.libraries, id: \.id) { library in
                         if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
                             Button {
-                                libraryListRouter.route(to: .library(viewModel: .init(parentID: library.id), title: library.name ?? ""))
+                                libraryListRouter.route(to: \.library,
+                                                        (viewModel: LibraryViewModel(parentID: library.id),
+                                                         title: library.name ?? ""))
                             } label: {
                                 ZStack {
                                     ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
@@ -99,7 +102,7 @@ struct LibraryListView: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
-                    libraryListRouter.route(to: .search(viewModel: .init(parentID: nil)))
+                    libraryListRouter.route(to: \.search, LibrarySearchViewModel(parentID: nil))
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }

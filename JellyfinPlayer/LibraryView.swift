@@ -10,7 +10,7 @@ import Stinsen
 import SwiftUI
 
 struct LibraryView: View {
-    @EnvironmentObject var libraryRouter: NavigationRouter<LibraryCoordinator.Route>
+    @EnvironmentObject var libraryRouter: LibraryCoordinator.Router
     @StateObject var viewModel: LibraryViewModel
     var title: String
 
@@ -36,7 +36,7 @@ struct LibraryView: View {
                             ForEach(viewModel.items, id: \.id) { item in
                                 if item.type != "Folder" {
                                     Button {
-                                        libraryRouter.route(to: .item(viewModel: .init(id: item.id!)))
+                                        libraryRouter.route(to: \.item, item)
                                     } label: {
                                         PortraitItemView(item: item)
                                     }
@@ -96,11 +96,11 @@ struct LibraryView: View {
                     .foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
                     .onTapGesture {
                         libraryRouter
-                            .route(to: .filter(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType,
-                                               parentId: viewModel.parentID ?? ""))
+                            .route(to: \.filter, (filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType,
+                                                  parentId: viewModel.parentID ?? ""))
                     }
                 Button {
-                    libraryRouter.route(to: .search(viewModel: .init(parentID: viewModel.parentID)))
+                    libraryRouter.route(to: \.search, .init(parentID: viewModel.parentID))
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }

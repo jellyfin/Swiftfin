@@ -10,28 +10,25 @@
 import Foundation
 import Stinsen
 import SwiftUI
+import JellyfinAPI
 
 final class SearchCoordinator: NavigationCoordinatable {
-    var navigationStack = NavigationStack()
+    let stack = NavigationStack(initial: \SearchCoordinator.start)
+
+    @Root var start = makeStart
+    @Route(.push) var item = makeItem
+
     var viewModel: LibrarySearchViewModel
 
     init(viewModel: LibrarySearchViewModel) {
         self.viewModel = viewModel
     }
 
-    enum Route: NavigationRoute {
-        case item(viewModel: ItemViewModel)
+    func makeItem(item: BaseItemDto) -> ItemCoordinator {
+        ItemCoordinator(item: item)
     }
 
-    func resolveRoute(route: Route) -> Transition {
-        switch route {
-        case let .item(viewModel):
-            return .push(ItemCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
-        }
-    }
-
-    @ViewBuilder
-    func start() -> some View {
+    @ViewBuilder func makeStart() -> some View {
         LibrarySearchView(viewModel: self.viewModel)
     }
 }

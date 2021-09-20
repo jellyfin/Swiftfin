@@ -11,7 +11,7 @@ import Stinsen
 import SwiftUI
 
 struct LibrarySearchView: View {
-    @EnvironmentObject var searchRouter: NavigationRouter<SearchCoordinator.Route>
+    @EnvironmentObject var searchRouter: SearchCoordinator.Router
     @StateObject var viewModel: LibrarySearchViewModel
     @State private var searchQuery = ""
 
@@ -81,7 +81,7 @@ struct LibrarySearchView: View {
                         LazyVGrid(columns: tracks) {
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    searchRouter.route(to: .item(viewModel: .init(id: item.id!)))
+                                    searchRouter.route(to: \.item, item)
                                 } label: {
                                     PortraitItemView(item: item)
                                 }

@@ -12,24 +12,22 @@ import Stinsen
 import SwiftUI
 
 final class LibraryListCoordinator: NavigationCoordinatable {
-    var navigationStack = NavigationStack()
+    let stack = NavigationStack(initial: \LibraryListCoordinator.start)
 
-    enum Route: NavigationRoute {
-        case search(viewModel: LibrarySearchViewModel)
-        case library(viewModel: LibraryViewModel, title: String)
+    @Root var start = makeStart
+    @Route(.push) var search = makeSearch
+    @Route(.push) var library = makeLibrary
+
+    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
+        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
     }
 
-    func resolveRoute(route: Route) -> Transition {
-        switch route {
-        case let .search(viewModel):
-            return .push(SearchCoordinator(viewModel: viewModel).eraseToAnyCoordinatable())
-        case let .library(viewModel, title):
-            return .push(LibraryCoordinator(viewModel: viewModel, title: title).eraseToAnyCoordinatable())
-        }
+    func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
+        SearchCoordinator(viewModel: viewModel)
     }
 
     @ViewBuilder
-    func start() -> some View {
+    func makeStart() -> some View {
         LibraryListView()
     }
 }
