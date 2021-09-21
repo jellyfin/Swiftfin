@@ -7,9 +7,11 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 
 struct ItemLandscapeMainView: View {
+    @EnvironmentObject var itemRouter: ItemCoordinator.Router
     @Binding private var videoIsLoading: Bool
     @EnvironmentObject private var viewModel: ItemViewModel
     @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
@@ -68,8 +70,7 @@ struct ItemLandscapeMainView: View {
 
                     if let episodeViewModel = viewModel as? SeasonItemViewModel {
                         EpisodeCardVStackView(items: episodeViewModel.episodes) { episode in
-                            // Router work here to present a:
-                            // ItemNavigationView(item: episode)
+                            itemRouter.route(to: \.item, episode)
                         }
                     } else {
                         ItemViewBody()
