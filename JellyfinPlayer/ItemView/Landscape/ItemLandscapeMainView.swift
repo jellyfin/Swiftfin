@@ -67,7 +67,10 @@ struct ItemLandscapeMainView: View {
                     // MARK: ItemViewBody
 
                     if let episodeViewModel = viewModel as? SeasonItemViewModel {
-                        CardVStackView(items: episodeViewModel.episodes)
+                        EpisodeCardVStackView(items: episodeViewModel.episodes) { episode in
+                            // Router work here to present a:
+                            // ItemNavigationView(item: episode)
+                        }
                     } else {
                         ItemViewBody()
                             .environmentObject(viewModel)

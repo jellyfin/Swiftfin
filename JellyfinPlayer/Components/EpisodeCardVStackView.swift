@@ -10,9 +10,10 @@
 import SwiftUI
 import JellyfinAPI
 
-struct CardVStackView: View {
+struct EpisodeCardVStackView: View {
     
     let items: [BaseItemDto]
+    let selectedAction: (BaseItemDto) -> Void
     
     private func buildCardOverlayView(item: BaseItemDto) -> some View {
         HStack {
@@ -45,8 +46,9 @@ struct CardVStackView: View {
     var body: some View {
         VStack {
             ForEach(items, id: \.id) { item in
-                NavigationLink(destination: ItemNavigationView(item: item)) {
-                        
+                Button {
+                    selectedAction(item)
+                } label: {
                     HStack {
                         
                         // MARK: Image

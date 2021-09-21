@@ -13,11 +13,12 @@ protocol PillStackable {
     var title: String { get }
 }
 
-struct PillHStackView<NavigationView: View, ItemType: PillStackable>: View {
+struct PillHStackView<ItemType: PillStackable>: View {
     
     let title: String
     let items: [ItemType]
-    let navigationView: (ItemType) -> NavigationView
+//    let navigationView: (ItemType) -> NavigationView
+    let selectedAction: (ItemType) -> Void
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -30,14 +31,14 @@ struct PillHStackView<NavigationView: View, ItemType: PillStackable>: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(items, id: \.title) { item in
-                        NavigationLink(destination: LazyView {
-                            navigationView(item)
-                        }) {
+                        Button {
+                            selectedAction(item)
+                        } label: {
                             ZStack {
                                 Color(UIColor.systemFill)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .cornerRadius(10)
-                                
+
                                 Text(item.title)
                                     .font(.caption)
                                     .fontWeight(.semibold)

@@ -33,22 +33,26 @@ struct ItemViewBody: View {
                                                 .fontWeight(.semibold)
                                                 .padding(.top, 3)
                                                 .padding(.leading, 16)
-                                        }, navigationView: { season in
-                                            ItemNavigationView(item: season)
+                                        }, selectedAction: { season in
+                                            // Router work here to present a:
+                                            // ItemNavigationView(item: Season)
                                         })
             }
             
             // MARK: Genres
             PillHStackView(title: "Genres",
-                           items: viewModel.item.genreItems ?? []) { genre in
-                LibraryView(viewModel: .init(genre: genre), title: genre.title)
-            }
+                           items: viewModel.item.genreItems ?? [],
+                           selectedAction: { genre in
+                // Router work here to present a:
+                // LibraryView(viewModel: .init(genre: genre), title: genre.title)
+            })
             
             // MARK: Studios
             if let studios = viewModel.item.studios {
                 PillHStackView(title: "Studios",
                                items: studios) { studio in
-                    LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
+                    // Router work here to present a:
+                    // LibraryView(viewModel: .init(studio: studio), title: studio.name ?? "")
                 }
             }
             
@@ -63,8 +67,9 @@ struct ItemViewBody: View {
                                                 .padding(.top, 3)
                                                 .padding(.leading, 16)
                                         },
-                                        navigationView: { person in
-                                            LibraryView(viewModel: .init(person: person), title: person.title)
+                                        selectedAction: { person in
+                                            // Router work here to present a:
+                                            // LibraryView(viewModel: .init(person: person), title: person.title)
                                         })
             }
 
@@ -79,8 +84,9 @@ struct ItemViewBody: View {
                                                 .padding(.top, 3)
                                                 .padding(.leading, 16)
                                         },
-                                        navigationView: { item in
-                                            ItemNavigationView(item: item)
+                                        selectedAction: { item in
+                                            // Router work here to present a:
+                                            // ItemNavigationView(item: item)
                                         })
             }
         }
