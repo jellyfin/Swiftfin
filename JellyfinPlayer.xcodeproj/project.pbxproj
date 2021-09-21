@@ -249,6 +249,7 @@
 		62EC353126766848000E9F2D /* ServerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352B26766675000E9F2D /* ServerEnvironment.swift */; };
 		62EC353226766849000E9F2D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352E267666A5000E9F2D /* SessionManager.swift */; };
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
+		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */; };
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
@@ -483,6 +484,7 @@
 		62EC352B26766675000E9F2D /* ServerEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerEnvironment.swift; sourceTree = "<group>"; };
 		62EC352E267666A5000E9F2D /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRotationViewModifier.swift; sourceTree = "<group>"; };
+		62ECA01726FA685A00E8EBB7 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		BEEC50E7EFD4848C0E320941 /* Pods-JellyfinPlayer iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.release.xcconfig"; sourceTree = "<group>"; };
 		D79953919FED0C4DF72BA578 /* Pods-JellyfinPlayer tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -771,6 +773,7 @@
 			children = (
 				62C29E9D26D0FE5900C1D2E7 /* Coordinators */,
 				53F866422687A45400DCD1D7 /* Components */,
+				62ECA01926FA6D6900E8EBB7 /* Singleton */,
 				53AD124C2670278D0094A276 /* JellyfinPlayer.entitlements */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
@@ -796,6 +799,7 @@
 				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
 				625CB5672678B6FB00530A6E /* SplashView.swift */,
 				625CB56E2678C23300530A6E /* HomeView.swift */,
+				62ECA01726FA685A00E8EBB7 /* DeepLink.swift */,
 			);
 			path = JellyfinPlayer;
 			sourceTree = "<group>";
@@ -1019,6 +1023,13 @@
 				53649AB0269CFB1900A2D8B7 /* LogManager.swift */,
 				62EC352B26766675000E9F2D /* ServerEnvironment.swift */,
 				62EC352E267666A5000E9F2D /* SessionManager.swift */,
+			);
+			path = Singleton;
+			sourceTree = "<group>";
+		};
+		62ECA01926FA6D6900E8EBB7 /* Singleton */ = {
+			isa = PBXGroup;
+			children = (
 				6220D0CB26D640C400B8E046 /* AppURLHandler.swift */,
 			);
 			path = Singleton;
@@ -1587,6 +1598,7 @@
 				E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */,
 				53892770263C25230035E14B /* NextUpView.swift in Sources */,
 				625CB5682678B6FB00530A6E /* SplashView.swift in Sources */,
+				62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */,
 				535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */,

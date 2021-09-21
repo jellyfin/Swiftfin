@@ -7,14 +7,13 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Combine
 import Foundation
+import JellyfinAPI
 import Stinsen
 
 final class AppURLHandler {
     static let deepLinkScheme = "jellyfin"
-
-    @RouterObject
-    var router: HomeCoordinator.Router?
 
     enum AppURLState {
         case launched
@@ -35,6 +34,8 @@ final class AppURLHandler {
 
     static let shared = AppURLHandler()
 
+    var cancellables = Set<AnyCancellable>()
+
     var appURLState: AppURLState = .launched
     var launchURL: URL?
 }
@@ -46,9 +47,7 @@ extension AppURLHandler {
             return false
         }
         if AppURLHandler.shared.appURLState.allowedScheme(with: url) {
-            if launchURL == nil {
-                return processURL(url)
-            }
+            return processURL(url)
         } else {
             launchURL = url
         }
@@ -56,7 +55,8 @@ extension AppURLHandler {
     }
 
     func processLaunchedURLIfNeeded() {
-        guard let launchURL = launchURL else { return }
+        guard let launchURL = launchURL,
+              !launchURL.absoluteString.isEmpty else { return }
         if processDeepLink(url: launchURL) {
             self.launchURL = nil
         }
@@ -76,12 +76,35 @@ extension AppURLHandler {
 
         // /Users/{UserID}/Items/{ItemID}
         if url.pathComponents[safe: 2]?.lowercased() == "items",
+           let userID = url.pathComponents[safe: 1],
            let itemID = url.pathComponents[safe: 3]
         {
-//            router?.route(to: \.item(item: item))
+            // It would be nice if the ItemViewModel could be initialized to id later.
+            getItem(userID: userID, itemID: itemID) { item in
+                guard let item = item else { return }
+                NotificationCenter.default.post(name: Notification.Name("processDeepLink"), object: DeepLink.item(item))
+            }
+
             return true
         }
 
         return false
+    }
+}
+
+extension AppURLHandler {
+    func getItem(userID: String, itemID: String, completion: @escaping (BaseItemDto?) -> Void) {
+        UserLibraryAPI.getItem(userId: userID, itemId: itemID)
+            .sink(receiveCompletion: { innerCompletion in
+                switch innerCompletion {
+                case .failure:
+                    completion(nil)
+                default:
+                    break
+                }
+            }, receiveValue: { item in
+                completion(item)
+            })
+            .store(in: &cancellables)
     }
 }

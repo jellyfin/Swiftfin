@@ -38,4 +38,13 @@ final class MainTabCoordinator: TabCoordinatable {
         Image(systemName: "folder")
         Text("All Media")
     }
+
+    @ViewBuilder func customize(_ view: AnyView) -> some View {
+        view.onAppear {
+            AppURLHandler.shared.appURLState = .allowed
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {                
+                AppURLHandler.shared.processLaunchedURLIfNeeded()
+            }
+        }
+    }
 }

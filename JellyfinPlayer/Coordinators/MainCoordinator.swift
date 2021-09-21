@@ -39,6 +39,7 @@ import SwiftUI
             let nc = NotificationCenter.default
             nc.addObserver(self, selector: #selector(didLogIn), name: Notification.Name("didSignIn"), object: nil)
             nc.addObserver(self, selector: #selector(didLogOut), name: Notification.Name("didSignOut"), object: nil)
+            nc.addObserver(self, selector: #selector(processDeepLink), name: Notification.Name("processDeepLink"), object: nil)
         }
 
         @objc func didLogIn() {
@@ -49,6 +50,19 @@ import SwiftUI
         @objc func didLogOut() {
             LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
             root(\.connectToServer)
+        }
+
+        @objc func processDeepLink(_ notification: Notification) {
+            guard let deepLink = notification.object as? DeepLink else { return }
+            if let coordinator = hasRoot(\.mainTab) {
+                switch deepLink {
+                case let .item(item):
+                    coordinator.focusFirst(\.home)
+                        .child
+                        .popToRoot()
+                        .route(to: \.item, item)
+                }
+            }
         }
 
         func makeMainTab() -> MainTabCoordinator {
