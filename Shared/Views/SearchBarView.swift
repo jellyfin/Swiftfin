@@ -16,21 +16,13 @@ struct SearchBar: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            // TODO: Clean up the statement as previously done
-            //       in commit 93a25eb9c43eddd03e09df87722c086fb6cb6da4
-            //       after Swift 5.5 is released.
+            TextField(NSLocalizedString("Search...", comment: ""), text: $text)
+                .padding(8)
+                .padding(.horizontal, 16)
             #if os(iOS)
-            TextField(NSLocalizedString("Search...", comment: ""), text: $text)
-                .padding(8)
-                .padding(.horizontal, 16)
                 .background(Color(.systemGray6))
-                .cornerRadius(8)
-            #else
-            TextField(NSLocalizedString("Search...", comment: ""), text: $text)
-                .padding(8)
-                .padding(.horizontal, 16)
-                .cornerRadius(8)
             #endif
+                .cornerRadius(8)
             if !text.isEmpty {
                 Button(action: {
                     self.text = ""

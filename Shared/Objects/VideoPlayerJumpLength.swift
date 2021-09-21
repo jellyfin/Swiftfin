@@ -14,9 +14,7 @@ enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable {
     case thirty = 30
     case fifteen = 15
     case ten = 10
-
-    // TODO - Uncomment once iOS 15 released
-//    case five = 5
+    case five = 5
 
     var label: String {
         return "\(self.rawValue) seconds"
@@ -33,8 +31,8 @@ enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable {
             systemName = "goforward.15"
         case .ten:
             systemName = "goforward.10"
-//        case .five:
-//            systemName = "goforward.5"
+        case .five:
+            systemName = "goforward.5"
         }
 
         return UIImage(systemName: systemName, withConfiguration: config)!
@@ -51,8 +49,8 @@ enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable {
             systemName = "gobackward.15"
         case .ten:
             systemName = "gobackward.10"
-//        case .five:
-//            systemName = "gobackward.5"
+        case .five:
+            systemName = "gobackward.5"
         }
 
         return UIImage(systemName: systemName, withConfiguration: config)!
