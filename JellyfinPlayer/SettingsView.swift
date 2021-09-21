@@ -31,7 +31,7 @@ struct SettingsView: View {
                 HStack {
                     Text("User")
                     Spacer()
-                    Text(SessionManager.current.user.username ?? "")
+                    Text(SessionManager.current.user?.username ?? "")
                         .foregroundColor(.jellyfinPurple)
                 }
 
@@ -41,7 +41,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Server")
                         Spacer()
-                        Text(ServerEnvironment.current.server.name ?? "")
+                        Text(ServerEnvironment.current.server?.name ?? "")
                             .foregroundColor(.jellyfinPurple)
 
                         Image(systemName: "chevron.right")
