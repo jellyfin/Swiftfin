@@ -30,7 +30,7 @@ struct ImageView: View {
         .failure {
             ZStack {
                 Rectangle()
-                    .foregroundColor(Color(UIColor.systemFill))
+                   .foregroundColor(Color.systemFill)
                 
                 Text(failureInitials)
                     .font(.largeTitle)
