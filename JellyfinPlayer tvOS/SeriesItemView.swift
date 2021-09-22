@@ -53,11 +53,7 @@ struct SeriesItemView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
                     HStack {
-                        Text(viewModel.getRunYears()).font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                        if viewModel.item.officialRating != nil {
+                       if viewModel.item.officialRating != nil {
                             Text(viewModel.item.officialRating!).font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
@@ -137,16 +133,6 @@ struct SeriesItemView: View {
                             Spacer()
                         }
                     }.padding(.top, 50)
-
-                    if viewModel.nextUpItem != nil {
-                        Text("Next Up")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                        NavigationLink(destination: ItemView(item: viewModel.nextUpItem!)) {
-                            LandscapeItemElement(item: viewModel.nextUpItem!)
-                        }.buttonStyle(PlainNavigationLinkButtonStyle()).padding(.bottom, 1)
-                    }
-
                     if !viewModel.seasons.isEmpty {
                         Text("Seasons")
                             .font(.headline)

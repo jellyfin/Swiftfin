@@ -55,7 +55,7 @@ struct MediaInfoView: View {
                             Text(item.name ?? "Episode")
                                 .foregroundColor(.secondary)
 
-                            Text(item.getEpisodeLocator())
+                            Text(item.getEpisodeLocator() ?? "")
 
                             if let date = item.premiereDate {
                                 Text(formatDate(date: date))
