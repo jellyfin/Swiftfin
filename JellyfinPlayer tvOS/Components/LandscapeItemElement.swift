@@ -92,13 +92,13 @@ struct LandscapeItemElement: View {
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
             if focused {
                 if inSeasonView ?? false {
-                    Text("\(item.getEpisodeLocator()) • \(item.name ?? "")")
+                  Text("\(item.getEpisodeLocator() ?? "") • \(item.name ?? "")")
                         .font(.callout)
                         .fontWeight(.semibold)
                         .lineLimit(1)
                         .frame(width: 445)
                 } else {
-                    Text(item.type == "Episode" ? "\(item.seriesName ?? "") • \(item.getEpisodeLocator())" : item.name ?? "")
+                    Text(item.type == "Episode" ? "\(item.seriesName ?? "") • \(item.getEpisodeLocator() ?? "")" : item.name ?? "")
                         .font(.callout)
                         .fontWeight(.semibold)
                         .lineLimit(1)

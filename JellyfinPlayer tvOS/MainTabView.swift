@@ -46,7 +46,7 @@ struct MainTabView: View {
                     Image(systemName: "house")
 
                 }
-                .tag(Tab.allMedia)
+                .tag(Tab.home)
 
                 Text("Library")
                 .tabItem {
