@@ -26,15 +26,17 @@ final class LatestMediaViewModel: ViewModel {
 
     func requestLatestMedia() {
         LogManager.shared.log.debug("Requesting latest media for user id \(SessionManager.current.user.user_id ?? "NIL")")
-        UserLibraryAPI.getLatestMedia(userId: SessionManager.current.user.user_id!, parentId: libraryID,
+        UserLibraryAPI.getLatestMedia(userId: SessionManager.current.user.user_id!,
+                                      parentId: libraryID,
                                       fields: [
-                                          .primaryImageAspectRatio,
-                                          .seriesPrimaryImage,
-                                          .seasonUserData,
-                                          .overview,
-                                          .genres,
-                                          .people
+                                        .primaryImageAspectRatio,
+                                        .seriesPrimaryImage,
+                                        .seasonUserData,
+                                        .overview,
+                                        .genres,
+                                        .people
                                       ],
+                                      includeItemTypes: ["Series", "Movie"],
                                       enableUserData: true, limit: 12)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in

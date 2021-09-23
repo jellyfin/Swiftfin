@@ -16,12 +16,10 @@ struct LatestMediaView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
                 ForEach(viewModel.items, id: \.id) { item in
-                    if item.type == "Series" || item.type == "Movie" {
-                        Button {
-                            homeRouter.route(to: \.item, item)
-                        } label: {
-                            PortraitItemView(item: item)
-                        }
+                    Button {
+                        homeRouter.route(to: \.item, item)
+                    } label: {
+                        PortraitItemView(item: item)
                     }
                 }.padding(.trailing, 16)
             }.padding(.leading, 20)
