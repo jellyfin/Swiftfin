@@ -184,7 +184,6 @@
 		6220D0C626D62D8700B8E046 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0C526D62D8700B8E046 /* VideoPlayerCoordinator.swift */; };
 		6220D0C726D62D8700B8E046 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0C526D62D8700B8E046 /* VideoPlayerCoordinator.swift */; };
 		6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 6220D0C826D63F3700B8E046 /* Stinsen */; };
-		6220D0CA26D63F4D00B8E046 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29E9E26D1016600C1D2E7 /* MainCoordinator.swift */; };
 		6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0CB26D640C400B8E046 /* AppURLHandler.swift */; };
 		6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
 		6228B1C22670EB010067FD35 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBFD263B596B003A4E83 /* PersistenceController.swift */; };
@@ -224,6 +223,7 @@
 		62CB3F482685BB3B003D0A6F /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 62CB3F472685BB3B003D0A6F /* Defaults */; };
 		62CB3F4B2685BB77003D0A6F /* DefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62CB3F4A2685BB77003D0A6F /* DefaultsExtension.swift */; };
 		62CB3F4C2685BB77003D0A6F /* DefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62CB3F4A2685BB77003D0A6F /* DefaultsExtension.swift */; };
+		62D8535B26FC631300FDFC59 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29E9E26D1016600C1D2E7 /* MainCoordinator.swift */; };
 		62E632DA267D2BC40063E547 /* LatestMediaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632D9267D2BC40063E547 /* LatestMediaViewModel.swift */; };
 		62E632DC267D2E130063E547 /* LibrarySearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632DB267D2E130063E547 /* LibrarySearchViewModel.swift */; };
 		62E632DD267D2E130063E547 /* LibrarySearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E632DB267D2E130063E547 /* LibrarySearchViewModel.swift */; };
@@ -265,9 +265,7 @@
 		E18845F626DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F826DEA9C900B0C5B7 /* ItemViewBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */; };
 		E188460026DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845FF26DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift */; };
-		E188460426DEF04800B0C5B7 /* CardVStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E188460326DEF04800B0C5B7 /* CardVStackView.swift */; };
 		E188460426DEF04800B0C5B7 /* EpisodeCardVStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E188460326DEF04800B0C5B7 /* EpisodeCardVStackView.swift */; };
-		E188460526DEF04800B0C5B7 /* EpisodeCardVStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E188460326DEF04800B0C5B7 /* EpisodeCardVStackView.swift */; };
 		E1AD104A26D94822003E4A08 /* DetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104926D94822003E4A08 /* DetailItem.swift */; };
 		E1AD104B26D94822003E4A08 /* DetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104926D94822003E4A08 /* DetailItem.swift */; };
 		E1AD104D26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */; };
@@ -1481,7 +1479,6 @@
 				E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */,
 				536D3D88267C17350004248C /* PublicUserButton.swift in Sources */,
-				6220D0CA26D63F4D00B8E046 /* MainCoordinator.swift in Sources */,
 				62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
 				53CD2A42268A4B38002ABD4E /* MovieItemView.swift in Sources */,
@@ -1520,6 +1517,7 @@
 				5398514626B64DBB00101B49 /* SearchablePickerView.swift in Sources */,
 				53ABFDEE26799DCD00886593 /* ImageView.swift in Sources */,
 				62CB3F4C2685BB77003D0A6F /* DefaultsExtension.swift in Sources */,
+				62D8535B26FC631300FDFC59 /* MainCoordinator.swift in Sources */,
 				62E632E4267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
 				5358706C2669D21700D05A09 /* PersistenceController.swift in Sources */,
 				53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */,
@@ -1541,8 +1539,6 @@
 				535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */,
 				53ABFDE4267974EF00886593 /* LibraryListViewModel.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
-				E1AD105D26D9ABDD003E4A08 /* PillHStackView.swift in Sources */,
-				E188460526DEF04800B0C5B7 /* EpisodeCardVStackView.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				6220D0BE26D60D6600B8E046 /* ItemViewModel.swift in Sources */,
 				531690FA267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift in Sources */,

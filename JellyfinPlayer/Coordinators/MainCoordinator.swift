@@ -77,13 +77,12 @@ import SwiftUI
 #elseif os(tvOS)
     // temp for fixing build error
     final class MainCoordinator: NavigationCoordinatable {
-        var stack: NavigationStack<MainCoordinator>
+        var stack = NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
 
-        @Root var mainTab = makeMainTab
-        @Root var connectToServer = makeMainTab
+        @Root var mainTab = makeEmpty
 
-        func makeMainTab() -> NavigationViewCoordinator<MainTabCoordinator> {
-            return NavigationViewCoordinator(MainTabCoordinator())
+        @ViewBuilder func makeEmpty() -> some View {
+            EmptyView()
         }
     }
 #endif
