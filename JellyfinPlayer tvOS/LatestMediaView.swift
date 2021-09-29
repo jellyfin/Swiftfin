@@ -42,15 +42,13 @@ struct LatestMediaView: View {
                 LazyHStack {
                     Spacer().frame(width: 45)
                     ForEach(items, id: \.id) { item in
-                        if item.type == "Series" || item.type == "Movie" {
                             NavigationLink(destination: LazyView { ItemView(item: item) }) {
                                 PortraitItemElement(item: item)
                             }.buttonStyle(PlainNavigationLinkButtonStyle())
-                        }
                     }
                     Spacer().frame(width: 45)
                 }
-            }.frame(height: 350)
+            }.frame(height: 396)
             .onAppear(perform: onAppear)
     }
 }
