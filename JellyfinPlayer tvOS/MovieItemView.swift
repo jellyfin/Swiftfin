@@ -45,6 +45,7 @@ struct MovieItemView: View {
         ZStack {
             ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920), bh: viewModel.item.getBackdropImageBlurHash())
                 .opacity(0.4)
+                .ignoresSafeArea()
             ScrollView {
                 LazyVStack(alignment: .leading) {
                     Text(viewModel.item.name ?? "")

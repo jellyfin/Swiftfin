@@ -47,6 +47,7 @@ struct LandscapeItemElement: View {
             ImageView(src: (item.type == "Episode" && !(inSeasonView ?? false) ? item.getSeriesBackdropImage(maxWidth: 445) : item.getBackdropImage(maxWidth: 445)), bh: item.type == "Episode" ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
                 .frame(width: 445, height: 250)
                 .cornerRadius(10)
+                .ignoresSafeArea()
                 .overlay(
                     ZStack {
                         if item.userData?.played ?? false {

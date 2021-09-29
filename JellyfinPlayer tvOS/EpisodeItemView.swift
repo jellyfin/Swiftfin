@@ -41,6 +41,7 @@ struct EpisodeItemView: View {
         ZStack {
             ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920), bh: viewModel.item.getBackdropImageBlurHash())
                 .opacity(0.4)
+                .ignoresSafeArea()
             LazyVStack(alignment: .leading) {
                 Text(viewModel.item.name ?? "")
                     .font(.title)
@@ -129,7 +130,7 @@ struct EpisodeItemView: View {
                                     .font(.caption)
                             }
                             VStack {
-                                NavigationLink(destination: VideoPlayerView(item: viewModel.item)) {
+                              NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
                                     MediaViewActionButton(icon: "play.fill")
                                 }
                                 Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : "Play")
