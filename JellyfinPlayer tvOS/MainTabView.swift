@@ -48,7 +48,7 @@ struct MainTabView: View {
                 }
                 .tag(Tab.home)
 
-                Text("Library")
+                LibraryListView()
                 .tabItem {
                     Text("All Media")
                     Image(systemName: "folder")
