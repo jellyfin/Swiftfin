@@ -55,6 +55,7 @@ struct PortraitItemElement: View {
                         }
                     }.padding(2)
                     .opacity(1), alignment: .topTrailing).opacity(1)
+            Text(item.title)
         }
         .onChange(of: envFocused) { envFocus in
             withAnimation(.linear(duration: 0.15)) {

@@ -29,7 +29,6 @@ struct LibraryListView: View {
                         }
                     }
                     .padding(16)
-                    .background(Color.white)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
                 .cornerRadius(10)
@@ -49,7 +48,6 @@ struct LibraryListView: View {
                         }
                     }
                     .padding(16)
-                    .background(Color.white)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
                 .cornerRadius(10)
