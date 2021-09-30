@@ -73,4 +73,17 @@ enum ItemType: String {
     case movie = "Movie"
     case series = "Series"
     case season = "Season"
+  
+    var localized: String {
+        switch self {
+        case .episode:
+            return "Episodes"
+        case .movie:
+            return "Movies"
+        case .series:
+            return "Shows"
+        default:
+            return ""
+        }
+    }
 }

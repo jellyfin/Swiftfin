@@ -101,19 +101,3 @@ struct LibrarySearchView: View {
         }
     }
 }
-
-private extension ItemType {
-
-    var localized: String {
-        switch self {
-        case .episode:
-            return "Episodes"
-        case .movie:
-            return "Movies"
-        case .series:
-            return "Shows"
-        default:
-            return ""
-        }
-    }
-}
