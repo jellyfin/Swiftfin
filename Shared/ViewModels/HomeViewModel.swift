@@ -24,7 +24,6 @@ final class HomeViewModel: ViewModel {
 
     override init() {
         super.init()
-
         refresh()
     }
 

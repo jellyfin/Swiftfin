@@ -5,9 +5,10 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
-import MessageUI
 import Defaults
+import MessageUI
+import Stinsen
+import SwiftUI
 
 // The notification we'll send when a shake gesture happens.
 extension UIDevice {
@@ -16,18 +17,18 @@ extension UIDevice {
 
 //  Override the default behavior of shake gestures to send our notification instead.
 extension UIWindow {
-     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+    override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
             NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
         }
-     }
+    }
 }
 
 // A view modifier that detects shaking and calls a function of our choosing.
 struct DeviceShakeViewModifier: ViewModifier {
     let action: () -> Void
 
-    func body(content: Content) -> some View {
+    func body(content: Self.Content) -> some View {
         content
             .onAppear()
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.deviceDidShakeNotification)) { _ in
@@ -39,20 +40,20 @@ struct DeviceShakeViewModifier: ViewModifier {
 // A View extension to make the modifier easier to use.
 extension View {
     func onShake(perform action: @escaping () -> Void) -> some View {
-        self.modifier(DeviceShakeViewModifier(action: action))
+        modifier(DeviceShakeViewModifier(action: action))
     }
 }
 
 extension UIDevice {
     var hasNotch: Bool {
-        let bottom = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.safeAreaInsets.bottom ?? 0
+        let bottom = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.safeAreaInsets.bottom ?? 0
         return bottom > 0
     }
 }
 
 extension View {
     func withHostingWindow(_ callback: @escaping (UIWindow?) -> Void) -> some View {
-        self.background(HostingWindowFinder(callback: callback))
+        background(HostingWindowFinder(callback: callback))
     }
 }
 
@@ -67,8 +68,7 @@ struct HostingWindowFinder: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-    }
+    func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
 struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
@@ -105,18 +105,17 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
     init<V: View>(wrappedView: V) {
         let box = Box()
         super.init(rootView: AnyView(wrappedView
-            .onPreferenceChange(PrefersHomeIndicatorAutoHiddenPreferenceKey.self) {
-                box.value?._prefersHomeIndicatorAutoHidden = $0
-            }.onPreferenceChange(SupportedOrientationsPreferenceKey.self) {
-                box.value?._orientations = $0
-            }.onPreferenceChange(ViewPreferenceKey.self) {
-                box.value?._viewPreference = $0
-            }
-        ))
+                .onPreferenceChange(PrefersHomeIndicatorAutoHiddenPreferenceKey.self) {
+                    box.value?._prefersHomeIndicatorAutoHidden = $0
+                }.onPreferenceChange(SupportedOrientationsPreferenceKey.self) {
+                    box.value?._orientations = $0
+                }.onPreferenceChange(ViewPreferenceKey.self) {
+                    box.value?._viewPreference = $0
+                }))
         box.value = self
     }
 
-    @objc required dynamic init?(coder aDecoder: NSCoder) {
+    @objc dynamic required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         super.modalPresentationStyle = .fullScreen
     }
@@ -131,6 +130,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
     public var _prefersHomeIndicatorAutoHidden = false {
         didSet { setNeedsUpdateOfHomeIndicatorAutoHidden() }
     }
+
     override var prefersHomeIndicatorAutoHidden: Bool {
         _prefersHomeIndicatorAutoHidden
     }
@@ -146,6 +146,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
             }
         }
     }
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         _orientations
     }
@@ -176,7 +177,7 @@ extension View {
 
 class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
     public static let shared = EmailHelper()
-    private override init() {
+    override private init() {
         //
     }
 
@@ -192,7 +193,9 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
         let data = fileManager.contents(atPath: logURL.path)
 
         picker.setSubject("[DEV-BUG] SwiftFin")
-        picker.setMessageBody("Please don't edit this email.\n Please don't change the subject. \nUDID: \(UIDevice.current.identifierForVendor?.uuidString ?? "NIL")\n", isHTML: false)
+        picker
+            .setMessageBody("Please don't edit this email.\n Please don't change the subject. \nUDID: \(UIDevice.current.identifierForVendor?.uuidString ?? "NIL")\n",
+                            isHTML: false)
         picker.setToRecipients(["SwiftFin Bug Reports <swiftfin-bugs@jellyfin.org>"])
         picker.addAttachmentData(data!, mimeType: "text/plain", fileName: logURL.lastPathComponent)
         picker.mailComposeDelegate = self
@@ -218,16 +221,21 @@ struct JellyfinPlayerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SplashView()
+            EmptyView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear(perform: {
                     setupAppearance()
                 })
                 .withHostingWindow { window in
-                    window?.rootViewController = PreferenceUIHostingController(wrappedView: SplashView().environment(\.managedObjectContext, persistenceController.container.viewContext))
+                    window?
+                        .rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view()
+                            .environment(\.managedObjectContext, persistenceController.container.viewContext))
                 }
                 .onShake {
                     EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
+                }
+                .onOpenURL { url in
+                    AppURLHandler.shared.processDeepLink(url: url)
                 }
         }
     }
@@ -238,7 +246,6 @@ struct JellyfinPlayerApp: App {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-
     static var orientationLock = UIInterfaceOrientationMask.all
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {

@@ -7,19 +7,21 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 
 struct SplashView: View {
+    @EnvironmentObject var mainRouter: MainCoordinator.Router
     @StateObject var viewModel = SplashViewModel()
 
     var body: some View {
-        if viewModel.isLoggedIn {
-            MainTabView()
-        } else {
-            NavigationView {
-                ConnectToServerView()
+        ProgressView()
+            .onReceive(viewModel.$isLoggedIn) { flag in
+                if flag {
+                    mainRouter.root(\.mainTab)
+                } else {
+                    mainRouter.root(\.connectToServer)
+                }
             }
-            .navigationViewStyle(StackNavigationViewStyle())
-        }
     }
 }

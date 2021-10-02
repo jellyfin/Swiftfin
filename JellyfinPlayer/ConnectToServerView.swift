@@ -6,8 +6,10 @@
  */
 
 import SwiftUI
+import Stinsen
 
 struct ConnectToServerView: View {
+    @EnvironmentObject var mainRouter: MainCoordinator.Router
     @StateObject var viewModel = ConnectToServerViewModel()
     @State var username = ""
     @State var password = ""
@@ -59,6 +61,7 @@ struct ConnectToServerView: View {
                                         if SessionManager.current.doesUserHaveSavedSession(userID: publicUser.id!) {
                                             let user = SessionManager.current.getSavedSession(userID: publicUser.id!)
                                             SessionManager.current.loginWithSavedSession(user: user)
+                                            mainRouter.root(\.mainTab)
                                         } else {
                                             username = publicUser.name ?? ""
                                             viewModel.selectedPublicUser = publicUser
@@ -174,5 +177,8 @@ struct ConnectToServerView: View {
                   dismissButton: .cancel())
         }
         .navigationTitle(NSLocalizedString("Connect to Server", comment: ""))
+        .onAppear {            
+            AppURLHandler.shared.appURLState = .allowedInLogin
+        }
     }
 }

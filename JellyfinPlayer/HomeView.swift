@@ -11,9 +11,9 @@ import Foundation
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject var homeRouter: HomeCoordinator.Router
     @StateObject var viewModel = HomeViewModel()
-    @State var showingSettings = false
-    
+
     init() {
         let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
         let barAppearance = UINavigationBar.appearance()
@@ -43,16 +43,19 @@ struct HomeView: View {
                                     .font(.title2)
                                     .fontWeight(.bold)
                                 Spacer()
-                                NavigationLink(destination: LazyView {
-                                    LibraryView(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? "")
-                                }) {
+                                Button {
+                                    homeRouter
+                                        .route(to: \.library, (viewModel: .init(parentID: libraryID,
+                                                                                filters: viewModel.recentFilterSet),
+                                                               title: library?.name ?? ""))
+                                } label: {
                                     HStack {
                                         Text("See All").font(.subheadline).fontWeight(.bold)
                                         Image(systemName: "chevron.right").font(Font.subheadline.bold())
                                     }
                                 }
                             }.padding(.leading, 16)
-                            .padding(.trailing, 16)
+                                .padding(.trailing, 16)
                             LatestMediaView(viewModel: .init(libraryID: libraryID))
                         }
                     }
@@ -68,14 +71,11 @@ struct HomeView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
-                        showingSettings = true
+                        homeRouter.route(to: \.settings)
                     } label: {
                         Image(systemName: "gear")
                     }
                 }
-            }
-            .fullScreenCover(isPresented: $showingSettings) {
-                SettingsView(viewModel: SettingsViewModel(), close: $showingSettings)
             }
     }
 }

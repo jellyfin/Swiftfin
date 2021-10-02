@@ -142,14 +142,14 @@ struct NextUpEntryView: View {
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             } else {
                 switch family {
-                    case .systemSmall:
-                        small(item: entry.items.first)
-                    case .systemMedium:
-                        medium(items: entry.items)
-                    case .systemLarge:
-                        large(items: entry.items)
-                    default:
-                        EmptyView()
+                case .systemSmall:
+                    small(item: entry.items.first)
+                case .systemMedium:
+                    medium(items: entry.items)
+                case .systemLarge:
+                    large(items: entry.items)
+                default:
+                    EmptyView()
                 }
             }
         }
@@ -198,51 +198,55 @@ extension NextUpEntryView {
     }
 
     func smallVideoView(item: (BaseItemDto, UIImage?)) -> some View {
-        VStack(alignment: .leading) {
-            if let image = item.1 {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(.init(width: 1, height: 0.5625), contentMode: .fill)
-                    .clipped()
-                    .cornerRadius(8)
-                    .shadow(radius: 8)
-            }
-            Text(item.0.seriesName ?? "")
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
-                .lineLimit(1)
-            Text("\(item.0.name ?? "") · S\(item.0.parentIndexNumber ?? 0):E\(item.0.indexNumber ?? 0)")
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(.secondary)
-                .lineLimit(1)
-        }
-    }
-
-    func largeVideoView(item: (BaseItemDto, UIImage?)) -> some View {
-        HStack(spacing: 20) {
-            if let image = item.1 {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(.init(width: 1, height: 0.5625), contentMode: .fill)
-                    .clipped()
-                    .cornerRadius(8)
-                    .shadow(radius: 8)
-            }
-            VStack(alignment: .leading, spacing: 8) {
+        Link(destination: URL(string: "widget-extension://Users/\(SessionManager.current.user.user_id!)/Items/\(item.0.id!)")!, label: {
+            VStack(alignment: .leading) {
+                if let image = item.1 {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(.init(width: 1, height: 0.5625), contentMode: .fill)
+                        .clipped()
+                        .cornerRadius(8)
+                        .shadow(radius: 8)
+                }
                 Text(item.0.seriesName ?? "")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .lineLimit(1)
                 Text("\(item.0.name ?? "") · S\(item.0.parentIndexNumber ?? 0):E\(item.0.indexNumber ?? 0)")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.secondary)
-                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .lineLimit(1)
             }
-        }
+        })
+    }
+
+    func largeVideoView(item: (BaseItemDto, UIImage?)) -> some View {
+        Link(destination: URL(string: "widget-extension://Users/\(SessionManager.current.user.user_id!)/Items/\(item.0.id!)")!, label: {
+            HStack(spacing: 20) {
+                if let image = item.1 {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(.init(width: 1, height: 0.5625), contentMode: .fill)
+                        .clipped()
+                        .cornerRadius(8)
+                        .shadow(radius: 8)
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(item.0.seriesName ?? "")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    Text("\(item.0.name ?? "") · S\(item.0.parentIndexNumber ?? 0):E\(item.0.indexNumber ?? 0)")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        })
     }
 }
 
@@ -281,33 +285,36 @@ extension NextUpEntryView {
     func large(items: [(BaseItemDto, UIImage?)]) -> some View {
         VStack(spacing: 0) {
             if let firstItem = items[safe: 0] {
-                ZStack(alignment: .topTrailing) {
-                    ZStack(alignment: .bottomLeading) {
-                        if let image = firstItem.1 {
-                            Image(uiImage: image)
-                                .centerCropped()
-                                .innerShadow(color: Color.black.opacity(0.5), radius: 0.5)
-                        }
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(firstItem.0.seriesName ?? "")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                            Text("\(firstItem.0.name ?? "") · S\(firstItem.0.parentIndexNumber ?? 0):E\(firstItem.0.indexNumber ?? 0)")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.gray)
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        }
-                        .shadow(radius: 8)
-                        .padding(12)
-                    }
-                    headerSymbol
-                        .padding(12)
-                }
-                .clipped()
-                .shadow(radius: 8)
+                Link(destination: URL(string: "widget-extension://Users/\(SessionManager.current.user.user_id!)/Items/\(firstItem.0.id!)")!,
+                     label: {
+                         ZStack(alignment: .topTrailing) {
+                             ZStack(alignment: .bottomLeading) {
+                                 if let image = firstItem.1 {
+                                     Image(uiImage: image)
+                                         .centerCropped()
+                                         .innerShadow(color: Color.black.opacity(0.5), radius: 0.5)
+                                 }
+                                 VStack(alignment: .leading, spacing: 8) {
+                                     Text(firstItem.0.seriesName ?? "")
+                                         .font(.caption)
+                                         .fontWeight(.semibold)
+                                         .foregroundColor(.white)
+                                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                     Text("\(firstItem.0.name ?? "") · S\(firstItem.0.parentIndexNumber ?? 0):E\(firstItem.0.indexNumber ?? 0)")
+                                         .font(.caption)
+                                         .fontWeight(.semibold)
+                                         .foregroundColor(.gray)
+                                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                 }
+                                 .shadow(radius: 8)
+                                 .padding(12)
+                             }
+                             headerSymbol
+                                 .padding(12)
+                         }
+                         .clipped()
+                         .shadow(radius: 8)
+                     })
             }
             VStack(spacing: 8) {
                 if let secondItem = items[safe: 1] {
@@ -354,7 +361,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "WidgetHeaderSymbol"))
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
@@ -365,7 +372,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name2", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series2"),
-                                              UIImage(named: "WidgetHeaderSymbol"))
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
@@ -380,7 +387,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "WidgetHeaderSymbol"))
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
@@ -392,7 +399,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name2", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series2"),
-                                              UIImage(named: "WidgetHeaderSymbol"))
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
@@ -405,7 +412,7 @@ struct NextUpWidget_Previews: PreviewProvider {
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                              UIImage(named: "WidgetHeaderSymbol"))
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
@@ -415,7 +422,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "WidgetHeaderSymbol"))
+                                              UIImage(named: "WidgetHeaderSymbol")),
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))

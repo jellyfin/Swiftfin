@@ -8,7 +8,6 @@
   */
 
 import Foundation
-import Foundation
 import JellyfinAPI
 
 class ItemViewModel: ViewModel {

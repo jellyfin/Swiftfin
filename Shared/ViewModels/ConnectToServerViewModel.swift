@@ -10,8 +10,11 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import Stinsen
 
 final class ConnectToServerViewModel: ViewModel {
+    @RouterObject
+    var main: MainCoordinator.Router?
 
     @Published var isConnectedServer = false
 
@@ -23,13 +26,14 @@ final class ConnectToServerViewModel: ViewModel {
     @Published var publicUsers = [UserDto]()
     @Published var selectedPublicUser = UserDto()
 
-    private let discovery: ServerDiscovery = ServerDiscovery()
+    private let discovery = ServerDiscovery()
     @Published var servers: [ServerDiscovery.ServerLookupResponse] = []
     @Published var searching = false
 
     func getPublicUsers() {
         if ServerEnvironment.current.server != nil {
-            LogManager.shared.log.debug("Attempting to read public users from \(ServerEnvironment.current.server.baseURI!)", tag: "getPublicUsers")
+            LogManager.shared.log.debug("Attempting to read public users from \(ServerEnvironment.current.server.baseURI!)",
+                                        tag: "getPublicUsers")
             UserAPI.getPublicUsers()
                 .trackActivity(loading)
                 .sink(receiveCompletion: { completion in
@@ -46,28 +50,28 @@ final class ConnectToServerViewModel: ViewModel {
     }
 
     func hidePublicUsers() {
-        self.lastPublicUsers = publicUsers
+        lastPublicUsers = publicUsers
         publicUsers = []
     }
 
     func showPublicUsers() {
-        self.publicUsers = lastPublicUsers
+        publicUsers = lastPublicUsers
         lastPublicUsers = []
     }
 
     func connectToServer() {
-        
         #if targetEnvironment(simulator)
-        if uriSubject.value == "localhost" {
-            uriSubject.value = "http://localhost:8096"
-        }
+            if uriSubject.value == "localhost" {
+                uriSubject.value = "http://localhost:8096"
+            }
         #endif
-        
+
         LogManager.shared.log.debug("Attempting to connect to server at \"\(uriSubject.value)\"", tag: "connectToServer")
         ServerEnvironment.current.create(with: uriSubject.value)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer", completion: completion)
+                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
+                                           completion: completion)
             }, receiveValue: { _ in
                 LogManager.shared.log.debug("Connected to server at \"\(self.uriSubject.value)\"", tag: "connectToServer")
                 self.getPublicUsers()
@@ -77,7 +81,7 @@ final class ConnectToServerViewModel: ViewModel {
 
     func connectToServer(at url: URL) {
         uriSubject.send(url.absoluteString)
-        self.connectToServer()
+        connectToServer()
     }
 
     func discoverServers() {
@@ -88,7 +92,7 @@ final class ConnectToServerViewModel: ViewModel {
             self.searching = false
         }
 
-        discovery.locateServer { [self] (server) in
+        discovery.locateServer { [self] server in
             if let server = server, !servers.contains(server) {
                 servers.append(server)
             }
@@ -98,13 +102,16 @@ final class ConnectToServerViewModel: ViewModel {
 
     func login() {
         LogManager.shared.log.debug("Attempting to login to server at \"\(uriSubject.value)\"", tag: "login")
-        LogManager.shared.log.debug("username == \"\": \(usernameSubject.value.isEmpty), password == \"\": \(passwordSubject.value.isEmpty)", tag: "login")
+        LogManager.shared.log
+            .debug("username == \"\": \(usernameSubject.value.isEmpty), password == \"\": \(passwordSubject.value.isEmpty)",
+                   tag: "login")
         SessionManager.current.login(username: usernameSubject.value, password: passwordSubject.value)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login", completion: completion)
-            }, receiveValue: { _ in
-
+                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login",
+                                           completion: completion)
+            }, receiveValue: { [weak self] _ in
+                self?.main?.root(\.mainTab)
             })
             .store(in: &cancellables)
     }

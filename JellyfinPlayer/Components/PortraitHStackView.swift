@@ -17,20 +17,20 @@ public protocol PortraitImageStackable {
     var failureInitials: String { get }
 }
 
-struct PortraitImageHStackView<TopBarView: View, NavigationView: View, ItemType: PortraitImageStackable>: View {
+struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackable>: View {
     
     let items: [ItemType]
     let maxWidth: Int
     let horizontalAlignment: HorizontalAlignment
     let topBarView: () -> TopBarView
-    let navigationView: (ItemType) -> NavigationView
+    let selectedAction: (ItemType) -> Void
     
-    init(items: [ItemType], maxWidth: Int, horizontalAlignment: HorizontalAlignment = .leading, topBarView: @escaping () -> TopBarView, navigationView: @escaping (ItemType) -> NavigationView) {
+    init(items: [ItemType], maxWidth: Int, horizontalAlignment: HorizontalAlignment = .leading, topBarView: @escaping () -> TopBarView, selectedAction: @escaping (ItemType) -> Void) {
         self.items = items
         self.maxWidth = maxWidth
         self.horizontalAlignment = horizontalAlignment
         self.topBarView = topBarView
-        self.navigationView = navigationView
+        self.selectedAction = selectedAction
     }
     
     var body: some View {
@@ -45,38 +45,36 @@ struct PortraitImageHStackView<TopBarView: View, NavigationView: View, ItemType:
                         Spacer().frame(width: 16)
                         
                         ForEach(items, id: \.title) { item in
-                            NavigationLink(
-                                destination: LazyView {
-                                    navigationView(item)
-                                },
-                                label: {
-                                    VStack {
-                                        ImageView(src: item.imageURLContsructor(maxWidth: maxWidth),
-                                                  bh: item.blurHash,
-                                                  failureInitials: item.failureInitials)
-                                            .frame(width: 100, height: CGFloat(maxWidth))
-                                            .cornerRadius(10)
-                                            .shadow(radius: 4, y: 2)
-                                        
-                                        Text(item.title)
-                                            .font(.footnote)
-                                            .fontWeight(.regular)
+                            Button {
+                                selectedAction(item)
+                            } label: {
+                                VStack {
+                                    ImageView(src: item.imageURLContsructor(maxWidth: maxWidth),
+                                              bh: item.blurHash,
+                                              failureInitials: item.failureInitials)
+                                        .frame(width: 100, height: CGFloat(maxWidth))
+                                        .cornerRadius(10)
+                                        .shadow(radius: 4, y: 2)
+                                    
+                                    Text(item.title)
+                                        .font(.footnote)
+                                        .fontWeight(.regular)
+                                        .frame(width: 100)
+                                        .foregroundColor(.primary)
+                                        .multilineTextAlignment(.center)
+                                        .lineLimit(2)
+                                    
+                                    if let description = item.description {
+                                        Text(description)
+                                            .font(.caption)
+                                            .fontWeight(.medium)
                                             .frame(width: 100)
-                                            .foregroundColor(.primary)
+                                            .foregroundColor(.secondary)
                                             .multilineTextAlignment(.center)
                                             .lineLimit(2)
-                                        
-                                        if let description = item.description {
-                                            Text(description)
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                                .frame(width: 100)
-                                                .foregroundColor(.secondary)
-                                                .multilineTextAlignment(.center)
-                                                .lineLimit(2)
-                                        }
                                     }
-                                })
+                                }
+                            }
                         }
                         Spacer().frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
                     }

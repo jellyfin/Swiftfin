@@ -7,11 +7,13 @@
 
 import Combine
 import JellyfinAPI
+import Stinsen
 import SwiftUI
 
 struct LibrarySearchView: View {
+    @EnvironmentObject var searchRouter: SearchCoordinator.Router
     @StateObject var viewModel: LibrarySearchViewModel
-    @State var searchQuery = ""
+    @State private var searchQuery = ""
 
     @State private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
 
@@ -78,7 +80,11 @@ struct LibrarySearchView: View {
                     if !items.isEmpty {
                         LazyVGrid(columns: tracks) {
                             ForEach(items, id: \.id) { item in
-                                PortraitItemView(item: item)
+                                Button {
+                                    searchRouter.route(to: \.item, item)
+                                } label: {
+                                    PortraitItemView(item: item)
+                                }
                             }
                         }
                         .padding(.bottom, 16)
@@ -106,7 +112,6 @@ struct LibrarySearchView: View {
 }
 
 private extension ItemType {
-
     var localized: String {
         switch self {
         case .episode:
