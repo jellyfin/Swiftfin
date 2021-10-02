@@ -21,6 +21,7 @@ struct SeasonItemView: View {
         ZStack {
             ImageView(src: viewModel.item.getSeriesBackdropImage(maxWidth: 1920), bh: viewModel.item.getSeriesBackdropImageBlurHash())
                 .opacity(0.4)
+                .ignoresSafeArea()
             ScrollView {
                 LazyVStack(alignment: .leading) {
                     Text("\(viewModel.item.seriesName ?? "") • \(viewModel.item.name ?? "")")

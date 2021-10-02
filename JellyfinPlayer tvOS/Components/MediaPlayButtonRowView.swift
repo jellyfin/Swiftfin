@@ -17,7 +17,7 @@ struct MediaPlayButtonRowView: View {
     var body: some View {
         HStack {
             VStack {
-                NavigationLink(destination: VideoPlayerView(item: viewModel.item)) {
+              NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
                     MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
                 }
                 Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : "Play")

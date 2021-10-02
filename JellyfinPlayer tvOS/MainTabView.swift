@@ -23,6 +23,7 @@ struct MainTabView: View {
                 ImageView(src: viewModel.lastBackgroundURL!, bh: viewModel.backgroundBlurHash)
                     .frame(minWidth: 100, maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
                     .opacity(lastBackdropAnim ? 0.4 : 0)
+                    .ignoresSafeArea()
             }
             if viewModel.backgroundURL != nil {
                 ImageView(src: viewModel.backgroundURL!, bh: viewModel.backgroundBlurHash)
@@ -36,6 +37,7 @@ struct MainTabView: View {
                             backdropAnim = true
                         }
                     }
+                    .ignoresSafeArea()
             }
 
             TabView(selection: $tabSelection) {
@@ -44,11 +46,10 @@ struct MainTabView: View {
                 .tabItem {
                     Text("Home")
                     Image(systemName: "house")
-
                 }
                 .tag(Tab.home)
 
-                Text("Library")
+                LibraryListView()
                 .tabItem {
                     Text("All Media")
                     Image(systemName: "folder")

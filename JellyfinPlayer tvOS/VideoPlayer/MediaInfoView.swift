@@ -43,6 +43,7 @@ struct MediaInfoView: View {
                     ImageView(src: item.type == "Episode" ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200), bh: item.type == "Episode" ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())
                         .frame(width: 200, height: 300)
                         .cornerRadius(10)
+                        .ignoresSafeArea()
                     Spacer()
                 }
 

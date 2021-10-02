@@ -73,7 +73,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         super.didUpdateFocus(in: context, with: coordinator)
 
         // Check if focused on the tab bar, allows for swipe up to dismiss the info panel
-        if context.nextFocusedView!.description.contains("UITabBarButton") {
+      if let nextFocused = context.nextFocusedView,
+         nextFocused.description.contains("UITabBarButton") {
             // Set value after half a second so info panel is not dismissed instantly when swiping up from content
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.focusedOnTabBar  = true
