@@ -55,6 +55,39 @@ private struct ItemView: View {
         }
     }
 
+    @ViewBuilder
+    var toolbarItemContent: some View {
+        switch viewModel.item.itemType {
+        case .season:
+            Menu {
+                Button {
+                    (viewModel as? SeasonItemViewModel)?.routeToSeriesItem()
+                } label: {
+                    Label("Show Series", systemImage: "text.below.photo")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+        case .episode:
+            Menu {
+                Button {
+                    (viewModel as? EpisodeItemViewModel)?.routeToSeriesItem()
+                } label: {
+                    Label("Show Series", systemImage: "text.below.photo")
+                }
+                Button {
+                    (viewModel as? EpisodeItemViewModel)?.routeToSeasonItem()
+                } label: {
+                    Label("Show Season", systemImage: "square.fill.text.grid.1x2")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+        default:
+            EmptyView()
+        }
+    }
+
     var body: some View {
         Group {
             if hSizeClass == .compact && vSizeClass == .regular {
@@ -70,6 +103,11 @@ private struct ItemView: View {
         .onReceive(videoPlayerItem.$shouldShowPlayer) { flag in
             guard flag else { return }
             self.itemRouter.route(to: \.videoPlayer, viewModel.item)
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                toolbarItemContent
+            }
         }
     }
 }
