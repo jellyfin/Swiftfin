@@ -10,9 +10,10 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import Stinsen
 
 final class SeasonItemViewModel: ItemViewModel {
-
+    @RouterObject var itemRouter: ItemCoordinator.Router?
     @Published private(set) var episodes: [BaseItemDto] = []
 
     override init(item: BaseItemDto) {
@@ -21,7 +22,7 @@ final class SeasonItemViewModel: ItemViewModel {
 
         requestEpisodes()
     }
-    
+
     override func playButtonText() -> String {
         guard let playButtonItem = playButtonItem else { return "Play" }
         guard let episodeLocator = playButtonItem.getEpisodeLocator() else { return "Play" }
@@ -29,7 +30,8 @@ final class SeasonItemViewModel: ItemViewModel {
     }
 
     private func requestEpisodes() {
-        LogManager.shared.log.debug("Getting episodes in season \(self.item.id!) (\(self.item.name!)) of show \(self.item.seriesId!) (\(self.item.seriesName!))")
+        LogManager.shared.log
+            .debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
         TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.user.user_id!,
                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                seasonId: item.id ?? "")
@@ -39,20 +41,20 @@ final class SeasonItemViewModel: ItemViewModel {
             }, receiveValue: { [weak self] response in
                 self?.episodes = response.items ?? []
                 LogManager.shared.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")
-                
+
                 self?.setNextUpInSeason()
             })
             .store(in: &cancellables)
     }
-    
+
     // Sets the play button item to the "Next up" in the season based upon
     //     the watched status of episodes in the season.
     // Default to the first episode of the season if all have been watched.
     private func setNextUpInSeason() {
-        guard episodes.count > 0 else { return }
-        
+        guard !episodes.isEmpty else { return }
+
         var firstUnwatchedSearch: BaseItemDto?
-        
+
         for episode in episodes {
             guard let played = episode.userData?.played else { continue }
             if !played {
@@ -60,12 +62,24 @@ final class SeasonItemViewModel: ItemViewModel {
                 break
             }
         }
-        
+
         if let firstUnwatched = firstUnwatchedSearch {
             playButtonItem = firstUnwatched
         } else {
             guard let firstEpisode = episodes.first else { return }
             playButtonItem = firstEpisode
         }
+    }
+    
+    func routeToSeriesItem() {
+        guard let id = item.seriesId else { return }
+        UserLibraryAPI.getItem(userId: SessionManager.current.user.user_id!, itemId: id)
+            .trackActivity(loading)
+            .sink(receiveCompletion: { [weak self] completion in
+                self?.handleAPIRequestError(completion: completion)
+            }, receiveValue: { [weak self] item in
+                self?.itemRouter?.route(to: \.item, item)
+            })
+            .store(in: &cancellables)
     }
 }
