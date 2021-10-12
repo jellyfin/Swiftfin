@@ -197,6 +197,7 @@
 		625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 625CB5792678C4A400530A6E /* ActivityIndicator */; };
 		6260FFF926A09754003FA968 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 6260FFF826A09754003FA968 /* CombineExt */; };
 		6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = 6261A0DF26A0AB710072EF1C /* CombineExt */; };
+		62671DB327159C1800199D95 /* ItemCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */; };
 		6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
 		6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
 		6267B3D826710B9800A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
@@ -1494,6 +1495,7 @@
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
 				62EC3530267666A5000E9F2D /* SessionManager.swift in Sources */,
+				62671DB327159C1800199D95 /* ItemCoordinator.swift in Sources */,
 				E1AD104B26D94822003E4A08 /* DetailItem.swift in Sources */,
 				53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */,
 				531690F7267ACC00005D8AB9 /* LandscapeItemElement.swift in Sources */,
