@@ -9,6 +9,7 @@
 
 import Combine
 import CoreData
+import CoreStore
 import Foundation
 import JellyfinAPI
 import KeychainSwift
@@ -17,6 +18,83 @@ import UIKit
 #if os(tvOS)
 import TVServices
 #endif
+
+typealias CurrentLogin = (server: SwiftfinStore.Models.Server, user: SwiftfinStore.Models.User)
+
+// MARK: New SessionManager
+final class NewSessionManager {
+    
+    // MARK: currentLogin
+    private(set) var currentLogin: CurrentLogin!
+    
+    // MARK: main
+    static let main = SessionManager()
+    
+    private let JellyfinDefaults = UserDefaults(suiteName: "jellyfin-defaults")!
+    
+    private init() { }
+    
+    func generateServerUserID(server: SwiftfinStore.Models.Server, user: SwiftfinStore.Models.User) -> String {
+        return "\(server.id)-\(user.id)"
+    }
+    
+    func connectToServer(with uri: String) -> AnyPublisher<PublicSystemInfo, Error> {
+        var uri = uri
+        if !uri.contains("http") {
+            uri = "https://" + uri
+        }
+        if uri.last == "/" {
+            uri = String(uri.dropLast())
+        }
+        
+        JellyfinAPI.basePath = uri
+        
+        return SystemAPI.getPublicSystemInfo()
+            .handleEvents(receiveOutput: { response in
+                print(response)
+            }).eraseToAnyPublisher()
+    }
+    
+    func fetchServers() -> [SwiftfinStore.Models.Server] {
+        let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.Server>())
+        return servers
+    }
+    
+    func loginUser(server: SwiftfinStore.Models.Server, username: String, password: String) -> AnyPublisher<AuthenticationResult, Error> {
+        setAuthHeader(with: "")
+        
+        return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
+            .handleEvents(receiveOutput: { [unowned self] response in
+                guard let accessToken = response.accessToken else { fatalError() }
+                setAuthHeader(with: accessToken)
+            })
+            .eraseToAnyPublisher()
+    }
+    
+    private func setAuthHeader(with accessToken: String) {
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        var deviceName = UIDevice.current.name
+        deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
+        deviceName = String(deviceName.unicodeScalars.filter {CharacterSet.urlQueryAllowed.contains($0) })
+
+        var header = "MediaBrowser "
+        
+        let platform: String
+        #if os(tvOS)
+        platform = "tvOS"
+        #else
+        platform = "iOS"
+        #endif
+        
+        header.append("Client=\"Jellyfin \(platform)\", ")
+        header.append("Device=\"\(deviceName)\", ")
+        header.append("DeviceId=\"\(platform)_\(UIDevice.vendorUUIDString)_\(String(Date().timeIntervalSince1970))\", ")
+        header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
+        header.append("Token=\"\(accessToken)\"")
+
+        JellyfinAPI.customHeaders["X-Emby-Authorization"] = header
+    }
+}
 
 final class SessionManager {
     static let current = SessionManager()

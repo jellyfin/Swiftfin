@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+
 @main
 struct JellyfinPlayer_tvOSApp: App {
     let persistenceController = PersistenceController.shared

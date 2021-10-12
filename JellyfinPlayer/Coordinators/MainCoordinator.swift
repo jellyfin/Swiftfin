@@ -28,6 +28,7 @@ import SwiftUI
             } else {
                 self.stack = NavigationStack(initial: \MainCoordinator.connectToServer)
             }
+            
             ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
             DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
