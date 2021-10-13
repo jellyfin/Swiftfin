@@ -16,7 +16,7 @@ enum SwiftfinStore {
         
         final class Server: CoreStoreObject {
             
-            @Field.Stored("url")
+            @Field.Stored("uri")
             var url: String = ""
             
             @Field.Stored("name")
@@ -25,17 +25,26 @@ enum SwiftfinStore {
             @Field.Stored("id")
             var id: String = ""
             
+            @Field.Stored("os")
+            var os: String = ""
+            
+            @Field.Stored("version")
+            var version: String = ""
+            
             @Field.Relationship("users", inverse: \User.$server)
             var users: Set<User>
         }
         
         final class User: CoreStoreObject {
             
-            @Field.Stored("name")
+            @Field.Stored("username")
             var name: String = ""
             
             @Field.Stored("id")
             var id: String = ""
+            
+            @Field.Stored("appleTVID")
+            var appleTVID: String = ""
             
             @Field.Relationship("server")
             var server: Server?
