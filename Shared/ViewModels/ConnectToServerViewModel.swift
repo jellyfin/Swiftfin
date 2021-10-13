@@ -13,75 +13,30 @@ import JellyfinAPI
 import Stinsen
 
 final class ConnectToServerViewModel: ViewModel {
-    @RouterObject
-    var main: MainCoordinator.Router?
-
-    @Published var isConnectedServer = false
-
-    var uriSubject = CurrentValueSubject<String, Never>("")
-    var usernameSubject = CurrentValueSubject<String, Never>("")
-    var passwordSubject = CurrentValueSubject<String, Never>("")
-
-    @Published var lastPublicUsers = [UserDto]()
-    @Published var publicUsers = [UserDto]()
-    @Published var selectedPublicUser = UserDto()
-
-    private let discovery = ServerDiscovery()
-    @Published var servers: [ServerDiscovery.ServerLookupResponse] = []
+    
+    @RouterObject var main: MainCoordinator.Router?
+    @Published var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
     @Published var searching = false
+    private let discovery = ServerDiscovery()
 
-    func getPublicUsers() {
-        if ServerEnvironment.current.server != nil {
-            LogManager.shared.log.debug("Attempting to read public users from \(ServerEnvironment.current.server.baseURI!)",
-                                        tag: "getPublicUsers")
-            UserAPI.getPublicUsers()
-                .trackActivity(loading)
-                .sink(receiveCompletion: { completion in
-                    self.handleAPIRequestError(completion: completion)
-                }, receiveValue: { response in
-                    self.publicUsers = response
-                    LogManager.shared.log.debug("Received \(String(response.count)) public users.", tag: "getPublicUsers")
-                    self.isConnectedServer = true
-                })
-                .store(in: &cancellables)
-        } else {
-            LogManager.shared.log.debug("Not getting users - server is nil", tag: "getPublicUsers")
-        }
-    }
-
-    func hidePublicUsers() {
-        lastPublicUsers = publicUsers
-        publicUsers = []
-    }
-
-    func showPublicUsers() {
-        publicUsers = lastPublicUsers
-        lastPublicUsers = []
-    }
-
-    func connectToServer() {
+    func connectToServer(uri: String) {
         #if targetEnvironment(simulator)
-            if uriSubject.value == "localhost" {
-                uriSubject.value = "http://localhost:8096"
-            }
+        var uri = uri
+        if uri == "localhost" {
+            uri = "http://localhost:8096"
+        }
         #endif
 
-        LogManager.shared.log.debug("Attempting to connect to server at \"\(uriSubject.value)\"", tag: "connectToServer")
-        ServerEnvironment.current.create(with: uriSubject.value)
+        LogManager.shared.log.debug("Attempting to connect to server at \"\(uri)\"", tag: "connectToServer")
+        SessionManager.main.connectToServer(with: uri)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
                                            completion: completion)
             }, receiveValue: { _ in
-                LogManager.shared.log.debug("Connected to server at \"\(self.uriSubject.value)\"", tag: "connectToServer")
-                self.getPublicUsers()
+                LogManager.shared.log.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
             })
             .store(in: &cancellables)
-    }
-
-    func connectToServer(at url: URL) {
-        uriSubject.send(url.absoluteString)
-        connectToServer()
     }
 
     func discoverServers() {
@@ -93,26 +48,10 @@ final class ConnectToServerViewModel: ViewModel {
         }
 
         discovery.locateServer { [self] server in
-            if let server = server, !servers.contains(server) {
-                servers.append(server)
+            if let server = server {
+                discoveredServers.insert(server)
             }
             searching = false
         }
-    }
-
-    func login() {
-        LogManager.shared.log.debug("Attempting to login to server at \"\(uriSubject.value)\"", tag: "login")
-        LogManager.shared.log
-            .debug("username == \"\": \(usernameSubject.value.isEmpty), password == \"\": \(passwordSubject.value.isEmpty)",
-                   tag: "login")
-        SessionManager.current.login(username: usernameSubject.value, password: passwordSubject.value)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login",
-                                           completion: completion)
-            }, receiveValue: { [weak self] _ in
-                self?.main?.root(\.mainTab)
-            })
-            .store(in: &cancellables)
     }
 }

@@ -24,92 +24,94 @@ struct NextUpWidgetProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NextUpEntry) -> Void) {
+        
+        guard let currentLogin = SessionManager.main.currentLogin else { return }
+        
         let currentDate = Date()
-        let server = ServerEnvironment.current.server
-        let savedUser = SessionManager.current.user
+        let server = currentLogin.server
+        let savedUser = currentLogin.user
         var tempCancellables = Set<AnyCancellable>()
 
-        if server != nil && savedUser != nil {
-            JellyfinAPI.basePath = server!.baseURI ?? ""
-            TvShowsAPI.getNextUp(userId: savedUser!.user_id, limit: 3,
-                                 fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-                                 imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
-                .subscribe(on: DispatchQueue.global(qos: .background))
-                .sink(receiveCompletion: { result in
-                    switch result {
-                    case .finished:
-                        break
-                    case let .failure(error):
-                        completion(NextUpEntry(date: currentDate, items: [], error: error))
-                    }
-                }, receiveValue: { response in
-                    let dispatchGroup = DispatchGroup()
-                    let items = response.items ?? []
-                    var downloadedItems = [(BaseItemDto, UIImage?)]()
-                    items.enumerated().forEach { _, item in
-                        dispatchGroup.enter()
-                        ImagePipeline.shared.loadImage(with: item.getBackdropImage(maxWidth: 320)) { result in
-                            guard case let .success(image) = result else {
-                                dispatchGroup.leave()
-                                return
-                            }
-                            downloadedItems.append((item, image.image))
+        JellyfinAPI.basePath = server.uri
+        TvShowsAPI.getNextUp(userId: savedUser.id, limit: 3,
+                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                             imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
+            .subscribe(on: DispatchQueue.global(qos: .background))
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .finished:
+                    break
+                case let .failure(error):
+                    completion(NextUpEntry(date: currentDate, items: [], error: error))
+                }
+            }, receiveValue: { response in
+                let dispatchGroup = DispatchGroup()
+                let items = response.items ?? []
+                var downloadedItems = [(BaseItemDto, UIImage?)]()
+                items.enumerated().forEach { _, item in
+                    dispatchGroup.enter()
+                    ImagePipeline.shared.loadImage(with: item.getBackdropImage(maxWidth: 320)) { result in
+                        guard case let .success(image) = result else {
                             dispatchGroup.leave()
+                            return
                         }
+                        downloadedItems.append((item, image.image))
+                        dispatchGroup.leave()
                     }
+                }
 
-                    dispatchGroup.notify(queue: .main) {
-                        completion(NextUpEntry(date: currentDate, items: downloadedItems, error: nil))
-                    }
-                })
-                .store(in: &tempCancellables)
-        }
+                dispatchGroup.notify(queue: .main) {
+                    completion(NextUpEntry(date: currentDate, items: downloadedItems, error: nil))
+                }
+            })
+            .store(in: &tempCancellables)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
+        
+        guard let currentLogin = SessionManager.main.currentLogin else { return }
+        
         let currentDate = Date()
         let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
-        let server = ServerEnvironment.current.server
-        let savedUser = SessionManager.current.user
+        let server = currentLogin.server
+        let savedUser = currentLogin.user
 
         var tempCancellables = Set<AnyCancellable>()
 
-        if server != nil && savedUser != nil {
-            JellyfinAPI.basePath = server!.baseURI ?? ""
-            TvShowsAPI.getNextUp(userId: savedUser!.user_id, limit: 3,
-                                 fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-                                 imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
-                .subscribe(on: DispatchQueue.global(qos: .background))
-                .sink(receiveCompletion: { result in
-                    switch result {
-                    case .finished:
-                        break
-                    case let .failure(error):
-                        completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: error)], policy: .after(entryDate)))
-                    }
-                }, receiveValue: { response in
-                    let dispatchGroup = DispatchGroup()
-                    let items = response.items ?? []
-                    var downloadedItems = [(BaseItemDto, UIImage?)]()
-                    items.enumerated().forEach { _, item in
-                        dispatchGroup.enter()
-                        ImagePipeline.shared.loadImage(with: item.getBackdropImage(maxWidth: 320)) { result in
-                            guard case let .success(image) = result else {
-                                dispatchGroup.leave()
-                                return
-                            }
-                            downloadedItems.append((item, image.image))
+        JellyfinAPI.basePath = server.uri
+        TvShowsAPI.getNextUp(userId: savedUser.id, limit: 3,
+                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                             imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
+            .subscribe(on: DispatchQueue.global(qos: .background))
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .finished:
+                    break
+                case let .failure(error):
+                    completion(Timeline(entries: [NextUpEntry(date: currentDate, items: [], error: error)], policy: .after(entryDate)))
+                }
+            }, receiveValue: { response in
+                let dispatchGroup = DispatchGroup()
+                let items = response.items ?? []
+                var downloadedItems = [(BaseItemDto, UIImage?)]()
+                items.enumerated().forEach { _, item in
+                    dispatchGroup.enter()
+                    ImagePipeline.shared.loadImage(with: item.getBackdropImage(maxWidth: 320)) { result in
+                        guard case let .success(image) = result else {
                             dispatchGroup.leave()
+                            return
                         }
+                        downloadedItems.append((item, image.image))
+                        dispatchGroup.leave()
                     }
+                }
 
-                    dispatchGroup.notify(queue: .main) {
-                        completion(Timeline(entries: [NextUpEntry(date: currentDate, items: downloadedItems, error: nil)],
-                                            policy: .after(entryDate)))
-                    }
-                })
-                .store(in: &tempCancellables)
-        }
+                dispatchGroup.notify(queue: .main) {
+                    completion(Timeline(entries: [NextUpEntry(date: currentDate, items: downloadedItems, error: nil)],
+                                        policy: .after(entryDate)))
+                }
+            })
+            .store(in: &tempCancellables)
     }
 }
 
@@ -198,7 +200,8 @@ extension NextUpEntryView {
     }
 
     func smallVideoView(item: (BaseItemDto, UIImage?)) -> some View {
-        Link(destination: URL(string: "widget-extension://Users/\(SessionManager.current.user.user_id!)/Items/\(item.0.id!)")!, label: {
+        let url = URL(string: "widget-extension://Users/\(SessionManager.main.currentLogin.user.id)/Items/\(item.0.id!)")!
+        return Link(destination: url, label: {
             VStack(alignment: .leading) {
                 if let image = item.1 {
                     Image(uiImage: image)
@@ -223,7 +226,8 @@ extension NextUpEntryView {
     }
 
     func largeVideoView(item: (BaseItemDto, UIImage?)) -> some View {
-        Link(destination: URL(string: "widget-extension://Users/\(SessionManager.current.user.user_id!)/Items/\(item.0.id!)")!, label: {
+        let url = URL(string: "widget-extension://Users/\(SessionManager.main.currentLogin.user.id)/Items/\(item.0.id!)")!
+        return Link(destination: url, label: {
             HStack(spacing: 20) {
                 if let image = item.1 {
                     Image(uiImage: image)
@@ -285,7 +289,8 @@ extension NextUpEntryView {
     func large(items: [(BaseItemDto, UIImage?)]) -> some View {
         VStack(spacing: 0) {
             if let firstItem = items[safe: 0] {
-                Link(destination: URL(string: "widget-extension://Users/\(SessionManager.current.user.user_id!)/Items/\(firstItem.0.id!)")!,
+                let url = URL(string: "widget-extension://Users/\(SessionManager.main.currentLogin.user.id)/Items/\(firstItem.0.id!)")!
+                Link(destination: url,
                      label: {
                          ZStack(alignment: .topTrailing) {
                              ZStack(alignment: .bottomLeading) {

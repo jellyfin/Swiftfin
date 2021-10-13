@@ -146,8 +146,6 @@ struct JellyfinPlayerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @Default(.appAppearance) var appAppearance
 
-    let persistenceController = PersistenceController.shared
-
     var body: some Scene {
         WindowGroup {
             MainCoordinator().view()

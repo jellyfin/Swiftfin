@@ -19,28 +19,28 @@ struct ServerDetailView: View {
                 HStack {
                     Text("Name")
                     Spacer()
-                    Text(ServerEnvironment.current.server.name ?? "")
+                    Text(SessionManager.main.currentLogin.server.name)
                         .foregroundColor(.secondary)
                 }
 
                 HStack {
                     Text("URI")
                     Spacer()
-                    Text(ServerEnvironment.current.server.baseURI ?? "")
+                    Text(SessionManager.main.currentLogin.server.uri)
                         .foregroundColor(.secondary)
                 }
 
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text(ServerEnvironment.current.server.version ?? "")
+                    Text(SessionManager.main.currentLogin.server.version)
                         .foregroundColor(.secondary)
                 }
 
                 HStack {
                     Text("Operating System")
                     Spacer()
-                    Text(ServerEnvironment.current.server.os ?? "")
+                    Text(SessionManager.main.currentLogin.server.os)
                         .foregroundColor(.secondary)
                 }
             }

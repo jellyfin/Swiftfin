@@ -518,13 +518,13 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         let builder = DeviceProfileBuilder()
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
-        let playbackInfo = PlaybackInfoDto(userId: SessionManager.current.user.user_id!, maxStreamingBitrate: Int(maxBitrate),
+        let playbackInfo = PlaybackInfoDto(userId: SessionManager.main.currentLogin.user.id, maxStreamingBitrate: Int(maxBitrate),
                                            startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile,
                                            autoOpenLiveStream: true)
 
         DispatchQueue.global(qos: .userInitiated).async { [self] in
             delegate?.showLoadingView(self)
-            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.current.user.user_id!,
+            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: SessionManager.main.currentLogin.user.id,
                                                maxStreamingBitrate: Int(maxBitrate),
                                                startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true,
                                                playbackInfoDto: playbackInfo)
@@ -537,7 +537,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             switch err {
                             case .error(401, _, _, _):
                                 self.delegate?.exitPlayer(self)
-                                SessionManager.current.logout()
+                                // TODO: todo
+//                                SessionManager.current.logout()
                                 main?.root(\.connectToServer)
                             case .error:
                                 self.delegate?.exitPlayer(self)
@@ -550,7 +551,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                     let mediaSource = response.mediaSources!.first.self!
                     if mediaSource.transcodingUrl != nil {
                         // Item is being transcoded by request of server
-                        let streamURL = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(mediaSource.transcodingUrl!)")
+                        let streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)\(mediaSource.transcodingUrl!)")
                         let item = PlaybackItem()
                         item.videoType = .transcode
                         item.videoUrl = streamURL!
@@ -564,7 +565,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
-                                    deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl ?? "")")!
+                                    deliveryUrl = URL(string: "\(SessionManager.main.currentLogin.server.uri)\(stream.deliveryUrl ?? "")")!
                                 } else {
                                     deliveryUrl = nil
                                 }
@@ -596,9 +597,10 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                         self.sendPlayReport()
                         playbackItem = item
                     } else {
+                        // TODO: todo
                         // Item will be directly played by the client.
-                        let streamURL =
-                            URL(string: "\(ServerEnvironment.current.server.baseURI!)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag ?? "")")!
+                        let streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&Tag=\(mediaSource.eTag ?? "")")!
+//                            URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag ?? "")")!
 
                         let item = PlaybackItem()
                         item.videoUrl = streamURL
@@ -613,7 +615,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
-                                    deliveryUrl = URL(string: "\(ServerEnvironment.current.server.baseURI!)\(stream.deliveryUrl!)")!
+                                    deliveryUrl = URL(string: "\(SessionManager.main.currentLogin.server.uri)\(stream.deliveryUrl!)")!
                                 } else {
                                     deliveryUrl = nil
                                 }
@@ -771,7 +773,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
     }
 
     func getNextEpisode() {
-        TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.current.user.user_id!, startItemId: manifest.id,
+        TvShowsAPI.getEpisodes(seriesId: manifest.seriesId!, userId: SessionManager.main.currentLogin.user.id, startItemId: manifest.id,
                                limit: 2)
             .sink(receiveCompletion: { completion in
                 print(completion)
@@ -873,11 +875,11 @@ extension PlayerViewController: GCKGenericChannelDelegate {
         let payload: [String: Any] = [
             "options": options,
             "command": command,
-            "userId": SessionManager.current.user.user_id!,
-            "deviceId": SessionManager.current.deviceID,
-            "accessToken": SessionManager.current.accessToken,
-            "serverAddress": ServerEnvironment.current.server.baseURI!,
-            "serverId": ServerEnvironment.current.server.server_id!,
+            "userId": SessionManager.main.currentLogin.user.id,
+//            "deviceId": SessionManager.main.currentLogin.de.deviceID,
+            "accessToken": SessionManager.main.currentLogin.user.accessToken?.value ?? "",
+            "serverAddress": SessionManager.main.currentLogin.server.uri,
+            "serverId": SessionManager.main.currentLogin.server.id,
             "serverVersion": "10.8.0",
             "receiverName": castSessionManager.currentCastSession!.device.friendlyName!,
             "subtitleBurnIn": false,
@@ -931,7 +933,7 @@ extension PlayerViewController: GCKSessionManagerListener {
         let playNowOptions: [String: Any] = [
             "items": [[
                 "Id": manifest.id!,
-                "ServerId": ServerEnvironment.current.server.server_id!,
+                "ServerId": SessionManager.main.currentLogin.server.id,
                 "Name": manifest.name!,
                 "Type": manifest.type!,
                 "MediaType": manifest.mediaType!,

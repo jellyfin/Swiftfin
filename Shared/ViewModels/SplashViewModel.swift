@@ -21,7 +21,8 @@ final class SplashViewModel: ViewModel {
     @Published var isLoggedIn: Bool = false
 
     override init() {
-        isLoggedIn = ServerEnvironment.current.server != nil && SessionManager.current.user != nil
+        // TODO: Remove SplashViewModel
+        isLoggedIn = SessionManager.main.currentLogin != nil
         super.init()
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory

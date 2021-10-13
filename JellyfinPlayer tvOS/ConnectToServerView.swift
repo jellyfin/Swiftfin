@@ -26,7 +26,7 @@ struct ConnectToServerView: View {
                         } else {
                             HStack {
                                 Spacer()
-                                ImageView(src: URL(string: "\(ServerEnvironment.current.server.baseURI ?? "")/Users/\(viewModel.selectedPublicUser.id ?? "")/Images/Primary?width=500&quality=80&tag=\(viewModel.selectedPublicUser.primaryImageTag ?? "")")!)
+                                ImageView(src: URL(string: "\(SessionManager.main.currentLogin.server.uri)/Users/\(viewModel.selectedPublicUser.id ?? "")/Images/Primary?width=500&quality=80&tag=\(viewModel.selectedPublicUser.primaryImageTag ?? "")")!)
                                     .frame(width: 250, height: 250)
                                     .cornerRadius(125.0)
                                 Spacer()

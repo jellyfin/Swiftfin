@@ -11,22 +11,6 @@
 import Foundation
 
 public class ServerDiscovery {
-    public struct ServerCredential: Codable {
-        public let host: String
-        public let port: Int
-        public let username: String
-        public let password: String
-        public let deviceId: String
-
-        public init(_ host: String, _ port: Int, _ username: String, _ password: String, _ deviceId: String = UUID().uuidString) {
-            self.host = host
-            self.port = port
-            self.username = username
-            self.password = password
-            self.deviceId = deviceId
-        }
-    }
-
     public struct ServerLookupResponse: Codable, Hashable, Identifiable {
 
         public func hash(into hasher: inout Hasher) {
@@ -62,6 +46,7 @@ public class ServerDiscovery {
             case name = "Name"
         }
     }
+    
     private let broadcastConn: UDPBroadcastConnection
 
     public init() {

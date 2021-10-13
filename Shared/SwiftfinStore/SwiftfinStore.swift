@@ -9,6 +9,7 @@
 
 import Foundation
 import CoreStore
+import Defaults
 
 enum SwiftfinStore {
     
@@ -17,7 +18,7 @@ enum SwiftfinStore {
         final class Server: CoreStoreObject {
             
             @Field.Stored("uri")
-            var url: String = ""
+            var uri: String = ""
             
             @Field.Stored("name")
             var name: String = ""
@@ -38,7 +39,7 @@ enum SwiftfinStore {
         final class User: CoreStoreObject {
             
             @Field.Stored("username")
-            var name: String = ""
+            var username: String = ""
             
             @Field.Stored("id")
             var id: String = ""
@@ -48,6 +49,18 @@ enum SwiftfinStore {
             
             @Field.Relationship("server")
             var server: Server?
+            
+            @Field.Relationship("accessToken", inverse: \AccessToken.$user)
+            var accessToken: AccessToken?
+        }
+        
+        final class AccessToken: CoreStoreObject {
+            
+            @Field.Stored("value")
+            var value: String = ""
+            
+            @Field.Relationship("user")
+            var user: User?
         }
     }
     
@@ -56,8 +69,9 @@ enum SwiftfinStore {
                                      entities: [
                                         Entity<SwiftfinStore.Models.Server>("Server"),
                                         Entity<SwiftfinStore.Models.User>("User"),
+                                        Entity<SwiftfinStore.Models.AccessToken>("AccessToken")
                                      ],
-                                     versionLock: nil)
+                                     versionLock: nil) // TODO: todo
         
         let _dataStack = DataStack(schema)
         try! _dataStack.addStorageAndWait(

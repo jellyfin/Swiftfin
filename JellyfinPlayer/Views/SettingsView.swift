@@ -31,7 +31,7 @@ struct SettingsView: View {
                 HStack {
                     Text("User")
                     Spacer()
-                    Text(SessionManager.current.user?.username ?? "")
+                    Text(SessionManager.main.currentLogin.user.username)
                         .foregroundColor(.jellyfinPurple)
                 }
 
@@ -41,7 +41,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Server")
                         Spacer()
-                        Text(ServerEnvironment.current.server?.name ?? "")
+                        Text(SessionManager.main.currentLogin.server.name)
                             .foregroundColor(.jellyfinPurple)
 
                         Image(systemName: "chevron.right")
@@ -51,7 +51,8 @@ struct SettingsView: View {
                 Button {
                     settingsRouter.dismissCoordinator()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        SessionManager.current.logout()
+                        // TODO: todo
+//                        SessionManager.current.logout()
                         let nc = NotificationCenter.default
                         nc.post(name: Notification.Name("didSignOut"), object: nil)
                     }

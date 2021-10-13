@@ -26,7 +26,7 @@ final class EpisodeItemViewModel: ItemViewModel {
 
     func routeToSeasonItem() {
         guard let id = item.seasonId else { return }
-        UserLibraryAPI.getItem(userId: SessionManager.current.user.user_id!, itemId: id)
+        UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
@@ -38,7 +38,7 @@ final class EpisodeItemViewModel: ItemViewModel {
 
     func routeToSeriesItem() {
         guard let id = item.seriesId else { return }
-        UserLibraryAPI.getItem(userId: SessionManager.current.user.user_id!, itemId: id)
+        UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)

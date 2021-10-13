@@ -20,13 +20,13 @@ import SwiftUI
         var stack: NavigationStack<MainCoordinator>
 
         @Root var mainTab = makeMainTab
-        @Root var connectToServer = makeConnectToServer
+        @Root var serverList = makeServerList
 
         init() {
-            if ServerEnvironment.current.server != nil, SessionManager.current.user != nil {
+            if SessionManager.main.currentLogin != nil {
                 self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
             } else {
-                self.stack = NavigationStack(initial: \MainCoordinator.connectToServer)
+                self.stack = NavigationStack(initial: \MainCoordinator.serverList)
             }
             
             ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
@@ -50,7 +50,7 @@ import SwiftUI
 
         @objc func didLogOut() {
             LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
-            root(\.connectToServer)
+            root(\.serverList)
         }
 
         @objc func processDeepLink(_ notification: Notification) {
@@ -70,8 +70,8 @@ import SwiftUI
             MainTabCoordinator()
         }
 
-        func makeConnectToServer() -> NavigationViewCoordinator<ConnectToServerCoodinator> {
-            NavigationViewCoordinator(ConnectToServerCoodinator())
+        func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
+            NavigationViewCoordinator(ServerListCoordinator())
         }
     }
 
