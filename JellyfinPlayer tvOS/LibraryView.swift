@@ -74,8 +74,6 @@ struct LibraryView: View {
         }
       } supplementaryView: { _, indexPath in
         HStack {
-            Text("Supp View")
-                .font(.title3)
             Spacer()
         }.accessibilityIdentifier("\(indexPath.section).\(indexPath.row)")
       }
