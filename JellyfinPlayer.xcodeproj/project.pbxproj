@@ -44,7 +44,6 @@
 		53313B90265EEA6D00947AA3 /* VideoPlayer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */; };
 		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
-		5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5338F756263B7E2E0014BF09 /* KeychainSwift */; };
 		534D4FF026A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
 		534D4FF126A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
 		534D4FF226A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
@@ -59,7 +58,6 @@
 		5358706A2669D21700D05A09 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870692669D21700D05A09 /* Preview Assets.xcassets */; };
 		5358706C2669D21700D05A09 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5358706B2669D21700D05A09 /* PersistenceController.swift */; };
 		5358707E2669D64F00D05A09 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
-		5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5358708C2669D7A800D05A09 /* KeychainSwift */; };
 		535870912669D7A800D05A09 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 535870902669D7A800D05A09 /* Introspect */; };
 		5358709B2669D7A800D05A09 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5358709A2669D7A800D05A09 /* NukeUI */; };
 		535870A52669D8AE00D05A09 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
@@ -203,7 +201,6 @@
 		628B95332670CAEA0091AF3B /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 628B95322670CAEA0091AF3B /* NukeUI */; };
 		628B95352670CAEA0091AF3B /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 628B95342670CAEA0091AF3B /* JellyfinAPI */; };
 		628B95372670CB800091AF3B /* JellyfinWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628B95362670CB800091AF3B /* JellyfinWidget.swift */; };
-		628B953A2670CE250091AF3B /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 628B95392670CE250091AF3B /* KeychainSwift */; };
 		628B953C2670D2430091AF3B /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
 		62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 62C29E9B26D0FE4200C1D2E7 /* Stinsen */; };
 		62C29E9F26D1016600C1D2E7 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29E9E26D1016600C1D2E7 /* MainCoordinator.swift */; };
@@ -566,7 +563,6 @@
 				6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */,
 				E13DD3DF27175CEA009D4DAF /* Defaults in Frameworks */,
 				53272535268BF9710035FBF1 /* SwiftUIFocusGuide in Frameworks */,
-				5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
@@ -582,7 +578,6 @@
 				E13DD3D327168E65009D4DAF /* Defaults in Frameworks */,
 				53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
-				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
 				53EC6E25267EB10F006DD26A /* SwiftyJSON in Frameworks */,
 				53EC6E21267E80B1006DD26A /* Pods_JellyfinPlayer_iOS.framework in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
@@ -604,7 +599,6 @@
 				E13DD3DD27175CE3009D4DAF /* Defaults in Frameworks */,
 				53649AB5269D423A00A2D8B7 /* Puppy in Frameworks */,
 				536D3D7D267BD5F90004248C /* ActivityIndicator in Frameworks */,
-				628B953A2670CE250091AF3B /* KeychainSwift in Frameworks */,
 				E13DD3CF27164E1F009D4DAF /* CoreStore in Frameworks */,
 				628B95352670CAEA0091AF3B /* JellyfinAPI in Frameworks */,
 			);
@@ -1219,7 +1213,6 @@
 			);
 			name = "JellyfinPlayer tvOS";
 			packageProductDependencies = (
-				5358708C2669D7A800D05A09 /* KeychainSwift */,
 				535870902669D7A800D05A09 /* Introspect */,
 				5358709A2669D7A800D05A09 /* NukeUI */,
 				53A431BE266B0FFE0016769F /* JellyfinAPI */,
@@ -1256,7 +1249,6 @@
 			);
 			name = "JellyfinPlayer iOS";
 			packageProductDependencies = (
-				5338F756263B7E2E0014BF09 /* KeychainSwift */,
 				53352570265EA0A0006CCA86 /* Introspect */,
 				621C637F26672A30004216EA /* NukeUI */,
 				53A431BC266B0FF20016769F /* JellyfinAPI */,
@@ -1288,7 +1280,6 @@
 			packageProductDependencies = (
 				628B95322670CAEA0091AF3B /* NukeUI */,
 				628B95342670CAEA0091AF3B /* JellyfinAPI */,
-				628B95392670CE250091AF3B /* KeychainSwift */,
 				536D3D7C267BD5F90004248C /* ActivityIndicator */,
 				53649AB4269D423A00A2D8B7 /* Puppy */,
 				E13DD3CE27164E1F009D4DAF /* CoreStore */,
@@ -1345,7 +1336,6 @@
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
-				5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				621C637E26672A30004216EA /* XCRemoteSwiftPackageReference "NukeUI" */,
 				53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
@@ -2296,14 +2286,6 @@
 				minimumVersion = 0.1.3;
 			};
 		};
-		5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/evgenyneu/keychain-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 19.0.0;
-			};
-		};
 		53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sushichop/Puppy";
@@ -2397,16 +2379,6 @@
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
 		};
-		5338F756263B7E2E0014BF09 /* KeychainSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */;
-			productName = KeychainSwift;
-		};
-		5358708C2669D7A800D05A09 /* KeychainSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */;
-			productName = KeychainSwift;
-		};
 		535870902669D7A800D05A09 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
@@ -2496,11 +2468,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
 			productName = JellyfinAPI;
-		};
-		628B95392670CE250091AF3B /* KeychainSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5338F755263B7E2E0014BF09 /* XCRemoteSwiftPackageReference "keychain-swift" */;
-			productName = KeychainSwift;
 		};
 		62C29E9B26D0FE4200C1D2E7 /* Stinsen */ = {
 			isa = XCSwiftPackageProductDependency;
