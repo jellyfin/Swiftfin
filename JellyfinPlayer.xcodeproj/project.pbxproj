@@ -252,6 +252,8 @@
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
+		C49FB6592717A06300AAEABB /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C49FB6582717A06300AAEABB /* SwiftUICollection */; };
+		C4BFD4E527167B63007739E3 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C4BFD4E427167B63007739E3 /* SwiftUICollection */; };
 		C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E508172703E8190045C9AB /* LibraryListView.swift */; };
 		C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */; };
 		E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */; };
@@ -528,6 +530,7 @@
 				53272535268BF9710035FBF1 /* SwiftUIFocusGuide in Frameworks */,
 				5358708D2669D7A800D05A09 /* KeychainSwift in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
+				C49FB6592717A06300AAEABB /* SwiftUICollection in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				5358709B2669D7A800D05A09 /* NukeUI in Frameworks */,
 				53ABFDED26799D7700886593 /* ActivityIndicator in Frameworks */,
@@ -542,6 +545,7 @@
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				62CB3F462685BAF7003D0A6F /* Defaults in Frameworks */,
 				5338F757263B7E2E0014BF09 /* KeychainSwift in Frameworks */,
+				C4BFD4E527167B63007739E3 /* SwiftUICollection in Frameworks */,
 				53EC6E25267EB10F006DD26A /* SwiftyJSON in Frameworks */,
 				53EC6E21267E80B1006DD26A /* Pods_JellyfinPlayer_iOS.framework in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
@@ -1151,6 +1155,7 @@
 				53649AAE269CFAF600A2D8B7 /* Puppy */,
 				6261A0DF26A0AB710072EF1C /* CombineExt */,
 				6220D0C826D63F3700B8E046 /* Stinsen */,
+				C49FB6582717A06300AAEABB /* SwiftUICollection */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */;
@@ -1186,6 +1191,7 @@
 				53649AAC269CFAEA00A2D8B7 /* Puppy */,
 				6260FFF826A09754003FA968 /* CombineExt */,
 				62C29E9B26D0FE4200C1D2E7 /* Stinsen */,
+				C4BFD4E427167B63007739E3 /* SwiftUICollection */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer iOS.app */;
@@ -1275,6 +1281,7 @@
 				53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */,
 				6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */,
 				62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */,
+				C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -2268,6 +2275,14 @@
 				kind = branch;
 			};
 		};
+		C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ABJC/SwiftUICollection";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2405,6 +2420,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 62CB3F442685BAF7003D0A6F /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		C49FB6582717A06300AAEABB /* SwiftUICollection */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
+			productName = SwiftUICollection;
+		};
+		C4BFD4E427167B63007739E3 /* SwiftUICollection */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
+			productName = SwiftUICollection;
 		};
 /* End XCSwiftPackageProductDependency section */
 

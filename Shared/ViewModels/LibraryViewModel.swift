@@ -10,6 +10,9 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import SwiftUICollection
+
+typealias LibraryRow = CollectionRow<Int, BaseItemDto>
 
 final class LibraryViewModel: ViewModel {
     var parentID: String?
@@ -18,6 +21,7 @@ final class LibraryViewModel: ViewModel {
     var studio: NameGuidPair?
 
     @Published var items = [BaseItemDto]()
+    @Published var rows = [LibraryRow]()
 
     @Published var totalPages = 0
     @Published var currentPage = 0
@@ -26,6 +30,8 @@ final class LibraryViewModel: ViewModel {
 
     // temp
     @Published var filters: LibraryFilters
+  
+    private let columns: Int
 
     var enabledFilterType: [FilterType] {
         if genre == nil {
@@ -35,16 +41,20 @@ final class LibraryViewModel: ViewModel {
         }
     }
 
-    init(parentID: String? = nil,
-         person: BaseItemPerson? = nil,
-         genre: NameGuidPair? = nil,
-         studio: NameGuidPair? = nil,
-         filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name])) {
+    init(
+      parentID: String? = nil,
+      person: BaseItemPerson? = nil,
+      genre: NameGuidPair? = nil,
+      studio: NameGuidPair? = nil,
+      filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]),
+      columns: Int = 7
+    ) {
         self.parentID = parentID
         self.person = person
         self.genre = genre
         self.studio = studio
         self.filters = filters
+        self.columns = columns
         super.init()
 
         $filters
@@ -79,6 +89,7 @@ final class LibraryViewModel: ViewModel {
                 self.hasPreviousPage = self.currentPage > 0
                 self.hasNextPage = self.currentPage < self.totalPages - 1
                 self.items = response.items ?? []
+                self.calculateRows()
             })
             .store(in: &cancellables)
     }
@@ -108,6 +119,7 @@ final class LibraryViewModel: ViewModel {
                 self.hasPreviousPage = self.currentPage > 0
                 self.hasNextPage = self.currentPage < self.totalPages - 1
                 self.items.append(contentsOf: response.items ?? [])
+                self.calculateRows()
             })
             .store(in: &cancellables)
     }
@@ -126,4 +138,22 @@ final class LibraryViewModel: ViewModel {
         currentPage -= 1
         requestItems(with: filters)
     }
+  
+  private func calculateRows() {
+    let rowCount = items.count / columns
+    rows = [LibraryRow]()
+    for i in (0...rowCount) {
+      let firstItemIndex = i * columns
+      var lastItemIndex = firstItemIndex + columns
+      if lastItemIndex >= items.count {
+        lastItemIndex = items.count - 1
+      }
+      rows.append(
+        LibraryRow(
+          section: i,
+          items: Array(items[firstItemIndex...lastItemIndex])
+        )
+      )
+    }
+  }
 }

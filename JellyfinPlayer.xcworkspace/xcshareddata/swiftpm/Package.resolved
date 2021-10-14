@@ -137,6 +137,15 @@
         }
       },
       {
+        "package": "SwiftUICollection",
+        "repositoryURL": "https://github.com/ABJC/SwiftUICollection",
+        "state": {
+          "branch": "master",
+          "revision": "e27149382ce8ec21995069c8aab7ca83d61a3120",
+          "version": null
+        }
+      },
+      {
         "package": "SwiftUIFocusGuide",
         "repositoryURL": "https://github.com/rmnblm/SwiftUIFocusGuide",
         "state": {
