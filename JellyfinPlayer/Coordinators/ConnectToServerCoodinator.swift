@@ -22,6 +22,6 @@ final class ConnectToServerCoodinator: NavigationCoordinatable {
     }
     
     @ViewBuilder func makeStart() -> some View {
-        ConnectToServerView()
+        ConnectToServerView(viewModel: ConnectToServerViewModel())
     }
 }

@@ -56,7 +56,6 @@
 		535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */; };
 		535870672669D21700D05A09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870662669D21700D05A09 /* Assets.xcassets */; };
 		5358706A2669D21700D05A09 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870692669D21700D05A09 /* Preview Assets.xcassets */; };
-		5358706C2669D21700D05A09 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5358706B2669D21700D05A09 /* PersistenceController.swift */; };
 		5358707E2669D64F00D05A09 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		535870912669D7A800D05A09 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 535870902669D7A800D05A09 /* Introspect */; };
 		5358709B2669D7A800D05A09 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5358709A2669D7A800D05A09 /* NukeUI */; };
@@ -242,6 +241,7 @@
 		E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11B1B6E2718CDBA006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
+		E12186DE2718F1C50010884C /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E12186DD2718F1C50010884C /* Defaults */; };
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
@@ -261,7 +261,6 @@
 		E13DD3D6271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3D4271693CD009D4DAF /* SwiftfinStoreDefaults.swift */; };
 		E13DD3D7271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3D4271693CD009D4DAF /* SwiftfinStoreDefaults.swift */; };
 		E13DD3DD27175CE3009D4DAF /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3DC27175CE3009D4DAF /* Defaults */; };
-		E13DD3DF27175CEA009D4DAF /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3DE27175CEA009D4DAF /* Defaults */; };
 		E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E027176BD3009D4DAF /* ServerListViewModel.swift */; };
 		E13DD3E227176BD3009D4DAF /* ServerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E027176BD3009D4DAF /* ServerListViewModel.swift */; };
 		E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E427177D15009D4DAF /* ServerListView.swift */; };
@@ -386,7 +385,6 @@
 		535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinPlayer_tvOSApp.swift; sourceTree = "<group>"; };
 		535870662669D21700D05A09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		535870692669D21700D05A09 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		5358706B2669D21700D05A09 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		535870702669D21700D05A09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		535870AC2669D8DD00D05A09 /* Typings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typings.swift; sourceTree = "<group>"; };
 		535BAE9E2649E569005FA86D /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
@@ -561,12 +559,12 @@
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */,
-				E13DD3DF27175CEA009D4DAF /* Defaults in Frameworks */,
 				53272535268BF9710035FBF1 /* SwiftUIFocusGuide in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				5358709B2669D7A800D05A09 /* NukeUI in Frameworks */,
+				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				53ABFDED26799D7700886593 /* ActivityIndicator in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -708,32 +706,15 @@
 		535870612669D21600D05A09 /* JellyfinPlayer tvOS */ = {
 			isa = PBXGroup;
 			children = (
-				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
-				536D3D77267BB9650004248C /* Components */,
-				53ABFDDA267972BF00886593 /* JellyfinPlayer tvOS.entitlements */,
-				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
-				535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */,
+				E12186DF2718F2030010884C /* App */,
 				535870662669D21700D05A09 /* Assets.xcassets */,
-				5358706B2669D21700D05A09 /* PersistenceController.swift */,
+				536D3D77267BB9650004248C /* Components */,
 				535870702669D21700D05A09 /* Info.plist */,
+				53ABFDDA267972BF00886593 /* JellyfinPlayer tvOS.entitlements */,
 				535870682669D21700D05A09 /* Preview Content */,
-				53ABFDDD267974E300886593 /* SplashView.swift */,
-				531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */,
-				531690EE267ABF72005D8AB9 /* NextUpView.swift */,
-				53ABFDEA2679753200886593 /* ConnectToServerView.swift */,
-				531690E4267ABD5C005D8AB9 /* MainTabView.swift */,
-				531690E6267ABD79005D8AB9 /* HomeView.swift */,
 				531690F8267AD135005D8AB9 /* README.md */,
-				536D3D7E267BDF100004248C /* LatestMediaView.swift */,
-				53A83C32268A309300DF3D92 /* LibraryView.swift */,
-				C4E508172703E8190045C9AB /* LibraryListView.swift */,
-				C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */,
-				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
-				53CD2A41268A4B38002ABD4E /* MovieItemView.swift */,
-				53116A16268B919A003024C9 /* SeriesItemView.swift */,
-				53272536268C1DBB0035FBF1 /* SeasonItemView.swift */,
-				53272538268C20100035FBF1 /* EpisodeItemView.swift */,
-				5398514426B64DA100101B49 /* SettingsView.swift */,
+				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
+				E12186E02718F23B0010884C /* Views */,
 			);
 			path = "JellyfinPlayer tvOS";
 			sourceTree = "<group>";
@@ -1086,6 +1067,38 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		E12186DF2718F2030010884C /* App */ = {
+			isa = PBXGroup;
+			children = (
+				535870622669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E12186E02718F23B0010884C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				53ABFDEA2679753200886593 /* ConnectToServerView.swift */,
+				531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */,
+				53272538268C20100035FBF1 /* EpisodeItemView.swift */,
+				531690E6267ABD79005D8AB9 /* HomeView.swift */,
+				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
+				536D3D7E267BDF100004248C /* LatestMediaView.swift */,
+				C4E508172703E8190045C9AB /* LibraryListView.swift */,
+				C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */,
+				53A83C32268A309300DF3D92 /* LibraryView.swift */,
+				531690E4267ABD5C005D8AB9 /* MainTabView.swift */,
+				53CD2A41268A4B38002ABD4E /* MovieItemView.swift */,
+				531690EE267ABF72005D8AB9 /* NextUpView.swift */,
+				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
+				53272536268C1DBB0035FBF1 /* SeasonItemView.swift */,
+				53116A16268B919A003024C9 /* SeriesItemView.swift */,
+				5398514426B64DA100101B49 /* SettingsView.swift */,
+				53ABFDDD267974E300886593 /* SplashView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		E13DD3BB27163C3E009D4DAF /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -1223,7 +1236,7 @@
 				6261A0DF26A0AB710072EF1C /* CombineExt */,
 				6220D0C826D63F3700B8E046 /* Stinsen */,
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
-				E13DD3DE27175CEA009D4DAF /* Defaults */,
+				E12186DD2718F1C50010884C /* Defaults */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */;
@@ -1606,7 +1619,6 @@
 				62CB3F4C2685BB77003D0A6F /* DefaultsExtension.swift in Sources */,
 				62D8535B26FC631300FDFC59 /* MainCoordinator.swift in Sources */,
 				62E632E4267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
-				5358706C2669D21700D05A09 /* PersistenceController.swift in Sources */,
 				53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */,
 				E13DD3D6271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
 				E13DD3FD2717EAE8009D4DAF /* UserListView.swift in Sources */,
@@ -2474,6 +2486,11 @@
 			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
 			productName = Stinsen;
 		};
+		E12186DD2718F1C50010884C /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
@@ -2495,11 +2512,6 @@
 			productName = Defaults;
 		};
 		E13DD3DC27175CE3009D4DAF /* Defaults */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
-			productName = Defaults;
-		};
-		E13DD3DE27175CEA009D4DAF /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;

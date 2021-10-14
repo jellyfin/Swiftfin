@@ -13,7 +13,6 @@ import CoreStore
 import Defaults
 import Foundation
 import JellyfinAPI
-import KeychainSwift
 import UIKit
 
 #if os(tvOS)

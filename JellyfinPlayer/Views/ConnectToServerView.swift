@@ -11,7 +11,7 @@ import Stinsen
 
 struct ConnectToServerView: View {
     
-    @StateObject var viewModel = ConnectToServerViewModel()
+    @StateObject var viewModel: ConnectToServerViewModel
     @State var uri = ""
     
     var body: some View {
