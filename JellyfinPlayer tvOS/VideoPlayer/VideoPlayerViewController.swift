@@ -138,15 +138,13 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         let builder = DeviceProfileBuilder()
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
+        
+        let currentUser = SessionManager.main.currentLogin.user
 
-        guard let currentUser = SessionManager.current.user else {
-            return
-        }
-
-        let playbackInfo = PlaybackInfoDto(userId: currentUser.user_id ?? "", maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
+        let playbackInfo = PlaybackInfoDto(userId: currentUser.id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)
 
         DispatchQueue.global(qos: .userInitiated).async { [self] in
-            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: currentUser.user_id ?? "", maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
+            MediaInfoAPI.getPostedPlaybackInfo(itemId: manifest.id!, userId: currentUser.id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, autoOpenLiveStream: true, playbackInfoDto: playbackInfo)
                 .sink(receiveCompletion: { result in
                     print(result)
                 }, receiveValue: { [self] response in

@@ -17,8 +17,7 @@ struct ConnectToServerView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if viewModel.isConnectedServer {
-                if viewModel.publicUsers.isEmpty {
-                    Section(header: Text(viewModel.lastPublicUsers.isEmpty || username == "" ? "Login to \(ServerEnvironment.current.server.name ?? "")": "")) {
+                    Section(header: Text(viewModel.lastPublicUsers.isEmpty || username == "" ? "Login to \(SessionManager.main.currentLogin.server.name)": "")) {
                         if viewModel.lastPublicUsers.isEmpty || username == "" {
                             TextField(NSLocalizedString("Username", comment: ""), text: $username)
                                 .disableAutocorrection(true)
@@ -67,40 +66,6 @@ struct ConnectToServerView: View {
                                 Spacer()
                             }.disabled(viewModel.isLoading || username.isEmpty)
                         }
-                    }
-                } else {
-                    VStack {
-                        HStack {
-                            ForEach(viewModel.publicUsers, id: \.id) { publicUser in
-                                Button(action: {
-                                    if SessionManager.current.doesUserHaveSavedSession(userID: publicUser.id!) {
-                                        let user = SessionManager.current.getSavedSession(userID: publicUser.id!)
-                                        SessionManager.current.loginWithSavedSession(user: user)
-                                    } else {
-                                        username = publicUser.name ?? ""
-                                        viewModel.selectedPublicUser = publicUser
-                                        viewModel.hidePublicUsers()
-                                        if !(publicUser.hasPassword ?? true) {
-                                            password = ""
-                                            viewModel.login()
-                                        }
-                                    }
-                                }) {
-                                    PublicUserButton(publicUser: publicUser)
-                                }
-                                .buttonStyle(PlainNavigationLinkButtonStyle())
-                            }
-                        }.padding(.bottom, 20)
-                        HStack {
-                            Spacer()
-                            Button {
-                                viewModel.hidePublicUsers()
-                                username = ""
-                            } label: {
-                                Text("Other User").font(.headline).fontWeight(.semibold)
-                            }
-                            Spacer()
-                        }.padding(.top, 12)
                     }
                 }
             } else {

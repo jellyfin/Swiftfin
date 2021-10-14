@@ -8,6 +8,7 @@
 import CoreData
 import SwiftUI
 import Defaults
+import JellyfinAPI
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -22,7 +23,7 @@ struct SettingsView: View {
     @State private var username: String = ""
 
     func onAppear() {
-        username = SessionManager.current.user?.username ?? ""
+        username = SessionManager.main.currentLogin.user.username
     }
 
     var body: some View {
@@ -61,24 +62,18 @@ struct SettingsView: View {
                     )
                 }
 
-                Section(header: Text(ServerEnvironment.current.server.name ?? "")) {
+                Section(header: Text(SessionManager.main.currentLogin.server.name)) {
                     HStack {
                         Text("Signed in as \(username)").foregroundColor(.primary)
                         Spacer()
                         Button {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
-                            }
+                            SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
                         } label: {
                             Text("Switch user").font(.callout)
                         }
                     }
                     Button {
-                        // TODO: remove delay
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            SessionManager.current.logout()
-                            SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
-                        }
+                        SessionManager.main.logout()
                     } label: {
                         Text("Sign out").font(.callout)
                     }

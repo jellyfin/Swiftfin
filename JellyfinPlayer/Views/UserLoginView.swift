@@ -42,7 +42,6 @@ struct UserLoginView: View {
                 .disabled(viewModel.isLoading || username.isEmpty)
 
             } header: {
-                // TODO: Server
                 Text("Login to \(viewModel.server.name)")
             }
         }

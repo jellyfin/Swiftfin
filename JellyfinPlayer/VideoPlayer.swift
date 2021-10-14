@@ -537,9 +537,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             switch err {
                             case .error(401, _, _, _):
                                 self.delegate?.exitPlayer(self)
-                                // TODO: todo
-//                                SessionManager.current.logout()
-                                main?.root(\.serverList)
+                                SessionManager.main.logout()
                             case .error:
                                 self.delegate?.exitPlayer(self)
                             }
