@@ -36,7 +36,15 @@ import SwiftUI
                 WidgetCenter.shared.reloadAllTimelines()
                 UIScrollView.appearance().keyboardDismissMode = .onDrag
             #endif
+        
+            // Back bar button item setup
+            let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
+            let barAppearance = UINavigationBar.appearance()
+            barAppearance.backIndicatorImage = backButtonBackgroundImage
+            barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
+            barAppearance.tintColor = UIColor(Color.jellyfinPurple)
 
+            // Notification setup for state
             let nc = SwiftfinNotificationCenter.main
             nc.addObserver(self, selector: #selector(didLogIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
             nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)

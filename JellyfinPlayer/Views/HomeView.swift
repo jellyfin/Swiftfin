@@ -14,15 +14,6 @@ struct HomeView: View {
     @EnvironmentObject var homeRouter: HomeCoordinator.Router
     @StateObject var viewModel = HomeViewModel()
 
-    // TODO: Move so that setup has same button
-    init() {
-        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
-        let barAppearance = UINavigationBar.appearance()
-        barAppearance.backIndicatorImage = backButtonBackgroundImage
-        barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
-        barAppearance.tintColor = UIColor(Color.jellyfinPurple)
-    }
-
     @ViewBuilder
     var innerBody: some View {
         if viewModel.isLoading {
