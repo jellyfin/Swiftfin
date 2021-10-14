@@ -40,6 +40,7 @@ final class SessionManager {
             guard let server = user.server, let accessToken = user.accessToken else { fatalError("No associated server or access token for last user?") }
             guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { return }
             
+            JellyfinAPI.basePath = server.uri
             setAuthHeader(with: accessToken.value)
             currentLogin = (server: existingServer.state, user: user.state)
         }
@@ -143,6 +144,7 @@ final class SessionManager {
     
     func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
         JellyfinAPI.basePath = server.uri
+        SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
         setAuthHeader(with: user.accessToken)
         currentLogin = (server: server, user: user)
     }
