@@ -15,6 +15,11 @@ final class ConnectToServerCoodinator: NavigationCoordinatable {
     let stack = NavigationStack(initial: \ConnectToServerCoodinator.start)
 
     @Root var start = makeStart
+    @Route(.push) var userLogin = makeUserLogin
+    
+    func makeUserLogin(server: SwiftfinStore.Models.Server) -> UserLoginCoordinator {
+        return UserLoginCoordinator(viewModel: .init(server: server))
+    }
     
     @ViewBuilder func makeStart() -> some View {
         ConnectToServerView()

@@ -276,6 +276,12 @@
 		E13DD3EA27177ED6009D4DAF /* ServerListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */; };
 		E13DD3EC27178A54009D4DAF /* UserLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EB27178A54009D4DAF /* UserLoginViewModel.swift */; };
 		E13DD3ED27178A54009D4DAF /* UserLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EB27178A54009D4DAF /* UserLoginViewModel.swift */; };
+		E13DD3EF27178F87009D4DAF /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* NotificationCenter.swift */; };
+		E13DD3F027178F87009D4DAF /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* NotificationCenter.swift */; };
+		E13DD3F227179378009D4DAF /* UserLoginCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserLoginCoordinator.swift */; };
+		E13DD3F327179378009D4DAF /* UserLoginCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserLoginCoordinator.swift */; };
+		E13DD3F5271793BB009D4DAF /* UserLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F4271793BB009D4DAF /* UserLoginView.swift */; };
+		E13DD3F6271793BB009D4DAF /* UserLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F4271793BB009D4DAF /* UserLoginView.swift */; };
 		E14F7D0726DB36EF007C3AE6 /* ItemPortraitMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14F7D0626DB36EF007C3AE6 /* ItemPortraitMainView.swift */; };
 		E14F7D0926DB36F7007C3AE6 /* ItemLandscapeMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14F7D0826DB36F7007C3AE6 /* ItemLandscapeMainView.swift */; };
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
@@ -517,6 +523,9 @@
 		E13DD3E427177D15009D4DAF /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListCoordinator.swift; sourceTree = "<group>"; };
 		E13DD3EB27178A54009D4DAF /* UserLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLoginViewModel.swift; sourceTree = "<group>"; };
+		E13DD3EE27178F87009D4DAF /* NotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenter.swift; sourceTree = "<group>"; };
+		E13DD3F127179378009D4DAF /* UserLoginCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLoginCoordinator.swift; sourceTree = "<group>"; };
+		E13DD3F4271793BB009D4DAF /* UserLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLoginView.swift; sourceTree = "<group>"; };
 		E14F7D0626DB36EF007C3AE6 /* ItemPortraitMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPortraitMainView.swift; sourceTree = "<group>"; };
 		E14F7D0826DB36F7007C3AE6 /* ItemLandscapeMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLandscapeMainView.swift; sourceTree = "<group>"; };
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
@@ -1029,6 +1038,7 @@
 				62C29EA026D102A500C1D2E7 /* MainTabCoordinator.swift */,
 				6220D0B626D5EE1100B8E046 /* SearchCoordinator.swift */,
 				E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */,
+				E13DD3F127179378009D4DAF /* UserLoginCoordinator.swift */,
 				6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */,
 				6220D0C526D62D8700B8E046 /* VideoPlayerCoordinator.swift */,
 			);
@@ -1039,6 +1049,7 @@
 			isa = PBXGroup;
 			children = (
 				536D3D73267BA8170004248C /* BackgroundManager.swift */,
+				E13DD3EE27178F87009D4DAF /* NotificationCenter.swift */,
 				53649AB0269CFB1900A2D8B7 /* LogManager.swift */,
 				62EC352E267666A5000E9F2D /* SessionManager.swift */,
 			);
@@ -1112,6 +1123,7 @@
 				E13DD3E427177D15009D4DAF /* ServerListView.swift */,
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
 				625CB5672678B6FB00530A6E /* SplashView.swift */,
+				E13DD3F4271793BB009D4DAF /* UserLoginView.swift */,
 				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
 			);
 			path = Views;
@@ -1541,11 +1553,13 @@
 				C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */,
 				53ABFDE9267974EF00886593 /* HomeViewModel.swift in Sources */,
 				53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */,
+				E13DD3F027178F87009D4DAF /* NotificationCenter.swift in Sources */,
 				E13DD3DA27169406009D4DAF /* SwiftfinStoreKeychain.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				53ABFDDE267974E300886593 /* SplashView.swift in Sources */,
 				53ABFDE8267974EF00886593 /* SplashViewModel.swift in Sources */,
 				62E632DE267D2E170063E547 /* LatestMediaViewModel.swift in Sources */,
+				E13DD3F327179378009D4DAF /* UserLoginCoordinator.swift in Sources */,
 				E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				E13DD3EA27177ED6009D4DAF /* ServerListCoordinator.swift in Sources */,
 				53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */,
@@ -1609,6 +1623,7 @@
 				E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				53ABFDEB2679753200886593 /* ConnectToServerView.swift in Sources */,
 				536D3D76267BA9BB0004248C /* MainTabViewModel.swift in Sources */,
+				E13DD3F6271793BB009D4DAF /* UserLoginView.swift in Sources */,
 				5310695C2684E7EE00CFFDBA /* VideoPlayerViewController.swift in Sources */,
 				C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */,
 				536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */,
@@ -1635,6 +1650,7 @@
 				5364F455266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
+				E13DD3F227179378009D4DAF /* UserLoginCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
@@ -1682,6 +1698,7 @@
 				E188460026DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift in Sources */,
 				091B5A8B2683142E00D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */,
+				E13DD3F5271793BB009D4DAF /* UserLoginView.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
@@ -1725,6 +1742,7 @@
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */,
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
+				E13DD3EF27178F87009D4DAF /* NotificationCenter.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,

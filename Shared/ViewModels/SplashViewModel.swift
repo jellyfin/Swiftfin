@@ -16,12 +16,13 @@ import UIKit
 import WidgetKit
 #endif
 
+// TODO: Remove SplashViewModel
+
 final class SplashViewModel: ViewModel {
 
     @Published var isLoggedIn: Bool = false
 
     override init() {
-        // TODO: Remove SplashViewModel
         isLoggedIn = SessionManager.main.currentLogin != nil
         super.init()
 

@@ -10,6 +10,7 @@
 import Combine
 import CoreData
 import CoreStore
+import Defaults
 import Foundation
 import JellyfinAPI
 import KeychainSwift
@@ -17,6 +18,7 @@ import UIKit
 
 #if os(tvOS)
 import TVServices
+import SwiftUIFocusGuide
 #endif
 
 typealias CurrentLogin = (server: SwiftfinStore.Models.Server, user: SwiftfinStore.Models.User)
@@ -30,18 +32,18 @@ final class SessionManager {
     // MARK: main
     static let main = SessionManager()
     
-    private let JellyfinDefaults = UserDefaults(suiteName: "jellyfin-defaults")!
-    
     private init() {
-        if let lastServerUserID = SwiftfinStore.Defaults.suite[.lastServerUserID],
-           let userID = lastServerUserID.split(separator: "-")[safe: 1],
+        if let lastUserID = SwiftfinStore.Defaults.suite[.lastServerUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.User>(),
-                                                            [Where<SwiftfinStore.Models.User>("id == %@", userID)]) {
+                                                            [Where<SwiftfinStore.Models.User>("id == %@", lastUserID)]) {
+            
+            // TODO: Fetch for right queue
             // Strongly assuming that we didn't delete the server associate with the user
             guard let server = user.server, let accessToken = user.accessToken else { return }
+            guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { return }
             
             setAuthHeader(with: accessToken.value)
-            currentLogin = (server: server, user: user)
+            currentLogin = (server: existingServer, user: user)
         }
     }
     
@@ -115,12 +117,23 @@ final class SessionManager {
             .handleEvents(receiveOutput: { [unowned self] (user, transaction) in
                 setAuthHeader(with: user.accessToken?.value ?? "")
                 try? transaction.commitAndWait()
-                currentLogin = (server: server, user: user)
+                
+                // Fetch for the right queue
+                let currentServer = SwiftfinStore.dataStack.fetchExisting(server)!
+                let currentUser = SwiftfinStore.dataStack.fetchExisting(user)!
+                
+                SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
+                
+                currentLogin = (server: currentServer, user: currentUser)
             })
             .map({ (user, _) in
                 return user
             })
             .eraseToAnyPublisher()
+    }
+    
+    func logout() {
+        // TODO: todo
     }
     
     private func setAuthHeader(with accessToken: String) {

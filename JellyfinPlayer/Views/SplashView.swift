@@ -20,7 +20,7 @@ struct SplashView: View {
                 if flag {
                     mainRouter.root(\.mainTab)
                 } else {
-                    mainRouter.root(\.connectToServer)
+                    mainRouter.root(\.serverList)
                 }
             }
     }

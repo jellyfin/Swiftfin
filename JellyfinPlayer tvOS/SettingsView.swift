@@ -67,18 +67,17 @@ struct SettingsView: View {
                         Spacer()
                         Button {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                let nc = NotificationCenter.default
-                                nc.post(name: Notification.Name("didSignOut"), object: nil)
+                                SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
                             }
                         } label: {
                             Text("Switch user").font(.callout)
                         }
                     }
                     Button {
+                        // TODO: remove delay
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             SessionManager.current.logout()
-                            let nc = NotificationCenter.default
-                            nc.post(name: Notification.Name("didSignOut"), object: nil)
+                            SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
                         }
                     } label: {
                         Text("Sign out").font(.callout)

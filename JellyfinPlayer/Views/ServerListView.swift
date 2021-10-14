@@ -7,6 +7,7 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import CoreStore
 import SwiftUI
 
 struct ServerListView: View {
@@ -22,13 +23,36 @@ struct ServerListView: View {
         }
         .navigationTitle("Servers")
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    serverListRouter.route(to: \.connectToServer)
-                } label: {
-                    Text("Connect")
+            
+            ToolbarItemGroup(placement: .navigation) {
+                HStack {
+                    Button {
+                        serverListRouter.route(to: \.connectToServer)
+                    } label: {
+                        Text("Connect")
+                    }
+                    
+                    Button {
+                        SwiftfinStore.dataStack.perform(asynchronous: { transaction in
+                            try! transaction.deleteAll(From<SwiftfinStore.Models.Server>())
+                            try! transaction.deleteAll(From<SwiftfinStore.Models.User>())
+                            try! transaction.deleteAll(From<SwiftfinStore.Models.AccessToken>())
+                        }) { _ in
+                            viewModel.servers = []
+                        }
+                    } label: {
+                        Text("Purge")
+                    }
                 }
             }
+            
+//            ToolbarItem(placement: .navigationBarTrailing) {
+//                Button {
+//                    serverListRouter.route(to: \.connectToServer)
+//                } label: {
+//                    Text("Connect")
+//                }
+//            }
         }
     }
 }

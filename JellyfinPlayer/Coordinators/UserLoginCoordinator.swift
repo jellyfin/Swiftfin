@@ -11,17 +11,18 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class ServerListCoordinator: NavigationCoordinatable {
-    let stack = NavigationStack(initial: \ServerListCoordinator.start)
+final class UserLoginCoordinator: NavigationCoordinatable {
+    let stack = NavigationStack(initial: \UserLoginCoordinator.start)
     
     @Root var start = makeStart
-    @Route(.push) var connectToServer = makeConnectToServer
     
-    func makeConnectToServer() -> ConnectToServerCoodinator {
-        ConnectToServerCoodinator()
+    let viewModel: UserLoginViewModel
+    
+    init(viewModel: UserLoginViewModel) {
+        self.viewModel = viewModel
     }
     
     @ViewBuilder func makeStart() -> some View {
-        ServerListView(viewModel: ServerListViewModel())
+        UserLoginView(viewModel: viewModel)
     }
 }

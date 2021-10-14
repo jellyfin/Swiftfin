@@ -82,7 +82,7 @@ extension AppURLHandler {
             // It would be nice if the ItemViewModel could be initialized to id later.
             getItem(userID: userID, itemID: itemID) { item in
                 guard let item = item else { return }
-                NotificationCenter.default.post(name: Notification.Name("processDeepLink"), object: DeepLink.item(item))
+                SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.processDeepLink, object: DeepLink.item(item))
             }
 
             return true

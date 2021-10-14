@@ -7,16 +7,19 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import CoreStore
 import Foundation
 import JellyfinAPI
 import Stinsen
 
 final class UserLoginViewModel: ViewModel {
     
+    @RouterObject var router: UserLoginCoordinator.Router?
     let server: SwiftfinStore.Models.Server
     
     init(server: SwiftfinStore.Models.Server) {
-        self.server = server
+        // Need to fetch for this context
+        self.server = SwiftfinStore.dataStack.fetchExisting(server)!
     }
     
     func login(username: String, password: String) {
@@ -29,19 +32,8 @@ final class UserLoginViewModel: ViewModel {
                 self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login",
                                            completion: completion)
             } receiveValue: { user in
-                print(user)
+                SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
             }
             .store(in: &cancellables)
-//
-//        
-//        SessionManager.current.login(username: username, password: password)
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { completion in
-//                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login",
-//                                           completion: completion)
-//            }, receiveValue: { [weak self] _ in
-//                self?.main?.root(\.mainTab)
-//            })
-//            .store(in: &cancellables)
     }
 }

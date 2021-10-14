@@ -14,7 +14,7 @@ import Stinsen
 
 final class ConnectToServerViewModel: ViewModel {
     
-    @RouterObject var main: MainCoordinator.Router?
+    @RouterObject var router: ConnectToServerCoodinator.Router?
     @Published var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
     @Published var searching = false
     private let discovery = ServerDiscovery()
@@ -33,8 +33,9 @@ final class ConnectToServerViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
                                            completion: completion)
-            }, receiveValue: { _ in
+            }, receiveValue: { server in
                 LogManager.shared.log.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
+                self.router?.route(to: \.userLogin, server)
             })
             .store(in: &cancellables)
     }

@@ -37,10 +37,10 @@ import SwiftUI
                 UIScrollView.appearance().keyboardDismissMode = .onDrag
             #endif
 
-            let nc = NotificationCenter.default
-            nc.addObserver(self, selector: #selector(didLogIn), name: Notification.Name("didSignIn"), object: nil)
-            nc.addObserver(self, selector: #selector(didLogOut), name: Notification.Name("didSignOut"), object: nil)
-            nc.addObserver(self, selector: #selector(processDeepLink), name: Notification.Name("processDeepLink"), object: nil)
+            let nc = SwiftfinNotificationCenter.main
+            nc.addObserver(self, selector: #selector(didLogIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
+            nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+            nc.addObserver(self, selector: #selector(processDeepLink), name: SwiftfinNotificationCenter.Keys.processDeepLink, object: nil)
         }
 
         @objc func didLogIn() {

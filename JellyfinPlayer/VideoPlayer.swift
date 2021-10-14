@@ -539,7 +539,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                                 self.delegate?.exitPlayer(self)
                                 // TODO: todo
 //                                SessionManager.current.logout()
-                                main?.root(\.connectToServer)
+                                main?.root(\.serverList)
                             case .error:
                                 self.delegate?.exitPlayer(self)
                             }
