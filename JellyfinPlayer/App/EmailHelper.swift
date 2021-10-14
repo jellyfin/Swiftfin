@@ -11,10 +11,10 @@ import SwiftUI
 import MessageUI
 
 class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
+    
     public static let shared = EmailHelper()
-    override private init() {
-        //
-    }
+    
+    override private init() { }
 
     func sendLogs(logURL: URL) {
         if !MFMailComposeViewController.canSendMail() {

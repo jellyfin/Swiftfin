@@ -148,31 +148,20 @@ struct JellyfinPlayerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainCoordinator().view()
+            EmptyView()
                 .onAppear {
                     setupAppearance()
                 }
+                .withHostingWindow { window in
+                    window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
+                }
+                .onShake {
+                    EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
+                }
+                .onOpenURL { url in
+                    AppURLHandler.shared.processDeepLink(url: url)
+                }
         }
-        
-        
-//        WindowGroup {
-//            EmptyView()
-//                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-//                .onAppear(perform: {
-//                    setupAppearance()
-//                })
-//                .withHostingWindow { window in
-//                    window?
-//                        .rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view()
-//                            .environment(\.managedObjectContext, persistenceController.container.viewContext))
-//                }
-//                .onShake {
-//                    EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
-//                }
-//                .onOpenURL { url in
-//                    AppURLHandler.shared.processDeepLink(url: url)
-//                }
-//        }
     }
 
     private func setupAppearance() {

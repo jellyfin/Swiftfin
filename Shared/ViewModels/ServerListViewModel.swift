@@ -17,4 +17,12 @@ class ServerListViewModel: ObservableObject {
     func fetchServers() {
         self.servers = SessionManager.main.fetchServers()
     }
+    
+    func userTextFor(server: SwiftfinStore.State.Server) -> String {
+        if server.userIDs.count == 1 {
+            return "1 user"
+        } else {
+            return "\(server.userIDs.count) users"
+        }
+    }
 }
