@@ -89,7 +89,7 @@ final class SessionManager {
     }
     
     // Logs in a user with an associated server, storing if successful
-    func loginUser(server: SwiftfinStore.State.Server, username: String, password: String) -> AnyPublisher<SwiftfinStore.Models.StoredUser, Error> {
+    func loginUser(server: SwiftfinStore.State.Server, username: String, password: String) -> AnyPublisher<SwiftfinStore.State.User, Error> {
         setAuthHeader(with: "")
         
         return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
@@ -128,7 +128,7 @@ final class SessionManager {
                 currentLogin = (server: currentServer.state, user: currentUser.state)
             })
             .map({ (_, user, _) in
-                return user
+                return user.state
             })
             .eraseToAnyPublisher()
     }
