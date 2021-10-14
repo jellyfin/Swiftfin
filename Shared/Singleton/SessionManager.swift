@@ -75,15 +75,29 @@ final class SessionManager {
         JellyfinAPI.basePath = uri
         
         return SystemAPI.getPublicSystemInfo()
-            .map({ response -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
+            .tryMap({ response -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
+                
                 let transaction = SwiftfinStore.dataStack.beginUnsafe()
                 let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
-                newServer.uri = response.localAddress ?? "SfUri"
-                newServer.name = response.serverName ?? "SfServerName"
-                newServer.id = response.id ?? ""
-                newServer.os = response.operatingSystem ?? "SfOS"
-                newServer.version = response.version ?? "SfVersion"
+                
+                guard let uri = response.localAddress,
+                      let name = response.serverName,
+                      let id = response.id,
+                      let os = response.operatingSystem,
+                      let version = response.version else { throw JellyfinAPIError("Missing server data from network call") }
+                
+                newServer.uri = uri
+                newServer.name = name
+                newServer.id = id
+                newServer.os = os
+                newServer.version = version
                 newServer.users = []
+                
+                // Check for existing server on device
+                if let existingServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                            [Where<SwiftfinStore.Models.StoredServer>("id == %@", newServer.id)]) {
+                    throw SwiftfinStore.Errors.existingServer(existingServer.state)
+                }
                 
                 return (newServer, transaction)
             })
@@ -100,16 +114,28 @@ final class SessionManager {
     func loginUser(server: SwiftfinStore.State.Server, username: String, password: String) -> AnyPublisher<SwiftfinStore.State.User, Error> {
         setAuthHeader(with: "")
         
+        JellyfinAPI.basePath = server.uri
+        
         return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
-            .map({ response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
+            .tryMap({ response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
                 
-                guard let accessToken = response.accessToken else { fatalError("Received successful user with no access token") }
+                guard let accessToken = response.accessToken else { throw JellyfinAPIError("Access token missing from network call") }
                 
                 let transaction = SwiftfinStore.dataStack.beginUnsafe()
                 let newUser = transaction.create(Into<SwiftfinStore.Models.StoredUser>())
-                newUser.username = response.user?.name ?? "SfUsername"
-                newUser.id = response.user?.id ?? "SfID"
+                
+                guard let username = response.user?.name,
+                      let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
+                
+                newUser.username = username
+                newUser.id = id
                 newUser.appleTVID = ""
+                
+                // Check for existing user on device
+                if let existingUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
+                                                                            [Where<SwiftfinStore.Models.StoredUser>("id == %@", newUser.id)]) {
+                    throw SwiftfinStore.Errors.existingUser(existingUser.state)
+                }
                 
                 let newAccessToken = transaction.create(Into<SwiftfinStore.Models.StoredAccessToken>())
                 newAccessToken.value = accessToken
@@ -154,6 +180,14 @@ final class SessionManager {
         setAuthHeader(with: "")
         SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+    }
+    
+    func delete(user: SwiftfinStore.State.User) {
+        
+    }
+    
+    func delete(server: SwiftfinStore.State.Server) {
+        
     }
     
     private func setAuthHeader(with accessToken: String) {

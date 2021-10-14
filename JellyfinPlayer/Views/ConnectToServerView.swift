@@ -63,8 +63,8 @@ struct ConnectToServerView: View {
             .headerProminence(.increased)
         }
         .alert(item: $viewModel.errorMessage) { _ in
-            Alert(title: Text("\(viewModel.errorMessage?.code ?? -1)\n\(viewModel.errorMessage?.title ?? "Error")"),
-                  message: Text(viewModel.errorMessage?.displayMessage ?? "Error"),
+            Alert(title: Text(viewModel.alertTitle),
+                  message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
                   dismissButton: .cancel())
         }
         .navigationTitle("Connect")

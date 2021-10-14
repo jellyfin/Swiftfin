@@ -20,9 +20,18 @@ final class UserSignInViewModel: ViewModel {
         self.server = server
     }
     
+    var alertTitle: String {
+        var message: String = ""
+        if errorMessage?.code != ErrorMessage.noShowErrorCode {
+            message.append(contentsOf: "\(errorMessage?.code ?? ErrorMessage.noShowErrorCode)\n")
+        }
+        message.append(contentsOf: "\(errorMessage?.title ?? "Unkown Error")")
+        return message
+    }
+    
     func login(username: String, password: String) {
         LogManager.shared.log.debug("Attempting to login to server at \"\(server.uri)\"", tag: "login")
-        LogManager.shared.log.debug("username == \"\": \(username), password == \"\": \(password)", tag: "login")
+        LogManager.shared.log.debug("username: \(username), password: \(password)", tag: "login")
         
         SessionManager.main.loginUser(server: server, username: username, password: password)
             .trackActivity(loading)

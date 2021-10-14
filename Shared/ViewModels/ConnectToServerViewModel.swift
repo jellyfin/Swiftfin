@@ -18,6 +18,15 @@ final class ConnectToServerViewModel: ViewModel {
     @Published var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
     @Published var searching = false
     private let discovery = ServerDiscovery()
+    
+    var alertTitle: String {
+        var message: String = ""
+        if errorMessage?.code != ErrorMessage.noShowErrorCode {
+            message.append(contentsOf: "\(errorMessage?.code ?? ErrorMessage.noShowErrorCode)\n")
+        }
+        message.append(contentsOf: "\(errorMessage?.title ?? "Unkown Error")")
+        return message
+    }
 
     func connectToServer(uri: String) {
         #if targetEnvironment(simulator)

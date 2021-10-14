@@ -45,6 +45,11 @@ struct UserSignInView: View {
                 Text("Sign In to \(viewModel.server.name)")
             }
         }
+        .alert(item: $viewModel.errorMessage) { _ in
+            Alert(title: Text(viewModel.alertTitle),
+                  message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
+                  dismissButton: .cancel())
+        }
         .navigationTitle("Sign In")
     }
 }

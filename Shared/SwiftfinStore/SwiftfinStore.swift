@@ -119,6 +119,13 @@ enum SwiftfinStore {
         }
     }
     
+    // MARK: Errors
+    enum Errors {
+        case existingServer(State.Server)
+        case existingUser(State.User)
+    }
+    
+    // MARK: dataStack
     static let dataStack: DataStack = {
         let schema = CoreStoreSchema(modelVersion: "V1",
                                      entities: [
@@ -137,4 +144,25 @@ enum SwiftfinStore {
         )
         return _dataStack
     }()
+}
+
+extension SwiftfinStore.Errors: LocalizedError {
+    
+    var title: String {
+        switch self {
+        case .existingServer(_):
+            return "Existing Server"
+        case .existingUser(_):
+            return "Existing User"
+        }
+    }
+    
+    var errorDescription: String? {
+        switch self {
+        case .existingServer(let server):
+            return "Server \(server.name) already exists with same server ID"
+        case .existingUser(let user):
+            return "User \(user.username) already exists with same user ID"
+        }
+    }
 }
