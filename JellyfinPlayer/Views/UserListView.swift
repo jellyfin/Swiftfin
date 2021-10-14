@@ -53,7 +53,7 @@ struct UserListView: View {
     @ViewBuilder
     private var noUserView: some View {
         VStack {
-            Text("Login to a user to get started.")
+            Text("Sign in to get started.")
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
             
@@ -69,7 +69,7 @@ struct UserListView: View {
                         .padding([.leading, .trailing], 30)
                         .padding([.top, .bottom], 20)
                     
-                    Text("Login")
+                    Text("Sign in")
                         .foregroundColor(Color.white)
                         .bold()
                 }

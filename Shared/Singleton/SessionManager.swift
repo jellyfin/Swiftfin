@@ -80,8 +80,7 @@ final class SessionManager {
                 let transaction = SwiftfinStore.dataStack.beginUnsafe()
                 let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
                 
-                guard let uri = response.localAddress,
-                      let name = response.serverName,
+                guard let name = response.serverName,
                       let id = response.id,
                       let os = response.operatingSystem,
                       let version = response.version else { throw JellyfinAPIError("Missing server data from network call") }
