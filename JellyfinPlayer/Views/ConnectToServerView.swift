@@ -32,9 +32,11 @@ struct ConnectToServerView: View {
                     }
                 }
                 .disabled(viewModel.isLoading || uri.isEmpty)
+            } header: {
+                Text("Connect to a Jellyfin server")
             }
             
-            Section(header: Text("Discovered Servers")) {
+            Section(header: Text("Local Servers")) {
                 if viewModel.searching {
                     ProgressView()
                 }
