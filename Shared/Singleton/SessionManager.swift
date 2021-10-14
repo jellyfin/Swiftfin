@@ -54,6 +54,13 @@ final class SessionManager {
         return servers.map({ $0.state })
     }
     
+    func fetchUsers(for server: SwiftfinStore.State.Server) -> [SwiftfinStore.State.User] {
+        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                 Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id))
+            else { fatalError("No stored server associated with given state server?") }
+        return storedServer.users.map({ $0.state }).sorted(by: { $0.username < $1.username })
+    }
+    
     // Connects to a server at the given uri, storing if successful
     func connectToServer(with uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
         var uri = uri
@@ -108,7 +115,8 @@ final class SessionManager {
                 newUser.accessToken = newAccessToken
                 
                 guard let userServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
-                                                                        [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]) else { fatalError("No stored server associated with given state server?")}
+                                                                        [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)])
+                    else { fatalError("No stored server associated with given state server?") }
                 
                 guard let editUserServer = transaction.edit(userServer) else { fatalError("Can't get proxy for existing object?") }
                 editUserServer.users.insert(newUser)
@@ -133,7 +141,15 @@ final class SessionManager {
             .eraseToAnyPublisher()
     }
     
+    func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
+        JellyfinAPI.basePath = server.uri
+        setAuthHeader(with: user.accessToken)
+        currentLogin = (server: server, user: user)
+    }
+    
     func logout() {
+        JellyfinAPI.basePath = ""
+        setAuthHeader(with: "")
         SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
     }
@@ -161,171 +177,3 @@ final class SessionManager {
         JellyfinAPI.customHeaders["X-Emby-Authorization"] = header
     }
 }
-
-//final class SessionManager {
-//    static let current = SessionManager()
-//    fileprivate(set) var user: SignedInUser!
-//    fileprivate(set) var deviceID: String = ""
-//    fileprivate(set) var accessToken: String = ""
-//
-//    #if os(tvOS)
-//    let tvUserManager = TVUserManager()
-//    #endif
-//    let userDefaults = UserDefaults()
-//
-//    init() {
-//        let savedUserRequest: NSFetchRequest<SignedInUser> = SignedInUser.fetchRequest()
-//        let lastUsedUserID = userDefaults.string(forKey: "lastUsedUserID")
-//        let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
-//
-//        #if os(tvOS)
-//        savedUsers?.forEach { savedUser in
-//            if savedUser.appletv_id == tvUserManager.currentUserIdentifier ?? "" {
-//                self.user = savedUser
-//            }
-//        }
-//        #else
-//        if lastUsedUserID != nil {
-//            savedUsers?.forEach { savedUser in
-//                if savedUser.user_id ?? "" == lastUsedUserID! {
-//                    user = savedUser
-//                }
-//            }
-//        } else {
-//            user = savedUsers?.first
-//        }
-//        #endif
-//
-//        if user != nil {
-//            let authToken = getAuthToken(userID: user.user_id!)
-//            generateAuthHeader(with: authToken, deviceID: user.device_uuid)
-//        }
-//    }
-//
-//    fileprivate func generateAuthHeader(with authToken: String?, deviceID devID: String?) {
-//        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-//        var deviceName = UIDevice.current.name
-//        deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
-//        deviceName = String(deviceName.unicodeScalars.filter {CharacterSet.urlQueryAllowed.contains($0) })
-//
-//        var header = "MediaBrowser "
-//        #if os(tvOS)
-//        header.append("Client=\"Jellyfin tvOS\", ")
-//        #else
-//        header.append("Client=\"SwiftFin iOS\", ")
-//        #endif
-//
-//        header.append("Device=\"\(deviceName)\", ")
-//
-//        if devID == nil {
-//            LogManager.shared.log.info("Generating device ID...")
-//            #if os(tvOS)
-//            header.append("DeviceId=\"tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))\", ")
-//            deviceID = "tvOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))"
-//            #else
-//            header.append("DeviceId=\"iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))\", ")
-//            deviceID = "iOS_\(UIDevice.current.identifierForVendor!.uuidString)_\(String(Date().timeIntervalSince1970))"
-//            #endif
-//        } else {
-//            LogManager.shared.log.info("Using stored device ID...")
-//            header.append("DeviceId=\"\(devID!)\", ")
-//            deviceID = devID!
-//        }
-//
-//        header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
-//
-//        if authToken != nil {
-//            header.append("Token=\"\(authToken!)\"")
-//            accessToken = authToken!
-//        }
-//
-//        JellyfinAPI.customHeaders["X-Emby-Authorization"] = header
-//    }
-//
-//    fileprivate func getAuthToken(userID: String) -> String? {
-//        let keychain = KeychainSwift()
-//        keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
-//        return keychain.get("AccessToken_\(userID)")
-//    }
-//
-//    func doesUserHaveSavedSession(userID: String) -> Bool {
-//        let savedUserRequest: NSFetchRequest<SignedInUser> = SignedInUser.fetchRequest()
-//        savedUserRequest.predicate = NSPredicate(format: "user_id == %@", userID)
-//        let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
-//
-//        if savedUsers!.isEmpty {
-//            return false
-//        }
-//
-//        return true
-//    }
-//
-//    func getSavedSession(userID: String) -> SignedInUser {
-//        let savedUserRequest: NSFetchRequest<SignedInUser> = SignedInUser.fetchRequest()
-//        savedUserRequest.predicate = NSPredicate(format: "user_id == %@", userID)
-//        let savedUsers = try? PersistenceController.shared.container.viewContext.fetch(savedUserRequest)
-//        return savedUsers!.first!
-//    }
-//
-//    func loginWithSavedSession(user: SignedInUser) {
-//        let accessToken = getAuthToken(userID: user.user_id!)
-//        userDefaults.set(user.user_id!, forKey: "lastUsedUserID")
-//        self.user = user
-//        generateAuthHeader(with: accessToken, deviceID: user.device_uuid)
-//        print(JellyfinAPI.customHeaders)
-//        let nc = NotificationCenter.default
-//        nc.post(name: Notification.Name("didSignIn"), object: nil)
-//    }
-//
-//    func login(username: String, password: String) -> AnyPublisher<SignedInUser, Error> {
-//        generateAuthHeader(with: nil, deviceID: nil)
-//
-//        return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
-//            .map { response -> (SignedInUser, String?) in
-//                let user = SignedInUser(context: PersistenceController.shared.container.viewContext)
-//                user.username = response.user?.name
-//                user.user_id = response.user?.id
-//                user.device_uuid = self.deviceID
-//
-//                #if os(tvOS)
-//                let descriptor: TVAppProfileDescriptor = TVAppProfileDescriptor(name: user.username!)
-//                self.tvUserManager.shouldStorePreferenceForCurrentUser(to: descriptor) { should in
-//                    if should {
-//                        user.appletv_id = self.tvUserManager.currentUserIdentifier ?? ""
-//                    }
-//                }
-//                #endif
-//
-//                return (user, response.accessToken)
-//            }
-//            .handleEvents(receiveOutput: { [unowned self] response, accessToken in
-//                user = response
-//                _ = try? PersistenceController.shared.container.viewContext.save()
-//
-//                let keychain = KeychainSwift()
-//                keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
-//                keychain.set(accessToken!, forKey: "AccessToken_\(user.user_id!)")
-//
-//                generateAuthHeader(with: accessToken, deviceID: user.device_uuid)
-//
-//                let nc = NotificationCenter.default
-//                nc.post(name: Notification.Name("didSignIn"), object: nil)
-//            })
-//            .map(\.0)
-//            .eraseToAnyPublisher()
-//    }
-//
-//    func logout() {
-//        let nc = NotificationCenter.default
-//        nc.post(name: Notification.Name("didSignOut"), object: nil)
-//        let keychain = KeychainSwift()
-//        keychain.accessGroup = "9R8RREG67J.me.vigue.jellyfin.sharedKeychain"
-//        keychain.delete("AccessToken_\(user?.user_id ?? "")")
-//        generateAuthHeader(with: nil, deviceID: nil)
-//        if user != nil {
-//            let deleteRequest = NSBatchDeleteRequest(objectIDs: [user.objectID])
-//            user = nil
-//            _ = try? PersistenceController.shared.container.viewContext.execute(deleteRequest)
-//        }
-//    }
-//}

@@ -25,7 +25,7 @@ final class LatestMediaViewModel: ViewModel {
     }
 
     func requestLatestMedia() {
-        LogManager.shared.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id ?? "NIL")")
+        LogManager.shared.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id)")
         UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
                                       parentId: libraryID,
                                       fields: [

@@ -18,12 +18,15 @@ struct ServerListView: View {
     var body: some View {
         List {
             ForEach(viewModel.servers, id: \.id) { server in
-                Text(server.name)
+                Button {
+                    serverListRouter.route(to: \.userList, server)
+                } label: {
+                    Text(server.name)
+                }
             }
         }
         .navigationTitle("Servers")
         .toolbar {
-            
             ToolbarItemGroup(placement: .navigation) {
                 HStack {
                     Button {

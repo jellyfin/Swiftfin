@@ -10,7 +10,6 @@ import Stinsen
 
 struct ConnectToServerView: View {
     
-    @EnvironmentObject var mainRouter: MainCoordinator.Router
     @StateObject var viewModel = ConnectToServerViewModel()
     @State var uri = ""
     

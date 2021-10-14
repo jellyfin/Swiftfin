@@ -9,7 +9,6 @@
 
 import CoreStore
 import Foundation
-import JellyfinAPI
 import Stinsen
 
 final class UserLoginViewModel: ViewModel {
