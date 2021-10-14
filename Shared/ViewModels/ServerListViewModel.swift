@@ -25,4 +25,9 @@ class ServerListViewModel: ObservableObject {
             return "\(server.userIDs.count) users"
         }
     }
+    
+    func remove(server: SwiftfinStore.State.Server) {
+        SessionManager.main.delete(server: server)
+        fetchServers()
+    }
 }

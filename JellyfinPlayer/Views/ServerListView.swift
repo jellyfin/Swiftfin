@@ -52,6 +52,13 @@ struct ServerListView: View {
                         }
                         .padding()
                     }
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            viewModel.remove(server: server)
+                        } label: {
+                            Label("Remove", systemImage: "trash")
+                        }
+                    }
                 }
             }
         }
@@ -60,7 +67,7 @@ struct ServerListView: View {
     @ViewBuilder
     private var noServerView: some View {
         VStack {
-            Text("Connect to a Jellyfin server to get started.")
+            Text("Connect to a Jellyfin server to get started")
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
             

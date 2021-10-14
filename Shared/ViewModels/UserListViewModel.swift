@@ -29,4 +29,9 @@ class UserListViewModel: ViewModel {
         SessionManager.main.loginUser(server: server, user: user)
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
     }
+    
+    func remove(user: SwiftfinStore.State.User) {
+        SessionManager.main.delete(user: user)
+        fetchUsers()
+    }
 }

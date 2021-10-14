@@ -28,23 +28,48 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section(header: EmptyView()) {
-                HStack {
-                    Text("User")
-                    Spacer()
-                    Text(SessionManager.main.currentLogin.user.username)
-                        .foregroundColor(.jellyfinPurple)
-                }
-
-                Button {
-                    settingsRouter.route(to: \.serverDetail)
-                } label: {
+                
+                // There is a bug where the SettingsView attmempts to remake itself upon signing out
+                //     so this check is made
+                if SessionManager.main.currentLogin == nil {
                     HStack {
-                        Text("Server")
+                        Text("User")
                         Spacer()
-                        Text(SessionManager.main.currentLogin.server.name)
+                        Text("")
                             .foregroundColor(.jellyfinPurple)
+                    }
 
-                        Image(systemName: "chevron.right")
+                    Button {
+                        settingsRouter.route(to: \.serverDetail)
+                    } label: {
+                        HStack {
+                            Text("Server")
+                            Spacer()
+                            Text("")
+                                .foregroundColor(.jellyfinPurple)
+
+                            Image(systemName: "chevron.right")
+                        }
+                    }
+                } else {
+                    HStack {
+                        Text("User")
+                        Spacer()
+                        Text(SessionManager.main.currentLogin.user.username)
+                            .foregroundColor(.jellyfinPurple)
+                    }
+
+                    Button {
+                        settingsRouter.route(to: \.serverDetail)
+                    } label: {
+                        HStack {
+                            Text("Server")
+                            Spacer()
+                            Text(SessionManager.main.currentLogin.server.name)
+                                .foregroundColor(.jellyfinPurple)
+
+                            Image(systemName: "chevron.right")
+                        }
                     }
                 }
 

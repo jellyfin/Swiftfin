@@ -45,6 +45,13 @@ struct UserListView: View {
                         }
                         .padding()
                     }
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            viewModel.remove(user: user)
+                        } label: {
+                            Label("Remove", systemImage: "trash")
+                        }
+                    }
                 }
             }
         }
@@ -53,7 +60,7 @@ struct UserListView: View {
     @ViewBuilder
     private var noUserView: some View {
         VStack {
-            Text("Sign in to get started.")
+            Text("Sign in to get started")
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
             

@@ -15,7 +15,7 @@ struct ServerDetailView: View {
 
     var body: some View {
         Form {
-            Section(header: Text("")) {
+            Section(header: Text("Server Details")) {
                 HStack {
                     Text("Name")
                     Spacer()

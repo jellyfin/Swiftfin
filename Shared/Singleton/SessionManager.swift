@@ -175,6 +175,7 @@ final class SessionManager {
     }
     
     func logout() {
+        currentLogin = nil
         JellyfinAPI.basePath = ""
         setAuthHeader(with: "")
         SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
@@ -182,11 +183,35 @@ final class SessionManager {
     }
     
     func delete(user: SwiftfinStore.State.User) {
-        
+        guard let storedUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
+                                                                     [Where<SwiftfinStore.Models.StoredUser>("id == %@", user.id)]) else { fatalError("No stored user for state user?")}
+        _delete(user: storedUser, transaction: nil)
     }
     
     func delete(server: SwiftfinStore.State.Server) {
+        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                       [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]) else { fatalError("No stored server for state server?")}
+        _delete(server: storedServer, transaction: nil)
+    }
+    
+    private func _delete(user: SwiftfinStore.Models.StoredUser, transaction: UnsafeDataTransaction?) {
+        guard let storedAccessToken = user.accessToken else { fatalError("No access token for stored user?")}
         
+        let transaction = transaction == nil ? SwiftfinStore.dataStack.beginUnsafe() : transaction!
+        transaction.delete(storedAccessToken)
+        transaction.delete(user)
+        try? transaction.commitAndWait()
+    }
+    
+    private func _delete(server: SwiftfinStore.Models.StoredServer, transaction: UnsafeDataTransaction?) {
+        let transaction = transaction == nil ? SwiftfinStore.dataStack.beginUnsafe() : transaction!
+        
+        for user in server.users {
+            _delete(user: user, transaction: transaction)
+        }
+        
+        transaction.delete(server)
+        try? transaction.commitAndWait()
     }
     
     private func setAuthHeader(with accessToken: String) {
