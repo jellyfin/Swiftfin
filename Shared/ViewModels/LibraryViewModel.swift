@@ -89,7 +89,7 @@ final class LibraryViewModel: ViewModel {
                 self.hasPreviousPage = self.currentPage > 0
                 self.hasNextPage = self.currentPage < self.totalPages - 1
                 self.items = response.items ?? []
-                self.calculateRows()
+                self.rows = self.calculateRows()
             })
             .store(in: &cancellables)
     }
@@ -119,7 +119,7 @@ final class LibraryViewModel: ViewModel {
                 self.hasPreviousPage = self.currentPage > 0
                 self.hasNextPage = self.currentPage < self.totalPages - 1
                 self.items.append(contentsOf: response.items ?? [])
-                self.calculateRows()
+                self.rows = self.calculateRows()
             })
             .store(in: &cancellables)
     }
@@ -139,21 +139,24 @@ final class LibraryViewModel: ViewModel {
         requestItems(with: filters)
     }
   
-  private func calculateRows() {
+  private func calculateRows() -> [LibraryRow] {
+    guard items.count > 0 else { return [] }
     let rowCount = items.count / columns
-    rows = [LibraryRow]()
+    var calculatedRows = [LibraryRow]()
     for i in (0...rowCount) {
       let firstItemIndex = i * columns
       var lastItemIndex = firstItemIndex + columns
       if lastItemIndex >= items.count {
         lastItemIndex = items.count - 1
       }
-      rows.append(
+      calculatedRows.append(
         LibraryRow(
           section: i,
           items: Array(items[firstItemIndex...lastItemIndex])
         )
       )
     }
+    
+    return calculatedRows
   }
 }

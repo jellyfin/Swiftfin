@@ -82,17 +82,6 @@ struct LibraryView: View {
     } else {
         Text("No results.")
     }
-      /*
-      .sheet(isPresented: $isShowingFilterView) {
-          LibraryFilterView(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType, parentId: viewModel.parentID ?? "")
-      }
-      .background(
-          NavigationLink(destination: LibrarySearchView(viewModel: .init(parentID: viewModel.parentID)),
-                         isActive: $isShowingSearchView) {
-              EmptyView()
-          }
-      )
-      */
   }
 }
 
