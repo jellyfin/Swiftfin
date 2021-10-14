@@ -49,12 +49,14 @@ struct SettingsView: View {
                 }
 
                 Button {
-                    settingsRouter.dismissCoordinator()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    SessionManager.main.logout()
+                    
+//                    settingsRouter.dismissCoordinator()
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         // TODO: todo and move notification somewhere else
 //                        SessionManager.current.logout()
-                        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
-                    }
+//                        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+//                    }
                 } label: {
                     Text("Sign out")
                         .font(.callout)

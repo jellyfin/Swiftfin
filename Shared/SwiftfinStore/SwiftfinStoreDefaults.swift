@@ -17,10 +17,6 @@ extension SwiftfinStore {
         static let suite: UserDefaults = {
             return UserDefaults(suiteName: "swiftfinstore-defaults")!
         }()
-        
-//        enum Keys {
-//            static let lastUserID = Defaults.Key<String?>("lastUserID", suite: SwiftfinStore.Defaults.suite)
-//        }
     }
 }
 

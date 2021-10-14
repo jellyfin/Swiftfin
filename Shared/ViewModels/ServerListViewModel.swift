@@ -12,9 +12,9 @@ import SwiftUI
 
 class ServerListViewModel: ObservableObject {
     
-    @Published var servers: [SwiftfinStore.Models.Server] = []
+    @Published var servers: [SwiftfinStore.State.Server] = []
     
-    init() {
+    func fetchServers() {
         self.servers = SessionManager.main.fetchServers()
     }
 }

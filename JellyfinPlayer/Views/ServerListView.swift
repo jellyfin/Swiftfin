@@ -34,18 +34,18 @@ struct ServerListView: View {
                     
                     Button {
                         SwiftfinStore.dataStack.perform(asynchronous: { transaction in
-                            try! transaction.deleteAll(From<SwiftfinStore.Models.Server>())
-                            try! transaction.deleteAll(From<SwiftfinStore.Models.User>())
-                            try! transaction.deleteAll(From<SwiftfinStore.Models.AccessToken>())
+                            try! transaction.deleteAll(From<SwiftfinStore.Models.StoredServer>())
+                            try! transaction.deleteAll(From<SwiftfinStore.Models.StoredUser>())
+                            try! transaction.deleteAll(From<SwiftfinStore.Models.StoredAccessToken>())
                         }) { _ in
-                            viewModel.servers = []
+                            SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
+                            viewModel.fetchServers()
                         }
                     } label: {
                         Text("Purge")
                     }
                 }
             }
-            
 //            ToolbarItem(placement: .navigationBarTrailing) {
 //                Button {
 //                    serverListRouter.route(to: \.connectToServer)
@@ -53,6 +53,9 @@ struct ServerListView: View {
 //                    Text("Connect")
 //                }
 //            }
+        }
+        .onAppear {
+            viewModel.fetchServers()
         }
     }
 }

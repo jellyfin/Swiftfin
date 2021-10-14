@@ -13,9 +13,46 @@ import Defaults
 
 enum SwiftfinStore {
     
+    // Safe, copyable representations of their underlying CoreStoredObject's
+    // Relationships are represented by the related object's IDs or value
+    enum State {
+        
+        struct Server {
+            let uri: String
+            let name: String
+            let id: String
+            let os: String
+            let version: String
+            let userIDs: [String]
+            
+            fileprivate init(uri: String, name: String, id: String, os: String, version: String, usersIDs: [String]) {
+                self.uri = uri
+                self.name = name
+                self.id = id
+                self.os = os
+                self.version = version
+                self.userIDs = usersIDs
+            }
+        }
+        
+        struct User {
+            let username: String
+            let id: String
+            let serverID: String
+            let accessToken: String
+            
+            fileprivate init(username: String, id: String, serverID: String, accessToken: String) {
+                self.username = username
+                self.id = id
+                self.serverID = serverID
+                self.accessToken = accessToken
+            }
+        }
+    }
+    
     enum Models {
         
-        final class Server: CoreStoreObject {
+        final class StoredServer: CoreStoreObject {
             
             @Field.Stored("uri")
             var uri: String = ""
@@ -32,11 +69,20 @@ enum SwiftfinStore {
             @Field.Stored("version")
             var version: String = ""
             
-            @Field.Relationship("users", inverse: \User.$server)
-            var users: Set<User>
+            @Field.Relationship("users", inverse: \StoredUser.$server)
+            var users: Set<StoredUser>
+            
+            var state: State.Server {
+                return State.Server(uri: uri,
+                                    name: name,
+                                    id: id,
+                                    os: os,
+                                    version: version,
+                                    usersIDs: users.map({ $0.id }))
+            }
         }
         
-        final class User: CoreStoreObject {
+        final class StoredUser: CoreStoreObject {
             
             @Field.Stored("username")
             var username: String = ""
@@ -48,28 +94,37 @@ enum SwiftfinStore {
             var appleTVID: String = ""
             
             @Field.Relationship("server")
-            var server: Server?
+            var server: StoredServer?
             
-            @Field.Relationship("accessToken", inverse: \AccessToken.$user)
-            var accessToken: AccessToken?
+            @Field.Relationship("accessToken", inverse: \StoredAccessToken.$user)
+            var accessToken: StoredAccessToken?
+            
+            var state: State.User {
+                guard let server = server else { fatalError("No server associated with user") }
+                guard let accessToken = accessToken else { fatalError("No access token associated with user") }
+                return State.User(username: username,
+                                  id: id,
+                                  serverID: server.id,
+                                  accessToken: accessToken.value)
+            }
         }
         
-        final class AccessToken: CoreStoreObject {
+        final class StoredAccessToken: CoreStoreObject {
             
             @Field.Stored("value")
             var value: String = ""
             
             @Field.Relationship("user")
-            var user: User?
+            var user: StoredUser?
         }
     }
     
     static let dataStack: DataStack = {
         let schema = CoreStoreSchema(modelVersion: "V1",
                                      entities: [
-                                        Entity<SwiftfinStore.Models.Server>("Server"),
-                                        Entity<SwiftfinStore.Models.User>("User"),
-                                        Entity<SwiftfinStore.Models.AccessToken>("AccessToken")
+                                        Entity<SwiftfinStore.Models.StoredServer>("Server"),
+                                        Entity<SwiftfinStore.Models.StoredUser>("User"),
+                                        Entity<SwiftfinStore.Models.StoredAccessToken>("AccessToken")
                                      ],
                                      versionLock: nil) // TODO: todo
         

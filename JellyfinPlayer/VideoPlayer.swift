@@ -877,7 +877,7 @@ extension PlayerViewController: GCKGenericChannelDelegate {
             "command": command,
             "userId": SessionManager.main.currentLogin.user.id,
 //            "deviceId": SessionManager.main.currentLogin.de.deviceID,
-            "accessToken": SessionManager.main.currentLogin.user.accessToken?.value ?? "",
+            "accessToken": SessionManager.main.currentLogin.user.accessToken,
             "serverAddress": SessionManager.main.currentLogin.server.uri,
             "serverId": SessionManager.main.currentLogin.server.id,
             "serverVersion": "10.8.0",

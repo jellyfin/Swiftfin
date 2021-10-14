@@ -15,11 +15,10 @@ import Stinsen
 final class UserLoginViewModel: ViewModel {
     
     @RouterObject var router: UserLoginCoordinator.Router?
-    let server: SwiftfinStore.Models.Server
+    let server: SwiftfinStore.State.Server
     
-    init(server: SwiftfinStore.Models.Server) {
-        // Need to fetch for this context
-        self.server = SwiftfinStore.dataStack.fetchExisting(server)!
+    init(server: SwiftfinStore.State.Server) {
+        self.server = server
     }
     
     func login(username: String, password: String) {
