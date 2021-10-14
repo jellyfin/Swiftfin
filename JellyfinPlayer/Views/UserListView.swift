@@ -58,7 +58,7 @@ struct UserListView: View {
                 .multilineTextAlignment(.center)
             
             Button {
-                userListRouter.route(to: \.userLogin, viewModel.server)
+                userListRouter.route(to: \.userSignIn, viewModel.server)
             } label: {
                 ZStack {
                     Rectangle()
@@ -94,7 +94,7 @@ struct UserListView: View {
         } else {
             HStack {
                 Button {
-                    userListRouter.route(to: \.userLogin, viewModel.server)
+                    userListRouter.route(to: \.userSignIn, viewModel.server)
                 } label: {
                     Image(systemName: "person.crop.circle.fill.badge.plus")
                 }

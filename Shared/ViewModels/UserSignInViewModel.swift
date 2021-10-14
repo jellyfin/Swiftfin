@@ -11,9 +11,9 @@ import CoreStore
 import Foundation
 import Stinsen
 
-final class UserLoginViewModel: ViewModel {
+final class UserSignInViewModel: ViewModel {
     
-    @RouterObject var router: UserLoginCoordinator.Router?
+    @RouterObject var router: UserSignInCoordinator.Router?
     let server: SwiftfinStore.State.Server
     
     init(server: SwiftfinStore.State.Server) {

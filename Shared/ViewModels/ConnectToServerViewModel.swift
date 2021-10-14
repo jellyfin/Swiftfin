@@ -35,7 +35,7 @@ final class ConnectToServerViewModel: ViewModel {
                                            completion: completion)
             }, receiveValue: { server in
                 LogManager.shared.log.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
-                self.router?.route(to: \.userLogin, server)
+                self.router?.route(to: \.userSignIn, server)
             })
             .store(in: &cancellables)
     }

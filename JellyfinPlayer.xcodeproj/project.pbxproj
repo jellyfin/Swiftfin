@@ -268,14 +268,14 @@
 		E13DD3E627177D15009D4DAF /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E427177D15009D4DAF /* ServerListView.swift */; };
 		E13DD3E927177ED6009D4DAF /* ServerListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */; };
 		E13DD3EA27177ED6009D4DAF /* ServerListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */; };
-		E13DD3EC27178A54009D4DAF /* UserLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EB27178A54009D4DAF /* UserLoginViewModel.swift */; };
-		E13DD3ED27178A54009D4DAF /* UserLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EB27178A54009D4DAF /* UserLoginViewModel.swift */; };
+		E13DD3EC27178A54009D4DAF /* UserSignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */; };
+		E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */; };
 		E13DD3EF27178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */; };
 		E13DD3F027178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */; };
-		E13DD3F227179378009D4DAF /* UserLoginCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserLoginCoordinator.swift */; };
-		E13DD3F327179378009D4DAF /* UserLoginCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserLoginCoordinator.swift */; };
-		E13DD3F5271793BB009D4DAF /* UserLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F4271793BB009D4DAF /* UserLoginView.swift */; };
-		E13DD3F6271793BB009D4DAF /* UserLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F4271793BB009D4DAF /* UserLoginView.swift */; };
+		E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */; };
+		E13DD3F327179378009D4DAF /* UserSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */; };
+		E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F4271793BB009D4DAF /* UserSignInView.swift */; };
+		E13DD3F6271793BB009D4DAF /* UserSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F4271793BB009D4DAF /* UserSignInView.swift */; };
 		E13DD3F72717E87D009D4DAF /* SwiftfinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */; };
 		E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F82717E961009D4DAF /* UserListViewModel.swift */; };
 		E13DD3FA2717E961009D4DAF /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F82717E961009D4DAF /* UserListViewModel.swift */; };
@@ -521,10 +521,10 @@
 		E13DD3E027176BD3009D4DAF /* ServerListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListViewModel.swift; sourceTree = "<group>"; };
 		E13DD3E427177D15009D4DAF /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListCoordinator.swift; sourceTree = "<group>"; };
-		E13DD3EB27178A54009D4DAF /* UserLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLoginViewModel.swift; sourceTree = "<group>"; };
+		E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInViewModel.swift; sourceTree = "<group>"; };
 		E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinNotificationCenter.swift; sourceTree = "<group>"; };
-		E13DD3F127179378009D4DAF /* UserLoginCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLoginCoordinator.swift; sourceTree = "<group>"; };
-		E13DD3F4271793BB009D4DAF /* UserLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLoginView.swift; sourceTree = "<group>"; };
+		E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInCoordinator.swift; sourceTree = "<group>"; };
+		E13DD3F4271793BB009D4DAF /* UserSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInView.swift; sourceTree = "<group>"; };
 		E13DD3F82717E961009D4DAF /* UserListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewModel.swift; sourceTree = "<group>"; };
 		E13DD3FB2717EAE8009D4DAF /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
 		E13DD4012717EE79009D4DAF /* UserListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListCoordinator.swift; sourceTree = "<group>"; };
@@ -653,7 +653,7 @@
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
 				625CB5692678B71200530A6E /* SplashViewModel.swift */,
 				E13DD3F82717E961009D4DAF /* UserListViewModel.swift */,
-				E13DD3EB27178A54009D4DAF /* UserLoginViewModel.swift */,
+				E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */,
 				09389CC626819B4500AE350E /* VideoPlayerModel.swift */,
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
 			);
@@ -1043,7 +1043,7 @@
 				E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */,
 				6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */,
 				E13DD4012717EE79009D4DAF /* UserListCoordinator.swift */,
-				E13DD3F127179378009D4DAF /* UserLoginCoordinator.swift */,
+				E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */,
 				6220D0C526D62D8700B8E046 /* VideoPlayerCoordinator.swift */,
 			);
 			path = Coordinators;
@@ -1126,7 +1126,7 @@
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
 				625CB5672678B6FB00530A6E /* SplashView.swift */,
 				E13DD3FB2717EAE8009D4DAF /* UserListView.swift */,
-				E13DD3F4271793BB009D4DAF /* UserLoginView.swift */,
+				E13DD3F4271793BB009D4DAF /* UserSignInView.swift */,
 				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
 			);
 			path = Views;
@@ -1562,7 +1562,7 @@
 				53ABFDDE267974E300886593 /* SplashView.swift in Sources */,
 				53ABFDE8267974EF00886593 /* SplashViewModel.swift in Sources */,
 				62E632DE267D2E170063E547 /* LatestMediaViewModel.swift in Sources */,
-				E13DD3F327179378009D4DAF /* UserLoginCoordinator.swift in Sources */,
+				E13DD3F327179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
 				E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				E13DD3EA27177ED6009D4DAF /* ServerListCoordinator.swift in Sources */,
 				53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */,
@@ -1574,7 +1574,7 @@
 				091B5A8E268315D400D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
-				E13DD3ED27178A54009D4DAF /* UserLoginViewModel.swift in Sources */,
+				E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				62EC3530267666A5000E9F2D /* SessionManager.swift in Sources */,
 				E1AD104B26D94822003E4A08 /* DetailItem.swift in Sources */,
 				E13DD3E227176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
@@ -1628,7 +1628,7 @@
 				E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				53ABFDEB2679753200886593 /* ConnectToServerView.swift in Sources */,
 				536D3D76267BA9BB0004248C /* MainTabViewModel.swift in Sources */,
-				E13DD3F6271793BB009D4DAF /* UserLoginView.swift in Sources */,
+				E13DD3F6271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				5310695C2684E7EE00CFFDBA /* VideoPlayerViewController.swift in Sources */,
 				C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */,
 				536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */,
@@ -1654,7 +1654,7 @@
 				5364F455266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
-				E13DD3F227179378009D4DAF /* UserLoginCoordinator.swift in Sources */,
+				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
@@ -1669,7 +1669,7 @@
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */,
 				6220D0AD26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
-				E13DD3EC27178A54009D4DAF /* UserLoginViewModel.swift in Sources */,
+				E13DD3EC27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				62CB3F4B2685BB77003D0A6F /* DefaultsExtension.swift in Sources */,
@@ -1701,7 +1701,7 @@
 				E188460026DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift in Sources */,
 				091B5A8B2683142E00D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */,
-				E13DD3F5271793BB009D4DAF /* UserLoginView.swift in Sources */,
+				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,

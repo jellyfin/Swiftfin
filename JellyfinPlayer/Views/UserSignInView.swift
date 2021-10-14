@@ -10,9 +10,9 @@
 import SwiftUI
 import Stinsen
 
-struct UserLoginView: View {
+struct UserSignInView: View {
     
-    @ObservedObject var viewModel: UserLoginViewModel
+    @ObservedObject var viewModel: UserSignInViewModel
     @State private var username: String = ""
     @State private var password: String = ""
     
@@ -42,9 +42,9 @@ struct UserLoginView: View {
                 .disabled(viewModel.isLoading || username.isEmpty)
 
             } header: {
-                Text("Login to \(viewModel.server.name)")
+                Text("Sign In to \(viewModel.server.name)")
             }
         }
-        .navigationTitle("Login")
+        .navigationTitle("Sign In")
     }
 }

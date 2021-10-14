@@ -15,7 +15,7 @@ final class UserListCoordinator: NavigationCoordinatable {
     let stack = NavigationStack(initial: \UserListCoordinator.start)
     
     @Root var start = makeStart
-    @Route(.push) var userLogin = makeUserLogin
+    @Route(.push) var userSignIn = makeUserSignIn
     
     let viewModel: UserListViewModel
     
@@ -23,8 +23,8 @@ final class UserListCoordinator: NavigationCoordinatable {
         self.viewModel = viewModel
     }
     
-    func makeUserLogin(server: SwiftfinStore.State.Server) -> UserLoginCoordinator {
-        return UserLoginCoordinator(viewModel: .init(server: server))
+    func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
+        return UserSignInCoordinator(viewModel: .init(server: server))
     }
     
     @ViewBuilder func makeStart() -> some View {
