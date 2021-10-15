@@ -25,14 +25,10 @@ struct UserListView: View {
                         ZStack(alignment: Alignment.leading) {
                             Rectangle()
                                 .foregroundColor(Color(UIColor.secondarySystemFill))
-                                .frame(height: 70)
+                                .frame(height: 50)
                                 .cornerRadius(10)
                             
                             HStack {
-                                Image(systemName: "person.crop.circle.fill")
-                                    .font(.system(size: 46))
-                                    .foregroundColor(.primary)
-                                
                                 Text(user.username)
                                     .font(.title2)
                                 
