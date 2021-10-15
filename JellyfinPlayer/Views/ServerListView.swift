@@ -119,7 +119,7 @@ struct ServerListView: View {
         Button {
             serverListRouter.route(to: \.basicAppSettings)
         } label: {
-            Image(systemName: "gear")
+            Image(systemName: "gearshape.fill")
         }
     }
     

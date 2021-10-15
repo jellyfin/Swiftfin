@@ -50,7 +50,7 @@ final class MainTabCoordinator: TabCoordinatable {
     
     @ViewBuilder func makeSettingsTab(isActive: Bool) -> some View {
         HStack {
-            Image(systemName: "gear")
+            Image(systemName: "gearshape.fill")
             Text("Settings")
         }
     }

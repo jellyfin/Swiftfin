@@ -11,6 +11,7 @@ import Foundation
 import SwiftUI
 
 struct HomeView: View {
+    
     @EnvironmentObject var homeRouter: HomeCoordinator.Router
     @StateObject var viewModel = HomeViewModel()
 
@@ -65,7 +66,7 @@ struct HomeView: View {
                     Button {
                         homeRouter.route(to: \.settings)
                     } label: {
-                        Image(systemName: "gear")
+                        Image(systemName: "gearshape.fill")
                     }
                 }
             }

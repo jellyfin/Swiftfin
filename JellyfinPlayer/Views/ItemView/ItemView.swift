@@ -66,7 +66,7 @@ fileprivate struct ItemView: View {
                     Label("Show Series", systemImage: "text.below.photo")
                 }
             } label: {
-                Image(systemName: "ellipsis.circle")
+                Image(systemName: "ellipsis.circle.fill")
             }
         case .episode:
             Menu {
@@ -81,7 +81,7 @@ fileprivate struct ItemView: View {
                     Label("Show Season", systemImage: "square.fill.text.grid.1x2")
                 }
             } label: {
-                Image(systemName: "ellipsis.circle")
+                Image(systemName: "ellipsis.circle.fill")
             }
         default:
             EmptyView()
