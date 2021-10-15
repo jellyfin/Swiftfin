@@ -15,7 +15,11 @@ class ServerListViewModel: ObservableObject {
     @Published var servers: [SwiftfinStore.State.Server] = []
     
     init() {
-        // Workaround since Stinsen doesn't allow rebuilding the root even if it's the same active root
+        
+        // Oct. 15, 2021
+        // This is a workaround since Stinsen doesn't have the ability to rebuild a root at the time of writing.
+        // Feature request issue: https://github.com/rundfunk47/stinsen/issues/33
+        // Go to each MainCoordinator and implement the rebuild of the root when receiving the notification
         let nc = SwiftfinNotificationCenter.main
         nc.addObserver(self, selector: #selector(didPurge), name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
     }
