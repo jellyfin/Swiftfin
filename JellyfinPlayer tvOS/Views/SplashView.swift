@@ -10,19 +10,21 @@
 import SwiftUI
 
 struct SplashView: View {
+    
     @StateObject var viewModel = SplashViewModel()
-
+    
     var body: some View {
         Group {
-            if viewModel.isLoggedIn {
-                NavigationView {
-                    MainTabView()
-                }.padding(.all, -1)
-            } else {
+            if SessionManager.main.currentLogin == nil {
                 NavigationView {
                     ConnectToServerView()
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
+            } else {
+                NavigationView {
+                    MainTabView()
+                }
+                .ignoresSafeArea()
             }
         }
     }

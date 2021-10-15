@@ -9,10 +9,6 @@
 
 import SwiftUI
 
-protocol PillStackable {
-    var title: String { get }
-}
-
 struct PillHStackView<ItemType: PillStackable>: View {
     
     let title: String
