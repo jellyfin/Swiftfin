@@ -7,57 +7,86 @@
  */
 
 import SwiftUI
+import SwiftUICollection
+import JellyfinAPI
 
 struct LibraryView: View {
-    @StateObject var viewModel: LibraryViewModel
-    var title: String
+  @StateObject var  viewModel: LibraryViewModel
+  var title: String
 
-    // MARK: tracks for grid
-    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
+  // MARK: tracks for grid
+  var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
 
-    @State var isShowingSearchView = false
-    @State var isShowingFilterView = false
-
-    @State private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 250)
-
-    var body: some View {
-        Group {
-            if viewModel.isLoading == true {
-                ProgressView()
-            } else if !viewModel.items.isEmpty {
-                ScrollView(.vertical) {
-                    LazyVGrid(columns: tracks) {
-                        ForEach(viewModel.items, id: \.id) { item in
-                            if item.type != "Folder" {
-                                NavigationLink(destination: LazyView { ItemView(item: item) }) {
-                                    PortraitItemElement(item: item)
-                                }.buttonStyle(PlainNavigationLinkButtonStyle())
-                                    .onAppear {
-                                        if item == viewModel.items.last && viewModel.hasNextPage {
-                                            print("Last item visible, load more items.")
-                                            viewModel.requestNextPageAsync()
-                                        }
-                                    }
-                            }
-                        }
-                    }.padding()
-                }
-            } else {
-                Text("No results.")
-            }
-        }
-        /*
-        .sheet(isPresented: $isShowingFilterView) {
-            LibraryFilterView(filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType, parentId: viewModel.parentID ?? "")
-        }
-        .background(
-            NavigationLink(destination: LibrarySearchView(viewModel: .init(parentID: viewModel.parentID)),
-                           isActive: $isShowingSearchView) {
-                EmptyView()
-            }
+  @State var isShowingSearchView = false
+  @State var isShowingFilterView = false
+  
+  var body: some View {
+    if viewModel.isLoading == true {
+        ProgressView()
+    } else if !viewModel.items.isEmpty {
+      CollectionView(rows: viewModel.rows) { _, _ in
+        let itemSize = NSCollectionLayoutSize(
+           widthDimension: .fractionalWidth(1),
+           heightDimension: .fractionalHeight(1)
         )
-        */
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+           widthDimension: .absolute(200),
+           heightDimension: .absolute(300)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+           layoutSize: groupSize,
+           subitems: [item]
+        )
+
+        let header =
+           NSCollectionLayoutBoundarySupplementaryItem(
+               layoutSize: NSCollectionLayoutSize(
+                   widthDimension: .fractionalWidth(1),
+                   heightDimension: .absolute(44)
+               ),
+               elementKind: UICollectionView.elementKindSectionHeader,
+               alignment: .topLeading
+           )
+
+        let section = NSCollectionLayoutSection(group: group)
+
+        section.contentInsets = NSDirectionalEdgeInsets(top: 30, leading: 0, bottom: 80, trailing: 80)
+        section.interGroupSpacing = 48
+        section.orthogonalScrollingBehavior = .continuous
+        section.boundarySupplementaryItems = [header]
+        return section
+      } cell: { _, cell in
+        GeometryReader { _ in
+          if let item = cell.item {
+            if item.type != "Folder" {
+              NavigationLink(destination: LazyView { ItemView(item: item) }) {
+                  PortraitItemElement(item: item)
+              }
+              .buttonStyle(PlainNavigationLinkButtonStyle())
+              .onAppear {
+                if item == viewModel.items.last && viewModel.hasNextPage {
+                    viewModel.requestNextPageAsync()
+                }
+              }
+            }
+          } else if cell.loadingCell {
+            ProgressView()
+              .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+          }
+        }
+      } supplementaryView: { _, indexPath in
+        HStack {
+            Spacer()
+        }.accessibilityIdentifier("\(indexPath.section).\(indexPath.row)")
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .ignoresSafeArea(.all)
+    } else {
+        Text("No results.")
     }
+  }
 }
 
 // stream BM^S by nicki!
