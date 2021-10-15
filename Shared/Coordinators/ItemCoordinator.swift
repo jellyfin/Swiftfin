@@ -12,33 +12,62 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class ItemCoordinator: NavigationCoordinatable {
-    let stack = NavigationStack(initial: \ItemCoordinator.start)
+#if os(iOS)
+    final class ItemCoordinator: NavigationCoordinatable {
+        let stack = NavigationStack(initial: \ItemCoordinator.start)
 
-    @Root var start = makeStart
-    @Route(.push) var item = makeItem
-    @Route(.push) var library = makeLibrary
-    @Route(.fullScreen) var videoPlayer = makeVideoPlayer
+        @Root var start = makeStart
+        @Route(.push) var item = makeItem
+        @Route(.push) var library = makeLibrary
+        @Route(.fullScreen) var videoPlayer = makeVideoPlayer
 
-    let itemDto: BaseItemDto
+        let itemDto: BaseItemDto
 
-    init(item: BaseItemDto) {
-        self.itemDto = item
+        init(item: BaseItemDto) {
+            self.itemDto = item
+        }
+
+        func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
+            LibraryCoordinator(viewModel: params.viewModel, title: params.title)
+        }
+
+        func makeItem(item: BaseItemDto) -> ItemCoordinator {
+            ItemCoordinator(item: item)
+        }
+
+        func makeVideoPlayer(item: BaseItemDto) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+            NavigationViewCoordinator(VideoPlayerCoordinator(item: item))
+        }
+
+        @ViewBuilder func makeStart() -> some View {
+            ItemNavigationView(item: itemDto)
+        }
     }
 
-    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
-    }
+#elseif os(tvOS)
+    // temp for fixing build error
+    final class ItemCoordinator: NavigationCoordinatable {
+        let stack = NavigationStack<ItemCoordinator>(initial: \ItemCoordinator.start)
 
-    func makeItem(item: BaseItemDto) -> ItemCoordinator {
-        ItemCoordinator(item: item)
-    }
+        @Root var start = makeStart
+        @Route(.push) var item = makeItem
+        @Route(.push) var library = makeLibrary
+        @Route(.fullScreen) var videoPlayer = makeVideoPlayer
 
-    func makeVideoPlayer(item: BaseItemDto) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(item: item))
-    }
+        @ViewBuilder func makeStart() -> some View {
+            EmptyView()
+        }
 
-    @ViewBuilder func makeStart() -> some View {
-        ItemNavigationView(item: itemDto)
+        @ViewBuilder func makeLibrary(params: (viewModel: LibraryViewModel, title: String)) -> some View {
+            EmptyView()
+        }
+
+        @ViewBuilder func makeItem(item: BaseItemDto) -> some View {
+            EmptyView()
+        }
+
+        @ViewBuilder func makeVideoPlayer(item: BaseItemDto) -> some View {
+            EmptyView()
+        }
     }
-}
+#endif
