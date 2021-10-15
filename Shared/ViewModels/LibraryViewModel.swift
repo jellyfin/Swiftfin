@@ -12,7 +12,13 @@ import Foundation
 import JellyfinAPI
 import SwiftUICollection
 
-typealias LibraryRow = CollectionRow<Int, BaseItemDto>
+typealias LibraryRow = CollectionRow<Int, LibraryRowCell>
+
+struct LibraryRowCell: Hashable {
+  let id = UUID()
+  let item: BaseItemDto?
+  var loadingCell: Bool = false
+}
 
 final class LibraryViewModel: ViewModel {
     var parentID: String?
@@ -150,10 +156,22 @@ final class LibraryViewModel: ViewModel {
       if lastItemIndex > items.count {
         lastItemIndex = items.count
       }
+      
+      var rowCells = [LibraryRowCell]()
+      for item in items[firstItemIndex..<lastItemIndex] {
+        let newCell = LibraryRowCell(item: item)
+        rowCells.append(newCell)
+      }
+      if i == rowCount {
+        var loadingCell = LibraryRowCell(item: nil)
+        loadingCell.loadingCell = true
+        rowCells.append(loadingCell)
+      }
+      
       calculatedRows.append(
         LibraryRow(
           section: i,
-          items: Array(items[firstItemIndex..<lastItemIndex])
+          items: rowCells
         )
       )
     }

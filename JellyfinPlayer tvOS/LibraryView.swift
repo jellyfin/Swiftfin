@@ -57,18 +57,23 @@ struct LibraryView: View {
         section.orthogonalScrollingBehavior = .continuous
         section.boundarySupplementaryItems = [header]
         return section
-      } cell: { _, item in
+      } cell: { _, cell in
         GeometryReader { _ in
-          if item.type != "Folder" {
-            NavigationLink(destination: LazyView { ItemView(item: item) }) {
-                PortraitItemElement(item: item)
-            }
-            .buttonStyle(PlainNavigationLinkButtonStyle())
-            .onAppear {
-              if item == viewModel.items.last && viewModel.hasNextPage {
-                  viewModel.requestNextPageAsync()
+          if let item = cell.item {
+            if item.type != "Folder" {
+              NavigationLink(destination: LazyView { ItemView(item: item) }) {
+                  PortraitItemElement(item: item)
+              }
+              .buttonStyle(PlainNavigationLinkButtonStyle())
+              .onAppear {
+                if item == viewModel.items.last && viewModel.hasNextPage {
+                    viewModel.requestNextPageAsync()
+                }
               }
             }
+          } else if cell.loadingCell {
+            ProgressView()
+              .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
           }
         }
       } supplementaryView: { _, indexPath in
