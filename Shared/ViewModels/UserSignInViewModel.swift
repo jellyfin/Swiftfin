@@ -38,8 +38,8 @@ final class UserSignInViewModel: ViewModel {
             .sink { completion in
                 self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login",
                                            completion: completion)
-            } receiveValue: { user in
-                SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
+            } receiveValue: { _ in
+                
             }
             .store(in: &cancellables)
     }

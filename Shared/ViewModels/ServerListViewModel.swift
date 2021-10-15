@@ -14,6 +14,12 @@ class ServerListViewModel: ObservableObject {
     
     @Published var servers: [SwiftfinStore.State.Server] = []
     
+    init() {
+        // Workaround since Stinsen doesn't allow rebuilding the root even if it's the same active root
+        let nc = SwiftfinNotificationCenter.main
+        nc.addObserver(self, selector: #selector(didPurge), name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
+    }
+    
     func fetchServers() {
         self.servers = SessionManager.main.fetchServers()
     }
@@ -28,6 +34,10 @@ class ServerListViewModel: ObservableObject {
     
     func remove(server: SwiftfinStore.State.Server) {
         SessionManager.main.delete(server: server)
+        fetchServers()
+    }
+    
+    @objc private func didPurge() {
         fetchServers()
     }
 }

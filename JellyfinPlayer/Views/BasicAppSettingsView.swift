@@ -15,6 +15,7 @@ struct BasicAppSettingsView: View {
     
     @EnvironmentObject var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
     @ObservedObject var viewModel: BasicAppSettingsViewModel
+    @State var resetTapped: Bool = false
     
     @Default(.appAppearance) var appAppearance
     
@@ -31,8 +32,21 @@ struct BasicAppSettingsView: View {
             } header: {
                 Text("Accessibility")
             }
-
+            
+            Button {
+                resetTapped = true
+            } label: {
+                Text("Reset")
+            }
         }
+        .alert("Reset", isPresented: $resetTapped, actions: {
+            Button(role: .destructive) {
+                viewModel.reset()
+                basicAppSettingsRouter.dismissCoordinator()
+            } label: {
+                Text("Reset")
+            }
+        })
         .navigationBarTitle("Settings", displayMode: .inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {

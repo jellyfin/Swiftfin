@@ -19,5 +19,6 @@ enum SwiftfinNotificationCenter {
         static let didSignIn = Notification.Name("didSignIn")
         static let didSignOut = Notification.Name("didSignOut")
         static let processDeepLink = Notification.Name("processDeepLink")
+        static let didPurge = Notification.Name("didPurge")
     }
 }

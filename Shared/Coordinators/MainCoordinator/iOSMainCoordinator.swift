@@ -47,12 +47,12 @@ final class MainCoordinator: NavigationCoordinatable {
     }
 
     @objc func didLogIn() {
-        LogManager.shared.log.info("Received `didSignIn` from NSNotificationCenter.")
+        LogManager.shared.log.info("Received `didSignIn` from SwiftfinNotificationCenter.")
         root(\.mainTab)
     }
 
     @objc func didLogOut() {
-        LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
+        LogManager.shared.log.info("Received `didSignOut` from SwiftfinNotificationCenter.")
         root(\.serverList)
     }
 
@@ -68,7 +68,6 @@ final class MainCoordinator: NavigationCoordinatable {
             }
         }
     }
-
     func makeMainTab() -> MainTabCoordinator {
         MainTabCoordinator()
     }

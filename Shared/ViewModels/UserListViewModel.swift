@@ -27,7 +27,6 @@ class UserListViewModel: ViewModel {
     func login(user: SwiftfinStore.State.User) {
         self.isLoading = true
         SessionManager.main.loginUser(server: server, user: user)
-        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
     }
     
     func remove(user: SwiftfinStore.State.User) {

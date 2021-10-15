@@ -154,6 +154,7 @@ final class SessionManager {
                 SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
                 
                 currentLogin = (server: currentServer.state, user: currentUser.state)
+                SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
             })
             .map({ (_, user, _) in
                 return user.state
@@ -166,6 +167,7 @@ final class SessionManager {
         SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
         setAuthHeader(with: user.accessToken)
         currentLogin = (server: server, user: user)
+        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
     }
     
     func logout() {
@@ -174,6 +176,16 @@ final class SessionManager {
         setAuthHeader(with: "")
         SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+    }
+    
+    func purge() {
+        let servers = fetchServers()
+        
+        for server in servers {
+            delete(server: server)
+        }
+        
+        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
     }
     
     func delete(user: SwiftfinStore.State.User) {
