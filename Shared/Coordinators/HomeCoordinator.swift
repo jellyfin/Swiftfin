@@ -13,6 +13,7 @@ import Stinsen
 import SwiftUI
 
 final class HomeCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \HomeCoordinator.start)
 
     @Root var start = makeStart

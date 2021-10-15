@@ -12,6 +12,7 @@ import Stinsen
 import SwiftUI
 
 final class SettingsCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \SettingsCoordinator.start)
 
     @Root var start = makeStart

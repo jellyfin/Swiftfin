@@ -15,6 +15,7 @@ import SwiftUI
 typealias LibraryCoordinatorParams = (viewModel: LibraryViewModel, title: String)
 
 final class LibraryCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \LibraryCoordinator.start)
 
     @Root var start = makeStart
@@ -22,8 +23,8 @@ final class LibraryCoordinator: NavigationCoordinatable {
     @Route(.modal) var filter = makeFilter
     @Route(.push) var item = makeItem
 
-    var viewModel: LibraryViewModel
-    var title: String
+    let viewModel: LibraryViewModel
+    let title: String
 
     init(viewModel: LibraryViewModel, title: String) {
         self.viewModel = viewModel

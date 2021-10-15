@@ -318,6 +318,17 @@
 		E1AD105C26D9ABDD003E4A08 /* PillHStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105B26D9ABDD003E4A08 /* PillHStackView.swift */; };
 		E1AD105F26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105E26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift */; };
 		E1AD106226D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD106126D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift */; };
+		E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */; };
+		E1D4BF7E2719D1DD00A11E64 /* BasicAppSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */; };
+		E1D4BF7F2719D1DD00A11E64 /* BasicAppSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */; };
+		E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
+		E1D4BF822719D22800A11E64 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
+		E1D4BF842719D25A00A11E64 /* TrackLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */; };
+		E1D4BF852719D25A00A11E64 /* TrackLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */; };
+		E1D4BF872719D27100A11E64 /* Bitrates.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF862719D27100A11E64 /* Bitrates.swift */; };
+		E1D4BF882719D27100A11E64 /* Bitrates.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF862719D27100A11E64 /* Bitrates.swift */; };
+		E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */; };
+		E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */; };
 		E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
@@ -499,7 +510,6 @@
 		628B95282670CABE0091AF3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		628B952A2670CABE0091AF3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		628B95362670CB800091AF3B /* JellyfinWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinWidget.swift; sourceTree = "<group>"; };
-		628B953B2670D1FC0091AF3B /* WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetExtension.entitlements; sourceTree = "<group>"; };
 		62C29E9E26D1016600C1D2E7 /* iOSMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSMainCoordinator.swift; sourceTree = "<group>"; };
 		62C29EA026D102A500C1D2E7 /* iOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSMainTabCoordinator.swift; sourceTree = "<group>"; };
 		62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerCoodinator.swift; sourceTree = "<group>"; };
@@ -566,6 +576,12 @@
 		E1AD105B26D9ABDD003E4A08 /* PillHStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillHStackView.swift; sourceTree = "<group>"; };
 		E1AD105E26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameGUIDPairExtensions.swift; sourceTree = "<group>"; };
 		E1AD106126D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPortraitHeaderOverlayView.swift; sourceTree = "<group>"; };
+		E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
+		E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsViewModel.swift; sourceTree = "<group>"; };
+		E1D4BF802719D22800A11E64 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
+		E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackLanguage.swift; sourceTree = "<group>"; };
+		E1D4BF862719D27100A11E64 /* Bitrates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bitrates.swift; sourceTree = "<group>"; };
+		E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsCoordinator.swift; sourceTree = "<group>"; };
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
@@ -654,6 +670,7 @@
 		532175392671BCED005491E6 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */,
 				625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */,
 				62E632E5267D3F5B0063E547 /* EpisodeItemViewModel.swift */,
 				625CB5722678C32A00530A6E /* HomeViewModel.swift */,
@@ -770,11 +787,14 @@
 		535870AB2669D8D300D05A09 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				E1D4BF802719D22800A11E64 /* AppAppearance.swift */,
+				E1D4BF862719D27100A11E64 /* Bitrates.swift */,
 				E1AD104926D94822003E4A08 /* DetailItem.swift */,
 				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
 				62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */,
-				E193D4D727193CAC00900D82 /* PortraitImageStackable.swift */,
 				E193D4DA27193CCA00900D82 /* PillStackable.swift */,
+				E193D4D727193CAC00900D82 /* PortraitImageStackable.swift */,
+				E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */,
 				535870AC2669D8DD00D05A09 /* Typings.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
 			);
@@ -1019,7 +1039,6 @@
 		628B95252670CABD0091AF3B /* WidgetExtension */ = {
 			isa = PBXGroup;
 			children = (
-				628B953B2670D1FC0091AF3B /* WidgetExtension.entitlements */,
 				628B95362670CB800091AF3B /* JellyfinWidget.swift */,
 				628B95262670CABD0091AF3B /* NextUpWidget.swift */,
 				628B95282670CABE0091AF3B /* Assets.xcassets */,
@@ -1032,6 +1051,7 @@
 			isa = PBXGroup;
 			children = (
 				62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */,
+				E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */,
 				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
 				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
 				E193D5412719404B00900D82 /* MainCoordinator */,
@@ -1143,6 +1163,7 @@
 		E13DD3D027165886009D4DAF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
 				5389276D263C25100035E14B /* ContinueWatchingView.swift */,
 				625CB56E2678C23300530A6E /* HomeView.swift */,
@@ -1631,6 +1652,7 @@
 				53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */,
 				E13DD3F027178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
+				E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E13DD3FA2717E961009D4DAF /* UserListViewModel.swift in Sources */,
 				53ABFDDE267974E300886593 /* SplashView.swift in Sources */,
 				53ABFDE8267974EF00886593 /* SplashViewModel.swift in Sources */,
@@ -1672,6 +1694,7 @@
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,
 				E193D4D927193CAC00900D82 /* PortraitImageStackable.swift in Sources */,
 				535870A52669D8AE00D05A09 /* ParallaxHeader.swift in Sources */,
+				E1D4BF852719D25A00A11E64 /* TrackLanguage.swift in Sources */,
 				53272532268BF09D0035FBF1 /* MediaViewActionButton.swift in Sources */,
 				531690F0267ABF72005D8AB9 /* NextUpView.swift in Sources */,
 				E193D53427193F7F00900D82 /* HomeCoordinator.swift in Sources */,
@@ -1686,6 +1709,7 @@
 				5310695B2684E7EE00CFFDBA /* AudioView.swift in Sources */,
 				5398514726B64E4100101B49 /* SearchBarView.swift in Sources */,
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
+				E1D4BF882719D27100A11E64 /* Bitrates.swift in Sources */,
 				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
 				53ABFDE7267974EF00886593 /* ConnectToServerViewModel.swift in Sources */,
 				5398514626B64DBB00101B49 /* SearchablePickerView.swift in Sources */,
@@ -1699,6 +1723,7 @@
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
 				C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */,
 				531069582684E7EE00CFFDBA /* MediaInfoView.swift in Sources */,
+				E1D4BF822719D22800A11E64 /* AppAppearance.swift in Sources */,
 				53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */,
 				09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */,
 				E193D53C27193F9500900D82 /* UserListCoordinator.swift in Sources */,
@@ -1717,6 +1742,7 @@
 				536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */,
 				535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */,
 				E193D547271941C500900D82 /* UserListView.swift in Sources */,
+				E1D4BF7F2719D1DD00A11E64 /* BasicAppSettingsViewModel.swift in Sources */,
 				E193D53227193F7B00900D82 /* ConnectToServerCoodinator.swift in Sources */,
 				53ABFDE4267974EF00886593 /* LibraryListViewModel.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
@@ -1736,6 +1762,7 @@
 				5364F455266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				E18845F526DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */,
 				5364F455266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
+				E1D4BF7E2719D1DD00A11E64 /* BasicAppSettingsViewModel.swift in Sources */,
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
@@ -1796,11 +1823,13 @@
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
+				E1D4BF842719D25A00A11E64 /* TrackLanguage.swift in Sources */,
 				E14F7D0726DB36EF007C3AE6 /* ItemPortraitMainView.swift in Sources */,
 				E1AD106226D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift in Sources */,
 				53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */,
 				6220D0C626D62D8700B8E046 /* VideoPlayerCoordinator.swift in Sources */,
 				E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
+				E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */,
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
 				6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */,
 				62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */,
@@ -1813,6 +1842,7 @@
 				E193D4DB27193CCA00900D82 /* PillStackable.swift in Sources */,
 				E193D4D827193CAC00900D82 /* PortraitImageStackable.swift in Sources */,
 				624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */,
+				E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
 				62EC352F267666A5000E9F2D /* SessionManager.swift in Sources */,
 				62E632E3267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
@@ -1828,10 +1858,12 @@
 				6267B3DA2671138200A7371D /* ImageExtensions.swift in Sources */,
 				62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */,
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
+				E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */,
+				E1D4BF872719D27100A11E64 /* Bitrates.swift in Sources */,
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				E13DD3EF27178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
@@ -2205,7 +2237,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 60;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = 9R8RREG67J;
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2217,7 +2249,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pips.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -2273,7 +2305,7 @@
 				CODE_SIGN_ENTITLEMENTS = WidgetExtension/WidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 60;
-				DEVELOPMENT_TEAM = 9R8RREG67J;
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2282,7 +2314,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = me.vigue.jellyfin.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = pips.swiftfin.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";

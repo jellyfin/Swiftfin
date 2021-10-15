@@ -102,7 +102,7 @@ struct ServerListView: View {
     }
     
     @ViewBuilder
-    private var toolbarContent: some View {
+    private var trailingToolbarContent: some View {
         if viewModel.servers.isEmpty {
             EmptyView()
         } else {
@@ -114,14 +114,28 @@ struct ServerListView: View {
         }
     }
     
+    @ViewBuilder
+    private var leadingToolbarContent: some View {
+        Button {
+            serverListRouter.route(to: \.basicAppSettings)
+        } label: {
+            Image(systemName: "gear")
+        }
+    }
+    
     var body: some View {
         innerBody
         .navigationTitle("Servers")
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                toolbarContent
+                trailingToolbarContent
             }
         }
+        .toolbar(content: {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
+                leadingToolbarContent
+            }
+        })
         .onAppear {
             viewModel.fetchServers()
         }

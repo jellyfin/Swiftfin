@@ -12,6 +12,7 @@ import Stinsen
 import SwiftUI
 
 final class LibraryListCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \LibraryListCoordinator.start)
 
     @Root var start = makeStart

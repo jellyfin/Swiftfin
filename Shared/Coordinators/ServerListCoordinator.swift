@@ -12,11 +12,13 @@ import Stinsen
 import SwiftUI
 
 final class ServerListCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \ServerListCoordinator.start)
     
     @Root var start = makeStart
     @Route(.push) var connectToServer = makeConnectToServer
     @Route(.push) var userList = makeUserList
+    @Route(.modal) var basicAppSettings = makeBasicAppSettings
     
     func makeConnectToServer() -> ConnectToServerCoodinator {
         ConnectToServerCoodinator()
@@ -24,6 +26,10 @@ final class ServerListCoordinator: NavigationCoordinatable {
     
     func makeUserList(server: SwiftfinStore.State.Server) -> UserListCoordinator {
         UserListCoordinator(viewModel: .init(server: server))
+    }
+    
+    func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
+        NavigationViewCoordinator(BasicAppSettingsCoordinator())
     }
     
     @ViewBuilder func makeStart() -> some View {

@@ -11,9 +11,8 @@ import Stinsen
 import SwiftUI
 
 struct SettingsView: View {
+    
     @EnvironmentObject var settingsRouter: SettingsCoordinator.Router
-    @Environment(\.managedObjectContext) private var viewContext
-
     @ObservedObject var viewModel: SettingsViewModel
 
     @Default(.inNetworkBandwidth) var inNetworkStreamBitrate
@@ -82,6 +81,7 @@ struct SettingsView: View {
                         .font(.callout)
                 }
             }
+            
             Section(header: Text("Playback")) {
                 Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                     ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
@@ -144,7 +144,7 @@ struct SettingsView: View {
                 Button {
                     settingsRouter.dismissCoordinator()
                 } label: {
-                    Image(systemName: "xmark")
+                    Image(systemName: "xmark.circle.fill")
                 }
             }
         }

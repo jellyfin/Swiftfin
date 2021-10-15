@@ -11,19 +11,13 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class UserSignInCoordinator: NavigationCoordinatable {
+final class BasicAppSettingsCoordinator: NavigationCoordinatable {
     
-    let stack = NavigationStack(initial: \UserSignInCoordinator.start)
+    let stack = NavigationStack(initial: \BasicAppSettingsCoordinator.start)
     
     @Root var start = makeStart
     
-    let viewModel: UserSignInViewModel
-    
-    init(viewModel: UserSignInViewModel) {
-        self.viewModel = viewModel
-    }
-    
     @ViewBuilder func makeStart() -> some View {
-        UserSignInView(viewModel: viewModel)
+        BasicAppSettingsView(viewModel: BasicAppSettingsViewModel())
     }
 }

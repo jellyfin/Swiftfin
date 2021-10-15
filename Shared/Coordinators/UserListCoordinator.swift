@@ -12,6 +12,7 @@ import Stinsen
 import SwiftUI
 
 final class UserListCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \UserListCoordinator.start)
     
     @Root var start = makeStart

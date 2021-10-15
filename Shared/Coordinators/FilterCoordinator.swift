@@ -14,7 +14,9 @@ import SwiftUI
 typealias FilterCoordinatorParams = (filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String)
 
 final class FilterCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \FilterCoordinator.start)
+    
     @Root var start = makeStart
 
     @Binding var filters: LibraryFilters

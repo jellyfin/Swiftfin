@@ -13,12 +13,13 @@ import SwiftUI
 import JellyfinAPI
 
 final class SearchCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \SearchCoordinator.start)
 
     @Root var start = makeStart
     @Route(.push) var item = makeItem
 
-    var viewModel: LibrarySearchViewModel
+    let viewModel: LibrarySearchViewModel
 
     init(viewModel: LibrarySearchViewModel) {
         self.viewModel = viewModel

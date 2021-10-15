@@ -12,6 +12,7 @@ import Stinsen
 import SwiftUI
 
 final class ConnectToServerCoodinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \ConnectToServerCoodinator.start)
 
     @Root var start = makeStart
