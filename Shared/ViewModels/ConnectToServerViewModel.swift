@@ -53,7 +53,7 @@ final class ConnectToServerViewModel: ViewModel {
         discoveredServers.removeAll()
         searching = true
 
-        // Timeout after 5 seconds
+        // Timeout after 3 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.searching = false
         }

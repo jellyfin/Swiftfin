@@ -11,8 +11,7 @@ import Defaults
 import JellyfinAPI
 
 struct SettingsView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
+    
     @ObservedObject var viewModel: SettingsViewModel
 
     @Default(.inNetworkBandwidth) var inNetworkStreamBitrate
@@ -20,11 +19,6 @@ struct SettingsView: View {
     @Default(.isAutoSelectSubtitles) var isAutoSelectSubtitles
     @Default(.autoSelectSubtitlesLangCode) var autoSelectSubtitlesLangcode
     @Default(.autoSelectAudioLangCode) var autoSelectAudioLangcode
-    @State private var username: String = ""
-
-    func onAppear() {
-        username = SessionManager.main.currentLogin.user.username
-    }
 
     var body: some View {
             Form {
@@ -64,7 +58,7 @@ struct SettingsView: View {
 
                 Section(header: Text(SessionManager.main.currentLogin.server.name)) {
                     HStack {
-                        Text("Signed in as \(username)").foregroundColor(.primary)
+                        Text("Signed in as \(SessionManager.main.currentLogin.user.username)").foregroundColor(.primary)
                         Spacer()
                         Button {
                             SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
@@ -78,7 +72,7 @@ struct SettingsView: View {
                         Text("Sign out").font(.callout)
                     }
                 }
-            }.onAppear(perform: onAppear)
+            }
             .padding(.leading, 90)
             .padding(.trailing, 90)
     }

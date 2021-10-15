@@ -8,7 +8,6 @@
   */
 
 import SwiftUI
-import NukeUI
 
 struct ImageView: View {
     private let source: URL
@@ -20,21 +19,35 @@ struct ImageView: View {
         self.blurhash = bh
         self.failureInitials = failureInitials
     }
+    
+    @ViewBuilder
+    private var placeholderImage: some View {
+        Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ?? UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
+            .resizable()
+    }
+    
+    @ViewBuilder
+    private var failureImage: some View {
+        ZStack {
+            Rectangle()
+               .foregroundColor(Color.systemFill)
+
+            Text(failureInitials)
+                .font(.largeTitle)
+                .foregroundColor(.secondary)
+        }
+    }
 
     var body: some View {
-        LazyImage(source: source)
-        .placeholder {
-            Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ?? UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
-                .resizable()
-        }
-        .failure {
-            ZStack {
-                Rectangle()
-                   .foregroundColor(Color.systemFill)
-                
-                Text(failureInitials)
-                    .font(.largeTitle)
-                    .foregroundColor(.secondary)
+        AsyncImage(url: source) { phase in
+            if let image = phase.image {
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else if phase.error != nil {
+                failureImage
+            } else {
+                placeholderImage
             }
         }
     }

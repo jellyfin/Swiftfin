@@ -17,10 +17,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Lazily initialize datastack
         let _ = SwiftfinStore.dataStack
         
+        setupAppearance()
+        
         return true
     }
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         AppDelegate.orientationLock
+    }
+    
+    private func setupAppearance() {
+//        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
     }
 }

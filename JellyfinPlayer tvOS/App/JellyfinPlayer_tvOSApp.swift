@@ -14,7 +14,6 @@ struct JellyfinPlayer_tvOSApp: App {
     var body: some Scene {
         WindowGroup {
             MainCoordinator().view()
-                .ignoresSafeArea(.all, edges: .all)
         }
     }
 }
