@@ -156,6 +156,7 @@ enum SwiftfinStore {
     }()
 }
 
+// MARK: LocalizedError
 extension SwiftfinStore.Errors: LocalizedError {
     
     var title: String {

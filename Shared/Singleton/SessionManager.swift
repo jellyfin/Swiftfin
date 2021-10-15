@@ -179,11 +179,15 @@ final class SessionManager {
     }
     
     func purge() {
+        // Delete all servers
         let servers = fetchServers()
         
         for server in servers {
             delete(server: server)
         }
+        
+        // Delete UserDefaults
+        SwiftfinStore.Defaults.suite.removeAll()
         
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
     }
@@ -224,7 +228,7 @@ final class SessionManager {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         var deviceName = UIDevice.current.name
         deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
-        deviceName = String(deviceName.unicodeScalars.filter {CharacterSet.urlQueryAllowed.contains($0) })
+        deviceName = String(deviceName.unicodeScalars.filter { CharacterSet.urlQueryAllowed.contains($0) })
         
         let platform: String
         #if os(tvOS)

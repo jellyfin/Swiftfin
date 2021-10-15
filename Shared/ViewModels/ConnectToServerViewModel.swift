@@ -50,10 +50,11 @@ final class ConnectToServerViewModel: ViewModel {
     }
 
     func discoverServers() {
+        discoveredServers.removeAll()
         searching = true
 
         // Timeout after 5 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.searching = false
         }
 
@@ -61,7 +62,6 @@ final class ConnectToServerViewModel: ViewModel {
             if let server = server {
                 discoveredServers.insert(server)
             }
-            searching = false
         }
     }
     

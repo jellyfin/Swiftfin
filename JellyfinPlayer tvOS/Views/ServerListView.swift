@@ -91,7 +91,7 @@ struct ServerListView: View {
     }
     
     @ViewBuilder
-    private var toolbarContent: some View {
+    private var trailingToolbarContent: some View {
         if viewModel.servers.isEmpty {
             EmptyView()
         } else {
@@ -99,6 +99,13 @@ struct ServerListView: View {
                 serverListRouter.route(to: \.connectToServer)
             } label: {
                 Image(systemName: "plus.circle.fill")
+            }
+            .contextMenu {
+                Button {
+                    serverListRouter.route(to: \.basicAppSettings)
+                } label: {
+                    Text("Settings")
+                }
             }
         }
     }
@@ -108,7 +115,7 @@ struct ServerListView: View {
         .navigationTitle("Servers")
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                toolbarContent
+                trailingToolbarContent
             }
         }
         .onAppear {

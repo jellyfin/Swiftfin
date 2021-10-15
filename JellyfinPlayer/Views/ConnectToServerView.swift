@@ -44,8 +44,10 @@ struct ConnectToServerView: View {
                 if viewModel.searching {
                     HStack(alignment: .center, spacing: 5) {
                         Spacer()
-                        ProgressView()
-                        Text("Searching")
+                        // Oct. 15, 2021
+                        // There is a bug where ProgressView() won't appear sometimes when searching,
+                        //     dots were used instead but ProgressView() is preferred
+                        Text("Searching...")
                             .foregroundColor(.secondary)
                         Spacer()
                     }
@@ -61,6 +63,7 @@ struct ConnectToServerView: View {
                     } else {
                         ForEach(viewModel.discoveredServers.sorted(by: { $0.name < $1.name }), id: \.id) { discoveredServer in
                             Button {
+                                uri = discoveredServer.url.absoluteString
                                 viewModel.connectToServer(uri: discoveredServer.url.absoluteString)
                             } label: {
                                 VStack(alignment: .leading, spacing: 5) {
