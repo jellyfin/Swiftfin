@@ -13,6 +13,7 @@ import SwiftUI
 // MARK: JellyfinPlayerApp
 @main
 struct JellyfinPlayerApp: App {
+    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @Default(.appAppearance) var appAppearance
 
