@@ -20,7 +20,7 @@ struct JellyfinPlayerApp: App {
     var body: some Scene {
         WindowGroup {
             // TODO: Replace with a SplashView
-            Color(appAppearance.style == .dark ? UIColor.black : UIColor.white)
+            Color(appAppearance.style == .light ? UIColor.white : UIColor.black)
                 .ignoresSafeArea()
                 .onAppear {
                     setupAppearance()
