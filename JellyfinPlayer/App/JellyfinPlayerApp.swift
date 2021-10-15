@@ -18,7 +18,12 @@ struct JellyfinPlayerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            EmptyView()
+            // TODO: Replace with a SplashView
+            Color(appAppearance.style == .dark ? UIColor.black : UIColor.white)
+                .ignoresSafeArea()
+                .onAppear {
+                    setupAppearance()
+                }
                 .withHostingWindow { window in
                     window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
                 }
@@ -29,6 +34,10 @@ struct JellyfinPlayerApp: App {
                     AppURLHandler.shared.processDeepLink(url: url)
                 }
         }
+    }
+    
+    private func setupAppearance() {
+        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
     }
 }
 
