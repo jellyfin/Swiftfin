@@ -9,6 +9,19 @@ import SwiftUI
 import Introspect
 import JellyfinAPI
 
+// Useless view necessary in tvOS because of iOS's implementation
+struct ItemNavigationView: View {
+    private let item: BaseItemDto
+
+    init(item: BaseItemDto) {
+        self.item = item
+    }
+
+    var body: some View {
+        ItemView(item: item)
+    }
+}
+
 struct ItemView: View {
     private var item: BaseItemDto
 

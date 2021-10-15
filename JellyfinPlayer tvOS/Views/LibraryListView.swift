@@ -91,15 +91,5 @@ struct LibraryListView: View {
             .padding(.trailing, 16)
             .padding(.top, 8)
         }
-        .navigationTitle(NSLocalizedString("All Media", comment: ""))
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                NavigationLink(destination: LazyView {
-                    LibrarySearchView(viewModel: .init(parentID: nil))
-                }) {
-                    Image(systemName: "magnifyingglass")
-                }
-            }
-        }
     }
 }

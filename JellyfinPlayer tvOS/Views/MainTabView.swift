@@ -75,5 +75,3 @@ extension MainTabView {
         case settings
     }
 }
-
-// stream ancient dreams in a modern land by MARINA!

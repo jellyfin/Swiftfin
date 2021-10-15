@@ -169,7 +169,8 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     // Item will be directly played by the client
                     else {
                         item.videoType = .directPlay
-                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
+//                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
+                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&Tag=\(mediaSource.eTag ?? "")")!
                     }
 
                     item.videoUrl = streamURL

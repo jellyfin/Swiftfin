@@ -13,7 +13,7 @@ struct JellyfinPlayer_tvOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SplashView()
+            MainCoordinator().view()
                 .ignoresSafeArea(.all, edges: .all)
         }
     }

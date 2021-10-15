@@ -15,9 +15,40 @@ import SwiftUI
 final class MainCoordinator: NavigationCoordinatable {
     var stack = NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
 
-    @Root var mainTab = makeEmpty
+    @Root var mainTab = makeMainTab
+    @Root var serverList = makeServerList
+    
+    init() {
+        if SessionManager.main.currentLogin != nil {
+            self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
+        } else {
+            self.stack = NavigationStack(initial: \MainCoordinator.serverList)
+        }
+        
+        ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
+        DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
-    @ViewBuilder func makeEmpty() -> some View {
-        EmptyView()
+        // Notification setup for state
+        let nc = SwiftfinNotificationCenter.main
+        nc.addObserver(self, selector: #selector(didLogIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
+        nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+    }
+
+    @objc func didLogIn() {
+        LogManager.shared.log.info("Received `didSignIn` from NSNotificationCenter.")
+        root(\.mainTab)
+    }
+
+    @objc func didLogOut() {
+        LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
+        root(\.serverList)
+    }
+
+    func makeMainTab() -> MainTabCoordinator {
+        MainTabCoordinator()
+    }
+
+    func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
+        NavigationViewCoordinator(ServerListCoordinator())
     }
 }

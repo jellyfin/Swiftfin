@@ -28,7 +28,7 @@ struct ItemNavigationView: View {
     }
 }
 
-private struct ItemView: View {
+fileprivate struct ItemView: View {
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
 
     @State private var videoIsLoading: Bool = false // This variable is only changed by the underlying VLC view.

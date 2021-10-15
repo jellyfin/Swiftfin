@@ -14,11 +14,11 @@ import Stinsen
 final class MainTabCoordinator: TabCoordinatable {
     var child = TabChild(startingItems: [
         \MainTabCoordinator.home,
-        \MainTabCoordinator.allMedia,
+        \MainTabCoordinator.allMedia
     ])
 
     @Route(tabItem: makeHomeTab) var home = makeHome
-    @Route(tabItem: makeTodosTab) var allMedia = makeTodos
+    @Route(tabItem: makeAllMediaTab) var allMedia = makeAllMedia
 
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
         return NavigationViewCoordinator(HomeCoordinator())
@@ -29,11 +29,11 @@ final class MainTabCoordinator: TabCoordinatable {
         Text("Home")
     }
 
-    func makeTodos() -> NavigationViewCoordinator<LibraryListCoordinator> {
+    func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
         return NavigationViewCoordinator(LibraryListCoordinator())
     }
 
-    @ViewBuilder func makeTodosTab(isActive: Bool) -> some View {
+    @ViewBuilder func makeAllMediaTab(isActive: Bool) -> some View {
         Image(systemName: "folder")
         Text("All Media")
     }
@@ -41,6 +41,7 @@ final class MainTabCoordinator: TabCoordinatable {
     @ViewBuilder func customize(_ view: AnyView) -> some View {
         view.onAppear {
             AppURLHandler.shared.appURLState = .allowed
+            // TODO: todo
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {                
                 AppURLHandler.shared.processLaunchedURLIfNeeded()
             }

@@ -72,7 +72,6 @@ struct LibraryFilterView: View {
                 }
             }
         }
-        .navigationBarTitle(NSLocalizedString("Filter Results", comment: ""), displayMode: .inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 Button {
