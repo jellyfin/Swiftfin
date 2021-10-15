@@ -220,8 +220,6 @@
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
-		C49FB6592717A06300AAEABB /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C49FB6582717A06300AAEABB /* SwiftUICollection */; };
-		C4BFD4E527167B63007739E3 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C4BFD4E427167B63007739E3 /* SwiftUICollection */; };
 		C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E508172703E8190045C9AB /* LibraryListView.swift */; };
 		C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */; };
 		E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */; };
@@ -302,6 +300,8 @@
 		E193D5502719430400900D82 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D54F2719430400900D82 /* ServerDetailView.swift */; };
 		E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
 		E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */; };
+		E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = E1A99998271A3429008E78C0 /* SwiftUICollection */; };
+		E1A9999B271A343C008E78C0 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = E1A9999A271A343C008E78C0 /* SwiftUICollection */; };
 		E1AD104A26D94822003E4A08 /* DetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104926D94822003E4A08 /* DetailItem.swift */; };
 		E1AD104B26D94822003E4A08 /* DetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104926D94822003E4A08 /* DetailItem.swift */; };
 		E1AD104D26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */; };
@@ -595,8 +595,8 @@
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
-				C49FB6592717A06300AAEABB /* SwiftUICollection in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
+				E1A9999B271A343C008E78C0 /* SwiftUICollection in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				53ABFDED26799D7700886593 /* ActivityIndicator in Frameworks */,
@@ -610,8 +610,7 @@
 				E13DD3D327168E65009D4DAF /* Defaults in Frameworks */,
 				53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
-
-				C4BFD4E527167B63007739E3 /* SwiftUICollection in Frameworks */,
+				E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */,
 				53EC6E21267E80B1006DD26A /* Pods_JellyfinPlayer_iOS.framework in Frameworks */,
 				E1218C9A271A26BA00EA0737 /* Nuke in Frameworks */,
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
@@ -1305,7 +1304,7 @@
 				E12186DD2718F1C50010884C /* Defaults */,
 				E1218C9D271A2CD600EA0737 /* CombineExt */,
 				E1218C9F271A2CF200EA0737 /* Nuke */,
-				C49FB6582717A06300AAEABB /* SwiftUICollection */,
+				E1A9999A271A343C008E78C0 /* SwiftUICollection */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */;
@@ -1341,7 +1340,7 @@
 				E1B6DCE7271A23780015B715 /* CombineExt */,
 				E1B6DCE9271A23880015B715 /* SwiftyJSON */,
 				E1218C99271A26BA00EA0737 /* Nuke */,
-				C4BFD4E427167B63007739E3 /* SwiftUICollection */,
+				E1A99998271A3429008E78C0 /* SwiftUICollection */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer iOS.app */;
@@ -2420,6 +2419,14 @@
 				minimumVersion = 2.0.2;
 			};
 		};
+		C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ABJC/SwiftUICollection";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
@@ -2458,14 +2465,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.0;
-			};
-		};
-		C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ABJC/SwiftUICollection";
-			requirement = {
-				branch = master;
-				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -2590,6 +2589,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		E1A99998271A3429008E78C0 /* SwiftUICollection */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
+			productName = SwiftUICollection;
+		};
+		E1A9999A271A343C008E78C0 /* SwiftUICollection */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
+			productName = SwiftUICollection;
 		};
 		E1B6DCE7271A23780015B715 /* CombineExt */ = {
 			isa = XCSwiftPackageProductDependency;
