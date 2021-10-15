@@ -229,6 +229,8 @@
 		E12186DE2718F1C50010884C /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E12186DD2718F1C50010884C /* Defaults */; };
 		E1218C9A271A26BA00EA0737 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C99271A26BA00EA0737 /* Nuke */; };
 		E1218C9C271A26C400EA0737 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C9B271A26C400EA0737 /* Nuke */; };
+		E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C9D271A2CD600EA0737 /* CombineExt */; };
+		E1218CA0271A2CF200EA0737 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C9F271A2CF200EA0737 /* Nuke */; };
 		E1267D3E271A1F46003C492E /* PreferenceUIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */; };
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
@@ -584,7 +586,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */,
+				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
 				53EC6E1E267E80AC006DD26A /* Pods_JellyfinPlayer_tvOS.framework in Frameworks */,
+				E1218CA0271A2CF200EA0737 /* Nuke in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
@@ -1294,6 +1298,8 @@
 				6220D0C826D63F3700B8E046 /* Stinsen */,
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
+				E1218C9D271A2CD600EA0737 /* CombineExt */,
+				E1218C9F271A2CF200EA0737 /* Nuke */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* JellyfinPlayer tvOS.app */;
@@ -2530,6 +2536,16 @@
 			productName = Nuke;
 		};
 		E1218C9B271A26C400EA0737 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		E1218C9D271A2CD600EA0737 /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
+		};
+		E1218C9F271A2CF200EA0737 /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = Nuke;
