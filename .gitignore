@@ -96,6 +96,3 @@ iOSInjectionProject/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Project files that need to be force pushed
-*.pbxproj
