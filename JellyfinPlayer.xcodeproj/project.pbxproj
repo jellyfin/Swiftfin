@@ -825,7 +825,6 @@
 				62ECA01926FA6D6900E8EBB7 /* AppURLHandler */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
 				53F866422687A45400DCD1D7 /* Components */,
-				E193D53F27193FA800900D82 /* Coordinators */,
 				5377CC02263B596B003A4E83 /* Info.plist */,
 				53AD124C2670278D0094A276 /* JellyfinPlayer.entitlements */,
 				5377CBFA263B596B003A4E83 /* Preview Content */,
@@ -1196,13 +1195,6 @@
 			sourceTree = "<group>";
 		};
 		E193D4DD27193DC400900D82 /* Coordinators */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Coordinators;
-			sourceTree = "<group>";
-		};
-		E193D53F27193FA800900D82 /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
 			);
