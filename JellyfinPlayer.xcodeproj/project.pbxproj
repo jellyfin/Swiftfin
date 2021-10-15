@@ -726,7 +726,6 @@
 				53ABFDDA267972BF00886593 /* JellyfinPlayer tvOS.entitlements */,
 				535870682669D21700D05A09 /* Preview Content */,
 				531690F8267AD135005D8AB9 /* README.md */,
-				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
 				E12186E02718F23B0010884C /* Views */,
 			);
 			path = "JellyfinPlayer tvOS";
@@ -819,10 +818,6 @@
 				5377CC02263B596B003A4E83 /* Info.plist */,
 				53AD124C2670278D0094A276 /* JellyfinPlayer.entitlements */,
 				5377CBFA263B596B003A4E83 /* Preview Content */,
-				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
-				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
-				532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */,
-				0959A5FC2686D29800C7C9A9 /* VideoUpNextView.swift */,
 				E13DD3D027165886009D4DAF /* Views */,
 			);
 			path = JellyfinPlayer;
@@ -1111,6 +1106,7 @@
 				53116A16268B919A003024C9 /* SeriesItemView.swift */,
 				5398514426B64DA100101B49 /* SettingsView.swift */,
 				53ABFDDD267974E300886593 /* SplashView.swift */,
+				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1154,6 +1150,7 @@
 				625CB5672678B6FB00530A6E /* SplashView.swift */,
 				E13DD3FB2717EAE8009D4DAF /* UserListView.swift */,
 				E13DD3F4271793BB009D4DAF /* UserSignInView.swift */,
+				E193D5452719418B00900D82 /* VideoPlayer */,
 				53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */,
 			);
 			path = Views;
@@ -1209,6 +1206,17 @@
 				E193D5422719407E00900D82 /* tvOSMainCoordinator.swift */,
 			);
 			path = MainCoordinator;
+			sourceTree = "<group>";
+		};
+		E193D5452719418B00900D82 /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				53313B8F265EEA6D00947AA3 /* VideoPlayer.storyboard */,
+				535BAEA4264A151C005FA86D /* VideoPlayer.swift */,
+				532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */,
+				0959A5FC2686D29800C7C9A9 /* VideoUpNextView.swift */,
+			);
+			path = VideoPlayer;
 			sourceTree = "<group>";
 		};
 		E1AD105226D96D5F003E4A08 /* JellyfinAPIExtensions */ = {
