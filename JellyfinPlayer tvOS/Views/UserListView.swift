@@ -22,29 +22,18 @@ struct UserListView: View {
                     Button {
                         viewModel.login(user: user)
                     } label: {
-                        ZStack(alignment: Alignment.leading) {
-                            Rectangle()
-                                .foregroundColor(Color.secondarySystemFill)
-                                .frame(height: 70)
-                                .cornerRadius(10)
+                        HStack {
+                            Text(user.username)
+                                .font(.title2)
                             
-                            HStack {
-                                Image(systemName: "person.crop.circle.fill")
-                                    .font(.system(size: 46))
-                                    .foregroundColor(.primary)
-                                
-                                Text(user.username)
-                                    .font(.title2)
-                                
-                                Spacer()
-                                
-                                if viewModel.isLoading {
-                                    ProgressView()
-                                }
-                            }.padding(.leading)
+                            Spacer()
+                            
+                            if viewModel.isLoading {
+                                ProgressView()
+                            }
                         }
-                        .padding()
                     }
+                    .padding([.leading, .trailing], 100)
                     .contextMenu {
                         Button(role: .destructive) {
                             viewModel.remove(user: user)
@@ -54,33 +43,27 @@ struct UserListView: View {
                     }
                 }
             }
+            .padding(.top, 50)
         }
+        .padding(.top, 50)
     }
     
     @ViewBuilder
     private var noUserView: some View {
         VStack {
             Text("Sign in to get started")
-                .frame(minWidth: 50, maxWidth: 240)
+                .frame(minWidth: 50, maxWidth: 500)
                 .multilineTextAlignment(.center)
+                .font(.callout)
             
             Button {
                 userListRouter.route(to: \.userSignIn, viewModel.server)
             } label: {
-                ZStack {
-                    Rectangle()
-                        .foregroundColor(Color.jellyfinPurple)
-                        .frame(maxWidth: 500, maxHeight: 50)
-                        .frame(height: 50)
-                        .cornerRadius(10)
-                        .padding([.leading, .trailing], 30)
-                        .padding([.top, .bottom], 20)
-                    
-                    Text("Sign in")
-                        .foregroundColor(Color.white)
-                        .bold()
-                }
+                Text("Sign in")
+                    .bold()
+                    .font(.callout)
             }
+            .padding(.top, 40)
         }
     }
     

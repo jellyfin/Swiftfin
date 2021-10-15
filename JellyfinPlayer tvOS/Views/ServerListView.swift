@@ -42,8 +42,11 @@ struct ServerListView: View {
                                     .font(.footnote)
                                     .foregroundColor(.primary)
                             }
+                            
+                            Spacer()
                         }
                     }
+                    .padding([.leading, .trailing], 100)
                     .contextMenu {
                         Button(role: .destructive) {
                             viewModel.remove(server: server)
@@ -53,8 +56,9 @@ struct ServerListView: View {
                     }
                 }
             }
+            .padding(.top, 50)
         }
-        .padding(.top, 100)
+        .padding(.top, 50)
     }
     
     @ViewBuilder
@@ -83,7 +87,6 @@ struct ServerListView: View {
                 .offset(y: -50)
         } else {
             listView
-                .frame(width: 3000)
         }
     }
     
@@ -117,7 +120,6 @@ struct ServerListView: View {
     
     var body: some View {
         innerBody
-            .frame(width: 1500)
         .navigationTitle("Servers")
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -126,14 +128,6 @@ struct ServerListView: View {
         }
         .onAppear {
             viewModel.fetchServers()
-        }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            ServerListView(viewModel: ServerListViewModel())
         }
     }
 }
