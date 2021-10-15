@@ -95,25 +95,10 @@ struct ServerListView: View {
         if viewModel.servers.isEmpty {
             EmptyView()
         } else {
-            HStack {
-                Button {
-                    SwiftfinStore.dataStack.perform(asynchronous: { transaction in
-                        try! transaction.deleteAll(From<SwiftfinStore.Models.StoredServer>())
-                        try! transaction.deleteAll(From<SwiftfinStore.Models.StoredUser>())
-                        try! transaction.deleteAll(From<SwiftfinStore.Models.StoredAccessToken>())
-                    }) { _ in
-                        SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
-                        viewModel.fetchServers()
-                    }
-                } label: {
-                    Text("Purge")
-                }
-                
-                Button {
-                    serverListRouter.route(to: \.connectToServer)
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                }
+            Button {
+                serverListRouter.route(to: \.connectToServer)
+            } label: {
+                Image(systemName: "plus.circle.fill")
             }
         }
     }
