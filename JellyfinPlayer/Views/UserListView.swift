@@ -66,7 +66,7 @@ struct UserListView: View {
                 ZStack {
                     Rectangle()
                         .foregroundColor(Color.jellyfinPurple)
-                        .frame(maxWidth: 500, maxHeight: 50)
+                        .frame(maxWidth: 400, maxHeight: 50)
                         .frame(height: 50)
                         .cornerRadius(10)
                         .padding([.leading, .trailing], 30)
