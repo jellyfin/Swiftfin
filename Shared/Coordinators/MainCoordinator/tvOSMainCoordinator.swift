@@ -1,0 +1,23 @@
+//
+ /* 
+  * SwiftFin is subject to the terms of the Mozilla Public
+  * License, v2.0. If a copy of the MPL was not distributed with this
+  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+  *
+  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+  */
+
+import Foundation
+import Nuke
+import Stinsen
+import SwiftUI
+
+final class MainCoordinator: NavigationCoordinatable {
+    var stack = NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
+
+    @Root var mainTab = makeEmpty
+
+    @ViewBuilder func makeEmpty() -> some View {
+        EmptyView()
+    }
+}

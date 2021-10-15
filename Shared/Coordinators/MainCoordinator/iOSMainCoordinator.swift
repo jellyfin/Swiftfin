@@ -11,9 +11,7 @@ import Foundation
 import Nuke
 import Stinsen
 import SwiftUI
-#if !os(tvOS)
-    import WidgetKit
-#endif
+import WidgetKit
 
 final class MainCoordinator: NavigationCoordinatable {
     var stack: NavigationStack<MainCoordinator>
@@ -31,10 +29,8 @@ final class MainCoordinator: NavigationCoordinatable {
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
-        #if !os(tvOS)
-            WidgetCenter.shared.reloadAllTimelines()
-            UIScrollView.appearance().keyboardDismissMode = .onDrag
-        #endif
+        WidgetCenter.shared.reloadAllTimelines()
+        UIScrollView.appearance().keyboardDismissMode = .onDrag
     
         // Back bar button item setup
         let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")

@@ -301,6 +301,7 @@
 		E193D53C27193F9500900D82 /* UserListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD4012717EE79009D4DAF /* UserListCoordinator.swift */; };
 		E193D53D27193F9700900D82 /* UserSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */; };
 		E193D53E27193F9A00900D82 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0C526D62D8700B8E046 /* VideoPlayerCoordinator.swift */; };
+		E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D5422719407E00900D82 /* tvOSMainCoordinator.swift */; };
 		E1AD104A26D94822003E4A08 /* DetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104926D94822003E4A08 /* DetailItem.swift */; };
 		E1AD104B26D94822003E4A08 /* DetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104926D94822003E4A08 /* DetailItem.swift */; };
 		E1AD104D26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */; };
@@ -546,6 +547,7 @@
 		E188460326DEF04800B0C5B7 /* EpisodeCardVStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCardVStackView.swift; sourceTree = "<group>"; };
 		E193D4D727193CAC00900D82 /* PortraitImageStackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitImageStackable.swift; sourceTree = "<group>"; };
 		E193D4DA27193CCA00900D82 /* PillStackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillStackable.swift; sourceTree = "<group>"; };
+		E193D5422719407E00900D82 /* tvOSMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainCoordinator.swift; sourceTree = "<group>"; };
 		E1AD104926D94822003E4A08 /* DetailItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailItem.swift; sourceTree = "<group>"; };
 		E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseItemDtoExtensions.swift; sourceTree = "<group>"; };
 		E1AD105526D981CE003E4A08 /* PortraitHStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitHStackView.swift; sourceTree = "<group>"; };
@@ -1027,6 +1029,7 @@
 				62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */,
 				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
 				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
+				E193D5412719404B00900D82 /* MainCoordinator */,
 				6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */,
 				6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */,
 				62C29EA726D103D500C1D2E7 /* LibraryListCoordinator.swift */,
@@ -1195,9 +1198,17 @@
 		E193D53F27193FA800900D82 /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
-				62C29E9E26D1016600C1D2E7 /* iOSMainCoordinator.swift */,
 			);
 			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		E193D5412719404B00900D82 /* MainCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				62C29E9E26D1016600C1D2E7 /* iOSMainCoordinator.swift */,
+				E193D5422719407E00900D82 /* tvOSMainCoordinator.swift */,
+			);
+			path = MainCoordinator;
 			sourceTree = "<group>";
 		};
 		E1AD105226D96D5F003E4A08 /* JellyfinAPIExtensions */ = {
@@ -1648,6 +1659,7 @@
 				5310695B2684E7EE00CFFDBA /* AudioView.swift in Sources */,
 				5398514726B64E4100101B49 /* SearchBarView.swift in Sources */,
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
+				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
 				53ABFDE7267974EF00886593 /* ConnectToServerViewModel.swift in Sources */,
 				5398514626B64DBB00101B49 /* SearchablePickerView.swift in Sources */,
 				53ABFDEE26799DCD00886593 /* ImageView.swift in Sources */,
