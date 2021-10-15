@@ -15,11 +15,6 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-#if os(tvOS)
-import TVServices
-import SwiftUIFocusGuide
-#endif
-
 typealias CurrentLogin = (server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User)
 
 // MARK: NewSessionManager

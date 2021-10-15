@@ -13,6 +13,7 @@ import Defaults
 
 enum SwiftfinStore {
     
+    // MARK: State
     // Safe, copyable representations of their underlying CoreStoredObject's
     // Relationships are represented by the related object's IDs or value
     enum State {
@@ -33,6 +34,10 @@ enum SwiftfinStore {
                 self.version = version
                 self.userIDs = usersIDs
             }
+            
+            static var sample: Server {
+                return Server(uri: "https://www.notaurl.com", name: "Johnny's Tree", id: "123abc", os: "macOS", version: "1.1.1", usersIDs: ["1", "2"])
+            }
         }
         
         struct User {
@@ -47,9 +52,14 @@ enum SwiftfinStore {
                 self.serverID = serverID
                 self.accessToken = accessToken
             }
+            
+            static var sample: User {
+                return User(username: "JohnnyAppleseed", id: "123abc", serverID: "123abc", accessToken: "open-sesame")
+            }
         }
     }
     
+    // MARK: Models
     enum Models {
         
         final class StoredServer: CoreStoreObject {

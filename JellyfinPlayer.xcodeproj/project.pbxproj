@@ -37,7 +37,6 @@
 		5321753E2671DE9C005491E6 /* Typings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* Typings.swift */; };
 		532175402671EE4F005491E6 /* LibraryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */; };
 		53272532268BF09D0035FBF1 /* MediaViewActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272531268BF09D0035FBF1 /* MediaViewActionButton.swift */; };
-		53272535268BF9710035FBF1 /* SwiftUIFocusGuide in Frameworks */ = {isa = PBXBuildFile; productRef = 53272534268BF9710035FBF1 /* SwiftUIFocusGuide */; };
 		53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272536268C1DBB0035FBF1 /* SeasonItemView.swift */; };
 		53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272538268C20100035FBF1 /* EpisodeItemView.swift */; };
 		532E68CF267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532E68CE267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift */; };
@@ -583,7 +582,6 @@
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				6261A0E026A0AB710072EF1C /* CombineExt in Frameworks */,
-				53272535268BF9710035FBF1 /* SwiftUIFocusGuide in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
@@ -1304,7 +1302,6 @@
 				53A431BE266B0FFE0016769F /* JellyfinAPI */,
 				53ABFDEC26799D7700886593 /* ActivityIndicator */,
 				536D3D83267BEA550004248C /* ParallaxView */,
-				53272534268BF9710035FBF1 /* SwiftUIFocusGuide */,
 				53649AAE269CFAF600A2D8B7 /* Puppy */,
 				6261A0DF26A0AB710072EF1C /* CombineExt */,
 				6220D0C826D63F3700B8E046 /* Stinsen */,
@@ -1428,7 +1425,6 @@
 				625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */,
 				536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */,
 				53EC6E23267EB10F006DD26A /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
-				53272533268BF9710035FBF1 /* XCRemoteSwiftPackageReference "SwiftUIFocusGuide" */,
 				53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */,
 				6260FFF726A09754003FA968 /* XCRemoteSwiftPackageReference "CombineExt" */,
 				62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */,
@@ -2370,14 +2366,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		53272533268BF9710035FBF1 /* XCRemoteSwiftPackageReference "SwiftUIFocusGuide" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rmnblm/SwiftUIFocusGuide";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
-			};
-		};
 		5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
@@ -2469,11 +2457,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		53272534268BF9710035FBF1 /* SwiftUIFocusGuide */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53272533268BF9710035FBF1 /* XCRemoteSwiftPackageReference "SwiftUIFocusGuide" */;
-			productName = SwiftUIFocusGuide;
-		};
 		53352570265EA0A0006CCA86 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;

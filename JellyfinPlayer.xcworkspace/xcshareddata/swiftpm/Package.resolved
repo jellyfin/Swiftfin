@@ -137,15 +137,6 @@
         }
       },
       {
-        "package": "SwiftUIFocusGuide",
-        "repositoryURL": "https://github.com/rmnblm/SwiftUIFocusGuide",
-        "state": {
-          "branch": null,
-          "revision": "fb8eefaccb2954efedc19a5539241f370baa4a10",
-          "version": "0.1.0"
-        }
-      },
-      {
         "package": "SwiftyJSON",
         "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON",
         "state": {

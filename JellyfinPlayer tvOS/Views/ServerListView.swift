@@ -23,34 +23,26 @@ struct ServerListView: View {
                     Button {
                         serverListRouter.route(to: \.userList, server)
                     } label: {
-                        ZStack(alignment: Alignment.leading) {
-                            Rectangle()
-                                .foregroundColor(Color.secondarySystemFill)
-                                .frame(height: 100)
-                                .cornerRadius(10)
+                        HStack {
+                            Image(systemName: "server.rack")
+                                .font(.system(size: 72))
+                                .foregroundColor(.primary)
                             
-                            HStack {
-                                Image(systemName: "server.rack")
-                                    .font(.system(size: 36))
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(server.name)
+                                    .font(.title2)
                                     .foregroundColor(.primary)
                                 
-                                VStack(alignment: .leading, spacing: 5) {
-                                    Text(server.name)
-                                        .font(.title2)
-                                        .foregroundColor(.primary)
-                                    
-                                    Text(server.uri)
-                                        .font(.footnote)
-                                        .disabled(true)
-                                        .foregroundColor(.secondary)
-                                    
-                                    Text(viewModel.userTextFor(server: server))
-                                        .font(.footnote)
-                                        .foregroundColor(.primary)
-                                }
-                            }.padding([.leading])
+                                Text(server.uri)
+                                    .font(.footnote)
+                                    .disabled(true)
+                                    .foregroundColor(.secondary)
+                                
+                                Text(viewModel.userTextFor(server: server))
+                                    .font(.footnote)
+                                    .foregroundColor(.primary)
+                            }
                         }
-                        .padding()
                     }
                     .contextMenu {
                         Button(role: .destructive) {
@@ -62,32 +54,25 @@ struct ServerListView: View {
                 }
             }
         }
+        .padding(.top, 100)
     }
     
     @ViewBuilder
     private var noServerView: some View {
         VStack {
             Text("Connect to a Jellyfin server to get started")
-                .frame(minWidth: 50, maxWidth: 240)
+                .frame(minWidth: 50, maxWidth: 500)
                 .multilineTextAlignment(.center)
+                .font(.callout)
             
             Button {
                 serverListRouter.route(to: \.connectToServer)
             } label: {
-                ZStack {
-                    Rectangle()
-                        .foregroundColor(Color.jellyfinPurple)
-                        .frame(maxWidth: 500, maxHeight: 50)
-                        .frame(height: 50)
-                        .cornerRadius(10)
-                        .padding([.leading, .trailing], 30)
-                        .padding([.top, .bottom], 20)
-                    
-                    Text("Connect")
-                        .foregroundColor(Color.white)
-                        .bold()
-                }
+                Text("Connect")
+                    .bold()
+                    .font(.callout)
             }
+            .padding(.top, 40)
         }
     }
     
@@ -98,6 +83,7 @@ struct ServerListView: View {
                 .offset(y: -50)
         } else {
             listView
+                .frame(width: 3000)
         }
     }
     
@@ -131,6 +117,7 @@ struct ServerListView: View {
     
     var body: some View {
         innerBody
+            .frame(width: 1500)
         .navigationTitle("Servers")
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -139,6 +126,14 @@ struct ServerListView: View {
         }
         .onAppear {
             viewModel.fetchServers()
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationView {
+            ServerListView(viewModel: ServerListViewModel())
         }
     }
 }
