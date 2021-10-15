@@ -162,7 +162,7 @@ final class LibraryViewModel: ViewModel {
         let newCell = LibraryRowCell(item: item)
         rowCells.append(newCell)
       }
-      if i == rowCount {
+      if i == rowCount && hasNextPage {
         var loadingCell = LibraryRowCell(item: nil)
         loadingCell.loadingCell = true
         rowCells.append(loadingCell)
