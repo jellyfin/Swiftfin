@@ -28,19 +28,20 @@ struct UserSignInView: View {
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                 
-                Button {
-                    viewModel.login(username: username, password: password)
-                } label: {
-                    HStack {
-                        Text("Connect")
-                        Spacer()
-                        if viewModel.isLoading {
-                            ProgressView()
-                        }
+                if viewModel.isLoading {
+                    Button(role: .destructive) {
+                        viewModel.cancelSignIn()
+                    } label: {
+                        Text("Cancel")
                     }
+                } else {
+                    Button {
+                        viewModel.login(username: username, password: password)
+                    } label: {
+                        Text("Connect")
+                    }
+                    .disabled(username.isEmpty)
                 }
-                .disabled(viewModel.isLoading || username.isEmpty)
-
             } header: {
                 Text("Sign In to \(viewModel.server.name)")
             }
@@ -51,5 +52,6 @@ struct UserSignInView: View {
                   dismissButton: .cancel())
         }
         .navigationTitle("Sign In")
+        .navigationBarBackButtonHidden(viewModel.isLoading)
     }
 }

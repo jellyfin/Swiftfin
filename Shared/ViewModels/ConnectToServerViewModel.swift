@@ -64,4 +64,10 @@ final class ConnectToServerViewModel: ViewModel {
             searching = false
         }
     }
+    
+    func cancelConnection() {
+        for cancellable in cancellables {
+            cancellable.cancel()
+        }
+    }
 }

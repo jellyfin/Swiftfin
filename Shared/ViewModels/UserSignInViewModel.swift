@@ -43,4 +43,10 @@ final class UserSignInViewModel: ViewModel {
             }
             .store(in: &cancellables)
     }
+    
+    func cancelSignIn() {
+        for cancellable in cancellables {
+            cancellable.cancel()
+        }
+    }
 }
