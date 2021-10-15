@@ -65,10 +65,9 @@ struct LibraryView: View {
             }
             .buttonStyle(PlainNavigationLinkButtonStyle())
             .onAppear {
-                if item == viewModel.items.last && viewModel.hasNextPage {
-                    print("Last item visible, load more items.")
-                    viewModel.requestNextPageAsync()
-                }
+              if item == viewModel.items.last && viewModel.hasNextPage {
+                  viewModel.requestNextPageAsync()
+              }
             }
           }
         }

@@ -144,15 +144,16 @@ final class LibraryViewModel: ViewModel {
     let rowCount = items.count / columns
     var calculatedRows = [LibraryRow]()
     for i in (0...rowCount) {
+      
       let firstItemIndex = i * columns
       var lastItemIndex = firstItemIndex + columns
-      if lastItemIndex >= items.count {
-        lastItemIndex = items.count - 1
+      if lastItemIndex > items.count {
+        lastItemIndex = items.count
       }
       calculatedRows.append(
         LibraryRow(
           section: i,
-          items: Array(items[firstItemIndex...lastItemIndex])
+          items: Array(items[firstItemIndex..<lastItemIndex])
         )
       )
     }
