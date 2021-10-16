@@ -14,12 +14,17 @@ final class MainTabViewModel: ViewModel {
     @Published var backgroundURL: URL?
     @Published var lastBackgroundURL: URL?
     @Published var backgroundBlurHash: String = "001fC^"
+    @Published var libraries = [BaseItemDto]()
 
     override init() {
         super.init()
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(backgroundDidChange), name: Notification.Name("backgroundDidChange"), object: nil)
+        
+        #if os(tvOS)
+        requestLibraries()
+        #endif
     }
 
     @objc func backgroundDidChange() {
@@ -27,4 +32,15 @@ final class MainTabViewModel: ViewModel {
         self.backgroundURL = BackgroundManager.current.backgroundURL
         self.backgroundBlurHash = BackgroundManager.current.blurhash
     }
+  
+  func requestLibraries() {
+      UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id ?? "val was nil")
+          .trackActivity(loading)
+          .sink(receiveCompletion: { completion in
+              self.handleAPIRequestError(completion: completion)
+          }, receiveValue: { response in
+              self.libraries.append(contentsOf: response.items ?? [])
+          })
+          .store(in: &cancellables)
+  }
 }
