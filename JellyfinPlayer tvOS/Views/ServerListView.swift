@@ -18,7 +18,7 @@ struct ServerListView: View {
     @ViewBuilder
     private var listView: some View {
         ScrollView {
-            VStack {
+            LazyVStack {
                 ForEach(viewModel.servers, id: \.id) { server in
                     Button {
                         serverListRouter.route(to: \.userList, server)
@@ -46,7 +46,7 @@ struct ServerListView: View {
                             Spacer()
                         }
                     }
-                    .padding([.leading, .trailing], 100)
+                    .padding(.horizontal, 100)
                     .contextMenu {
                         Button(role: .destructive) {
                             viewModel.remove(server: server)

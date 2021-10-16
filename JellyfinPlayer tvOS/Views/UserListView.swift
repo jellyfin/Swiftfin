@@ -17,7 +17,7 @@ struct UserListView: View {
     @ViewBuilder
     private var listView: some View {
         ScrollView {
-            VStack {
+            LazyVStack {
                 ForEach(viewModel.users, id: \.id) { user in
                     Button {
                         viewModel.login(user: user)
@@ -33,7 +33,7 @@ struct UserListView: View {
                             }
                         }
                     }
-                    .padding([.leading, .trailing], 100)
+                    .padding(.horizontal, 100)
                     .contextMenu {
                         Button(role: .destructive) {
                             viewModel.remove(user: user)

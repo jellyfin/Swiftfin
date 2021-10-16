@@ -14,10 +14,9 @@ struct UserListView: View {
     @EnvironmentObject var userListRouter: UserListCoordinator.Router
     @ObservedObject var viewModel: UserListViewModel
     
-    @ViewBuilder
     private var listView: some View {
         ScrollView {
-            VStack {
+            LazyVStack {
                 ForEach(viewModel.users, id: \.id) { user in
                     Button {
                         viewModel.login(user: user)
@@ -53,7 +52,6 @@ struct UserListView: View {
         }
     }
     
-    @ViewBuilder
     private var noUserView: some View {
         VStack {
             Text("Sign in to get started")
@@ -69,7 +67,7 @@ struct UserListView: View {
                         .frame(maxWidth: 400, maxHeight: 50)
                         .frame(height: 50)
                         .cornerRadius(10)
-                        .padding([.leading, .trailing], 30)
+                        .padding(.horizontal, 30)
                         .padding([.top, .bottom], 20)
                     
                     Text("Sign in")

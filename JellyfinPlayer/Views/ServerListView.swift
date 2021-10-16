@@ -15,10 +15,9 @@ struct ServerListView: View {
     @EnvironmentObject var serverListRouter: ServerListCoordinator.Router
     @ObservedObject var viewModel: ServerListViewModel
     
-    @ViewBuilder
     private var listView: some View {
         ScrollView {
-            VStack {
+            LazyVStack {
                 ForEach(viewModel.servers, id: \.id) { server in
                     Button {
                         serverListRouter.route(to: \.userList, server)
@@ -64,7 +63,6 @@ struct ServerListView: View {
         }
     }
     
-    @ViewBuilder
     private var noServerView: some View {
         VStack {
             Text("Connect to a Jellyfin server to get started")
@@ -80,7 +78,7 @@ struct ServerListView: View {
                         .frame(maxWidth: 400, maxHeight: 50)
                         .frame(height: 50)
                         .cornerRadius(10)
-                        .padding([.leading, .trailing], 30)
+                        .padding(.horizontal, 30)
                         .padding([.top, .bottom], 20)
                     
                     Text("Connect")
@@ -114,7 +112,6 @@ struct ServerListView: View {
         }
     }
     
-    @ViewBuilder
     private var leadingToolbarContent: some View {
         Button {
             serverListRouter.route(to: \.basicAppSettings)
