@@ -69,5 +69,7 @@ final class ConnectToServerViewModel: ViewModel {
         for cancellable in cancellables {
             cancellable.cancel()
         }
+        
+        self.isLoading = false
     }
 }

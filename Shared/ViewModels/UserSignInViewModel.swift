@@ -48,5 +48,7 @@ final class UserSignInViewModel: ViewModel {
         for cancellable in cancellables {
             cancellable.cancel()
         }
+        
+        self.isLoading = false
     }
 }
