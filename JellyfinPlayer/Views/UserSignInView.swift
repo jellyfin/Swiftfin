@@ -38,7 +38,7 @@ struct UserSignInView: View {
                     Button {
                         viewModel.login(username: username, password: password)
                     } label: {
-                        Text("Connect")
+                        Text("Sign In")
                     }
                     .disabled(username.isEmpty)
                 }
