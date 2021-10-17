@@ -74,7 +74,7 @@ public extension BaseItemDto {
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
         let urlString =
-            "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+        "\(SessionManager.main.currentLogin.server.uri)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -91,7 +91,7 @@ public extension BaseItemDto {
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
         let urlString =
-            "\(ServerEnvironment.current.server.baseURI!)/Items/\(parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+            "\(SessionManager.main.currentLogin.server.uri)/Items/\(parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -100,7 +100,7 @@ public extension BaseItemDto {
         let imageTag = seriesPrimaryImageTag ?? ""
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
         let urlString =
-            "\(ServerEnvironment.current.server.baseURI!)/Items/\(seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+            "\(SessionManager.main.currentLogin.server.uri)/Items/\(seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         return URL(string: urlString)!
     }
 
@@ -117,7 +117,7 @@ public extension BaseItemDto {
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
         let urlString =
-            "\(ServerEnvironment.current.server.baseURI!)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+            "\(SessionManager.main.currentLogin.server.uri)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
         // print(urlString)
         return URL(string: urlString)!
     }

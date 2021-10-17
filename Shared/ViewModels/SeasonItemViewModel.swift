@@ -32,7 +32,7 @@ final class SeasonItemViewModel: ItemViewModel {
     private func requestEpisodes() {
         LogManager.shared.log
             .debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
-        TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.current.user.user_id!,
+        TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.main.currentLogin.user.id,
                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                seasonId: item.id ?? "")
             .trackActivity(loading)
@@ -73,7 +73,7 @@ final class SeasonItemViewModel: ItemViewModel {
     
     func routeToSeriesItem() {
         guard let id = item.seriesId else { return }
-        UserLibraryAPI.getItem(userId: SessionManager.current.user.user_id!, itemId: id)
+        UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)

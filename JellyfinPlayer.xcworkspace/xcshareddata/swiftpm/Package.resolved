@@ -20,39 +20,30 @@
         }
       },
       {
-        "package": "combine-schedulers",
-        "repositoryURL": "https://github.com/pointfreeco/combine-schedulers",
+        "package": "CombineExt",
+        "repositoryURL": "https://github.com/CombineCommunity/CombineExt",
         "state": {
           "branch": null,
-          "revision": "6bde3b0063ba8e7537b43744948535ca7e9e0dad",
-          "version": "0.5.2"
+          "revision": "0880829102152185190064fd17847a7c681d2127",
+          "version": "1.5.1"
         }
       },
       {
-        "package": "CombineExt",
-        "repositoryURL": "https://github.com/acvigue/CombineExt",
+        "package": "CoreStore",
+        "repositoryURL": "https://github.com/JohnEstropia/CoreStore.git",
         "state": {
-          "branch": "main",
-          "revision": "f629c5b052d1cb5d03e10890deccc50e4c649e68",
-          "version": null
+          "branch": null,
+          "revision": "496145761ab30e8cf1c44220c0882b95e6b41077",
+          "version": "8.1.0"
         }
       },
       {
         "package": "Defaults",
-        "repositoryURL": "https://github.com/acvigue/Defaults",
-        "state": {
-          "branch": "main",
-          "revision": "a4153b523ab3df9f5e3f70e9cfe9c54bed98c7e3",
-          "version": null
-        }
-      },
-      {
-        "package": "Gifu",
-        "repositoryURL": "https://github.com/kaishin/Gifu",
+        "repositoryURL": "https://github.com/sindresorhus/Defaults",
         "state": {
           "branch": null,
-          "revision": "51f2eab32903e336f590c013267cfa4d7f8b06c4",
-          "version": "3.3.1"
+          "revision": "8a6e4a96fd38504a05903d136c85634b65fd7c4d",
+          "version": "6.0.0"
         }
       },
       {
@@ -65,30 +56,12 @@
         }
       },
       {
-        "package": "KeychainSwift",
-        "repositoryURL": "https://github.com/evgenyneu/keychain-swift",
-        "state": {
-          "branch": null,
-          "revision": "96fb84f45a96630e7583903bd7e08cf095c7a7ef",
-          "version": "19.0.0"
-        }
-      },
-      {
         "package": "Nuke",
-        "repositoryURL": "https://github.com/kean/Nuke.git",
+        "repositoryURL": "https://github.com/kean/Nuke",
         "state": {
           "branch": null,
-          "revision": "0db18dd34998cca18e9a28bcee136f84518007a0",
-          "version": "10.4.1"
-        }
-      },
-      {
-        "package": "NukeUI",
-        "repositoryURL": "https://github.com/kean/NukeUI",
-        "state": {
-          "branch": null,
-          "revision": "d2580b8d22b29c6244418d8e4b568f3162191460",
-          "version": "0.3.0"
+          "revision": "7f73ceaeacd5df75a7994cd82e165ad9ff1815db",
+          "version": "9.6.1"
         }
       },
       {
@@ -146,30 +119,12 @@
         }
       },
       {
-        "package": "SwiftUIFocusGuide",
-        "repositoryURL": "https://github.com/rmnblm/SwiftUIFocusGuide",
-        "state": {
-          "branch": null,
-          "revision": "fb8eefaccb2954efedc19a5539241f370baa4a10",
-          "version": "0.1.0"
-        }
-      },
-      {
         "package": "SwiftyJSON",
         "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON",
         "state": {
-          "branch": "master",
-          "revision": "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
-          "version": null
-        }
-      },
-      {
-        "package": "xctest-dynamic-overlay",
-        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
-        "state": {
           "branch": null,
-          "revision": "50a70a9d3583fe228ce672e8923010c8df2deddd",
-          "version": "0.2.1"
+          "revision": "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
+          "version": "5.0.1"
         }
       }
     ]

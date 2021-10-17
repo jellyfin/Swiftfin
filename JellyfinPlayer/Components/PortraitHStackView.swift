@@ -9,14 +9,6 @@
 
 import SwiftUI
 
-public protocol PortraitImageStackable {
-    func imageURLContsructor(maxWidth: Int) -> URL
-    var title: String { get }
-    var description: String? { get }
-    var blurHash: String { get }
-    var failureInitials: String { get }
-}
-
 struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackable>: View {
     
     let items: [ItemType]

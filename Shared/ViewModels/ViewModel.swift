@@ -29,11 +29,12 @@ class ViewModel: ObservableObject {
         case .finished:
             break
         case .failure(let error):
-            if let errorResponse = error as? ErrorResponse {
-
+            let logConstructor = LogConstructor(message: "__NOTHING__", tag: tag, level: logLevel, function: function, file: file, line: line)
+            
+            switch error {
+            case is ErrorResponse:
                 let networkError: NetworkError
-                let logConstructor = LogConstructor(message: "__NOTHING__", tag: tag, level: logLevel, function: function, file: file, line: line)
-
+                let errorResponse = error as! ErrorResponse
                 switch errorResponse {
                 case .error(-1, _, _, _):
                     networkError = .URLError(response: errorResponse, displayMessage: displayMessage, logConstructor: logConstructor)
@@ -51,6 +52,23 @@ class ViewModel: ObservableObject {
                 self.errorMessage = networkError.errorMessage
 
                 networkError.logMessage()
+                
+            case is SwiftfinStore.Errors:
+                let swiftfinError = error as! SwiftfinStore.Errors
+                let errorMessage = ErrorMessage(code: ErrorMessage.noShowErrorCode,
+                                                title: swiftfinError.title,
+                                                displayMessage: swiftfinError.errorDescription ?? "",
+                                                logConstructor: logConstructor)
+                self.errorMessage = errorMessage
+                LogManager.shared.log.error("Request failed: \(swiftfinError.errorDescription ?? "")")
+                
+            default:
+                let genericErrorMessage = ErrorMessage(code: ErrorMessage.noShowErrorCode,
+                                                       title: "Generic Error",
+                                                       displayMessage: error.localizedDescription,
+                                                       logConstructor: logConstructor)
+                self.errorMessage = genericErrorMessage
+                LogManager.shared.log.error("Request failed: Generic error - \(error.localizedDescription)")
             }
         }
     }

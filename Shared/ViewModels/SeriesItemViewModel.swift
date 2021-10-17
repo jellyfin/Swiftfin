@@ -35,7 +35,7 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getNextUp() {        
         
         LogManager.shared.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
-        TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seriesId: self.item.id!, enableUserData: true)
+        TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seriesId: self.item.id!, enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
@@ -67,7 +67,7 @@ final class SeriesItemViewModel: ItemViewModel {
 
     private func requestSeasons() {
         LogManager.shared.log.debug("Getting seasons of show \(self.item.id!) (\(self.item.name!))")
-        TvShowsAPI.getSeasons(seriesId: item.id ?? "", userId: SessionManager.current.user.user_id!, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true)
+        TvShowsAPI.getSeasons(seriesId: item.id ?? "", userId: SessionManager.main.currentLogin.user.id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)

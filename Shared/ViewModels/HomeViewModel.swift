@@ -29,7 +29,7 @@ final class HomeViewModel: ViewModel {
 
     func refresh() {
         LogManager.shared.log.debug("Refresh called.")
-        UserViewsAPI.getUserViews(userId: SessionManager.current.user.user_id!)
+        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
@@ -57,7 +57,7 @@ final class HomeViewModel: ViewModel {
             })
             .store(in: &cancellables)
 
-        ItemsAPI.getResumeItems(userId: SessionManager.current.user.user_id!, limit: 12,
+        ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id, limit: 12,
                                 fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                 mediaTypes: ["Video"], imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
             .trackActivity(loading)
@@ -69,7 +69,7 @@ final class HomeViewModel: ViewModel {
             })
             .store(in: &cancellables)
 
-        TvShowsAPI.getNextUp(userId: SessionManager.current.user.user_id!, limit: 12,
+        TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id, limit: 12,
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
