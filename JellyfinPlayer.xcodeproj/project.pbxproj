@@ -204,6 +204,10 @@
 		6267B3DA2671138200A7371D /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D92671138200A7371D /* ImageExtensions.swift */; };
 		6267B3DB2671139400A7371D /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D92671138200A7371D /* ImageExtensions.swift */; };
 		6267B3DC2671139500A7371D /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D92671138200A7371D /* ImageExtensions.swift */; };
+		6286F0A1271C0AA500C40ED5 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6286F0A0271C0AA500C40ED5 /* R.generated.swift */; };
+		6286F0A2271C0AA500C40ED5 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6286F0A0271C0AA500C40ED5 /* R.generated.swift */; };
+		6286F0A6271C0EB700C40ED5 /* R.swift+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6286F0A5271C0EB700C40ED5 /* R.swift+SwiftUI.swift */; };
+		6286F0A7271C0EB700C40ED5 /* R.swift+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6286F0A5271C0EB700C40ED5 /* R.swift+SwiftUI.swift */; };
 		628B95242670CABD0091AF3B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 628B95232670CABD0091AF3B /* SwiftUI.framework */; };
 		628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628B95262670CABD0091AF3B /* NextUpWidget.swift */; };
 		628B95292670CABE0091AF3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 628B95282670CABE0091AF3B /* Assets.xcassets */; };
@@ -460,6 +464,8 @@
 		625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = Carthage/Build/TVVLCKit.xcframework; sourceTree = "<group>"; };
 		6267B3D526710B8900A7371D /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		6267B3D92671138200A7371D /* ImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtensions.swift; sourceTree = "<group>"; };
+		6286F0A0271C0AA500C40ED5 /* R.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
+		6286F0A5271C0EB700C40ED5 /* R.swift+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "R.swift+SwiftUI.swift"; sourceTree = "<group>"; };
 		628B95202670CABD0091AF3B /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		628B95212670CABD0091AF3B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -715,6 +721,7 @@
 		535870752669D60C00D05A09 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				6286F09F271C0AA500C40ED5 /* Generated */,
 				E1FCD08E26C466F3007C8DCF /* Errors */,
 				621338912660106C00A81A2A /* Extensions */,
 				535870AB2669D8D300D05A09 /* Objects */,
@@ -990,8 +997,17 @@
 				E1AD105226D96D5F003E4A08 /* JellyfinAPIExtensions */,
 				621338922660107500A81A2A /* StringExtensions.swift */,
 				6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */,
+				6286F0A5271C0EB700C40ED5 /* R.swift+SwiftUI.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		6286F09F271C0AA500C40ED5 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				6286F0A0271C0AA500C40ED5 /* R.generated.swift */,
+			);
+			path = Generated;
 			sourceTree = "<group>";
 		};
 		628B95252670CABD0091AF3B /* WidgetExtension */ = {
@@ -1134,6 +1150,7 @@
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "JellyfinPlayer tvOS" */;
 			buildPhases = (
 				E7370E1AA68C6CB254E46F2C /* [CP] Check Pods Manifest.lock */,
+				6286F0A3271C0ABA00C40ED5 /* R.swift */,
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
@@ -1167,6 +1184,7 @@
 			buildConfigurationList = 5377CC1B263B596B003A4E83 /* Build configuration list for PBXNativeTarget "JellyfinPlayer iOS" */;
 			buildPhases = (
 				6435C3C2E610FE34AD537AC1 /* [CP] Check Pods Manifest.lock */,
+				6286F09E271C093000C40ED5 /* R.swift */,
 				5377CBED263B596A003A4E83 /* Sources */,
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
@@ -1377,6 +1395,46 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		6286F09E271C093000C40ED5 /* R.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$TEMP_DIR/rswift-lastrun",
+			);
+			name = R.swift;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				$SRCROOT/Shared/Generated/R.generated.swift,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ $ACTION != \"indexbuild\" ]; then\n  \"$PODS_ROOT/R.swift/rswift\" generate \"$SRCROOT/Shared/Generated/R.generated.swift\" --generators string\nfi\n";
+		};
+		6286F0A3271C0ABA00C40ED5 /* R.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$TEMP_DIR/rswift-lastrun",
+			);
+			name = R.swift;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				$SRCROOT/Shared/Generated/R.generated.swift,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ $ACTION != \"indexbuild\" ]; then\n  \"$PODS_ROOT/R.swift/rswift\" generate \"$SRCROOT/Shared/Generated/R.generated.swift\" --generators string\nfi\n";
+		};
 		6435C3C2E610FE34AD537AC1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1498,6 +1556,7 @@
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
 				53CD2A42268A4B38002ABD4E /* MovieItemView.swift in Sources */,
 				536D3D7F267BDF100004248C /* LatestMediaView.swift in Sources */,
+				6286F0A7271C0EB700C40ED5 /* R.swift+SwiftUI.swift in Sources */,
 				091B5A8E268315D400D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
@@ -1521,6 +1580,7 @@
 				535870A52669D8AE00D05A09 /* ParallaxHeader.swift in Sources */,
 				53272532268BF09D0035FBF1 /* MediaViewActionButton.swift in Sources */,
 				531690F0267ABF72005D8AB9 /* NextUpView.swift in Sources */,
+				6286F0A2271C0AA500C40ED5 /* R.generated.swift in Sources */,
 				535870A72669D8AE00D05A09 /* MultiSelectorView.swift in Sources */,
 				E1AD104E26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
 				62E632DD267D2E130063E547 /* LibrarySearchViewModel.swift in Sources */,
@@ -1621,6 +1681,7 @@
 				53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */,
 				E188460026DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift in Sources */,
 				091B5A8B2683142E00D78B61 /* UDPBroadCastConnection.swift in Sources */,
+				6286F0A1271C0AA500C40ED5 /* R.generated.swift in Sources */,
 				6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
@@ -1636,6 +1697,7 @@
 				6220D0C626D62D8700B8E046 /* VideoPlayerCoordinator.swift in Sources */,
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
 				6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */,
+				6286F0A6271C0EB700C40ED5 /* R.swift+SwiftUI.swift in Sources */,
 				62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */,
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				E1AD104A26D94822003E4A08 /* DetailItem.swift in Sources */,
