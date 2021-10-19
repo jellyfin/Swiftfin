@@ -329,8 +329,6 @@
 		E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */; };
 		E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */; };
-		E1E48CCA271E6D410021A2F9 /* RefreshHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */; };
-		E1E48CCB271E6D410021A2F9 /* RefreshHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */; };
 		E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
@@ -790,7 +788,6 @@
 				62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */,
 				E193D4DA27193CCA00900D82 /* PillStackable.swift */,
 				E193D4D727193CAC00900D82 /* PortraitImageStackable.swift */,
-				E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */,
 				E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */,
 				535870AC2669D8DD00D05A09 /* Typings.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
@@ -839,6 +836,7 @@
 		5377CBF3263B596A003A4E83 /* JellyfinPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				E1DD1127271E7D15005BE12F /* Objects */,
 				E13DD3BB27163C3E009D4DAF /* App */,
 				62ECA01926FA6D6900E8EBB7 /* AppURLHandler */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
@@ -1268,6 +1266,14 @@
 				53DE4BD1267098F300739748 /* SearchBarView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		E1DD1127271E7D15005BE12F /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */,
+			);
+			path = Objects;
 			sourceTree = "<group>";
 		};
 		E1FCD08E26C466F3007C8DCF /* Errors */ = {
@@ -1710,7 +1716,6 @@
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
 				C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */,
 				531069582684E7EE00CFFDBA /* MediaInfoView.swift in Sources */,
-				E1E48CCA271E6D410021A2F9 /* RefreshHelper.swift in Sources */,
 				E1D4BF822719D22800A11E64 /* AppAppearance.swift in Sources */,
 				53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */,
 				09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */,
@@ -1880,7 +1885,6 @@
 				628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */,
 				E13DD3F72717E87D009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */,
-				E1E48CCB271E6D410021A2F9 /* RefreshHelper.swift in Sources */,
 				6220D0AF26D5EABE00B8E046 /* ViewExtensions.swift in Sources */,
 				E13DD3D7271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
 				E1FCD09926C4F358007C8DCF /* NetworkError.swift in Sources */,
