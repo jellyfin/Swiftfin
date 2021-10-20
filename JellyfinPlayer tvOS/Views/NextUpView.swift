@@ -9,9 +9,12 @@
 import SwiftUI
 import JellyfinAPI
 import Combine
+import Stinsen
 
 struct NextUpView: View {
     var items: [BaseItemDto]
+    
+    var homeRouter: HomeCoordinator.Router? = RouterStore.shared.retrieve()
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -24,7 +27,9 @@ struct NextUpView: View {
                     LazyHStack {
                         Spacer().frame(width: 45)
                         ForEach(items, id: \.id) { item in
-                            NavigationLink(destination: LazyView { ItemView(item: item) }) {
+                            Button {
+                                self.homeRouter?.route(to: \.modalItem, item)
+                            } label: {
                                 LandscapeItemElement(item: item)
                             }.buttonStyle(PlainNavigationLinkButtonStyle())
                         }

@@ -16,47 +16,11 @@ struct LibraryListView: View {
     var body: some View {
         ScrollView {
             LazyVStack {
-                NavigationLink(destination: LazyView {
-                    LibraryView(viewModel: .init(filters: viewModel.withFavorites), title: "Favorites")
-                }) {
-                    ZStack {
-                        HStack {
-                            Spacer()
-                            Text("Your Favorites")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                            Spacer()
-                        }
-                    }
-                    .padding(16)
-                    .frame(minWidth: 100, maxWidth: .infinity)
-                }
-                .cornerRadius(10)
-                .shadow(radius: 5)
-                .padding(.bottom, 5)
-
-                NavigationLink(destination: LazyView {
-                    Text("WIP")
-                }) {
-                    ZStack {
-                        HStack {
-                            Spacer()
-                            Text("All Genres")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                            Spacer()
-                        }
-                    }
-                    .padding(16)
-                    .frame(minWidth: 100, maxWidth: .infinity)
-                }
-                .cornerRadius(10)
-                .shadow(radius: 5)
-                .padding(.bottom, 15)
-
                 if !viewModel.isLoading {
                     ForEach(viewModel.libraries, id: \.id) { library in
                         if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
+                            EmptyView()
+                        } else {
                             NavigationLink(destination: LazyView {
                                 LibraryView(viewModel: .init(parentID: library.id), title: library.name ?? "")
                                 }) {
@@ -80,8 +44,6 @@ struct LibraryListView: View {
                             .cornerRadius(10)
                             .shadow(radius: 5)
                             .padding(.bottom, 5)
-                        } else {
-                            EmptyView()
                         }
                     }
                 } else {
