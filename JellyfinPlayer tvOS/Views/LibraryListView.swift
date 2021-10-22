@@ -18,7 +18,7 @@ struct LibraryListView: View {
             LazyVStack {
                 if !viewModel.isLoading {
                     ForEach(viewModel.libraries, id: \.id) { library in
-                        if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
+                        if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" || library.collectionType ?? "" == "music" {
                             EmptyView()
                         } else {
                             NavigationLink(destination: LazyView {
