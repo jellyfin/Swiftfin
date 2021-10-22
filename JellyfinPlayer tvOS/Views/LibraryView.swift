@@ -87,8 +87,11 @@ struct LibraryView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(.all)
     } else {
-        Button { } label: {
+        VStack {
             Text("No results.")
+            Button { } label: {
+                Text("Reload")
+            }
         }
     }
   }

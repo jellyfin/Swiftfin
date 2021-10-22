@@ -51,12 +51,10 @@ final class TVLibrariesViewModel: ViewModel {
                           self.libraries.append(library)
                       }
                   }
+                  self.rows = self.calculateRows()
                   if self.libraries.count == 1, let library = self.libraries.first {
                       // show library
                       self.router?.route(to: \.library, library)
-                  } else {
-                      // display list of libraries
-                      self.rows = self.calculateRows()
                   }
               }
           })
@@ -76,7 +74,6 @@ final class TVLibrariesViewModel: ViewModel {
 
             var rowCells = [LibraryRowCell]()
             for item in libraries[firstItemIndex..<lastItemIndex] {
-                print("item: \(item.title) index: \(i)")
                 let newCell = LibraryRowCell(item: item)
                 rowCells.append(newCell)
             }
@@ -93,7 +90,6 @@ final class TVLibrariesViewModel: ViewModel {
                 )
             )
         }
-        print("caluculated \(calculatedRows.count) rows")
         return calculatedRows
     }
 }

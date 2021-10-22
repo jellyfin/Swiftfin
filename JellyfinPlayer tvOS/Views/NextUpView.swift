@@ -35,7 +35,7 @@ struct NextUpView: View {
                         }
                         Spacer().frame(width: 45)
                     }
-                }.frame(height: 330)
+                }.frame(height: 350)
                 .offset(y: -10)
             } else {
                 EmptyView()

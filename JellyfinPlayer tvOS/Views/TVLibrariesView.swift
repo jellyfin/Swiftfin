@@ -56,7 +56,9 @@ struct TVLibrariesView: View {
                 GeometryReader { _ in
                     if let item = cell.item {
                         if item.type != "Folder" {
-                            Button {} label: {
+                            Button {
+                                self.tvLibrariesRouter.route(to: \.library, item)
+                            } label: {
                                 PortraitItemElement(item: item)
                             }
                             .buttonStyle(PlainNavigationLinkButtonStyle())
@@ -74,7 +76,14 @@ struct TVLibrariesView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .ignoresSafeArea(.all)
         } else {
-            Text("No results.")
+            VStack {
+                Text("No results.")
+                Button {
+                    print("tvLibraries reload")
+                } label: {
+                    Text("Reload")
+                }
+            }
         }
     }
 }

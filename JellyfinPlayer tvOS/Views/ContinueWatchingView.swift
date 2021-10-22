@@ -37,7 +37,7 @@ struct ContinueWatchingView: View {
                         }
                         Spacer().frame(width: 45)
                     }
-                }.frame(height: 330)
+                }.frame(height: 350)
             } else {
                 EmptyView()
             }

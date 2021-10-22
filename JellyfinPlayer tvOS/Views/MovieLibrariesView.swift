@@ -76,7 +76,14 @@ struct MovieLibrariesView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .ignoresSafeArea(.all)
         } else {
-            Text("No results.")
+            VStack {
+                Text("No results.")
+                Button {
+                    print("movieLibraries reload")
+                } label: {
+                    Text("Reload")
+                }
+            }
         }
     }
 }

@@ -57,6 +57,22 @@ struct PortraitItemElement: View {
                     .opacity(1), alignment: .topTrailing).opacity(1)
             Text(item.title)
               .frame(width: 200, height: 30, alignment: .center)
+            if item.type == "Movie" || item.type == "Series" {
+                Text("\(String(item.productionYear ?? 0)) • \(item.officialRating ?? "N/A")")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+                    .fontWeight(.medium)
+            } else if item.type == "Season" {
+                Text("\(item.name ?? "") • \(String(item.productionYear ?? 0))")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+                    .fontWeight(.medium)
+            } else {
+                Text("S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+                    .fontWeight(.medium)
+            }
         }
         .onChange(of: envFocused) { envFocus in
             withAnimation(.linear(duration: 0.15)) {
