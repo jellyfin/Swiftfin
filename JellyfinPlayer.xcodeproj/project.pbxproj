@@ -219,7 +219,21 @@
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
+		C40CD922271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */; };
+		C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */; };
+		C40CD925271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */; };
+		C40CD926271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */; };
+		C40CD928271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */; };
+		C40CD929271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */; };
 		C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
+		C4BE0763271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE0762271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift */; };
+		C4BE0764271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE0762271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift */; };
+		C4BE0766271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE0765271FC109003F4AD1 /* TVLibrariesViewModel.swift */; };
+		C4BE0767271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE0765271FC109003F4AD1 /* TVLibrariesViewModel.swift */; };
+		C4BE0769271FC164003F4AD1 /* TVLibrariesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE0768271FC164003F4AD1 /* TVLibrariesView.swift */; };
+		C4BE076A271FC164003F4AD1 /* TVLibrariesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE0768271FC164003F4AD1 /* TVLibrariesView.swift */; };
+		C4BE076E2720FEA8003F4AD1 /* PortraitItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE076D2720FEA8003F4AD1 /* PortraitItemElement.swift */; };
+		C4BE076F2720FEFF003F4AD1 /* PlainNavigationLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */; };
 		C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E508172703E8190045C9AB /* LibraryListView.swift */; };
 		C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */; };
 		E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */; };
@@ -522,6 +536,13 @@
 		62ECA01726FA685A00E8EBB7 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		BEEC50E7EFD4848C0E320941 /* Pods-JellyfinPlayer iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.release.xcconfig"; sourceTree = "<group>"; };
+		C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesLibrariesCoordinator.swift; sourceTree = "<group>"; };
+		C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLibrariesViewModel.swift; sourceTree = "<group>"; };
+		C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLibrariesView.swift; sourceTree = "<group>"; };
+		C4BE0762271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVLibrariesCoordinator.swift; sourceTree = "<group>"; };
+		C4BE0765271FC109003F4AD1 /* TVLibrariesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVLibrariesViewModel.swift; sourceTree = "<group>"; };
+		C4BE0768271FC164003F4AD1 /* TVLibrariesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVLibrariesView.swift; sourceTree = "<group>"; };
+		C4BE076D2720FEA8003F4AD1 /* PortraitItemElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitItemElement.swift; sourceTree = "<group>"; };
 		C4E508172703E8190045C9AB /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
 		D79953919FED0C4DF72BA578 /* Pods-JellyfinPlayer tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -677,6 +698,8 @@
 				62E632DB267D2E130063E547 /* LibrarySearchViewModel.swift */,
 				62E632DF267D30CA0063E547 /* LibraryViewModel.swift */,
 				536D3D75267BA9BB0004248C /* MainTabViewModel.swift */,
+				C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */,
+				C4BE0765271FC109003F4AD1 /* TVLibrariesViewModel.swift */,
 				62E632E2267D3BA60063E547 /* MovieItemViewModel.swift */,
 				62E632E8267D3FF50063E547 /* SeasonItemViewModel.swift */,
 				62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */,
@@ -800,7 +823,6 @@
 				E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */,
 				53272531268BF09D0035FBF1 /* MediaViewActionButton.swift */,
 				53116A18268B947A003024C9 /* PlainLinkButton.swift */,
-				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
 				536D3D80267BDFC60004248C /* PortraitItemElement.swift */,
 				536D3D87267C17350004248C /* PublicUserButton.swift */,
 			);
@@ -1009,6 +1031,7 @@
 				E1AD105526D981CE003E4A08 /* PortraitHStackView.swift */,
 				53F866432687A45F00DCD1D7 /* PortraitItemView.swift */,
 				E188460326DEF04800B0C5B7 /* EpisodeCardVStackView.swift */,
+				C4BE076D2720FEA8003F4AD1 /* PortraitItemElement.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1050,6 +1073,8 @@
 				6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */,
 				6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */,
 				62C29EA726D103D500C1D2E7 /* LibraryListCoordinator.swift */,
+				C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */,
+				C4BE0762271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift */,
 				6220D0B626D5EE1100B8E046 /* SearchCoordinator.swift */,
 				E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */,
 				6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */,
@@ -1120,6 +1145,8 @@
 				C4E508172703E8190045C9AB /* LibraryListView.swift */,
 				C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */,
 				53A83C32268A309300DF3D92 /* LibraryView.swift */,
+				C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */,
+				C4BE0768271FC164003F4AD1 /* TVLibrariesView.swift */,
 				531690EE267ABF72005D8AB9 /* NextUpView.swift */,
 				E193D54F2719430400900D82 /* ServerDetailView.swift */,
 				E193D54A271941D300900D82 /* ServerListView.swift */,
@@ -1255,6 +1282,7 @@
 		E1AD105326D96F5A003E4A08 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				621338B22660A07800A81A2A /* LazyView.swift */,
 				53E4E648263F725B00F67C6B /* MultiSelectorView.swift */,
@@ -1632,6 +1660,7 @@
 				E193D4DC27193CCA00900D82 /* PillStackable.swift in Sources */,
 				E193D53327193F7D00900D82 /* FilterCoordinator.swift in Sources */,
 				6267B3DC2671139500A7371D /* ImageExtensions.swift in Sources */,
+				C40CD929271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */,
 				531069592684E7EE00CFFDBA /* SubtitlesView.swift in Sources */,
 				C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */,
 				53ABFDE9267974EF00886593 /* HomeViewModel.swift in Sources */,
@@ -1640,6 +1669,7 @@
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E13DD3FA2717E961009D4DAF /* UserListViewModel.swift in Sources */,
+				C40CD926271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */,
 				62E632DE267D2E170063E547 /* LatestMediaViewModel.swift in Sources */,
 				E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				E193D53527193F8100900D82 /* ItemCoordinator.swift in Sources */,
@@ -1672,6 +1702,7 @@
 				62E632F4267D54030063E547 /* ItemViewModel.swift in Sources */,
 				6267B3D826710B9800A7371D /* CollectionExtensions.swift in Sources */,
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
+				C4BE0767271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */,
 				E193D53727193F8700900D82 /* LibraryListCoordinator.swift in Sources */,
 				E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */,
 				E193D54D2719426600900D82 /* LibraryFilterView.swift in Sources */,
@@ -1706,6 +1737,7 @@
 				C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */,
 				531069582684E7EE00CFFDBA /* MediaInfoView.swift in Sources */,
 				E1D4BF822719D22800A11E64 /* AppAppearance.swift in Sources */,
+				C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */,
 				53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */,
 				09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */,
 				E193D53C27193F9500900D82 /* UserListCoordinator.swift in Sources */,
@@ -1731,7 +1763,9 @@
 				5364F456266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				531690FA267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift in Sources */,
+				C4BE0764271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift in Sources */,
 				E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */,
+				C4BE076A271FC164003F4AD1 /* TVLibrariesView.swift in Sources */,
 				E13DD3C327164941009D4DAF /* SwiftfinStore.swift in Sources */,
 				09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */,
 				E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */,
@@ -1760,7 +1794,9 @@
 				53F866442687A45F00DCD1D7 /* PortraitItemView.swift in Sources */,
 				E1AD105626D981CE003E4A08 /* PortraitHStackView.swift in Sources */,
 				62C29EA126D102A500C1D2E7 /* iOSMainTabCoordinator.swift in Sources */,
+				C4BE076E2720FEA8003F4AD1 /* PortraitItemElement.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
+				C40CD925271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */,
 				6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */,
 				6220D0AD26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
 				E13DD3EC27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
@@ -1781,6 +1817,7 @@
 				625CB56F2678C23300530A6E /* HomeView.swift in Sources */,
 				E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */,
 				53892770263C25230035E14B /* NextUpView.swift in Sources */,
+				C4BE0766271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */,
 				62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */,
 				535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
@@ -1789,6 +1826,7 @@
 				532E68CF267D9F6B007B9F13 /* VideoPlayerCastDeviceSelector.swift in Sources */,
 				E14F7D0926DB36F7007C3AE6 /* ItemLandscapeMainView.swift in Sources */,
 				532175402671EE4F005491E6 /* LibraryFilterView.swift in Sources */,
+				C4BE0763271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift in Sources */,
 				53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */,
 				E188460026DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift in Sources */,
 				091B5A8B2683142E00D78B61 /* UDPBroadCastConnection.swift in Sources */,
@@ -1826,14 +1864,17 @@
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
 				62EC352F267666A5000E9F2D /* SessionManager.swift in Sources */,
 				62E632E3267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
+				C4BE076F2720FEFF003F4AD1 /* PlainNavigationLinkButton.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
 				62E632EF267D43320063E547 /* LibraryFilterViewModel.swift in Sources */,
+				C40CD922271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */,
 				E13DD3C827164B1E009D4DAF /* UIDeviceExtensions.swift in Sources */,
 				E1AD104D26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
 				E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */,
 				535870AD2669D8DD00D05A09 /* Typings.swift in Sources */,
 				E1AD105F26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift in Sources */,
 				E13DD3D5271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
+				C4BE0769271FC164003F4AD1 /* TVLibrariesView.swift in Sources */,
 				E1267D3E271A1F46003C492E /* PreferenceUIHostingController.swift in Sources */,
 				6220D0BA26D6092100B8E046 /* FilterCoordinator.swift in Sources */,
 				6267B3DA2671138200A7371D /* ImageExtensions.swift in Sources */,
@@ -1848,6 +1889,7 @@
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				E13DD3EF27178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
+				C40CD928271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */,
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,

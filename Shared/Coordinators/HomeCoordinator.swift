@@ -20,6 +20,8 @@ final class HomeCoordinator: NavigationCoordinatable {
     @Route(.modal) var settings = makeSettings
     @Route(.push) var library = makeLibrary
     @Route(.push) var item = makeItem
+    @Route(.modal) var modalItem = makeModalItem
+    @Route(.modal) var modalLibrary = makeModalLibrary
 
     func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
         NavigationViewCoordinator(SettingsCoordinator())
@@ -31,6 +33,14 @@ final class HomeCoordinator: NavigationCoordinatable {
 
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
+    }
+    
+    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        return NavigationViewCoordinator(ItemCoordinator(item: item))
+    }
+    
+    func makeModalLibrary(params: LibraryCoordinatorParams) -> NavigationViewCoordinator<LibraryCoordinator> {
+        return NavigationViewCoordinator(LibraryCoordinator(viewModel: params.viewModel, title: params.title))
     }
 
     @ViewBuilder func makeStart() -> some View {

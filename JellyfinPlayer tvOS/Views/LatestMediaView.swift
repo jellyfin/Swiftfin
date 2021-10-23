@@ -48,7 +48,7 @@ struct LatestMediaView: View {
                     }
                     Spacer().frame(width: 45)
                 }
-            }.frame(height: 396)
+            }.frame(height: 480)
             .onAppear(perform: onAppear)
     }
 }

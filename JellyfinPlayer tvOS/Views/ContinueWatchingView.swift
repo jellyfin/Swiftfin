@@ -9,11 +9,14 @@
 import SwiftUI
 import JellyfinAPI
 import Combine
+import Stinsen
 
 struct ContinueWatchingView: View {
     var items: [BaseItemDto]
     @Namespace private var namespace
 
+    var homeRouter: HomeCoordinator.Router? = RouterStore.shared.retrieve()
+    
     var body: some View {
         VStack(alignment: .leading) {
             if items.count > 0 {
@@ -25,14 +28,16 @@ struct ContinueWatchingView: View {
                     LazyHStack {
                         Spacer().frame(width: 45)
                         ForEach(items, id: \.id) { item in
-                            NavigationLink(destination: LazyView { ItemView(item: item) }) {
+                            Button {
+                                self.homeRouter?.route(to: \.modalItem, item)
+                            } label: {
                                 LandscapeItemElement(item: item)
                             }
                             .buttonStyle(PlainNavigationLinkButtonStyle())
                         }
                         Spacer().frame(width: 45)
                     }
-                }.frame(height: 330)
+                }.frame(height: 350)
             } else {
                 EmptyView()
             }

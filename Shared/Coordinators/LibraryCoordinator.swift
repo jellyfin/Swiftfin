@@ -22,6 +22,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
     @Route(.push) var search = makeSearch
     @Route(.modal) var filter = makeFilter
     @Route(.push) var item = makeItem
+    @Route(.modal) var modalItem = makeModalItem
 
     let viewModel: LibraryViewModel
     let title: String
@@ -47,5 +48,9 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
+    }
+    
+    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        return NavigationViewCoordinator(ItemCoordinator(item: item))
     }
 }

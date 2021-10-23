@@ -11,6 +11,7 @@ import Foundation
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject var homeRouter: HomeCoordinator.Router
     @StateObject var viewModel = HomeViewModel()
 
     @State var showingSettings = false
@@ -33,9 +34,9 @@ struct HomeView: View {
                             VStack(alignment: .leading) {
                                 let library = viewModel.libraries.first(where: { $0.id == libraryID })
 
-                                NavigationLink(destination: LazyView {
-                                    LibraryView(viewModel: .init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? "")
-                                }) {
+                                Button {
+                                    self.homeRouter.route(to: \.modalLibrary, (.init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
+                                } label: {
                                     HStack {
                                         Text("Latest \(library?.name ?? "")")
                                         .font(.headline)
