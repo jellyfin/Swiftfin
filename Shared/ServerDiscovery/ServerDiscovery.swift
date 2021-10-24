@@ -37,7 +37,7 @@ public class ServerDiscovery {
             if let port = components?.port {
                 return port
             }
-            return 8096
+            return 7359
         }
 
         enum CodingKeys: String, CodingKey {
