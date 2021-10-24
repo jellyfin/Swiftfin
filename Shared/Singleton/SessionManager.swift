@@ -58,10 +58,14 @@ final class SessionManager {
     
     // Connects to a server at the given uri, storing if successful
     func connectToServer(with uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
-        var uri = uri
-        if !uri.contains("http") {
-            uri = "https://" + uri
+        var uriComponents = URLComponents(string: uri) ?? URLComponents()
+        
+        if uriComponents.scheme == nil {
+            uriComponents.scheme = SwiftfinStore.Defaults.suite[.defaultHTTPScheme].rawValue
         }
+        
+        var uri = uriComponents.string ?? ""
+        
         if uri.last == "/" {
             uri = String(uri.dropLast())
         }

@@ -6,13 +6,16 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
+import Defaults
 import Stinsen
+import SwiftUI
 
 struct ConnectToServerView: View {
     
     @StateObject var viewModel: ConnectToServerViewModel
     @State var uri = ""
+    
+    @Default(.defaultHTTPScheme) var defaultHTTPScheme
     
     var body: some View {
         List {
@@ -21,6 +24,11 @@ struct ConnectToServerView: View {
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                     .keyboardType(.URL)
+                    .onAppear {
+                        if uri == "" {
+                            uri = "\(defaultHTTPScheme.rawValue)://"
+                        }
+                    }
                 
                 if viewModel.isLoading {
                     Button(role: .destructive) {
