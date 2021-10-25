@@ -32,7 +32,7 @@ struct NextUpWidgetProvider: TimelineProvider {
         let savedUser = currentLogin.user
         var tempCancellables = Set<AnyCancellable>()
 
-        JellyfinAPI.basePath = server.uri
+        JellyfinAPI.basePath = server.currentURI
         TvShowsAPI.getNextUp(userId: savedUser.id, limit: 3,
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                              imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])
@@ -78,7 +78,7 @@ struct NextUpWidgetProvider: TimelineProvider {
 
         var tempCancellables = Set<AnyCancellable>()
 
-        JellyfinAPI.basePath = server.uri
+        JellyfinAPI.basePath = server.currentURI
         TvShowsAPI.getNextUp(userId: savedUser.id, limit: 3,
                              fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                              imageTypeLimit: 1, enableImageTypes: [.primary, .backdrop, .thumb])

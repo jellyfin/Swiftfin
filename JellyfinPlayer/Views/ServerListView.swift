@@ -38,7 +38,7 @@ struct ServerListView: View {
                                         .font(.title2)
                                         .foregroundColor(.primary)
                                     
-                                    Text(server.uri)
+                                    Text(server.currentURI)
                                         .font(.footnote)
                                         .disabled(true)
                                         .foregroundColor(.secondary)

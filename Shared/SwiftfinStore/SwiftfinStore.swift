@@ -14,20 +14,22 @@ import Defaults
 enum SwiftfinStore {
     
     // MARK: State
-    // Safe, copyable representations of their underlying CoreStoredObject's
+    // Safe, copyable representations of their underlying CoreStoredObject
     // Relationships are represented by the related object's IDs or value
     enum State {
         
         struct Server {
-            let uri: String
+            let uris: Set<String>
+            let currentURI: String
             let name: String
             let id: String
             let os: String
             let version: String
             let userIDs: [String]
             
-            fileprivate init(uri: String, name: String, id: String, os: String, version: String, usersIDs: [String]) {
-                self.uri = uri
+            fileprivate init(uris: Set<String>, currentURI: String, name: String, id: String, os: String, version: String, usersIDs: [String]) {
+                self.uris = uris
+                self.currentURI = currentURI
                 self.name = name
                 self.id = id
                 self.os = os
@@ -36,7 +38,13 @@ enum SwiftfinStore {
             }
             
             static var sample: Server {
-                return Server(uri: "https://www.notaurl.com", name: "Johnny's Tree", id: "123abc", os: "macOS", version: "1.1.1", usersIDs: ["1", "2"])
+                return Server(uris: ["https://www.notaurl.com", "http://www.maybeaurl.org"],
+                              currentURI: "https://www.notaurl.com",
+                              name: "Johnny's Tree",
+                              id: "123abc",
+                              os: "macOS",
+                              version: "1.1.1",
+                              usersIDs: ["1", "2"])
             }
         }
         
@@ -54,7 +62,10 @@ enum SwiftfinStore {
             }
             
             static var sample: User {
-                return User(username: "JohnnyAppleseed", id: "123abc", serverID: "123abc", accessToken: "open-sesame")
+                return User(username: "JohnnyAppleseed",
+                            id: "123abc",
+                            serverID: "123abc",
+                            accessToken: "open-sesame")
             }
         }
     }
@@ -64,8 +75,11 @@ enum SwiftfinStore {
         
         final class StoredServer: CoreStoreObject {
             
-            @Field.Stored("uri")
-            var uri: String = ""
+            @Field.Coded("uris", coder: FieldCoders.Json.self)
+            var uris: Set<String> = []
+            
+            @Field.Stored("currentURI")
+            var currentURI: String = ""
             
             @Field.Stored("name")
             var name: String = ""
@@ -83,7 +97,8 @@ enum SwiftfinStore {
             var users: Set<StoredUser>
             
             var state: State.Server {
-                return State.Server(uri: uri,
+                return State.Server(uris: uris,
+                                    currentURI: currentURI,
                                     name: name,
                                     id: id,
                                     os: os,
@@ -143,11 +158,12 @@ enum SwiftfinStore {
                                         Entity<SwiftfinStore.Models.StoredUser>("User"),
                                         Entity<SwiftfinStore.Models.StoredAccessToken>("AccessToken")
                                      ],
-                                     versionLock: [
-                                         "AccessToken": [0xa8c475e874494bb1, 0x79486e93449f0b3d, 0xa7dc4a0003541edb, 0x94183fae7580ef72],
-                                         "Server": [0x39c64a826739077e, 0xa7ac63744fd7df32, 0xef3c9d4fe638fbfb, 0xdabd796256df14db],
-                                         "User": [0x845de08a74bc53ed, 0xe95a406a29f3a5d0, 0x9eda732821a15ea9, 0xb5afa531e41ce8a]
-                                     ])
+                                     versionLock: nil)
+//                                     versionLock: [
+//                                         "AccessToken": [0xa8c475e874494bb1, 0x79486e93449f0b3d, 0xa7dc4a0003541edb, 0x94183fae7580ef72],
+//                                         "Server": [0x39c64a826739077e, 0xa7ac63744fd7df32, 0xef3c9d4fe638fbfb, 0xdabd796256df14db],
+//                                         "User": [0x845de08a74bc53ed, 0xe95a406a29f3a5d0, 0x9eda732821a15ea9, 0xb5afa531e41ce8a]
+//                                     ])
         
         let _dataStack = DataStack(schema)
         try! _dataStack.addStorageAndWait(

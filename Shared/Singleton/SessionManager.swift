@@ -34,14 +34,10 @@ final class SessionManager {
             guard let server = user.server, let accessToken = user.accessToken else { fatalError("No associated server or access token for last user?") }
             guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { return }
             
-            JellyfinAPI.basePath = server.uri
+            JellyfinAPI.basePath = server.currentURI
             setAuthHeader(with: accessToken.value)
             currentLogin = (server: existingServer.state, user: user.state)
         }
-    }
-    
-    private func generateServerUserID(server: SwiftfinStore.Models.StoredServer, user: SwiftfinStore.Models.StoredUser) -> String {
-        return "\(server.id)-\(user.id)"
     }
     
     func fetchServers() -> [SwiftfinStore.State.Server] {
@@ -79,7 +75,8 @@ final class SessionManager {
                       let os = response.operatingSystem,
                       let version = response.version else { throw JellyfinAPIError("Missing server data from network call") }
                 
-                newServer.uri = uri
+                newServer.uris = [uri]
+                newServer.currentURI = uri
                 newServer.name = name
                 newServer.id = id
                 newServer.os = os
@@ -103,11 +100,65 @@ final class SessionManager {
             .eraseToAnyPublisher()
     }
     
+    func addURIToServer(server: SwiftfinStore.State.Server, uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
+        return Just(server)
+            .tryMap { server -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
+                
+                let transaction = SwiftfinStore.dataStack.beginUnsafe()
+                
+                guard let existingServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                                [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]) else {
+                    fatalError("No stored server associated with given state server?")
+                    }
+                
+                guard let editServer = transaction.edit(existingServer) else { fatalError("Can't get proxy for existing object?") }
+                editServer.uris.insert(uri)
+                
+                return (editServer, transaction)
+            }
+            .handleEvents(receiveOutput: { (server, transaction) in
+                try? transaction.commitAndWait()
+            })
+            .map({ (server, _) in
+                return server.state
+            })
+            .eraseToAnyPublisher()
+    }
+    
+    func setServerCurrentURI(server: SwiftfinStore.State.Server, uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
+        return Just(server)
+            .tryMap { server -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
+                
+                let transaction = SwiftfinStore.dataStack.beginUnsafe()
+                
+                guard let existingServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                                [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]) else {
+                    fatalError("No stored server associated with given state server?")
+                    }
+                
+                if !existingServer.uris.contains(uri) {
+                    fatalError("Attempting to set current uri while server doesn't contain it?")
+                }
+                
+                guard let editServer = transaction.edit(existingServer) else { fatalError("Can't get proxy for existing object?") }
+                editServer.currentURI = uri
+                
+                return (editServer, transaction)
+            }
+            .handleEvents(receiveOutput: { (server, transaction) in
+                try? transaction.commitAndWait()
+            })
+            .map({ (server, _) in
+                return server.state
+            })
+            .eraseToAnyPublisher()
+    }
+    
     // Logs in a user with an associated server, storing if successful
     func loginUser(server: SwiftfinStore.State.Server, username: String, password: String) -> AnyPublisher<SwiftfinStore.State.User, Error> {
         setAuthHeader(with: "")
         
-        JellyfinAPI.basePath = server.uri
+        JellyfinAPI.basePath = server.currentURI
         
         return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
             .tryMap({ response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
@@ -163,7 +214,7 @@ final class SessionManager {
     }
     
     func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
-        JellyfinAPI.basePath = server.uri
+        JellyfinAPI.basePath = server.currentURI
         SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
         setAuthHeader(with: user.accessToken)
         currentLogin = (server: server, user: user)

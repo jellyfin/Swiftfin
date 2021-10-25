@@ -11,7 +11,7 @@ import Stinsen
 
 struct ConnectToServerView: View {
     
-    @StateObject var viewModel: ConnectToServerViewModel
+    @ObservedObject var viewModel: ConnectToServerViewModel
     @State var uri = ""
     
     var body: some View {
@@ -97,6 +97,14 @@ struct ConnectToServerView: View {
             Alert(title: Text(viewModel.alertTitle),
                   message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
                   dismissButton: .cancel())
+        }
+        .alert(item: $viewModel.addServerURIPayload) { _ in   
+            Alert(title: Text("Existing Server"),
+                  message: Text("Server \(viewModel.addServerURIPayload?.server.name ?? "") already exists. Add new URI?"),
+                  primaryButton: .default(Text("Existing Server"), action: {
+                viewModel.addURIToServer(addServerURIPayload: viewModel.addServerURIPayload!)
+            }),
+                  secondaryButton: .cancel())
         }
         .navigationTitle("Connect")
         .onAppear {

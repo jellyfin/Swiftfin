@@ -12,11 +12,23 @@ import Foundation
 import JellyfinAPI
 import Stinsen
 
+struct AddServerURIPayload: Identifiable {
+    
+    let server: SwiftfinStore.State.Server
+    let uri: String
+    
+    var id: String {
+        return server.id.appending(uri)
+    }
+}
+
 final class ConnectToServerViewModel: ViewModel {
     
     @RouterObject var router: ConnectToServerCoodinator.Router?
     @Published var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
     @Published var searching = false
+    @Published var addServerURIPayload: AddServerURIPayload?
+    
     private let discovery = ServerDiscovery()
     
     var alertTitle: String {
@@ -40,8 +52,25 @@ final class ConnectToServerViewModel: ViewModel {
         SessionManager.main.connectToServer(with: uri)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
-                                           completion: completion)
+                // This is disgusting. ViewModel Error handling overall needs to be refactored
+                switch completion {
+                case .finished: ()
+                case .failure(let error):
+                    switch error {
+                    case is SwiftfinStore.Errors:
+                        let swiftfinError = error as! SwiftfinStore.Errors
+                        switch swiftfinError {
+                        case .existingServer(let server):
+                            self.addServerURIPayload = AddServerURIPayload(server: server, uri: uri)
+                        default:
+                            self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
+                                                       completion: completion)
+                        }
+                    default:
+                        self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
+                                                   completion: completion)
+                    }
+                }
             }, receiveValue: { server in
                 LogManager.shared.log.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
                 self.router?.route(to: \.userSignIn, server)
@@ -63,6 +92,17 @@ final class ConnectToServerViewModel: ViewModel {
                 discoveredServers.insert(server)
             }
         }
+    }
+    
+    func addURIToServer(addServerURIPayload: AddServerURIPayload) {
+        SessionManager.main.addURIToServer(server: addServerURIPayload.server, uri: addServerURIPayload.uri)
+            .sink { completion in
+                self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
+                                           completion: completion)
+            } receiveValue: { _ in
+                print("Here")
+            }
+            .store(in: &cancellables)
     }
     
     func cancelConnection() {

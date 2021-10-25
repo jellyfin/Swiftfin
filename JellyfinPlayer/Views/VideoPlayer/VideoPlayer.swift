@@ -549,7 +549,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                     let mediaSource = response.mediaSources!.first.self!
                     if mediaSource.transcodingUrl != nil {
                         // Item is being transcoded by request of server
-                        let streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)\(mediaSource.transcodingUrl!)")
+                        let streamURL = URL(string: "\(SessionManager.main.currentLogin.server.currentURI)\(mediaSource.transcodingUrl!)")
                         let item = PlaybackItem()
                         item.videoType = .transcode
                         item.videoUrl = streamURL!
@@ -563,7 +563,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
-                                    deliveryUrl = URL(string: "\(SessionManager.main.currentLogin.server.uri)\(stream.deliveryUrl ?? "")")!
+                                    deliveryUrl = URL(string: "\(SessionManager.main.currentLogin.server.currentURI)\(stream.deliveryUrl ?? "")")!
                                 } else {
                                     deliveryUrl = nil
                                 }
@@ -597,8 +597,8 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                     } else {
                         // TODO: todo
                         // Item will be directly played by the client.
-                        let streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&Tag=\(mediaSource.eTag ?? "")")!
-//                            URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag ?? "")")!
+                        let streamURL = URL(string: "\(SessionManager.main.currentLogin.server.currentURI)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&Tag=\(mediaSource.eTag ?? "")")!
+//                            URL(string: "\(SessionManager.main.currentLogin.server.currentURI)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag ?? "")")!
 
                         let item = PlaybackItem()
                         item.videoUrl = streamURL
@@ -613,7 +613,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
                             if stream.type == .subtitle {
                                 var deliveryUrl: URL?
                                 if stream.deliveryMethod == .external {
-                                    deliveryUrl = URL(string: "\(SessionManager.main.currentLogin.server.uri)\(stream.deliveryUrl!)")!
+                                    deliveryUrl = URL(string: "\(SessionManager.main.currentLogin.server.currentURI)\(stream.deliveryUrl!)")!
                                 } else {
                                     deliveryUrl = nil
                                 }
@@ -876,7 +876,7 @@ extension PlayerViewController: GCKGenericChannelDelegate {
             "userId": SessionManager.main.currentLogin.user.id,
 //            "deviceId": SessionManager.main.currentLogin.de.deviceID,
             "accessToken": SessionManager.main.currentLogin.user.accessToken,
-            "serverAddress": SessionManager.main.currentLogin.server.uri,
+            "serverAddress": SessionManager.main.currentLogin.server.currentURI,
             "serverId": SessionManager.main.currentLogin.server.id,
             "serverVersion": "10.8.0",
             "receiverName": castSessionManager.currentCastSession!.device.friendlyName!,

@@ -26,7 +26,7 @@ struct ServerDetailView: View {
                 HStack {
                     Text("URI")
                     Spacer()
-                    Text(SessionManager.main.currentLogin.server.uri)
+                    Text(SessionManager.main.currentLogin.server.currentURI)
                         .foregroundColor(.secondary)
                 }
 

@@ -57,7 +57,7 @@ extension BaseItemPerson {
 // MARK: PortraitImageStackable
 extension BaseItemPerson: PortraitImageStackable {
     public func imageURLContsructor(maxWidth: Int) -> URL {
-        return self.getImage(baseURL: SessionManager.main.currentLogin.server.uri, maxWidth: maxWidth)
+        return self.getImage(baseURL: SessionManager.main.currentLogin.server.currentURI, maxWidth: maxWidth)
     }
     
     public var title: String {
