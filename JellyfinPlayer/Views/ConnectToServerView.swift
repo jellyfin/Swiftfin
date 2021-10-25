@@ -100,9 +100,9 @@ struct ConnectToServerView: View {
         }
         .alert(item: $viewModel.addServerURIPayload) { _ in   
             Alert(title: Text("Existing Server"),
-                  message: Text("Server \(viewModel.addServerURIPayload?.server.name ?? "") already exists. Add new URI?"),
-                  primaryButton: .default(Text("Existing Server"), action: {
-                viewModel.addURIToServer(addServerURIPayload: viewModel.addServerURIPayload!)
+                  message: Text("Server \(viewModel.addServerURIPayload?.server.name ?? "") already exists. Add new URL?"),
+                  primaryButton: .default(Text("Add URL"), action: {
+                viewModel.addURIToServer(addServerURIPayload: viewModel.backAddServerURIPayload!)
             }),
                   secondaryButton: .cancel())
         }

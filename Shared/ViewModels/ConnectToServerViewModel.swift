@@ -28,6 +28,7 @@ final class ConnectToServerViewModel: ViewModel {
     @Published var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
     @Published var searching = false
     @Published var addServerURIPayload: AddServerURIPayload?
+    var backAddServerURIPayload: AddServerURIPayload?
     
     private let discovery = ServerDiscovery()
     
@@ -62,6 +63,7 @@ final class ConnectToServerViewModel: ViewModel {
                         switch swiftfinError {
                         case .existingServer(let server):
                             self.addServerURIPayload = AddServerURIPayload(server: server, uri: uri)
+                            self.backAddServerURIPayload = AddServerURIPayload(server: server, uri: uri)
                         default:
                             self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
                                                        completion: completion)
@@ -99,8 +101,15 @@ final class ConnectToServerViewModel: ViewModel {
             .sink { completion in
                 self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
                                            completion: completion)
-            } receiveValue: { _ in
-                print("Here")
+            } receiveValue: { server in
+                SessionManager.main.setServerCurrentURI(server: server, uri: addServerURIPayload.uri)
+                    .sink { completion in
+                        self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
+                                                   completion: completion)
+                    } receiveValue: { server in
+                        self.router?.dismissCoordinator()
+                    }
+                    .store(in: &self.cancellables)
             }
             .store(in: &cancellables)
     }
