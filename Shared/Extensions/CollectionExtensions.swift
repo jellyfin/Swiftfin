@@ -18,6 +18,6 @@ public extension Collection {
 	///
 	/// - Parameter index: index of element to access element.
 	subscript(safe index: Index) -> Element? {
-		return indices.contains(index) ? self[index] : nil
+		indices.contains(index) ? self[index] : nil
 	}
 }

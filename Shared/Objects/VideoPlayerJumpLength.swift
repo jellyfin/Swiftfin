@@ -16,7 +16,7 @@ enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable {
 	case five = 5
 
 	var label: String {
-		return "\(rawValue) seconds"
+		"\(rawValue) seconds"
 	}
 
 	func generateForwardImage(with font: UIFont) -> UIImage {

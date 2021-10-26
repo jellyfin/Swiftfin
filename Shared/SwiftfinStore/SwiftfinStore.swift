@@ -36,8 +36,8 @@ enum SwiftfinStore {
 			}
 
 			static var sample: Server {
-				return Server(uri: "https://www.notaurl.com", name: "Johnny's Tree", id: "123abc", os: "macOS", version: "1.1.1",
-				              usersIDs: ["1", "2"])
+				Server(uri: "https://www.notaurl.com", name: "Johnny's Tree", id: "123abc", os: "macOS", version: "1.1.1",
+				       usersIDs: ["1", "2"])
 			}
 		}
 
@@ -55,7 +55,7 @@ enum SwiftfinStore {
 			}
 
 			static var sample: User {
-				return User(username: "JohnnyAppleseed", id: "123abc", serverID: "123abc", accessToken: "open-sesame")
+				User(username: "JohnnyAppleseed", id: "123abc", serverID: "123abc", accessToken: "open-sesame")
 			}
 		}
 	}
@@ -85,12 +85,12 @@ enum SwiftfinStore {
 			var users: Set<StoredUser>
 
 			var state: State.Server {
-				return State.Server(uri: uri,
-				                    name: name,
-				                    id: id,
-				                    os: os,
-				                    version: version,
-				                    usersIDs: users.map { $0.id })
+				State.Server(uri: uri,
+				             name: name,
+				             id: id,
+				             os: os,
+				             version: version,
+				             usersIDs: users.map(\.id))
 			}
 		}
 

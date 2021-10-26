@@ -10,6 +10,6 @@ import UIKit
 
 extension UIDevice {
 	static var vendorUUIDString: String {
-		return current.identifierForVendor!.uuidString
+		current.identifierForVendor!.uuidString
 	}
 }

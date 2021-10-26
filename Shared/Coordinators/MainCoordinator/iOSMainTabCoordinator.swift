@@ -22,7 +22,7 @@ final class MainTabCoordinator: TabCoordinatable {
 	var allMedia = makeAllMedia
 
 	func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
-		return NavigationViewCoordinator(HomeCoordinator())
+		NavigationViewCoordinator(HomeCoordinator())
 	}
 
 	@ViewBuilder
@@ -32,7 +32,7 @@ final class MainTabCoordinator: TabCoordinatable {
 	}
 
 	func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
-		return NavigationViewCoordinator(LibraryListCoordinator())
+		NavigationViewCoordinator(LibraryListCoordinator())
 	}
 
 	@ViewBuilder

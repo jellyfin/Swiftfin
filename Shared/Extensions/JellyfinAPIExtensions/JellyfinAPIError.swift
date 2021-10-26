@@ -17,6 +17,6 @@ struct JellyfinAPIError: Error {
 	}
 
 	var localizedDescription: String {
-		return message
+		message
 	}
 }

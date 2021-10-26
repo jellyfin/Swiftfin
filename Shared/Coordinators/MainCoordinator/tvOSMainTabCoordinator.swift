@@ -31,7 +31,7 @@ final class MainTabCoordinator: TabCoordinatable {
 	var settings = makeSettings
 
 	func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
-		return NavigationViewCoordinator(HomeCoordinator())
+		NavigationViewCoordinator(HomeCoordinator())
 	}
 
 	@ViewBuilder
@@ -43,7 +43,7 @@ final class MainTabCoordinator: TabCoordinatable {
 	}
 
 	func makeTv() -> NavigationViewCoordinator<TVLibrariesCoordinator> {
-		return NavigationViewCoordinator(TVLibrariesCoordinator(viewModel: TVLibrariesViewModel(), title: "TV Shows"))
+		NavigationViewCoordinator(TVLibrariesCoordinator(viewModel: TVLibrariesViewModel(), title: "TV Shows"))
 	}
 
 	@ViewBuilder
@@ -55,7 +55,7 @@ final class MainTabCoordinator: TabCoordinatable {
 	}
 
 	func makeMovies() -> NavigationViewCoordinator<MovieLibrariesCoordinator> {
-		return NavigationViewCoordinator(MovieLibrariesCoordinator(viewModel: MovieLibrariesViewModel(), title: "Movies"))
+		NavigationViewCoordinator(MovieLibrariesCoordinator(viewModel: MovieLibrariesViewModel(), title: "Movies"))
 	}
 
 	@ViewBuilder
@@ -67,7 +67,7 @@ final class MainTabCoordinator: TabCoordinatable {
 	}
 
 	func makeOther() -> NavigationViewCoordinator<LibraryListCoordinator> {
-		return NavigationViewCoordinator(LibraryListCoordinator())
+		NavigationViewCoordinator(LibraryListCoordinator())
 	}
 
 	@ViewBuilder
@@ -79,7 +79,7 @@ final class MainTabCoordinator: TabCoordinatable {
 	}
 
 	func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
-		return NavigationViewCoordinator(SettingsCoordinator())
+		NavigationViewCoordinator(SettingsCoordinator())
 	}
 
 	@ViewBuilder

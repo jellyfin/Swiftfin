@@ -77,11 +77,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 	var jellyfinCastChannel: GCKGenericChannel?
 	var remotePositionTicks: Int = 0
 	private var castDiscoveryManager: GCKDiscoveryManager {
-		return GCKCastContext.sharedInstance().discoveryManager
+		GCKCastContext.sharedInstance().discoveryManager
 	}
 
 	private var castSessionManager: GCKSessionManager {
-		return GCKCastContext.sharedInstance().sessionManager
+		GCKCastContext.sharedInstance().sessionManager
 	}
 
 	var hasSentRemoteSeek: Bool = false
@@ -95,11 +95,11 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
 	var audioTrackArray: [AudioTrack] = []
 	let playbackSpeeds: [Float] = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
 	var jumpForwardLength: VideoPlayerJumpLength {
-		return Defaults[.videoPlayerJumpForward]
+		Defaults[.videoPlayerJumpForward]
 	}
 
 	var jumpBackwardLength: VideoPlayerJumpLength {
-		return Defaults[.videoPlayerJumpBackward]
+		Defaults[.videoPlayerJumpBackward]
 	}
 
 	var manifest = BaseItemDto()
@@ -1214,6 +1214,6 @@ extension PlayerViewController {
 
 extension UINavigationController {
 	override open var childForHomeIndicatorAutoHidden: UIViewController? {
-		return nil
+		nil
 	}
 }

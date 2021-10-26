@@ -45,19 +45,19 @@ final class SessionManager {
 	}
 
 	private func generateServerUserID(server: SwiftfinStore.Models.StoredServer, user: SwiftfinStore.Models.StoredUser) -> String {
-		return "\(server.id)-\(user.id)"
+		"\(server.id)-\(user.id)"
 	}
 
 	func fetchServers() -> [SwiftfinStore.State.Server] {
 		let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.StoredServer>())
-		return servers.map { $0.state }
+		return servers.map(\.state)
 	}
 
 	func fetchUsers(for server: SwiftfinStore.State.Server) -> [SwiftfinStore.State.User] {
 		guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
 		                                                               Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id))
 		else { fatalError("No stored server associated with given state server?") }
-		return storedServer.users.map { $0.state }.sorted(by: { $0.username < $1.username })
+		return storedServer.users.map(\.state).sorted(by: { $0.username < $1.username })
 	}
 
 	// Connects to a server at the given uri, storing if successful

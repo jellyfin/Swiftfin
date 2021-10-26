@@ -13,11 +13,11 @@ import JellyfinAPI
 
 extension BaseItemDto: PortraitImageStackable {
 	public func imageURLContsructor(maxWidth: Int) -> URL {
-		return getPrimaryImage(maxWidth: maxWidth)
+		getPrimaryImage(maxWidth: maxWidth)
 	}
 
 	public var title: String {
-		return name ?? ""
+		name ?? ""
 	}
 
 	public var description: String? {
@@ -33,7 +33,7 @@ extension BaseItemDto: PortraitImageStackable {
 	}
 
 	public var blurHash: String {
-		return getPrimaryImageBlurHash()
+		getPrimaryImageBlurHash()
 	}
 
 	public var failureInitials: String {

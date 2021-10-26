@@ -12,7 +12,7 @@ public class ServerDiscovery {
 	public struct ServerLookupResponse: Codable, Hashable, Identifiable {
 
 		public func hash(into hasher: inout Hasher) {
-			return hasher.combine(id)
+			hasher.combine(id)
 		}
 
 		private let address: String

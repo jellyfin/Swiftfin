@@ -21,7 +21,7 @@ struct ErrorMessage: Identifiable {
 	static let noShowErrorCode = -69420
 
 	var id: String {
-		return "\(code)\(title)\(logConstructor.message)"
+		"\(code)\(title)\(logConstructor.message)"
 	}
 
 	/// If the custom displayMessage is `nil`, it will be set to the given logConstructor's message
