@@ -13,12 +13,14 @@ import Stinsen
 
 final class LiveTVTabCoordinator: TabCoordinatable {
     var child = TabChild(startingItems: [
-        \LiveTVTabCoordinator.programs,
-        \LiveTVTabCoordinator.guide
+         \LiveTVTabCoordinator.programs,
+         \LiveTVTabCoordinator.guide,
+         \LiveTVTabCoordinator.channels
     ])
     
     @Route(tabItem: makeProgramsTab) var programs = makePrograms
     @Route(tabItem: makeGuideTab) var guide = makeGuide
+    @Route(tabItem: makeChannelsTab) var channels = makeChannels
     
     func makePrograms() -> NavigationViewCoordinator<LiveTVProgramsCoordinator> {
         return NavigationViewCoordinator(LiveTVProgramsCoordinator())
@@ -39,6 +41,17 @@ final class LiveTVTabCoordinator: TabCoordinatable {
         HStack {
             Image(systemName: "calendar")
             Text("Guide")
+        }
+    }
+    
+    func makeChannels() -> NavigationViewCoordinator<LiveTVChannelsCoordinator> {
+        return NavigationViewCoordinator(LiveTVChannelsCoordinator())
+    }
+    
+    @ViewBuilder func makeChannelsTab(isActive: Bool) -> some View {
+        HStack {
+            Image(systemName: "square.grid.3x3")
+            Text("Channels")
         }
     }
 }
