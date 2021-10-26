@@ -1,5 +1,7 @@
 # version: 0.47.5
 
+--swiftversion 5.4
+
 --indent tab
 --tabwidth 4
 --xcodeindentation enabled
@@ -36,7 +38,9 @@
 
 --disable strongOutlets,    \
     yodaConditions,         \
-    blankLinesAtStartOfScope
+    blankLinesAtStartOfScope,\
+    andOperator,            \
+    redundantFileprivate
 
 --exclude Pods
 
