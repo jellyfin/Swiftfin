@@ -30,7 +30,7 @@ final class TVLibrariesCoordinator: NavigationCoordinatable {
 
 	@ViewBuilder
 	func makeStart() -> some View {
-		TVLibrariesView(viewModel: viewModel, title: title)
+        TVLibrariesView(viewModel: self.viewModel, title: title)
 	}
 
 	func makeLibrary(library: BaseItemDto) -> LibraryCoordinator {

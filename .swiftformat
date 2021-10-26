@@ -5,7 +5,6 @@
 --indent tab
 --tabwidth 4
 --xcodeindentation enabled
---self init-only
 --semicolons never
 --stripunusedargs closure-only
 --maxwidth 140
@@ -40,7 +39,8 @@
     yodaConditions,         \
     blankLinesAtStartOfScope,\
     andOperator,            \
-    redundantFileprivate
+    redundantFileprivate,   \
+    redundantSelf
 
 --exclude Pods
 
