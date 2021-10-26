@@ -38,7 +38,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
 	@ViewBuilder
 	func makeStart() -> some View {
-        LibraryView(viewModel: self.viewModel, title: title)
+		LibraryView(viewModel: self.viewModel, title: title)
 	}
 
 	func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
