@@ -11,6 +11,7 @@ import Foundation
 import SwiftUI
 
 struct LibraryListView: View {
+    @EnvironmentObject var mainCoordinator: MainCoordinator.Router
     @EnvironmentObject var libraryListRouter: LibraryListCoordinator.Router
     @StateObject var viewModel = LibraryListViewModel()
 
@@ -24,7 +25,7 @@ struct LibraryListView: View {
                         } else {
                             Button() {
                                 if library.collectionType == "livetv" {
-                                    self.libraryListRouter.route(to: \.liveTvTabs)
+                                    self.mainCoordinator.root(\.liveTV)
                                 } else {
                                     self.libraryListRouter.route(to: \.library, (viewModel: LibraryViewModel(), title: library.name ?? ""))
                                 }

@@ -17,7 +17,8 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @Root var mainTab = makeMainTab
     @Root var serverList = makeServerList
-
+    @Root var liveTV = makeLiveTV
+    
     init() {
         if SessionManager.main.currentLogin != nil {
             self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
@@ -50,5 +51,9 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
         NavigationViewCoordinator(ServerListCoordinator())
+    }
+    
+    func makeLiveTV() -> LiveTVTabCoordinator {
+        LiveTVTabCoordinator()
     }
 }
