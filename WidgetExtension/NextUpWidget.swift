@@ -24,9 +24,9 @@ struct NextUpWidgetProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NextUpEntry) -> Void) {
-        
+
         guard let currentLogin = SessionManager.main.currentLogin else { return }
-        
+
         let currentDate = Date()
         let server = currentLogin.server
         let savedUser = currentLogin.user
@@ -68,9 +68,9 @@ struct NextUpWidgetProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
-        
+
         guard let currentLogin = SessionManager.main.currentLogin else { return }
-        
+
         let currentDate = Date()
         let entryDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
         let server = currentLogin.server
@@ -366,7 +366,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "WidgetHeaderSymbol")),
+                                              UIImage(named: "WidgetHeaderSymbol"))
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
@@ -377,7 +377,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name2", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series2"),
-                                              UIImage(named: "WidgetHeaderSymbol")),
+                                              UIImage(named: "WidgetHeaderSymbol"))
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
@@ -392,7 +392,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "WidgetHeaderSymbol")),
+                                              UIImage(named: "WidgetHeaderSymbol"))
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
@@ -404,7 +404,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name2", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series2"),
-                                              UIImage(named: "WidgetHeaderSymbol")),
+                                              UIImage(named: "WidgetHeaderSymbol"))
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
@@ -417,7 +417,7 @@ struct NextUpWidget_Previews: PreviewProvider {
             NextUpEntryView(entry: .init(date: Date(),
                                          items: [
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
-                                              UIImage(named: "WidgetHeaderSymbol")),
+                                              UIImage(named: "WidgetHeaderSymbol"))
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
@@ -427,7 +427,7 @@ struct NextUpWidget_Previews: PreviewProvider {
                                              (.init(name: "Name0", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series0"),
                                               UIImage(named: "WidgetHeaderSymbol")),
                                              (.init(name: "Name1", indexNumber: 10, parentIndexNumber: 0, seriesName: "Series1"),
-                                              UIImage(named: "WidgetHeaderSymbol")),
+                                              UIImage(named: "WidgetHeaderSymbol"))
                                          ],
                                          error: nil))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))

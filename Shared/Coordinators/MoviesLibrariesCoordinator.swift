@@ -13,7 +13,7 @@ import Stinsen
 import SwiftUI
 
 final class MovieLibrariesCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \MovieLibrariesCoordinator.start)
 
     @Root var start = makeStart
