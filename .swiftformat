@@ -1,5 +1,7 @@
 # version: 0.47.5
 
+--swiftversion 5.5
+
 --indent tab
 --tabwidth 4
 --xcodeindentation enabled
