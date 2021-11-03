@@ -36,7 +36,10 @@
 
 --disable strongOutlets,    \
     yodaConditions,         \
-    blankLinesAtStartOfScope
+    blankLinesAtStartOfScope,\
+    andOperator,            \
+    redundantFileprivate,   \
+    redundantSelf
 
 --exclude Pods
 
