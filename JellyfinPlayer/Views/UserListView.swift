@@ -10,10 +10,10 @@
 import SwiftUI
 
 struct UserListView: View {
-    
+
     @EnvironmentObject var userListRouter: UserListCoordinator.Router
     @ObservedObject var viewModel: UserListViewModel
-    
+
     private var listView: some View {
         ScrollView {
             LazyVStack {
@@ -26,13 +26,13 @@ struct UserListView: View {
                                 .foregroundColor(Color(UIColor.secondarySystemFill))
                                 .frame(height: 50)
                                 .cornerRadius(10)
-                            
+
                             HStack {
                                 Text(user.username)
                                     .font(.title2)
-                                
+
                                 Spacer()
-                                
+
                                 if viewModel.isLoading {
                                     ProgressView()
                                 }
@@ -51,13 +51,13 @@ struct UserListView: View {
             }
         }
     }
-    
+
     private var noUserView: some View {
         VStack {
             Text("Sign in to get started")
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
-            
+
             Button {
                 userListRouter.route(to: \.userSignIn, viewModel.server)
             } label: {
@@ -69,7 +69,7 @@ struct UserListView: View {
                         .cornerRadius(10)
                         .padding(.horizontal, 30)
                         .padding([.top, .bottom], 20)
-                    
+
                     Text("Sign in")
                         .foregroundColor(Color.white)
                         .bold()
@@ -77,7 +77,7 @@ struct UserListView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private var innerBody: some View {
         if viewModel.users.isEmpty {
@@ -87,7 +87,7 @@ struct UserListView: View {
             listView
         }
     }
-    
+
     @ViewBuilder
     private var toolbarContent: some View {
         if viewModel.users.isEmpty {
@@ -102,7 +102,7 @@ struct UserListView: View {
             }
         }
     }
-    
+
     var body: some View {
         innerBody
         .navigationTitle(viewModel.server.name)

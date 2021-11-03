@@ -11,11 +11,11 @@ import Foundation
 import SwiftUI
 
 class ServerListViewModel: ObservableObject {
-    
+
     @Published var servers: [SwiftfinStore.State.Server] = []
-    
+
     init() {
-        
+
         // Oct. 15, 2021
         // This is a workaround since Stinsen doesn't have the ability to rebuild a root at the time of writing.
         // Feature request issue: https://github.com/rundfunk47/stinsen/issues/33
@@ -23,11 +23,11 @@ class ServerListViewModel: ObservableObject {
         let nc = SwiftfinNotificationCenter.main
         nc.addObserver(self, selector: #selector(didPurge), name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
     }
-    
+
     func fetchServers() {
         self.servers = SessionManager.main.fetchServers()
     }
-    
+
     func userTextFor(server: SwiftfinStore.State.Server) -> String {
         if server.userIDs.count == 1 {
             return "1 user"
@@ -35,12 +35,12 @@ class ServerListViewModel: ObservableObject {
             return "\(server.userIDs.count) users"
         }
     }
-    
+
     func remove(server: SwiftfinStore.State.Server) {
         SessionManager.main.delete(server: server)
         fetchServers()
     }
-    
+
     @objc private func didPurge() {
         fetchServers()
     }

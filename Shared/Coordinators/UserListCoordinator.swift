@@ -12,22 +12,22 @@ import Stinsen
 import SwiftUI
 
 final class UserListCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \UserListCoordinator.start)
-    
+
     @Root var start = makeStart
     @Route(.push) var userSignIn = makeUserSignIn
-    
+
     let viewModel: UserListViewModel
-    
+
     init(viewModel: UserListViewModel) {
         self.viewModel = viewModel
     }
-    
+
     func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
         return UserSignInCoordinator(viewModel: .init(server: server))
     }
-    
+
     @ViewBuilder func makeStart() -> some View {
         UserListView(viewModel: viewModel)
     }

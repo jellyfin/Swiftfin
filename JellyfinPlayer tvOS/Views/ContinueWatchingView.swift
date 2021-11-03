@@ -16,7 +16,7 @@ struct ContinueWatchingView: View {
     @Namespace private var namespace
 
     var homeRouter: HomeCoordinator.Router? = RouterStore.shared.retrieve()
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             if items.count > 0 {

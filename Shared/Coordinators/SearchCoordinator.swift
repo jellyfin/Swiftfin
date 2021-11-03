@@ -13,7 +13,7 @@ import SwiftUI
 import JellyfinAPI
 
 final class SearchCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \SearchCoordinator.start)
 
     @Root var start = makeStart

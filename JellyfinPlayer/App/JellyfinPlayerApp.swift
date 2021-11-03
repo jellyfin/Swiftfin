@@ -13,7 +13,7 @@ import SwiftUI
 // MARK: JellyfinPlayerApp
 @main
 struct JellyfinPlayerApp: App {
-    
+
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @Default(.appAppearance) var appAppearance
 
@@ -35,7 +35,7 @@ struct JellyfinPlayerApp: App {
                 }
         }
     }
-    
+
     private func setupAppearance() {
         UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
     }

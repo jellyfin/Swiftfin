@@ -12,11 +12,11 @@ import Stinsen
 import SwiftUI
 
 final class BasicAppSettingsCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \BasicAppSettingsCoordinator.start)
-    
+
     @Root var start = makeStart
-    
+
     @ViewBuilder func makeStart() -> some View {
         BasicAppSettingsView(viewModel: BasicAppSettingsViewModel())
     }
