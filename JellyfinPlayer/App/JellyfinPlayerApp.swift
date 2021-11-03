@@ -15,6 +15,9 @@ import SwiftUI
 
 @main
 struct JellyfinPlayerApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @Default(.appAppearance) var appAppearance
 
 	var body: some Scene {
 		WindowGroup {
