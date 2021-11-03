@@ -21,7 +21,7 @@ final class EpisodeItemViewModel: ItemViewModel {
 	}
 
 	override func shouldDisplayRuntime() -> Bool {
-		return false
+		false
 	}
 
 	func routeToSeasonItem() {

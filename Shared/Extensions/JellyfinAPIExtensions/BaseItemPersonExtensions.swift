@@ -60,19 +60,19 @@ extension BaseItemPerson {
 
 extension BaseItemPerson: PortraitImageStackable {
 	public func imageURLContsructor(maxWidth: Int) -> URL {
-		return self.getImage(baseURL: SessionManager.main.currentLogin.server.uri, maxWidth: maxWidth)
+		self.getImage(baseURL: SessionManager.main.currentLogin.server.uri, maxWidth: maxWidth)
 	}
 
 	public var title: String {
-		return self.name ?? ""
+		self.name ?? ""
 	}
 
 	public var description: String? {
-		return self.firstRole()
+		self.firstRole()
 	}
 
 	public var blurHash: String {
-		return self.getBlurHash()
+		self.getBlurHash()
 	}
 
 	public var failureInitials: String {
@@ -95,7 +95,7 @@ extension BaseItemPerson {
 		case producer = "Producer"
 
 		static var allCasesRaw: [String] {
-			return self.allCases.map { $0.rawValue }
+			self.allCases.map(\.rawValue)
 		}
 	}
 }

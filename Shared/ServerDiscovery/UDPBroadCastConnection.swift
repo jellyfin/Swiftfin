@@ -282,7 +282,7 @@ open class UDPBroadcastConnection {
 	}
 
 	fileprivate class func ntohs(value: CUnsignedShort) -> CUnsignedShort {
-		return (value << 8) + (value >> 8)
+		(value << 8) + (value >> 8)
 	}
 }
 

@@ -29,7 +29,7 @@ final class SeriesItemViewModel: ItemViewModel {
 	}
 
 	override func shouldDisplayRuntime() -> Bool {
-		return false
+		false
 	}
 
 	private func getNextUp() {

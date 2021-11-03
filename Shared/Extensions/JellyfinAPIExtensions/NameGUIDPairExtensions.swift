@@ -11,6 +11,6 @@ import JellyfinAPI
 
 extension NameGuidPair: PillStackable {
 	var title: String {
-		return self.name ?? ""
+		self.name ?? ""
 	}
 }

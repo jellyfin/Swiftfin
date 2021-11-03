@@ -95,7 +95,7 @@ private func decodeAC(_ value: Int, maximumValue: Float) -> (Float, Float, Float
 }
 
 private func signPow(_ value: Float, _ exp: Float) -> Float {
-	return copysign(pow(abs(value), exp), value)
+	copysign(pow(abs(value), exp), value)
 }
 
 private func linearTosRGB(_ value: Float) -> Int {
@@ -134,7 +134,7 @@ extension String {
 
 private extension String {
 	subscript(offset: Int) -> Character {
-		return self[index(startIndex, offsetBy: offset)]
+		self[index(startIndex, offsetBy: offset)]
 	}
 
 	subscript(bounds: CountableClosedRange<Int>) -> Substring {

@@ -39,15 +39,15 @@ class ItemViewModel: ViewModel {
 	}
 
 	func playButtonText() -> String {
-		return item.getItemProgressString() == "" ? "Play" : item.getItemProgressString()
+		item.getItemProgressString() == "" ? "Play" : item.getItemProgressString()
 	}
 
 	func getItemDisplayName() -> String {
-		return item.name ?? ""
+		item.name ?? ""
 	}
 
 	func shouldDisplayRuntime() -> Bool {
-		return true
+		true
 	}
 
 	func getSimilarItems() {

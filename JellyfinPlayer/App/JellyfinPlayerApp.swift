@@ -16,28 +16,28 @@ import SwiftUI
 @main
 struct JellyfinPlayerApp: App {
 
-    var body: some Scene {
-        WindowGroup {
-            EmptyView()
-                .ignoresSafeArea()
-                .onAppear {
-                    setupAppearance()
-                }
-                .withHostingWindow { window in
-                    window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
-                }
-                .onShake {
-                    EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
-                }
-                .onOpenURL { url in
-                    AppURLHandler.shared.processDeepLink(url: url)
-                }
-        }
-    }
+	var body: some Scene {
+		WindowGroup {
+			EmptyView()
+				.ignoresSafeArea()
+				.onAppear {
+					setupAppearance()
+				}
+				.withHostingWindow { window in
+					window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
+				}
+				.onShake {
+					EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
+				}
+				.onOpenURL { url in
+					AppURLHandler.shared.processDeepLink(url: url)
+				}
+		}
+	}
 
-    private func setupAppearance() {
-        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
-    }
+	private func setupAppearance() {
+		UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
+	}
 }
 
 // MARK: Hosting Window

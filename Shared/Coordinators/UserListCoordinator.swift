@@ -26,7 +26,7 @@ final class UserListCoordinator: NavigationCoordinatable {
 	}
 
 	func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
-		return UserSignInCoordinator(viewModel: .init(server: server))
+		UserSignInCoordinator(viewModel: .init(server: server))
 	}
 
 	@ViewBuilder

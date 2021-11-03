@@ -56,6 +56,6 @@ final class LibraryCoordinator: NavigationCoordinatable {
 	}
 
 	func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-		return NavigationViewCoordinator(ItemCoordinator(item: item))
+		NavigationViewCoordinator(ItemCoordinator(item: item))
 	}
 }

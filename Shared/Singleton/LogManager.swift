@@ -33,7 +33,7 @@ class LogManager {
 	}
 
 	func logFileURL() -> URL {
-		return self.getDocumentsDirectory().appendingPathComponent("logs.txt")
+		self.getDocumentsDirectory().appendingPathComponent("logs.txt")
 	}
 
 	func getDocumentsDirectory() -> URL {
