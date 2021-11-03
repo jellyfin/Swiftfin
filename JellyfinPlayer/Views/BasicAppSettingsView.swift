@@ -12,53 +12,60 @@ import SwiftUI
 
 struct BasicAppSettingsView: View {
 
-	@EnvironmentObject
-	var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
-	@ObservedObject
-	var viewModel: BasicAppSettingsViewModel
-	@State
-	var resetTapped: Bool = false
+    @EnvironmentObject var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
+    @ObservedObject var viewModel: BasicAppSettingsViewModel
+    @State var resetTapped: Bool = false
 
-	@Default(.appAppearance)
-	var appAppearance
+    @Default(.appAppearance) var appAppearance
+    @Default(.defaultHTTPScheme) var defaultHTTPScheme
 
-	var body: some View {
-		Form {
-			Section {
-				Picker(NSLocalizedString("Appearance", comment: ""), selection: $appAppearance) {
-					ForEach(self.viewModel.appearances, id: \.self) { appearance in
-						Text(appearance.localizedName).tag(appearance.rawValue)
-					}
-				}.onChange(of: appAppearance, perform: { _ in
-					UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
-				})
-			} header: {
-				Text("Accessibility")
-			}
+    var body: some View {
+        Form {
+            Section {
+                Picker(NSLocalizedString("Appearance", comment: ""), selection: $appAppearance) {
+                    ForEach(self.viewModel.appearances, id: \.self) { appearance in
+                        Text(appearance.localizedName).tag(appearance.rawValue)
+                    }
+                }.onChange(of: appAppearance, perform: { _ in
+                    UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
+                })
+            } header: {
+                Text("Accessibility")
+            }
 
-			Button {
-				resetTapped = true
-			} label: {
-				Text("Reset")
-			}
-		}
-		.alert("Reset", isPresented: $resetTapped, actions: {
-			Button(role: .destructive) {
-				viewModel.reset()
-				basicAppSettingsRouter.dismissCoordinator()
-			} label: {
-				Text("Reset")
-			}
-		})
-		.navigationBarTitle("Settings", displayMode: .inline)
-		.toolbar {
-			ToolbarItemGroup(placement: .navigationBarLeading) {
-				Button {
-					basicAppSettingsRouter.dismissCoordinator()
-				} label: {
-					Image(systemName: "xmark.circle.fill")
-				}
-			}
-		}
-	}
+            Section {
+                Picker("Default Scheme", selection: $defaultHTTPScheme) {
+                    ForEach(HTTPScheme.allCases, id: \.self) { scheme in
+                        Text("\(scheme.rawValue)")
+                    }
+                }
+            } header: {
+                Text("Networking")
+            }
+
+            Button {
+                resetTapped = true
+            } label: {
+                Text("Reset")
+            }
+        }
+        .alert("Reset", isPresented: $resetTapped, actions: {
+            Button(role: .destructive) {
+                viewModel.reset()
+                basicAppSettingsRouter.dismissCoordinator()
+            } label: {
+                Text("Reset")
+            }
+        })
+        .navigationBarTitle("Settings", displayMode: .inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
+                Button {
+                    basicAppSettingsRouter.dismissCoordinator()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                }
+            }
+        }
+    }
 }

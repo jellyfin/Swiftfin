@@ -16,34 +16,28 @@ import SwiftUI
 @main
 struct JellyfinPlayerApp: App {
 
-	@UIApplicationDelegateAdaptor(AppDelegate.self)
-	var appDelegate
-	@Default(.appAppearance)
-	var appAppearance
+    var body: some Scene {
+        WindowGroup {
+            EmptyView()
+                .ignoresSafeArea()
+                .onAppear {
+                    setupAppearance()
+                }
+                .withHostingWindow { window in
+                    window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
+                }
+                .onShake {
+                    EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
+                }
+                .onOpenURL { url in
+                    AppURLHandler.shared.processDeepLink(url: url)
+                }
+        }
+    }
 
-	var body: some Scene {
-		WindowGroup {
-			// TODO: Replace with a SplashView
-			Color(appAppearance.style == .light ? UIColor.white : UIColor.black)
-				.ignoresSafeArea()
-				.onAppear {
-					setupAppearance()
-				}
-				.withHostingWindow { window in
-					window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
-				}
-				.onShake {
-					EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
-				}
-				.onOpenURL { url in
-					AppURLHandler.shared.processDeepLink(url: url)
-				}
-		}
-	}
-
-	private func setupAppearance() {
-		UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
-	}
+    private func setupAppearance() {
+        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
+    }
 }
 
 // MARK: Hosting Window

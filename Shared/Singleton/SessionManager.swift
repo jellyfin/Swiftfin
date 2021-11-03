@@ -20,245 +20,234 @@ typealias CurrentLogin = (server: SwiftfinStore.State.Server, user: SwiftfinStor
 
 final class SessionManager {
 
-	// MARK: currentLogin
+    // MARK: currentLogin
+    private(set) var currentLogin: CurrentLogin!
 
-	private(set) var currentLogin: CurrentLogin!
+    // MARK: main
+    static let main = SessionManager()
 
-	// MARK: main
+    private init() {
+        if let lastUserID = SwiftfinStore.Defaults.suite[.lastServerUserID],
+           let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
+                                                            [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)]) {
 
-	static let main = SessionManager()
+            guard let server = user.server, let accessToken = user.accessToken else { fatalError("No associated server or access token for last user?") }
+            guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { return }
 
-	private init() {
-		if let lastUserID = SwiftfinStore.Defaults.suite[.lastServerUserID],
-		   let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
-		                                                    [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)])
-		{
+            JellyfinAPI.basePath = server.uri
+            setAuthHeader(with: accessToken.value)
+            currentLogin = (server: existingServer.state, user: user.state)
+        }
+    }
 
-			guard let server = user.server,
-			      let accessToken = user.accessToken else { fatalError("No associated server or access token for last user?") }
-			guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { return }
+    private func generateServerUserID(server: SwiftfinStore.Models.StoredServer, user: SwiftfinStore.Models.StoredUser) -> String {
+        return "\(server.id)-\(user.id)"
+    }
 
-			JellyfinAPI.basePath = server.uri
-			setAuthHeader(with: accessToken.value)
-			currentLogin = (server: existingServer.state, user: user.state)
-		}
-	}
+    func fetchServers() -> [SwiftfinStore.State.Server] {
+        let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.StoredServer>())
+        return servers.map({ $0.state })
+    }
 
-	private func generateServerUserID(server: SwiftfinStore.Models.StoredServer, user: SwiftfinStore.Models.StoredUser) -> String {
-		return "\(server.id)-\(user.id)"
-	}
+    func fetchUsers(for server: SwiftfinStore.State.Server) -> [SwiftfinStore.State.User] {
+        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                 Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id))
+            else { fatalError("No stored server associated with given state server?") }
+        return storedServer.users.map({ $0.state }).sorted(by: { $0.username < $1.username })
+    }
 
-	func fetchServers() -> [SwiftfinStore.State.Server] {
-		let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.StoredServer>())
-		return servers.map { $0.state }
-	}
+    // Connects to a server at the given uri, storing if successful
+    func connectToServer(with uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
+        var uriComponents = URLComponents(string: uri) ?? URLComponents()
 
-	func fetchUsers(for server: SwiftfinStore.State.Server) -> [SwiftfinStore.State.User] {
-		guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
-		                                                               Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id))
-		else { fatalError("No stored server associated with given state server?") }
-		return storedServer.users.map { $0.state }.sorted(by: { $0.username < $1.username })
-	}
+        if uriComponents.scheme == nil {
+            uriComponents.scheme = SwiftfinStore.Defaults.suite[.defaultHTTPScheme].rawValue
+        }
 
-	// Connects to a server at the given uri, storing if successful
-	func connectToServer(with uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
-		var uri = uri
-		if !uri.contains("http") {
-			uri = "https://" + uri
-		}
-		if uri.last == "/" {
-			uri = String(uri.dropLast())
-		}
+        var uri = uriComponents.string ?? ""
 
-		JellyfinAPI.basePath = uri
+        if uri.last == "/" {
+            uri = String(uri.dropLast())
+        }
 
-		return SystemAPI.getPublicSystemInfo()
-			.tryMap { response -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
+        JellyfinAPI.basePath = uri
 
-				let transaction = SwiftfinStore.dataStack.beginUnsafe()
-				let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
+        return SystemAPI.getPublicSystemInfo()
+            .tryMap({ response -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
 
-				guard let name = response.serverName,
-				      let id = response.id,
-				      let os = response.operatingSystem,
-				      let version = response.version else { throw JellyfinAPIError("Missing server data from network call") }
+                let transaction = SwiftfinStore.dataStack.beginUnsafe()
+                let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
 
-				newServer.uri = uri
-				newServer.name = name
-				newServer.id = id
-				newServer.os = os
-				newServer.version = version
-				newServer.users = []
+                guard let name = response.serverName,
+                      let id = response.id,
+                      let os = response.operatingSystem,
+                      let version = response.version else { throw JellyfinAPIError("Missing server data from network call") }
 
-				// Check for existing server on device
-				if let existingServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
-				                                                              [Where<SwiftfinStore.Models.StoredServer>("id == %@",
-				                                                                                                        newServer.id)])
-				{
-					throw SwiftfinStore.Errors.existingServer(existingServer.state)
-				}
+                newServer.uri = uri
+                newServer.name = name
+                newServer.id = id
+                newServer.os = os
+                newServer.version = version
+                newServer.users = []
 
-				return (newServer, transaction)
-			}
-			.handleEvents(receiveOutput: { _, transaction in
-				try? transaction.commitAndWait()
-			})
-			.map { server, _ in
-				server.state
-			}
-			.eraseToAnyPublisher()
-	}
+                // Check for existing server on device
+                if let existingServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                            [Where<SwiftfinStore.Models.StoredServer>("id == %@", newServer.id)]) {
+                    throw SwiftfinStore.Errors.existingServer(existingServer.state)
+                }
 
-	// Logs in a user with an associated server, storing if successful
-	func loginUser(server: SwiftfinStore.State.Server, username: String,
-	               password: String) -> AnyPublisher<SwiftfinStore.State.User, Error>
-	{
-		setAuthHeader(with: "")
+                return (newServer, transaction)
+            })
+            .handleEvents(receiveOutput: { (_, transaction) in
+                try? transaction.commitAndWait()
+            })
+            .map({ (server, _) in
+                return server.state
+            })
+            .eraseToAnyPublisher()
+    }
 
-		JellyfinAPI.basePath = server.uri
+    // Logs in a user with an associated server, storing if successful
+    func loginUser(server: SwiftfinStore.State.Server, username: String, password: String) -> AnyPublisher<SwiftfinStore.State.User, Error> {
+        setAuthHeader(with: "")
 
-		return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
-			.tryMap { response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
+        JellyfinAPI.basePath = server.uri
 
-				guard let accessToken = response.accessToken else { throw JellyfinAPIError("Access token missing from network call") }
+        return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
+            .tryMap({ response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
 
-				let transaction = SwiftfinStore.dataStack.beginUnsafe()
-				let newUser = transaction.create(Into<SwiftfinStore.Models.StoredUser>())
+                guard let accessToken = response.accessToken else { throw JellyfinAPIError("Access token missing from network call") }
 
-				guard let username = response.user?.name,
-				      let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
+                let transaction = SwiftfinStore.dataStack.beginUnsafe()
+                let newUser = transaction.create(Into<SwiftfinStore.Models.StoredUser>())
 
-				newUser.username = username
-				newUser.id = id
-				newUser.appleTVID = ""
+                guard let username = response.user?.name,
+                      let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
 
-				// Check for existing user on device
-				if let existingUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
-				                                                            [Where<SwiftfinStore.Models.StoredUser>("id == %@",
-				                                                                                                    newUser.id)])
-				{
-					throw SwiftfinStore.Errors.existingUser(existingUser.state)
-				}
+                newUser.username = username
+                newUser.id = id
+                newUser.appleTVID = ""
 
-				let newAccessToken = transaction.create(Into<SwiftfinStore.Models.StoredAccessToken>())
-				newAccessToken.value = accessToken
-				newUser.accessToken = newAccessToken
+                // Check for existing user on device
+                if let existingUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
+                                                                            [Where<SwiftfinStore.Models.StoredUser>("id == %@", newUser.id)]) {
+                    throw SwiftfinStore.Errors.existingUser(existingUser.state)
+                }
 
-				guard let userServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
-				                                                             [
-				                                                             	Where<SwiftfinStore.Models.StoredServer>("id == %@",
-				                                                             	                                         server.id),
-				                                                             ])
-				else { fatalError("No stored server associated with given state server?") }
+                let newAccessToken = transaction.create(Into<SwiftfinStore.Models.StoredAccessToken>())
+                newAccessToken.value = accessToken
+                newUser.accessToken = newAccessToken
 
-				guard let editUserServer = transaction.edit(userServer) else { fatalError("Can't get proxy for existing object?") }
-				editUserServer.users.insert(newUser)
+                guard let userServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                        [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)])
+                    else { fatalError("No stored server associated with given state server?") }
 
-				return (editUserServer, newUser, transaction)
-			}
-			.handleEvents(receiveOutput: { [unowned self] server, user, transaction in
-				setAuthHeader(with: user.accessToken?.value ?? "")
-				try? transaction.commitAndWait()
+                guard let editUserServer = transaction.edit(userServer) else { fatalError("Can't get proxy for existing object?") }
+                editUserServer.users.insert(newUser)
 
-				// Fetch for the right queue
-				let currentServer = SwiftfinStore.dataStack.fetchExisting(server)!
-				let currentUser = SwiftfinStore.dataStack.fetchExisting(user)!
+                return (editUserServer, newUser, transaction)
+            })
+            .handleEvents(receiveOutput: { [unowned self] (server, user, transaction) in
+                setAuthHeader(with: user.accessToken?.value ?? "")
+                try? transaction.commitAndWait()
 
-				SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
+                // Fetch for the right queue
+                let currentServer = SwiftfinStore.dataStack.fetchExisting(server)!
+                let currentUser = SwiftfinStore.dataStack.fetchExisting(user)!
 
-				currentLogin = (server: currentServer.state, user: currentUser.state)
-				SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
-			})
-			.map { _, user, _ in
-				user.state
-			}
-			.eraseToAnyPublisher()
-	}
+                SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
 
-	func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
-		JellyfinAPI.basePath = server.uri
-		SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
-		setAuthHeader(with: user.accessToken)
-		currentLogin = (server: server, user: user)
-		SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
-	}
+                currentLogin = (server: currentServer.state, user: currentUser.state)
+                SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
+            })
+            .map({ (_, user, _) in
+                return user.state
+            })
+            .eraseToAnyPublisher()
+    }
 
-	func logout() {
-		currentLogin = nil
-		JellyfinAPI.basePath = ""
-		setAuthHeader(with: "")
-		SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
-		SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
-	}
+    func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
+        JellyfinAPI.basePath = server.uri
+        SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
+        setAuthHeader(with: user.accessToken)
+        currentLogin = (server: server, user: user)
+        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
+    }
 
-	func purge() {
-		// Delete all servers
-		let servers = fetchServers()
+    func logout() {
+        currentLogin = nil
+        JellyfinAPI.basePath = ""
+        setAuthHeader(with: "")
+        SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
+        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+    }
 
-		for server in servers {
-			delete(server: server)
-		}
+    func purge() {
+        // Delete all servers
+        let servers = fetchServers()
 
-		// Delete UserDefaults
-		SwiftfinStore.Defaults.suite.removeAll()
+        for server in servers {
+            delete(server: server)
+        }
 
-		SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
-	}
+        // Delete UserDefaults
+        SwiftfinStore.Defaults.suite.removeAll()
 
-	func delete(user: SwiftfinStore.State.User) {
-		guard let storedUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
-		                                                             [Where<SwiftfinStore.Models.StoredUser>("id == %@", user.id)])
-		else { fatalError("No stored user for state user?") }
-		_delete(user: storedUser, transaction: nil)
-	}
+        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
+    }
 
-	func delete(server: SwiftfinStore.State.Server) {
-		guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
-		                                                               [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)])
-		else { fatalError("No stored server for state server?") }
-		_delete(server: storedServer, transaction: nil)
-	}
+    func delete(user: SwiftfinStore.State.User) {
+        guard let storedUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
+                                                                     [Where<SwiftfinStore.Models.StoredUser>("id == %@", user.id)]) else { fatalError("No stored user for state user?")}
+        _delete(user: storedUser, transaction: nil)
+    }
 
-	private func _delete(user: SwiftfinStore.Models.StoredUser, transaction: UnsafeDataTransaction?) {
-		guard let storedAccessToken = user.accessToken else { fatalError("No access token for stored user?") }
+    func delete(server: SwiftfinStore.State.Server) {
+        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+                                                                       [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]) else { fatalError("No stored server for state server?")}
+        _delete(server: storedServer, transaction: nil)
+    }
 
-		let transaction = transaction == nil ? SwiftfinStore.dataStack.beginUnsafe() : transaction!
-		transaction.delete(storedAccessToken)
-		transaction.delete(user)
-		try? transaction.commitAndWait()
-	}
+    private func _delete(user: SwiftfinStore.Models.StoredUser, transaction: UnsafeDataTransaction?) {
+        guard let storedAccessToken = user.accessToken else { fatalError("No access token for stored user?")}
 
-	private func _delete(server: SwiftfinStore.Models.StoredServer, transaction: UnsafeDataTransaction?) {
-		let transaction = transaction == nil ? SwiftfinStore.dataStack.beginUnsafe() : transaction!
+        let transaction = transaction == nil ? SwiftfinStore.dataStack.beginUnsafe() : transaction!
+        transaction.delete(storedAccessToken)
+        transaction.delete(user)
+        try? transaction.commitAndWait()
+    }
 
-		for user in server.users {
-			_delete(user: user, transaction: transaction)
-		}
+    private func _delete(server: SwiftfinStore.Models.StoredServer, transaction: UnsafeDataTransaction?) {
+        let transaction = transaction == nil ? SwiftfinStore.dataStack.beginUnsafe() : transaction!
 
-		transaction.delete(server)
-		try? transaction.commitAndWait()
-	}
+        for user in server.users {
+            _delete(user: user, transaction: transaction)
+        }
 
-	private func setAuthHeader(with accessToken: String) {
-		let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-		var deviceName = UIDevice.current.name
-		deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
-		deviceName = String(deviceName.unicodeScalars.filter { CharacterSet.urlQueryAllowed.contains($0) })
+        transaction.delete(server)
+        try? transaction.commitAndWait()
+    }
 
-		let platform: String
-		#if os(tvOS)
-			platform = "tvOS"
-		#else
-			platform = "iOS"
-		#endif
+    private func setAuthHeader(with accessToken: String) {
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        var deviceName = UIDevice.current.name
+        deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
+        deviceName = String(deviceName.unicodeScalars.filter { CharacterSet.urlQueryAllowed.contains($0) })
 
-		var header = "MediaBrowser "
-		header.append("Client=\"Jellyfin \(platform)\", ")
-		header.append("Device=\"\(deviceName)\", ")
-		header.append("DeviceId=\"\(platform)_\(UIDevice.vendorUUIDString)_\(String(Date().timeIntervalSince1970))\", ")
-		header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
-		header.append("Token=\"\(accessToken)\"")
+        let platform: String
+        #if os(tvOS)
+        platform = "tvOS"
+        #else
+        platform = "iOS"
+        #endif
 
-		JellyfinAPI.customHeaders["X-Emby-Authorization"] = header
-	}
+        var header = "MediaBrowser "
+        header.append("Client=\"Jellyfin \(platform)\", ")
+        header.append("Device=\"\(deviceName)\", ")
+        header.append("DeviceId=\"\(platform)_\(UIDevice.vendorUUIDString)_\(String(Date().timeIntervalSince1970))\", ")
+        header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
+        header.append("Token=\"\(accessToken)\"")
+
+        JellyfinAPI.customHeaders["X-Emby-Authorization"] = header
+    }
 }
