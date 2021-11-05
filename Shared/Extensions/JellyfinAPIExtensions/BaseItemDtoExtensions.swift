@@ -14,7 +14,7 @@ import UIKit
 // 001fC^ = dark grey plain blurhash
 
 public extension BaseItemDto {
-    
+
     // MARK: Images
 
     func getSeriesBackdropImageBlurHash() -> String {
@@ -152,17 +152,17 @@ public extension BaseItemDto {
             return "\(String(progminutes))m"
         }
     }
-    
+
     // MARK: ItemType
-    
+
     enum ItemType: String {
         case movie = "Movie"
         case season = "Season"
         case episode = "Episode"
         case series = "Series"
-        
+
         case unknown
-        
+
         var showDetails: Bool {
             switch self {
             case .season, .series:
@@ -172,14 +172,14 @@ public extension BaseItemDto {
             }
         }
     }
-    
+
     var itemType: ItemType {
         guard let originalType = self.type, let knownType = ItemType(rawValue: originalType)  else { return .unknown }
         return knownType
     }
-    
+
     // MARK: PortraitHeaderViewURL
-    
+
     func portraitHeaderViewURL(maxWidth: Int) -> URL {
         switch self.itemType {
         case .movie, .season, .series:

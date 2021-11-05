@@ -12,17 +12,17 @@ import Stinsen
 import SwiftUI
 
 final class UserSignInCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \UserSignInCoordinator.start)
-    
+
     @Root var start = makeStart
-    
+
     let viewModel: UserSignInViewModel
-    
+
     init(viewModel: UserSignInViewModel) {
         self.viewModel = viewModel
     }
-    
+
     @ViewBuilder func makeStart() -> some View {
         UserSignInView(viewModel: viewModel)
     }

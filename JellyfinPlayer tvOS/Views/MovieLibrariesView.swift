@@ -14,7 +14,7 @@ struct MovieLibrariesView: View {
     @EnvironmentObject var movieLibrariesRouter: MovieLibrariesCoordinator.Router
     @StateObject var  viewModel: MovieLibrariesViewModel
     var title: String
-    
+
     var body: some View {
         if viewModel.isLoading == true {
             ProgressView()

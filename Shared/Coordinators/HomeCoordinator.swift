@@ -13,7 +13,7 @@ import Stinsen
 import SwiftUI
 
 final class HomeCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \HomeCoordinator.start)
 
     @Root var start = makeStart
@@ -34,11 +34,11 @@ final class HomeCoordinator: NavigationCoordinatable {
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
-    
+
     func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
         return NavigationViewCoordinator(ItemCoordinator(item: item))
     }
-    
+
     func makeModalLibrary(params: LibraryCoordinatorParams) -> NavigationViewCoordinator<LibraryCoordinator> {
         return NavigationViewCoordinator(LibraryCoordinator(viewModel: params.viewModel, title: params.title))
     }
