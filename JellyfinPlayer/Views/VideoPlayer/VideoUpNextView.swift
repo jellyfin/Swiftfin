@@ -32,7 +32,7 @@ struct VideoUpNextView: View {
         } label: {
             HStack {
                 VStack {
-                    R.string.localizable.playNext.text
+                    L10n.playNext.text
                         .foregroundColor(.white)
                         .font(.subheadline)
                         .fontWeight(.semibold)

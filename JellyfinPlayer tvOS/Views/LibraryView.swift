@@ -88,7 +88,7 @@ struct LibraryView: View {
         .ignoresSafeArea(.all)
     } else {
         VStack {
-            R.string.localizable.noResults.text
+            L10n.noResults.text
             Button { } label: {
                 Text("Reload")
             }

@@ -24,8 +24,8 @@ final class SeasonItemViewModel: ItemViewModel {
     }
 
     override func playButtonText() -> String {
-        guard let playButtonItem = playButtonItem else { return R.string.localizable.play() }
-        guard let episodeLocator = playButtonItem.getEpisodeLocator() else { return R.string.localizable.play() }
+        guard let playButtonItem = playButtonItem else { return L10n.play }
+        guard let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
         return episodeLocator
     }
 

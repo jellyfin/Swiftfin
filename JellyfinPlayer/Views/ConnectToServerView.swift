@@ -20,7 +20,7 @@ struct ConnectToServerView: View {
     var body: some View {
         List {
             Section {
-                TextField(R.string.localizable.serverURL(), text: $uri)
+                TextField(L10n.serverURL, text: $uri)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                     .keyboardType(.URL)
@@ -40,7 +40,7 @@ struct ConnectToServerView: View {
                     Button {
                         viewModel.connectToServer(uri: uri)
                     } label: {
-                        R.string.localizable.connect.text
+                        L10n.connect.text
                     }
                     .disabled(uri.isEmpty)
                 }
@@ -88,7 +88,7 @@ struct ConnectToServerView: View {
                 }
             } header: {
                 HStack {
-                    R.string.localizable.localServers.text
+                    L10n.localServers.text
                     Spacer()
                     
                     Button {
@@ -106,7 +106,7 @@ struct ConnectToServerView: View {
                   message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
                   dismissButton: .cancel())
         }
-        .navigationTitle(R.string.localizable.connect())
+        .navigationTitle(L10n.connect)
         .onAppear {
             viewModel.discoverServers()
             AppURLHandler.shared.appURLState = .allowedInLogin

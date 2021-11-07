@@ -18,11 +18,11 @@ enum AppAppearance: String, CaseIterable, Defaults.Serializable {
     var localizedName: String {
         switch self {
         case .system:
-            return R.string.localizable.system()
+            return L10n.system
         case .dark:
-            return R.string.localizable.dark()
+            return L10n.dark
         case .light:
-            return R.string.localizable.light()
+            return L10n.light
         }
     }
 

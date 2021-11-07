@@ -77,7 +77,7 @@ struct TVLibrariesView: View {
             .ignoresSafeArea(.all)
         } else {
             VStack {
-                R.string.localizable.noResults.text
+                L10n.noResults.text
                 Button {
                     print("tvLibraries reload")
                 } label: {

@@ -79,7 +79,7 @@ struct SeriesItemView: View {
                     HStack {
                         VStack(alignment: .trailing) {
                             if studio != nil {
-                                R.string.localizable.studio.text
+                                L10n.studio.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -91,7 +91,7 @@ struct SeriesItemView: View {
                             }
 
                             if director != nil {
-                                R.string.localizable.director.text
+                                L10n.director.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -103,7 +103,7 @@ struct SeriesItemView: View {
                             }
 
                             if !actors.isEmpty {
-                                R.string.localizable.cast.text
+                                L10n.cast.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -135,7 +135,7 @@ struct SeriesItemView: View {
                         }
                     }.padding(.top, 50)
                     if !viewModel.seasons.isEmpty {
-                        R.string.localizable.seasons.text
+                        L10n.seasons.text
                             .font(.headline)
                             .fontWeight(.semibold)
                         ScrollView(.horizontal) {
@@ -153,7 +153,7 @@ struct SeriesItemView: View {
                     }
 
                     if !viewModel.similarItems.isEmpty {
-                        R.string.localizable.moreLikeThis.text
+                        L10n.moreLikeThis.text
                             .font(.headline)
                             .fontWeight(.semibold)
                         ScrollView(.horizontal) {

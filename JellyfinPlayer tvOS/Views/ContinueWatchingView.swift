@@ -20,7 +20,7 @@ struct ContinueWatchingView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if items.count > 0 {
-                R.string.localizable.continueWatching.text
+                L10n.continueWatching.text
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.leading, 90)

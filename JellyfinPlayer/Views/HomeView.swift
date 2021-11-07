@@ -34,7 +34,7 @@ struct HomeView: View {
                     
                     ForEach(viewModel.libraries, id: \.self) { library in
                         HStack {
-                            Text(R.string.localizable.latestWithString(library.name ?? ""))
+                            Text(L10n.latestWithString(library.name ?? ""))
                                 .font(.title2)
                                 .fontWeight(.bold)
                             Spacer()
@@ -45,7 +45,7 @@ struct HomeView: View {
                                                            title: library.name ?? ""))
                             } label: {
                                 HStack {
-                                    R.string.localizable.seeAll.text.font(.subheadline).fontWeight(.bold)
+                                    L10n.seeAll.text.font(.subheadline).fontWeight(.bold)
                                     Image(systemName: "chevron.right").font(Font.subheadline.bold())
                                 }
                             }
@@ -70,7 +70,7 @@ struct HomeView: View {
 
     var body: some View {
         innerBody
-            .navigationTitle(R.string.localizable.home())
+            .navigationTitle(L10n.home)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {

@@ -40,7 +40,7 @@ struct ItemView: View {
             } else if item.type == "Episode" {
                 EpisodeItemView(viewModel: .init(item: item))
             } else {                
-                Text(R.string.localizable.notImplementedYetWithType(item.type ?? ""))
+                Text(L10n.notImplementedYetWithType(item.type ?? ""))
             }
         }
     }

@@ -95,7 +95,7 @@ struct SeasonItemView: View {
                     }.padding(.top, 50)
 
                     if !viewModel.episodes.isEmpty {
-                        R.string.localizable.episodes.text
+                        L10n.episodes.text
                             .font(.headline)
                             .fontWeight(.semibold)
                         ScrollView(.horizontal) {

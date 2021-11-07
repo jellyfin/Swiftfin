@@ -17,7 +17,7 @@ struct NextUpView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            R.string.localizable.nextUp.text
+            L10n.nextUp.text
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.leading, 16)

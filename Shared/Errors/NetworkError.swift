@@ -85,13 +85,13 @@ enum NetworkError: Error {
                 logMessage = "Cannot connect to host."
                 logConstructor.message = logMessage
                 errorMessage = ErrorMessage(code: err._code,
-                                            title: R.string.localizable.error(),
+                                            title: L10n.error,
                                             displayMessage: displayMessage,
                                             logConstructor: logConstructor)
             default:
                 logConstructor.message = logMessage
                 errorMessage = ErrorMessage(code: err._code,
-                                            title: R.string.localizable.error(),
+                                            title: L10n.error,
                                             displayMessage: displayMessage,
                                             logConstructor: logConstructor)
             }
@@ -111,7 +111,7 @@ enum NetworkError: Error {
         case .error:
             logConstructor.message = logMessage
             errorMessage = ErrorMessage(code: 0,
-                                        title: R.string.localizable.error(),
+                                        title: L10n.error,
                                         displayMessage: displayMessage,
                                         logConstructor: logConstructor)
         }
@@ -140,7 +140,7 @@ enum NetworkError: Error {
             default:
                 logConstructor.message = logMessage
                 errorMessage = ErrorMessage(code: code,
-                                            title: R.string.localizable.error(),
+                                            title: L10n.error,
                                             displayMessage: displayMessage,
                                             logConstructor: logConstructor)
             }

@@ -22,7 +22,7 @@ struct BasicAppSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Picker(R.string.localizable.appearance(), selection: $appAppearance) {
+                Picker(L10n.appearance, selection: $appAppearance) {
                     ForEach(self.viewModel.appearances, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)
                     }
@@ -30,21 +30,21 @@ struct BasicAppSettingsView: View {
                     UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
                 })
             } header: {
-                R.string.localizable.accessibility.text
+                L10n.accessibility.text
             }
             
             Button {
                 resetTapped = true
             } label: {
-                R.string.localizable.reset.text
+                L10n.reset.text
             }
         }
-        .alert(R.string.localizable.reset(), isPresented: $resetTapped, actions: {
+        .alert(L10n.reset, isPresented: $resetTapped, actions: {
             Button(role: .destructive) {
                 viewModel.reset()
                 basicAppSettingsRouter.dismissCoordinator()
             } label: {
-                R.string.localizable.reset.text
+                L10n.reset.text
             }
         })
         .navigationTitle("Settings")

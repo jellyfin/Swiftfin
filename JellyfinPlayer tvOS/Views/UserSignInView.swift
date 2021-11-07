@@ -20,11 +20,11 @@ struct UserSignInView: View {
         Form {
             
             Section {
-                TextField(R.string.localizable.username(), text: $username)
+                TextField(L10n.username, text: $username)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                 
-                SecureField(R.string.localizable.password(), text: $password)
+                SecureField(L10n.password, text: $password)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                 
@@ -32,7 +32,7 @@ struct UserSignInView: View {
                     viewModel.login(username: username, password: password)
                 } label: {
                     HStack {
-                        R.string.localizable.connect.text
+                        L10n.connect.text
                         Spacer()
                         if viewModel.isLoading {
                             ProgressView()

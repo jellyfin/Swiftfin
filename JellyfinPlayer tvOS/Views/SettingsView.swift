@@ -22,7 +22,7 @@ struct SettingsView: View {
 
     var body: some View {
             Form {
-                Section(header: R.string.localizable.playbackSettings()) {
+                Section(header: L10n.playbackSettings) {
                     Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
@@ -36,7 +36,7 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: R.string.localizable.accessibility.text) {
+                Section(header: L10n.accessibility.text) {
                     Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
                     SearchablePicker(label: "Preferred subtitle language",
                                      options: viewModel.langs,
@@ -58,12 +58,12 @@ struct SettingsView: View {
 
                 Section(header: Text(SessionManager.main.currentLogin.server.name)) {
                     HStack {
-                        Text(R.string.localizable.signedInAsWithString(SessionManager.main.currentLogin.user.username))).foregroundColor(.primary)
+                        Text(L10n.signedInAsWithString(SessionManager.main.currentLogin.user.username))).foregroundColor(.primary)
                         Spacer()
                         Button {
                             SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
                         } label: {
-                            R.string.localizable.switchUser.text.font(.callout)
+                            L10n.switchUser.text.font(.callout)
                         }
                     }
                     Button {

@@ -23,7 +23,7 @@ struct LibraryListView: View {
                     ZStack {
                         HStack {
                             Spacer()
-                            R.string.localizable.yourFavorites.text
+                            L10n.yourFavorites.text
                                 .foregroundColor(.black)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
@@ -39,12 +39,12 @@ struct LibraryListView: View {
                 .padding(.bottom, 5)
 
                 NavigationLink(destination: LazyView {
-                    R.string.localizable.wip.text
+                    L10n.wip.text
                 }) {
                     ZStack {
                         HStack {
                             Spacer()
-                            R.string.localizable.allGenres.text
+                            L10n.allGenres.text
                                 .foregroundColor(.black)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
@@ -98,7 +98,7 @@ struct LibraryListView: View {
                 .padding(.trailing, 16)
                 .padding(.top, 8)
         }
-        .navigationTitle(R.string.localizable.allMedia())
+        .navigationTitle(L10n.allMedia)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {

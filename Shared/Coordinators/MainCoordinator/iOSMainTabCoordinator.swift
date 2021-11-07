@@ -26,7 +26,7 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder func makeHomeTab(isActive: Bool) -> some View {
         Image(systemName: "house")
-        R.string.localizable.home.text
+        L10n.home.text
     }
 
     func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
@@ -35,7 +35,7 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder func makeAllMediaTab(isActive: Bool) -> some View {
         Image(systemName: "folder")
-        R.string.localizable.allMedia.text
+        L10n.allMedia.text
     }
 
     @ViewBuilder func customize(_ view: AnyView) -> some View {

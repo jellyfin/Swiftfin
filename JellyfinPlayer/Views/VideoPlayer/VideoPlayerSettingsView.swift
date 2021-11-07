@@ -40,7 +40,7 @@ struct VideoPlayerSettings: View {
 
     var body: some View {
         Form {
-            Picker(R.string.localizable.closedCaptions(), selection: $captionTrack) {
+            Picker(L10n.closedCaptions, selection: $captionTrack) {
                 ForEach(delegate.subtitleTrackArray, id: \.id) { caption in
                     Text(caption.name).tag(caption.id)
                 }
@@ -48,14 +48,14 @@ struct VideoPlayerSettings: View {
             .onChange(of: captionTrack) { track in
                 self.delegate.subtitleTrackChanged(newTrackID: track)
             }
-            Picker(R.string.localizable.audioTrack(), selection: $audioTrack) {
+            Picker(L10n.audioTrack, selection: $audioTrack) {
                 ForEach(delegate.audioTrackArray, id: \.id) { caption in
                     Text(caption.name).tag(caption.id).lineLimit(1)
                 }
             }.onChange(of: audioTrack) { track in
                 self.delegate.audioTrackChanged(newTrackID: track)
             }
-            Picker(R.string.localizable.playbackSpeed(), selection: $playbackSpeedSelection) {
+            Picker(L10n.playbackSpeed, selection: $playbackSpeedSelection) {
                 ForEach(delegate.playbackSpeeds.indices, id: \.self) { speedIndex in
                     let speed = delegate.playbackSpeeds[speedIndex]
                     Text("\(String(speed))x").tag(speedIndex)
@@ -65,7 +65,7 @@ struct VideoPlayerSettings: View {
                 self.delegate.playbackSpeedChanged(index: index)
             })
         }.navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(R.string.localizable.audioAndCaptions())
+            .navigationTitle(L10n.audioAndCaptions)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 if UIDevice.current.userInterfaceIdiom == .phone {
@@ -74,7 +74,7 @@ struct VideoPlayerSettings: View {
                     } label: {
                         HStack {
                             Image(systemName: "chevron.left")
-                            R.string.localizable.back.text.font(.callout)
+                            L10n.back.text.font(.callout)
                         }
                     }
                 }

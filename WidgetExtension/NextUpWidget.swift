@@ -135,7 +135,7 @@ struct NextUpEntryView: View {
                 }
                 .background(Color.blue)
             } else if entry.items.isEmpty {
-                R.string.localizable.emptyNextUp()
+                L10n.emptyNextUp.text
                     .font(.body)
                     .bold()
                     .foregroundColor(.primary)
@@ -214,7 +214,7 @@ extension NextUpEntryView {
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                Text("\(item.0.name ?? "") · \(R.string.localizable.seasonAndEpisode(String(item.0.parentIndexNumber ?? 0), String(item.0.indexNumber ?? 0)))")
+                Text("\(item.0.name ?? "") · \(L10n.seasonAndEpisode(String(item.0.parentIndexNumber ?? 0), String(item.0.indexNumber ?? 0)))")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.secondary)
@@ -242,7 +242,7 @@ extension NextUpEntryView {
                         .foregroundColor(.primary)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
 
-                    Text("\(item.0.name ?? "") · \(R.string.localizable.seasonAndEpisode(String(item.0.parentIndexNumber ?? 0), String(item.0.indexNumber ?? 0)))")
+                    Text("\(item.0.name ?? "") · \(L10n.seasonAndEpisode(String(item.0.parentIndexNumber ?? 0), String(item.0.indexNumber ?? 0)))")
                         .font(.caption)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
@@ -304,7 +304,7 @@ extension NextUpEntryView {
                                          .fontWeight(.semibold)
                                          .foregroundColor(.white)
                                          .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                                     Text("\(firstItem.0.name ?? "") · \(R.string.localizable.seasonAndEpisode(String(firstItem.0.parentIndexNumber ?? 0), String(firstItem.0.indexNumber ?? 0)))")
+                                     Text("\(firstItem.0.name ?? "") · \(L10n.seasonAndEpisode(String(firstItem.0.parentIndexNumber ?? 0), String(firstItem.0.indexNumber ?? 0)))")
                                          .font(.caption)
                                          .fontWeight(.semibold)
                                          .foregroundColor(.gray)
@@ -346,7 +346,7 @@ struct NextUpWidget: Widget {
                             provider: NextUpWidgetProvider()) { entry in
             NextUpEntryView(entry: entry)
         }
-        .configurationDisplayName(R.string.localizable.nextUp())
+        .configurationDisplayName(L10n.nextUp)
         .description("Keep watching where you left off or see what's up next.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }

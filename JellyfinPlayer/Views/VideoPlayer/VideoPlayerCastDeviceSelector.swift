@@ -56,7 +56,7 @@ struct VideoPlayerCastDeviceSelector: View {
                                 delegate?.castPopoverDismissed()
                             } label: {
                                 HStack {
-                                    R.string.localizable.connect.text
+                                    L10n.connect.text
                                         .font(.caption)
                                         .fontWeight(.medium)
                                     Image(systemName: "bonjour")
@@ -66,14 +66,14 @@ struct VideoPlayerCastDeviceSelector: View {
                         }
                     }
                 } else {
-                    R.string.localizable.noCastdevicesfound.text
+                    L10n.noCastdevicesfound.text
                         .foregroundColor(.secondary)
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(R.string.localizable.selectCastDestination())
+            .navigationTitle(L10n.selectCastDestination)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if UIDevice.current.userInterfaceIdiom == .phone {
@@ -82,7 +82,7 @@ struct VideoPlayerCastDeviceSelector: View {
                         } label: {
                             HStack {
                                 Image(systemName: "chevron.left")
-                                R.string.localizable.back.text.font(.callout)
+                                L10n.back.text.font(.callout)
                             }
                         }
                     }
