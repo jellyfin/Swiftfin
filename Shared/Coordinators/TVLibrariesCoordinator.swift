@@ -13,7 +13,7 @@ import Stinsen
 import SwiftUI
 
 final class TVLibrariesCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \TVLibrariesCoordinator.start)
 
     @Root var start = makeStart

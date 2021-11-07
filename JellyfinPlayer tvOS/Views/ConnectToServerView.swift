@@ -10,10 +10,10 @@ import SwiftUI
 import Stinsen
 
 struct ConnectToServerView: View {
-    
+
     @StateObject var viewModel = ConnectToServerViewModel()
     @State var uri = ""
-    
+
     var body: some View {
         List {
             Section {
@@ -36,7 +36,7 @@ struct ConnectToServerView: View {
             } header: {
                 Text("Connect to a Jellyfin server")
             }
-            
+
             Section(header: L10n.localServers.text) {
                 if viewModel.searching {
                     ProgressView()

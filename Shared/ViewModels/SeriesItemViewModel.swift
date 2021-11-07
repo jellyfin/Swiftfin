@@ -21,19 +21,19 @@ final class SeriesItemViewModel: ItemViewModel {
         requestSeasons()
         getNextUp()
     }
-    
+
     override func playButtonText() -> String {
         guard let playButtonItem = playButtonItem else { return L10n.play }
         guard let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
         return episodeLocator
     }
-    
+
     override func shouldDisplayRuntime() -> Bool {
         return false
     }
 
-    private func getNextUp() {        
-        
+    private func getNextUp() {
+
         LogManager.shared.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
         TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], seriesId: self.item.id!, enableUserData: true)
             .trackActivity(loading)

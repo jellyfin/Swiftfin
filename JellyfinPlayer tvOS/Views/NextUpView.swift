@@ -13,7 +13,7 @@ import Stinsen
 
 struct NextUpView: View {
     var items: [BaseItemDto]
-    
+
     var homeRouter: HomeCoordinator.Router? = RouterStore.shared.retrieve()
 
     var body: some View {

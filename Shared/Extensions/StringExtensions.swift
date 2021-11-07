@@ -32,7 +32,7 @@ extension String {
 
         return "\(padString)\(self)"
     }
-    
+
     var text: Text {
         Text(self)
     }

@@ -30,7 +30,7 @@ class ViewModel: ObservableObject {
             break
         case .failure(let error):
             let logConstructor = LogConstructor(message: "__NOTHING__", tag: tag, level: logLevel, function: function, file: file, line: line)
-            
+
             switch error {
             case is ErrorResponse:
                 let networkError: NetworkError
@@ -52,7 +52,7 @@ class ViewModel: ObservableObject {
                 self.errorMessage = networkError.errorMessage
 
                 networkError.logMessage()
-                
+
             case is SwiftfinStore.Errors:
                 let swiftfinError = error as! SwiftfinStore.Errors
                 let errorMessage = ErrorMessage(code: ErrorMessage.noShowErrorCode,
@@ -61,7 +61,7 @@ class ViewModel: ObservableObject {
                                                 logConstructor: logConstructor)
                 self.errorMessage = errorMessage
                 LogManager.shared.log.error("Request failed: \(swiftfinError.errorDescription ?? "")")
-                
+
             default:
                 let genericErrorMessage = ErrorMessage(code: ErrorMessage.noShowErrorCode,
                                                        title: "Generic Error",

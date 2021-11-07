@@ -12,14 +12,14 @@ import Stinsen
 import SwiftUI
 
 struct BasicAppSettingsView: View {
-    
+
     @EnvironmentObject var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
     @ObservedObject var viewModel: BasicAppSettingsViewModel
     @State var resetTapped: Bool = false
-    
+
     @Default(.appAppearance) var appAppearance
     @Default(.defaultHTTPScheme) var defaultHTTPScheme
-    
+
     var body: some View {
         Form {
             Section {
@@ -33,7 +33,7 @@ struct BasicAppSettingsView: View {
             } header: {
                 L10n.accessibility.text
             }
-            
+
             Section {
                 Picker("Default Scheme", selection: $defaultHTTPScheme) {
                     ForEach(HTTPScheme.allCases, id: \.self) { scheme in
@@ -43,7 +43,7 @@ struct BasicAppSettingsView: View {
             } header: {
                 Text("Networking")
             }
-            
+
             Button {
                 resetTapped = true
             } label: {

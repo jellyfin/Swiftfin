@@ -19,24 +19,24 @@ final class MainTabCoordinator: TabCoordinatable {
          \MainTabCoordinator.other,
          \MainTabCoordinator.settings
     ])
-    
+
     @Route(tabItem: makeHomeTab) var home = makeHome
     @Route(tabItem: makeTvTab) var tv = makeTv
     @Route(tabItem: makeMoviesTab) var movies = makeMovies
     @Route(tabItem: makeOtherTab) var other = makeOther
     @Route(tabItem: makeSettingsTab) var settings = makeSettings
-    
+
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
         return NavigationViewCoordinator(HomeCoordinator())
     }
-    
+
     @ViewBuilder func makeHomeTab(isActive: Bool) -> some View {
         HStack {
             Image(systemName: "house")
             L10n.home.text
         }
     }
-    
+
     func makeTv() -> NavigationViewCoordinator<TVLibrariesCoordinator> {
         return NavigationViewCoordinator(TVLibrariesCoordinator(viewModel: TVLibrariesViewModel(), title: "TV Shows"))
     }
@@ -47,7 +47,7 @@ final class MainTabCoordinator: TabCoordinatable {
             Text("TV Shows")
         }
     }
-    
+
     func makeMovies() -> NavigationViewCoordinator<MovieLibrariesCoordinator> {
         return NavigationViewCoordinator(MovieLibrariesCoordinator(viewModel: MovieLibrariesViewModel(), title: "Movies"))
     }
@@ -69,11 +69,11 @@ final class MainTabCoordinator: TabCoordinatable {
             Text("Other")
         }
     }
-    
+
     func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
         return NavigationViewCoordinator(SettingsCoordinator())
     }
-    
+
     @ViewBuilder func makeSettingsTab(isActive: Bool) -> some View {
         HStack {
             Image(systemName: "gearshape.fill")

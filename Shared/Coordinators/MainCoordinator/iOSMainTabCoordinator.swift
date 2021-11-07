@@ -42,7 +42,7 @@ final class MainTabCoordinator: TabCoordinatable {
         view.onAppear {
             AppURLHandler.shared.appURLState = .allowed
             // TODO: todo
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {                
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                 AppURLHandler.shared.processLaunchedURLIfNeeded()
             }
         }

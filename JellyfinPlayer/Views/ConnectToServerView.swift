@@ -11,12 +11,12 @@ import Stinsen
 import SwiftUI
 
 struct ConnectToServerView: View {
-    
+
     @StateObject var viewModel: ConnectToServerViewModel
     @State var uri = ""
-    
+
     @Default(.defaultHTTPScheme) var defaultHTTPScheme
-    
+
     var body: some View {
         List {
             Section {
@@ -29,7 +29,7 @@ struct ConnectToServerView: View {
                             uri = "\(defaultHTTPScheme.rawValue)://"
                         }
                     }
-                
+
                 if viewModel.isLoading {
                     Button(role: .destructive) {
                         viewModel.cancelConnection()
@@ -47,7 +47,7 @@ struct ConnectToServerView: View {
             } header: {
                 Text("Connect to a Jellyfin server")
             }
-            
+
             Section {
                 if viewModel.searching {
                     HStack(alignment: .center, spacing: 5) {
@@ -90,7 +90,7 @@ struct ConnectToServerView: View {
                 HStack {
                     L10n.localServers.text
                     Spacer()
-                    
+
                     Button {
                         viewModel.discoverServers()
                     } label: {

@@ -12,10 +12,10 @@ import Introspect
 import SwiftUI
 
 struct HomeView: View {
-    
+
     @EnvironmentObject var homeRouter: HomeCoordinator.Router
     @StateObject var viewModel = HomeViewModel()
-    
+
     private let refreshHelper = RefreshHelper()
 
     @ViewBuilder
@@ -31,7 +31,7 @@ struct HomeView: View {
                     if !viewModel.nextUpItems.isEmpty {
                         NextUpView(items: viewModel.nextUpItems)
                     }
-                    
+
                     ForEach(viewModel.libraries, id: \.self) { library in
                         HStack {
                             Text(L10n.latestWithString(library.name ?? ""))
@@ -58,10 +58,10 @@ struct HomeView: View {
             }
             .introspectScrollView { scrollView in
                 let control = UIRefreshControl()
-                
+
                 refreshHelper.refreshControl = control
                 refreshHelper.refreshAction = viewModel.refresh
-                
+
                 control.addTarget(refreshHelper, action: #selector(RefreshHelper.didRefresh), for: .valueChanged)
                 scrollView.refreshControl = control
             }

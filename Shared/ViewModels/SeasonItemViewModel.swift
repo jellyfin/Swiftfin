@@ -70,7 +70,7 @@ final class SeasonItemViewModel: ItemViewModel {
             playButtonItem = firstEpisode
         }
     }
-    
+
     func routeToSeriesItem() {
         guard let id = item.seriesId else { return }
         UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)

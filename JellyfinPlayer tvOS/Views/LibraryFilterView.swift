@@ -10,7 +10,7 @@ import Stinsen
 import SwiftUI
 
 struct LibraryFilterView: View {
-    
+
     @EnvironmentObject var filterRouter: FilterCoordinator.Router
     @Binding var filters: LibraryFilters
     var parentId: String = ""

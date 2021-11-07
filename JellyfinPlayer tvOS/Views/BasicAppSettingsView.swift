@@ -12,13 +12,13 @@ import Stinsen
 import SwiftUI
 
 struct BasicAppSettingsView: View {
-    
+
     @EnvironmentObject var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
     @ObservedObject var viewModel: BasicAppSettingsViewModel
     @State var resetTapped: Bool = false
-    
+
     @Default(.appAppearance) var appAppearance
-    
+
     var body: some View {
         Form {
             Section {
@@ -32,7 +32,7 @@ struct BasicAppSettingsView: View {
             } header: {
                 L10n.accessibility.text
             }
-            
+
             Button {
                 resetTapped = true
             } label: {

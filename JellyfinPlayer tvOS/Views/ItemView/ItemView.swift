@@ -39,7 +39,7 @@ struct ItemView: View {
                 SeasonItemView(viewModel: .init(item: item))
             } else if item.type == "Episode" {
                 EpisodeItemView(viewModel: .init(item: item))
-            } else {                
+            } else {
                 Text(L10n.notImplementedYetWithType(item.type ?? ""))
             }
         }

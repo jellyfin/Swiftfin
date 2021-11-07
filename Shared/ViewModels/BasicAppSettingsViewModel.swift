@@ -10,9 +10,9 @@
 import SwiftUI
 
 final class BasicAppSettingsViewModel: ViewModel {
-    
+
     let appearances = AppAppearance.allCases
-    
+
     func reset() {
         SessionManager.main.purge()
     }
