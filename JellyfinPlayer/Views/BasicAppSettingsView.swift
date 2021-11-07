@@ -18,6 +18,7 @@ struct BasicAppSettingsView: View {
     @State var resetTapped: Bool = false
     
     @Default(.appAppearance) var appAppearance
+    @Default(.defaultHTTPScheme) var defaultHTTPScheme
     
     var body: some View {
         Form {
@@ -31,6 +32,16 @@ struct BasicAppSettingsView: View {
                 })
             } header: {
                 Text("Accessibility")
+            }
+            
+            Section {
+                Picker("Default Scheme", selection: $defaultHTTPScheme) {
+                    ForEach(HTTPScheme.allCases, id: \.self) { scheme in
+                        Text("\(scheme.rawValue)")
+                    }
+                }
+            } header: {
+                Text("Networking")
             }
             
             Button {
