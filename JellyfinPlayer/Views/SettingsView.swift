@@ -108,7 +108,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section(header: Text("Accessibility")) {
+            Section(header: R.string.localizable.accessibility.text) {
                 Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
                 SearchablePicker(label: "Preferred subtitle language",
                                  options: viewModel.langs,
@@ -129,7 +129,7 @@ struct SettingsView: View {
                                                                           .auto
                                                                   },
                                                                   set: { autoSelectAudioLangcode = $0.isoCode }))
-                Picker(NSLocalizedString("Appearance", comment: ""), selection: $appAppearance) {
+                Picker(R.string.localizable.appearance(), selection: $appAppearance) {
                     ForEach(self.viewModel.appearances, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)
                     }

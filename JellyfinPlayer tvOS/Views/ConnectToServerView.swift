@@ -17,7 +17,7 @@ struct ConnectToServerView: View {
     var body: some View {
         List {
             Section {
-                TextField(NSLocalizedString("Server URL", comment: ""), text: $uri)
+                TextField(R.string.localizable.serverURL(), text: $uri)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                     .keyboardType(.URL)
@@ -25,7 +25,7 @@ struct ConnectToServerView: View {
                     viewModel.connectToServer(uri: uri)
                 } label: {
                     HStack {
-                        Text("Connect")
+                        R.string.localizable.connect.text
                         Spacer()
                         if viewModel.isLoading {
                             ProgressView()
@@ -37,7 +37,7 @@ struct ConnectToServerView: View {
                 Text("Connect to a Jellyfin server")
             }
             
-            Section(header: Text("Local Servers")) {
+            Section(header: R.string.localizable.localServers.text) {
                 if viewModel.searching {
                     ProgressView()
                 }
@@ -68,6 +68,6 @@ struct ConnectToServerView: View {
                   message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
                   dismissButton: .cancel())
         }
-        .navigationTitle("Connect")
+        .navigationTitle(R.string.localizable.connect())
     }
 }

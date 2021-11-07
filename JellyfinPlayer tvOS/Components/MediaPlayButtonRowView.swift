@@ -20,7 +20,7 @@ struct MediaPlayButtonRowView: View {
               NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
                     MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
                 }
-                Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : "Play")
+                Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : R.string.localizable.play())
                     .font(.caption)
             }
             VStack {

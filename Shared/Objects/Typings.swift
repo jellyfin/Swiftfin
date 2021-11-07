@@ -77,7 +77,7 @@ enum ItemType: String {
     var localized: String {
         switch self {
         case .episode:
-            return "Episodes"
+            return R.string.localizable.episodes()
         case .movie:
             return "Movies"
         case .series:

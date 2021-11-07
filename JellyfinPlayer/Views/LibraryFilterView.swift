@@ -31,32 +31,32 @@ struct LibraryFilterView: View {
             } else {
                 Form {
                     if viewModel.enabledFilterType.contains(.genre) {
-                        MultiSelector(label: NSLocalizedString("Genres", comment: ""),
+                        MultiSelector(label: R.string.localizable.genres(),
                                       options: viewModel.possibleGenres,
                                       optionToString: { $0.name ?? "" },
                                       selected: $viewModel.modifiedFilters.withGenres)
                     }
                     if viewModel.enabledFilterType.contains(.filter) {
-                        MultiSelector(label: NSLocalizedString("Filters", comment: ""),
+                        MultiSelector(label: R.string.localizable.filters(),
                                       options: viewModel.possibleItemFilters,
                                       optionToString: { $0.localized },
                                       selected: $viewModel.modifiedFilters.filters)
                     }
                     if viewModel.enabledFilterType.contains(.tag) {
-                        MultiSelector(label: NSLocalizedString("Tags", comment: ""),
+                        MultiSelector(label: R.string.localizable.tags(),
                                       options: viewModel.possibleTags,
                                       optionToString: { $0 },
                                       selected: $viewModel.modifiedFilters.tags)
                     }
                     if viewModel.enabledFilterType.contains(.sortBy) {
-                        Picker(selection: $viewModel.selectedSortBy, label: Text("Sort by")) {
+                        Picker(selection: $viewModel.selectedSortBy, label: R.string.localizable.sortBy.text) {
                             ForEach(viewModel.possibleSortBys, id: \.self) { so in
                                 Text(so.localized).tag(so)
                             }
                         }
                     }
                     if viewModel.enabledFilterType.contains(.sortOrder) {
-                        Picker(selection: $viewModel.selectedSortOrder, label: Text("Display order")) {
+                        Picker(selection: $viewModel.selectedSortOrder, label: R.string.localizable.displayOrder.text) {
                             ForEach(viewModel.possibleSortOrders, id: \.self) { so in
                                 Text(so.rawValue).tag(so)
                             }
@@ -68,11 +68,11 @@ struct LibraryFilterView: View {
                     self.filters = viewModel.modifiedFilters
                     filterRouter.dismissCoordinator()
                 } label: {
-                    Text("Reset")
+                    R.string.localizable.reset.text
                 }
             }
         }
-        .navigationBarTitle(NSLocalizedString("Filter Results", comment: ""), displayMode: .inline)
+        .navigationBarTitle(R.string.localizable.filterResults(), displayMode: .inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 Button {
@@ -87,7 +87,7 @@ struct LibraryFilterView: View {
                     self.filters = viewModel.modifiedFilters
                     filterRouter.dismissCoordinator()
                 } label: {
-                    Text("Apply")
+                    R.string.localizable.apply.text
                 }
             }
         }

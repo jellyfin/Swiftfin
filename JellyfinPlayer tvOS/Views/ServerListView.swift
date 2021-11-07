@@ -72,7 +72,7 @@ struct ServerListView: View {
             Button {
                 serverListRouter.route(to: \.connectToServer)
             } label: {
-                Text("Connect")
+                R.string.localizable.connect.text
                     .bold()
                     .font(.callout)
             }

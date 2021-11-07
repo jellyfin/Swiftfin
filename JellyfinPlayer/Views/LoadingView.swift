@@ -32,7 +32,7 @@ struct LoadingView<Content>: View where Content: View {
                     // indicator, with some text underneath showing what we are doing
                     HStack {
                         ProgressView()
-                        Text(text ?? "Loading").fontWeight(.semibold).font(.callout).offset(x: 60)
+                        Text(text ?? R.string.localizable.loading()).fontWeight(.semibold).font(.callout).offset(x: 60)
                         Spacer()
                     }
                     .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 10))
@@ -70,7 +70,7 @@ struct LoadingViewNoBlur<Content>: View where Content: View {
                     // indicator, with some text underneath showing what we are doing
                     HStack {
                         ProgressView()
-                        Text(text ?? "Loading").fontWeight(.semibold).font(.callout).offset(x: 60)
+                        Text(text ?? R.string.localizable.loading()).fontWeight(.semibold).font(.callout).offset(x: 60)
                         Spacer()
                     }
                     .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 10))

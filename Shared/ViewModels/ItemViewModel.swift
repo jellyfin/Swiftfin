@@ -35,7 +35,7 @@ class ItemViewModel: ViewModel {
     }
     
     func playButtonText() -> String {
-        return item.getItemProgressString() == "" ? "Play" : item.getItemProgressString()
+        return item.getItemProgressString() == "" ? R.string.localizable.play() : item.getItemProgressString()
     }
     
     func getItemDisplayName() -> String {

@@ -33,7 +33,7 @@ final class MainTabCoordinator: TabCoordinatable {
     @ViewBuilder func makeHomeTab(isActive: Bool) -> some View {
         HStack {
             Image(systemName: "house")
-            Text("Home")
+            R.string.localizable.home.text
         }
     }
     

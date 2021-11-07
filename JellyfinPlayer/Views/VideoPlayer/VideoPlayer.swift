@@ -421,7 +421,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         if manifest.type == "Movie" {
             titleLabel.text = manifest.name ?? ""
         } else {
-            titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
+            titleLabel.text = "\(R.string.localizable.seasonAndEpisode(String(manifest.parentIndexNumber ?? 0), String(manifest.indexNumber ?? 0))) “\(manifest.name ?? "")”"
 
             setupNextUpView()
             upNextViewModel.delegate = self
@@ -816,7 +816,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         shouldShowLoadingScreen = true
         videoControlsView.isHidden = true
 
-        titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
+        titleLabel.text = "\(R.string.localizable.seasonAndEpisode(String(manifest.parentIndexNumber ?? 0), String(manifest.indexNumber ?? 0))) “\(manifest.name ?? "")”"
 
         setupMediaPlayer()
         getNextEpisode()

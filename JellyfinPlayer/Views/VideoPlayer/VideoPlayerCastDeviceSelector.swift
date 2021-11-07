@@ -56,7 +56,7 @@ struct VideoPlayerCastDeviceSelector: View {
                                 delegate?.castPopoverDismissed()
                             } label: {
                                 HStack {
-                                    Text("Connect")
+                                    R.string.localizable.connect.text
                                         .font(.caption)
                                         .fontWeight(.medium)
                                     Image(systemName: "bonjour")
@@ -66,14 +66,14 @@ struct VideoPlayerCastDeviceSelector: View {
                         }
                     }
                 } else {
-                    Text("No Cast devices found..")
+                    R.string.localizable.noCastdevicesfound.text
                         .foregroundColor(.secondary)
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(NSLocalizedString("Select Cast Destination", comment: ""))
+            .navigationTitle(R.string.localizable.selectCastDestination())
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if UIDevice.current.userInterfaceIdiom == .phone {
@@ -82,7 +82,7 @@ struct VideoPlayerCastDeviceSelector: View {
                         } label: {
                             HStack {
                                 Image(systemName: "chevron.left")
-                                Text("Back").font(.callout)
+                                R.string.localizable.back.text.font(.callout)
                             }
                         }
                     }

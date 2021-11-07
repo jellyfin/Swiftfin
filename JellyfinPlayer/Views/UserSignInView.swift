@@ -20,11 +20,11 @@ struct UserSignInView: View {
         Form {
             
             Section {
-                TextField("Username", text: $username)
+                TextField(R.string.localizable.username(), text: $username)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                 
-                SecureField("Password", text: $password)
+                SecureField(R.string.localizable.password(), text: $password)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                 

@@ -77,7 +77,7 @@ struct MovieItemView: View {
                     HStack {
                         VStack(alignment: .trailing) {
                             if studio != nil {
-                                Text("STUDIO")
+                                R.string.localizable.studio.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -89,7 +89,7 @@ struct MovieItemView: View {
                             }
 
                             if director != nil {
-                                Text("DIRECTOR")
+                                R.string.localizable.director.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -101,7 +101,7 @@ struct MovieItemView: View {
                             }
 
                             if !actors.isEmpty {
-                                Text("CAST")
+                                R.string.localizable.cast.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -133,7 +133,7 @@ struct MovieItemView: View {
                     }.padding(.top, 50)
 
                     if !viewModel.similarItems.isEmpty {
-                        Text("More Like This")
+                        R.string.localizable.moreLikeThis.text
                             .font(.headline)
                             .fontWeight(.semibold)
                         ScrollView(.horizontal) {

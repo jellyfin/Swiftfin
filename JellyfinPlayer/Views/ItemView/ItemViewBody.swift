@@ -29,7 +29,7 @@ struct ItemViewBody: View {
                 PortraitImageHStackView(items: seriesViewModel.seasons,
                                         maxWidth: 150,
                                         topBarView: {
-                                            Text("Seasons")
+                    R.string.localizable.seasons.text
                                                 .font(.callout)
                                                 .fontWeight(.semibold)
                                                 .padding(.top, 3)
@@ -41,7 +41,7 @@ struct ItemViewBody: View {
 
             // MARK: Genres
 
-            PillHStackView(title: "Genres",
+            PillHStackView(title: R.string.localizable.genres(),
                            items: viewModel.item.genreItems ?? [],
                            selectedAction: { genre in
                                itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
@@ -50,7 +50,7 @@ struct ItemViewBody: View {
             // MARK: Studios
 
             if let studios = viewModel.item.studios {
-                PillHStackView(title: "Studios",
+                PillHStackView(title: R.string.localizable.studios(),
                                items: studios) { studio in
                     itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                 }
@@ -79,7 +79,7 @@ struct ItemViewBody: View {
                 PortraitImageHStackView(items: viewModel.similarItems,
                                         maxWidth: 150,
                                         topBarView: {
-                                            Text("More Like This")
+                    R.string.localizable.moreLikeThis.text
                                                 .font(.callout)
                                                 .fontWeight(.semibold)
                                                 .padding(.top, 3)

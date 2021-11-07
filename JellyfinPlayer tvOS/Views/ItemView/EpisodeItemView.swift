@@ -76,7 +76,7 @@ struct EpisodeItemView: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .trailing) {
                         if studio != nil {
-                            Text("STUDIO")
+                            R.string.localizable.studio.text
                                 .font(.body)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
@@ -88,7 +88,7 @@ struct EpisodeItemView: View {
                         }
 
                         if director != nil {
-                            Text("DIRECTOR")
+                            R.string.localizable.director.text
                                 .font(.body)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
@@ -100,7 +100,7 @@ struct EpisodeItemView: View {
                         }
 
                         if !actors.isEmpty {
-                            Text("CAST")
+                            R.string.localizable.cast.text
                                 .font(.body)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
@@ -133,7 +133,7 @@ struct EpisodeItemView: View {
                               NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
                                     MediaViewActionButton(icon: "play.fill")
                                 }
-                                Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : "Play")
+                                Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : R.string.localizable.play())
                                     .font(.caption)
                             }
                             VStack {
@@ -152,7 +152,7 @@ struct EpisodeItemView: View {
                 }.padding(.top, 50)
 
                 if !viewModel.similarItems.isEmpty {
-                    Text("More Like This")
+                    R.string.localizable.moreLikeThis.text
                         .font(.headline)
                         .fontWeight(.semibold)
                     ScrollView(.horizontal) {

@@ -14,7 +14,7 @@ class AudioViewController: InfoTabViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tabBarItem.title = NSLocalizedString("Audio", comment: "")
+        tabBarItem.title = "Audio"
 
     }
 

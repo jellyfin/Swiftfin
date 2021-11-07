@@ -38,7 +38,7 @@ struct HomeView: View {
                                     self.homeRouter.route(to: \.modalLibrary, (.init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
                                 } label: {
                                     HStack {
-                                        Text("Latest \(library?.name ?? "")")
+                                        Text(R.string.localizable.latestWithString(library?.name ?? ""))
                                         .font(.headline)
                                         .fontWeight(.semibold)
                                         Image(systemName: "chevron.forward.circle.fill")

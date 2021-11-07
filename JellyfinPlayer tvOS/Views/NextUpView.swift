@@ -19,7 +19,7 @@ struct NextUpView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if items.count > 0 {
-                Text("Next Up")
+                R.string.localizable.nextUp.text
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.leading, 90)

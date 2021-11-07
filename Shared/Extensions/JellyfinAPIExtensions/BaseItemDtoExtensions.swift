@@ -80,7 +80,7 @@ public extension BaseItemDto {
 
     func getEpisodeLocator() -> String? {
         if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
-            return "S\(seasonNo):E\(episodeNo)"
+            return R.string.localizable.seasonAndEpisode(String(seasonNo), String(episodeNo))
         }
         return nil
     }

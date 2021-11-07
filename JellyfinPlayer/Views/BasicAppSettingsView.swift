@@ -23,7 +23,7 @@ struct BasicAppSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Picker(NSLocalizedString("Appearance", comment: ""), selection: $appAppearance) {
+                Picker(R.string.localizable.appearance(), selection: $appAppearance) {
                     ForEach(self.viewModel.appearances, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)
                     }
@@ -31,7 +31,7 @@ struct BasicAppSettingsView: View {
                     UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
                 })
             } header: {
-                Text("Accessibility")
+                R.string.localizable.accessibility.text
             }
             
             Section {
@@ -47,15 +47,15 @@ struct BasicAppSettingsView: View {
             Button {
                 resetTapped = true
             } label: {
-                Text("Reset")
+                R.string.localizable.reset.text
             }
         }
-        .alert("Reset", isPresented: $resetTapped, actions: {
+        .alert(R.string.localizable.reset(), isPresented: $resetTapped, actions: {
             Button(role: .destructive) {
                 viewModel.reset()
                 basicAppSettingsRouter.dismissCoordinator()
             } label: {
-                Text("Reset")
+                R.string.localizable.reset.text
             }
         })
         .navigationBarTitle("Settings", displayMode: .inline)

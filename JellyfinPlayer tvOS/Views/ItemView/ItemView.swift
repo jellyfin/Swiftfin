@@ -39,8 +39,8 @@ struct ItemView: View {
                 SeasonItemView(viewModel: .init(item: item))
             } else if item.type == "Episode" {
                 EpisodeItemView(viewModel: .init(item: item))
-            } else {
-                Text("Type: \(item.type ?? "") not implemented yet :(")
+            } else {                
+                Text(R.string.localizable.notImplementedYetWithType(item.type ?? ""))
             }
         }
     }

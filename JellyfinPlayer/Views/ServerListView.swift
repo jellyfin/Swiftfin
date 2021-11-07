@@ -81,7 +81,7 @@ struct ServerListView: View {
                         .padding(.horizontal, 30)
                         .padding([.top, .bottom], 20)
                     
-                    Text("Connect")
+                    R.string.localizable.connect.text
                         .foregroundColor(Color.white)
                         .bold()
                 }

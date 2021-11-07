@@ -55,7 +55,7 @@ struct LibraryView: View {
                                         Image(systemName: "chevron.left")
                                             .font(.system(size: 25))
                                     }.disabled(!viewModel.hasPreviousPage)
-                                    Text("Page \(String(viewModel.currentPage + 1)) of \(String(viewModel.totalPages))")
+                                    Text(R.string.localizable.pageOfWithNumbers(String(viewModel.currentPage + 1), String(viewModel.totalPages)))
                                         .font(.subheadline)
                                         .fontWeight(.medium)
                                     Button {
@@ -72,7 +72,7 @@ struct LibraryView: View {
                     }
                 }
             } else {
-                Text("No results.")
+                R.string.localizable.noResults.text
             }
         }
         .navigationBarTitle(title, displayMode: .inline)
