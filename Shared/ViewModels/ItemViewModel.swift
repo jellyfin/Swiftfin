@@ -47,7 +47,7 @@ class ItemViewModel: ViewModel {
     }
     
     func getSimilarItems() {
-        LibraryAPI.getSimilarItems(itemId: item.id!, userId: SessionManager.current.user.user_id!, limit: 20, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
+        LibraryAPI.getSimilarItems(itemId: item.id!, userId: SessionManager.main.currentLogin.user.id, limit: 20, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
@@ -59,7 +59,7 @@ class ItemViewModel: ViewModel {
 
     func updateWatchState() {
         if isWatched {
-            PlaystateAPI.markUnplayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
+            PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
                     self?.handleAPIRequestError(completion: completion)
@@ -68,7 +68,7 @@ class ItemViewModel: ViewModel {
                 })
                 .store(in: &cancellables)
         } else {
-            PlaystateAPI.markPlayedItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
+            PlaystateAPI.markPlayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
                     self?.handleAPIRequestError(completion: completion)
@@ -81,7 +81,7 @@ class ItemViewModel: ViewModel {
 
     func updateFavoriteState() {
         if isFavorited {
-            UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
+            UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
                     self?.handleAPIRequestError(completion: completion)
@@ -90,7 +90,7 @@ class ItemViewModel: ViewModel {
                 })
                 .store(in: &cancellables)
         } else {
-            UserLibraryAPI.markFavoriteItem(userId: SessionManager.current.user.user_id!, itemId: item.id!)
+            UserLibraryAPI.markFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
                 .trackActivity(loading)
                 .sink(receiveCompletion: { [weak self] completion in
                     self?.handleAPIRequestError(completion: completion)

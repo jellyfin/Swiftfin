@@ -16,6 +16,10 @@ struct ErrorMessage: Identifiable {
     let title: String
     let displayMessage: String
     let logConstructor: LogConstructor
+    
+    // Chosen value such that if an error has this code, don't show the code to the UI
+    // This was chosen because of its unlikelyhood to ever be used
+    static let noShowErrorCode = -69420
 
     var id: String {
         return "\(code)\(title)\(logConstructor.message)"

@@ -77,7 +77,7 @@ final class LibrarySearchViewModel: ViewModel {
     }
 
     func requestSuggestions() {
-        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!,
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id,
                                   limit: 20,
                                   recursive: true,
                                   parentId: parentID,
@@ -96,7 +96,7 @@ final class LibrarySearchViewModel: ViewModel {
     }
 
     func search(with query: String) {
-        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, limit: 50, recursive: true, searchTerm: query,
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
                                   sortOrder: [.ascending], parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                   includeItemTypes: [ItemType.movie.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)
@@ -107,7 +107,7 @@ final class LibrarySearchViewModel: ViewModel {
                 self?.movieItems = response.items ?? []
             })
             .store(in: &cancellables)
-        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, limit: 50, recursive: true, searchTerm: query,
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
                                   sortOrder: [.ascending], parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                   includeItemTypes: [ItemType.series.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)
@@ -118,7 +118,7 @@ final class LibrarySearchViewModel: ViewModel {
                 self?.showItems = response.items ?? []
             })
             .store(in: &cancellables)
-        ItemsAPI.getItemsByUserId(userId: SessionManager.current.user.user_id!, limit: 50, recursive: true, searchTerm: query,
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
                                   sortOrder: [.ascending], parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
                                   includeItemTypes: [ItemType.episode.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)

@@ -11,48 +11,6 @@ import Foundation
 import SwiftUI
 import Defaults
 
-struct UserSettings: Decodable {
-    var LocalMaxBitrate: Int
-    var RemoteMaxBitrate: Int
-    var AutoSelectSubtitles: Bool
-    var AutoSelectSubtitlesLangcode: String
-    var SubtitlePositionOffset: Int
-    var SubtitleFontName: String
-}
-
-struct Bitrates: Codable, Hashable {
-    public var name: String
-    public var value: Int
-}
-
-struct TrackLanguage: Hashable {
-    var name: String
-    var isoCode: String
-
-    static let auto = TrackLanguage(name: "Auto", isoCode: "Auto")
-}
-
-enum AppAppearance: String, CaseIterable, Defaults.Serializable {
-    case system
-    case dark
-    case light
-
-    var localizedName: String {
-        return NSLocalizedString(self.rawValue.capitalized, comment: "")
-    }
-
-    var style: UIUserInterfaceStyle {
-        switch self {
-        case .system:
-            return .unspecified
-        case .dark:
-            return .dark
-        case .light:
-            return .light
-        }
-    }
-}
-
 final class SettingsViewModel: ObservableObject {
     let currentLocale = Locale.current
     var bitrates: [Bitrates] = []

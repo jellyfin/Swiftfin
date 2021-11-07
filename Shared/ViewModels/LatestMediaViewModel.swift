@@ -25,8 +25,8 @@ final class LatestMediaViewModel: ViewModel {
     }
 
     func requestLatestMedia() {
-        LogManager.shared.log.debug("Requesting latest media for user id \(SessionManager.current.user.user_id ?? "NIL")")
-        UserLibraryAPI.getLatestMedia(userId: SessionManager.current.user.user_id!,
+        LogManager.shared.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id)")
+        UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
                                       parentId: libraryID,
                                       fields: [
                                         .primaryImageAspectRatio,
