@@ -63,12 +63,12 @@ network.</string>
 	<true/>
 	<key>UILaunchScreen</key>
 	<dict>
-		<key>UIImageRespectsSafeAreaInsets</key>
-		<true/>
-		<key>UIImageName</key>
-		<string>swiftfin-logo</string>
 		<key>UIColorName</key>
 		<string>LaunchScreenBackground</string>
+		<key>UIImageName</key>
+		<string>swiftfin-logo</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
 	</dict>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>

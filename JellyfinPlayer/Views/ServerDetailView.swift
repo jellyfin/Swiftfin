@@ -11,7 +11,13 @@ import SwiftUI
 
 struct ServerDetailView: View {
 
-    @ObservedObject var viewModel = ServerDetailViewModel()
+    @ObservedObject var viewModel: ServerDetailViewModel
+    @State var currentServerURI: String
+    
+    init(viewModel: ServerDetailViewModel) {
+        self.viewModel = viewModel
+        self.currentServerURI = viewModel.server.currentURI
+    }
 
     var body: some View {
         Form {
@@ -19,44 +25,33 @@ struct ServerDetailView: View {
                 HStack {
                     Text("Name")
                     Spacer()
-                    Text(SessionManager.main.currentLogin.server.name)
+                    Text(viewModel.server.name)
                         .foregroundColor(.secondary)
                 }
 
-                HStack {
-                    Text("URI")
-                    Spacer()
-                    Text(SessionManager.main.currentLogin.server.currentURI)
-                        .foregroundColor(.secondary)
+                Picker("URI", selection: $currentServerURI) {
+                    ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
+                        Text(uri).tag(uri)
+                            .foregroundColor(.secondary)
+                    }.onChange(of: currentServerURI) { newValue in
+                        viewModel.setServerCurrentURI(uri: newValue)
+                    }
                 }
 
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text(SessionManager.main.currentLogin.server.version)
+                    Text(viewModel.server.version)
                         .foregroundColor(.secondary)
                 }
 
                 HStack {
                     Text("Operating System")
                     Spacer()
-                    Text(SessionManager.main.currentLogin.server.os)
+                    Text(viewModel.server.os)
                         .foregroundColor(.secondary)
                 }
             }
-
-            Button(action: {
-                viewModel.refreshServerLibrary()
-            }, label: {
-                HStack {
-                    Text("Refresh Library")
-                        .font(.callout)
-                    Spacer()
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
-            }).disabled(viewModel.isLoading)
         }
     }
 }

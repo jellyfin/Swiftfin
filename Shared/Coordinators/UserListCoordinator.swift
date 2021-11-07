@@ -17,6 +17,7 @@ final class UserListCoordinator: NavigationCoordinatable {
     
     @Root var start = makeStart
     @Route(.push) var userSignIn = makeUserSignIn
+    @Route(.push) var serverDetail = makeServerDetail
     
     let viewModel: UserListViewModel
     
@@ -26,6 +27,10 @@ final class UserListCoordinator: NavigationCoordinatable {
     
     func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
         return UserSignInCoordinator(viewModel: .init(server: server))
+    }
+    
+    func makeServerDetail(server: SwiftfinStore.State.Server) -> ServerDetailCoordinator {
+        return ServerDetailCoordinator(viewModel: .init(server: server))
     }
     
     @ViewBuilder func makeStart() -> some View {

@@ -14,10 +14,20 @@ class UserListViewModel: ViewModel {
     
     @Published var users: [SwiftfinStore.State.User] = []
     
-    let server: SwiftfinStore.State.Server
+    var server: SwiftfinStore.State.Server
     
     init(server: SwiftfinStore.State.Server) {
         self.server = server
+        
+        super.init()
+        
+        let nc = SwiftfinNotificationCenter.main
+        nc.addObserver(self, selector: #selector(didChangeCurrentLoginURI), name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: nil)
+    }
+    
+    @objc func didChangeCurrentLoginURI(_ notification: Notification) {
+        guard let newServerState = notification.object as? SwiftfinStore.State.Server else { fatalError("Need to have new state server") }
+        self.server = newServerState
     }
     
     func fetchUsers() {
@@ -33,4 +43,5 @@ class UserListViewModel: ViewModel {
         SessionManager.main.delete(user: user)
         fetchUsers()
     }
+
 }
