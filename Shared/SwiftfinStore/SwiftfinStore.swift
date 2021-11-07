@@ -158,12 +158,11 @@ enum SwiftfinStore {
                                         Entity<SwiftfinStore.Models.StoredUser>("User"),
                                         Entity<SwiftfinStore.Models.StoredAccessToken>("AccessToken")
                                      ],
-                                     versionLock: nil)
-//                                     versionLock: [
-//                                         "AccessToken": [0xa8c475e874494bb1, 0x79486e93449f0b3d, 0xa7dc4a0003541edb, 0x94183fae7580ef72],
-//                                         "Server": [0x39c64a826739077e, 0xa7ac63744fd7df32, 0xef3c9d4fe638fbfb, 0xdabd796256df14db],
-//                                         "User": [0x845de08a74bc53ed, 0xe95a406a29f3a5d0, 0x9eda732821a15ea9, 0xb5afa531e41ce8a]
-//                                     ])
+                                     versionLock: [
+                                         "AccessToken": [0xa8c475e874494bb1, 0x79486e93449f0b3d, 0xa7dc4a0003541edb, 0x94183fae7580ef72],
+                                         "Server": [0x936b46acd8e8f0e3, 0x59890d4d9f3f885f, 0x819cf7a4abf98b22, 0xe16125c5af885a06],
+                                         "User": [0x845de08a74bc53ed, 0xe95a406a29f3a5d0, 0x9eda732821a15ea9, 0xb5afa531e41ce8a]
+                                     ])
         
         let _dataStack = DataStack(schema)
         try! _dataStack.addStorageAndWait(
