@@ -22,7 +22,7 @@ struct SettingsView: View {
 
     var body: some View {
             Form {
-                Section(header: L10n.playbackSettings) {
+                Section(header: L10n.playbackSettings.text) {
                     Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                         ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                             Text(bitrate.name).tag(bitrate.value)
@@ -58,7 +58,7 @@ struct SettingsView: View {
 
                 Section(header: Text(SessionManager.main.currentLogin.server.name)) {
                     HStack {
-                        Text(L10n.signedInAsWithString(SessionManager.main.currentLogin.user.username))).foregroundColor(.primary)
+                        Text(L10n.signedInAsWithString(SessionManager.main.currentLogin.user.username)).foregroundColor(.primary)
                         Spacer()
                         Button {
                             SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
