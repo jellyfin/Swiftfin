@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ServerDetailView: View {
 
-    @ObservedObject var viewModel = ServerDetailViewModel()
+    @ObservedObject var viewModel: ServerDetailViewModel
 
     var body: some View {
         Form {
@@ -44,19 +44,6 @@ struct ServerDetailView: View {
                         .foregroundColor(.secondary)
                 }
             }
-
-            Button(action: {
-                viewModel.refreshServerLibrary()
-            }, label: {
-                HStack {
-                    Text("Refresh Library")
-                        .font(.callout)
-                    Spacer()
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
-            }).disabled(viewModel.isLoading)
         }
     }
 }
