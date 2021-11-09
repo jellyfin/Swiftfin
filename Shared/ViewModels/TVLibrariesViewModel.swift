@@ -14,19 +14,19 @@ import Stinsen
 import SwiftUICollection
 
 final class TVLibrariesViewModel: ViewModel {
-    
+
     @Published var rows = [LibraryRow]()
     @Published var totalPages = 0
     @Published var currentPage = 0
     @Published var hasNextPage = false
     @Published var hasPreviousPage = false
-    
+
     private var libraries = [BaseItemDto]()
     private let columns: Int
-    
+
     @RouterObject
     var router: TVLibrariesCoordinator.Router?
-    
+
     init(
         columns: Int = 7
     ) {
@@ -35,9 +35,9 @@ final class TVLibrariesViewModel: ViewModel {
 
         requestLibraries()
     }
-    
+
     func requestLibraries() {
-        
+
         UserViewsAPI.getUserViews(
             userId: SessionManager.main.currentLogin.user.id)
             .trackActivity(loading)
@@ -60,7 +60,7 @@ final class TVLibrariesViewModel: ViewModel {
           })
           .store(in: &cancellables)
     }
-    
+
     private func calculateRows() -> [LibraryRow] {
         guard libraries.count > 0 else { return [] }
         let rowCount = libraries.count / columns

@@ -11,7 +11,7 @@ import Stinsen
 import SwiftUI
 
 struct SettingsView: View {
-    
+
     @EnvironmentObject var settingsRouter: SettingsCoordinator.Router
     @ObservedObject var viewModel: SettingsViewModel
 
@@ -27,7 +27,7 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section(header: EmptyView()) {
-                
+
                 // There is a bug where the SettingsView attmempts to remake itself upon signing out
                 //     so this check is made
                 if SessionManager.main.currentLogin == nil {
@@ -81,7 +81,7 @@ struct SettingsView: View {
                         .font(.callout)
                 }
             }
-            
+
             Section(header: Text("Playback")) {
                 Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                     ForEach(self.viewModel.bitrates, id: \.self) { bitrate in

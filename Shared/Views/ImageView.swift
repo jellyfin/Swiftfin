@@ -19,13 +19,13 @@ struct ImageView: View {
         self.blurhash = bh
         self.failureInitials = failureInitials
     }
-    
+
     @ViewBuilder
     private var placeholderImage: some View {
         Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ?? UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
             .resizable()
     }
-    
+
     @ViewBuilder
     private var failureImage: some View {
         ZStack {

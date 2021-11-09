@@ -11,9 +11,9 @@ import Defaults
 import Foundation
 
 extension SwiftfinStore {
-    
+
     enum Defaults {
-        
+
         static let suite: UserDefaults = {
             return UserDefaults(suiteName: "swiftfinstore-defaults")!
         }()
@@ -22,7 +22,7 @@ extension SwiftfinStore {
 
 extension Defaults.Keys {
     static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: SwiftfinStore.Defaults.suite)
-    
+
     static let defaultHTTPScheme = Key<HTTPScheme>("defaultHTTPScheme", default: .http, suite: SwiftfinStore.Defaults.suite)
     static let inNetworkBandwidth = Key<Int>("InNetworkBandwidth", default: 40_000_000, suite: SwiftfinStore.Defaults.suite)
     static let outOfNetworkBandwidth = Key<Int>("OutOfNetworkBandwidth", default: 40_000_000, suite: SwiftfinStore.Defaults.suite)

@@ -10,13 +10,13 @@
 import SwiftUI
 
 struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackable>: View {
-    
+
     let items: [ItemType]
     let maxWidth: Int
     let horizontalAlignment: HorizontalAlignment
     let topBarView: () -> TopBarView
     let selectedAction: (ItemType) -> Void
-    
+
     init(items: [ItemType], maxWidth: Int, horizontalAlignment: HorizontalAlignment = .leading, topBarView: @escaping () -> TopBarView, selectedAction: @escaping (ItemType) -> Void) {
         self.items = items
         self.maxWidth = maxWidth
@@ -24,18 +24,18 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
         self.topBarView = topBarView
         self.selectedAction = selectedAction
     }
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             topBarView()
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
                 VStack {
                     Spacer().frame(height: 8)
                     HStack(alignment: .top) {
-                        
+
                         Spacer().frame(width: 16)
-                        
+
                         ForEach(items, id: \.title) { item in
                             Button {
                                 selectedAction(item)
@@ -47,7 +47,7 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
                                         .frame(width: 100, height: CGFloat(maxWidth))
                                         .cornerRadius(10)
                                         .shadow(radius: 4, y: 2)
-                                    
+
                                     Text(item.title)
                                         .font(.footnote)
                                         .fontWeight(.regular)
@@ -55,7 +55,7 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
                                         .foregroundColor(.primary)
                                         .multilineTextAlignment(.center)
                                         .lineLimit(2)
-                                    
+
                                     if let description = item.description {
                                         Text(description)
                                             .font(.caption)

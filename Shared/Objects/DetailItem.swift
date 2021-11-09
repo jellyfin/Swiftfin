@@ -18,11 +18,8 @@ enum DetailItemType: String {
 }
 
 struct DetailItem {
-    
+
     let baseItem: BaseItemDto
     let type: DetailItemType
-    
-    
-    
-    
+
 }

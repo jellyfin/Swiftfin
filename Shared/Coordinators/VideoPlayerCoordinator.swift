@@ -13,11 +13,11 @@ import Stinsen
 import SwiftUI
 
 final class VideoPlayerCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
 
     @Root var start = makeStart
-    
+
     let item: BaseItemDto
 
     init(item: BaseItemDto) {

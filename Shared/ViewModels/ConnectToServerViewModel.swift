@@ -13,12 +13,12 @@ import JellyfinAPI
 import Stinsen
 
 final class ConnectToServerViewModel: ViewModel {
-    
+
     @RouterObject var router: ConnectToServerCoodinator.Router?
     @Published var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
     @Published var searching = false
     private let discovery = ServerDiscovery()
-    
+
     var alertTitle: String {
         var message: String = ""
         if errorMessage?.code != ErrorMessage.noShowErrorCode {
@@ -64,12 +64,12 @@ final class ConnectToServerViewModel: ViewModel {
             }
         }
     }
-    
+
     func cancelConnection() {
         for cancellable in cancellables {
             cancellable.cancel()
         }
-        
+
         self.isLoading = false
     }
 }

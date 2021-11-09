@@ -11,10 +11,10 @@ import SwiftUI
 import JellyfinAPI
 
 struct EpisodeCardVStackView: View {
-    
+
     let items: [BaseItemDto]
     let selectedAction: (BaseItemDto) -> Void
-    
+
     private func buildCardOverlayView(item: BaseItemDto) -> some View {
         HStack {
             ZStack {
@@ -30,7 +30,7 @@ struct EpisodeCardVStackView: View {
             .padding(.leading, 2)
             .padding(.bottom, item.userData?.playedPercentage == nil ? 2 : 9)
             .opacity(1)
-            
+
             ZStack {
                 if item.userData?.played ?? false {
                     Image(systemName: "circle.fill")
@@ -42,7 +42,7 @@ struct EpisodeCardVStackView: View {
             .opacity(1)
         }
     }
-    
+
     var body: some View {
         VStack {
             ForEach(items, id: \.id) { item in
@@ -50,7 +50,7 @@ struct EpisodeCardVStackView: View {
                     selectedAction(item)
                 } label: {
                     HStack {
-                        
+
                         // MARK: Image
                         ImageView(src: item.getPrimaryImage(maxWidth: 150),
                                   bh: item.getPrimaryImageBlurHash(),
@@ -65,37 +65,37 @@ struct EpisodeCardVStackView: View {
                                     .padding(0), alignment: .bottomLeading
                             )
                             .overlay(buildCardOverlayView(item: item), alignment: .topTrailing)
-                        
+
                         VStack(alignment: .leading) {
-                            
+
                             // MARK: Title
                             Text(item.title)
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.primary)
                                 .lineLimit(2)
-                            
+
                             HStack {
                                 Text(item.getEpisodeLocator() ?? "")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                                     .foregroundColor(.secondary)
-                                
+
                                 Text(item.getItemRuntime())
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                                     .foregroundColor(.secondary)
-                                
+
                                 Spacer()
                             }
-                            
+
                             // MARK: Overview
                             Text(item.overview ?? "")
                                 .font(.footnote)
                                 .foregroundColor(.primary)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .lineLimit(4)
-                            
+
                             Spacer()
                         }
                     }
