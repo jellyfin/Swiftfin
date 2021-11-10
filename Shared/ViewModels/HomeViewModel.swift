@@ -34,7 +34,7 @@ final class HomeViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished: ()
-                case .failure(_):
+                case .failure:
                     self.libraries = []
                     self.handleAPIRequestError(completion: completion)
                 }
@@ -54,7 +54,7 @@ final class HomeViewModel: ViewModel {
                     .sink(receiveCompletion: { completion in
                         switch completion {
                         case .finished: ()
-                        case .failure(_):
+                        case .failure:
                             self.libraries = []
                             self.handleAPIRequestError(completion: completion)
                         }
@@ -82,7 +82,7 @@ final class HomeViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished: ()
-                case .failure(_):
+                case .failure:
                     self.resumeItems = []
                     self.handleAPIRequestError(completion: completion)
                 }
@@ -99,7 +99,7 @@ final class HomeViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished: ()
-                case .failure(_):
+                case .failure:
                     self.nextUpItems = []
                     self.handleAPIRequestError(completion: completion)
                 }
