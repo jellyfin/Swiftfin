@@ -10,7 +10,7 @@ import JellyfinAPI
 import UIKit
 
 extension BaseItemPerson {
-    
+
     // MARK: Get Image
     func getImage(baseURL: String, maxWidth: Int) -> URL {
         let imageType = "Primary"
@@ -28,10 +28,9 @@ extension BaseItemPerson {
 
         return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
     }
-    
-    
+
     // MARK: First Role
-    
+
     // Jellyfin will grab all roles the person played in the show which makes the role
     //    text too long. This will grab the first role which:
     //      - assumes that the most important role is the first
@@ -40,16 +39,16 @@ extension BaseItemPerson {
         guard let role = self.role else { return nil }
         let split = role.split(separator: "/")
         guard split.count > 1 else { return role }
-        
+
         guard let firstRole = split.first?.trimmingCharacters(in: CharacterSet(charactersIn: " ")), let lastRole = split.last?.trimmingCharacters(in: CharacterSet(charactersIn: " ")) else { return role }
-        
+
         var final = firstRole
-        
+
         if let lastOpenIndex = lastRole.lastIndex(of: "("), let lastClosingIndex = lastRole.lastIndex(of: ")") {
             let roleText = lastRole[lastOpenIndex...lastClosingIndex]
             final.append(" \(roleText)")
         }
-        
+
         return final
     }
 }
@@ -59,19 +58,19 @@ extension BaseItemPerson: PortraitImageStackable {
     public func imageURLContsructor(maxWidth: Int) -> URL {
         return self.getImage(baseURL: SessionManager.main.currentLogin.server.uri, maxWidth: maxWidth)
     }
-    
+
     public var title: String {
         return self.name ?? ""
     }
-    
+
     public var description: String? {
         return self.firstRole()
     }
-    
+
     public var blurHash: String {
         return self.getBlurHash()
     }
-    
+
     public var failureInitials: String {
         guard let name = self.name else { return "" }
         let initials = name.split(separator: " ").compactMap({ String($0).first })
@@ -81,7 +80,7 @@ extension BaseItemPerson: PortraitImageStackable {
 
 // MARK: DiplayedType
 extension BaseItemPerson {
-    
+
     // Only displayed person types.
     // Will ignore people like "GuestStar"
     enum DisplayedType: String, CaseIterable {
@@ -89,7 +88,7 @@ extension BaseItemPerson {
         case director = "Director"
         case writer = "Writer"
         case producer = "Producer"
-        
+
         static var allCasesRaw: [String] {
             return self.allCases.map({ $0.rawValue })
         }

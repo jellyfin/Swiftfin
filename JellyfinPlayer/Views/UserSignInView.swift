@@ -11,23 +11,23 @@ import SwiftUI
 import Stinsen
 
 struct UserSignInView: View {
-    
+
     @ObservedObject var viewModel: UserSignInViewModel
     @State private var username: String = ""
     @State private var password: String = ""
-    
+
     var body: some View {
         Form {
-            
+
             Section {
-                TextField("Username", text: $username)
+                TextField(L10n.username, text: $username)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
-                
-                SecureField("Password", text: $password)
+
+                SecureField(L10n.password, text: $password)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
-                
+
                 if viewModel.isLoading {
                     Button(role: .destructive) {
                         viewModel.cancelSignIn()

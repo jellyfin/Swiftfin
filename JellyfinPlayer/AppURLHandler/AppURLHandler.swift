@@ -77,8 +77,7 @@ extension AppURLHandler {
         // /Users/{UserID}/Items/{ItemID}
         if url.pathComponents[safe: 2]?.lowercased() == "items",
            let userID = url.pathComponents[safe: 1],
-           let itemID = url.pathComponents[safe: 3]
-        {
+           let itemID = url.pathComponents[safe: 3] {
             // It would be nice if the ItemViewModel could be initialized to id later.
             getItem(userID: userID, itemID: itemID) { item in
                 guard let item = item else { return }

@@ -17,14 +17,14 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @Root var mainTab = makeMainTab
     @Root var serverList = makeServerList
-    
+
     init() {
         if SessionManager.main.currentLogin != nil {
             self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
             self.stack = NavigationStack(initial: \MainCoordinator.serverList)
         }
-        
+
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 

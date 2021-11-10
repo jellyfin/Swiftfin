@@ -44,7 +44,7 @@ struct LibrarySearchView: View {
     var suggestionsListView: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
-                Text("Suggestions")
+                L10n.suggestions.text
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)

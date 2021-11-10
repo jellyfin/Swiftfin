@@ -11,16 +11,16 @@ import Stinsen
 import SwiftUI
 
 struct ConnectToServerView: View {
-    
+
     @StateObject var viewModel: ConnectToServerViewModel
     @State var uri = ""
-    
+
     @Default(.defaultHTTPScheme) var defaultHTTPScheme
-    
+
     var body: some View {
         List {
             Section {
-                TextField(NSLocalizedString("Server URL", comment: ""), text: $uri)
+                TextField(L10n.serverURL, text: $uri)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                     .keyboardType(.URL)
@@ -29,7 +29,7 @@ struct ConnectToServerView: View {
                             uri = "\(defaultHTTPScheme.rawValue)://"
                         }
                     }
-                
+
                 if viewModel.isLoading {
                     Button(role: .destructive) {
                         viewModel.cancelConnection()
@@ -40,14 +40,14 @@ struct ConnectToServerView: View {
                     Button {
                         viewModel.connectToServer(uri: uri)
                     } label: {
-                        Text("Connect")
+                        L10n.connect.text
                     }
                     .disabled(uri.isEmpty)
                 }
             } header: {
                 Text("Connect to a Jellyfin server")
             }
-            
+
             Section {
                 if viewModel.searching {
                     HStack(alignment: .center, spacing: 5) {
@@ -88,9 +88,9 @@ struct ConnectToServerView: View {
                 }
             } header: {
                 HStack {
-                    Text("Local Servers")
+                    L10n.localServers.text
                     Spacer()
-                    
+
                     Button {
                         viewModel.discoverServers()
                     } label: {
@@ -106,7 +106,7 @@ struct ConnectToServerView: View {
                   message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
                   dismissButton: .cancel())
         }
-        .navigationTitle("Connect")
+        .navigationTitle(L10n.connect)
         .onAppear {
             viewModel.discoverServers()
             AppURLHandler.shared.appURLState = .allowedInLogin

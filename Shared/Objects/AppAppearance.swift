@@ -16,7 +16,14 @@ enum AppAppearance: String, CaseIterable, Defaults.Serializable {
     case light
 
     var localizedName: String {
-        return NSLocalizedString(self.rawValue.capitalized, comment: "")
+        switch self {
+        case .system:
+            return L10n.system
+        case .dark:
+            return L10n.dark
+        case .light:
+            return L10n.light
+        }
     }
 
     var style: UIUserInterfaceStyle {

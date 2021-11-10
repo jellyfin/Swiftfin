@@ -10,10 +10,10 @@
 import SwiftUI
 
 struct UserListView: View {
-    
+
     @EnvironmentObject var userListRouter: UserListCoordinator.Router
     @ObservedObject var viewModel: UserListViewModel
-    
+
     @ViewBuilder
     private var listView: some View {
         ScrollView {
@@ -25,9 +25,9 @@ struct UserListView: View {
                         HStack {
                             Text(user.username)
                                 .font(.title2)
-                            
+
                             Spacer()
-                            
+
                             if viewModel.isLoading {
                                 ProgressView()
                             }
@@ -47,7 +47,7 @@ struct UserListView: View {
         }
         .padding(.top, 50)
     }
-    
+
     @ViewBuilder
     private var noUserView: some View {
         VStack {
@@ -55,7 +55,7 @@ struct UserListView: View {
                 .frame(minWidth: 50, maxWidth: 500)
                 .multilineTextAlignment(.center)
                 .font(.callout)
-            
+
             Button {
                 userListRouter.route(to: \.userSignIn, viewModel.server)
             } label: {
@@ -66,7 +66,7 @@ struct UserListView: View {
             .padding(.top, 40)
         }
     }
-    
+
     @ViewBuilder
     private var innerBody: some View {
         if viewModel.users.isEmpty {
@@ -76,7 +76,7 @@ struct UserListView: View {
             listView
         }
     }
-    
+
     @ViewBuilder
     private var toolbarContent: some View {
         if viewModel.users.isEmpty {
@@ -91,7 +91,7 @@ struct UserListView: View {
             }
         }
     }
-    
+
     var body: some View {
         innerBody
         .navigationTitle(viewModel.server.name)

@@ -13,7 +13,7 @@ import Stinsen
 import SwiftUI
 
 final class ItemCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \ItemCoordinator.start)
 
     @Root var start = makeStart

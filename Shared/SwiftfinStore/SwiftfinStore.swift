@@ -12,12 +12,12 @@ import CoreStore
 import Defaults
 
 enum SwiftfinStore {
-    
+
     // MARK: State
     // Safe, copyable representations of their underlying CoreStoredObject's
     // Relationships are represented by the related object's IDs or value
     enum State {
-        
+
         struct Server {
             let uri: String
             let name: String
@@ -25,7 +25,7 @@ enum SwiftfinStore {
             let os: String
             let version: String
             let userIDs: [String]
-            
+
             fileprivate init(uri: String, name: String, id: String, os: String, version: String, usersIDs: [String]) {
                 self.uri = uri
                 self.name = name
@@ -34,54 +34,54 @@ enum SwiftfinStore {
                 self.version = version
                 self.userIDs = usersIDs
             }
-            
+
             static var sample: Server {
                 return Server(uri: "https://www.notaurl.com", name: "Johnny's Tree", id: "123abc", os: "macOS", version: "1.1.1", usersIDs: ["1", "2"])
             }
         }
-        
+
         struct User {
             let username: String
             let id: String
             let serverID: String
             let accessToken: String
-            
+
             fileprivate init(username: String, id: String, serverID: String, accessToken: String) {
                 self.username = username
                 self.id = id
                 self.serverID = serverID
                 self.accessToken = accessToken
             }
-            
+
             static var sample: User {
                 return User(username: "JohnnyAppleseed", id: "123abc", serverID: "123abc", accessToken: "open-sesame")
             }
         }
     }
-    
+
     // MARK: Models
     enum Models {
-        
+
         final class StoredServer: CoreStoreObject {
-            
+
             @Field.Stored("uri")
             var uri: String = ""
-            
+
             @Field.Stored("name")
             var name: String = ""
-            
+
             @Field.Stored("id")
             var id: String = ""
-            
+
             @Field.Stored("os")
             var os: String = ""
-            
+
             @Field.Stored("version")
             var version: String = ""
-            
+
             @Field.Relationship("users", inverse: \StoredUser.$server)
             var users: Set<StoredUser>
-            
+
             var state: State.Server {
                 return State.Server(uri: uri,
                                     name: name,
@@ -91,24 +91,24 @@ enum SwiftfinStore {
                                     usersIDs: users.map({ $0.id }))
             }
         }
-        
+
         final class StoredUser: CoreStoreObject {
-            
+
             @Field.Stored("username")
             var username: String = ""
-            
+
             @Field.Stored("id")
             var id: String = ""
-            
+
             @Field.Stored("appleTVID")
             var appleTVID: String = ""
-            
+
             @Field.Relationship("server")
             var server: StoredServer?
-            
+
             @Field.Relationship("accessToken", inverse: \StoredAccessToken.$user)
             var accessToken: StoredAccessToken?
-            
+
             var state: State.User {
                 guard let server = server else { fatalError("No server associated with user") }
                 guard let accessToken = accessToken else { fatalError("No access token associated with user") }
@@ -118,23 +118,23 @@ enum SwiftfinStore {
                                   accessToken: accessToken.value)
             }
         }
-        
+
         final class StoredAccessToken: CoreStoreObject {
-            
+
             @Field.Stored("value")
             var value: String = ""
-            
+
             @Field.Relationship("user")
             var user: StoredUser?
         }
     }
-    
+
     // MARK: Errors
     enum Errors {
         case existingServer(State.Server)
         case existingUser(State.User)
     }
-    
+
     // MARK: dataStack
     static let dataStack: DataStack = {
         let schema = CoreStoreSchema(modelVersion: "V1",
@@ -148,7 +148,7 @@ enum SwiftfinStore {
                                          "Server": [0x39c64a826739077e, 0xa7ac63744fd7df32, 0xef3c9d4fe638fbfb, 0xdabd796256df14db],
                                          "User": [0x845de08a74bc53ed, 0xe95a406a29f3a5d0, 0x9eda732821a15ea9, 0xb5afa531e41ce8a]
                                      ])
-        
+
         let _dataStack = DataStack(schema)
         try! _dataStack.addStorageAndWait(
             SQLiteStore(
@@ -162,7 +162,7 @@ enum SwiftfinStore {
 
 // MARK: LocalizedError
 extension SwiftfinStore.Errors: LocalizedError {
-    
+
     var title: String {
         switch self {
         case .existingServer(_):
@@ -171,7 +171,7 @@ extension SwiftfinStore.Errors: LocalizedError {
             return "Existing User"
         }
     }
-    
+
     var errorDescription: String? {
         switch self {
         case .existingServer(let server):

@@ -6,6 +6,7 @@
  */
 
 import Foundation
+import SwiftUI
 
 extension String {
     func removeRegexMatches(pattern: String, replaceWith: String = "") -> String {
@@ -30,5 +31,9 @@ extension String {
         }
 
         return "\(padString)\(self)"
+    }
+
+    var text: Text {
+        Text(self)
     }
 }

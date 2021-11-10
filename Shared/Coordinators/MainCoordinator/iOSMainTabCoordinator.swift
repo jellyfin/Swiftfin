@@ -26,7 +26,7 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder func makeHomeTab(isActive: Bool) -> some View {
         Image(systemName: "house")
-        Text("Home")
+        L10n.home.text
     }
 
     func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
@@ -35,14 +35,14 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder func makeAllMediaTab(isActive: Bool) -> some View {
         Image(systemName: "folder")
-        Text("All Media")
+        L10n.allMedia.text
     }
 
     @ViewBuilder func customize(_ view: AnyView) -> some View {
         view.onAppear {
             AppURLHandler.shared.appURLState = .allowed
             // TODO: todo
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {                
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                 AppURLHandler.shared.processLaunchedURLIfNeeded()
             }
         }

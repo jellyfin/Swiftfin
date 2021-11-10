@@ -10,12 +10,12 @@
 import SwiftUI
 
 struct PillHStackView<ItemType: PillStackable>: View {
-    
+
     let title: String
     let items: [ItemType]
 //    let navigationView: (ItemType) -> NavigationView
     let selectedAction: (ItemType) -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
@@ -23,7 +23,7 @@ struct PillHStackView<ItemType: PillStackable>: View {
                 .fontWeight(.semibold)
                 .padding(.top, 3)
                 .padding(.leading, 16)
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(items, id: \.title) { item in

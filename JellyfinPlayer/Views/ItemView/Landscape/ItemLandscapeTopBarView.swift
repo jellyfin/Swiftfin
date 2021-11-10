@@ -10,22 +10,22 @@
 import SwiftUI
 
 struct ItemLandscapeTopBarView: View {
-    
+
     @EnvironmentObject private var viewModel: ItemViewModel
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                
+
                 // MARK: Name
-                
+
                 Text(viewModel.getItemDisplayName())
                     .font(.title)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .padding(.leading, 16)
                     .padding(.bottom, 10)
-                
+
                 if viewModel.item.itemType.showDetails {
                     // MARK: Runtime
                     Text(viewModel.item.getItemRuntime())
@@ -34,7 +34,7 @@ struct ItemLandscapeTopBarView: View {
                         .foregroundColor(.secondary)
                         .padding(.leading, 16)
                 }
-                
+
                 // MARK: Details
                 HStack {
                     if viewModel.item.productionYear != nil {
@@ -53,9 +53,9 @@ struct ItemLandscapeTopBarView: View {
                             .overlay(RoundedRectangle(cornerRadius: 2)
                                 .stroke(Color.secondary, lineWidth: 1))
                     }
-                    
+
                     Spacer()
-                    
+
                     if viewModel.item.itemType.showDetails {
                         // MARK: Favorite
                         Button {
@@ -70,7 +70,7 @@ struct ItemLandscapeTopBarView: View {
                             }
                         }
                         .disabled(viewModel.isLoading)
-                    
+
                         // MARK: Watched
                         Button {
                             viewModel.updateWatchState()

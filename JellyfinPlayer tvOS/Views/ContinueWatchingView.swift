@@ -16,11 +16,11 @@ struct ContinueWatchingView: View {
     @Namespace private var namespace
 
     var homeRouter: HomeCoordinator.Router? = RouterStore.shared.retrieve()
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             if items.count > 0 {
-                Text("Continue Watching")
+                L10n.continueWatching.text
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.leading, 90)

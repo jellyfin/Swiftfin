@@ -16,7 +16,7 @@ class MediaInfoViewController: InfoTabViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tabBarItem.title = NSLocalizedString("Info", comment: "")
+        tabBarItem.title = "Info"
     }
 
     func setMedia(item: BaseItemDto) {

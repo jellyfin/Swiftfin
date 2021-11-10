@@ -36,7 +36,7 @@ final class LibraryViewModel: ViewModel {
 
     // temp
     @Published var filters: LibraryFilters
-  
+
     private let columns: Int
     private var libraries = [BaseItemDto]()
 
@@ -64,11 +64,10 @@ final class LibraryViewModel: ViewModel {
         self.columns = columns
         super.init()
 
-
         $filters
             .sink(receiveValue: requestItems(with:))
             .store(in: &cancellables)
-        
+
     }
 
     func requestItems(with filters: LibraryFilters) {
@@ -147,7 +146,7 @@ final class LibraryViewModel: ViewModel {
         currentPage -= 1
         requestItems(with: filters)
     }
-  
+
     private func calculateRows(for itemList: [BaseItemDto]) -> [LibraryRow] {
         guard itemList.count > 0 else { return [] }
         let rowCount = itemList.count / columns
