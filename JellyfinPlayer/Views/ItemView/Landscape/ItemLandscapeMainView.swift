@@ -92,18 +92,15 @@ struct ItemLandscapeMainView: View {
                 .opacity(0.3)
                 .edgesIgnoringSafeArea(.all)
                 .blur(radius: 4)
-                .layoutPriority(1)
+                .layoutPriority(-1)
             
             // iPadOS is making the view go all the way to the edge.
             // We have to accomodate this here
-            Group {
-                if UIDevice.current.userInterfaceIdiom == .pad {
-                    innerBody.padding(.horizontal, 25)
-                } else {
-                    innerBody
-                }
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                innerBody.padding(.horizontal, 25)
+            } else {
+                innerBody
             }
-            .layoutPriority(2)
         }
     }
 }
