@@ -12,17 +12,17 @@ import Stinsen
 import SwiftUI
 
 final class ServerDetailCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \ServerDetailCoordinator.start)
-    
+
     @Root var start = makeStart
-    
+
     let viewModel: ServerDetailViewModel
-    
+
     init(viewModel: ServerDetailViewModel) {
         self.viewModel = viewModel
     }
-    
+
     @ViewBuilder func makeStart() -> some View {
         ServerDetailView(viewModel: viewModel)
     }

@@ -120,7 +120,7 @@ final class SessionManager {
 
                 return (editServer, transaction)
             }
-            .handleEvents(receiveOutput: { (server, transaction) in
+            .handleEvents(receiveOutput: { (_, transaction) in
                 try? transaction.commitAndWait()
             })
             .map({ (server, _) in
@@ -149,7 +149,7 @@ final class SessionManager {
 
                 return (editServer, transaction)
             }
-            .handleEvents(receiveOutput: { (server, transaction) in
+            .handleEvents(receiveOutput: { (_, transaction) in
                 try? transaction.commitAndWait()
             })
             .map({ (server, _) in

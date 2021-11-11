@@ -25,7 +25,7 @@ final class HomeViewModel: ViewModel {
     override init() {
         super.init()
         refresh()
-        
+
         // Nov. 6, 2021
         // This is a workaround since Stinsen doesn't have the ability to rebuild a root at the time of writing.
         // See ServerDetailViewModel.swift for feature request issue
@@ -33,36 +33,36 @@ final class HomeViewModel: ViewModel {
         nc.addObserver(self, selector: #selector(didSignIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
         nc.addObserver(self, selector: #selector(didSignOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
     }
-    
+
     @objc func didSignIn() {
         for cancellable in cancellables {
             cancellable.cancel()
         }
-        
+
         librariesShowRecentlyAddedIDs = []
         libraries = []
         resumeItems = []
         nextUpItems = []
-        
+
         refresh()
     }
-    
+
     @objc func didSignOut() {
         for cancellable in cancellables {
             cancellable.cancel()
         }
-        
+
         cancellables.removeAll()
     }
 
-    func refresh() {        
+    func refresh() {
         LogManager.shared.log.debug("Refresh called.")
         UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished: ()
-                case .failure(_):
+                case .failure:
                     self.libraries = []
                     self.handleAPIRequestError(completion: completion)
                 }
@@ -82,7 +82,7 @@ final class HomeViewModel: ViewModel {
                     .sink(receiveCompletion: { completion in
                         switch completion {
                         case .finished: ()
-                        case .failure(_):
+                        case .failure:
                             self.libraries = []
                             self.handleAPIRequestError(completion: completion)
                         }
@@ -110,7 +110,7 @@ final class HomeViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished: ()
-                case .failure(_):
+                case .failure:
                     self.resumeItems = []
                     self.handleAPIRequestError(completion: completion)
                 }
@@ -127,7 +127,7 @@ final class HomeViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished: ()
-                case .failure(_):
+                case .failure:
                     self.nextUpItems = []
                     self.handleAPIRequestError(completion: completion)
                 }

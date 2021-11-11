@@ -11,20 +11,20 @@ import Foundation
 import JellyfinAPI
 
 class ServerDetailViewModel: ViewModel {
-    
+
     @Published var server: SwiftfinStore.State.Server
-    
+
     init(server: SwiftfinStore.State.Server) {
         self.server = server
     }
-    
+
     func setServerCurrentURI(uri: String) {
         SessionManager.main.setServerCurrentURI(server: server, uri: uri)
             .sink { c in
                 print(c)
             } receiveValue: { newServerState in
                 self.server = newServerState
-                
+
                 let nc = SwiftfinNotificationCenter.main
                 nc.post(name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: newServerState)
             }

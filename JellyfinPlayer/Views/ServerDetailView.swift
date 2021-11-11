@@ -13,7 +13,7 @@ struct ServerDetailView: View {
 
     @ObservedObject var viewModel: ServerDetailViewModel
     @State var currentServerURI: String
-    
+
     init(viewModel: ServerDetailViewModel) {
         self.viewModel = viewModel
         self.currentServerURI = viewModel.server.currentURI

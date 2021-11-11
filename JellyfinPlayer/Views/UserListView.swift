@@ -96,7 +96,7 @@ struct UserListView: View {
             } label: {
                 Image(systemName: "info.circle.fill")
             }
-            
+
             if !viewModel.users.isEmpty {
                 Button {
                     userListRouter.route(to: \.userSignIn, viewModel.server)

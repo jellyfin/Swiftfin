@@ -106,7 +106,7 @@ final class ConnectToServerViewModel: ViewModel {
                     .sink { completion in
                         self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
                                                    completion: completion)
-                    } receiveValue: { server in
+                    } receiveValue: { _ in
                         self.router?.dismissCoordinator()
                     }
                     .store(in: &self.cancellables)

@@ -69,7 +69,7 @@ final class MainCoordinator: NavigationCoordinatable {
             }
         }
     }
-    
+
     @objc func didChangeServerCurrentURI(_ notification: Notification) {
         guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server else { fatalError("Need to have new current login state server") }
         guard SessionManager.main.currentLogin != nil else { return }
@@ -77,7 +77,7 @@ final class MainCoordinator: NavigationCoordinatable {
             SessionManager.main.loginUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
         }
     }
-    
+
     func makeMainTab() -> MainTabCoordinator {
         MainTabCoordinator()
     }
