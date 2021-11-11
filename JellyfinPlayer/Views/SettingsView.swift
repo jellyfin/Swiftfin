@@ -11,7 +11,7 @@ import Stinsen
 import SwiftUI
 
 struct SettingsView: View {
-    
+
     @EnvironmentObject var settingsRouter: SettingsCoordinator.Router
     @ObservedObject var viewModel: SettingsViewModel
 
@@ -27,7 +27,7 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section(header: EmptyView()) {
-                
+
                 // There is a bug where the SettingsView attmempts to remake itself upon signing out
                 //     so this check is made
                 if SessionManager.main.currentLogin == nil {
@@ -81,7 +81,7 @@ struct SettingsView: View {
                         .font(.callout)
                 }
             }
-            
+
             Section(header: Text("Playback")) {
                 Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                     ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
@@ -108,7 +108,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section(header: Text("Accessibility")) {
+            Section(header: L10n.accessibility.text) {
                 Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
                 SearchablePicker(label: "Preferred subtitle language",
                                  options: viewModel.langs,
@@ -129,7 +129,7 @@ struct SettingsView: View {
                                                                           .auto
                                                                   },
                                                                   set: { autoSelectAudioLangcode = $0.isoCode }))
-                Picker(NSLocalizedString("Appearance", comment: ""), selection: $appAppearance) {
+                Picker(L10n.appearance, selection: $appAppearance) {
                     ForEach(self.viewModel.appearances, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)
                     }

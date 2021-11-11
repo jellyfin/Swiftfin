@@ -12,16 +12,16 @@ import Stinsen
 import SwiftUI
 
 final class ConnectToServerCoodinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \ConnectToServerCoodinator.start)
 
     @Root var start = makeStart
     @Route(.push) var userSignIn = makeUserSignIn
-    
+
     func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
         return UserSignInCoordinator(viewModel: .init(server: server))
     }
-    
+
     @ViewBuilder func makeStart() -> some View {
         ConnectToServerView(viewModel: ConnectToServerViewModel())
     }

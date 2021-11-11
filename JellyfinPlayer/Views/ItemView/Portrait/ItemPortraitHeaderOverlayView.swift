@@ -11,22 +11,22 @@ import SwiftUI
 import JellyfinAPI
 
 struct PortraitHeaderOverlayView: View {
-    
+
     @EnvironmentObject private var viewModel: ItemViewModel
     @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 12) {
-                
+
                 // MARK: Portrait Image
                 ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 130))
                     .frame(width: 130, height: 195)
                     .cornerRadius(10)
-                
+
                 VStack(alignment: .leading, spacing: 1) {
                     Spacer()
-                    
+
                     // MARK: Name
                     Text(viewModel.getItemDisplayName())
                         .font(.title2)
@@ -34,7 +34,7 @@ struct PortraitHeaderOverlayView: View {
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.bottom, 10)
-                    
+
                     if viewModel.item.itemType.showDetails {
                         // MARK: Runtime
                         if viewModel.shouldDisplayRuntime() {
@@ -45,7 +45,7 @@ struct PortraitHeaderOverlayView: View {
                                 .lineLimit(1)
                         }
                     }
-                    
+
                     // MARK: Details
                     HStack {
                         if let productionYear = viewModel.item.productionYear {
@@ -55,7 +55,7 @@ struct PortraitHeaderOverlayView: View {
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                         }
-                        
+
                         if let officialRating = viewModel.item.officialRating {
                             Text(officialRating)
                                 .font(.subheadline)
@@ -70,9 +70,9 @@ struct PortraitHeaderOverlayView: View {
                 }
                 .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 30)
             }
-            
+
             HStack {
-                
+
                 // MARK: Play
                 Button {
                     if let playButtonItem = viewModel.playButtonItem {
@@ -93,9 +93,9 @@ struct PortraitHeaderOverlayView: View {
                     .background(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
                     .cornerRadius(10)
                 }.disabled(viewModel.playButtonItem == nil)
-                
+
                 Spacer()
-                
+
                 if viewModel.item.itemType.showDetails {
                     // MARK: Favorite
                     Button {
@@ -112,7 +112,7 @@ struct PortraitHeaderOverlayView: View {
                         }
                     }
                     .disabled(viewModel.isLoading)
-                    
+
                     // MARK: Watched
                     Button {
                         viewModel.updateWatchState()

@@ -15,11 +15,11 @@ extension BaseItemDto: PortraitImageStackable {
     public func imageURLContsructor(maxWidth: Int) -> URL {
         return self.getPrimaryImage(maxWidth: maxWidth)
     }
-    
+
     public var title: String {
         return self.name ?? ""
     }
-    
+
     public var description: String? {
         switch self.itemType {
         case .season:
@@ -31,11 +31,11 @@ extension BaseItemDto: PortraitImageStackable {
             return nil
         }
     }
-    
+
     public var blurHash: String {
         return self.getPrimaryImageBlurHash()
     }
-    
+
     public var failureInitials: String {
         guard let name = self.name else { return "" }
         let initials = name.split(separator: " ").compactMap({ String($0).first })

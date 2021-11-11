@@ -14,7 +14,7 @@ struct TVLibrariesView: View {
     @EnvironmentObject var tvLibrariesRouter: TVLibrariesCoordinator.Router
     @StateObject var  viewModel: TVLibrariesViewModel
     var title: String
-    
+
     var body: some View {
         if viewModel.isLoading == true {
             ProgressView()
@@ -77,7 +77,7 @@ struct TVLibrariesView: View {
             .ignoresSafeArea(.all)
         } else {
             VStack {
-                Text("No results.")
+                L10n.noResults.text
                 Button {
                     print("tvLibraries reload")
                 } label: {

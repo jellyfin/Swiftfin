@@ -67,9 +67,9 @@ final class HomeViewModel: ViewModel {
                     self.handleAPIRequestError(completion: completion)
                 }
             }, receiveValue: { response in
-                
+
                 var newLibraries: [BaseItemDto] = []
-                
+
                 response.items!.forEach { item in
                     LogManager.shared.log.debug("Retrieved user view: \(item.id!) (\(item.name ?? "nil")) with type \(item.collectionType ?? "nil")")
                     if item.collectionType == "movies" || item.collectionType == "tvshows" {
@@ -88,13 +88,13 @@ final class HomeViewModel: ViewModel {
                         }
                     }, receiveValue: { response in
                         let excludeIDs = response.configuration?.latestItemsExcludes != nil ? response.configuration!.latestItemsExcludes! : []
-                        
+
                         for excludeID in excludeIDs {
                             newLibraries.removeAll { library in
                                 return library.id == excludeID
                             }
                         }
-                        
+
                         self.libraries = newLibraries
                     })
                     .store(in: &self.cancellables)
@@ -116,7 +116,7 @@ final class HomeViewModel: ViewModel {
                 }
             }, receiveValue: { response in
                 LogManager.shared.log.debug("Retrieved \(String(response.items!.count)) resume items")
-                
+
                 self.resumeItems = response.items ?? []
             })
             .store(in: &cancellables)
@@ -133,7 +133,7 @@ final class HomeViewModel: ViewModel {
                 }
             }, receiveValue: { response in
                 LogManager.shared.log.debug("Retrieved \(String(response.items!.count)) nextup items")
-                
+
                 self.nextUpItems = response.items ?? []
             })
             .store(in: &cancellables)

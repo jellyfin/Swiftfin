@@ -1,5 +1,5 @@
 //
- /* 
+ /*
   * SwiftFin is subject to the terms of the Mozilla Public
   * License, v2.0. If a copy of the MPL was not distributed with this
   * file, you can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,10 +11,10 @@ import CoreStore
 import SwiftUI
 
 struct ServerListView: View {
-    
+
     @EnvironmentObject var serverListRouter: ServerListCoordinator.Router
     @ObservedObject var viewModel: ServerListViewModel
-    
+
     private var listView: some View {
         ScrollView {
             LazyVStack {
@@ -27,22 +27,22 @@ struct ServerListView: View {
                                 .foregroundColor(Color(UIColor.secondarySystemFill))
                                 .frame(height: 100)
                                 .cornerRadius(10)
-                            
+
                             HStack(spacing: 10) {
                                 Image(systemName: "server.rack")
                                     .font(.system(size: 36))
                                     .foregroundColor(.primary)
-                                
+
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(server.name)
                                         .font(.title2)
                                         .foregroundColor(.primary)
-                                    
+
                                     Text(server.currentURI)
                                         .font(.footnote)
                                         .disabled(true)
                                         .foregroundColor(.secondary)
-                                    
+
                                     Text(viewModel.userTextFor(server: server))
                                         .font(.footnote)
                                         .foregroundColor(.primary)
@@ -62,13 +62,13 @@ struct ServerListView: View {
             }
         }
     }
-    
+
     private var noServerView: some View {
         VStack {
             Text("Connect to a Jellyfin server to get started")
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
-            
+
             Button {
                 serverListRouter.route(to: \.connectToServer)
             } label: {
@@ -80,15 +80,15 @@ struct ServerListView: View {
                         .cornerRadius(10)
                         .padding(.horizontal, 30)
                         .padding([.top, .bottom], 20)
-                    
-                    Text("Connect")
+
+                    L10n.connect.text
                         .foregroundColor(Color.white)
                         .bold()
                 }
             }
         }
     }
-    
+
     @ViewBuilder
     private var innerBody: some View {
         if viewModel.servers.isEmpty {
@@ -98,7 +98,7 @@ struct ServerListView: View {
             listView
         }
     }
-    
+
     @ViewBuilder
     private var trailingToolbarContent: some View {
         if viewModel.servers.isEmpty {
@@ -111,7 +111,7 @@ struct ServerListView: View {
             }
         }
     }
-    
+
     private var leadingToolbarContent: some View {
         Button {
             serverListRouter.route(to: \.basicAppSettings)
@@ -119,7 +119,7 @@ struct ServerListView: View {
             Image(systemName: "gearshape.fill")
         }
     }
-    
+
     var body: some View {
         innerBody
         .navigationTitle("Servers")

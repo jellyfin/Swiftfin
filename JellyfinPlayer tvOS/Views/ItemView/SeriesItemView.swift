@@ -79,7 +79,7 @@ struct SeriesItemView: View {
                     HStack {
                         VStack(alignment: .trailing) {
                             if studio != nil {
-                                Text("STUDIO")
+                                L10n.studio.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -91,7 +91,7 @@ struct SeriesItemView: View {
                             }
 
                             if director != nil {
-                                Text("DIRECTOR")
+                                L10n.director.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -103,7 +103,7 @@ struct SeriesItemView: View {
                             }
 
                             if !actors.isEmpty {
-                                Text("CAST")
+                                L10n.cast.text
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -135,7 +135,7 @@ struct SeriesItemView: View {
                         }
                     }.padding(.top, 50)
                     if !viewModel.seasons.isEmpty {
-                        Text("Seasons")
+                        L10n.seasons.text
                             .font(.headline)
                             .fontWeight(.semibold)
                         ScrollView(.horizontal) {
@@ -153,7 +153,7 @@ struct SeriesItemView: View {
                     }
 
                     if !viewModel.similarItems.isEmpty {
-                        Text("More Like This")
+                        L10n.moreLikeThis.text
                             .font(.headline)
                             .fontWeight(.semibold)
                         ScrollView(.horizontal) {

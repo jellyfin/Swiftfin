@@ -75,7 +75,7 @@ struct PortraitItemView: View {
                     .font(.caption)
                     .fontWeight(.medium)
             } else {
-                Text("S\(String(item.parentIndexNumber ?? 0)):E\(String(item.indexNumber ?? 0))")
+                Text(L10n.seasonAndEpisode(String(item.parentIndexNumber ?? 0), String(item.indexNumber ?? 0)))
                     .foregroundColor(.secondary)
                     .font(.caption)
                     .fontWeight(.medium)

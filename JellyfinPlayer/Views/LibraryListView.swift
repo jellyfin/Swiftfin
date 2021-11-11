@@ -23,7 +23,7 @@ struct LibraryListView: View {
                     ZStack {
                         HStack {
                             Spacer()
-                            Text("Your Favorites")
+                            L10n.yourFavorites.text
                                 .foregroundColor(.black)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
@@ -39,12 +39,12 @@ struct LibraryListView: View {
                 .padding(.bottom, 5)
 
                 NavigationLink(destination: LazyView {
-                    Text("WIP")
+                    L10n.wip.text
                 }) {
                     ZStack {
                         HStack {
                             Spacer()
-                            Text("All Genres")
+                            L10n.allGenres.text
                                 .foregroundColor(.black)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
@@ -98,7 +98,7 @@ struct LibraryListView: View {
                 .padding(.trailing, 16)
                 .padding(.top, 8)
         }
-        .navigationTitle(NSLocalizedString("All Media", comment: ""))
+        .navigationTitle(L10n.allMedia)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {

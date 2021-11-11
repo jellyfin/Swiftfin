@@ -12,10 +12,10 @@ import Introspect
 import SwiftUI
 
 struct HomeView: View {
-    
+
     @EnvironmentObject var homeRouter: HomeCoordinator.Router
     @StateObject var viewModel = HomeViewModel()
-    
+
     private let refreshHelper = RefreshHelper()
 
     @ViewBuilder
@@ -31,10 +31,10 @@ struct HomeView: View {
                     if !viewModel.nextUpItems.isEmpty {
                         NextUpView(items: viewModel.nextUpItems)
                     }
-                    
+
                     ForEach(viewModel.libraries, id: \.self) { library in
                         HStack {
-                            Text("Latest \(library.name ?? "")")
+                            Text(L10n.latestWithString(library.name ?? ""))
                                 .font(.title2)
                                 .fontWeight(.bold)
                             Spacer()
@@ -45,7 +45,7 @@ struct HomeView: View {
                                                            title: library.name ?? ""))
                             } label: {
                                 HStack {
-                                    Text("See All").font(.subheadline).fontWeight(.bold)
+                                    L10n.seeAll.text.font(.subheadline).fontWeight(.bold)
                                     Image(systemName: "chevron.right").font(Font.subheadline.bold())
                                 }
                             }
@@ -58,10 +58,10 @@ struct HomeView: View {
             }
             .introspectScrollView { scrollView in
                 let control = UIRefreshControl()
-                
+
                 refreshHelper.refreshControl = control
                 refreshHelper.refreshAction = viewModel.refresh
-                
+
                 control.addTarget(refreshHelper, action: #selector(RefreshHelper.didRefresh), for: .valueChanged)
                 scrollView.refreshControl = control
             }
@@ -70,7 +70,7 @@ struct HomeView: View {
 
     var body: some View {
         innerBody
-            .navigationTitle(NSLocalizedString("Home", comment: ""))
+            .navigationTitle(L10n.home)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {

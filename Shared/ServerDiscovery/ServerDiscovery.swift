@@ -46,7 +46,7 @@ public class ServerDiscovery {
             case name = "Name"
         }
     }
-    
+
     private let broadcastConn: UDPBroadcastConnection
 
     public init() {

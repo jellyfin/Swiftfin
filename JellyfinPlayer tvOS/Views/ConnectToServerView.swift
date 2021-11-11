@@ -10,14 +10,14 @@ import SwiftUI
 import Stinsen
 
 struct ConnectToServerView: View {
-    
+
     @StateObject var viewModel = ConnectToServerViewModel()
     @State var uri = ""
-    
+
     var body: some View {
         List {
             Section {
-                TextField(NSLocalizedString("Server URL", comment: ""), text: $uri)
+                TextField(L10n.serverURL, text: $uri)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
                     .keyboardType(.URL)
@@ -25,7 +25,7 @@ struct ConnectToServerView: View {
                     viewModel.connectToServer(uri: uri)
                 } label: {
                     HStack {
-                        Text("Connect")
+                        L10n.connect.text
                         Spacer()
                         if viewModel.isLoading {
                             ProgressView()
@@ -36,8 +36,8 @@ struct ConnectToServerView: View {
             } header: {
                 Text("Connect to a Jellyfin server")
             }
-            
-            Section(header: Text("Local Servers")) {
+
+            Section(header: L10n.localServers.text) {
                 if viewModel.searching {
                     ProgressView()
                 }
@@ -68,6 +68,6 @@ struct ConnectToServerView: View {
                   message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
                   dismissButton: .cancel())
         }
-        .navigationTitle("Connect")
+        .navigationTitle(L10n.connect)
     }
 }

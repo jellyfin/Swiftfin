@@ -15,7 +15,7 @@ import SwiftUI
 typealias LibraryCoordinatorParams = (viewModel: LibraryViewModel, title: String)
 
 final class LibraryCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \LibraryCoordinator.start)
 
     @Root var start = makeStart
@@ -49,7 +49,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
-    
+
     func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
         return NavigationViewCoordinator(ItemCoordinator(item: item))
     }

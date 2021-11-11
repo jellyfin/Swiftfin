@@ -15,6 +15,7 @@
 		09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
 		09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
 		0959A5FD2686D29800C7C9A9 /* VideoUpNextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0959A5FC2686D29800C7C9A9 /* VideoUpNextView.swift */; };
+		363CADF08820D3B2055CF1D8 /* Pods_JellyfinPlayer_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE2D324B040DCA2629C110D /* Pods_JellyfinPlayer_tvOS.framework */; };
 		531069572684E7EE00CFFDBA /* InfoTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069502684E7EE00CFFDBA /* InfoTabBarViewController.swift */; };
 		531069582684E7EE00CFFDBA /* MediaInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069512684E7EE00CFFDBA /* MediaInfoView.swift */; };
 		531069592684E7EE00CFFDBA /* SubtitlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531069522684E7EE00CFFDBA /* SubtitlesView.swift */; };
@@ -148,12 +149,11 @@
 		53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DE4BD1267098F300739748 /* SearchBarView.swift */; };
 		53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF641D263D9C0600A7CD1A /* LibraryView.swift */; };
 		53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelectorView.swift */; };
-		53EC6E1E267E80AC006DD26A /* Pods_JellyfinPlayer_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBFE1F64394BCC2EFFF1610D /* Pods_JellyfinPlayer_tvOS.framework */; };
-		53EC6E21267E80B1006DD26A /* Pods_JellyfinPlayer_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F905C1D3D3A0C9E13E7A0BC /* Pods_JellyfinPlayer_iOS.framework */; };
 		53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE24E5265060780068F029 /* LibrarySearchView.swift */; };
 		53F8377D265FF67C00F456B3 /* VideoPlayerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */; };
 		53F866442687A45F00DCD1D7 /* PortraitItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F866432687A45F00DCD1D7 /* PortraitItemView.swift */; };
 		53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F29263CF3F500585C35 /* LatestMediaView.swift */; };
+		560CA59B3956A4CA13EDAC05 /* Pods_JellyfinPlayer_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86BAC42C3764D232C8DF8F5E /* Pods_JellyfinPlayer_iOS.framework */; };
 		62133890265F83A900A81A2A /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388F265F83A900A81A2A /* LibraryListView.swift */; };
 		621338932660107500A81A2A /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
 		621338B32660A07800A81A2A /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
@@ -175,6 +175,10 @@
 		625CB5752678C33500530A6E /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5742678C33500530A6E /* LibraryListViewModel.swift */; };
 		625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */; };
 		625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 625CB5792678C4A400530A6E /* ActivityIndicator */; };
+		6264E88A27384A6F0081A12A /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
+		6264E88C273850380081A12A /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6264E88B273850380081A12A /* Strings.swift */; };
+		6264E88D273850380081A12A /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6264E88B273850380081A12A /* Strings.swift */; };
+		6264E88E273850380081A12A /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6264E88B273850380081A12A /* Strings.swift */; };
 		62671DB327159C1800199D95 /* ItemCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */; };
 		6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
 		6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
@@ -354,17 +358,17 @@
 		E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
 		E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
-		E1FCD09926C4F358007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
+		EABFD69FA6D5DBB248A494AA /* Pods_WidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AFF849629F3C787909A911 /* Pods_WidgetExtension.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		628B952B2670CABE0091AF3B /* PBXContainerItemProxy */ = {
+		6264E888273848760081A12A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 628B951F2670CABD0091AF3B;
-			remoteInfo = WidgetExtensionExtension;
+			remoteInfo = WidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -396,8 +400,10 @@
 		091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UDPBroadCastConnection.swift; sourceTree = "<group>"; };
 		09389CC626819B4500AE350E /* VideoPlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerModel.swift; sourceTree = "<group>"; };
 		0959A5FC2686D29800C7C9A9 /* VideoUpNextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoUpNextView.swift; sourceTree = "<group>"; };
-		3773C07648173CE7FEC083D5 /* Pods-JellyfinPlayer iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.debug.xcconfig"; sourceTree = "<group>"; };
-		3F905C1D3D3A0C9E13E7A0BC /* Pods_JellyfinPlayer_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JellyfinPlayer_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		14E199C7BBA98782CAD2F0D4 /* Pods-JellyfinPlayer iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.release.xcconfig"; sourceTree = "<group>"; };
+		20CA36DDD247EED8D16438A5 /* Pods-JellyfinPlayer tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		4BDCEE3B49CF70A9E9BA3CD8 /* Pods-WidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WidgetExtension.debug.xcconfig"; path = "Target Support Files/Pods-WidgetExtension/Pods-WidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		4BE2D324B040DCA2629C110D /* Pods_JellyfinPlayer_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JellyfinPlayer_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		531069502684E7EE00CFFDBA /* InfoTabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoTabBarViewController.swift; sourceTree = "<group>"; };
 		531069512684E7EE00CFFDBA /* MediaInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaInfoView.swift; sourceTree = "<group>"; };
 		531069522684E7EE00CFFDBA /* SubtitlesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtitlesView.swift; sourceTree = "<group>"; };
@@ -495,6 +501,7 @@
 		53F8377C265FF67C00F456B3 /* VideoPlayerSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSettingsView.swift; sourceTree = "<group>"; };
 		53F866432687A45F00DCD1D7 /* PortraitItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitItemView.swift; sourceTree = "<group>"; };
 		53FF7F29263CF3F500585C35 /* LatestMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaView.swift; sourceTree = "<group>"; };
+		59AFF849629F3C787909A911 /* Pods_WidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6213388F265F83A900A81A2A /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		621338922660107500A81A2A /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
@@ -514,6 +521,7 @@
 		625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerViewModel.swift; sourceTree = "<group>"; };
 		625CB57B2678CE1000530A6E /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = Carthage/Build/TVVLCKit.xcframework; sourceTree = "<group>"; };
+		6264E88B273850380081A12A /* Strings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		6267B3D526710B8900A7371D /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		6267B3D92671138200A7371D /* ImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtensions.swift; sourceTree = "<group>"; };
 		628B95202670CABD0091AF3B /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -540,8 +548,10 @@
 		62EC352E267666A5000E9F2D /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRotationViewModifier.swift; sourceTree = "<group>"; };
 		62ECA01726FA685A00E8EBB7 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
+		772F6DAB8534FD1DB45B7687 /* Pods-JellyfinPlayer iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		86BAC42C3764D232C8DF8F5E /* Pods_JellyfinPlayer_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JellyfinPlayer_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
-		BEEC50E7EFD4848C0E320941 /* Pods-JellyfinPlayer iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.release.xcconfig"; sourceTree = "<group>"; };
+		B598C62749E5EFD37280FCC3 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesLibrariesCoordinator.swift; sourceTree = "<group>"; };
 		C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLibrariesViewModel.swift; sourceTree = "<group>"; };
 		C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLibrariesView.swift; sourceTree = "<group>"; };
@@ -551,8 +561,6 @@
 		C4BE076D2720FEA8003F4AD1 /* PortraitItemElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitItemElement.swift; sourceTree = "<group>"; };
 		C4E508172703E8190045C9AB /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
-		D79953919FED0C4DF72BA578 /* Pods-JellyfinPlayer tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		DE5004F745B19E28744A7DE7 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayButtonRowView.swift; sourceTree = "<group>"; };
 		E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPIError.swift; sourceTree = "<group>"; };
 		E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailCoordinator.swift; sourceTree = "<group>"; };
@@ -609,7 +617,7 @@
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
-		EBFE1F64394BCC2EFFF1610D /* Pods_JellyfinPlayer_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JellyfinPlayer_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDEDADB92FA8523BC8432E45 /* Pods-WidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WidgetExtension.release.xcconfig"; path = "Target Support Files/Pods-WidgetExtension/Pods-WidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -619,7 +627,6 @@
 			files = (
 				53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */,
 				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
-				53EC6E1E267E80AC006DD26A /* Pods_JellyfinPlayer_tvOS.framework in Frameworks */,
 				E1218CA0271A2CF200EA0737 /* Nuke in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
@@ -630,6 +637,7 @@
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				53ABFDED26799D7700886593 /* ActivityIndicator in Frameworks */,
+				363CADF08820D3B2055CF1D8 /* Pods_JellyfinPlayer_tvOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,7 +649,6 @@
 				53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */,
-				53EC6E21267E80B1006DD26A /* Pods_JellyfinPlayer_iOS.framework in Frameworks */,
 				E1218C9A271A26BA00EA0737 /* Nuke in Frameworks */,
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
@@ -649,6 +656,7 @@
 				625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */,
 				E1B6DCE8271A23780015B715 /* CombineExt in Frameworks */,
 				53A431BD266B0FF20016769F /* JellyfinAPI in Frameworks */,
+				560CA59B3956A4CA13EDAC05 /* Pods_JellyfinPlayer_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -664,6 +672,7 @@
 				E13DD3CF27164E1F009D4DAF /* CoreStore in Frameworks */,
 				628B95352670CAEA0091AF3B /* JellyfinAPI in Frameworks */,
 				E1218C9C271A26C400EA0737 /* Nuke in Frameworks */,
+				EABFD69FA6D5DBB248A494AA /* Pods_WidgetExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -794,6 +803,7 @@
 		535870752669D60C00D05A09 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				6286F09F271C0AA500C40ED5 /* Generated */,
 				62C29E9D26D0FE5900C1D2E7 /* Coordinators */,
 				E1FCD08E26C466F3007C8DCF /* Errors */,
 				621338912660106C00A81A2A /* Extensions */,
@@ -1029,8 +1039,9 @@
 				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
 				628B95212670CABD0091AF3B /* WidgetKit.framework */,
 				628B95232670CABD0091AF3B /* SwiftUI.framework */,
-				3F905C1D3D3A0C9E13E7A0BC /* Pods_JellyfinPlayer_iOS.framework */,
-				EBFE1F64394BCC2EFFF1610D /* Pods_JellyfinPlayer_tvOS.framework */,
+				86BAC42C3764D232C8DF8F5E /* Pods_JellyfinPlayer_iOS.framework */,
+				4BE2D324B040DCA2629C110D /* Pods_JellyfinPlayer_tvOS.framework */,
+				59AFF849629F3C787909A911 /* Pods_WidgetExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1060,6 +1071,14 @@
 				6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		6286F09F271C0AA500C40ED5 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				6264E88B273850380081A12A /* Strings.swift */,
+			);
+			path = Generated;
 			sourceTree = "<group>";
 		};
 		628B95252670CABD0091AF3B /* WidgetExtension */ = {
@@ -1128,10 +1147,12 @@
 		C78797A232E2B8774099D1E9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3773C07648173CE7FEC083D5 /* Pods-JellyfinPlayer iOS.debug.xcconfig */,
-				BEEC50E7EFD4848C0E320941 /* Pods-JellyfinPlayer iOS.release.xcconfig */,
-				DE5004F745B19E28744A7DE7 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */,
-				D79953919FED0C4DF72BA578 /* Pods-JellyfinPlayer tvOS.release.xcconfig */,
+				772F6DAB8534FD1DB45B7687 /* Pods-JellyfinPlayer iOS.debug.xcconfig */,
+				14E199C7BBA98782CAD2F0D4 /* Pods-JellyfinPlayer iOS.release.xcconfig */,
+				B598C62749E5EFD37280FCC3 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */,
+				20CA36DDD247EED8D16438A5 /* Pods-JellyfinPlayer tvOS.release.xcconfig */,
+				4BDCEE3B49CF70A9E9BA3CD8 /* Pods-WidgetExtension.debug.xcconfig */,
+				FDEDADB92FA8523BC8432E45 /* Pods-WidgetExtension.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1330,11 +1351,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "JellyfinPlayer tvOS" */;
 			buildPhases = (
-				E7370E1AA68C6CB254E46F2C /* [CP] Check Pods Manifest.lock */,
+				3D0F2756C71CDF6B9EEBD4E0 /* [CP] Check Pods Manifest.lock */,
+				6286F0A3271C0ABA00C40ED5 /* R.swift */,
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
-				6AB6F1DD2C8AD942F71C8A32 /* [CP] Embed Pods Frameworks */,
+				879C22C1CCC48E68C86E904C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1362,19 +1384,20 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5377CC1B263B596B003A4E83 /* Build configuration list for PBXNativeTarget "JellyfinPlayer iOS" */;
 			buildPhases = (
-				6435C3C2E610FE34AD537AC1 /* [CP] Check Pods Manifest.lock */,
+				1C7487D3432E90546DA855B5 /* [CP] Check Pods Manifest.lock */,
+				6286F09E271C093000C40ED5 /* R.swift */,
 				5377CBED263B596A003A4E83 /* Sources */,
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
 				5302F8322658B74800647A2E /* CopyFiles */,
 				628B95312670CABE0091AF3B /* Embed App Extensions */,
-				E8DDF21F62DFCE8CE76666BA /* [CP] Embed Pods Frameworks */,
-				83FD120CA10FD0E91DAD83C9 /* [CP] Copy Pods Resources */,
+				8D1E0C963DCE6C6F328B3EBB /* [CP] Embed Pods Frameworks */,
+				DB8CA7C37DF78BEDCE4E37C1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				628B952C2670CABE0091AF3B /* PBXTargetDependency */,
+				6264E889273848760081A12A /* PBXTargetDependency */,
 			);
 			name = "JellyfinPlayer iOS";
 			packageProductDependencies = (
@@ -1398,6 +1421,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 628B952E2670CABE0091AF3B /* Build configuration list for PBXNativeTarget "WidgetExtension" */;
 			buildPhases = (
+				D4D3981ADF75BCD341D590C0 /* [CP] Check Pods Manifest.lock */,
 				628B951C2670CABD0091AF3B /* Sources */,
 				628B951D2670CABD0091AF3B /* Frameworks */,
 				628B951E2670CABD0091AF3B /* Resources */,
@@ -1572,7 +1596,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6435C3C2E610FE34AD537AC1 /* [CP] Check Pods Manifest.lock */ = {
+		1C7487D3432E90546DA855B5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1594,41 +1618,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6AB6F1DD2C8AD942F71C8A32 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		83FD120CA10FD0E91DAD83C9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E7370E1AA68C6CB254E46F2C /* [CP] Check Pods Manifest.lock */ = {
+		3D0F2756C71CDF6B9EEBD4E0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1650,7 +1640,60 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E8DDF21F62DFCE8CE76666BA /* [CP] Embed Pods Frameworks */ = {
+		6286F09E271C093000C40ED5 /* R.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = R.swift;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PROJECT_DIR}/bin/swiftgen\"\n";
+		};
+		6286F0A3271C0ABA00C40ED5 /* R.swift */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = R.swift;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PROJECT_DIR}/bin/swiftgen\"\n";
+		};
+		879C22C1CCC48E68C86E904C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8D1E0C963DCE6C6F328B3EBB /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1665,6 +1708,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D4D3981ADF75BCD341D590C0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-WidgetExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DB8CA7C37DF78BEDCE4E37C1 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1770,6 +1852,7 @@
 				5321753E2671DE9C005491E6 /* Typings.swift in Sources */,
 				E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				53ABFDEB2679753200886593 /* ConnectToServerView.swift in Sources */,
+				6264E88D273850380081A12A /* Strings.swift in Sources */,
 				536D3D76267BA9BB0004248C /* MainTabViewModel.swift in Sources */,
 				E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */,
 				5310695C2684E7EE00CFFDBA /* VideoPlayerViewController.swift in Sources */,
@@ -1841,6 +1924,7 @@
 				E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */,
 				53892770263C25230035E14B /* NextUpView.swift in Sources */,
 				E11D224227378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */,
+				6264E88C273850380081A12A /* Strings.swift in Sources */,
 				C4BE0766271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */,
 				62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */,
 				535BAEA5264A151C005FA86D /* VideoPlayer.swift in Sources */,
@@ -1929,6 +2013,7 @@
 			files = (
 				53649AB3269D3F5B00A2D8B7 /* LogManager.swift in Sources */,
 				E13DD3CB27164BA8009D4DAF /* UIDeviceExtensions.swift in Sources */,
+				6264E88A27384A6F0081A12A /* NetworkError.swift in Sources */,
 				E19169D0272514760085832A /* HTTPScheme.swift in Sources */,
 				6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */,
 				628B953C2670D2430091AF3B /* StringExtensions.swift in Sources */,
@@ -1936,6 +2021,7 @@
 				E1AD105926D9A543003E4A08 /* LazyView.swift in Sources */,
 				E11B1B6E2718CDBA006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				628B95372670CB800091AF3B /* JellyfinWidget.swift in Sources */,
+				6264E88E273850380081A12A /* Strings.swift in Sources */,
 				E1AD105426D97161003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
 				E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */,
 				628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */,
@@ -1943,7 +2029,6 @@
 				E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */,
 				6220D0AF26D5EABE00B8E046 /* ViewExtensions.swift in Sources */,
 				E13DD3D7271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
-				E1FCD09926C4F358007C8DCF /* NetworkError.swift in Sources */,
 				E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */,
 				E13DD3CA27164B80009D4DAF /* SwiftfinStore.swift in Sources */,
 				62EC353226766849000E9F2D /* SessionManager.swift in Sources */,
@@ -1955,10 +2040,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		628B952C2670CABE0091AF3B /* PBXTargetDependency */ = {
+		6264E889273848760081A12A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 628B951F2670CABD0091AF3B /* WidgetExtension */;
-			targetProxy = 628B952B2670CABE0091AF3B /* PBXContainerItemProxy */;
+			targetProxy = 6264E888273848760081A12A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2096,7 +2181,7 @@
 /* Begin XCBuildConfiguration section */
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DE5004F745B19E28744A7DE7 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */;
+			baseConfigurationReference = B598C62749E5EFD37280FCC3 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Dev App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2126,7 +2211,7 @@
 		};
 		535870732669D21700D05A09 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D79953919FED0C4DF72BA578 /* Pods-JellyfinPlayer tvOS.release.xcconfig */;
+			baseConfigurationReference = 20CA36DDD247EED8D16438A5 /* Pods-JellyfinPlayer tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2276,7 +2361,7 @@
 		};
 		5377CC1C263B596B003A4E83 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3773C07648173CE7FEC083D5 /* Pods-JellyfinPlayer iOS.debug.xcconfig */;
+			baseConfigurationReference = 772F6DAB8534FD1DB45B7687 /* Pods-JellyfinPlayer iOS.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
@@ -2312,7 +2397,7 @@
 		};
 		5377CC1D263B596B003A4E83 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BEEC50E7EFD4848C0E320941 /* Pods-JellyfinPlayer iOS.release.xcconfig */;
+			baseConfigurationReference = 14E199C7BBA98782CAD2F0D4 /* Pods-JellyfinPlayer iOS.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -2348,6 +2433,7 @@
 		};
 		628B952F2670CABE0091AF3B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4BDCEE3B49CF70A9E9BA3CD8 /* Pods-WidgetExtension.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
@@ -2374,6 +2460,7 @@
 		};
 		628B95302670CABE0091AF3B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FDEDADB92FA8523BC8432E45 /* Pods-WidgetExtension.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;

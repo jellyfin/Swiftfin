@@ -14,7 +14,7 @@ import UIKit
 class RefreshHelper {
     var refreshControl: UIRefreshControl?
     var refreshAction: (() -> Void)?
-    
+
     @objc func didRefresh() {
         guard let refreshControl = refreshControl else { return }
         refreshAction?()

@@ -12,18 +12,18 @@ import Stinsen
 import SwiftUI
 
 struct BasicAppSettingsView: View {
-    
+
     @EnvironmentObject var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
     @ObservedObject var viewModel: BasicAppSettingsViewModel
     @State var resetTapped: Bool = false
-    
+
     @Default(.appAppearance) var appAppearance
     @Default(.defaultHTTPScheme) var defaultHTTPScheme
-    
+
     var body: some View {
         Form {
             Section {
-                Picker(NSLocalizedString("Appearance", comment: ""), selection: $appAppearance) {
+                Picker(L10n.appearance, selection: $appAppearance) {
                     ForEach(self.viewModel.appearances, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)
                     }
@@ -31,9 +31,9 @@ struct BasicAppSettingsView: View {
                     UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
                 })
             } header: {
-                Text("Accessibility")
+                L10n.accessibility.text
             }
-            
+
             Section {
                 Picker("Default Scheme", selection: $defaultHTTPScheme) {
                     ForEach(HTTPScheme.allCases, id: \.self) { scheme in
@@ -43,19 +43,19 @@ struct BasicAppSettingsView: View {
             } header: {
                 Text("Networking")
             }
-            
+
             Button {
                 resetTapped = true
             } label: {
-                Text("Reset")
+                L10n.reset.text
             }
         }
-        .alert("Reset", isPresented: $resetTapped, actions: {
+        .alert(L10n.reset, isPresented: $resetTapped, actions: {
             Button(role: .destructive) {
                 viewModel.reset()
                 basicAppSettingsRouter.dismissCoordinator()
             } label: {
-                Text("Reset")
+                L10n.reset.text
             }
         })
         .navigationBarTitle("Settings", displayMode: .inline)

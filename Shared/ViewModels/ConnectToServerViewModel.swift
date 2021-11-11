@@ -13,25 +13,25 @@ import JellyfinAPI
 import Stinsen
 
 struct AddServerURIPayload: Identifiable {
-    
+
     let server: SwiftfinStore.State.Server
     let uri: String
-    
+
     var id: String {
         return server.id.appending(uri)
     }
 }
 
 final class ConnectToServerViewModel: ViewModel {
-    
+
     @RouterObject var router: ConnectToServerCoodinator.Router?
     @Published var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
     @Published var searching = false
     @Published var addServerURIPayload: AddServerURIPayload?
     var backAddServerURIPayload: AddServerURIPayload?
-    
+
     private let discovery = ServerDiscovery()
-    
+
     var alertTitle: String {
         var message: String = ""
         if errorMessage?.code != ErrorMessage.noShowErrorCode {
@@ -95,7 +95,7 @@ final class ConnectToServerViewModel: ViewModel {
             }
         }
     }
-    
+
     func addURIToServer(addServerURIPayload: AddServerURIPayload) {
         SessionManager.main.addURIToServer(server: addServerURIPayload.server, uri: addServerURIPayload.uri)
             .sink { completion in
@@ -113,12 +113,12 @@ final class ConnectToServerViewModel: ViewModel {
             }
             .store(in: &cancellables)
     }
-    
+
     func cancelConnection() {
         for cancellable in cancellables {
             cancellable.cancel()
         }
-        
+
         self.isLoading = false
     }
 }

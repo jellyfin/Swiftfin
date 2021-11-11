@@ -153,7 +153,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
             sendProgressReport(eventName: "unpause")
         } else {
             sendJellyfinCommand(command: "Seek", options: [
-                "position": Int(secondsScrubbedTo),
+                "position": Int(secondsScrubbedTo)
             ])
         }
     }
@@ -421,7 +421,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         if manifest.type == "Movie" {
             titleLabel.text = manifest.name ?? ""
         } else {
-            titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
+            titleLabel.text = "\(L10n.seasonAndEpisode(String(manifest.parentIndexNumber ?? 0), String(manifest.indexNumber ?? 0))) “\(manifest.name ?? "")”"
 
             setupNextUpView()
             upNextViewModel.delegate = self
@@ -664,8 +664,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         subtitleTrackArray.forEach { subtitle in
             if Defaults[.isAutoSelectSubtitles] {
                 if Defaults[.autoSelectSubtitlesLangCode] == "Auto",
-                   subtitle.languageCode.contains(Locale.current.languageCode ?? "")
-                {
+                   subtitle.languageCode.contains(Locale.current.languageCode ?? "") {
                     selectedCaptionTrack = subtitle.id
                     mediaPlayer.currentVideoSubTitleIndex = subtitle.id
                 } else if subtitle.languageCode.contains(Defaults[.autoSelectSubtitlesLangCode]) {
@@ -816,7 +815,7 @@ class PlayerViewController: UIViewController, GCKDiscoveryManagerListener, GCKRe
         shouldShowLoadingScreen = true
         videoControlsView.isHidden = true
 
-        titleLabel.text = "S\(String(manifest.parentIndexNumber ?? 0)):E\(String(manifest.indexNumber ?? 0)) “\(manifest.name ?? "")”"
+        titleLabel.text = "\(L10n.seasonAndEpisode(String(manifest.parentIndexNumber ?? 0), String(manifest.indexNumber ?? 0))) “\(manifest.name ?? "")”"
 
         setupMediaPlayer()
         getNextEpisode()
@@ -854,7 +853,7 @@ extension PlayerViewController: GCKGenericChannelDelegate {
                         if hasSentRemoteSeek == false {
                             hasSentRemoteSeek = true
                             sendJellyfinCommand(command: "Seek", options: [
-                                "position": Int(Float(manifest.runTimeTicks! / 10_000_000) * mediaPlayer.position),
+                                "position": Int(Float(manifest.runTimeTicks! / 10_000_000) * mediaPlayer.position)
                             ])
                         }
                     }
@@ -880,7 +879,7 @@ extension PlayerViewController: GCKGenericChannelDelegate {
             "serverId": SessionManager.main.currentLogin.server.id,
             "serverVersion": "10.8.0",
             "receiverName": castSessionManager.currentCastSession!.device.friendlyName!,
-            "subtitleBurnIn": false,
+            "subtitleBurnIn": false
         ]
         let jsonData = JSON(payload)
 
@@ -935,8 +934,8 @@ extension PlayerViewController: GCKSessionManagerListener {
                 "Name": manifest.name!,
                 "Type": manifest.type!,
                 "MediaType": manifest.mediaType!,
-                "IsFolder": manifest.isFolder!,
-            ]],
+                "IsFolder": manifest.isFolder!
+            ]]
         ]
         sendJellyfinCommand(command: "PlayNow", options: playNowOptions)
     }
@@ -1104,8 +1103,7 @@ struct VLCPlayerWithControls: UIViewControllerRepresentable {
 
     typealias UIViewControllerType = PlayerViewController
     func makeUIViewController(context: UIViewControllerRepresentableContext<VLCPlayerWithControls>) -> VLCPlayerWithControls
-        .UIViewControllerType
-    {
+        .UIViewControllerType {
         let storyboard = UIStoryboard(name: "VideoPlayer", bundle: nil)
         let customViewController = storyboard.instantiateViewController(withIdentifier: "VideoPlayer") as! PlayerViewController
         customViewController.manifest = item

@@ -14,7 +14,7 @@ struct MovieLibrariesView: View {
     @EnvironmentObject var movieLibrariesRouter: MovieLibrariesCoordinator.Router
     @StateObject var  viewModel: MovieLibrariesViewModel
     var title: String
-    
+
     var body: some View {
         if viewModel.isLoading == true {
             ProgressView()
@@ -77,7 +77,7 @@ struct MovieLibrariesView: View {
             .ignoresSafeArea(.all)
         } else {
             VStack {
-                Text("No results.")
+                L10n.noResults.text
                 Button {
                     print("movieLibraries reload")
                 } label: {

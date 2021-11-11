@@ -11,10 +11,10 @@ import CoreStore
 import SwiftUI
 
 struct ServerListView: View {
-    
+
     @EnvironmentObject var serverListRouter: ServerListCoordinator.Router
     @ObservedObject var viewModel: ServerListViewModel
-    
+
     @ViewBuilder
     private var listView: some View {
         ScrollView {
@@ -27,22 +27,22 @@ struct ServerListView: View {
                             Image(systemName: "server.rack")
                                 .font(.system(size: 72))
                                 .foregroundColor(.primary)
-                            
+
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(server.name)
                                     .font(.title2)
                                     .foregroundColor(.primary)
-                                
+
                                 Text(server.currentURI)
                                     .font(.footnote)
                                     .disabled(true)
                                     .foregroundColor(.secondary)
-                                
+
                                 Text(viewModel.userTextFor(server: server))
                                     .font(.footnote)
                                     .foregroundColor(.primary)
                             }
-                            
+
                             Spacer()
                         }
                     }
@@ -60,7 +60,7 @@ struct ServerListView: View {
         }
         .padding(.top, 50)
     }
-    
+
     @ViewBuilder
     private var noServerView: some View {
         VStack {
@@ -68,18 +68,18 @@ struct ServerListView: View {
                 .frame(minWidth: 50, maxWidth: 500)
                 .multilineTextAlignment(.center)
                 .font(.callout)
-            
+
             Button {
                 serverListRouter.route(to: \.connectToServer)
             } label: {
-                Text("Connect")
+                L10n.connect.text
                     .bold()
                     .font(.callout)
             }
             .padding(.top, 40)
         }
     }
-    
+
     @ViewBuilder
     private var innerBody: some View {
         if viewModel.servers.isEmpty {
@@ -89,7 +89,7 @@ struct ServerListView: View {
             listView
         }
     }
-    
+
     @ViewBuilder
     private var trailingToolbarContent: some View {
         if viewModel.servers.isEmpty {
@@ -109,7 +109,7 @@ struct ServerListView: View {
             }
         }
     }
-    
+
     var body: some View {
         innerBody
         .navigationTitle("Servers")

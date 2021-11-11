@@ -25,13 +25,13 @@ final class MainCoordinator: NavigationCoordinatable {
         } else {
             self.stack = NavigationStack(initial: \MainCoordinator.serverList)
         }
-        
+
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
         WidgetCenter.shared.reloadAllTimelines()
         UIScrollView.appearance().keyboardDismissMode = .onDrag
-    
+
         // Back bar button item setup
         let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
         let barAppearance = UINavigationBar.appearance()

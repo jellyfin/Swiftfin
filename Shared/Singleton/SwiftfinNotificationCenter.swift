@@ -10,11 +10,11 @@
 import Foundation
 
 enum SwiftfinNotificationCenter {
-    
+
     static let main: NotificationCenter = {
         return NotificationCenter()
     }()
-    
+
     enum Keys {
         static let didSignIn = Notification.Name("didSignIn")
         static let didSignOut = Notification.Name("didSignOut")

@@ -24,8 +24,8 @@ final class SeasonItemViewModel: ItemViewModel {
     }
 
     override func playButtonText() -> String {
-        guard let playButtonItem = playButtonItem else { return "Play" }
-        guard let episodeLocator = playButtonItem.getEpisodeLocator() else { return "Play" }
+        guard let playButtonItem = playButtonItem else { return L10n.play }
+        guard let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
         return episodeLocator
     }
 
@@ -70,7 +70,7 @@ final class SeasonItemViewModel: ItemViewModel {
             playButtonItem = firstEpisode
         }
     }
-    
+
     func routeToSeriesItem() {
         guard let id = item.seriesId else { return }
         UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)

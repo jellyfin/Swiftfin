@@ -138,7 +138,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         let builder = DeviceProfileBuilder()
         builder.setMaxBitrate(bitrate: maxBitrate)
         let profile = builder.buildProfile()
-        
+
         let currentUser = SessionManager.main.currentLogin.user
 
         let playbackInfo = PlaybackInfoDto(userId: currentUser.id, maxStreamingBitrate: Int(maxBitrate), startTimeTicks: manifest.userData?.playbackPositionTicks ?? 0, deviceProfile: profile, autoOpenLiveStream: true)

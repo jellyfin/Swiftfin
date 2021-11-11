@@ -10,7 +10,7 @@ import Stinsen
 import SwiftUI
 
 struct LibraryFilterView: View {
-    
+
     @EnvironmentObject var filterRouter: FilterCoordinator.Router
     @Binding var filters: LibraryFilters
     var parentId: String = ""
@@ -31,32 +31,32 @@ struct LibraryFilterView: View {
             } else {
                 Form {
                     if viewModel.enabledFilterType.contains(.genre) {
-                        MultiSelector(label: NSLocalizedString("Genres", comment: ""),
+                        MultiSelector(label: L10n.genres,
                                       options: viewModel.possibleGenres,
                                       optionToString: { $0.name ?? "" },
                                       selected: $viewModel.modifiedFilters.withGenres)
                     }
                     if viewModel.enabledFilterType.contains(.filter) {
-                        MultiSelector(label: NSLocalizedString("Filters", comment: ""),
+                        MultiSelector(label: L10n.filters,
                                       options: viewModel.possibleItemFilters,
                                       optionToString: { $0.localized },
                                       selected: $viewModel.modifiedFilters.filters)
                     }
                     if viewModel.enabledFilterType.contains(.tag) {
-                        MultiSelector(label: NSLocalizedString("Tags", comment: ""),
+                        MultiSelector(label: L10n.tags,
                                       options: viewModel.possibleTags,
                                       optionToString: { $0 },
                                       selected: $viewModel.modifiedFilters.tags)
                     }
                     if viewModel.enabledFilterType.contains(.sortBy) {
-                        Picker(selection: $viewModel.selectedSortBy, label: Text("Sort by")) {
+                        Picker(selection: $viewModel.selectedSortBy, label: L10n.sortBy.text) {
                             ForEach(viewModel.possibleSortBys, id: \.self) { so in
                                 Text(so.localized).tag(so)
                             }
                         }
                     }
                     if viewModel.enabledFilterType.contains(.sortOrder) {
-                        Picker(selection: $viewModel.selectedSortOrder, label: Text("Display order")) {
+                        Picker(selection: $viewModel.selectedSortOrder, label: L10n.displayOrder.text) {
                             ForEach(viewModel.possibleSortOrders, id: \.self) { so in
                                 Text(so.rawValue).tag(so)
                             }
@@ -68,7 +68,7 @@ struct LibraryFilterView: View {
                     self.filters = viewModel.modifiedFilters
                     filterRouter.dismissCoordinator()
                 } label: {
-                    Text("Reset")
+                    L10n.reset.text
                 }
             }
         }
@@ -86,7 +86,7 @@ struct LibraryFilterView: View {
                     self.filters = viewModel.modifiedFilters
                     filterRouter.dismissCoordinator()
                 } label: {
-                    Text("Apply")
+                    L10n.apply.text
                 }
             }
         }

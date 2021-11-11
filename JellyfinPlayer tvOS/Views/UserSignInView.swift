@@ -11,28 +11,28 @@ import SwiftUI
 import Stinsen
 
 struct UserSignInView: View {
-    
+
     @ObservedObject var viewModel: UserSignInViewModel
     @State private var username: String = ""
     @State private var password: String = ""
-    
+
     var body: some View {
         Form {
-            
+
             Section {
-                TextField("Username", text: $username)
+                TextField(L10n.username, text: $username)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
-                
-                SecureField("Password", text: $password)
+
+                SecureField(L10n.password, text: $password)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
-                
+
                 Button {
                     viewModel.login(username: username, password: password)
                 } label: {
                     HStack {
-                        Text("Connect")
+                        L10n.connect.text
                         Spacer()
                         if viewModel.isLoading {
                             ProgressView()
