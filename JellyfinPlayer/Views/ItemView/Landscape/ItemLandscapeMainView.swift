@@ -92,7 +92,7 @@ struct ItemLandscapeMainView: View {
                           bh: viewModel.item.getBackdropImageBlurHash())
                     .opacity(0.3)
                     .edgesIgnoringSafeArea(.all)
-                    .blur(radius: 4)
+                    .blur(radius: 8)
 
                 // iPadOS is making the view go all the way to the edge.
                 // We have to accomodate this here
