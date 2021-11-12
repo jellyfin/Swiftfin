@@ -34,7 +34,6 @@ class ContentProvider: TVTopShelfContentProvider {
                     break
                 case .failure:
                     completion(nil)
-                    break
                 }
             }, receiveValue: { response in
                 DispatchGroup().notify(queue: .main) {
