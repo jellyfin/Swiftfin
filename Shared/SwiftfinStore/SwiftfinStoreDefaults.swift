@@ -15,7 +15,7 @@ extension SwiftfinStore {
     enum Defaults {
 
         static let suite: UserDefaults = {
-            return UserDefaults(suiteName: "swiftfinstore-defaults")!
+            return UserDefaults(suiteName: "group.swiftfinstore-defaults")!
         }()
     }
 }

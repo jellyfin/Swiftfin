@@ -11,10 +11,14 @@ import Combine
 import TVServices
 import JellyfinAPI
 import CoreData
+import CoreStore
+import Defaults
+import Foundation
 
 class ContentProvider: TVTopShelfContentProvider {
     
     func getResumeWatching(completion: @escaping ([BaseItemDto]?) -> Void) {
+                        
         guard let currentLogin = SessionManager.main.currentLogin else {
             LogManager.shared.log.debug("No current login")
             completion(nil)
@@ -42,11 +46,45 @@ class ContentProvider: TVTopShelfContentProvider {
             })
             .store(in: &cancellables)
         
+        
+        
     }
     
     override func loadTopShelfContent(completionHandler: @escaping (TVTopShelfContent?) -> Void) {
         // Fetch content and call completionHandler
         var contentItems = [TVTopShelfSectionedItem]()
+        
+        LogManager.shared.log.debug("Lazy init datastack")
+        // Lazily initialize datastack
+        _ = SwiftfinStore.dataStack
+
+        
+        if let lastUserID = SwiftfinStore.Defaults.suite[.lastServerUserID] {
+            LogManager.shared.log.debug("Defaults got")
+            
+            LogManager.shared.log.debug("main thread: \(Thread.isMainThread)")
+            
+            DispatchQueue.main.async {
+                
+                LogManager.shared.log.debug("main thread: \(Thread.isMainThread)")
+                assert(Thread.isMainThread)
+                // On main thread
+                
+                if let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
+                                                                    [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)]) {
+                    LogManager.shared.log.debug("Got user")
+                }
+                else{
+                    LogManager.shared.log.debug("no user")
+                }
+            }
+        }
+        else {
+            LogManager.shared.log.debug("no defultas")
+        }
+        
+       
+        
         
         LogManager.shared.log.debug("Fetching top shelf content")
         getResumeWatching { items in
