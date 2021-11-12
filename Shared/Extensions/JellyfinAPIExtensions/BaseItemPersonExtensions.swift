@@ -18,9 +18,8 @@ extension BaseItemPerson {
         let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
                                                                 imageType: .primary,
                                                                 maxWidth: Int(x),
-                                                                quality: 85,
-                                                                tag: primaryImageTag,
-                                                                format: .webp).URLString
+                                                                quality: 96,
+                                                                tag: primaryImageTag).URLString
         return URL(string: urlString)!
     }
     

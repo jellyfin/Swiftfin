@@ -88,9 +88,8 @@ public extension BaseItemDto {
         let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: imageItemId,
                                                                 imageType: imageType,
                                                                 maxWidth: Int(x),
-                                                                quality: 85,
-                                                                tag: imageTag,
-                                                                format: .webp).URLString
+                                                                quality: 96,
+                                                                tag: imageTag).URLString
         return URL(string: urlString)!
     }
 
@@ -106,9 +105,8 @@ public extension BaseItemDto {
         let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: parentBackdropItemId ?? "",
                                                                 imageType: .backdrop,
                                                                 maxWidth: Int(x),
-                                                                quality: 85,
-                                                                tag: parentBackdropImageTags?.first,
-                                                                format: .webp).URLString
+                                                                quality: 96,
+                                                                tag: parentBackdropImageTags?.first).URLString
         return URL(string: urlString)!
     }
 
@@ -117,9 +115,8 @@ public extension BaseItemDto {
         let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: seriesId ?? "",
                                                                 imageType: .primary,
                                                                 maxWidth: Int(x),
-                                                                quality: 85,
-                                                                tag: seriesPrimaryImageTag,
-                                                                format: .webp).URLString
+                                                                quality: 96,
+                                                                tag: seriesPrimaryImageTag).URLString
         return URL(string: urlString)!
     }
 
@@ -138,9 +135,8 @@ public extension BaseItemDto {
         let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: imageItemId,
                                                                 imageType: imageType,
                                                                 maxWidth: Int(x),
-                                                                quality: 85,
-                                                                tag: imageTag,
-                                                                format: .webp).URLString
+                                                                quality: 96,
+                                                                tag: imageTag).URLString
         return URL(string: urlString)!
     }
 
