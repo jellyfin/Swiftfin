@@ -1,11 +1,11 @@
 //
- /* 
-  * SwiftFin is subject to the terms of the Mozilla Public
-  * License, v2.0. If a copy of the MPL was not distributed with this
-  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
-  *
-  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
-  */
+/*
+ * SwiftFin is subject to the terms of the Mozilla Public
+ * License, v2.0. If a copy of the MPL was not distributed with this
+ * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+ */
 
 import Foundation
 import JellyfinAPI
@@ -14,35 +14,48 @@ import UIKit
 // 001fC^ = dark grey plain blurhash
 
 public extension BaseItemDto {
-
     // MARK: Images
 
     func getSeriesBackdropImageBlurHash() -> String {
-        let rawImgURL = getSeriesBackdropImage(maxWidth: 1).absoluteString
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+        let imgURL = getSeriesBackdropImage(maxWidth: 1)
+        guard let imgTag = imgURL.queryParameters?["tag"],
+              let hash = imageBlurHashes?.backdrop?[imgTag]
+        else {
+            return "001fC^"
+        }
 
-        return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
+        return hash
     }
 
     func getSeriesPrimaryImageBlurHash() -> String {
-        let rawImgURL = getSeriesPrimaryImage(maxWidth: 1).absoluteString
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+        let imgURL = getSeriesPrimaryImage(maxWidth: 1)
+        guard let imgTag = imgURL.queryParameters?["tag"],
+              let hash = imageBlurHashes?.primary?[imgTag]
+        else {
+            return "001fC^"
+        }
 
-        return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
+        return hash
     }
 
     func getPrimaryImageBlurHash() -> String {
-        let rawImgURL = getPrimaryImage(maxWidth: 1).absoluteString
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+        let imgURL = getPrimaryImage(maxWidth: 1)
+        guard let imgTag = imgURL.queryParameters?["tag"],
+              let hash = imageBlurHashes?.primary?[imgTag]
+        else {
+            return "001fC^"
+        }
 
-        return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
+        return hash
     }
 
     func getBackdropImageBlurHash() -> String {
-        let rawImgURL = getBackdropImage(maxWidth: 1).absoluteString
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+        let imgURL = getBackdropImage(maxWidth: 1)
+        guard let imgTag = imgURL.queryParameters?["tag"] else {
+            return "001fC^"
+        }
 
-        if rawImgURL.contains("Backdrop") {
+        if imgURL.queryParameters?[ImageType.backdrop.rawValue] == nil {
             return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
         } else {
             return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
@@ -50,31 +63,33 @@ public extension BaseItemDto {
     }
 
     func getBackdropImage(maxWidth: Int) -> URL {
-        var imageType = ""
-        var imageTag = ""
+        var imageType = ImageType.backdrop
+        var imageTag: String?
         var imageItemId = id ?? ""
 
         if primaryImageAspectRatio ?? 0.0 < 1.0 {
-            imageType = "Backdrop"
             if !(backdropImageTags?.isEmpty ?? true) {
-                imageTag = (backdropImageTags ?? [""])[0]
+                imageTag = backdropImageTags?.first
             }
         } else {
-            imageType = "Primary"
-            imageTag = imageTags?["Primary"] ?? ""
+            imageType = .primary
+            imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
         }
 
-        if imageTag == "" || imageItemId == "" {
-            imageType = "Backdrop"
+        if imageTag == nil || imageItemId.isEmpty {
             if !(parentBackdropImageTags?.isEmpty ?? true) {
-                imageTag = (parentBackdropImageTags ?? [""])[0]
+                imageTag = parentBackdropImageTags?.first
                 imageItemId = parentBackdropItemId ?? ""
             }
         }
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString =
-        "\(SessionManager.main.currentLogin.server.uri)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: imageItemId,
+                                                                imageType: imageType,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: imageTag).URLString
         return URL(string: urlString)!
     }
 
@@ -86,39 +101,42 @@ public extension BaseItemDto {
     }
 
     func getSeriesBackdropImage(maxWidth: Int) -> URL {
-        let imageType = "Backdrop"
-        let imageTag = (parentBackdropImageTags ?? [""])[0]
-
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString =
-            "\(SessionManager.main.currentLogin.server.uri)/Items/\(parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: parentBackdropItemId ?? "",
+                                                                imageType: .backdrop,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: parentBackdropImageTags?.first).URLString
         return URL(string: urlString)!
     }
 
     func getSeriesPrimaryImage(maxWidth: Int) -> URL {
-        let imageType = "Primary"
-        let imageTag = seriesPrimaryImageTag ?? ""
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString =
-            "\(SessionManager.main.currentLogin.server.uri)/Items/\(seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: seriesId ?? "",
+                                                                imageType: .primary,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: seriesPrimaryImageTag).URLString
         return URL(string: urlString)!
     }
 
     func getPrimaryImage(maxWidth: Int) -> URL {
-        let imageType = "Primary"
-        var imageTag = imageTags?["Primary"] ?? ""
+        let imageType = ImageType.primary
+        var imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
         var imageItemId = id ?? ""
 
-        if imageTag == "" || imageItemId == "" {
+        if imageTag.isEmpty || imageItemId.isEmpty {
             imageTag = seriesPrimaryImageTag ?? ""
             imageItemId = seriesId ?? ""
         }
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-        let urlString =
-            "\(SessionManager.main.currentLogin.server.uri)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
-        // print(urlString)
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: imageItemId,
+                                                                imageType: imageType,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: imageTag).URLString
         return URL(string: urlString)!
     }
 
@@ -174,14 +192,14 @@ public extension BaseItemDto {
     }
 
     var itemType: ItemType {
-        guard let originalType = self.type, let knownType = ItemType(rawValue: originalType)  else { return .unknown }
+        guard let originalType = type, let knownType = ItemType(rawValue: originalType) else { return .unknown }
         return knownType
     }
 
     // MARK: PortraitHeaderViewURL
 
     func portraitHeaderViewURL(maxWidth: Int) -> URL {
-        switch self.itemType {
+        switch itemType {
         case .movie, .season, .series:
             return getPrimaryImage(maxWidth: maxWidth)
         case .episode:

@@ -84,22 +84,24 @@ struct ItemLandscapeMainView: View {
     // MARK: body
     
     var body: some View {
-        ZStack {
-            // MARK: Backdrop
-            
-            ImageView(src: viewModel.item.getBackdropImage(maxWidth: 200),
-                      bh: viewModel.item.getBackdropImageBlurHash())
-                .opacity(0.3)
-                .edgesIgnoringSafeArea(.all)
-                .blur(radius: 4)
-                .layoutPriority(-1)
-            
-            // iPadOS is making the view go all the way to the edge.
-            // We have to accomodate this here
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                innerBody.padding(.horizontal, 25)
-            } else {
-                innerBody
+        VStack {
+            ZStack {
+                // MARK: Backdrop
+
+                ImageView(src: viewModel.item.getBackdropImage(maxWidth: 200),
+                          bh: viewModel.item.getBackdropImageBlurHash())
+                    .opacity(0.3)
+                    .edgesIgnoringSafeArea(.all)
+                    .blur(radius: 8)
+                    .layoutPriority(-1)
+
+                // iPadOS is making the view go all the way to the edge.
+                // We have to accomodate this here
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    innerBody.padding(.horizontal, 25)
+                } else {
+                    innerBody
+                }
             }
         }
     }
