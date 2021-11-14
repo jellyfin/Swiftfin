@@ -165,9 +165,9 @@ extension SwiftfinStore.Errors: LocalizedError {
 
     var title: String {
         switch self {
-        case .existingServer(_):
+        case .existingServer:
             return "Existing Server"
-        case .existingUser(_):
+        case .existingUser:
             return "Existing User"
         }
     }
