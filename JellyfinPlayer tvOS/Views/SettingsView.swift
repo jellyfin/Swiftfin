@@ -11,7 +11,7 @@ import Defaults
 import JellyfinAPI
 
 struct SettingsView: View {
-    
+
     @ObservedObject var viewModel: SettingsViewModel
 
     @Default(.inNetworkBandwidth) var inNetworkStreamBitrate
