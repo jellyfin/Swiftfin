@@ -13,14 +13,14 @@ import Stinsen
 
 final class LiveTVTabCoordinator: TabCoordinatable {
     var child = TabChild(startingItems: [
-         \LiveTVTabCoordinator.programs,
-         \LiveTVTabCoordinator.guide,
-         \LiveTVTabCoordinator.channels
+        \LiveTVTabCoordinator.programs,
+          \LiveTVTabCoordinator.channels,
+          \LiveTVTabCoordinator.home
     ])
     
     @Route(tabItem: makeProgramsTab) var programs = makePrograms
-    @Route(tabItem: makeGuideTab) var guide = makeGuide
     @Route(tabItem: makeChannelsTab) var channels = makeChannels
+    @Route(tabItem: makeHomeTab) var home = makeHome
     
     func makePrograms() -> NavigationViewCoordinator<LiveTVProgramsCoordinator> {
         return NavigationViewCoordinator(LiveTVProgramsCoordinator())
@@ -33,17 +33,6 @@ final class LiveTVTabCoordinator: TabCoordinatable {
         }
     }
     
-    func makeGuide() -> NavigationViewCoordinator<LiveTVGuideCoordinator> {
-        return NavigationViewCoordinator(LiveTVGuideCoordinator())
-    }
-    
-    @ViewBuilder func makeGuideTab(isActive: Bool) -> some View {
-        HStack {
-            Image(systemName: "calendar")
-            Text("Guide")
-        }
-    }
-    
     func makeChannels() -> NavigationViewCoordinator<LiveTVChannelsCoordinator> {
         return NavigationViewCoordinator(LiveTVChannelsCoordinator())
     }
@@ -52,6 +41,17 @@ final class LiveTVTabCoordinator: TabCoordinatable {
         HStack {
             Image(systemName: "square.grid.3x3")
             Text("Channels")
+        }
+    }
+    
+    func makeHome() -> LiveTVHomeView {
+        return LiveTVHomeView()
+    }
+    
+    @ViewBuilder func makeHomeTab(isActive: Bool) -> some View {
+        HStack {
+            Image(systemName: "house")
+            Text("Home")
         }
     }
 }

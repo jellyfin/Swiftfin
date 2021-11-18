@@ -10,7 +10,7 @@
 import SwiftUI
 import JellyfinAPI
 
-private struct CutOffShadow: Shape {
+struct CutOffShadow: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
 

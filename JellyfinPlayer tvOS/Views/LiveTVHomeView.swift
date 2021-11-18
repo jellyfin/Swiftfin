@@ -8,8 +8,16 @@
   */
 
 import Foundation
-import JellyfinAPI
+import SwiftUI
 
-final class LiveTVGuideViewModel: ViewModel {
+struct LiveTVHomeView: View {
+    @EnvironmentObject var mainCoordinator: MainCoordinator.Router
     
+    var body: some View {
+        Button {} label: {
+            Text("Return Home")
+        }.onAppear {
+            self.mainCoordinator.root(\.mainTab)
+        }
+    }
 }
