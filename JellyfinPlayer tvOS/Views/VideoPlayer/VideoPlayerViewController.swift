@@ -65,6 +65,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     var manifest: BaseItemDto = BaseItemDto()
     var playbackItem = PlaybackItem()
     var playSessionId: String = ""
+    var backAction = {}
 
     var cancellables = Set<AnyCancellable>()
 
@@ -486,7 +487,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
             self.resignFirstResponder()
             mediaPlayer.stop()
             sendStopReport()
-            self.navigationController?.popViewController(animated: true)
+            backAction()
         }
     }
 

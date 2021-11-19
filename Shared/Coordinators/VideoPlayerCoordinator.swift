@@ -26,5 +26,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     @ViewBuilder func makeStart() -> some View {
         VideoPlayerView(item: item)
+            .ignoresSafeArea()
     }
 }
