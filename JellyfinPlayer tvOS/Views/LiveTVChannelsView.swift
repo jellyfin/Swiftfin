@@ -13,7 +13,7 @@ import SwiftUICollection
 
 
 struct LiveTVChannelsView: View {
-    @EnvironmentObject var programsRouter: LiveTVChannelsCoordinator.Router
+    @EnvironmentObject var router: LiveTVChannelsCoordinator.Router
     @StateObject var viewModel = LiveTVChannelsViewModel()
     
     var body: some View {
@@ -49,6 +49,7 @@ struct LiveTVChannelsView: View {
                let channel = item.channel{
                 if channel.type != "Folder" {
                     Button {
+                        self.router.route(to: \.videoPlayer, channel)
                     } label: {
                         LiveTVChannelItemElement(channel: channel, program: item.program)
                     }

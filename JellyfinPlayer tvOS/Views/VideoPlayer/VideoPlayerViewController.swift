@@ -583,7 +583,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
         updateNowPlayingCenter(time: nil, playing: mediaPlayer.state == .playing)
 
         if (eventName == "timeupdate" && mediaPlayer.state == .playing) || eventName != "timeupdate" {
-            var ticks: Int64 = Int64(mediaPlayer.position * Float(manifest.runTimeTicks!))
+            var ticks: Int64 = Int64(mediaPlayer.position * Float(manifest.runTimeTicks ?? 0))
             if ticks == 0 {
                 ticks = manifest.userData?.playbackPositionTicks ?? 0
             }
@@ -601,7 +601,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
     }
 
     func sendStopReport() {
-        let stopInfo = PlaybackStopInfo(item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks!)), liveStreamId: nil, playSessionId: playSessionId, failed: nil, nextMediaType: nil, playlistItemId: "playlistItem0", nowPlayingQueue: [])
+        let stopInfo = PlaybackStopInfo(item: manifest, itemId: manifest.id, sessionId: playSessionId, mediaSourceId: manifest.id, positionTicks: Int64(mediaPlayer.position * Float(manifest.runTimeTicks ?? 0)), liveStreamId: nil, playSessionId: playSessionId, failed: nil, nextMediaType: nil, playlistItemId: "playlistItem0", nowPlayingQueue: [])
 
         PlaystateAPI.reportPlaybackStopped(playbackStopInfo: stopInfo)
             .sink(receiveCompletion: { result in

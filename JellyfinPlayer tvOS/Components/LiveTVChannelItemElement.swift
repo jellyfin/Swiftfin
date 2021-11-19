@@ -47,29 +47,27 @@ struct LiveTVChannelItemElement: View {
             }
             
             if let currentProgram = program,
-               let start = currentProgram.startDate?.toLocalTime().timeIntervalSinceReferenceDate,
-               let end = currentProgram.endDate?.toLocalTime().timeIntervalSinceReferenceDate {
+               let startDate = currentProgram.startDate,
+               let endDate = currentProgram.endDate {
+                let start = startDate.timeIntervalSinceReferenceDate
+                let end = endDate.timeIntervalSinceReferenceDate
                 let now = Date().timeIntervalSinceReferenceDate
                 let length = end - start
                 let progress = now - start
                 let progPercent = progress / length
-                
                 VStack {
-                    if let startDate = currentProgram.startDate,
-                       let endDate = currentProgram.endDate {
-                        HStack {
-                            Text(dateFormatter.string(from: startDate.toLocalTime()))
-                                .font(.footnote)
-                                .lineLimit(1)
-                                .frame(alignment: .leading)
-                            
-                            Spacer()
-                            
-                            Text(dateFormatter.string(from: endDate.toLocalTime()))
-                                .font(.footnote)
-                                .lineLimit(1)
-                                .frame(alignment: .trailing)
-                        }
+                    HStack {
+                        Text(dateFormatter.string(from: startDate))
+                            .font(.footnote)
+                            .lineLimit(1)
+                            .frame(alignment: .leading)
+                        
+                        Spacer()
+                        
+                        Text(dateFormatter.string(from: endDate))
+                            .font(.footnote)
+                            .lineLimit(1)
+                            .frame(alignment: .trailing)
                     }
                     GeometryReader { gp in
                         ZStack(alignment: .leading) {

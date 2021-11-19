@@ -89,7 +89,7 @@ final class LiveTVChannelsViewModel: ViewModel {
         let channelIds = channels.compactMap { $0.id }
         
         let minEndDate = Date.now.addComponentsToDate(hours: -1)
-        let maxStartDate = minEndDate.addComponentsToDate(days: 1)
+        let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
         
         NSLog("*** maxStartDate: \(maxStartDate)")
         NSLog("*** minEndDate: \(minEndDate)")
@@ -125,8 +125,9 @@ final class LiveTVChannelsViewModel: ViewModel {
         let now = Date()
         let df = DateFormatter()
         df.dateFormat = "MM/dd h:mm ZZZ"
+        NSLog("begin processing programs")
         for channel in self.channels {
-           // NSLog("\n\(channel.name)")
+            NSLog("\n\(channel.name)")
             let prgs = self.programs.filter { item in
                 item.channelId == channel.id
             }
@@ -136,15 +137,15 @@ final class LiveTVChannelsViewModel: ViewModel {
             for prg in prgs {
                 var startString = ""
                 var endString = ""
-                if let start = prg.startDate?.toLocalTime() {
+                if let start = prg.startDate {
                     startString = df.string(from: start)
                 }
-                if let end = prg.endDate?.toLocalTime() {
+                if let end = prg.endDate {
                     endString = df.string(from: end)
                 }
-                //NSLog("\(prg.name) - \(startString) to \(endString)")
-                if let startDate = prg.startDate?.toLocalTime()		,
-                   let endDate = prg.endDate?.toLocalTime(),
+                NSLog("\(prg.name) - \(startString) to \(endString)")
+                if let startDate = prg.startDate,
+                   let endDate = prg.endDate,
                    now.timeIntervalSinceReferenceDate > startDate.timeIntervalSinceReferenceDate &&
                     now.timeIntervalSinceReferenceDate < endDate.timeIntervalSinceReferenceDate {
                     currentPrg = prg
@@ -153,6 +154,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             
             channelPrograms.append(LiveTVChannelProgram(channel: channel, program: currentPrg))
         }
+        NSLog("finished processing programs")
         return channelPrograms
     }
 }
@@ -191,12 +193,5 @@ extension Date {
         dc.nanosecond = 0
         dc.timeZone = TimeZone(secondsFromGMT: 0)
         return Calendar.current.date(from: dc)!
-    }
-    
-    func toLocalTime() -> Date {
-        let timezoneOffset = TimeZone.current.secondsFromGMT()
-        let epochDate = self.timeIntervalSince1970
-        let timezoneEpochOffset = (epochDate + Double(timezoneOffset))
-        return Date(timeIntervalSince1970: timezoneEpochOffset)
     }
 }
