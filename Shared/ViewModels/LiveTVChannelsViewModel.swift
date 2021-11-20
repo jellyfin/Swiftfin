@@ -70,7 +70,7 @@ final class LiveTVChannelsViewModel: ViewModel {
         LiveTvAPI.getLiveTvChannels(
             userId: SessionManager.main.currentLogin.user.id,
             startIndex: 0,
-            limit: 500,
+            limit: 1000,
             enableImageTypes: [.primary],
             enableUserData: false,
             enableFavoriteSorting: true

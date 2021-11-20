@@ -17,10 +17,10 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
     let stack = NavigationStack(initial: \LiveTVProgramsCoordinator.start)
 
     @Root var start = makeStart
-    @Route(.modal) var modalItem = makeModalItem
+    @Route(.fullScreen) var videoPlayer = makeVideoPlayer
     
-    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        return NavigationViewCoordinator(ItemCoordinator(item: item))
+    func makeVideoPlayer(item: BaseItemDto) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+        NavigationViewCoordinator(VideoPlayerCoordinator(item: item))
     }
     
     @ViewBuilder

@@ -19,18 +19,51 @@ final class LiveTVProgramsViewModel: ViewModel {
     @Published var kidsItems = [BaseItemDto]()
     @Published var newsItems = [BaseItemDto]()
     
+    private var channels = [String:BaseItemDto]()
+    
     override init() {
         super.init()
         
-        loadRecommendedPrograms()
-        loadSeries()
-        loadMovies()
-        loadSports()
-        loadKids()
-        loadNews()
+        getChannels()
     }
     
-    private func loadRecommendedPrograms() {
+    func findChannel(id: String) -> BaseItemDto? {
+        return channels[id]
+    }
+    
+    private func getChannels() {
+        LiveTvAPI.getLiveTvChannels(
+            userId: SessionManager.main.currentLogin.user.id,
+            startIndex: 0,
+            limit: 1000,
+            enableImageTypes: [.primary],
+            enableUserData: false,
+            enableFavoriteSorting: true
+        )
+            .trackActivity(loading)
+            .sink(receiveCompletion: { [weak self] completion in
+                self?.handleAPIRequestError(completion: completion)
+            }, receiveValue: { [weak self] response in
+                LogManager.shared.log.debug("Received \(response.items?.count ?? 0) Channels")
+                guard let self = self else { return }
+                if let chans = response.items {
+                    for chan in chans {
+                        if let chanId = chan.id {
+                            self.channels[chanId] = chan
+                        }
+                    }
+                    self.getRecommendedPrograms()
+                    self.getSeries()
+                    self.getMovies()
+                    self.getSports()
+                    self.getKids()
+                    self.getNews()
+                }
+            })
+            .store(in: &cancellables)
+    }
+    
+    private func getRecommendedPrograms() {
         LiveTvAPI.getRecommendedPrograms(
             userId: SessionManager.main.currentLogin.user.id,
             limit: 9,
@@ -51,7 +84,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         .store(in: &cancellables)
     }
     
-    private func loadSeries() {
+    private func getSeries() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
                 isMovie: false,
@@ -77,7 +110,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         .store(in: &cancellables)
     }
     
-    private func loadMovies() {
+    private func getMovies() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
                 isMovie: true,
@@ -103,7 +136,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         .store(in: &cancellables)
     }
     
-    private func loadSports() {
+    private func getSports() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
                 isSports: true,
@@ -125,7 +158,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         .store(in: &cancellables)
     }
     
-    private func loadKids() {
+    private func getKids() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
                 isKids: true,
@@ -147,7 +180,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         .store(in: &cancellables)
     }
     
-    private func loadNews() {
+    private func getNews() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
                 isNews: true,

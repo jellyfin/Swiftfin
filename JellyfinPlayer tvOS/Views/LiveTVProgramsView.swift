@@ -28,7 +28,10 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    self.programsRouter.route(to: \.modalItem, item)
+                                    if let chanId = item.channelId,
+                                        let chan = viewModel.findChannel(id: chanId) {
+                                        self.programsRouter.route(to: \.videoPlayer, chan)
+                                    }
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -49,7 +52,10 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    self.programsRouter.route(to: \.modalItem, item)
+                                    if let chanId = item.channelId,
+                                       let chan = viewModel.findChannel(id: chanId) {
+                                        self.programsRouter.route(to: \.videoPlayer, chan)
+                                    }
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -70,7 +76,10 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    self.programsRouter.route(to: \.modalItem, item)
+                                    if let chanId = item.channelId,
+                                       let chan = viewModel.findChannel(id: chanId) {
+                                        self.programsRouter.route(to: \.videoPlayer, chan)
+                                    }
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -91,7 +100,10 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    self.programsRouter.route(to: \.modalItem, item)
+                                    if let chanId = item.channelId,
+                                       let chan = viewModel.findChannel(id: chanId) {
+                                        self.programsRouter.route(to: \.videoPlayer, chan)
+                                    }
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -112,7 +124,10 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    self.programsRouter.route(to: \.modalItem, item)
+                                    if let chanId = item.channelId,
+                                       let chan = viewModel.findChannel(id: chanId) {
+                                        self.programsRouter.route(to: \.videoPlayer, chan)
+                                    }
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -133,7 +148,10 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    self.programsRouter.route(to: \.modalItem, item)
+                                    if let chanId = item.channelId,
+                                       let chan = viewModel.findChannel(id: chanId) {
+                                        self.programsRouter.route(to: \.videoPlayer, chan)
+                                    }
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
