@@ -8,6 +8,7 @@
   */
 
 import Foundation
+import JellyfinAPI
 import SwiftUI
 import SwiftUICollection
 
@@ -51,7 +52,13 @@ struct LiveTVChannelsView: View {
                     Button {
                         self.router.route(to: \.videoPlayer, channel)
                     } label: {
-                        LiveTVChannelItemElement(channel: channel, program: item.program)
+                        LiveTVChannelItemElement(
+                            channel: channel,
+                            program: item.program,
+                            startString: item.program?.getLiveStartTimeString(formatter: viewModel.timeFormatter) ?? " ",
+                            endString: item.program?.getLiveEndTimeString(formatter: viewModel.timeFormatter) ?? " ",
+                            progressPercent: item.program?.getLiveProgressPercentage() ?? 0
+                        )
                     }
                     .buttonStyle(PlainNavigationLinkButtonStyle())
                 }

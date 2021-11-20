@@ -37,8 +37,15 @@ final class LiveTVChannelsViewModel: ViewModel {
         }
     }
     @Published var rows = [LiveTVChannelRow]()
+    
     private var programs = [BaseItemDto]()
     private var channelProgramsList = [BaseItemDto: [BaseItemDto]]()
+    
+    var timeFormatter: DateFormatter {
+        let df = DateFormatter()
+        df.dateFormat = "h:mm"
+        return df
+    }
     
     override init() {
         super.init()
@@ -91,9 +98,6 @@ final class LiveTVChannelsViewModel: ViewModel {
         let minEndDate = Date.now.addComponentsToDate(hours: -1)
         let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
         
-        NSLog("*** maxStartDate: \(maxStartDate)")
-        NSLog("*** minEndDate: \(minEndDate)")
-        
         let getProgramsDto = GetProgramsDto(
             channelIds: channelIds,
             userId: SessionManager.main.currentLogin.user.id,
@@ -123,11 +127,7 @@ final class LiveTVChannelsViewModel: ViewModel {
     private func processChannelPrograms() -> [LiveTVChannelProgram] {
         var channelPrograms = [LiveTVChannelProgram]()
         let now = Date()
-        let df = DateFormatter()
-        df.dateFormat = "MM/dd h:mm ZZZ"
-        NSLog("begin processing programs")
         for channel in self.channels {
-            NSLog("\n\(channel.name)")
             let prgs = self.programs.filter { item in
                 item.channelId == channel.id
             }
@@ -135,15 +135,6 @@ final class LiveTVChannelsViewModel: ViewModel {
             
             var currentPrg: BaseItemDto?
             for prg in prgs {
-                var startString = ""
-                var endString = ""
-                if let start = prg.startDate {
-                    startString = df.string(from: start)
-                }
-                if let end = prg.endDate {
-                    endString = df.string(from: end)
-                }
-                NSLog("\(prg.name) - \(startString) to \(endString)")
                 if let startDate = prg.startDate,
                    let endDate = prg.endDate,
                    now.timeIntervalSinceReferenceDate > startDate.timeIntervalSinceReferenceDate &&
@@ -154,7 +145,6 @@ final class LiveTVChannelsViewModel: ViewModel {
             
             channelPrograms.append(LiveTVChannelProgram(channel: channel, program: currentPrg))
         }
-        NSLog("finished processing programs")
         return channelPrograms
     }
 }
