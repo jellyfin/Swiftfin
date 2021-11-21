@@ -10,23 +10,28 @@ import JellyfinAPI
 import UIKit
 
 extension BaseItemPerson {
-
+    
     // MARK: Get Image
     func getImage(baseURL: String, maxWidth: Int) -> URL {
-        let imageType = "Primary"
-        let imageTag = primaryImageTag ?? ""
-
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = "\(baseURL)/Items/\(id ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=85&tag=\(imageTag)"
+        
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
+                                                                imageType: .primary,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: primaryImageTag).URLString
         return URL(string: urlString)!
     }
-
+    
     func getBlurHash() -> String {
-        let rawImgURL = getImage(baseURL: "", maxWidth: 1).absoluteString
-        let imgTag = rawImgURL.components(separatedBy: "&tag=")[1]
+        let imgURL = getImage(baseURL: "", maxWidth: 1)
+        guard let imgTag = imgURL.queryParameters?["tag"],
+              let hash = imageBlurHashes?.primary?[imgTag]
+        else {
+            return "001fC^"
+        }
 
-        return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
+        return hash
     }
 
     // MARK: First Role
