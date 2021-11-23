@@ -36,7 +36,7 @@ struct LiveTVChannelsView: View {
             VStack {
                 Text("No results.")
                 Button {
-                    print("movieLibraries reload")
+                    viewModel.getChannels()
                 } label: {
                     Text("Reload")
                 }
@@ -45,24 +45,21 @@ struct LiveTVChannelsView: View {
     }
     
     @ViewBuilder func makeCellView(indexPath: IndexPath, cell: LiveTVChannelRowCell) -> some View {
-        GeometryReader { _ in
-            if let item = cell.item,
-               let channel = item.channel{
-                if channel.type != "Folder" {
-                    Button {
-                        self.router.route(to: \.videoPlayer, channel)
-                    } label: {
-                        LiveTVChannelItemElement(
-                            channel: channel,
-                            program: item.program,
-                            startString: item.program?.getLiveStartTimeString(formatter: viewModel.timeFormatter) ?? " ",
-                            endString: item.program?.getLiveEndTimeString(formatter: viewModel.timeFormatter) ?? " ",
-                            progressPercent: item.program?.getLiveProgressPercentage() ?? 0
-                        )
-                    }
-                    .buttonStyle(PlainNavigationLinkButtonStyle())
-                }
+        let item = cell.item
+        let channel = item.channel
+        if channel.type != "Folder" {
+            Button {
+                self.router.route(to: \.videoPlayer, channel)
+            } label: {
+                LiveTVChannelItemElement(
+                    channel: channel,
+                    program: item.program,
+                    startString: item.program?.getLiveStartTimeString(formatter: viewModel.timeFormatter) ?? " ",
+                    endString: item.program?.getLiveEndTimeString(formatter: viewModel.timeFormatter) ?? " ",
+                    progressPercent: item.program?.getLiveProgressPercentage() ?? 0
+                )
             }
+            .buttonStyle(PlainNavigationLinkButtonStyle())
         }
     }
     

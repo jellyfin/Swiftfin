@@ -32,8 +32,6 @@ struct LibraryListView: View {
                             }
                             label: {
                                 ZStack {
-                                    ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
-                                        .opacity(0.4)
                                     HStack {
                                         Spacer()
                                         VStack {
@@ -44,7 +42,7 @@ struct LibraryListView: View {
                                         }
                                         Spacer()
                                     }.padding(32)
-                                }.background(Color.black)
+                                }
                                 .frame(minWidth: 100, maxWidth: .infinity)
                                 .frame(height: 100)
                             }

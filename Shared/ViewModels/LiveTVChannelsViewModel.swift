@@ -66,7 +66,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             .store(in: &cancellables)
     }
     
-    private func getChannels() {
+    func getChannels() {
         LiveTvAPI.getLiveTvChannels(
             userId: SessionManager.main.currentLogin.user.id,
             startIndex: 0,
