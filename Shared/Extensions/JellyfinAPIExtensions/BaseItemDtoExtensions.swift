@@ -84,8 +84,12 @@ public extension BaseItemDto {
         }
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString =
-            "\(SessionManager.main.currentLogin.server.currentURI)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: imageItemId,
+                                                                imageType: imageType,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: imageTag).URLString
         return URL(string: urlString)!
     }
 
@@ -98,15 +102,21 @@ public extension BaseItemDto {
 
     func getSeriesBackdropImage(maxWidth: Int) -> URL {
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString =
-            "\(SessionManager.main.currentLogin.server.currentURI)/Items/\(parentBackdropItemId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: parentBackdropItemId ?? "",
+                                                                imageType: .backdrop,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: parentBackdropImageTags?.first).URLString
         return URL(string: urlString)!
     }
 
     func getSeriesPrimaryImage(maxWidth: Int) -> URL {
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString =
-            "\(SessionManager.main.currentLogin.server.currentURI)/Items/\(seriesId ?? "")/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: seriesId ?? "",
+                                                                imageType: .primary,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: seriesPrimaryImageTag).URLString
         return URL(string: urlString)!
     }
 
@@ -122,8 +132,11 @@ public extension BaseItemDto {
 
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-        let urlString =
-            "\(SessionManager.main.currentLogin.server.currentURI)/Items/\(imageItemId)/Images/\(imageType)?maxWidth=\(String(Int(x)))&quality=96&tag=\(imageTag)"
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: imageItemId,
+                                                                imageType: imageType,
+                                                                maxWidth: Int(x),
+                                                                quality: 96,
+                                                                tag: imageTag).URLString
         return URL(string: urlString)!
     }
 
