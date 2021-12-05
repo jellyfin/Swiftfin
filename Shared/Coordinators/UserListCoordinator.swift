@@ -1,5 +1,5 @@
 //
- /* 
+ /*
   * SwiftFin is subject to the terms of the Mozilla Public
   * License, v2.0. If a copy of the MPL was not distributed with this
   * file, you can obtain one at https://mozilla.org/MPL/2.0/.
@@ -17,6 +17,7 @@ final class UserListCoordinator: NavigationCoordinatable {
 
     @Root var start = makeStart
     @Route(.push) var userSignIn = makeUserSignIn
+    @Route(.push) var serverDetail = makeServerDetail
 
     let viewModel: UserListViewModel
 
@@ -26,6 +27,10 @@ final class UserListCoordinator: NavigationCoordinatable {
 
     func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
         return UserSignInCoordinator(viewModel: .init(server: server))
+    }
+
+    func makeServerDetail(server: SwiftfinStore.State.Server) -> ServerDetailCoordinator {
+        return ServerDetailCoordinator(viewModel: .init(server: server))
     }
 
     @ViewBuilder func makeStart() -> some View {

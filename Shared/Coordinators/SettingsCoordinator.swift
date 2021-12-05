@@ -19,7 +19,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push) var serverDetail = makeServerDetail
 
     @ViewBuilder func makeServerDetail() -> some View {
-        ServerDetailView()
+        let viewModel = ServerDetailViewModel(server: SessionManager.main.currentLogin.server)
+        ServerDetailView(viewModel: viewModel)
     }
 
     @ViewBuilder func makeStart() -> some View {

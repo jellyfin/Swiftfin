@@ -12,7 +12,7 @@ import SwiftUI
 
 struct ConnectToServerView: View {
 
-    @StateObject var viewModel: ConnectToServerViewModel
+    @ObservedObject var viewModel: ConnectToServerViewModel
     @State var uri = ""
 
     @Default(.defaultHTTPScheme) var defaultHTTPScheme
@@ -105,6 +105,14 @@ struct ConnectToServerView: View {
             Alert(title: Text(viewModel.alertTitle),
                   message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
                   dismissButton: .cancel())
+        }
+        .alert(item: $viewModel.addServerURIPayload) { _ in
+            Alert(title: L10n.existingServer.text,
+                  message: L10n.serverAlreadyExistsPrompt(viewModel.addServerURIPayload?.server.name ?? "").text,
+                  primaryButton: .default(L10n.addURL.text, action: {
+                viewModel.addURIToServer(addServerURIPayload: viewModel.backAddServerURIPayload!)
+            }),
+                  secondaryButton: .cancel())
         }
         .navigationTitle(L10n.connect)
         .onAppear {

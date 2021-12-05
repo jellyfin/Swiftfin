@@ -12,6 +12,8 @@ import Foundation
 internal enum L10n {
   /// Accessibility
   internal static let accessibility = L10n.tr("Localizable", "accessibility")
+  /// Add URL
+  internal static let addURL = L10n.tr("Localizable", "addURL")
   /// All Genres
   internal static let allGenres = L10n.tr("Localizable", "allGenres")
   /// All Media
@@ -56,6 +58,8 @@ internal enum L10n {
   internal static let episodes = L10n.tr("Localizable", "episodes")
   /// Error
   internal static let error = L10n.tr("Localizable", "error")
+  /// Existing Server
+  internal static let existingServer = L10n.tr("Localizable", "existingServer")
   /// Filter Results
   internal static let filterResults = L10n.tr("Localizable", "filterResults")
   /// Filters
@@ -114,7 +118,7 @@ internal enum L10n {
   internal static let playNext = L10n.tr("Localizable", "playNext")
   /// Reset
   internal static let reset = L10n.tr("Localizable", "reset")
-  /// Search...
+  /// Search…
   internal static let search = L10n.tr("Localizable", "search")
   /// S%1$@:E%2$@
   internal static func seasonAndEpisode(_ p1: Any, _ p2: Any) -> String {
@@ -126,6 +130,10 @@ internal enum L10n {
   internal static let seeAll = L10n.tr("Localizable", "seeAll")
   /// Select Cast Destination
   internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination")
+  /// Server %s already exists. Add new URL?
+  internal static func serverAlreadyExistsPrompt(_ p1: UnsafePointer<CChar>) -> String {
+    return L10n.tr("Localizable", "serverAlreadyExistsPrompt", p1)
+  }
   /// Server Information
   internal static let serverInformation = L10n.tr("Localizable", "serverInformation")
   /// Server URL
@@ -150,6 +158,8 @@ internal enum L10n {
   internal static let tags = L10n.tr("Localizable", "tags")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "tryAgain")
+  /// Unknown Error
+  internal static let unknownError = L10n.tr("Localizable", "unknownError")
   /// Username
   internal static let username = L10n.tr("Localizable", "username")
   /// Who's watching?

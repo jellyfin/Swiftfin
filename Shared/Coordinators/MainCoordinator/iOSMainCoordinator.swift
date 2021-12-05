@@ -44,6 +44,7 @@ final class MainCoordinator: NavigationCoordinatable {
         nc.addObserver(self, selector: #selector(didLogIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
         nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
         nc.addObserver(self, selector: #selector(processDeepLink), name: SwiftfinNotificationCenter.Keys.processDeepLink, object: nil)
+        nc.addObserver(self, selector: #selector(didChangeServerCurrentURI), name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: nil)
     }
 
     @objc func didLogIn() {
@@ -68,6 +69,15 @@ final class MainCoordinator: NavigationCoordinatable {
             }
         }
     }
+
+    @objc func didChangeServerCurrentURI(_ notification: Notification) {
+        guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server else { fatalError("Need to have new current login state server") }
+        guard SessionManager.main.currentLogin != nil else { return }
+        if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
+            SessionManager.main.loginUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
+        }
+    }
+
     func makeMainTab() -> MainTabCoordinator {
         MainTabCoordinator()
     }

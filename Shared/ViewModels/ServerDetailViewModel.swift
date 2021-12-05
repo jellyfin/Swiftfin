@@ -12,14 +12,22 @@ import JellyfinAPI
 
 class ServerDetailViewModel: ViewModel {
 
-    func refreshServerLibrary() {
-        LibraryAPI.refreshLibrary()
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(completion: completion)
-            }, receiveValue: {
-                LogManager.shared.log.debug("Refreshed server library successfully")
-            })
+    @Published var server: SwiftfinStore.State.Server
+
+    init(server: SwiftfinStore.State.Server) {
+        self.server = server
+    }
+
+    func setServerCurrentURI(uri: String) {
+        SessionManager.main.setServerCurrentURI(server: server, uri: uri)
+            .sink { c in
+                print(c)
+            } receiveValue: { newServerState in
+                self.server = newServerState
+
+                let nc = SwiftfinNotificationCenter.main
+                nc.post(name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: newServerState)
+            }
             .store(in: &cancellables)
     }
 }

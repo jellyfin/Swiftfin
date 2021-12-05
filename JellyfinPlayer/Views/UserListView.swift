@@ -90,10 +90,14 @@ struct UserListView: View {
 
     @ViewBuilder
     private var toolbarContent: some View {
-        if viewModel.users.isEmpty {
-            EmptyView()
-        } else {
-            HStack {
+        HStack {
+            Button {
+                userListRouter.route(to: \.serverDetail, viewModel.server)
+            } label: {
+                Image(systemName: "info.circle.fill")
+            }
+
+            if !viewModel.users.isEmpty {
                 Button {
                     userListRouter.route(to: \.userSignIn, viewModel.server)
                 } label: {

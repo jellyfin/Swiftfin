@@ -164,13 +164,13 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                     // Item is being transcoded by request of server
                     if let transcodiungUrl = mediaSource.transcodingUrl {
                         item.videoType = .transcode
-                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)\(transcodiungUrl)")!
+                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.currentURI)\(transcodiungUrl)")!
                     }
                     // Item will be directly played by the client
                     else {
                         item.videoType = .directPlay
-//                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
-                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.uri)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&Tag=\(mediaSource.eTag ?? "")")!
+//                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.currentURI)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&deviceId=\(SessionManager.current.deviceID)&api_key=\(SessionManager.current.accessToken)&Tag=\(mediaSource.eTag!)")!
+                        streamURL = URL(string: "\(SessionManager.main.currentLogin.server.currentURI)/Videos/\(manifest.id!)/stream?Static=true&mediaSourceId=\(manifest.id!)&Tag=\(mediaSource.eTag ?? "")")!
                     }
 
                     item.videoUrl = streamURL
@@ -185,7 +185,7 @@ class VideoPlayerViewController: UIViewController, VideoPlayerSettingsDelegate, 
                             var deliveryUrl: URL?
 
                             if stream.deliveryMethod == .external {
-                                deliveryUrl = URL(string: "\(SessionManager.main.currentLogin.server.uri)\(stream.deliveryUrl!)")!
+                                deliveryUrl = URL(string: "\(SessionManager.main.currentLogin.server.currentURI)\(stream.deliveryUrl!)")!
                             }
 
                             let subtitle = Subtitle(name: stream.displayTitle ?? "Unknown", id: Int32(stream.index!), url: deliveryUrl, delivery: stream.deliveryMethod!, codec: stream.codec ?? "webvtt", languageCode: stream.language ?? "")
