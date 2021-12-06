@@ -10,11 +10,11 @@ import JellyfinAPI
 import UIKit
 
 extension BaseItemPerson {
-    
+
     // MARK: Get Image
     func getImage(baseURL: String, maxWidth: Int) -> URL {
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        
+
         let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
                                                                 imageType: .primary,
                                                                 maxWidth: Int(x),
@@ -22,7 +22,7 @@ extension BaseItemPerson {
                                                                 tag: primaryImageTag).URLString
         return URL(string: urlString)!
     }
-    
+
     func getBlurHash() -> String {
         let imgURL = getImage(baseURL: "", maxWidth: 1)
         guard let imgTag = imgURL.queryParameters?["tag"],
