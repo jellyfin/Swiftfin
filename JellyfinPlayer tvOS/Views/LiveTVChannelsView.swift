@@ -31,7 +31,12 @@ struct LiveTVChannelsView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .ignoresSafeArea()
-            
+            .onAppear {
+                viewModel.startScheduleCheckTimer()
+            }
+            .onDisappear {
+                viewModel.stopScheduleCheckTimer()
+            }
         } else {
             VStack {
                 Text("No results.")

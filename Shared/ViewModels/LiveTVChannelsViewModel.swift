@@ -40,6 +40,7 @@ final class LiveTVChannelsViewModel: ViewModel {
     
     private var programs = [BaseItemDto]()
     private var channelProgramsList = [BaseItemDto: [BaseItemDto]]()
+    private var timer: Timer?
     
     var timeFormatter: DateFormatter {
         let df = DateFormatter()
@@ -51,6 +52,11 @@ final class LiveTVChannelsViewModel: ViewModel {
         super.init()
         
         getChannels()
+        startScheduleCheckTimer()
+    }
+    
+    deinit {
+        stopScheduleCheckTimer()
     }
     
     private func getGuideInfo() {
@@ -131,7 +137,9 @@ final class LiveTVChannelsViewModel: ViewModel {
             let prgs = self.programs.filter { item in
                 item.channelId == channel.id
             }
-            channelProgramsList[channel] = prgs
+            DispatchQueue.main.async {
+                self.channelProgramsList[channel] = prgs
+            }
             
             var currentPrg: BaseItemDto?
             for prg in prgs {
@@ -146,6 +154,40 @@ final class LiveTVChannelsViewModel: ViewModel {
             channelPrograms.append(LiveTVChannelProgram(channel: channel, program: currentPrg))
         }
         return channelPrograms
+    }
+    
+    func startScheduleCheckTimer() {
+        let date = Date()
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute], from: date)
+        
+        // Run on 10th min of every hour
+        guard let minute = components.minute else { return }
+        components.second = 0
+        components.minute = minute + (10 - (minute % 10))
+        
+        guard let nextMinute = calendar.date(from: components) else { return }
+        
+        if let existingTimer = timer {
+            existingTimer.invalidate()
+        }
+        timer = Timer(fire: nextMinute, interval: 60 * 10, repeats: true) { [weak self] timer in
+            guard let self = self else { return }
+            LogManager.shared.log.debug("LiveTVChannels schedule check...")
+            DispatchQueue.global(qos: .background).async {
+                let newChanPrgs = self.processChannelPrograms()
+                DispatchQueue.main.async {
+                    self.channelPrograms = newChanPrgs
+                }
+            }
+        }
+        if let timer = timer {
+            RunLoop.main.add(timer, forMode: .default)
+        }
+    }
+    
+    func stopScheduleCheckTimer() {
+        timer?.invalidate()
     }
 }
 
