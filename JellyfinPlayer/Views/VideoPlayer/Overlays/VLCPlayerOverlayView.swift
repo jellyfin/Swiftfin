@@ -78,7 +78,7 @@ struct VLCPlayerOverlayView: View {
                         Button {
                             viewModel.playerOverlayDelegate?.didSelectCaptions()
                         } label: {
-                            if viewModel.captionsEnabled {
+                            if viewModel.subtitlesEnabled {
                                 Image(systemName: "captions.bubble.fill")
                             } else {
                                 Image(systemName: "captions.bubble")
