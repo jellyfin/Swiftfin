@@ -23,6 +23,7 @@ struct SettingsView: View {
     @Default(.appAppearance) var appAppearance
     @Default(.videoPlayerJumpForward) var jumpForwardLength
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
+    @Default(.nativeVideoPlayer) var nativeVideoPlayer
 
     var body: some View {
         Form {
@@ -83,6 +84,7 @@ struct SettingsView: View {
             }
 
             Section(header: Text("Playback")) {
+                Toggle("Native Player", isOn: $nativeVideoPlayer)
                 Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                     ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                         Text(bitrate.name).tag(bitrate.value)

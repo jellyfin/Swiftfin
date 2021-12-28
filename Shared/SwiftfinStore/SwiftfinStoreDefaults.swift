@@ -32,4 +32,5 @@ extension Defaults.Keys {
     static let appAppearance = Key<AppAppearance>("appAppearance", default: .system, suite: SwiftfinStore.Defaults.suite)
     static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>("videoPlayerJumpForward", default: .thirty, suite: SwiftfinStore.Defaults.suite)
     static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>("videoPlayerJumpBackward", default: .thirty, suite: SwiftfinStore.Defaults.suite)
+    static let nativeVideoPlayer = Key<Bool>("nativeVideoPlayer", default: false, suite: SwiftfinStore.Defaults.suite)
 }

@@ -35,8 +35,8 @@ final class ItemCoordinator: NavigationCoordinatable {
         ItemCoordinator(item: item)
     }
 
-    func makeVideoPlayer(item: BaseItemDto) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(item: item))
+    func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+        NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))
     }
 
     @ViewBuilder func makeStart() -> some View {

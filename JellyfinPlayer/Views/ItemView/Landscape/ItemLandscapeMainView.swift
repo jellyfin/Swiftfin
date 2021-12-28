@@ -12,13 +12,7 @@ import SwiftUI
 
 struct ItemLandscapeMainView: View {
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
-    @Binding private var videoIsLoading: Bool
     @EnvironmentObject private var viewModel: ItemViewModel
-    @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
-
-    init(videoIsLoading: Binding<Bool>) {
-        self._videoIsLoading = videoIsLoading
-    }
 
     // MARK: innerBody
 
@@ -34,14 +28,10 @@ struct ItemLandscapeMainView: View {
 
                 Spacer().frame(height: 15)
 
+                // MARK: Play
                 Button {
-                    if let playButtonItem = viewModel.playButtonItem {
-                        self.videoPlayerItem.itemToPlay = playButtonItem
-                        self.videoPlayerItem.shouldShowPlayer = true
-                    }
+                    self.itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
                 } label: {
-                    // MARK: Play
-
                     HStack {
                         Image(systemName: "play.fill")
                             .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)

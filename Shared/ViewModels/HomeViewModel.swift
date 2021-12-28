@@ -102,7 +102,7 @@ final class HomeViewModel: ViewModel {
             .store(in: &cancellables)
 
         ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id, limit: 12,
-                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters],
                                 mediaTypes: ["Video"],
                                 imageTypeLimit: 1,
                                 enableImageTypes: [.primary, .backdrop, .thumb])
@@ -122,7 +122,7 @@ final class HomeViewModel: ViewModel {
             .store(in: &cancellables)
 
         TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id, limit: 12,
-                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
+                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters])
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 switch completion {

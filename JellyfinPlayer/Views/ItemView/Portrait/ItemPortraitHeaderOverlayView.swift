@@ -12,8 +12,8 @@ import JellyfinAPI
 
 struct PortraitHeaderOverlayView: View {
 
+    @EnvironmentObject var itemRouter: ItemCoordinator.Router
     @EnvironmentObject private var viewModel: ItemViewModel
-    @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -75,10 +75,7 @@ struct PortraitHeaderOverlayView: View {
 
                 // MARK: Play
                 Button {
-                    if let playButtonItem = viewModel.playButtonItem {
-                        self.videoPlayerItem.itemToPlay = playButtonItem
-                        self.videoPlayerItem.shouldShowPlayer = true
-                    }
+                    self.itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
                 } label: {
                     HStack {
                         Image(systemName: "play.fill")

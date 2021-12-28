@@ -11,6 +11,8 @@ import SwiftUI
 import JellyfinAPI
 
 struct EpisodeItemView: View {
+    
+    @EnvironmentObject var itemRouter: ItemCoordinator.Router
     @ObservedObject var viewModel: EpisodeItemViewModel
 
     @State var actors: [BaseItemPerson] = []
@@ -130,7 +132,13 @@ struct EpisodeItemView: View {
                                     .font(.caption)
                             }
                             VStack {
-                              NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
+//                              NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
+//                                    MediaViewActionButton(icon: "play.fill")
+//                                }
+                                Button {
+                                    itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
+                                } label: {
+//                                    MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
                                     MediaViewActionButton(icon: "play.fill")
                                 }
                                 Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : L10n.play)
