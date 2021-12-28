@@ -1179,8 +1179,8 @@
 		E10EAA48277BB6D7000269ED /* Overlays */ = {
 			isa = PBXGroup;
 			children = (
-				E1C812BB277A8E5D00918266 /* VLCPlayerCompactOverlayView.swift */,
 				E10EAA49277BB6F5000269ED /* VideoPlayerOverlay.swift */,
+				E1C812BB277A8E5D00918266 /* VLCPlayerCompactOverlayView.swift */,
 				E1C812B7277A8E5D00918266 /* VLCPlayerOverlayView.swift */,
 			);
 			path = Overlays;
@@ -1309,10 +1309,10 @@
 			isa = PBXGroup;
 			children = (
 				E1C812B9277A8E5D00918266 /* NativePlayerViewController.swift */,
+				E10EAA48277BB6D7000269ED /* Overlays */,
 				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
 				E1C812B5277A8E5D00918266 /* PlayerOverlayDelegate.swift */,
 				E1C812B8277A8E5D00918266 /* VideoPlayerView.swift */,
-				E10EAA48277BB6D7000269ED /* Overlays */,
 				E1C812B6277A8E5D00918266 /* VLCPlayerViewController.swift */,
 			);
 			path = VideoPlayer;

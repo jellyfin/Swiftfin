@@ -6,14 +6,17 @@
 //
 
 import Combine
+import Defaults
+import JellyfinAPI
 import MobileVLCKit
 import Sliders
 import SwiftUI
-import JellyfinAPI
 
 struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
     
     @ObservedObject var viewModel: VideoPlayerViewModel
+    @Default(.videoPlayerJumpForward) var jumpForwardLength
+    @Default(.videoPlayerJumpBackward) var jumpBackwardLength
     
     @ViewBuilder
     private var mainButtonView: some View {
@@ -192,7 +195,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                         Button {
                             viewModel.playerOverlayDelegate?.didSelectBackward()
                         } label: {
-                            Image(systemName: "gobackward.10")
+                            Image(systemName: jumpBackwardLength.backwardImageLabel)
                                 .padding(.horizontal, 5)
                         }
                         
@@ -207,7 +210,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                         Button {
                             viewModel.playerOverlayDelegate?.didSelectForward()
                         } label: {
-                            Image(systemName: "goforward.10")
+                            Image(systemName: jumpForwardLength.forwardImageLabel)
                                 .padding(.horizontal, 5)
                         }
                     }

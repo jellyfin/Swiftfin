@@ -8,6 +8,7 @@
 import AVKit
 import AVFoundation
 import Combine
+import Defaults
 import JellyfinAPI
 import MediaPlayer
 import MobileVLCKit
@@ -30,6 +31,14 @@ class VLCPlayerViewController: UIViewController {
     
     private var displayingOverlay: Bool {
         return overlayHostingController.view.alpha > 0
+    }
+    
+    private var jumpForwardLength: VideoPlayerJumpLength {
+        return Defaults[.videoPlayerJumpForward]
+    }
+
+    private var jumpBackwardLength: VideoPlayerJumpLength {
+        return Defaults[.videoPlayerJumpBackward]
     }
     
     private lazy var videoContentView = makeVideoContentView()
@@ -283,7 +292,7 @@ extension VLCPlayerViewController {
 // MARK: OverlayTimer
 extension VLCPlayerViewController {
     
-    private func restartOverlayDismissTimer(interval: Double = 2) {
+    private func restartOverlayDismissTimer(interval: Double = 3) {
         self.overlayDismissTimer?.invalidate()
         self.overlayDismissTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(dismissTimerFired), userInfo: nil, repeats: false)
     }
@@ -304,8 +313,6 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
         
         self.viewModel.playerState = vlcMediaPlayer.state
-        
-        print("Player state changed: \(viewModel.playerState.rawValue)")
     }
     
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
@@ -337,7 +344,6 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     
     func didSelectAudioStream(index: Int) {
         vlcMediaPlayer.currentAudioTrackIndex = Int32(index)
-        print("New audio index: \(index)")
     }
     
     func didSelectSubtitleStream(index: Int) {
@@ -347,7 +353,6 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
             // set in case weren't shown
             viewModel.subtitlesEnabled = true
         }
-        print("New subtitle index: \(index)")
     }
     
     func didSelectClose() {
@@ -388,13 +393,13 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     }
     
     func didSelectBackward() {
-        vlcMediaPlayer.jumpBackward(10)
+        vlcMediaPlayer.jumpBackward(jumpBackwardLength.rawValue)
         
         restartOverlayDismissTimer()
     }
     
     func didSelectForward() {
-        vlcMediaPlayer.jumpForward(10)
+        vlcMediaPlayer.jumpForward(jumpForwardLength.rawValue)
         
         restartOverlayDismissTimer()
     }
@@ -443,7 +448,5 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         }
         
         restartOverlayDismissTimer()
-        
-        print("Scrubbed position: \(position)")
     }
 }
