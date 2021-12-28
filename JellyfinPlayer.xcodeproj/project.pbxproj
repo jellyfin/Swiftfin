@@ -142,6 +142,7 @@
 		53F866442687A45F00DCD1D7 /* PortraitItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F866432687A45F00DCD1D7 /* PortraitItemView.swift */; };
 		53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F29263CF3F500585C35 /* LatestMediaView.swift */; };
 		560CA59B3956A4CA13EDAC05 /* Pods_JellyfinPlayer_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86BAC42C3764D232C8DF8F5E /* Pods_JellyfinPlayer_iOS.framework */; };
+		5D64683D277B1649009E09AE /* PreferenceUIHostingSwizzling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D64683C277B1649009E09AE /* PreferenceUIHostingSwizzling.swift */; };
 		62133890265F83A900A81A2A /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388F265F83A900A81A2A /* LibraryListView.swift */; };
 		621338932660107500A81A2A /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
 		621338B32660A07800A81A2A /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338B22660A07800A81A2A /* LazyView.swift */; };
@@ -495,6 +496,7 @@
 		53F866432687A45F00DCD1D7 /* PortraitItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitItemView.swift; sourceTree = "<group>"; };
 		53FF7F29263CF3F500585C35 /* LatestMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaView.swift; sourceTree = "<group>"; };
 		59AFF849629F3C787909A911 /* Pods_WidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D64683C277B1649009E09AE /* PreferenceUIHostingSwizzling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingSwizzling.swift; sourceTree = "<group>"; };
 		6213388F265F83A900A81A2A /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		621338922660107500A81A2A /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		621338B22660A07800A81A2A /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
@@ -1062,6 +1064,15 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		5D64683B277B15E4009E09AE /* PreferenceUIHosting */ = {
+			isa = PBXGroup;
+			children = (
+				E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */,
+				5D64683C277B1649009E09AE /* PreferenceUIHostingSwizzling.swift */,
+			);
+			path = PreferenceUIHosting;
+			sourceTree = "<group>";
+		};
 		621338912660106C00A81A2A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1203,7 +1214,7 @@
 				E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */,
 				E13DD3BC27163C63009D4DAF /* EmailHelper.swift */,
 				5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */,
-				E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */,
+				5D64683B277B15E4009E09AE /* PreferenceUIHosting */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -1370,6 +1381,7 @@
 			buildPhases = (
 				3D0F2756C71CDF6B9EEBD4E0 /* [CP] Check Pods Manifest.lock */,
 				6286F0A3271C0ABA00C40ED5 /* R.swift */,
+				D2E6FAE5F7D441C818F95CD6 /* [CP] Prepare Artifacts */,
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
@@ -1403,6 +1415,7 @@
 			buildPhases = (
 				1C7487D3432E90546DA855B5 /* [CP] Check Pods Manifest.lock */,
 				6286F09E271C093000C40ED5 /* R.swift */,
+				EF9FEFA814318DC80C582AC6 /* [CP] Prepare Artifacts */,
 				5377CBED263B596A003A4E83 /* Sources */,
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
@@ -1725,6 +1738,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D2E6FAE5F7D441C818F95CD6 /* [CP] Prepare Artifacts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-artifacts-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Prepare Artifacts";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-artifacts-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS-artifacts.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		D4D3981ADF75BCD341D590C0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1762,6 +1792,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EF9FEFA814318DC80C582AC6 /* [CP] Prepare Artifacts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-artifacts-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Prepare Artifacts";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-artifacts-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS-artifacts.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1996,6 +2043,7 @@
 				C4BE076F2720FEFF003F4AD1 /* PlainNavigationLinkButton.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
 				62E632EF267D43320063E547 /* LibraryFilterViewModel.swift in Sources */,
+				5D64683D277B1649009E09AE /* PreferenceUIHostingSwizzling.swift in Sources */,
 				C40CD922271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */,
 				E13DD3C827164B1E009D4DAF /* UIDeviceExtensions.swift in Sources */,
 				E1AD104D26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
