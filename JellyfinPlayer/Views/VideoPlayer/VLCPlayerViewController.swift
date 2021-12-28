@@ -412,7 +412,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         case .buffering:
             vlcMediaPlayer.play()
             restartOverlayDismissTimer()
-        case .ended: ()
+        case .ended:
+            self.didSelectClose()
         case .error: ()
         case .playing:
             vlcMediaPlayer.pause()

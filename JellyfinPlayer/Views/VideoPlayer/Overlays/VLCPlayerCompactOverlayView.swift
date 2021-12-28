@@ -297,9 +297,4 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
     }
 }
 
-extension CGSize {
-    
-    static func Circle(radius: CGFloat) -> CGSize {
-        return CGSize(width: radius, height: radius)
-    }
-}
+
