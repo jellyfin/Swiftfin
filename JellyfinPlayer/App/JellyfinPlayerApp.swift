@@ -27,6 +27,9 @@ struct JellyfinPlayerApp: App {
                 .onOpenURL { url in
                     AppURLHandler.shared.processDeepLink(url: url)
                 }
+                .onChange(of: appAppearance) { newValue in
+                    setupAppearance()
+                }
         }
     }
 
