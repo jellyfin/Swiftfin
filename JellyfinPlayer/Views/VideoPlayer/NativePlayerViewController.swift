@@ -29,14 +29,6 @@ class NativePlayerViewController: AVPlayerViewController {
         player.appliesMediaSelectionCriteriaAutomatically = false
         player.currentItem?.externalMetadata = createMetadata()
         
-        let chevron = UIImage(systemName: "chevron.right.circle.fill")!
-        let testAction = UIAction(title: "Next", image: chevron) { action in
-            print("next item selected")
-        }
-        
-        // tvos
-//        self.transportBarCustomMenuItems = [testAction]
-        
         let timeScale = CMTimeScale(NSEC_PER_SEC)
         let time = CMTime(seconds: 5, preferredTimescale: timeScale)
         

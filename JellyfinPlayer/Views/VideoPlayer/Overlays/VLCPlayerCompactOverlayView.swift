@@ -89,13 +89,15 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
 //                            }
 //                        }
                         
-                        Button {
-                            viewModel.playerOverlayDelegate?.didSelectCaptions()
-                        } label: {
-                            if viewModel.subtitlesEnabled {
-                                Image(systemName: "captions.bubble.fill")
-                            } else {
-                                Image(systemName: "captions.bubble")
+                        if !viewModel.subtitleStreams.isEmpty {
+                            Button {
+                                viewModel.playerOverlayDelegate?.didSelectCaptions()
+                            } label: {
+                                if viewModel.subtitlesEnabled {
+                                    Image(systemName: "captions.bubble.fill")
+                                } else {
+                                    Image(systemName: "captions.bubble")
+                                }
                             }
                         }
                         
@@ -247,8 +249,6 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
             }
             .frame(maxWidth: 800, maxHeight: 50)
         }
-        .padding(.top)
-//        .padding(.horizontal)
         .ignoresSafeArea(edges: .top)
         .tint(Color.white)
         .foregroundColor(Color.white)
