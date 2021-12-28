@@ -121,8 +121,6 @@
 		5398514626B64DBB00101B49 /* SearchablePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C21742685CF60007F1390 /* SearchablePickerView.swift */; };
 		5398514726B64E4100101B49 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DE4BD1267098F300739748 /* SearchBarView.swift */; };
 		539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */; };
-		53A431BD266B0FF20016769F /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 53A431BC266B0FF20016769F /* JellyfinAPI */; };
-		53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 53A431BE266B0FFE0016769F /* JellyfinAPI */; };
 		53A83C33268A309300DF3D92 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A83C32268A309300DF3D92 /* LibraryView.swift */; };
 		53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
 		53ABFDE4267974EF00886593 /* LibraryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB5742678C33500530A6E /* LibraryListViewModel.swift */; };
@@ -179,7 +177,6 @@
 		628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628B95262670CABD0091AF3B /* NextUpWidget.swift */; };
 		628B95292670CABE0091AF3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 628B95282670CABE0091AF3B /* Assets.xcassets */; };
 		628B952D2670CABE0091AF3B /* WidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 628B95202670CABD0091AF3B /* WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		628B95352670CAEA0091AF3B /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 628B95342670CAEA0091AF3B /* JellyfinAPI */; };
 		628B95372670CB800091AF3B /* JellyfinWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628B95362670CB800091AF3B /* JellyfinWidget.swift */; };
 		628B953C2670D2430091AF3B /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
 		62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 62C29E9B26D0FE4200C1D2E7 /* Stinsen */; };
@@ -233,6 +230,10 @@
 		C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E508172703E8190045C9AB /* LibraryListView.swift */; };
 		C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */; };
 		E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */; };
+		E10EAA45277BB646000269ED /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E10EAA44277BB646000269ED /* JellyfinAPI */; };
+		E10EAA47277BB670000269ED /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E10EAA46277BB670000269ED /* JellyfinAPI */; };
+		E10EAA4A277BB6F5000269ED /* VideoPlayerOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA49277BB6F5000269ED /* VideoPlayerOverlay.swift */; };
+		E10EAA4D277BB716000269ED /* Sliders in Frameworks */ = {isa = PBXBuildFile; productRef = E10EAA4C277BB716000269ED /* Sliders */; };
 		E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11B1B6E2718CDBA006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
@@ -558,6 +559,7 @@
 		C4E508172703E8190045C9AB /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
 		E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayButtonRowView.swift; sourceTree = "<group>"; };
+		E10EAA49277BB6F5000269ED /* VideoPlayerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerOverlay.swift; sourceTree = "<group>"; };
 		E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPIError.swift; sourceTree = "<group>"; };
 		E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailCoordinator.swift; sourceTree = "<group>"; };
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
@@ -638,7 +640,6 @@
 				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
 				E1218CA0271A2CF200EA0737 /* Nuke in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
-				53A431BF266B0FFE0016769F /* JellyfinAPI in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
@@ -656,6 +657,7 @@
 			files = (
 				E13DD3D327168E65009D4DAF /* Defaults in Frameworks */,
 				53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */,
+				E10EAA4D277BB716000269ED /* Sliders in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */,
 				E1218C9A271A26BA00EA0737 /* Nuke in Frameworks */,
@@ -664,7 +666,7 @@
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
 				625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */,
 				E1B6DCE8271A23780015B715 /* CombineExt in Frameworks */,
-				53A431BD266B0FF20016769F /* JellyfinAPI in Frameworks */,
+				E10EAA45277BB646000269ED /* JellyfinAPI in Frameworks */,
 				560CA59B3956A4CA13EDAC05 /* Pods_JellyfinPlayer_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -679,8 +681,8 @@
 				53649AB5269D423A00A2D8B7 /* Puppy in Frameworks */,
 				536D3D7D267BD5F90004248C /* ActivityIndicator in Frameworks */,
 				E13DD3CF27164E1F009D4DAF /* CoreStore in Frameworks */,
-				628B95352670CAEA0091AF3B /* JellyfinAPI in Frameworks */,
 				E1218C9C271A26C400EA0737 /* Nuke in Frameworks */,
+				E10EAA47277BB670000269ED /* JellyfinAPI in Frameworks */,
 				EABFD69FA6D5DBB248A494AA /* Pods_WidgetExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1174,6 +1176,16 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		E10EAA48277BB6D7000269ED /* Overlays */ = {
+			isa = PBXGroup;
+			children = (
+				E1C812BB277A8E5D00918266 /* VLCPlayerCompactOverlayView.swift */,
+				E10EAA49277BB6F5000269ED /* VideoPlayerOverlay.swift */,
+				E1C812B7277A8E5D00918266 /* VLCPlayerOverlayView.swift */,
+			);
+			path = Overlays;
+			sourceTree = "<group>";
+		};
 		E12186DF2718F2030010884C /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -1300,8 +1312,7 @@
 				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
 				E1C812B5277A8E5D00918266 /* PlayerOverlayDelegate.swift */,
 				E1C812B8277A8E5D00918266 /* VideoPlayerView.swift */,
-				E1C812BB277A8E5D00918266 /* VLCPlayerCompactOverlayView.swift */,
-				E1C812B7277A8E5D00918266 /* VLCPlayerOverlayView.swift */,
+				E10EAA48277BB6D7000269ED /* Overlays */,
 				E1C812B6277A8E5D00918266 /* VLCPlayerViewController.swift */,
 			);
 			path = VideoPlayer;
@@ -1393,7 +1404,6 @@
 			name = "JellyfinPlayer tvOS";
 			packageProductDependencies = (
 				535870902669D7A800D05A09 /* Introspect */,
-				53A431BE266B0FFE0016769F /* JellyfinAPI */,
 				53ABFDEC26799D7700886593 /* ActivityIndicator */,
 				536D3D83267BEA550004248C /* ParallaxView */,
 				53649AAE269CFAF600A2D8B7 /* Puppy */,
@@ -1430,7 +1440,6 @@
 			name = "JellyfinPlayer iOS";
 			packageProductDependencies = (
 				53352570265EA0A0006CCA86 /* Introspect */,
-				53A431BC266B0FF20016769F /* JellyfinAPI */,
 				625CB5792678C4A400530A6E /* ActivityIndicator */,
 				53649AAC269CFAEA00A2D8B7 /* Puppy */,
 				62C29E9B26D0FE4200C1D2E7 /* Stinsen */,
@@ -1440,6 +1449,8 @@
 				E1B6DCE9271A23880015B715 /* SwiftyJSON */,
 				E1218C99271A26BA00EA0737 /* Nuke */,
 				E1A99998271A3429008E78C0 /* SwiftUICollection */,
+				E10EAA44277BB646000269ED /* JellyfinAPI */,
+				E10EAA4C277BB716000269ED /* Sliders */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* JellyfinPlayer iOS.app */;
@@ -1460,12 +1471,12 @@
 			);
 			name = WidgetExtension;
 			packageProductDependencies = (
-				628B95342670CAEA0091AF3B /* JellyfinAPI */,
 				536D3D7C267BD5F90004248C /* ActivityIndicator */,
 				53649AB4269D423A00A2D8B7 /* Puppy */,
 				E13DD3CE27164E1F009D4DAF /* CoreStore */,
 				E13DD3DC27175CE3009D4DAF /* Defaults */,
 				E1218C9B271A26C400EA0737 /* Nuke */,
+				E10EAA46277BB670000269ED /* JellyfinAPI */,
 			);
 			productName = WidgetExtensionExtension;
 			productReference = 628B95202670CABD0091AF3B /* WidgetExtension.appex */;
@@ -1519,17 +1530,18 @@
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
-				53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */,
 				536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */,
 				53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */,
 				62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */,
-				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */,
+				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */,
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
 				E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */,
 				E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */,
 				C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */,
+				E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
+				E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -2035,6 +2047,7 @@
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,
+				E10EAA4A277BB6F5000269ED /* VideoPlayerOverlay.swift in Sources */,
 				53892772263C8C6F0035E14B /* LoadingView.swift in Sources */,
 				625CB5752678C33500530A6E /* LibraryListViewModel.swift in Sources */,
 			);
@@ -2584,14 +2597,6 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/duyquang91/ActivityIndicator";
@@ -2616,6 +2621,22 @@
 				kind = branch;
 			};
 		};
+		E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/spacenation/swiftui-sliders";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
@@ -2632,7 +2653,7 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */ = {
+		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
 			requirement = {
@@ -2694,16 +2715,6 @@
 			package = 536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */;
 			productName = ParallaxView;
 		};
-		53A431BC266B0FF20016769F /* JellyfinAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
-			productName = JellyfinAPI;
-		};
-		53A431BE266B0FFE0016769F /* JellyfinAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
-			productName = JellyfinAPI;
-		};
 		53ABFDEC26799D7700886593 /* ActivityIndicator */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */;
@@ -2719,15 +2730,25 @@
 			package = 625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */;
 			productName = ActivityIndicator;
 		};
-		628B95342670CAEA0091AF3B /* JellyfinAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 53A431BB266B0FF20016769F /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
-			productName = JellyfinAPI;
-		};
 		62C29E9B26D0FE4200C1D2E7 /* Stinsen */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
 			productName = Stinsen;
+		};
+		E10EAA44277BB646000269ED /* JellyfinAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
+			productName = JellyfinAPI;
+		};
+		E10EAA46277BB670000269ED /* JellyfinAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
+			productName = JellyfinAPI;
+		};
+		E10EAA4C277BB716000269ED /* Sliders */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */;
+			productName = Sliders;
 		};
 		E12186DD2718F1C50010884C /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2756,17 +2777,17 @@
 		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3CC27164CA7009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3CE27164E1F009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3D227168E65009D4DAF /* Defaults */ = {

@@ -7,10 +7,11 @@
 
 import Combine
 import MobileVLCKit
+import Sliders
 import SwiftUI
 import JellyfinAPI
 
-struct VLCPlayerCompactOverlayView: View {
+struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
     
     @ObservedObject var viewModel: VideoPlayerViewModel
     
@@ -35,23 +36,22 @@ struct VLCPlayerCompactOverlayView: View {
             VStack(alignment: .EpisodeSeriesAlignmentGuide) {
                 
                 // MARK: Top Bar
-                HStack(alignment: .top) {
+                HStack(alignment: .center) {
                     
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Button {
-                                viewModel.playerOverlayDelegate?.didSelectClose()
-                            } label: {
-                                Image(systemName: "chevron.left.circle.fill")
-                                    .font(.system(size: 28, weight: .regular, design: .default))
-                            }
-                            
-                            Text(viewModel.title)
-                                .font(.system(size: 28, weight: .regular, design: .default))
-                                .alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
-                                    context[.leading]
-                                }
+                    HStack {
+                        Button {
+                            viewModel.playerOverlayDelegate?.didSelectClose()
+                        } label: {
+                            Image(systemName: "chevron.backward")
+                                .padding()
+                                    .padding(.trailing, -10)
                         }
+                        
+                        Text(viewModel.title)
+                            .font(.system(size: 28, weight: .regular, design: .default))
+                            .alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
+                                context[.leading]
+                            }
                     }
                     
                     Spacer()
@@ -74,22 +74,22 @@ struct VLCPlayerCompactOverlayView: View {
                             }
                         }
                         
-                        Button {
-                            viewModel.screenFilled = !viewModel.screenFilled
-                        } label: {
-                            if viewModel.screenFilled {
-                                Image(systemName: "rectangle.arrowtriangle.2.inward")
-                                    .rotationEffect(Angle(degrees: 90))
-                            } else {
-                                Image(systemName: "rectangle.arrowtriangle.2.outward")
-                                    .rotationEffect(Angle(degrees: 90))
-                            }
-                        }
+//                        Button {
+//                            viewModel.screenFilled = !viewModel.screenFilled
+//                        } label: {
+//                            if viewModel.screenFilled {
+//                                Image(systemName: "rectangle.arrowtriangle.2.inward")
+//                                    .rotationEffect(Angle(degrees: 90))
+//                            } else {
+//                                Image(systemName: "rectangle.arrowtriangle.2.outward")
+//                                    .rotationEffect(Angle(degrees: 90))
+//                            }
+//                        }
                         
                         Button {
                             viewModel.playerOverlayDelegate?.didSelectCaptions()
                         } label: {
-                            if viewModel.captionsEnabled {
+                            if viewModel.subtitlesEnabled {
                                 Image(systemName: "captions.bubble.fill")
                             } else {
                                 Image(systemName: "captions.bubble")
@@ -162,6 +162,7 @@ struct VLCPlayerCompactOverlayView: View {
                     }
                 }
                 .font(.system(size: 24))
+                .frame(height: 50)
                 
                 if let seriesTitle = viewModel.subtitle {
                     Text(seriesTitle)
@@ -177,54 +178,74 @@ struct VLCPlayerCompactOverlayView: View {
             Spacer()
             
             // MARK: Bottom Bar
-            HStack {
+            ZStack {
                 
-                HStack(spacing: 20) {
-                    Button {
-                        viewModel.playerOverlayDelegate?.didSelectBackward()
-                    } label: {
-                        Image(systemName: "gobackward.10")
-                    }
+//                VisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
+//                    .cornerRadius(25)
+//                    .mask {
+//                        Rectangle()
+//                    }
+                
+                HStack {
                     
-                    Button {
-                        viewModel.playerOverlayDelegate?.didSelectMain()
-                    } label: {
-                        mainButtonView
+                    HStack {
+                        Button {
+                            viewModel.playerOverlayDelegate?.didSelectBackward()
+                        } label: {
+                            Image(systemName: "gobackward.10")
+                                .padding(.horizontal, 5)
+                        }
+                        
+                        Button {
+                            viewModel.playerOverlayDelegate?.didSelectMain()
+                        } label: {
+                            mainButtonView
+                                .padding(.horizontal, 5)
+                                .frame(minWidth: 30, maxWidth: 30)
+                        }
+                        
+                        Button {
+                            viewModel.playerOverlayDelegate?.didSelectForward()
+                        } label: {
+                            Image(systemName: "goforward.10")
+                                .padding(.horizontal, 5)
+                        }
                     }
+                    .font(.system(size: 24, weight: .semibold, design: .default))
+//                    .padding(.trailing, 10)
                     
-                    Button {
-                        viewModel.playerOverlayDelegate?.didSelectForward()
-                    } label: {
-                        Image(systemName: "goforward.10")
-                    }
+                    Text(viewModel.leftLabelText)
+                        .font(.system(size: 18, weight: .semibold, design: .default))
+                        .frame(minWidth: 70, maxWidth: 70)
+                    
+                    ValueSlider(value: $viewModel.sliderPercentage, onEditingChanged: { editing in
+                        viewModel.sliderIsScrubbing = editing
+                    })
+                        .valueSliderStyle(
+                            HorizontalValueSliderStyle(track:
+                                                        HorizontalValueTrack(view:
+                                                            Capsule().foregroundColor(.purple))
+                                                        .background(Capsule().foregroundColor(Color.gray.opacity(0.25)))
+                                                        .frame(height: 4),
+                                                        thumb: Circle().foregroundColor(.purple)
+                                                        .onLongPressGesture(perform: {
+                                                            print("got it here")
+                                                        }),
+                                                       thumbSize: CGSize.Circle(radius: viewModel.sliderIsScrubbing ? 25 : 20),
+                                                       thumbInteractiveSize: CGSize.Circle(radius: 40),
+                                                           options: .defaultOptions)
+                        )
+                    
+                    Text(viewModel.rightLabelText)
+                        .font(.system(size: 18, weight: .semibold, design: .default))
+                        .frame(minWidth: 70, maxWidth: 70)
                 }
-                .font(.system(size: 24, weight: .semibold, design: .default))
-                .padding(.trailing, 20)
-                
-                Text(viewModel.leftLabelText)
-                    .font(.system(size: 18, weight: .semibold, design: .default))
-                
-                Slider(value: $viewModel.sliderPercentage) { editing in
-                    viewModel.sliderIsScrubbing = editing
-                }
-                    .foregroundColor(.purple)
-                    .tint(.purple)
-                
-//                ValueSlider(value: $viewModel.sliderPercentage)
-//                    .valueSliderStyle(
-//                        HorizontalValueSliderStyle(thumb: Circle().foregroundColor(.purple),
-//                                                   thumbSize: CGSize(width: 32, height: 32),
-//                                                   thumbInteractiveSize: CGSize(width: 50, height: 50),
-//                                                   options: [.interactiveTrack])
-//                    )
-                
-                Text(viewModel.rightLabelText)
-                    .font(.system(size: 18, weight: .semibold, design: .default))
+                .padding(.horizontal)
             }
-            .frame(height: 50)
+            .frame(maxWidth: 800, maxHeight: 50)
         }
         .padding(.top)
-        .padding(.horizontal)
+//        .padding(.horizontal)
         .ignoresSafeArea(edges: .top)
         .tint(Color.white)
         .foregroundColor(Color.white)
@@ -232,23 +253,26 @@ struct VLCPlayerCompactOverlayView: View {
     
     var body: some View {
         mainBody
-            .background {
-                Color(uiColor: .black.withAlphaComponent(0.001))
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        viewModel.playerOverlayDelegate?.didGenerallyTap()
-                    }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                viewModel.playerOverlayDelegate?.didGenerallyTap()
             }
     }
+}
+
+struct VisualEffectView: UIViewRepresentable {
+    var effect: UIVisualEffect?
+    func makeUIView(context: UIViewRepresentableContext<Self>) -> UIVisualEffectView { UIVisualEffectView() }
+    func updateUIView(_ uiView: UIVisualEffectView, context: UIViewRepresentableContext<Self>) { uiView.effect = effect }
 }
 
 struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            Color.gray
+            Color.black
                 .ignoresSafeArea()
             
-            VLCPlayerCompactOverlayView(viewModel: VideoPlayerViewModel(item: BaseItemDto(runTimeTicks: 123 * 10_000_000),
+            VLCPlayerCompactOverlayView(viewModel: VideoPlayerViewModel(item: BaseItemDto(runTimeTicks: 720 * 10_000_000),
                                                                         title: "Glorious Purpose",
                                                                         subtitle: "Loki - S1E1",
                                                                         streamURL: URL(string: "www.apple.com")!,
@@ -262,10 +286,17 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
                                                                         shouldShowGoogleCast: false,
                                                                         shouldShowAirplay: false,
                                                                         subtitlesEnabled: true,
-                                                                        sliderPercentage: 0.5,
+                                                                        sliderPercentage: 0.432,
                                                                         selectedAudioStreamIndex: -1,
                                                                         selectedSubtitleStreamIndex: -1))
         }
         .previewInterfaceOrientation(.landscapeLeft)
+    }
+}
+
+extension CGSize {
+    
+    static func Circle(radius: CGFloat) -> CGSize {
+        return CGSize(width: radius, height: radius)
     }
 }

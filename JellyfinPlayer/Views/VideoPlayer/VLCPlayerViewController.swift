@@ -128,7 +128,9 @@ class VLCPlayerViewController: UIViewController {
         }.store(in: &cancellables)
         
         viewModel.$sliderIsScrubbing.sink { sliderIsScrubbing in
-            if !sliderIsScrubbing {
+            if sliderIsScrubbing {
+                self.didBeginScrubbing()
+            } else {
                 self.didEndScrubbing(position: self.viewModel.sliderPercentage)
             }
         }.store(in: &cancellables)
@@ -343,8 +345,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         
         if index != -1 {
             // set in case weren't shown
-            viewModel.captionsEnabled = true
-        } 
+            viewModel.subtitlesEnabled = true
+        }
         print("New subtitle index: \(index)")
     }
     
@@ -366,9 +368,9 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     
     func didSelectCaptions() {
         
-        viewModel.captionsEnabled = !viewModel.captionsEnabled
+        viewModel.subtitlesEnabled = !viewModel.subtitlesEnabled
         
-        if viewModel.captionsEnabled {
+        if viewModel.subtitlesEnabled {
             vlcMediaPlayer.currentVideoSubTitleIndex = vlcMediaPlayer.videoSubTitlesIndexes[1] as! Int32
         } else {
             vlcMediaPlayer.currentVideoSubTitleIndex = -1
@@ -425,7 +427,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     }
     
     func didBeginScrubbing() {
-        
+        stopOverlayDismissTimer()
     }
     
     func didEndScrubbing(position: Double) {
@@ -439,6 +441,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         } else {
             vlcMediaPlayer.jumpBackward(Int32(abs(newPositionOffset)))
         }
+        
+        restartOverlayDismissTimer()
         
         print("Scrubbed position: \(position)")
     }

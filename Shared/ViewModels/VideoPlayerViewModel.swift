@@ -23,9 +23,10 @@ final class VideoPlayerViewModel: ObservableObject {
     @Published var playerState: VLCMediaPlayerState
     @Published var shouldShowGoogleCast: Bool
     @Published var shouldShowAirplay: Bool
-    @Published var captionsEnabled: Bool
+    @Published var subtitlesEnabled: Bool
     @Published var leftLabelText: String = "--:--"
     @Published var rightLabelText: String = "--:--"
+    @Published var playbackSpeed: PlaybackSpeed = .one
     @Published var screenFilled: Bool = false
     @Published var sliderPercentage: Double {
         willSet {
@@ -89,7 +90,7 @@ final class VideoPlayerViewModel: ObservableObject {
         self.playerState = playerState
         self.shouldShowGoogleCast = shouldShowGoogleCast
         self.shouldShowAirplay = shouldShowAirplay
-        self.captionsEnabled = subtitlesEnabled
+        self.subtitlesEnabled = subtitlesEnabled
         self.sliderPercentage = sliderPercentage
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
