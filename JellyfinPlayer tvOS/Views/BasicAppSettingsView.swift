@@ -26,9 +26,7 @@ struct BasicAppSettingsView: View {
                     ForEach(self.viewModel.appearances, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)
                     }
-                }.onChange(of: appAppearance, perform: { _ in
-                    UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
-                })
+                }
             } header: {
                 L10n.accessibility.text
             }

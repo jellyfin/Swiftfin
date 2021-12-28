@@ -19,16 +19,10 @@ struct JellyfinPlayerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            EmptyView()
+            MainCoordinator().view()
                 .ignoresSafeArea()
                 .onAppear {
                     setupAppearance()
-                }
-                .withHostingWindow { window in
-                    window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
-                }
-                .onShake {
-                    EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
                 }
                 .onOpenURL { url in
                     AppURLHandler.shared.processDeepLink(url: url)

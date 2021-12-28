@@ -253,7 +253,6 @@
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
-		E13DD3BD27163C63009D4DAF /* EmailHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3BC27163C63009D4DAF /* EmailHelper.swift */; };
 		E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */; };
 		E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
 		E13DD3C327164941009D4DAF /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
@@ -571,7 +570,6 @@
 		E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailCoordinator.swift; sourceTree = "<group>"; };
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
 		E131691626C583BC0074BFEE /* LogConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogConstructor.swift; sourceTree = "<group>"; };
-		E13DD3BC27163C63009D4DAF /* EmailHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailHelper.swift; sourceTree = "<group>"; };
 		E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E13DD3C127164941009D4DAF /* SwiftfinStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinStore.swift; sourceTree = "<group>"; };
 		E13DD3C727164B1E009D4DAF /* UIDeviceExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDeviceExtensions.swift; sourceTree = "<group>"; };
@@ -1232,7 +1230,6 @@
 			isa = PBXGroup;
 			children = (
 				E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */,
-				E13DD3BC27163C63009D4DAF /* EmailHelper.swift */,
 				5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */,
 				5D64683B277B15E4009E09AE /* PreferenceUIHosting */,
 			);
@@ -2017,7 +2014,6 @@
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				E13DD3E927177ED6009D4DAF /* ServerListCoordinator.swift in Sources */,
 				E1C812BD277A8E5D00918266 /* PlayerOverlayDelegate.swift in Sources */,
-				E13DD3BD27163C63009D4DAF /* EmailHelper.swift in Sources */,
 				E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */,
 				E1AD104A26D94822003E4A08 /* DetailItem.swift in Sources */,
 				62E632E0267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
