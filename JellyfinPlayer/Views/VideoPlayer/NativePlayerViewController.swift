@@ -14,9 +14,9 @@ class NativePlayerViewController: AVPlayerViewController {
     
     let viewModel: VideoPlayerViewModel
     
-    var timeObserverToken: Any?
+    private var timeObserverToken: Any?
     
-    var lastProgressTicks: Int64 = 0
+    private var lastProgressTicks: Int64 = 0
     
     init(viewModel: VideoPlayerViewModel) {
         
@@ -99,15 +99,14 @@ class NativePlayerViewController: AVPlayerViewController {
     
     private func play() {
         player?.play()
-        
-        viewModel.sendPlayReport(startTimeTicks: viewModel.item.userData?.playbackPositionTicks ?? 0)
+        viewModel.sendPlayReport()
     }
     
     private func sendProgressReport(seconds: Double) {
-        viewModel.sendProgressReport(ticks: Int64(seconds) * 10_000_000)
+        viewModel.sendProgressReport()
     }
     
     private func stop() {
-        viewModel.sendStopReport(ticks: 10_000_000)
+        viewModel.sendStopReport()
     }
 }

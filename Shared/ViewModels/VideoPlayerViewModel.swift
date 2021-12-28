@@ -8,15 +8,15 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import UIKit
+
 #if os(tvOS)
 import TVVLCKit
 #else
 import MobileVLCKit
 #endif
-import Stinsen
-import UIKit
 
-final class VideoPlayerViewModel: ObservableObject {
+final class VideoPlayerViewModel: ViewModel {
     
     // Manually kept state because VLCKit doesn't properly set "played"
     // on the VLCMediaPlayer object
@@ -55,10 +55,17 @@ final class VideoPlayerViewModel: ObservableObject {
     // Ticks of the time the media has begun
     var startTimeTicks: Int64?
     
+    var currentSeconds: Double {
+        let videoDuration = Double(item.runTimeTicks! / 10_000_000)
+        return round(sliderPercentage * videoDuration)
+    }
+    
+    var currentSecondTicks: Int64 {
+        return Int64(currentSeconds) * 10_000_000
+    }
+    
     // Necessary PassthroughSubject to capture manual scrubbing from sliders
     let sliderScrubbingSubject = PassthroughSubject<VideoPlayerViewModel, Never>()
-    
-    private var cancellables = Set<AnyCancellable>()
     
     init(item: BaseItemDto,
          title: String,
@@ -95,15 +102,16 @@ final class VideoPlayerViewModel: ObservableObject {
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
         
+        super.init()
+        
         self.sliderPercentageChanged(newValue: (item.userData?.playedPercentage ?? 0) / 100)
     }
     
     private func sliderPercentageChanged(newValue: Double) {
         let videoDuration = Double(item.runTimeTicks! / 10_000_000)
-        let secondsScrubbedTo = round(sliderPercentage * videoDuration)
-        let secondsScrubbedRemaining = videoDuration - secondsScrubbedTo
+        let secondsScrubbedRemaining = videoDuration - currentSeconds
         
-        leftLabelText = calculateTimeText(from: secondsScrubbedTo)
+        leftLabelText = calculateTimeText(from: currentSeconds)
         rightLabelText = calculateTimeText(from: secondsScrubbedRemaining)
     }
 
@@ -125,9 +133,9 @@ final class VideoPlayerViewModel: ObservableObject {
         return timeText
     }
     
-    func sendPlayReport(startTimeTicks: Int64) {
+    func sendPlayReport() {
         
-        self.startTimeTicks = startTimeTicks
+        self.startTimeTicks = Int64(Date().timeIntervalSince1970) * 10_000_000
         
         let startInfo = PlaybackStartInfo(canSeek: true,
                                           item: item,
@@ -153,16 +161,46 @@ final class VideoPlayerViewModel: ObservableObject {
         
         PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
             .sink { completion in
-                print(completion)
+                self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
                 print("Playback start report sent!")
             }
             .store(in: &cancellables)
     }
     
-    func sendProgressReport(ticks: Int64) {
+    func sendPauseReport(paused: Bool) {
+        let startInfo = PlaybackStartInfo(canSeek: true,
+                                          item: item,
+                                          itemId: item.id,
+                                          sessionId: response.playSessionId,
+                                          mediaSourceId: item.id,
+                                          audioStreamIndex: audioStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultAudioStreamIndex! })?.index,
+                                          subtitleStreamIndex: subtitleStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultSubtitleStreamIndex ?? -1 })?.index,
+                                          isPaused: paused,
+                                          isMuted: false,
+                                          positionTicks: currentSecondTicks,
+                                          playbackStartTimeTicks: startTimeTicks,
+                                          volumeLevel: 100,
+                                          brightness: 100,
+                                          aspectRatio: nil,
+                                          playMethod: .directPlay,
+                                          liveStreamId: nil,
+                                          playSessionId: response.playSessionId,
+                                          repeatMode: .repeatNone,
+                                          nowPlayingQueue: nil,
+                                          playlistItemId: "playlistItem0"
+        )
         
-        print("Progress ticks: \(ticks)")
+        PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
+            .sink { completion in
+                self.handleAPIRequestError(completion: completion)
+            } receiveValue: { _ in
+                print("Pause report sent!")
+            }
+            .store(in: &cancellables)
+    }
+    
+    func sendProgressReport() {
         
         let progressInfo = PlaybackProgressInfo(canSeek: true,
                                                 item: item,
@@ -173,7 +211,7 @@ final class VideoPlayerViewModel: ObservableObject {
                                                 subtitleStreamIndex: subtitleStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultSubtitleStreamIndex ?? -1 })?.index,
                                                 isPaused: false,
                                                 isMuted: false,
-                                                positionTicks: ticks,
+                                                positionTicks: currentSecondTicks,
                                                 playbackStartTimeTicks: startTimeTicks,
                                                 volumeLevel: nil,
                                                 brightness: nil,
@@ -187,20 +225,20 @@ final class VideoPlayerViewModel: ObservableObject {
         
         PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
             .sink { completion in
-                print(completion)
+                self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
                 print("Playback progress sent!")
             }
             .store(in: &cancellables)
     }
     
-    func sendStopReport(ticks: Int64) {
+    func sendStopReport() {
         
         let stopInfo = PlaybackStopInfo(item: item,
                                         itemId: item.id,
                                         sessionId: response.playSessionId,
                                         mediaSourceId: item.id,
-                                        positionTicks: ticks,
+                                        positionTicks: currentSecondTicks,
                                         liveStreamId: nil,
                                         playSessionId: response.playSessionId,
                                         failed: nil,
@@ -210,7 +248,7 @@ final class VideoPlayerViewModel: ObservableObject {
         
         PlaystateAPI.reportPlaybackStopped(playbackStopInfo: stopInfo)
             .sink { completion in
-                print(completion)
+                self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
                 print("Playback stop report sent!")
             }

@@ -22,6 +22,7 @@ class VLCPlayerViewController: UIViewController {
     private let viewModel: VideoPlayerViewModel
     private var vlcMediaPlayer = VLCMediaPlayer()
     private var lastPlayerTicks: Int64
+    private var lastProgressReportTicks: Int64
     private var cancellables = Set<AnyCancellable>()
     private var overlayDismissTimer: Timer?
     
@@ -52,6 +53,7 @@ class VLCPlayerViewController: UIViewController {
         self.viewModel = viewModel
         
         self.lastPlayerTicks = viewModel.item.userData?.playbackPositionTicks ?? 0
+        self.lastProgressReportTicks = viewModel.item.userData?.playbackPositionTicks ?? 0
         
         super.init(nibName: nil, bundle: nil)
         
@@ -243,7 +245,7 @@ extension VLCPlayerViewController {
     func startPlayback() {
         vlcMediaPlayer.play()
         
-        viewModel.sendPlayReport(startTimeTicks: viewModel.item.userData?.playbackPositionTicks ?? 0)
+        viewModel.sendPlayReport()
         
         // 1 second = 10,000,000 ticks
         let startTicks: Int64 = viewModel.item.userData?.playbackPositionTicks ?? 0
@@ -327,18 +329,18 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         
         viewModel.sliderPercentage = Double(vlcMediaPlayer.position)
         
-        if abs(currentPlayerTicks - lastPlayerTicks) >= 10000 {
+        if abs(currentPlayerTicks - lastPlayerTicks) >= 10_000 {
             
             viewModel.playerState = VLCMediaPlayerState.playing
         }
         
         lastPlayerTicks = currentPlayerTicks
-
-//        if CACurrentMediaTime() - lastProgressReportTime > 5 {
-//            mediaPlayer.currentVideoSubTitleIndex = selectedCaptionTrack
-//            sendProgressReport(eventName: "timeupdate")
-//            lastProgressReportTime = CACurrentMediaTime()
-//        }
+        
+        if abs(lastProgressReportTicks - currentPlayerTicks) >= 500_000_000 {
+            viewModel.sendProgressReport()
+            
+            lastProgressReportTicks = currentPlayerTicks
+        }
     }
 }
 
@@ -361,7 +363,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     func didSelectClose() {
         vlcMediaPlayer.stop()
         
-        viewModel.sendStopReport(ticks: currentPlayerTicks)
+        viewModel.sendStopReport()
         
         dismiss(animated: true, completion: nil)
     }
@@ -399,12 +401,20 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         vlcMediaPlayer.jumpBackward(jumpBackwardLength.rawValue)
         
         restartOverlayDismissTimer()
+        
+        viewModel.sendProgressReport()
+        
+        self.lastProgressReportTicks = currentPlayerTicks
     }
     
     func didSelectForward() {
         vlcMediaPlayer.jumpForward(jumpForwardLength.rawValue)
         
         restartOverlayDismissTimer()
+        
+        viewModel.sendProgressReport()
+        
+        self.lastProgressReportTicks = currentPlayerTicks
     }
     
     func didSelectMain() {
@@ -414,9 +424,11 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
             vlcMediaPlayer.play()
             restartOverlayDismissTimer()
         case .playing:
+            viewModel.sendPauseReport(paused: true)
             vlcMediaPlayer.pause()
             restartOverlayDismissTimer(interval: 5)
         case .paused:
+            viewModel.sendPauseReport(paused: false)
             vlcMediaPlayer.play()
         default: ()
         }
@@ -433,6 +445,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     }
     
     func didEndScrubbing(position: Double) {
+        // Necessary math as VLCMediaPlayer doesn't work well
+        //     by just setting the position
         let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
         let videoDuration = Double(viewModel.item.runTimeTicks! / 10_000_000)
         let secondsScrubbedTo = round(viewModel.sliderPercentage * videoDuration)
@@ -445,5 +459,9 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         }
         
         restartOverlayDismissTimer()
+        
+        viewModel.sendProgressReport()
+        
+        self.lastProgressReportTicks = currentPlayerTicks
     }
 }
