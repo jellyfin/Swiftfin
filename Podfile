@@ -9,6 +9,7 @@ target 'JellyfinPlayer iOS' do
   shared_pods
   pod 'google-cast-sdk'
   pod 'MobileVLCKit'
+  pod 'SwizzleSwift'
 end
 target 'JellyfinPlayer tvOS' do
   platform :tvos, '14.0'

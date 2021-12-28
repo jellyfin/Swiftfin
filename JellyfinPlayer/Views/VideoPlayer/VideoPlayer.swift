@@ -1057,12 +1057,14 @@ struct VideoPlayerView: View {
     var body: some View {
         // Loading UI needs to be moved into ViewController later
         LoadingViewNoBlur(isShowing: $isLoading) {
-            VLCPlayerWithControls(item: item, loadBinding: $isLoading)
-                .navigationBarHidden(true)
-                .navigationBarBackButtonHidden(true)
-                .statusBar(hidden: true)
-                .edgesIgnoringSafeArea(.all)
-                .prefersHomeIndicatorAutoHidden(true)
+            PreferenceUIHostingControllerView {
+                VLCPlayerWithControls(item: item, loadBinding: $isLoading)
+                    .navigationBarHidden(true)
+                    .navigationBarBackButtonHidden(true)
+                    .statusBar(hidden: true)
+                    .edgesIgnoringSafeArea(.all)
+                    .prefersHomeIndicatorAutoHidden(true)
+            }.edgesIgnoringSafeArea(.all)
         }
     }
 }
