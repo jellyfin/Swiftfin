@@ -28,15 +28,19 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     @ViewBuilder func makeStart() -> some View {
         if nativeVideoPlayer {
-            NativePlayerView(viewModel: viewModel)
-                .navigationBarHidden(true)
-                .statusBar(hidden: true)
-                .ignoresSafeArea()
+            PreferenceUIHostingControllerView {
+                NativePlayerView(viewModel: self.viewModel)
+                    .navigationBarHidden(true)
+                    .statusBar(hidden: true)
+                    .ignoresSafeArea()
+            }.ignoresSafeArea()
         } else {
-            VLCPlayerView(viewModel: viewModel)
-                .navigationBarHidden(true)
-                .statusBar(hidden: true)
-                .ignoresSafeArea()
+            PreferenceUIHostingControllerView {
+                VLCPlayerView(viewModel: self.viewModel)
+                    .navigationBarHidden(true)
+                    .statusBar(hidden: true)
+                    .ignoresSafeArea()
+            }.ignoresSafeArea()
         }
     }
 }
