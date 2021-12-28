@@ -237,6 +237,8 @@
 		E10EAA4F277BBCC4000269ED /* CGSizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */; };
 		E10EAA50277BBCC4000269ED /* CGSizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */; };
 		E10EAA51277BBCC4000269ED /* CGSizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */; };
+		E10EAA53277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */; };
+		E10EAA54277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */; };
 		E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11B1B6E2718CDBA006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
@@ -564,6 +566,7 @@
 		E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayButtonRowView.swift; sourceTree = "<group>"; };
 		E10EAA49277BB6F5000269ED /* VideoPlayerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerOverlay.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtensions.swift; sourceTree = "<group>"; };
+		E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+VideoPlayerViewModel.swift"; sourceTree = "<group>"; };
 		E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPIError.swift; sourceTree = "<group>"; };
 		E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailCoordinator.swift; sourceTree = "<group>"; };
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
@@ -1340,6 +1343,7 @@
 			children = (
 				E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */,
 				E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */,
+				E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */,
 				5364F454266CA0DC0026ECBA /* BaseItemPersonExtensions.swift */,
 				E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */,
 				E1AD105E26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift */,
@@ -1868,6 +1872,7 @@
 				536D3D81267BDFC60004248C /* PortraitItemElement.swift in Sources */,
 				62E1DCC4273CE19800C9AE76 /* URLExtensions.swift in Sources */,
 				5398514726B64E4100101B49 /* SearchBarView.swift in Sources */,
+				E10EAA54277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
 				E1D4BF882719D27100A11E64 /* Bitrates.swift in Sources */,
 				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
@@ -2029,6 +2034,7 @@
 				5D64683D277B1649009E09AE /* PreferenceUIHostingSwizzling.swift in Sources */,
 				C40CD922271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */,
 				E13DD3C827164B1E009D4DAF /* UIDeviceExtensions.swift in Sources */,
+				E10EAA53277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
 				E1AD104D26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
 				E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */,
 				535870AD2669D8DD00D05A09 /* Typings.swift in Sources */,
