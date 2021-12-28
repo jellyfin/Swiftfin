@@ -298,7 +298,6 @@ extension VLCPlayerViewController {
     }
     
     @objc private func dismissTimerFired() {
-        print("Dismiss timer fired")
         self.hideOverlay()
     }
     
@@ -313,6 +312,10 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
         
         self.viewModel.playerState = vlcMediaPlayer.state
+        
+        if vlcMediaPlayer.state == VLCMediaPlayerState.ended {
+            didSelectClose()
+        }
     }
     
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
@@ -407,21 +410,14 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     func didSelectMain() {
         
         switch viewModel.playerState {
-        case .stopped: ()
-        case .opening: ()
         case .buffering:
             vlcMediaPlayer.play()
             restartOverlayDismissTimer()
-        case .ended:
-            self.didSelectClose()
-        case .error: ()
         case .playing:
             vlcMediaPlayer.pause()
             restartOverlayDismissTimer(interval: 5)
         case .paused:
             vlcMediaPlayer.play()
-        case .esAdded: ()
-
         default: ()
         }
     }
