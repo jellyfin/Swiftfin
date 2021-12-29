@@ -23,7 +23,7 @@ protocol PlayerOverlayDelegate {
     func didGenerallyTap()
     
     func didBeginScrubbing()
-    func didEndScrubbing(position: Double)
+    func didEndScrubbing()
     
     func didSelectAudioStream(index: Int)
     func didSelectSubtitleStream(index: Int)

@@ -79,9 +79,18 @@ extension BaseItemDto {
                     hlsURL.addQueryItem(name: "SubtitleStreamIndex", value: "\(defaultSubtitleStream!.index!)")
                 }
                 
+                var subtitle: String? = nil
+                
+                // TODO: other forms of media subtitle
+                if self.itemType == .episode {
+                    if let seriesName = self.seriesName, let episodeLocator = self.getEpisodeLocator() {
+                        subtitle = "\(seriesName) - \(episodeLocator)"
+                    }
+                }
+                
                 let videoPlayerViewModel = VideoPlayerViewModel(item: self,
                                                                 title: self.name!,
-                                                                subtitle: self.seriesName,
+                                                                subtitle: subtitle,
                                                                 streamURL: streamURL.url!,
                                                                 hlsURL: hlsURL.url!,
                                                                 response: response,
@@ -92,7 +101,7 @@ extension BaseItemDto {
                                                                 playerState: .playing,
                                                                 shouldShowGoogleCast: false,
                                                                 shouldShowAirplay: false,
-                                                                subtitlesEnabled: defaultAudioStream?.index != nil,
+                                                                subtitlesEnabled: defaultSubtitleStream?.index != nil,
                                                                 sliderPercentage: (self.userData?.playedPercentage ?? 0) / 100,
                                                                 selectedAudioStreamIndex: defaultAudioStream?.index ?? -1,
                                                                 selectedSubtitleStreamIndex: defaultSubtitleStream?.index ?? -1,

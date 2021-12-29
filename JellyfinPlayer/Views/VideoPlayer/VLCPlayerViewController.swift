@@ -27,7 +27,7 @@ class VLCPlayerViewController: UIViewController {
     private var vlcMediaPlayer = VLCMediaPlayer()
     private var lastPlayerTicks: Int64 = 0
     private var lastProgressReportTicks: Int64 = 0
-    private var cancellables = Set<AnyCancellable>()
+    private var viewModelReactCancellables = Set<AnyCancellable>()
     private var overlayDismissTimer: Timer?
     
     private var currentPlayerTicks: Int64 {
@@ -229,17 +229,13 @@ extension VLCPlayerViewController {
         
         stopOverlayDismissTimer()
         
-        // UX improvement
-        (vlcMediaPlayer.drawable as! UIView).isHidden = true
-        
         // Stop current media if there is one
         if vlcMediaPlayer.media != nil {
-            cancellables.forEach({ $0.cancel() })
+            viewModelReactCancellables.forEach({ $0.cancel() })
             
             vlcMediaPlayer.stop()
             viewModel.sendStopReport()
             viewModel.playerOverlayDelegate = nil
-            vlcMediaPlayer.media = nil
         }
         
         lastPlayerTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
@@ -257,32 +253,27 @@ extension VLCPlayerViewController {
         newViewModel.getAdjacentEpisodes()
         newViewModel.playerOverlayDelegate = self
         
+        let startPercentage = viewModel.item.userData?.playedPercentage ?? 0
+        
+        if startPercentage > 0 {
+            newViewModel.sliderPercentage = startPercentage / 100
+        }
+        
+        didSelectSubtitleStream(index: newViewModel.selectedSubtitleStreamIndex)
+        didSelectAudioStream(index: newViewModel.selectedAudioStreamIndex)
+        
         viewModel = newViewModel
     }
     
+    // MARK: startPlayback
     func startPlayback() {
-        // UX improvement
-        (vlcMediaPlayer.drawable as! UIView).isHidden = false
-        
         vlcMediaPlayer.play()
+        
+        setMediaPlayerTimeAtCurrentSlider()
         
         viewModel.sendPlayReport()
         
         restartOverlayDismissTimer()
-        
-        // 1 second = 10,000,000 ticks
-        let startTicks: Int64 = viewModel.item.userData?.playbackPositionTicks ?? 0
-
-        if startTicks != 0 {
-            let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
-            let secondsScrubbedTo = startTicks / 10_000_000
-            let offset = secondsScrubbedTo - Int64(videoPosition)
-            if offset > 0 {
-                vlcMediaPlayer.jumpForward(Int32(offset))
-            } else {
-                vlcMediaPlayer.jumpBackward(Int32(abs(offset)))
-            }
-        }
     }
     
     // MARK: setupViewModelListeners
@@ -290,27 +281,42 @@ extension VLCPlayerViewController {
     private func setupViewModelListeners(viewModel: VideoPlayerViewModel) {
         viewModel.$playbackSpeed.sink { newSpeed in
             self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
-        }.store(in: &cancellables)
+        }.store(in: &viewModelReactCancellables)
         
         viewModel.$screenFilled.sink { shouldFill in
             self.changeFill(to: shouldFill)
-        }.store(in: &cancellables)
+        }.store(in: &viewModelReactCancellables)
         
         viewModel.$sliderIsScrubbing.sink { sliderIsScrubbing in
             if sliderIsScrubbing {
                 self.didBeginScrubbing()
             } else {
-                self.didEndScrubbing(position: self.viewModel.sliderPercentage)
+                self.didEndScrubbing()
             }
-        }.store(in: &cancellables)
+        }.store(in: &viewModelReactCancellables)
         
         viewModel.$selectedAudioStreamIndex.sink { newAudioStreamIndex in
             self.didSelectAudioStream(index: newAudioStreamIndex)
-        }.store(in: &cancellables)
+        }.store(in: &viewModelReactCancellables)
         
         viewModel.$selectedSubtitleStreamIndex.sink { newSubtitleStreamIndex in
             self.didSelectSubtitleStream(index: newSubtitleStreamIndex)
-        }.store(in: &cancellables)
+        }.store(in: &viewModelReactCancellables)
+    }
+    
+    func setMediaPlayerTimeAtCurrentSlider() {
+        // Necessary math as VLCMediaPlayer doesn't work well
+        //     by just setting the position
+        let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
+        let videoDuration = Double(viewModel.item.runTimeTicks! / 10_000_000)
+        let secondsScrubbedTo = round(viewModel.sliderPercentage * videoDuration)
+        let newPositionOffset = secondsScrubbedTo - videoPosition
+        
+        if newPositionOffset > 0 {
+            vlcMediaPlayer.jumpForward(Int32(newPositionOffset))
+        } else {
+            vlcMediaPlayer.jumpBackward(Int32(abs(newPositionOffset)))
+        }
     }
 }
 
@@ -386,13 +392,15 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         
         viewModel.sliderPercentage = Double(vlcMediaPlayer.position)
         
+        // Have to manually set playing because VLCMediaPlayer doesn't
+        // properly set it itself
         if abs(currentPlayerTicks - lastPlayerTicks) >= 10_000 {
-            
             viewModel.playerState = VLCMediaPlayerState.playing
         }
         
         lastPlayerTicks = currentPlayerTicks
         
+        // Send progress report every 5 seconds
         if abs(lastProgressReportTicks - currentPlayerTicks) >= 500_000_000 {
             viewModel.sendProgressReport()
             
@@ -438,7 +446,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         viewModel.subtitlesEnabled = !viewModel.subtitlesEnabled
         
         if viewModel.subtitlesEnabled {
-            vlcMediaPlayer.currentVideoSubTitleIndex = vlcMediaPlayer.videoSubTitlesIndexes[1] as! Int32
+            vlcMediaPlayer.currentVideoSubTitleIndex = Int32(viewModel.selectedSubtitleStreamIndex)
         } else {
             vlcMediaPlayer.currentVideoSubTitleIndex = -1
         }
@@ -501,19 +509,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         stopOverlayDismissTimer()
     }
     
-    func didEndScrubbing(position: Double) {
-        // Necessary math as VLCMediaPlayer doesn't work well
-        //     by just setting the position
-        let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
-        let videoDuration = Double(viewModel.item.runTimeTicks! / 10_000_000)
-        let secondsScrubbedTo = round(viewModel.sliderPercentage * videoDuration)
-        let newPositionOffset = secondsScrubbedTo - videoPosition
-        
-        if newPositionOffset > 0 {
-            vlcMediaPlayer.jumpForward(Int32(newPositionOffset))
-        } else {
-            vlcMediaPlayer.jumpBackward(Int32(abs(newPositionOffset)))
-        }
+    func didEndScrubbing() {
+        setMediaPlayerTimeAtCurrentSlider()
         
         restartOverlayDismissTimer()
         

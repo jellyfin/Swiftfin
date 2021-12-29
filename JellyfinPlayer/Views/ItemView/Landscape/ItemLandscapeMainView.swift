@@ -21,7 +21,7 @@ struct ItemLandscapeMainView: View {
             // MARK: Sidebar Image
 
             VStack {
-                ImageView(src: viewModel.item.getPrimaryImage(maxWidth: 130),
+                ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 130),
                           bh: viewModel.item.getPrimaryImageBlurHash())
                     .frame(width: 130, height: 195)
                     .cornerRadius(10)
@@ -44,7 +44,8 @@ struct ItemLandscapeMainView: View {
                     .frame(width: 130, height: 40)
                     .background(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
                     .cornerRadius(10)
-                }.disabled(viewModel.playButtonItem == nil)
+                }
+                .disabled(viewModel.playButtonItem == nil || viewModel.itemVideoPlayerViewModel == nil)
 
                 Spacer()
             }

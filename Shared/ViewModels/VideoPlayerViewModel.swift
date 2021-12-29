@@ -35,8 +35,18 @@ final class VideoPlayerViewModel: ViewModel {
         }
     }
     @Published var sliderIsScrubbing: Bool = false
-    @Published var selectedAudioStreamIndex: Int
-    @Published var selectedSubtitleStreamIndex: Int
+    @Published var selectedAudioStreamIndex: Int {
+        didSet {
+            previousItemVideoPlayerViewModel?.matchAudioStream(with: self)
+            nextItemVideoPlayerViewModel?.matchAudioStream(with: self)
+        }
+    }
+    @Published var selectedSubtitleStreamIndex: Int {
+        didSet {
+            previousItemVideoPlayerViewModel?.matchSubtitleStream(with:  self)
+            nextItemVideoPlayerViewModel?.matchSubtitleStream(with: self)
+        }
+    }
     @Published var showAdjacentItems: Bool
     @Published var previousItemVideoPlayerViewModel: VideoPlayerViewModel?
     @Published var nextItemVideoPlayerViewModel: VideoPlayerViewModel?
@@ -173,6 +183,9 @@ extension VideoPlayerViewModel {
                             .sink { completion in
                                 self.handleAPIRequestError(completion: completion)
                             } receiveValue: { videoPlayerViewModel in
+                                videoPlayerViewModel.matchSubtitleStream(with: self)
+                                videoPlayerViewModel.matchAudioStream(with: self)
+                                
                                 self.nextItemVideoPlayerViewModel = videoPlayerViewModel
                             }
                             .store(in: &self.cancellables)
@@ -184,6 +197,9 @@ extension VideoPlayerViewModel {
                             .sink { completion in
                                 self.handleAPIRequestError(completion: completion)
                             } receiveValue: { videoPlayerViewModel in
+                                videoPlayerViewModel.matchSubtitleStream(with: self)
+                                videoPlayerViewModel.matchAudioStream(with: self)
+                                
                                 self.previousItemVideoPlayerViewModel = videoPlayerViewModel
                             }
                             .store(in: &self.cancellables)
@@ -198,6 +214,9 @@ extension VideoPlayerViewModel {
                         .sink { completion in
                             self.handleAPIRequestError(completion: completion)
                         } receiveValue: { videoPlayerViewModel in
+                            videoPlayerViewModel.matchSubtitleStream(with: self)
+                            videoPlayerViewModel.matchAudioStream(with: self)
+                            
                             self.previousItemVideoPlayerViewModel = videoPlayerViewModel
                         }
                         .store(in: &self.cancellables)
@@ -206,12 +225,34 @@ extension VideoPlayerViewModel {
                         .sink { completion in
                             self.handleAPIRequestError(completion: completion)
                         } receiveValue: { videoPlayerViewModel in
+                            videoPlayerViewModel.matchSubtitleStream(with: self)
+                            videoPlayerViewModel.matchAudioStream(with: self)
+                            
                             self.nextItemVideoPlayerViewModel = videoPlayerViewModel
                         }
                         .store(in: &self.cancellables)
                 }
             })
             .store(in: &cancellables)
+    }
+    
+    private func matchSubtitleStream(with masterViewModel: VideoPlayerViewModel) {
+        guard let currentSubtitleStream = masterViewModel.subtitleStreams.first(where: { $0.index == masterViewModel.selectedSubtitleStreamIndex }) else { return }
+        guard let matchingSubtitleStream = self.subtitleStreams.first(where: { mediaStreamAboutEqual($0, currentSubtitleStream) }) else { return }
+        
+        self.subtitlesEnabled = masterViewModel.subtitlesEnabled
+        self.selectedSubtitleStreamIndex = matchingSubtitleStream.index ?? -1
+    }
+    
+    private func matchAudioStream(with masterViewModel: VideoPlayerViewModel) {
+        guard let currentAudioStream = masterViewModel.audioStreams.first(where: { $0.index == masterViewModel.selectedAudioStreamIndex }),
+              let matchingAudioStream = self.audioStreams.first(where: { mediaStreamAboutEqual($0, currentAudioStream) }) else { return }
+        
+        self.selectedAudioStreamIndex = matchingAudioStream.index ?? -1
+    }
+    
+    private func mediaStreamAboutEqual(_ lhs: MediaStream, _ rhs: MediaStream) -> Bool {
+        return lhs.displayTitle == rhs.displayTitle && lhs.language == rhs.language
     }
 }
 

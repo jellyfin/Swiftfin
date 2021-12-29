@@ -117,6 +117,8 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                     Image(systemName: "captions.bubble")
                                 }
                             }
+                            .disabled(viewModel.selectedSubtitleStreamIndex == -1)
+                            .foregroundColor(viewModel.selectedSubtitleStreamIndex == -1 ? .gray : .white)
                         }
                         
                         // MARK: Settings Menu
