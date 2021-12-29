@@ -95,7 +95,8 @@ extension BaseItemDto {
                                                                 subtitlesEnabled: defaultAudioStream?.index != nil,
                                                                 sliderPercentage: (self.userData?.playedPercentage ?? 0) / 100,
                                                                 selectedAudioStreamIndex: defaultAudioStream?.index ?? -1,
-                                                                selectedSubtitleStreamIndex: defaultSubtitleStream?.index ?? -1)
+                                                                selectedSubtitleStreamIndex: defaultSubtitleStream?.index ?? -1,
+                                                                showAdjacentItems: true)
                 
                 return videoPlayerViewModel
             })

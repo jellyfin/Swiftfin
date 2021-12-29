@@ -15,14 +15,18 @@ import MobileVLCKit
 import SwiftUI
 import UIKit
 
+// TODO: Make the VLC player layer a view
+// This will allow changing media and putting the view somewhere else
+// in a compact state, like a small viewer while navigating the app
+
 class VLCPlayerViewController: UIViewController {
     
     // MARK: variables
     
-    private let viewModel: VideoPlayerViewModel
+    private var viewModel: VideoPlayerViewModel
     private var vlcMediaPlayer = VLCMediaPlayer()
-    private var lastPlayerTicks: Int64
-    private var lastProgressReportTicks: Int64
+    private var lastPlayerTicks: Int64 = 0
+    private var lastProgressReportTicks: Int64 = 0
     private var cancellables = Set<AnyCancellable>()
     private var overlayDismissTimer: Timer?
     
@@ -31,7 +35,7 @@ class VLCPlayerViewController: UIViewController {
     }
     
     private var displayingOverlay: Bool {
-        return overlayHostingController.view.alpha > 0
+        return currentOverlayHostingController?.view.alpha ??  0 > 0
     }
     
     private var jumpForwardLength: VideoPlayerJumpLength {
@@ -44,16 +48,13 @@ class VLCPlayerViewController: UIViewController {
     
     private lazy var videoContentView = makeVideoContentView()
     private lazy var tapGestureView = makeTapGestureView()
-    private lazy var overlayHostingController = makeOverlayHostingController()
+    private var currentOverlayHostingController: UIHostingController<VLCPlayerCompactOverlayView>?
     
     // MARK: init
     
     init(viewModel: VideoPlayerViewModel) {
         
         self.viewModel = viewModel
-        
-        self.lastPlayerTicks = viewModel.item.userData?.playbackPositionTicks ?? 0
-        self.lastProgressReportTicks = viewModel.item.userData?.playbackPositionTicks ?? 0
         
         super.init(nibName: nil, bundle: nil)
         
@@ -67,12 +68,6 @@ class VLCPlayerViewController: UIViewController {
     private func setupSubviews() {
         view.addSubview(videoContentView)
         view.addSubview(tapGestureView)
-        
-        addChild(overlayHostingController)
-        overlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        overlayHostingController.view.backgroundColor = UIColor.black.withAlphaComponent(0.2)
-        view.addSubview(overlayHostingController.view)
-        overlayHostingController.didMove(toParent: self)
     }
     
     private func setupConstraints() {
@@ -87,12 +82,6 @@ class VLCPlayerViewController: UIViewController {
             tapGestureView.bottomAnchor.constraint(equalTo: videoContentView.bottomAnchor),
             tapGestureView.leftAnchor.constraint(equalTo: videoContentView.leftAnchor),
             tapGestureView.rightAnchor.constraint(equalTo: videoContentView.rightAnchor)
-        ])
-        NSLayoutConstraint.activate([
-            overlayHostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            overlayHostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            overlayHostingController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
-            overlayHostingController.view.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
     
@@ -120,39 +109,15 @@ class VLCPlayerViewController: UIViewController {
         setupSubviews()
         setupConstraints()
         
-        setupViewModelListeners()
-        
         view.backgroundColor = .black
         
-        setupMediaPlayer()
-    }
-    
-    // MARK: setupViewModelListeners
-    
-    private func setupViewModelListeners() {
-        viewModel.$playbackSpeed.sink { newSpeed in
-            self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
-        }.store(in: &cancellables)
+        // These are kept outside of 'setupMediaPlayer' such that
+        // they aren't unnecessarily set more than once
+        vlcMediaPlayer.delegate = self
+        vlcMediaPlayer.drawable = videoContentView
+        vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         
-        viewModel.$screenFilled.sink { shouldFill in
-            self.changeFill(to: shouldFill)
-        }.store(in: &cancellables)
-        
-        viewModel.$sliderIsScrubbing.sink { sliderIsScrubbing in
-            if sliderIsScrubbing {
-                self.didBeginScrubbing()
-            } else {
-                self.didEndScrubbing(position: self.viewModel.sliderPercentage)
-            }
-        }.store(in: &cancellables)
-        
-        viewModel.$selectedAudioStreamIndex.sink { newAudioStreamIndex in
-            self.didSelectAudioStream(index: newAudioStreamIndex)
-        }.store(in: &cancellables)
-        
-        viewModel.$selectedSubtitleStreamIndex.sink { newSubtitleStreamIndex in
-            self.didSelectSubtitleStream(index: newSubtitleStreamIndex)
-        }.store(in: &cancellables)
+        setupMediaPlayer(newViewModel: viewModel)
     }
     
     private func changeFill(to shouldFill: Bool) {
@@ -177,7 +142,6 @@ class VLCPlayerViewController: UIViewController {
         super.viewDidAppear(animated)
         
         startPlayback()
-        restartOverlayDismissTimer()
     }
     
     // MARK: subviews
@@ -193,7 +157,6 @@ class VLCPlayerViewController: UIViewController {
     private func makeTapGestureView() -> UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
         
         let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
         let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didRightSwipe))
@@ -220,32 +183,92 @@ class VLCPlayerViewController: UIViewController {
         self.didSelectBackward()
     }
     
-    private func makeOverlayHostingController() -> UIHostingController<VLCPlayerCompactOverlayView> {
-        let overlayView = VLCPlayerCompactOverlayView(viewModel: viewModel)
-        return UIHostingController(rootView: overlayView)
+    // MARK: setupOverlayHostingController
+    private func setupOverlayHostingController(viewModel: VideoPlayerViewModel) {
+        
+        if let currentOverlayHostingController = currentOverlayHostingController {
+            currentOverlayHostingController.view.isHidden = true
+            
+            currentOverlayHostingController.view.removeFromSuperview()
+            currentOverlayHostingController.removeFromParent()
+            self.currentOverlayHostingController = nil
+        }
+        
+        let newOverlayView = VLCPlayerCompactOverlayView(viewModel: viewModel)
+        let newOverlayHostingController = UIHostingController(rootView: newOverlayView)
+        
+        newOverlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        newOverlayHostingController.view.backgroundColor = UIColor.clear
+        addChild(newOverlayHostingController)
+        view.addSubview(newOverlayHostingController.view)
+        newOverlayHostingController.didMove(toParent: self)
+        
+        NSLayoutConstraint.activate([
+            newOverlayHostingController.view.topAnchor.constraint(equalTo: videoContentView.topAnchor),
+            newOverlayHostingController.view.bottomAnchor.constraint(equalTo: videoContentView.bottomAnchor),
+            newOverlayHostingController.view.leftAnchor.constraint(equalTo: videoContentView.leftAnchor),
+            newOverlayHostingController.view.rightAnchor.constraint(equalTo: videoContentView.rightAnchor)
+        ])
+        
+        self.currentOverlayHostingController = newOverlayHostingController
+        
+        // There is a behavior when setting this that the navigation bar
+        // on the current navigation controller pops up, re-hide it
+        self.navigationController?.isNavigationBarHidden = true
     }
 }
 
 // MARK: setupMediaPlayer
 extension VLCPlayerViewController {
     
-    func setupMediaPlayer() {
+    /// Main function that handles setting up the media player with the current VideoPlayerViewModel
+    /// and also takes the role of setting the 'viewModel' property with the given viewModel
+    ///
+    /// Use case for this is setting new media within the same VLCPlayerViewController
+    func setupMediaPlayer(newViewModel: VideoPlayerViewModel) {
         
-        vlcMediaPlayer.delegate = self
-        vlcMediaPlayer.drawable = videoContentView
-        vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
+        stopOverlayDismissTimer()
+        
+        // UX improvement
+        (vlcMediaPlayer.drawable as! UIView).isHidden = true
+        
+        // Stop current media if there is one
+        if vlcMediaPlayer.media != nil {
+            cancellables.forEach({ $0.cancel() })
+            
+            vlcMediaPlayer.stop()
+            viewModel.sendStopReport()
+            viewModel.playerOverlayDelegate = nil
+            vlcMediaPlayer.media = nil
+        }
+        
+        lastPlayerTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
+        lastProgressReportTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
 
-        let media = VLCMedia(url: viewModel.streamURL)
+        let media = VLCMedia(url: newViewModel.streamURL)
         media.addOption("--prefetch-buffer-size=1048576")
         media.addOption("--network-caching=5000")
         
         vlcMediaPlayer.media = media
+        
+        setupOverlayHostingController(viewModel: newViewModel)
+        setupViewModelListeners(viewModel: newViewModel)
+        
+        newViewModel.getAdjacentEpisodes()
+        newViewModel.playerOverlayDelegate = self
+        
+        viewModel = newViewModel
     }
     
     func startPlayback() {
+        // UX improvement
+        (vlcMediaPlayer.drawable as! UIView).isHidden = false
+        
         vlcMediaPlayer.play()
         
         viewModel.sendPlayReport()
+        
+        restartOverlayDismissTimer()
         
         // 1 second = 10,000,000 ticks
         let startTicks: Int64 = viewModel.item.userData?.playbackPositionTicks ?? 0
@@ -261,28 +284,62 @@ extension VLCPlayerViewController {
             }
         }
     }
+    
+    // MARK: setupViewModelListeners
+    
+    private func setupViewModelListeners(viewModel: VideoPlayerViewModel) {
+        viewModel.$playbackSpeed.sink { newSpeed in
+            self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
+        }.store(in: &cancellables)
+        
+        viewModel.$screenFilled.sink { shouldFill in
+            self.changeFill(to: shouldFill)
+        }.store(in: &cancellables)
+        
+        viewModel.$sliderIsScrubbing.sink { sliderIsScrubbing in
+            if sliderIsScrubbing {
+                self.didBeginScrubbing()
+            } else {
+                self.didEndScrubbing(position: self.viewModel.sliderPercentage)
+            }
+        }.store(in: &cancellables)
+        
+        viewModel.$selectedAudioStreamIndex.sink { newAudioStreamIndex in
+            self.didSelectAudioStream(index: newAudioStreamIndex)
+        }.store(in: &cancellables)
+        
+        viewModel.$selectedSubtitleStreamIndex.sink { newSubtitleStreamIndex in
+            self.didSelectSubtitleStream(index: newSubtitleStreamIndex)
+        }.store(in: &cancellables)
+    }
 }
 
 // MARK: Show/Hide Overlay
 extension VLCPlayerViewController {
     
     private func showOverlay() {
+        guard let overlayHostingController = currentOverlayHostingController else { return }
+        
         guard overlayHostingController.view.alpha != 1 else { return }
         
         UIView.animate(withDuration: 0.2) {
-            self.overlayHostingController.view.alpha = 1
+            overlayHostingController.view.alpha = 1
         }
     }
     
     private func hideOverlay() {
+        guard let overlayHostingController = currentOverlayHostingController else { return }
+        
         guard overlayHostingController.view.alpha != 0 else { return }
         
         UIView.animate(withDuration: 0.2) {
-            self.overlayHostingController.view.alpha = 0
+            overlayHostingController.view.alpha = 0
         }
     }
     
     private func toggleOverlay() {
+        guard let overlayHostingController = currentOverlayHostingController else { return }
+        
         if overlayHostingController.view.alpha < 1 {
             showOverlay()
         } else {
@@ -463,5 +520,15 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         viewModel.sendProgressReport()
         
         self.lastProgressReportTicks = currentPlayerTicks
+    }
+    
+    func didSelectPreviousItem() {
+        setupMediaPlayer(newViewModel: viewModel.previousItemVideoPlayerViewModel!)
+        startPlayback()
+    }
+    
+    func didSelectNextItem() {
+        setupMediaPlayer(newViewModel: viewModel.nextItemVideoPlayerViewModel!)
+        startPlayback()
     }
 }

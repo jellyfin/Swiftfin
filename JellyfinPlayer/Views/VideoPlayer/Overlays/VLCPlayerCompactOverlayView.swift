@@ -61,6 +61,24 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                     
                     HStack(spacing: 20) {
                         
+                        if viewModel.showAdjacentItems {
+                            Button {
+                                viewModel.playerOverlayDelegate?.didSelectPreviousItem()
+                            } label: {
+                                Image(systemName: "chevron.left.circle")
+                            }
+                            .disabled(viewModel.previousItemVideoPlayerViewModel == nil)
+                            .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+                            
+                            Button {
+                                viewModel.playerOverlayDelegate?.didSelectNextItem()
+                            } label: {
+                                Image(systemName: "chevron.right.circle")
+                            }
+                            .disabled(viewModel.nextItemVideoPlayerViewModel == nil)
+                            .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+                        }
+                        
                         if viewModel.shouldShowGoogleCast {
                             Button {
                                 viewModel.playerOverlayDelegate?.didSelectGoogleCast()
@@ -205,8 +223,8 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                             viewModel.playerOverlayDelegate?.didSelectMain()
                         } label: {
                             mainButtonView
-                                .padding(.horizontal, 5)
                                 .frame(minWidth: 30, maxWidth: 30)
+                                .padding(.horizontal, 10)
                         }
                         
                         Button {
@@ -291,7 +309,8 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
                                                                         subtitlesEnabled: true,
                                                                         sliderPercentage: 0.432,
                                                                         selectedAudioStreamIndex: -1,
-                                                                        selectedSubtitleStreamIndex: -1))
+                                                                        selectedSubtitleStreamIndex: -1,
+                                                                        showAdjacentItems: true))
         }
         .previewInterfaceOrientation(.landscapeLeft)
     }

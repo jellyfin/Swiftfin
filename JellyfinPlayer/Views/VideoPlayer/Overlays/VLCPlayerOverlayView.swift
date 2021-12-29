@@ -239,20 +239,11 @@ struct VLCPlayerOverlayView_Previews: PreviewProvider {
                                                                  subtitlesEnabled: true,
                                                                  sliderPercentage: 0.0,
                                                                  selectedAudioStreamIndex: -1,
-                                                                 selectedSubtitleStreamIndex: -1))
+                                                                 selectedSubtitleStreamIndex: -1,
+                                                                 showAdjacentItems: true))
         }
         .previewInterfaceOrientation(.landscapeLeft)
     }
 }
 
-extension HorizontalAlignment {
-    
-    private struct EpisodeSeriesTitleAlignment: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            context[HorizontalAlignment.leading]
-        }
-    }
-    
-    static let EpisodeSeriesAlignmentGuide = HorizontalAlignment(EpisodeSeriesTitleAlignment.self)
-    
-}
+

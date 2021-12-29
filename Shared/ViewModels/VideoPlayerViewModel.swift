@@ -37,6 +37,9 @@ final class VideoPlayerViewModel: ViewModel {
     @Published var sliderIsScrubbing: Bool = false
     @Published var selectedAudioStreamIndex: Int
     @Published var selectedSubtitleStreamIndex: Int
+    @Published var showAdjacentItems: Bool
+    @Published var previousItemVideoPlayerViewModel: VideoPlayerViewModel?
+    @Published var nextItemVideoPlayerViewModel: VideoPlayerViewModel?
     
     let item: BaseItemDto
     let title: String
@@ -67,6 +70,8 @@ final class VideoPlayerViewModel: ViewModel {
     // Necessary PassthroughSubject to capture manual scrubbing from sliders
     let sliderScrubbingSubject = PassthroughSubject<VideoPlayerViewModel, Never>()
     
+    // MARK: init
+    
     init(item: BaseItemDto,
          title: String,
          subtitle: String?,
@@ -83,7 +88,8 @@ final class VideoPlayerViewModel: ViewModel {
          subtitlesEnabled: Bool,
          sliderPercentage: Double,
          selectedAudioStreamIndex: Int,
-         selectedSubtitleStreamIndex: Int) {
+         selectedSubtitleStreamIndex: Int,
+         showAdjacentItems: Bool) {
         self.item = item
         self.title = title
         self.subtitle = subtitle
@@ -101,6 +107,7 @@ final class VideoPlayerViewModel: ViewModel {
         self.sliderPercentage = sliderPercentage
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
+        self.showAdjacentItems = showAdjacentItems
         
         super.init()
         
@@ -132,7 +139,87 @@ final class VideoPlayerViewModel: ViewModel {
 
         return timeText
     }
+}
+
+// MARK: Adjacent Items
+extension VideoPlayerViewModel {
     
+    func getAdjacentEpisodes() {
+        guard let seriesID = item.seriesId, item.itemType == .episode else { return }
+        
+        TvShowsAPI.getEpisodes(seriesId: seriesID,
+                               userId: SessionManager.main.currentLogin.user.id,
+                               adjacentTo: item.id,
+                               limit: 3)
+            .sink(receiveCompletion: { completion in
+                print(completion)
+            }, receiveValue: { response in
+                
+                // 4 possible states:
+                //  1 - only current episode
+                //  2 - two episodes with next episode
+                //  3 - two episodes with previous episode
+                //  4 - three episodes with current in middle
+                
+                // State 1
+                guard let items = response.items, items.count > 1 else { return }
+                
+                if items.count == 2 {
+                    if items[0].id == self.item.id {
+                        // State 2
+                        let nextItem = items[1]
+                        
+                        nextItem.createVideoPlayerViewModel()
+                            .sink { completion in
+                                self.handleAPIRequestError(completion: completion)
+                            } receiveValue: { videoPlayerViewModel in
+                                self.nextItemVideoPlayerViewModel = videoPlayerViewModel
+                            }
+                            .store(in: &self.cancellables)
+                    } else {
+                        // State 3
+                        let previousItem = items[0]
+                        
+                        previousItem.createVideoPlayerViewModel()
+                            .sink { completion in
+                                self.handleAPIRequestError(completion: completion)
+                            } receiveValue: { videoPlayerViewModel in
+                                self.previousItemVideoPlayerViewModel = videoPlayerViewModel
+                            }
+                            .store(in: &self.cancellables)
+                    }
+                } else {
+                    // State 4
+                    
+                    let previousItem = items[0]
+                    let nextItem = items[2]
+                    
+                    previousItem.createVideoPlayerViewModel()
+                        .sink { completion in
+                            self.handleAPIRequestError(completion: completion)
+                        } receiveValue: { videoPlayerViewModel in
+                            self.previousItemVideoPlayerViewModel = videoPlayerViewModel
+                        }
+                        .store(in: &self.cancellables)
+                    
+                    nextItem.createVideoPlayerViewModel()
+                        .sink { completion in
+                            self.handleAPIRequestError(completion: completion)
+                        } receiveValue: { videoPlayerViewModel in
+                            self.nextItemVideoPlayerViewModel = videoPlayerViewModel
+                        }
+                        .store(in: &self.cancellables)
+                }
+            })
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: Reports
+extension VideoPlayerViewModel {
+    
+    
+    // MARK: sendPlayReport
     func sendPlayReport() {
         
         self.startTimeTicks = Int64(Date().timeIntervalSince1970) * 10_000_000
@@ -168,6 +255,7 @@ final class VideoPlayerViewModel: ViewModel {
             .store(in: &cancellables)
     }
     
+    // MARK: sendPauseReport
     func sendPauseReport(paused: Bool) {
         let startInfo = PlaybackStartInfo(canSeek: true,
                                           item: item,
@@ -200,6 +288,7 @@ final class VideoPlayerViewModel: ViewModel {
             .store(in: &cancellables)
     }
     
+    // MARK: sendProgressReport
     func sendProgressReport() {
         
         let progressInfo = PlaybackProgressInfo(canSeek: true,
@@ -232,6 +321,7 @@ final class VideoPlayerViewModel: ViewModel {
             .store(in: &cancellables)
     }
     
+    // MARK: sendStopReport
     func sendStopReport() {
         
         let stopInfo = PlaybackStopInfo(item: item,

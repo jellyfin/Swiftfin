@@ -12,3 +12,15 @@ import SwiftUI
 protocol VideoPlayerOverlay: View {
     var viewModel: VideoPlayerViewModel { get set }
 }
+
+extension HorizontalAlignment {
+
+    private struct EpisodeSeriesTitleAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[HorizontalAlignment.leading]
+        }
+    }
+
+    static let EpisodeSeriesAlignmentGuide = HorizontalAlignment(EpisodeSeriesTitleAlignment.self)
+
+}
