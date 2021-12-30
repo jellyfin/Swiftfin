@@ -259,9 +259,6 @@ extension VLCPlayerViewController {
             newViewModel.sliderPercentage = startPercentage / 100
         }
         
-        didSelectSubtitleStream(index: newViewModel.selectedSubtitleStreamIndex)
-        didSelectAudioStream(index: newViewModel.selectedAudioStreamIndex)
-        
         viewModel = newViewModel
     }
     
@@ -374,6 +371,8 @@ extension VLCPlayerViewController {
 // MARK: VLCMediaPlayerDelegate
 extension VLCPlayerViewController: VLCMediaPlayerDelegate {
     
+    
+    // MARK: mediaPlayerStateChanged
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
         
         self.viewModel.playerState = vlcMediaPlayer.state
@@ -383,6 +382,7 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         }
     }
     
+    // MARK: mediaPlayerTimeChanged
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
         
         guard !viewModel.sliderIsScrubbing else {
@@ -396,6 +396,12 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         // properly set it itself
         if abs(currentPlayerTicks - lastPlayerTicks) >= 10_000 {
             viewModel.playerState = VLCMediaPlayerState.playing
+        }
+        
+        // If needing to fix subtitle streams during playback
+        if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex && viewModel.subtitlesEnabled {
+            didSelectSubtitleStream(index: viewModel.selectedSubtitleStreamIndex)
+            didSelectAudioStream(index: viewModel.selectedAudioStreamIndex)
         }
         
         lastPlayerTicks = currentPlayerTicks
@@ -414,15 +420,22 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     
     func didSelectAudioStream(index: Int) {
         vlcMediaPlayer.currentAudioTrackIndex = Int32(index)
+        
+        viewModel.sendProgressReport()
+        
+        lastProgressReportTicks = currentPlayerTicks
     }
     
     func didSelectSubtitleStream(index: Int) {
-        vlcMediaPlayer.currentVideoSubTitleIndex = Int32(index)
-        
-        if index != -1 {
-            // set in case weren't shown
-            viewModel.subtitlesEnabled = true
+        if viewModel.subtitlesEnabled {
+            vlcMediaPlayer.currentVideoSubTitleIndex = Int32(index)
+        } else {
+            vlcMediaPlayer.currentVideoSubTitleIndex = -1
         }
+        
+        viewModel.sendProgressReport()
+        
+        lastProgressReportTicks = currentPlayerTicks
     }
     
     func didSelectClose() {

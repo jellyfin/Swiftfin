@@ -23,7 +23,14 @@ final class VideoPlayerViewModel: ViewModel {
     @Published var playerState: VLCMediaPlayerState
     @Published var shouldShowGoogleCast: Bool
     @Published var shouldShowAirplay: Bool
-    @Published var subtitlesEnabled: Bool
+    @Published var subtitlesEnabled: Bool {
+        didSet {
+            if subtitlesEnabled != oldValue {
+                previousItemVideoPlayerViewModel?.matchSubtitlesEnabled(with: self)
+                nextItemVideoPlayerViewModel?.matchSubtitlesEnabled(with: self)
+            }
+        }
+    }
     @Published var leftLabelText: String = "--:--"
     @Published var rightLabelText: String = "--:--"
     @Published var playbackSpeed: PlaybackSpeed = .one
@@ -237,11 +244,15 @@ extension VideoPlayerViewModel {
     }
     
     private func matchSubtitleStream(with masterViewModel: VideoPlayerViewModel) {
-        guard let currentSubtitleStream = masterViewModel.subtitleStreams.first(where: { $0.index == masterViewModel.selectedSubtitleStreamIndex }) else { return }
-        guard let matchingSubtitleStream = self.subtitleStreams.first(where: { mediaStreamAboutEqual($0, currentSubtitleStream) }) else { return }
+        if !masterViewModel.subtitlesEnabled {
+            matchSubtitlesEnabled(with: masterViewModel)
+        }
         
-        self.subtitlesEnabled = masterViewModel.subtitlesEnabled
-        self.selectedSubtitleStreamIndex = matchingSubtitleStream.index ?? -1
+        guard let masterSubtitleStream = masterViewModel.subtitleStreams.first(where: { $0.index == masterViewModel.selectedSubtitleStreamIndex }),
+              let matchingSubtitleStream = self.subtitleStreams.first(where: { mediaStreamAboutEqual($0, masterSubtitleStream) }),
+              let matchingSubtitleStreamIndex = matchingSubtitleStream.index else { return }
+        
+        self.selectedSubtitleStreamIndex = matchingSubtitleStreamIndex
     }
     
     private func matchAudioStream(with masterViewModel: VideoPlayerViewModel) {
@@ -251,12 +262,16 @@ extension VideoPlayerViewModel {
         self.selectedAudioStreamIndex = matchingAudioStream.index ?? -1
     }
     
+    private func matchSubtitlesEnabled(with masterViewModel: VideoPlayerViewModel) {
+        self.subtitlesEnabled = masterViewModel.subtitlesEnabled
+    }
+    
     private func mediaStreamAboutEqual(_ lhs: MediaStream, _ rhs: MediaStream) -> Bool {
         return lhs.displayTitle == rhs.displayTitle && lhs.language == rhs.language
     }
 }
 
-// MARK: Reports
+// MARK: Updates
 extension VideoPlayerViewModel {
     
     
@@ -265,13 +280,15 @@ extension VideoPlayerViewModel {
         
         self.startTimeTicks = Int64(Date().timeIntervalSince1970) * 10_000_000
         
+        let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
+        
         let startInfo = PlaybackStartInfo(canSeek: true,
                                           item: item,
                                           itemId: item.id,
                                           sessionId: response.playSessionId,
                                           mediaSourceId: item.id,
-                                          audioStreamIndex: audioStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultAudioStreamIndex! })?.index,
-                                          subtitleStreamIndex: subtitleStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultSubtitleStreamIndex ?? -1 })?.index,
+                                          audioStreamIndex: selectedAudioStreamIndex,
+                                          subtitleStreamIndex: subtitleStreamIndex,
                                           isPaused: false,
                                           isMuted: false,
                                           positionTicks: item.userData?.playbackPositionTicks,
@@ -298,13 +315,16 @@ extension VideoPlayerViewModel {
     
     // MARK: sendPauseReport
     func sendPauseReport(paused: Bool) {
-        let startInfo = PlaybackStartInfo(canSeek: true,
+        
+        let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
+        
+        let pauseInfo = PlaybackStartInfo(canSeek: true,
                                           item: item,
                                           itemId: item.id,
                                           sessionId: response.playSessionId,
                                           mediaSourceId: item.id,
-                                          audioStreamIndex: audioStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultAudioStreamIndex! })?.index,
-                                          subtitleStreamIndex: subtitleStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultSubtitleStreamIndex ?? -1 })?.index,
+                                          audioStreamIndex: selectedAudioStreamIndex,
+                                          subtitleStreamIndex: subtitleStreamIndex,
                                           isPaused: paused,
                                           isMuted: false,
                                           positionTicks: currentSecondTicks,
@@ -320,7 +340,7 @@ extension VideoPlayerViewModel {
                                           playlistItemId: "playlistItem0"
         )
         
-        PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
+        PlaystateAPI.reportPlaybackStart(playbackStartInfo: pauseInfo)
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
@@ -332,13 +352,15 @@ extension VideoPlayerViewModel {
     // MARK: sendProgressReport
     func sendProgressReport() {
         
+        let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
+        
         let progressInfo = PlaybackProgressInfo(canSeek: true,
                                                 item: item,
                                                 itemId: item.id,
                                                 sessionId: response.playSessionId,
                                                 mediaSourceId: item.id,
-                                                audioStreamIndex: audioStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultAudioStreamIndex! })?.index,
-                                                subtitleStreamIndex: subtitleStreams.first(where: { $0.index! == response.mediaSources?.first?.defaultSubtitleStreamIndex ?? -1 })?.index,
+                                                audioStreamIndex: selectedAudioStreamIndex,
+                                                subtitleStreamIndex: subtitleStreamIndex,
                                                 isPaused: false,
                                                 isMuted: false,
                                                 positionTicks: currentSecondTicks,
