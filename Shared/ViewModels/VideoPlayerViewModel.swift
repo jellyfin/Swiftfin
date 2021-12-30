@@ -129,6 +129,10 @@ final class VideoPlayerViewModel: ViewModel {
         super.init()
         
         self.sliderPercentageChanged(newValue: (item.userData?.playedPercentage ?? 0) / 100)
+        
+        if item.itemType != .episode {
+            self.showAdjacentItems = false
+        }
     }
     
     private func sliderPercentageChanged(newValue: Double) {

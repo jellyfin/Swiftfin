@@ -98,6 +98,11 @@ class VLCPlayerViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        let defaultNotificationCenter = NotificationCenter.default
+        defaultNotificationCenter.removeObserver(self, name: UIApplication.willTerminateNotification, object: nil)
+        defaultNotificationCenter.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        defaultNotificationCenter.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        
 //        AppUtility.lockOrientation(.all)
     }
     
@@ -118,6 +123,25 @@ class VLCPlayerViewController: UIViewController {
         vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         
         setupMediaPlayer(newViewModel: viewModel)
+        
+        let defaultNotificationCenter = NotificationCenter.default
+        defaultNotificationCenter.addObserver(self, selector: #selector(appWillTerminate), name: UIApplication.willTerminateNotification, object: nil)
+        defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+        defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.didEnterBackgroundNotification, object: nil)
+    }
+    
+    @objc private func appWillTerminate() {
+        viewModel.sendStopReport()
+    }
+    
+    @objc private func appWillResignActive() {
+        showOverlay()
+        
+        stopOverlayDismissTimer()
+        
+        vlcMediaPlayer.pause()
+        
+        viewModel.sendPauseReport(paused: true)
     }
     
     private func changeFill(to shouldFill: Bool) {
@@ -508,6 +532,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         case .paused:
             viewModel.sendPauseReport(paused: false)
             vlcMediaPlayer.play()
+            restartOverlayDismissTimer()
         default: ()
         }
     }
