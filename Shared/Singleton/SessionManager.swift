@@ -20,12 +20,16 @@ typealias CurrentLogin = (server: SwiftfinStore.State.Server, user: SwiftfinStor
 // MARK: NewSessionManager
 final class SessionManager {
 
+    
     // MARK: currentLogin
+    
     private(set) var currentLogin: CurrentLogin!
 
     // MARK: main
+    
     static let main = SessionManager()
 
+    // MARK: init
     private init() {
         if let lastUserID = SwiftfinStore.Defaults.suite[.lastServerUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
@@ -40,11 +44,13 @@ final class SessionManager {
         }
     }
 
+    // MARK: fetchServers
     func fetchServers() -> [SwiftfinStore.State.Server] {
         let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.StoredServer>())
         return servers.map({ $0.state })
     }
 
+    // MARK: fetchUsers
     func fetchUsers(for server: SwiftfinStore.State.Server) -> [SwiftfinStore.State.User] {
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
                                                                  Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id))
@@ -52,6 +58,7 @@ final class SessionManager {
         return storedServer.users.map({ $0.state }).sorted(by: { $0.username < $1.username })
     }
 
+    // MARK: connectToServer publisher
     // Connects to a server at the given uri, storing if successful
     func connectToServer(with uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
         var uriComponents = URLComponents(string: uri) ?? URLComponents()
@@ -104,6 +111,7 @@ final class SessionManager {
             .eraseToAnyPublisher()
     }
 
+    // MARK: addURIToServer publisher
     func addURIToServer(server: SwiftfinStore.State.Server, uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
         return Just(server)
             .tryMap { server -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
@@ -129,6 +137,7 @@ final class SessionManager {
             .eraseToAnyPublisher()
     }
 
+    // MARK: setServerCurrentURI publisher
     func setServerCurrentURI(server: SwiftfinStore.State.Server, uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
         return Just(server)
             .tryMap { server -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
@@ -158,6 +167,7 @@ final class SessionManager {
             .eraseToAnyPublisher()
     }
 
+    // MARK: loginUser publisher
     // Logs in a user with an associated server, storing if successful
     func loginUser(server: SwiftfinStore.State.Server, username: String, password: String) -> AnyPublisher<SwiftfinStore.State.User, Error> {
         setAuthHeader(with: "")
@@ -174,7 +184,7 @@ final class SessionManager {
 
                 guard let username = response.user?.name,
                       let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
-
+                
                 newUser.username = username
                 newUser.id = id
                 newUser.appleTVID = ""
@@ -217,6 +227,7 @@ final class SessionManager {
             .eraseToAnyPublisher()
     }
 
+    // MARK: loginUser
     func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
         JellyfinAPI.basePath = server.currentURI
         SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
@@ -225,6 +236,7 @@ final class SessionManager {
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
     }
 
+    // MARK: logout
     func logout() {
         currentLogin = nil
         JellyfinAPI.basePath = ""
@@ -233,6 +245,7 @@ final class SessionManager {
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
     }
 
+    // MARK: purge
     func purge() {
         // Delete all servers
         let servers = fetchServers()
@@ -247,12 +260,14 @@ final class SessionManager {
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
     }
 
+    // MARK: delete user
     func delete(user: SwiftfinStore.State.User) {
         guard let storedUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
                                                                      [Where<SwiftfinStore.Models.StoredUser>("id == %@", user.id)]) else { fatalError("No stored user for state user?")}
         _delete(user: storedUser, transaction: nil)
     }
 
+    // MARK: delete server
     func delete(server: SwiftfinStore.State.Server) {
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
                                                                        [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]) else { fatalError("No stored server for state server?")}
