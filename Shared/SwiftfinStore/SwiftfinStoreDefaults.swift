@@ -33,4 +33,6 @@ extension Defaults.Keys {
     static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>("videoPlayerJumpForward", default: .fifteen, suite: SwiftfinStore.Defaults.suite)
     static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>("videoPlayerJumpBackward", default: .fifteen, suite: SwiftfinStore.Defaults.suite)
     static let nativeVideoPlayer = Key<Bool>("nativeVideoPlayer", default: false, suite: SwiftfinStore.Defaults.suite)
+    static let shouldShowAutoPlayNextItem = Key<Bool>("shouldShowAutoPlayNextItem", default: true, suite: SwiftfinStore.Defaults.suite)
+    static let autoPlayNextItem = Key<Bool>("autoPlayNextItem", default: true, suite: SwiftfinStore.Defaults.suite)
 }

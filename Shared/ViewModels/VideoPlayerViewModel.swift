@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -54,6 +55,16 @@ final class VideoPlayerViewModel: ViewModel {
         }
     }
     @Published var showAdjacentItems: Bool
+    @Published var shouldShowAutoPlayNextItem: Bool {
+        willSet {
+            Defaults[.shouldShowAutoPlayNextItem] = newValue
+        }
+    }
+    @Published var autoPlayNextItem: Bool {
+        willSet {
+            Defaults[.autoPlayNextItem] = newValue
+        }
+    }
     @Published var previousItemVideoPlayerViewModel: VideoPlayerViewModel?
     @Published var nextItemVideoPlayerViewModel: VideoPlayerViewModel?
     
@@ -105,7 +116,9 @@ final class VideoPlayerViewModel: ViewModel {
          sliderPercentage: Double,
          selectedAudioStreamIndex: Int,
          selectedSubtitleStreamIndex: Int,
-         showAdjacentItems: Bool) {
+         showAdjacentItems: Bool,
+         shouldShowAutoPlayNextItem: Bool,
+         autoPlayNextItem: Bool) {
         self.item = item
         self.title = title
         self.subtitle = subtitle
@@ -124,6 +137,8 @@ final class VideoPlayerViewModel: ViewModel {
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
         self.showAdjacentItems = showAdjacentItems
+        self.shouldShowAutoPlayNextItem = shouldShowAutoPlayNextItem
+        self.autoPlayNextItem = autoPlayNextItem
         
         super.init()
         

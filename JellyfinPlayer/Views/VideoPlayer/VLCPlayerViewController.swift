@@ -382,10 +382,14 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
     // MARK: mediaPlayerStateChanged
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
         
-        self.viewModel.playerState = vlcMediaPlayer.state
+        viewModel.playerState = vlcMediaPlayer.state
         
         if vlcMediaPlayer.state == VLCMediaPlayerState.ended {
-            didSelectClose()
+            if viewModel.autoPlayNextItem && viewModel.nextItemVideoPlayerViewModel != nil {
+                didSelectNextItem()
+            } else {
+                didSelectClose()
+            }
         }
     }
     

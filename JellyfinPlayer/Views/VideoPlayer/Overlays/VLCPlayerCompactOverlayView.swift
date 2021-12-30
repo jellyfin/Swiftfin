@@ -117,6 +117,18 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                 .foregroundColor(viewModel.selectedSubtitleStreamIndex == -1 ? .gray : .white)
                             }
                             
+                            if viewModel.shouldShowAutoPlayNextItem {
+                                Button {
+                                    viewModel.autoPlayNextItem.toggle()
+                                } label: {
+                                    if viewModel.autoPlayNextItem {
+                                        Image(systemName: "play.circle.fill")
+                                    } else {
+                                        Image(systemName: "play.circle")
+                                    }
+                                }
+                            }
+                            
                             // MARK: Settings Menu
                             Menu {
 
@@ -342,7 +354,9 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
                                                                         sliderPercentage: 0.432,
                                                                         selectedAudioStreamIndex: -1,
                                                                         selectedSubtitleStreamIndex: -1,
-                                                                        showAdjacentItems: true))
+                                                                        showAdjacentItems: true,
+                                                                        shouldShowAutoPlayNextItem: true,
+                                                                        autoPlayNextItem: true))
         }
         .previewInterfaceOrientation(.landscapeLeft)
     }

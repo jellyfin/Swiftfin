@@ -8,6 +8,7 @@
   */
 
 import Combine
+import Defaults
 import JellyfinAPI
 import UIKit
 
@@ -88,6 +89,14 @@ extension BaseItemDto {
                     }
                 }
                 
+                
+                // MARK: VidoPlayerViewModel Creation
+                
+                // TODO: show adjacent items
+                
+                let shouldShowAutoPlayNextItem = Defaults[.shouldShowAutoPlayNextItem]
+                let autoPlayNextItem = Defaults[.autoPlayNextItem]
+                
                 let videoPlayerViewModel = VideoPlayerViewModel(item: self,
                                                                 title: self.name!,
                                                                 subtitle: subtitle,
@@ -105,7 +114,9 @@ extension BaseItemDto {
                                                                 sliderPercentage: (self.userData?.playedPercentage ?? 0) / 100,
                                                                 selectedAudioStreamIndex: defaultAudioStream?.index ?? -1,
                                                                 selectedSubtitleStreamIndex: defaultSubtitleStream?.index ?? -1,
-                                                                showAdjacentItems: true)
+                                                                showAdjacentItems: true,
+                                                                shouldShowAutoPlayNextItem: shouldShowAutoPlayNextItem,
+                                                                autoPlayNextItem: autoPlayNextItem)
                 
                 return videoPlayerViewModel
             })

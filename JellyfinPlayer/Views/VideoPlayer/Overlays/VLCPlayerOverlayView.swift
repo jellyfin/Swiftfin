@@ -240,7 +240,9 @@ struct VLCPlayerOverlayView_Previews: PreviewProvider {
                                                                  sliderPercentage: 0.0,
                                                                  selectedAudioStreamIndex: -1,
                                                                  selectedSubtitleStreamIndex: -1,
-                                                                 showAdjacentItems: true))
+                                                                 showAdjacentItems: true,
+                                                                 shouldShowAutoPlayNextItem: true,
+                                                                 autoPlayNextItem: true))
         }
         .previewInterfaceOrientation(.landscapeLeft)
     }
