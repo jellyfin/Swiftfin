@@ -36,167 +36,176 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
     private var mainBody: some View {
         VStack {
             
-            VStack(alignment: .EpisodeSeriesAlignmentGuide) {
+            // MARK: Top Bar
+            ZStack {
                 
-                // MARK: Top Bar
-                HStack(alignment: .center) {
+                LinearGradient(gradient: Gradient(colors: [.black, .clear]),
+                               startPoint: .top,
+                               endPoint: .bottom)
+                    .ignoresSafeArea()
+                    .frame(height: 80)
+                
+                VStack(alignment: .EpisodeSeriesAlignmentGuide) {
                     
-                    HStack {
-                        Button {
-                            viewModel.playerOverlayDelegate?.didSelectClose()
-                        } label: {
-                            Image(systemName: "chevron.backward")
-                                .padding()
-                                    .padding(.trailing, -10)
+                    HStack(alignment: .center) {
+                        
+                        HStack {
+                            Button {
+                                viewModel.playerOverlayDelegate?.didSelectClose()
+                            } label: {
+                                Image(systemName: "chevron.backward")
+                                    .padding()
+                                        .padding(.trailing, -10)
+                            }
+                            
+                            Text(viewModel.title)
+                                .font(.system(size: 28, weight: .regular, design: .default))
+                                .alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
+                                    context[.leading]
+                                }
                         }
                         
-                        Text(viewModel.title)
-                            .font(.system(size: 28, weight: .regular, design: .default))
+                        Spacer()
+                        
+                        HStack(spacing: 20) {
+                            
+                            if viewModel.showAdjacentItems {
+                                Button {
+                                    viewModel.playerOverlayDelegate?.didSelectPreviousItem()
+                                } label: {
+                                    Image(systemName: "chevron.left.circle")
+                                }
+                                .disabled(viewModel.previousItemVideoPlayerViewModel == nil)
+                                .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+                                
+                                Button {
+                                    viewModel.playerOverlayDelegate?.didSelectNextItem()
+                                } label: {
+                                    Image(systemName: "chevron.right.circle")
+                                }
+                                .disabled(viewModel.nextItemVideoPlayerViewModel == nil)
+                                .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+                            }
+                            
+                            if viewModel.shouldShowGoogleCast {
+                                Button {
+                                    viewModel.playerOverlayDelegate?.didSelectGoogleCast()
+                                } label: {
+                                    Image(systemName: "rectangle.badge.plus")
+                                }
+                            }
+                            
+                            if viewModel.shouldShowAirplay {
+                                Button {
+                                    viewModel.playerOverlayDelegate?.didSelectAirplay()
+                                } label: {
+                                    Image(systemName: "airplayvideo")
+                                }
+                            }
+                            
+    //                        Button {
+    //                            viewModel.screenFilled = !viewModel.screenFilled
+    //                        } label: {
+    //                            if viewModel.screenFilled {
+    //                                Image(systemName: "rectangle.arrowtriangle.2.inward")
+    //                                    .rotationEffect(Angle(degrees: 90))
+    //                            } else {
+    //                                Image(systemName: "rectangle.arrowtriangle.2.outward")
+    //                                    .rotationEffect(Angle(degrees: 90))
+    //                            }
+    //                        }
+                            
+                            if !viewModel.subtitleStreams.isEmpty {
+                                Button {
+                                    viewModel.playerOverlayDelegate?.didSelectCaptions()
+                                } label: {
+                                    if viewModel.subtitlesEnabled {
+                                        Image(systemName: "captions.bubble.fill")
+                                    } else {
+                                        Image(systemName: "captions.bubble")
+                                    }
+                                }
+                                .disabled(viewModel.selectedSubtitleStreamIndex == -1)
+                                .foregroundColor(viewModel.selectedSubtitleStreamIndex == -1 ? .gray : .white)
+                            }
+                            
+                            // MARK: Settings Menu
+                            Menu {
+
+                                Menu {
+                                    ForEach(viewModel.audioStreams, id: \.self) { audioStream in
+                                        Button {
+                                            viewModel.selectedAudioStreamIndex = audioStream.index ?? -1
+                                        } label: {
+                                            if audioStream.index == viewModel.selectedAudioStreamIndex {
+                                                Label.init(audioStream.displayTitle ?? "No Title", systemImage: "checkmark")
+                                            } else {
+                                                Text(audioStream.displayTitle ?? "No Title")
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "speaker.wave.3")
+                                        Text("Audio")
+                                    }
+                                }
+
+                                Menu {
+                                    ForEach(viewModel.subtitleStreams, id: \.self) { subtitleStream in
+                                        Button {
+                                            viewModel.selectedSubtitleStreamIndex = subtitleStream.index ?? -1
+                                        } label: {
+                                            if subtitleStream.index == viewModel.selectedSubtitleStreamIndex {
+                                                Label.init(subtitleStream.displayTitle ?? "No Title", systemImage: "checkmark")
+                                            } else {
+                                                Text(subtitleStream.displayTitle ?? "No Title")
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "captions.bubble")
+                                        Text("Subtitles")
+                                    }
+                                }
+
+                                Menu {
+                                    ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
+                                        Button {
+                                            viewModel.playbackSpeed = speed
+                                        } label: {
+                                            if speed == viewModel.playbackSpeed {
+                                                Label(speed.displayTitle, systemImage: "checkmark")
+                                            } else {
+                                                Text(speed.displayTitle)
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "speedometer")
+                                        Text("Playback Speed")
+                                    }
+                                }
+
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
+                            }
+                        }
+                    }
+                    .font(.system(size: 24))
+                    .frame(height: 50)
+                    
+                    if let seriesTitle = viewModel.subtitle {
+                        Text(seriesTitle)
+                            .font(.subheadline)
+                            .foregroundColor(Color.gray)
                             .alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
                                 context[.leading]
                             }
+                            .offset(y: -10)
                     }
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 20) {
-                        
-                        if viewModel.showAdjacentItems {
-                            Button {
-                                viewModel.playerOverlayDelegate?.didSelectPreviousItem()
-                            } label: {
-                                Image(systemName: "chevron.left.circle")
-                            }
-                            .disabled(viewModel.previousItemVideoPlayerViewModel == nil)
-                            .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
-                            
-                            Button {
-                                viewModel.playerOverlayDelegate?.didSelectNextItem()
-                            } label: {
-                                Image(systemName: "chevron.right.circle")
-                            }
-                            .disabled(viewModel.nextItemVideoPlayerViewModel == nil)
-                            .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
-                        }
-                        
-                        if viewModel.shouldShowGoogleCast {
-                            Button {
-                                viewModel.playerOverlayDelegate?.didSelectGoogleCast()
-                            } label: {
-                                Image(systemName: "rectangle.badge.plus")
-                            }
-                        }
-                        
-                        if viewModel.shouldShowAirplay {
-                            Button {
-                                viewModel.playerOverlayDelegate?.didSelectAirplay()
-                            } label: {
-                                Image(systemName: "airplayvideo")
-                            }
-                        }
-                        
-//                        Button {
-//                            viewModel.screenFilled = !viewModel.screenFilled
-//                        } label: {
-//                            if viewModel.screenFilled {
-//                                Image(systemName: "rectangle.arrowtriangle.2.inward")
-//                                    .rotationEffect(Angle(degrees: 90))
-//                            } else {
-//                                Image(systemName: "rectangle.arrowtriangle.2.outward")
-//                                    .rotationEffect(Angle(degrees: 90))
-//                            }
-//                        }
-                        
-                        if !viewModel.subtitleStreams.isEmpty {
-                            Button {
-                                viewModel.playerOverlayDelegate?.didSelectCaptions()
-                            } label: {
-                                if viewModel.subtitlesEnabled {
-                                    Image(systemName: "captions.bubble.fill")
-                                } else {
-                                    Image(systemName: "captions.bubble")
-                                }
-                            }
-                            .disabled(viewModel.selectedSubtitleStreamIndex == -1)
-                            .foregroundColor(viewModel.selectedSubtitleStreamIndex == -1 ? .gray : .white)
-                        }
-                        
-                        // MARK: Settings Menu
-                        Menu {
-
-                            Menu {
-                                ForEach(viewModel.audioStreams, id: \.self) { audioStream in
-                                    Button {
-                                        viewModel.selectedAudioStreamIndex = audioStream.index ?? -1
-                                    } label: {
-                                        if audioStream.index == viewModel.selectedAudioStreamIndex {
-                                            Label.init(audioStream.displayTitle ?? "No Title", systemImage: "checkmark")
-                                        } else {
-                                            Text(audioStream.displayTitle ?? "No Title")
-                                        }
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    Image(systemName: "speaker.wave.3")
-                                    Text("Audio")
-                                }
-                            }
-
-                            Menu {
-                                ForEach(viewModel.subtitleStreams, id: \.self) { subtitleStream in
-                                    Button {
-                                        viewModel.selectedSubtitleStreamIndex = subtitleStream.index ?? -1
-                                    } label: {
-                                        if subtitleStream.index == viewModel.selectedSubtitleStreamIndex {
-                                            Label.init(subtitleStream.displayTitle ?? "No Title", systemImage: "checkmark")
-                                        } else {
-                                            Text(subtitleStream.displayTitle ?? "No Title")
-                                        }
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    Image(systemName: "captions.bubble")
-                                    Text("Subtitles")
-                                }
-                            }
-
-                            Menu {
-                                ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
-                                    Button {
-                                        viewModel.playbackSpeed = speed
-                                    } label: {
-                                        if speed == viewModel.playbackSpeed {
-                                            Label(speed.displayTitle, systemImage: "checkmark")
-                                        } else {
-                                            Text(speed.displayTitle)
-                                        }
-                                    }
-                                }
-                            } label: {
-                                HStack {
-                                    Image(systemName: "speedometer")
-                                    Text("Playback Speed")
-                                }
-                            }
-
-                        } label: {
-                            Image(systemName: "ellipsis.circle")
-                        }
-                    }
-                }
-                .font(.system(size: 24))
-                .frame(height: 50)
-                
-                if let seriesTitle = viewModel.subtitle {
-                    Text(seriesTitle)
-                        .font(.subheadline)
-                        .foregroundColor(Color.gray)
-                        .alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
-                            context[.leading]
-                        }
-                        .offset(y: -10)
                 }
             }
             
@@ -205,11 +214,11 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
             // MARK: Bottom Bar
             ZStack {
                 
-//                VisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
-//                    .cornerRadius(25)
-//                    .mask {
-//                        Rectangle()
-//                    }
+                LinearGradient(gradient: Gradient(colors: [.clear, .black]),
+                               startPoint: .top,
+                               endPoint: .bottom)
+                    .ignoresSafeArea()
+                    .frame(height: 70)
                 
                 HStack {
                     
@@ -266,8 +275,9 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                         .frame(minWidth: 70, maxWidth: 70)
                 }
                 .padding(.horizontal)
+//                .frame(maxWidth: 800, maxHeight: 50)
             }
-            .frame(maxWidth: 800, maxHeight: 50)
+            .frame(maxHeight: 50)
         }
         .ignoresSafeArea(edges: .top)
         .tint(Color.white)
@@ -283,16 +293,10 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
     }
 }
 
-struct VisualEffectView: UIViewRepresentable {
-    var effect: UIVisualEffect?
-    func makeUIView(context: UIViewRepresentableContext<Self>) -> UIVisualEffectView { UIVisualEffectView() }
-    func updateUIView(_ uiView: UIVisualEffectView, context: UIViewRepresentableContext<Self>) { uiView.effect = effect }
-}
-
 struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            Color.black
+            Color.red
                 .ignoresSafeArea()
             
             VLCPlayerCompactOverlayView(viewModel: VideoPlayerViewModel(item: BaseItemDto(runTimeTicks: 720 * 10_000_000),
@@ -317,5 +321,3 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
         .previewInterfaceOrientation(.landscapeLeft)
     }
 }
-
-
