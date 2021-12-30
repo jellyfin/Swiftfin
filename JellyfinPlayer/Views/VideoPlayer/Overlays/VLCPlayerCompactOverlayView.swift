@@ -176,6 +176,44 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                         Text("Playback Speed")
                                     }
                                 }
+                                
+                                Menu {
+                                    ForEach(VideoPlayerJumpLength.allCases, id: \.self) { forwardLength in
+                                        Button {
+                                            jumpForwardLength = forwardLength
+                                        } label: {
+                                            if forwardLength == jumpForwardLength {
+                                                Label(forwardLength.shortLabel, systemImage: "checkmark")
+                                            } else {
+                                                Text(forwardLength.shortLabel)
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "goforward")
+                                        Text("Jump Forward Length")
+                                    }
+                                }
+                                
+                                Menu {
+                                    ForEach(VideoPlayerJumpLength.allCases, id: \.self) { backwardLength in
+                                        Button {
+                                            jumpBackwardLength = backwardLength
+                                        } label: {
+                                            if backwardLength == jumpBackwardLength {
+                                                Label(backwardLength.shortLabel, systemImage: "checkmark")
+                                            } else {
+                                                Text(backwardLength.shortLabel)
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "gobackward")
+                                        Text("Jump Backward Length")
+                                    }
+                                }
 
                             } label: {
                                 Image(systemName: "ellipsis.circle")
