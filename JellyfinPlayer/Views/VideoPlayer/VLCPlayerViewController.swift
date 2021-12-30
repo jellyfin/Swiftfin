@@ -85,14 +85,6 @@ class VLCPlayerViewController: UIViewController {
         ])
     }
     
-    // MARK: viewWillAppear
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-//        AppUtility.lockOrientation(.all, andRotateTo: .landscapeLeft)
-    }
-    
     // MARK: viewWillDisappear
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -102,8 +94,6 @@ class VLCPlayerViewController: UIViewController {
         defaultNotificationCenter.removeObserver(self, name: UIApplication.willTerminateNotification, object: nil)
         defaultNotificationCenter.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
         defaultNotificationCenter.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-        
-//        AppUtility.lockOrientation(.all)
     }
     
     // MARK: viewDidLoad
@@ -209,13 +199,19 @@ class VLCPlayerViewController: UIViewController {
     
     // MARK: setupOverlayHostingController
     private func setupOverlayHostingController(viewModel: VideoPlayerViewModel) {
-        
+
+        // TODO: Look at injecting viewModel into the environment so it updates the current overlay
         if let currentOverlayHostingController = currentOverlayHostingController {
-            currentOverlayHostingController.view.isHidden = true
-            
-            currentOverlayHostingController.view.removeFromSuperview()
-            currentOverlayHostingController.removeFromParent()
-            self.currentOverlayHostingController = nil
+            // UX fade-out
+            UIView.animate(withDuration: 0.5) {
+                currentOverlayHostingController.view.alpha = 0
+            } completion: { _ in
+                currentOverlayHostingController.view.isHidden = true
+                
+                currentOverlayHostingController.view.removeFromSuperview()
+                currentOverlayHostingController.removeFromParent()
+//                self.currentOverlayHostingController = nil
+            }
         }
         
         let newOverlayView = VLCPlayerCompactOverlayView(viewModel: viewModel)
@@ -223,6 +219,10 @@ class VLCPlayerViewController: UIViewController {
         
         newOverlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
         newOverlayHostingController.view.backgroundColor = UIColor.clear
+        
+        // UX fade-in
+        newOverlayHostingController.view.alpha = 0
+        
         addChild(newOverlayHostingController)
         view.addSubview(newOverlayHostingController.view)
         newOverlayHostingController.didMove(toParent: self)
@@ -233,6 +233,11 @@ class VLCPlayerViewController: UIViewController {
             newOverlayHostingController.view.leftAnchor.constraint(equalTo: videoContentView.leftAnchor),
             newOverlayHostingController.view.rightAnchor.constraint(equalTo: videoContentView.rightAnchor)
         ])
+        
+        // UX fade-in
+        UIView.animate(withDuration: 0.5) {
+            newOverlayHostingController.view.alpha = 1
+        }
         
         self.currentOverlayHostingController = newOverlayHostingController
         

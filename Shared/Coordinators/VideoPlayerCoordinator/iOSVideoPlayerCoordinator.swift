@@ -34,6 +34,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
                     .statusBar(hidden: true)
                     .ignoresSafeArea()
                     .prefersHomeIndicatorAutoHidden(true)
+                    .supportedOrientations(.landscape)
             }.ignoresSafeArea()
         } else {
             PreferenceUIHostingControllerView {
@@ -42,6 +43,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
                     .statusBar(hidden: true)
                     .ignoresSafeArea()
                     .prefersHomeIndicatorAutoHidden(true)
+                    .supportedOrientations(.landscape)
             }.ignoresSafeArea()
         }
     }

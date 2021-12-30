@@ -19,8 +19,11 @@ struct JellyfinPlayerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainCoordinator().view()
+            EmptyView()
                 .ignoresSafeArea()
+                .withHostingWindow({ window in
+                    window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
+                })
                 .onAppear {
                     setupAppearance()
                 }
@@ -34,7 +37,9 @@ struct JellyfinPlayerApp: App {
     }
 
     private func setupAppearance() {
-        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
+        let scenes = UIApplication.shared.connectedScenes
+        let windowScene = scenes.first as? UIWindowScene
+        windowScene?.windows.first?.overrideUserInterfaceStyle = appAppearance.style
     }
 }
 
