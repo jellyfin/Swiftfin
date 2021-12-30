@@ -69,6 +69,22 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                         
                         HStack(spacing: 20) {
                             
+                            if viewModel.shouldShowGoogleCast {
+                                Button {
+                                    viewModel.playerOverlayDelegate?.didSelectGoogleCast()
+                                } label: {
+                                    Image(systemName: "rectangle.badge.plus")
+                                }
+                            }
+                            
+                            if viewModel.shouldShowAirplay {
+                                Button {
+                                    viewModel.playerOverlayDelegate?.didSelectAirplay()
+                                } label: {
+                                    Image(systemName: "airplayvideo")
+                                }
+                            }
+                            
                             if viewModel.showAdjacentItems {
                                 Button {
                                     viewModel.playerOverlayDelegate?.didSelectPreviousItem()
@@ -87,19 +103,15 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                 .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
                             }
                             
-                            if viewModel.shouldShowGoogleCast {
+                            if viewModel.shouldShowAutoPlayNextItem {
                                 Button {
-                                    viewModel.playerOverlayDelegate?.didSelectGoogleCast()
+                                    viewModel.autoPlayNextItem.toggle()
                                 } label: {
-                                    Image(systemName: "rectangle.badge.plus")
-                                }
-                            }
-                            
-                            if viewModel.shouldShowAirplay {
-                                Button {
-                                    viewModel.playerOverlayDelegate?.didSelectAirplay()
-                                } label: {
-                                    Image(systemName: "airplayvideo")
+                                    if viewModel.autoPlayNextItem {
+                                        Image(systemName: "play.circle.fill")
+                                    } else {
+                                        Image(systemName: "play.circle")
+                                    }
                                 }
                             }
                             
@@ -115,18 +127,6 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                 }
                                 .disabled(viewModel.selectedSubtitleStreamIndex == -1)
                                 .foregroundColor(viewModel.selectedSubtitleStreamIndex == -1 ? .gray : .white)
-                            }
-                            
-                            if viewModel.shouldShowAutoPlayNextItem {
-                                Button {
-                                    viewModel.autoPlayNextItem.toggle()
-                                } label: {
-                                    if viewModel.autoPlayNextItem {
-                                        Image(systemName: "play.circle.fill")
-                                    } else {
-                                        Image(systemName: "play.circle")
-                                    }
-                                }
                             }
                             
                             // MARK: Settings Menu
