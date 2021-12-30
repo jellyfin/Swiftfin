@@ -7,17 +7,23 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Stinsen
 import SwiftUI
 import JellyfinAPI
 
 struct VideoPlayerView: UIViewControllerRepresentable {
-    var item: BaseItemDto
+    @EnvironmentObject var router: VideoPlayerCoordinator.Router
 
+    var item: BaseItemDto
+    
     func makeUIViewController(context: Context) -> some UIViewController {
 
         let storyboard = UIStoryboard(name: "VideoPlayer", bundle: nil)
         let viewController = storyboard.instantiateViewController(withIdentifier: "VideoPlayer") as! VideoPlayerViewController
         viewController.manifest = item
+        viewController.backAction = {
+            self.router.dismissCoordinator()
+        }
 
         return viewController
     }

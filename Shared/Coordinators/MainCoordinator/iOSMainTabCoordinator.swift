@@ -30,7 +30,7 @@ final class MainTabCoordinator: TabCoordinatable {
     }
 
     func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
-        return NavigationViewCoordinator(LibraryListCoordinator())
+        return NavigationViewCoordinator(LibraryListCoordinator(viewModel: LibraryListViewModel()))
     }
 
     @ViewBuilder func makeAllMediaTab(isActive: Bool) -> some View {

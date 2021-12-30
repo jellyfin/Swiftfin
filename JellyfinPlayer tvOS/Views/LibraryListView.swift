@@ -11,6 +11,8 @@ import Foundation
 import SwiftUI
 
 struct LibraryListView: View {
+    @EnvironmentObject var mainCoordinator: MainCoordinator.Router
+    @EnvironmentObject var libraryListRouter: LibraryListCoordinator.Router
     @StateObject var viewModel = LibraryListViewModel()
 
     var body: some View {
@@ -21,12 +23,15 @@ struct LibraryListView: View {
                         if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" || library.collectionType ?? "" == "music" {
                             EmptyView()
                         } else {
-                            NavigationLink(destination: LazyView {
-                                LibraryView(viewModel: .init(parentID: library.id), title: library.name ?? "")
-                                }) {
+                            Button() {
+                                if library.collectionType == "livetv" {
+                                    self.mainCoordinator.root(\.liveTV)
+                                } else {
+                                    self.libraryListRouter.route(to: \.library, (viewModel: LibraryViewModel(), title: library.name ?? ""))
+                                }
+                            }
+                            label: {
                                 ZStack {
-                                    ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
-                                        .opacity(0.4)
                                     HStack {
                                         Spacer()
                                         VStack {
@@ -37,7 +42,7 @@ struct LibraryListView: View {
                                         }
                                         Spacer()
                                     }.padding(32)
-                                }.background(Color.black)
+                                }
                                 .frame(minWidth: 100, maxWidth: .infinity)
                                 .frame(height: 100)
                             }

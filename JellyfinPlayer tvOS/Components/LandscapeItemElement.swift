@@ -10,7 +10,7 @@
 import SwiftUI
 import JellyfinAPI
 
-private struct CutOffShadow: Shape {
+struct CutOffShadow: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
 
@@ -91,22 +91,18 @@ struct LandscapeItemElement: View {
                 )
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
                 .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
-            if focused {
-                if inSeasonView ?? false {
-                  Text("\(item.getEpisodeLocator() ?? "") • \(item.name ?? "")")
-                        .font(.callout)
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .frame(width: 445)
-                } else {
-                    Text(item.type == "Episode" ? "\(item.seriesName ?? "") • \(item.getEpisodeLocator() ?? "")" : item.name ?? "")
-                        .font(.callout)
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .frame(width: 445)
-                }
+            if inSeasonView ?? false {
+              Text("\(item.getEpisodeLocator() ?? "") • \(item.name ?? "")")
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .frame(width: 445)
             } else {
-                Spacer().frame(height: 25)
+                Text(item.type == "Episode" ? "\(item.seriesName ?? "") • \(item.getEpisodeLocator() ?? "")" : item.name ?? "")
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .frame(width: 445)
             }
         }
         .onChange(of: envFocused) { envFocus in

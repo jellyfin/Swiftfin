@@ -10,14 +10,16 @@
 import SwiftUI
 
 struct MediaPlayButtonRowView: View {
-
+    @EnvironmentObject var itemRouter: ItemCoordinator.Router
     @ObservedObject var viewModel: ItemViewModel
     @State var wrappedScrollView: UIScrollView?
 
     var body: some View {
         HStack {
             VStack {
-              NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
+                Button {
+                    self.itemRouter.route(to: \.videoPlayer, viewModel.item)
+                } label: {
                     MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
                 }
                 Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : L10n.play)
