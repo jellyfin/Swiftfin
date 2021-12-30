@@ -103,18 +103,6 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                 }
                             }
                             
-    //                        Button {
-    //                            viewModel.screenFilled = !viewModel.screenFilled
-    //                        } label: {
-    //                            if viewModel.screenFilled {
-    //                                Image(systemName: "rectangle.arrowtriangle.2.inward")
-    //                                    .rotationEffect(Angle(degrees: 90))
-    //                            } else {
-    //                                Image(systemName: "rectangle.arrowtriangle.2.outward")
-    //                                    .rotationEffect(Angle(degrees: 90))
-    //                            }
-    //                        }
-                            
                             if !viewModel.subtitleStreams.isEmpty {
                                 Button {
                                     viewModel.playerOverlayDelegate?.didSelectCaptions()

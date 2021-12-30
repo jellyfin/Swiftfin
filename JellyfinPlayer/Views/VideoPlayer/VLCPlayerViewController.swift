@@ -134,24 +134,6 @@ class VLCPlayerViewController: UIViewController {
         viewModel.sendPauseReport(paused: true)
     }
     
-    private func changeFill(to shouldFill: Bool) {
-        if shouldFill {
-            // TODO: May not be possible with current VLCKit
-            
-//            let drawableView = vlcMediaPlayer.drawable as! UIView
-//            let drawableViewSize = drawableView.frame.size
-//            let mediaSize = vlcMediaPlayer.videoSize
-            
-            // Largest size from mediaSize is how it is currently filled
-            //     in the drawable view, find scaleFactor by filling entire
-            //     drawableView
-            
-            vlcMediaPlayer.scaleFactor = 1.5
-        } else {
-            vlcMediaPlayer.scaleFactor = 0
-        }
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -307,10 +289,6 @@ extension VLCPlayerViewController {
     private func setupViewModelListeners(viewModel: VideoPlayerViewModel) {
         viewModel.$playbackSpeed.sink { newSpeed in
             self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
-        }.store(in: &viewModelReactCancellables)
-        
-        viewModel.$screenFilled.sink { shouldFill in
-            self.changeFill(to: shouldFill)
         }.store(in: &viewModelReactCancellables)
         
         viewModel.$sliderIsScrubbing.sink { sliderIsScrubbing in

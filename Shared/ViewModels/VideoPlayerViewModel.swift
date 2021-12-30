@@ -34,7 +34,6 @@ final class VideoPlayerViewModel: ViewModel {
     @Published var leftLabelText: String = "--:--"
     @Published var rightLabelText: String = "--:--"
     @Published var playbackSpeed: PlaybackSpeed = .one
-    @Published var screenFilled: Bool = false
     @Published var sliderPercentage: Double {
         willSet {
             sliderScrubbingSubject.send(self)
