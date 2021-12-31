@@ -39,7 +39,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
             // MARK: Top Bar
             ZStack {
                 
-                LinearGradient(gradient: Gradient(colors: [.black, .clear]),
+                LinearGradient(gradient: Gradient(colors: [.black.opacity(0.7), .clear]),
                                startPoint: .top,
                                endPoint: .bottom)
                     .ignoresSafeArea()
@@ -252,7 +252,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
             // MARK: Bottom Bar
             ZStack {
                 
-                LinearGradient(gradient: Gradient(colors: [.clear, .black]),
+                LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
                                startPoint: .top,
                                endPoint: .bottom)
                     .ignoresSafeArea()
@@ -313,7 +313,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                         .frame(minWidth: 70, maxWidth: 70)
                 }
                 .padding(.horizontal)
-//                .frame(maxWidth: 800, maxHeight: 50)
+                .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 800 : nil)
             }
             .frame(maxHeight: 50)
         }
