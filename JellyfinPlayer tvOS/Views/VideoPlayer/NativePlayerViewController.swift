@@ -145,15 +145,18 @@ class NativePlayerViewController: AVPlayerViewController {
     private func play() {
         player?.play()
         
-        viewModel.sendPlayReport(startTimeTicks: viewModel.item.userData?.playbackPositionTicks ?? 0)
+//        viewModel.sendPlayReport(startTimeTicks: viewModel.item.userData?.playbackPositionTicks ?? 0)
+        viewModel.sendPlayReport()
     }
     
     private func sendProgressReport(seconds: Double) {
-        viewModel.sendProgressReport(ticks: Int64(seconds) * 10_000_000)
+//        viewModel.sendProgressReport(ticks: Int64(seconds) * 10_000_000)
+        viewModel.sendProgressReport()
     }
     
     private func stop() {
         self.player?.pause()
-        viewModel.sendStopReport(ticks: 10_000_000)
+        viewModel.sendStopReport()
+//        viewModel.sendStopReport(ticks: 10_000_000)
     }
 }

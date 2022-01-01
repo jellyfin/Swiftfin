@@ -11,7 +11,7 @@ import Combine
 import Defaults
 import JellyfinAPI
 import MediaPlayer
-import MobileVLCKit
+import TVVLCKit
 import SwiftUI
 import UIKit
 
@@ -37,7 +37,8 @@ class VLCPlayerViewController: UIViewController {
     }
     
     private var displayingOverlay: Bool {
-        return currentOverlayHostingController?.view.alpha ??  0 > 0
+//        return currentOverlayHostingController?.view.alpha ??  0 > 0
+        return false
     }
     
     private var jumpForwardLength: VideoPlayerJumpLength {
@@ -50,7 +51,7 @@ class VLCPlayerViewController: UIViewController {
     
     private lazy var videoContentView = makeVideoContentView()
     private lazy var tapGestureView = makeTapGestureView()
-    private var currentOverlayHostingController: UIHostingController<VLCPlayerCompactOverlayView>?
+//    private var currentOverlayHostingController: UIHostingController<VLCPlayerCompactOverlayView>?
     
     // MARK: init
     
@@ -92,6 +93,8 @@ class VLCPlayerViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        didSelectClose()
+        
         let defaultNotificationCenter = NotificationCenter.default
         defaultNotificationCenter.removeObserver(self, name: UIApplication.willTerminateNotification, object: nil)
         defaultNotificationCenter.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
@@ -115,6 +118,9 @@ class VLCPlayerViewController: UIViewController {
         vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         
         setupMediaPlayer(newViewModel: viewModel)
+        
+        setupRightSwipedGestureRecognizer()
+        setupLeftSwipedGestureRecognizer()
         
         let defaultNotificationCenter = NotificationCenter.default
         defaultNotificationCenter.addObserver(self, selector: #selector(appWillTerminate), name: UIApplication.willTerminateNotification, object: nil)
@@ -181,53 +187,101 @@ class VLCPlayerViewController: UIViewController {
         self.didSelectBackward()
     }
     
+    // MARK: pressesBegan
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        guard let buttonPress = presses.first?.type else { return }
+             
+        switch(buttonPress) {
+        case .menu:
+           print("Menu")
+        case .playPause:
+            didSelectMain()
+           print("Play/Pause")
+        case .select:
+           print("select")
+        case .upArrow:
+           print("Up arrow")
+        case .downArrow:
+           print("Down arrow")
+        case .leftArrow:
+           print("Left arrow")
+        case .rightArrow:
+           print("right arrow")
+        case .pageUp:
+            print("page up")
+        case .pageDown:
+            print("page down")
+        @unknown default: ()
+        }
+    }
+    
+    func setupRightSwipedGestureRecognizer() {
+       let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipedRight))
+       swipeRecognizer.direction = .right
+       view.addGestureRecognizer(swipeRecognizer)
+    }
+        
+    @objc func swipedRight() {
+       didSelectForward()
+    }
+    
+    func setupLeftSwipedGestureRecognizer() {
+       let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipedLeft))
+       swipeRecognizer.direction = .left
+       view.addGestureRecognizer(swipeRecognizer)
+    }
+        
+    @objc func swipedLeft() {
+       didSelectBackward()
+    }
+    
     // MARK: setupOverlayHostingController
     private func setupOverlayHostingController(viewModel: VideoPlayerViewModel) {
 
-        // TODO: Look at injecting viewModel into the environment so it updates the current overlay
-        if let currentOverlayHostingController = currentOverlayHostingController {
-            // UX fade-out
-            UIView.animate(withDuration: 0.5) {
-                currentOverlayHostingController.view.alpha = 0
-            } completion: { _ in
-                currentOverlayHostingController.view.isHidden = true
-                
-                currentOverlayHostingController.view.removeFromSuperview()
-                currentOverlayHostingController.removeFromParent()
-//                self.currentOverlayHostingController = nil
-            }
-        }
-        
-        let newOverlayView = VLCPlayerCompactOverlayView(viewModel: viewModel)
-        let newOverlayHostingController = UIHostingController(rootView: newOverlayView)
-        
-        newOverlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        newOverlayHostingController.view.backgroundColor = UIColor.clear
-        
-        // UX fade-in
-        newOverlayHostingController.view.alpha = 0
-        
-        addChild(newOverlayHostingController)
-        view.addSubview(newOverlayHostingController.view)
-        newOverlayHostingController.didMove(toParent: self)
-        
-        NSLayoutConstraint.activate([
-            newOverlayHostingController.view.topAnchor.constraint(equalTo: videoContentView.topAnchor),
-            newOverlayHostingController.view.bottomAnchor.constraint(equalTo: videoContentView.bottomAnchor),
-            newOverlayHostingController.view.leftAnchor.constraint(equalTo: videoContentView.leftAnchor),
-            newOverlayHostingController.view.rightAnchor.constraint(equalTo: videoContentView.rightAnchor)
-        ])
-        
-        // UX fade-in
-        UIView.animate(withDuration: 0.5) {
-            newOverlayHostingController.view.alpha = 1
-        }
-        
-        self.currentOverlayHostingController = newOverlayHostingController
-        
-        // There is a behavior when setting this that the navigation bar
-        // on the current navigation controller pops up, re-hide it
-        self.navigationController?.isNavigationBarHidden = true
+//        // TODO: Look at injecting viewModel into the environment so it updates the current overlay
+//        if let currentOverlayHostingController = currentOverlayHostingController {
+//            // UX fade-out
+//            UIView.animate(withDuration: 0.5) {
+//                currentOverlayHostingController.view.alpha = 0
+//            } completion: { _ in
+//                currentOverlayHostingController.view.isHidden = true
+//
+//                currentOverlayHostingController.view.removeFromSuperview()
+//                currentOverlayHostingController.removeFromParent()
+////                self.currentOverlayHostingController = nil
+//            }
+//        }
+//
+//        let newOverlayView = VLCPlayerCompactOverlayView(viewModel: viewModel)
+//        let newOverlayHostingController = UIHostingController(rootView: newOverlayView)
+//
+//        newOverlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+//        newOverlayHostingController.view.backgroundColor = UIColor.clear
+//
+//        // UX fade-in
+//        newOverlayHostingController.view.alpha = 0
+//
+//        addChild(newOverlayHostingController)
+//        view.addSubview(newOverlayHostingController.view)
+//        newOverlayHostingController.didMove(toParent: self)
+//
+//        NSLayoutConstraint.activate([
+//            newOverlayHostingController.view.topAnchor.constraint(equalTo: videoContentView.topAnchor),
+//            newOverlayHostingController.view.bottomAnchor.constraint(equalTo: videoContentView.bottomAnchor),
+//            newOverlayHostingController.view.leftAnchor.constraint(equalTo: videoContentView.leftAnchor),
+//            newOverlayHostingController.view.rightAnchor.constraint(equalTo: videoContentView.rightAnchor)
+//        ])
+//
+//        // UX fade-in
+//        UIView.animate(withDuration: 0.5) {
+//            newOverlayHostingController.view.alpha = 1
+//        }
+//
+//        self.currentOverlayHostingController = newOverlayHostingController
+//
+//        // There is a behavior when setting this that the navigation bar
+//        // on the current navigation controller pops up, re-hide it
+//        self.navigationController?.isNavigationBarHidden = true
     }
 }
 
@@ -330,33 +384,33 @@ extension VLCPlayerViewController {
 extension VLCPlayerViewController {
     
     private func showOverlay() {
-        guard let overlayHostingController = currentOverlayHostingController else { return }
-        
-        guard overlayHostingController.view.alpha != 1 else { return }
-        
-        UIView.animate(withDuration: 0.2) {
-            overlayHostingController.view.alpha = 1
-        }
+//        guard let overlayHostingController = currentOverlayHostingController else { return }
+//        
+//        guard overlayHostingController.view.alpha != 1 else { return }
+//        
+//        UIView.animate(withDuration: 0.2) {
+//            overlayHostingController.view.alpha = 1
+//        }
     }
     
     private func hideOverlay() {
-        guard let overlayHostingController = currentOverlayHostingController else { return }
-        
-        guard overlayHostingController.view.alpha != 0 else { return }
-        
-        UIView.animate(withDuration: 0.2) {
-            overlayHostingController.view.alpha = 0
-        }
+//        guard let overlayHostingController = currentOverlayHostingController else { return }
+//        
+//        guard overlayHostingController.view.alpha != 0 else { return }
+//        
+//        UIView.animate(withDuration: 0.2) {
+//            overlayHostingController.view.alpha = 0
+//        }
     }
     
     private func toggleOverlay() {
-        guard let overlayHostingController = currentOverlayHostingController else { return }
-        
-        if overlayHostingController.view.alpha < 1 {
-            showOverlay()
-        } else {
-            hideOverlay()
-        }
+//        guard let overlayHostingController = currentOverlayHostingController else { return }
+//
+//        if overlayHostingController.view.alpha < 1 {
+//            showOverlay()
+//        } else {
+//            hideOverlay()
+//        }
     }
 }
 

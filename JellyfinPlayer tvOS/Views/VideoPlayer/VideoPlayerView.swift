@@ -23,3 +23,19 @@ struct NativePlayerView: UIViewControllerRepresentable {
         
     }
 }
+
+struct VLCPlayerView: UIViewControllerRepresentable {
+    
+    let viewModel: VideoPlayerViewModel
+    
+    typealias UIViewControllerType = VLCPlayerViewController
+    
+    func makeUIViewController(context: Context) -> VLCPlayerViewController {
+        
+        return VLCPlayerViewController(viewModel: viewModel)
+    }
+    
+    func updateUIViewController(_ uiViewController: VLCPlayerViewController, context: Context) {
+        
+    }
+}
