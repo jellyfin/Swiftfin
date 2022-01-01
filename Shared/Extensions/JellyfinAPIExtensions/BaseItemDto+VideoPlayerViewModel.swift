@@ -94,7 +94,7 @@ extension BaseItemDto {
                 
                 // TODO: show adjacent items
                 
-                let shouldShowAutoPlayNextItem = Defaults[.shouldShowAutoPlayNextItem]
+                let shouldShowAutoPlayNextItem = Defaults[.shouldShowAutoPlayNextItem] && itemType == .episode
                 let autoPlayNextItem = Defaults[.autoPlayNextItem]
                 
                 let videoPlayerViewModel = VideoPlayerViewModel(item: self,

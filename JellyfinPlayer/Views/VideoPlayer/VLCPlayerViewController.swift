@@ -385,7 +385,7 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         viewModel.playerState = vlcMediaPlayer.state
         
         if vlcMediaPlayer.state == VLCMediaPlayerState.ended {
-            if viewModel.autoPlayNextItem && viewModel.nextItemVideoPlayerViewModel != nil {
+            if viewModel.autoPlayNextItem && viewModel.shouldShowAutoPlayNextItem && viewModel.nextItemVideoPlayerViewModel != nil {
                 didSelectNextItem()
             } else {
                 didSelectClose()
