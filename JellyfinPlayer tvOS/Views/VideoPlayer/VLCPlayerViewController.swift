@@ -130,8 +130,6 @@ class VLCPlayerViewController: UIViewController {
         
         setupMediaPlayer(newViewModel: viewModel)
         
-        setupRightSwipedGestureRecognizer()
-        setupLeftSwipedGestureRecognizer()
         setupPanGestureRecognizer()
         
         let menuPressRecognizer = UITapGestureRecognizer()
@@ -229,26 +227,6 @@ class VLCPlayerViewController: UIViewController {
             print("page down")
         @unknown default: ()
         }
-    }
-    
-    private func setupRightSwipedGestureRecognizer() {
-       let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipedRight))
-       swipeRecognizer.direction = .right
-       view.addGestureRecognizer(swipeRecognizer)
-    }
-        
-    @objc private func swipedRight() {
-       didSelectForward()
-    }
-    
-    private func setupLeftSwipedGestureRecognizer() {
-       let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipedLeft))
-       swipeRecognizer.direction = .left
-       view.addGestureRecognizer(swipeRecognizer)
-    }
-        
-    @objc private func swipedLeft() {
-       didSelectBackward()
     }
     
     private func setupPanGestureRecognizer() {
