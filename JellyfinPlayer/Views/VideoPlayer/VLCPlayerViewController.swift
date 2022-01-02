@@ -45,6 +45,8 @@ class VLCPlayerViewController: UIViewController {
     }
     
     private lazy var videoContentView = makeVideoContentView()
+    private lazy var jumpBackwardOverlayView = makeJumpBackwardOverlayView()
+    private lazy var jumpForwardOverlayView = makeJumpForwardOverlayView()
     private lazy var tapGestureView = makeTapGestureView()
     private var currentOverlayHostingController: UIHostingController<VLCPlayerCompactOverlayView>?
     
@@ -65,7 +67,12 @@ class VLCPlayerViewController: UIViewController {
     
     private func setupSubviews() {
         view.addSubview(videoContentView)
+        view.addSubview(jumpForwardOverlayView)
+        view.addSubview(jumpBackwardOverlayView)
         view.addSubview(tapGestureView)
+        
+        jumpBackwardOverlayView.alpha = 0
+        jumpForwardOverlayView.alpha = 0
     }
     
     private func setupConstraints() {
@@ -74,6 +81,14 @@ class VLCPlayerViewController: UIViewController {
             videoContentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             videoContentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             videoContentView.rightAnchor.constraint(equalTo: view.rightAnchor)
+        ])
+        NSLayoutConstraint.activate([
+            jumpBackwardOverlayView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 150),
+            jumpBackwardOverlayView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        NSLayoutConstraint.activate([
+            jumpForwardOverlayView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -150),
+            jumpForwardOverlayView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         NSLayoutConstraint.activate([
             tapGestureView.topAnchor.constraint(equalTo: videoContentView.topAnchor),
@@ -175,6 +190,26 @@ class VLCPlayerViewController: UIViewController {
     
     @objc private func didLeftSwipe() {
         self.didSelectBackward()
+    }
+    
+    private func makeJumpBackwardOverlayView() -> UIImageView {
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 48)
+        let forwardSymbolImage = UIImage(systemName: jumpBackwardLength.forwardImageLabel, withConfiguration: symbolConfig)
+        let imageView = UIImageView(image: forwardSymbolImage)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tintColor = .white
+        
+        return imageView
+    }
+    
+    private func makeJumpForwardOverlayView() -> UIImageView {
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 48)
+        let forwardSymbolImage = UIImage(systemName: jumpForwardLength.forwardImageLabel, withConfiguration: symbolConfig)
+        let imageView = UIImageView(image: forwardSymbolImage)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tintColor = .white
+        
+        return imageView
     }
     
     // MARK: setupOverlayHostingController
@@ -356,6 +391,42 @@ extension VLCPlayerViewController {
     }
 }
 
+// MARK: Show/Hide Jump
+extension VLCPlayerViewController {
+    
+    private func flashJumpBackwardOverlay() {
+        jumpBackwardOverlayView.layer.removeAllAnimations()
+        
+        UIView.animate(withDuration: 0.1) {
+            self.jumpBackwardOverlayView.alpha = 1
+        } completion: { _ in
+            self.hideJumpBackwardOverlay()
+        }
+    }
+    
+    private func hideJumpBackwardOverlay() {
+        UIView.animate(withDuration: 0.3) {
+            self.jumpBackwardOverlayView.alpha = 0
+        }
+    }
+    
+    private func flashJumpFowardOverlay() {
+        jumpForwardOverlayView.layer.removeAllAnimations()
+        
+        UIView.animate(withDuration: 0.1) {
+            self.jumpForwardOverlayView.alpha = 1
+        } completion: { _ in
+            self.hideJumpForwardOverlay()
+        }
+    }
+    
+    private func hideJumpForwardOverlay() {
+        UIView.animate(withDuration: 0.3) {
+            self.jumpForwardOverlayView.alpha = 0
+        }
+    }
+}
+
 // MARK: OverlayTimer
 extension VLCPlayerViewController {
     
@@ -490,6 +561,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     }
     
     func didSelectBackward() {
+        flashJumpBackwardOverlay()
+        
         vlcMediaPlayer.jumpBackward(jumpBackwardLength.rawValue)
         
         restartOverlayDismissTimer()
@@ -500,6 +573,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     }
     
     func didSelectForward() {
+        flashJumpFowardOverlay()
+        
         vlcMediaPlayer.jumpForward(jumpForwardLength.rawValue)
         
         restartOverlayDismissTimer()
