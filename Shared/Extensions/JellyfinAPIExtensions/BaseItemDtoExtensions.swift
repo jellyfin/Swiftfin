@@ -170,21 +170,21 @@ public extension BaseItemDto {
             return "\(String(progminutes))m"
         }
     }
-    
+
     func getLiveStartTimeString(formatter: DateFormatter) -> String {
         if let startDate = self.startDate {
             return formatter.string(from: startDate)
         }
         return " "
     }
-    
+
     func getLiveEndTimeString(formatter: DateFormatter) -> String {
         if let endDate = self.endDate {
             return formatter.string(from: endDate)
         }
         return " "
     }
-    
+
     func getLiveProgressPercentage() -> Double {
         if let startDate = self.startDate,
            let endDate = self.endDate {
@@ -197,7 +197,7 @@ public extension BaseItemDto {
         }
         return 0
     }
-    
+
     // MARK: ItemType
 
     enum ItemType: String {

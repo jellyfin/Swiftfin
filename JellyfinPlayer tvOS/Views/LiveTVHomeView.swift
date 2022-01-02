@@ -12,7 +12,7 @@ import SwiftUI
 
 struct LiveTVHomeView: View {
     @EnvironmentObject var mainCoordinator: MainCoordinator.Router
-    
+
     var body: some View {
         Button {} label: {
             Text("Return Home")

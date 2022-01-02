@@ -17,37 +17,37 @@ final class LiveTVTabCoordinator: TabCoordinatable {
           \LiveTVTabCoordinator.channels,
           \LiveTVTabCoordinator.home
     ])
-    
+
     @Route(tabItem: makeProgramsTab) var programs = makePrograms
     @Route(tabItem: makeChannelsTab) var channels = makeChannels
     @Route(tabItem: makeHomeTab) var home = makeHome
-    
+
     func makePrograms() -> NavigationViewCoordinator<LiveTVProgramsCoordinator> {
         return NavigationViewCoordinator(LiveTVProgramsCoordinator())
     }
-    
+
     @ViewBuilder func makeProgramsTab(isActive: Bool) -> some View {
         HStack {
             Image(systemName: "tv")
             Text("Programs")
         }
     }
-    
+
     func makeChannels() -> NavigationViewCoordinator<LiveTVChannelsCoordinator> {
         return NavigationViewCoordinator(LiveTVChannelsCoordinator())
     }
-    
+
     @ViewBuilder func makeChannelsTab(isActive: Bool) -> some View {
         HStack {
             Image(systemName: "square.grid.3x3")
             Text("Channels")
         }
     }
-    
+
     func makeHome() -> LiveTVHomeView {
         return LiveTVHomeView()
     }
-    
+
     @ViewBuilder func makeHomeTab(isActive: Bool) -> some View {
         HStack {
             Image(systemName: "house")

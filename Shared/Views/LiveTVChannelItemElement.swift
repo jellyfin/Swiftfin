@@ -7,20 +7,19 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
-
 import SwiftUI
 import JellyfinAPI
 
 struct LiveTVChannelItemElement: View {
     @Environment(\.isFocused) var envFocused: Bool
     @State var focused: Bool = false
-    
+
     var channel: BaseItemDto
     var program: BaseItemDto?
     var startString = " "
     var endString = " "
     var progressPercent = Double(0)
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -46,9 +45,9 @@ struct LiveTVChannelItemElement: View {
                         .font(.footnote)
                         .lineLimit(1)
                         .frame(alignment: .leading)
-                    
+
                     Spacer()
-                    
+
                     Text(endString)
                         .font(.footnote)
                         .lineLimit(1)
