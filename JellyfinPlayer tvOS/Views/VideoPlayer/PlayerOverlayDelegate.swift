@@ -28,5 +28,8 @@ protocol PlayerOverlayDelegate {
     func didSelectAudioStream(index: Int)
     func didSelectSubtitleStream(index: Int)
     
+    func didSelectPreviousItem()
+    func didSelectNextItem()
+    
     func didFocusOnButton()
 }

@@ -17,6 +17,7 @@ extension Color {
     public static let systemFill = Color(UIColor.white)
     public static let secondarySystemFill = Color(UIColor.gray)
     public static let tertiarySystemFill = Color(UIColor.black)
+    public static let lightGray = Color(UIColor.lightGray)
     #else
     public static let systemFill = Color(UIColor.systemFill)
     public static let secondarySystemFill = Color(UIColor.secondarySystemBackground)

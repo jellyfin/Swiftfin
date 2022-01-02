@@ -53,6 +53,8 @@ class VLCPlayerViewController: UIViewController {
     }
     
     private lazy var videoContentView = makeVideoContentView()
+    private lazy var jumpBackwardOverlayView = makeJumpBackwardOverlayView()
+    private lazy var jumpForwardOverlayView = makeJumpForwardOverlayView()
     private var currentOverlayHostingController: UIHostingController<tvOSVLCOverlay>?
     private var currentOverlayContentHostingController: UIHostingController<tvOSOverlayContentView>?
     
@@ -73,6 +75,11 @@ class VLCPlayerViewController: UIViewController {
     
     private func setupSubviews() {
         view.addSubview(videoContentView)
+        view.addSubview(jumpForwardOverlayView)
+        view.addSubview(jumpBackwardOverlayView)
+        
+        jumpBackwardOverlayView.alpha = 0
+        jumpForwardOverlayView.alpha = 0
     }
     
     private func setupConstraints() {
@@ -81,6 +88,14 @@ class VLCPlayerViewController: UIViewController {
             videoContentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             videoContentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             videoContentView.rightAnchor.constraint(equalTo: view.rightAnchor)
+        ])
+        NSLayoutConstraint.activate([
+            jumpBackwardOverlayView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 300),
+            jumpBackwardOverlayView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        NSLayoutConstraint.activate([
+            jumpForwardOverlayView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -300),
+            jumpForwardOverlayView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
@@ -119,10 +134,25 @@ class VLCPlayerViewController: UIViewController {
         setupLeftSwipedGestureRecognizer()
         setupPanGestureRecognizer()
         
+        let menuPressRecognizer = UITapGestureRecognizer()
+        menuPressRecognizer.addTarget(self, action: #selector(menuButtonAction))
+        menuPressRecognizer.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
+        view.addGestureRecognizer(menuPressRecognizer)
+        
         let defaultNotificationCenter = NotificationCenter.default
         defaultNotificationCenter.addObserver(self, selector: #selector(appWillTerminate), name: UIApplication.willTerminateNotification, object: nil)
         defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.willResignActiveNotification, object: nil)
         defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.didEnterBackgroundNotification, object: nil)
+    }
+    
+    @objc private func menuButtonAction() {
+        if displayingOverlay {
+            hideOverlay()
+        } else {
+            vlcMediaPlayer.pause()
+            
+            dismiss(animated: true, completion: nil)
+        }
     }
     
     @objc private func appWillTerminate() {
@@ -153,6 +183,24 @@ class VLCPlayerViewController: UIViewController {
         view.backgroundColor = .black
         
         return view
+    }
+    
+    private func makeJumpBackwardOverlayView() -> UIImageView {
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 56)
+        let forwardSymbolImage = UIImage(systemName: jumpBackwardLength.forwardImageLabel, withConfiguration: symbolConfig)
+        let imageView = UIImageView(image: forwardSymbolImage)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }
+    
+    private func makeJumpForwardOverlayView() -> UIImageView {
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 56)
+        let forwardSymbolImage = UIImage(systemName: jumpForwardLength.forwardImageLabel, withConfiguration: symbolConfig)
+        let imageView = UIImageView(image: forwardSymbolImage)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
     }
     
     // MARK: pressesBegan
@@ -442,6 +490,42 @@ extension VLCPlayerViewController {
     }
 }
 
+// MARK: Show/Hide Jump
+extension VLCPlayerViewController {
+    
+    private func flashJumpBackwardOverlay() {
+        jumpBackwardOverlayView.layer.removeAllAnimations()
+        
+        UIView.animate(withDuration: 0.1) {
+            self.jumpBackwardOverlayView.alpha = 1
+        } completion: { _ in
+            self.hideJumpBackwardOverlay()
+        }
+    }
+    
+    private func hideJumpBackwardOverlay() {
+        UIView.animate(withDuration: 0.3) {
+            self.jumpBackwardOverlayView.alpha = 0
+        }
+    }
+    
+    private func flashJumpFowardOverlay() {
+        jumpForwardOverlayView.layer.removeAllAnimations()
+        
+        UIView.animate(withDuration: 0.1) {
+            self.jumpForwardOverlayView.alpha = 1
+        } completion: { _ in
+            self.hideJumpForwardOverlay()
+        }
+    }
+    
+    private func hideJumpForwardOverlay() {
+        UIView.animate(withDuration: 0.3) {
+            self.jumpForwardOverlayView.alpha = 0
+        }
+    }
+}
+
 // MARK: OverlayTimer
 extension VLCPlayerViewController {
     
@@ -579,6 +663,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     }
     
     func didSelectBackward() {
+        flashJumpBackwardOverlay()
+        
         vlcMediaPlayer.jumpBackward(jumpBackwardLength.rawValue)
         
         restartOverlayDismissTimer()
@@ -589,6 +675,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     }
     
     func didSelectForward() {
+        flashJumpFowardOverlay()
+        
         vlcMediaPlayer.jumpForward(jumpForwardLength.rawValue)
         
         restartOverlayDismissTimer()

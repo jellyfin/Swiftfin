@@ -45,7 +45,7 @@ struct tvOSVLCOverlay: View {
                         if let subtitle = viewModel.subtitle {
                             Text(subtitle)
                                 .font(.subheadline)
-                                .foregroundColor(.secondarySystemFill)
+                                .foregroundColor(.lightGray)
                         }
                         
                         Text(viewModel.title)
@@ -55,16 +55,34 @@ struct tvOSVLCOverlay: View {
 
                     Spacer()
                     
-                    if viewModel.subtitlesEnabled {
-                        SFSymbolButton(systemName: "captions.bubble.fill") {
-                            viewModel.playerOverlayDelegate?.didSelectCaptions()
-                        }
+                    if viewModel.showAdjacentItems {
+                        SFSymbolButton(systemName: "chevron.left.circle", action: {
+                            viewModel.playerOverlayDelegate?.didSelectPreviousItem()
+                        })
                         .frame(maxWidth: 30, maxHeight: 30)
-                    } else {
-                        SFSymbolButton(systemName: "captions.bubble") {
-                            viewModel.playerOverlayDelegate?.didSelectCaptions()
-                        }
+                        .disabled(viewModel.previousItemVideoPlayerViewModel == nil)
+                        .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+                        
+                        SFSymbolButton(systemName: "chevron.right.circle", action: {
+                            viewModel.playerOverlayDelegate?.didSelectNextItem()
+                        })
                         .frame(maxWidth: 30, maxHeight: 30)
+                        .disabled(viewModel.nextItemVideoPlayerViewModel == nil)
+                        .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+                    }
+                    
+                    if !viewModel.subtitleStreams.isEmpty {
+                        if viewModel.subtitlesEnabled {
+                            SFSymbolButton(systemName: "captions.bubble.fill") {
+                                viewModel.playerOverlayDelegate?.didSelectCaptions()
+                            }
+                            .frame(maxWidth: 30, maxHeight: 30)
+                        } else {
+                            SFSymbolButton(systemName: "captions.bubble") {
+                                viewModel.playerOverlayDelegate?.didSelectCaptions()
+                            }
+                            .frame(maxWidth: 30, maxHeight: 30)
+                        }
                     }
                     
                     SFSymbolButton(systemName: "ellipsis.circle") {
