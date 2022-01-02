@@ -384,6 +384,11 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
     // MARK: mediaPlayerStateChanged
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
         
+        // Don't show buffering if paused, usually here while scrubbing
+        if vlcMediaPlayer.state == .buffering && viewModel.playerState == .paused {
+            return
+        }
+        
         viewModel.playerState = vlcMediaPlayer.state
         
         if vlcMediaPlayer.state == VLCMediaPlayerState.ended {
