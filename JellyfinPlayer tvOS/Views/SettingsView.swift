@@ -21,59 +21,78 @@ struct SettingsView: View {
     @Default(.autoSelectAudioLangCode) var autoSelectAudioLangcode
 
     var body: some View {
-            Form {
-                Section(header: L10n.playbackSettings.text) {
-                    Picker("Default local quality", selection: $inNetworkStreamBitrate) {
-                        ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
-                            Text(bitrate.name).tag(bitrate.value)
+        ZStack {
+            Color.black
+                .ignoresSafeArea()
+            
+            GeometryReader { reader in
+                HStack {
+                    
+                    Image(uiImage: UIImage(named: "App Icon")!)
+                        .frame(width: reader.size.width / 2)
+                    
+                    Form {
+                        Section(header: L10n.playbackSettings.text) {
+                            Picker("Default local quality", selection: $inNetworkStreamBitrate) {
+                                ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
+                                    Text(bitrate.name).tag(bitrate.value)
+                                }
+                            }
+
+                            Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
+                                ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
+                                    Text(bitrate.name).tag(bitrate.value)
+                                }
+                            }
+                        }
+
+                        Section(header: L10n.accessibility.text) {
+                            Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
+                            SearchablePicker(label: "Preferred subtitle language",
+                                             options: viewModel.langs,
+                                             optionToString: { $0.name },
+                                             selected: Binding<TrackLanguage>(
+                                                get: { viewModel.langs.first(where: { $0.isoCode == autoSelectSubtitlesLangcode }) ?? .auto },
+                                                set: {autoSelectSubtitlesLangcode = $0.isoCode}
+                                             )
+                            )
+                            SearchablePicker(label: "Preferred audio language",
+                                             options: viewModel.langs,
+                                             optionToString: { $0.name },
+                                             selected: Binding<TrackLanguage>(
+                                                get: { viewModel.langs.first(where: { $0.isoCode == autoSelectAudioLangcode }) ?? .auto },
+                                                set: { autoSelectAudioLangcode = $0.isoCode}
+                                             )
+                            )
+                        }
+
+                        Section(header: Text(SessionManager.main.currentLogin.server.name)) {
+                            HStack {
+                                Text(L10n.signedInAsWithString(SessionManager.main.currentLogin.user.username)).foregroundColor(.primary)
+                                Spacer()
+                                Button {
+                                    SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+                                } label: {
+                                    L10n.switchUser.text.font(.callout)
+                                }
+                            }
+                            Button {
+                                SessionManager.main.logout()
+                            } label: {
+                                Text("Sign out").font(.callout)
+                            }
                         }
                     }
-
-                    Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
-                        ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
-                            Text(bitrate.name).tag(bitrate.value)
-                        }
-                    }
-                }
-
-                Section(header: L10n.accessibility.text) {
-                    Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
-                    SearchablePicker(label: "Preferred subtitle language",
-                                     options: viewModel.langs,
-                                     optionToString: { $0.name },
-                                     selected: Binding<TrackLanguage>(
-                                        get: { viewModel.langs.first(where: { $0.isoCode == autoSelectSubtitlesLangcode }) ?? .auto },
-                                        set: {autoSelectSubtitlesLangcode = $0.isoCode}
-                                     )
-                    )
-                    SearchablePicker(label: "Preferred audio language",
-                                     options: viewModel.langs,
-                                     optionToString: { $0.name },
-                                     selected: Binding<TrackLanguage>(
-                                        get: { viewModel.langs.first(where: { $0.isoCode == autoSelectAudioLangcode }) ?? .auto },
-                                        set: { autoSelectAudioLangcode = $0.isoCode}
-                                     )
-                    )
-                }
-
-                Section(header: Text(SessionManager.main.currentLogin.server.name)) {
-                    HStack {
-                        Text(L10n.signedInAsWithString(SessionManager.main.currentLogin.user.username)).foregroundColor(.primary)
-                        Spacer()
-                        Button {
-                            SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
-                        } label: {
-                            L10n.switchUser.text.font(.callout)
-                        }
-                    }
-                    Button {
-                        SessionManager.main.logout()
-                    } label: {
-                        Text("Sign out").font(.callout)
-                    }
+                    .padding(.leading, 90)
+                    .padding(.trailing, 90)
                 }
             }
-            .padding(.leading, 90)
-            .padding(.trailing, 90)
+        }
+    }
+}
+
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsView(viewModel: SettingsViewModel())
     }
 }

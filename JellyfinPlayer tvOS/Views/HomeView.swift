@@ -17,38 +17,43 @@ struct HomeView: View {
     @State var showingSettings = false
 
     var body: some View {
-        ScrollView {
-            if viewModel.isLoading {
-                ProgressView()
-            } else {
-                LazyVStack(alignment: .leading) {
-                    if !viewModel.resumeItems.isEmpty {
-                        ContinueWatchingView(items: viewModel.resumeItems)
-                    }
-                    if !viewModel.nextUpItems.isEmpty {
-                        NextUpView(items: viewModel.nextUpItems)
-                    }
+        ZStack {
+            Color.black
+                .ignoresSafeArea()
+            
+            ScrollView {
+                if viewModel.isLoading {
+                    ProgressView()
+                } else {
+                    LazyVStack(alignment: .leading) {
+                        if !viewModel.resumeItems.isEmpty {
+                            ContinueWatchingView(items: viewModel.resumeItems)
+                        }
+                        if !viewModel.nextUpItems.isEmpty {
+                            NextUpView(items: viewModel.nextUpItems)
+                        }
 
-                    if !viewModel.librariesShowRecentlyAddedIDs.isEmpty {
-                        ForEach(viewModel.librariesShowRecentlyAddedIDs, id: \.self) { libraryID in
-                            VStack(alignment: .leading) {
-                                let library = viewModel.libraries.first(where: { $0.id == libraryID })
+                        if !viewModel.librariesShowRecentlyAddedIDs.isEmpty {
+                            ForEach(viewModel.librariesShowRecentlyAddedIDs, id: \.self) { libraryID in
+                                VStack(alignment: .leading) {
+                                    let library = viewModel.libraries.first(where: { $0.id == libraryID })
 
-                                Button {
-                                    self.homeRouter.route(to: \.modalLibrary, (.init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
-                                } label: {
-                                    HStack {
-                                        Text(L10n.latestWithString(library?.name ?? ""))
-                                        .font(.headline)
-                                        .fontWeight(.semibold)
-                                        Image(systemName: "chevron.forward.circle.fill")
-                                    }
-                                }.padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
-                                LatestMediaView(usingParentID: libraryID)
+                                    Button {
+                                        self.homeRouter.route(to: \.modalLibrary, (.init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
+                                    } label: {
+                                        HStack {
+                                            Text(L10n.latestWithString(library?.name ?? ""))
+                                            .font(.headline)
+                                            .fontWeight(.semibold)
+                                            Image(systemName: "chevron.forward.circle.fill")
+                                        }
+                                    }.padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
+                                    LatestMediaView(usingParentID: libraryID)
+                                }
                             }
                         }
+                        Spacer().frame(height: 30)
                     }
-                    Spacer().frame(height: 30)
                 }
             }
         }

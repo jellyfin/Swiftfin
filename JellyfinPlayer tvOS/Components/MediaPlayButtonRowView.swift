@@ -18,9 +18,6 @@ struct MediaPlayButtonRowView: View {
     var body: some View {
         HStack {
             VStack {
-//              NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
-//                    MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
-//                }
                 Button {
                     itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
                 } label: {

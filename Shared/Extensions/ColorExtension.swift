@@ -11,7 +11,7 @@ import SwiftUI
 
 extension Color {
 
-    static let jellyfinPurple = Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255)
+    static let jellyfinPurple = Color(uiColor: .jellyfinPurple)
 
     #if os(tvOS) // tvOS doesn't have these
     public static let systemFill = Color(UIColor.white)
@@ -22,4 +22,8 @@ extension Color {
     public static let secondarySystemFill = Color(UIColor.secondarySystemBackground)
     public static let tertiarySystemFill = Color(UIColor.tertiarySystemBackground)
     #endif
+}
+
+extension UIColor {
+    static let jellyfinPurple = UIColor(red: 172 / 255, green: 92 / 255, blue: 195 / 255, alpha: 1)
 }

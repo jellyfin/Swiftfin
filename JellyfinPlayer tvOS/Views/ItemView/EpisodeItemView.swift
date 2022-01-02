@@ -120,42 +120,8 @@ struct EpisodeItemView: View {
                             .font(.body)
                             .fontWeight(.medium)
                             .foregroundColor(.primary)
-
-                        HStack {
-                            VStack {
-                                Button {
-                                    viewModel.updateFavoriteState()
-                                } label: {
-                                    MediaViewActionButton(icon: "heart.fill", iconColor: viewModel.isFavorited ? .red : .white)
-                                }
-                                Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
-                                    .font(.caption)
-                            }
-                            VStack {
-//                              NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
-//                                    MediaViewActionButton(icon: "play.fill")
-//                                }
-                                Button {
-                                    itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
-                                } label: {
-//                                    MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
-                                    MediaViewActionButton(icon: "play.fill")
-                                }
-                                Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : L10n.play)
-                                    .font(.caption)
-                            }
-                            VStack {
-                                Button {
-                                    viewModel.updateWatchState()
-                                } label: {
-                                    MediaViewActionButton(icon: "eye.fill", iconColor: viewModel.isWatched ? .red : .white)
-                                }
-                                Text(viewModel.isWatched ? "Unwatch" : "Mark Watched")
-                                    .font(.caption)
-                            }
-                            Spacer()
-                        }
-                        .padding(.top, 15)
+                        
+                        MediaPlayButtonRowView(viewModel: viewModel)
                     }
                 }.padding(.top, 50)
 

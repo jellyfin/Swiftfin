@@ -291,6 +291,11 @@
 		E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
 		E178857D278037FD0094FBCF /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E178857C278037FD0094FBCF /* JellyfinAPI */; };
+		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
+		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
+		E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */; };
+		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
+		E17885A6278130610094FBCF /* tvOSOverlayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A5278130610094FBCF /* tvOSOverlayContent.swift */; };
 		E18845F526DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F626DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F826DEA9C900B0C5B7 /* ItemViewBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */; };
@@ -593,6 +598,11 @@
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
+		E178859A2780F1F40094FBCF /* tvOSSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSSlider.swift; sourceTree = "<group>"; };
+		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
+		E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVLCOverlay.swift; sourceTree = "<group>"; };
+		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
+		E17885A5278130610094FBCF /* tvOSOverlayContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSOverlayContent.swift; sourceTree = "<group>"; };
 		E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+Stackable.swift"; sourceTree = "<group>"; };
 		E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewBody.swift; sourceTree = "<group>"; };
 		E18845FF26DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLandscapeTopBarView.swift; sourceTree = "<group>"; };
@@ -714,6 +724,8 @@
 			children = (
 				E1C812C7277AE40900918266 /* NativePlayerViewController.swift */,
 				E1C812C6277AE40900918266 /* PlayerOverlayDelegate.swift */,
+				E178859C2780F5300094FBCF /* tvOSSLider */,
+				E17885A7278130690094FBCF /* tvOSOverlay */,
 				E1C812C8277AE40900918266 /* VideoPlayerView.swift */,
 				E1384943278036C70024FB48 /* VLCPlayerViewController.swift */,
 			);
@@ -864,6 +876,7 @@
 				53116A18268B947A003024C9 /* PlainLinkButton.swift */,
 				536D3D80267BDFC60004248C /* PortraitItemElement.swift */,
 				536D3D87267C17350004248C /* PublicUserButton.swift */,
+				E17885A3278105170094FBCF /* SFSymbolButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1285,6 +1298,24 @@
 				E18845FA26DEACBE00B0C5B7 /* Portrait */,
 			);
 			path = ItemView;
+			sourceTree = "<group>";
+		};
+		E178859C2780F5300094FBCF /* tvOSSLider */ = {
+			isa = PBXGroup;
+			children = (
+				E178859D2780F53B0094FBCF /* SliderView.swift */,
+				E178859A2780F1F40094FBCF /* tvOSSlider.swift */,
+			);
+			path = tvOSSLider;
+			sourceTree = "<group>";
+		};
+		E17885A7278130690094FBCF /* tvOSOverlay */ = {
+			isa = PBXGroup;
+			children = (
+				E17885A5278130610094FBCF /* tvOSOverlayContent.swift */,
+				E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */,
+			);
+			path = tvOSOverlay;
 			sourceTree = "<group>";
 		};
 		E18845FA26DEACBE00B0C5B7 /* Portrait */ = {
@@ -1832,18 +1863,22 @@
 				E1C812CC277AE40A00918266 /* VideoPlayerView.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
 				53CD2A42268A4B38002ABD4E /* MovieItemView.swift in Sources */,
+				E178859E2780F53B0094FBCF /* SliderView.swift in Sources */,
 				536D3D7F267BDF100004248C /* LatestMediaView.swift in Sources */,
 				E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */,
 				091B5A8E268315D400D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				E10EAA50277BBCC4000269ED /* CGSizeExtensions.swift in Sources */,
+				E17885A6278130610094FBCF /* tvOSOverlayContent.swift in Sources */,
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
+				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
 				E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				62EC3530267666A5000E9F2D /* SessionManager.swift in Sources */,
 				62671DB327159C1800199D95 /* ItemCoordinator.swift in Sources */,
 				E1AD104B26D94822003E4A08 /* DetailItem.swift in Sources */,
 				E13DD3E227176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */,
+				E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */,
 				531690F7267ACC00005D8AB9 /* LandscapeItemElement.swift in Sources */,
 				62E632E1267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
 				535870A82669D8AE00D05A09 /* StringExtensions.swift in Sources */,
@@ -1859,6 +1894,7 @@
 				C4BE0767271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */,
 				E193D53727193F8700900D82 /* LibraryListCoordinator.swift in Sources */,
 				E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */,
+				E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */,
 				E193D54D2719426600900D82 /* LibraryFilterView.swift in Sources */,
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,
 				E193D4D927193CAC00900D82 /* PortraitImageStackable.swift in Sources */,
