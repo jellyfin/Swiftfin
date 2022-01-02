@@ -303,7 +303,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                                         .onLongPressGesture(perform: {
                                                             print("got it here")
                                                         }),
-                                                       thumbSize: CGSize.Circle(radius: viewModel.sliderIsScrubbing ? 25 : 20),
+                                                       thumbSize: CGSize.Circle(radius: viewModel.sliderIsScrubbing ? 20 : 15),
                                                        thumbInteractiveSize: CGSize.Circle(radius: 40),
                                                            options: .defaultOptions)
                         )
