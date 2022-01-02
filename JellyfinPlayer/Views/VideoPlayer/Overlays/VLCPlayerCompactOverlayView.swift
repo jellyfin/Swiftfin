@@ -117,7 +117,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                             
                             if !viewModel.subtitleStreams.isEmpty {
                                 Button {
-                                    viewModel.playerOverlayDelegate?.didSelectCaptions()
+                                    viewModel.playerOverlayDelegate?.didSelectSubtitles()
                                 } label: {
                                     if viewModel.subtitlesEnabled {
                                         Image(systemName: "captions.bubble.fill")

@@ -12,7 +12,7 @@ protocol PlayerOverlayDelegate {
     func didSelectClose()
     func didSelectGoogleCast()
     func didSelectAirplay()
-    func didSelectCaptions()
+    func didSelectSubtitles()
     func didSelectMenu()
     func didDeselectMenu()
     

@@ -128,7 +128,7 @@ class VLCPlayerViewController: UIViewController {
         
         setupPanGestureRecognizer()
         
-        setupButtonPressRecognizers()
+        addButtonPressRecognizer(pressType: .menu, action: #selector(didPressMenu))
         
         let defaultNotificationCenter = NotificationCenter.default
         defaultNotificationCenter.addObserver(self, selector: #selector(appWillTerminate), name: UIApplication.willTerminateNotification, object: nil)
@@ -189,11 +189,32 @@ class VLCPlayerViewController: UIViewController {
         view.addGestureRecognizer(panGestureRecognizer)
     }
     
-    private func setupButtonPressRecognizers() {
-        addButtonPressRecognizer(pressType: .menu, action: #selector(didPressMenu))
-        addButtonPressRecognizer(pressType: .playPause, action: #selector(didPressPlayPause))
-        addButtonPressRecognizer(pressType: .leftArrow, action: #selector(didPressLeftArrow))
-        addButtonPressRecognizer(pressType: .rightArrow, action: #selector(didPressRightArrow))
+    // MARK: pressesBegan
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        guard let buttonPress = presses.first?.type else { return }
+             
+        switch(buttonPress) {
+        case .menu:
+           print("Menu")
+        case .playPause:
+            didSelectMain()
+        case .select:
+            didGenerallyTap()
+        case .upArrow:
+           print("Up arrow")
+        case .downArrow:
+           print("Down arrow")
+        case .leftArrow:
+            didSelectBackward()
+           print("Left arrow")
+        case .rightArrow:
+            didSelectForward()
+        case .pageUp:
+            print("page up")
+        case .pageDown:
+            print("page down")
+        @unknown default: ()
+        }
     }
     
     private func addButtonPressRecognizer(pressType: UIPress.PressType, action: Selector) {
@@ -211,22 +232,6 @@ class VLCPlayerViewController: UIViewController {
             
             dismiss(animated: true, completion: nil)
         }
-    }
-    
-    @objc private func didPressPlayPause() {
-        didSelectMain()
-    }
-    
-    @objc private func didPressSelect() {
-        didGenerallyTap()
-    }
-    
-    @objc private func didPressLeftArrow() {
-        didSelectBackward()
-    }
-    
-    @objc private func didPressRightArrow() {
-        didSelectForward()
     }
     
     @objc private func userPanned(panGestureRecognizer: UIPanGestureRecognizer) {
@@ -611,7 +616,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         print("didSelectAirplay")
     }
     
-    func didSelectCaptions() {
+    func didSelectSubtitles() {
         
         viewModel.subtitlesEnabled = !viewModel.subtitlesEnabled
         

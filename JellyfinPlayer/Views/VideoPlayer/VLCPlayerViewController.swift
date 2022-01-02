@@ -468,7 +468,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         print("didSelectAirplay")
     }
     
-    func didSelectCaptions() {
+    func didSelectSubtitles() {
         
         viewModel.subtitlesEnabled = !viewModel.subtitlesEnabled
         

@@ -74,12 +74,12 @@ struct tvOSVLCOverlay: View {
                     if !viewModel.subtitleStreams.isEmpty {
                         if viewModel.subtitlesEnabled {
                             SFSymbolButton(systemName: "captions.bubble.fill") {
-                                viewModel.playerOverlayDelegate?.didSelectCaptions()
+                                viewModel.playerOverlayDelegate?.didSelectSubtitles()
                             }
                             .frame(maxWidth: 30, maxHeight: 30)
                         } else {
                             SFSymbolButton(systemName: "captions.bubble") {
-                                viewModel.playerOverlayDelegate?.didSelectCaptions()
+                                viewModel.playerOverlayDelegate?.didSelectSubtitles()
                             }
                             .frame(maxWidth: 30, maxHeight: 30)
                         }
