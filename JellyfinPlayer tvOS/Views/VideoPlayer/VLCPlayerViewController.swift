@@ -118,8 +118,8 @@ class VLCPlayerViewController: UIViewController {
         
         view.backgroundColor = .black
         
-        // These are kept outside of 'setupMediaPlayer' such that
-        // they aren't unnecessarily set more than once
+        // Outside of 'setupMediaPlayer' such that they
+        // aren't unnecessarily set more than once
         vlcMediaPlayer.delegate = self
         vlcMediaPlayer.drawable = videoContentView
         vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 16)
