@@ -132,25 +132,12 @@ class VLCPlayerViewController: UIViewController {
         
         setupPanGestureRecognizer()
         
-        let menuPressRecognizer = UITapGestureRecognizer()
-        menuPressRecognizer.addTarget(self, action: #selector(menuButtonAction))
-        menuPressRecognizer.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
-        view.addGestureRecognizer(menuPressRecognizer)
+        setupButtonPressRecognizers()
         
         let defaultNotificationCenter = NotificationCenter.default
         defaultNotificationCenter.addObserver(self, selector: #selector(appWillTerminate), name: UIApplication.willTerminateNotification, object: nil)
         defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.willResignActiveNotification, object: nil)
         defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.didEnterBackgroundNotification, object: nil)
-    }
-    
-    @objc private func menuButtonAction() {
-        if displayingOverlay {
-            hideOverlay()
-        } else {
-            vlcMediaPlayer.pause()
-            
-            dismiss(animated: true, completion: nil)
-        }
     }
     
     @objc private func appWillTerminate() {
@@ -184,7 +171,7 @@ class VLCPlayerViewController: UIViewController {
     }
     
     private func makeJumpBackwardOverlayView() -> UIImageView {
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 56)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 72)
         let forwardSymbolImage = UIImage(systemName: jumpBackwardLength.forwardImageLabel, withConfiguration: symbolConfig)
         let imageView = UIImageView(image: forwardSymbolImage)
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -193,7 +180,7 @@ class VLCPlayerViewController: UIViewController {
     }
     
     private func makeJumpForwardOverlayView() -> UIImageView {
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 56)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 72)
         let forwardSymbolImage = UIImage(systemName: jumpForwardLength.forwardImageLabel, withConfiguration: symbolConfig)
         let imageView = UIImageView(image: forwardSymbolImage)
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -201,37 +188,49 @@ class VLCPlayerViewController: UIViewController {
         return imageView
     }
     
-    // MARK: pressesBegan
-    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        guard let buttonPress = presses.first?.type else { return }
-             
-        switch(buttonPress) {
-        case .menu:
-           print("Menu")
-        case .playPause:
-            didSelectMain()
-        case .select:
-            didGenerallyTap()
-        case .upArrow:
-           print("Up arrow")
-        case .downArrow:
-           print("Down arrow")
-        case .leftArrow:
-            didSelectBackward()
-           print("Left arrow")
-        case .rightArrow:
-            didSelectForward()
-        case .pageUp:
-            print("page up")
-        case .pageDown:
-            print("page down")
-        @unknown default: ()
-        }
-    }
-    
     private func setupPanGestureRecognizer() {
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(userPanned(panGestureRecognizer:)))
         view.addGestureRecognizer(panGestureRecognizer)
+    }
+    
+    private func setupButtonPressRecognizers() {
+        addButtonPressRecognizer(pressType: .menu, action: #selector(didPressMenu))
+        addButtonPressRecognizer(pressType: .playPause, action: #selector(didPressPlayPause))
+        addButtonPressRecognizer(pressType: .leftArrow, action: #selector(didPressLeftArrow))
+        addButtonPressRecognizer(pressType: .rightArrow, action: #selector(didPressRightArrow))
+    }
+    
+    private func addButtonPressRecognizer(pressType: UIPress.PressType, action: Selector) {
+        let pressRecognizer = UITapGestureRecognizer()
+        pressRecognizer.addTarget(self, action: action)
+        pressRecognizer.allowedPressTypes = [NSNumber(value: pressType.rawValue)]
+        view.addGestureRecognizer(pressRecognizer)
+    }
+    
+    @objc private func didPressMenu() {
+        if displayingOverlay {
+            hideOverlay()
+        } else {
+            vlcMediaPlayer.pause()
+            
+            dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    @objc private func didPressPlayPause() {
+        didSelectMain()
+    }
+    
+    @objc private func didPressSelect() {
+        didGenerallyTap()
+    }
+    
+    @objc private func didPressLeftArrow() {
+        didSelectBackward()
+    }
+    
+    @objc private func didPressRightArrow() {
+        didSelectForward()
     }
     
     @objc private func userPanned(panGestureRecognizer: UIPanGestureRecognizer) {
