@@ -168,7 +168,7 @@ class VLCPlayerViewController: UIViewController {
     
     private func makeJumpBackwardOverlayView() -> UIImageView {
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 72)
-        let forwardSymbolImage = UIImage(systemName: jumpBackwardLength.forwardImageLabel, withConfiguration: symbolConfig)
+        let forwardSymbolImage = UIImage(systemName: jumpBackwardLength.backwardImageLabel, withConfiguration: symbolConfig)
         let imageView = UIImageView(image: forwardSymbolImage)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
