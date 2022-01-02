@@ -15,11 +15,7 @@ import MobileVLCKit
 import SwiftUI
 import UIKit
 
-// TODO: Make the VLC player layer a view
-// This will allow changing media and putting the view somewhere else
-// in a compact state, like a small viewer while navigating the app
-
-// TODO: Look at making overlays handle timer and all gesture events
+// TODO: Look at making the VLC player layer a view
 
 class VLCPlayerViewController: UIViewController {
     
