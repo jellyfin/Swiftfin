@@ -69,22 +69,8 @@ struct ServerListView: View {
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 
-            Button {
+            PrimaryButtonView(title: L10n.connect.stringValue) {
                 serverListRouter.route(to: \.connectToServer)
-            } label: {
-                ZStack {
-                    Rectangle()
-                        .foregroundColor(Color.jellyfinPurple)
-                        .frame(maxWidth: 400, maxHeight: 50)
-                        .frame(height: 50)
-                        .cornerRadius(10)
-                        .padding(.horizontal, 30)
-                        .padding([.top, .bottom], 20)
-
-                    L10n.connect.text
-                        .foregroundColor(Color.white)
-                        .bold()
-                }
             }
         }
     }

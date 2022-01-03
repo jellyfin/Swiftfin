@@ -64,8 +64,9 @@ final class HomeViewModel: ViewModel {
                 case .finished: ()
                 case .failure:
                     self.libraries = []
-                    self.handleAPIRequestError(completion: completion)
                 }
+                
+                self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
 
                 var newLibraries: [BaseItemDto] = []

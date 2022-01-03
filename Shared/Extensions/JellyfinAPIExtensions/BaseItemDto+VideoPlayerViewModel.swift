@@ -80,6 +80,8 @@ extension BaseItemDto {
                     hlsURL.addQueryItem(name: "SubtitleStreamIndex", value: "\(defaultSubtitleStream!.index!)")
                 }
                 
+                // MARK: VidoPlayerViewModel Creation
+                
                 var subtitle: String? = nil
                 
                 // TODO: other forms of media subtitle
@@ -89,34 +91,32 @@ extension BaseItemDto {
                     }
                 }
                 
+                let subtitlesEnabled = Defaults[.subtitlesEnabledIfDefault] && defaultSubtitleStream != nil
                 
-                // MARK: VidoPlayerViewModel Creation
+                let shouldShowAutoPlay = Defaults[.shouldShowAutoPlay] && itemType == .episode
+                let autoplayEnabled = Defaults[.autoplayEnabled] && shouldShowAutoPlay
                 
-                // TODO: show adjacent items
+                let overlayType = Defaults[.overlayType]
                 
-                let shouldShowAutoPlayNextItem = Defaults[.shouldShowAutoPlayNextItem] && itemType == .episode
-                let autoPlayNextItem = Defaults[.autoPlayNextItem]
+                let shouldShowPlayPreviousItem = Defaults[.shouldShowPlayPreviousItem] && itemType == .episode
+                let shouldShowPlayNextItem = Defaults[.shouldShowPlayNextItem] && itemType == .episode
                 
                 let videoPlayerViewModel = VideoPlayerViewModel(item: self,
-                                                                title: self.name!,
+                                                                title: self.name ?? "",
                                                                 subtitle: subtitle,
                                                                 streamURL: streamURL.url!,
                                                                 hlsURL: hlsURL.url!,
                                                                 response: response,
                                                                 audioStreams: audioStreams,
                                                                 subtitleStreams: subtitleStreams,
-                                                                defaultAudioStreamIndex: defaultAudioStream?.index ?? -1,
-                                                                defaultSubtitleStreamIndex: defaultSubtitleStream?.index ?? -1,
-                                                                playerState: .playing,
-                                                                shouldShowGoogleCast: false,
-                                                                shouldShowAirplay: false,
-                                                                subtitlesEnabled: defaultSubtitleStream?.index != nil,
-                                                                sliderPercentage: (self.userData?.playedPercentage ?? 0) / 100,
                                                                 selectedAudioStreamIndex: defaultAudioStream?.index ?? -1,
                                                                 selectedSubtitleStreamIndex: defaultSubtitleStream?.index ?? -1,
-                                                                showAdjacentItems: true,
-                                                                shouldShowAutoPlayNextItem: shouldShowAutoPlayNextItem,
-                                                                autoPlayNextItem: autoPlayNextItem)
+                                                                subtitlesEnabled: subtitlesEnabled,
+                                                                autoplayEnabled: autoplayEnabled,
+                                                                overlayType: overlayType,
+                                                                shouldShowPlayPreviousItem: shouldShowPlayPreviousItem,
+                                                                shouldShowPlayNextItem: shouldShowPlayNextItem,
+                                                                shouldShowAutoPlayNextItem: shouldShowAutoPlay)
                 
                 return videoPlayerViewModel
             })

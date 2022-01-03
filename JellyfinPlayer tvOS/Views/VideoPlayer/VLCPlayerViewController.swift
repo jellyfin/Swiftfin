@@ -1,9 +1,11 @@
 //
-//  PlayerViewController.swift
-//  JellyfinVideoPlayerDev
-//
-//  Created by Ethan Pippin on 11/12/21.
-//
+ /*
+  * SwiftFin is subject to the terms of the Mozilla Public
+  * License, v2.0. If a copy of the MPL was not distributed with this
+  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+  *
+  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+  */
 
 import AVKit
 import AVFoundation
@@ -203,7 +205,10 @@ class VLCPlayerViewController: UIViewController {
         case .upArrow:
            print("Up arrow")
         case .downArrow:
-           print("Down arrow")
+            stopOverlayDismissTimer()
+
+            hideOverlay()
+            showOverlayContent()
         case .leftArrow:
             didSelectBackward()
            print("Left arrow")
@@ -227,6 +232,8 @@ class VLCPlayerViewController: UIViewController {
     @objc private func didPressMenu() {
         if displayingOverlay {
             hideOverlay()
+        } else if displayingContentOverlay {
+            hideOverlayContent()
         } else {
             vlcMediaPlayer.pause()
             
@@ -294,6 +301,11 @@ class VLCPlayerViewController: UIViewController {
             currentOverlayContentHostingController.removeFromParent()
         }
         
+//        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(items: viewModel.subtitleStreams,
+//                                                                    selectedItem: viewModel.subtitleStreams.first(where: { $0.index == viewModel.selectedSubtitleStreamIndex })) { selectedMediaStream in
+//            self.didSelectSubtitleStream(index: selectedMediaStream.index ?? -1)
+//        }
+//        let newOverlayContentHostingController = UIHostingController(rootView: newSmallMenuOverlayView)
         let newOverlayContentView = tvOSOverlayContentView(viewModel: viewModel)
         let newOverlayContentHostingController = UIHostingController(rootView: newOverlayContentView)
         
@@ -452,6 +464,10 @@ extension VLCPlayerViewController {
         
         guard currentOverlayContentHostingController.view.alpha != 1 else { return }
         
+        currentOverlayContentHostingController.view.setNeedsFocusUpdate()
+        currentOverlayContentHostingController.setNeedsFocusUpdate()
+        setNeedsFocusUpdate()
+        
         UIView.animate(withDuration: 0.2) {
             currentOverlayContentHostingController.view.alpha = 1
         }
@@ -461,6 +477,8 @@ extension VLCPlayerViewController {
         guard let currentOverlayContentHostingController = currentOverlayContentHostingController else { return }
         
         guard currentOverlayContentHostingController.view.alpha != 0 else { return }
+        
+        setNeedsFocusUpdate()
         
         UIView.animate(withDuration: 0.2) {
             currentOverlayContentHostingController.view.alpha = 0
@@ -629,10 +647,10 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     
     // TODO: Implement properly in overlays
     func didSelectMenu() {
-//        stopOverlayDismissTimer()
-//
-//        hideOverlay()
-//        showOverlayContent()
+        stopOverlayDismissTimer()
+
+        hideOverlay()
+        showOverlayContent()
     }
     
     // TODO: Implement properly in overlays

@@ -1,9 +1,10 @@
-//
-//  VLCPlayerCompactOverlayView.swift
-//  JellyfinVideoPlayerDev
-//
-//  Created by Ethan Pippin on 12/26/21.
-//
+/*
+  * SwiftFin is subject to the terms of the Mozilla Public
+  * License, v2.0. If a copy of the MPL was not distributed with this
+  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+  *
+  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+  */
 
 import Combine
 import Defaults
@@ -12,11 +13,9 @@ import MobileVLCKit
 import Sliders
 import SwiftUI
 
-struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
+struct VLCPlayerOverlayView: View {
     
     @ObservedObject var viewModel: VideoPlayerViewModel
-    @Default(.videoPlayerJumpForward) var jumpForwardLength
-    @Default(.videoPlayerJumpBackward) var jumpBackwardLength
     
     @ViewBuilder
     private var mainButtonView: some View {
@@ -69,33 +68,19 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                         
                         HStack(spacing: 20) {
                             
-                            if viewModel.shouldShowGoogleCast {
+                            if viewModel.shouldShowPlayPreviousItem {
                                 Button {
-                                    viewModel.playerOverlayDelegate?.didSelectGoogleCast()
-                                } label: {
-                                    Image(systemName: "rectangle.badge.plus")
-                                }
-                            }
-                            
-                            if viewModel.shouldShowAirplay {
-                                Button {
-                                    viewModel.playerOverlayDelegate?.didSelectAirplay()
-                                } label: {
-                                    Image(systemName: "airplayvideo")
-                                }
-                            }
-                            
-                            if viewModel.showAdjacentItems {
-                                Button {
-                                    viewModel.playerOverlayDelegate?.didSelectPreviousItem()
+                                    viewModel.playerOverlayDelegate?.didSelectPlayPreviousItem()
                                 } label: {
                                     Image(systemName: "chevron.left.circle")
                                 }
                                 .disabled(viewModel.previousItemVideoPlayerViewModel == nil)
                                 .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
-                                
+                            }
+                            
+                            if viewModel.shouldShowPlayNextItem {
                                 Button {
-                                    viewModel.playerOverlayDelegate?.didSelectNextItem()
+                                    viewModel.playerOverlayDelegate?.didSelectPlayNextItem()
                                 } label: {
                                     Image(systemName: "chevron.right.circle")
                                 }
@@ -105,9 +90,9 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                             
                             if viewModel.shouldShowAutoPlayNextItem {
                                 Button {
-                                    viewModel.autoPlayNextItem.toggle()
+                                    viewModel.autoplayEnabled.toggle()
                                 } label: {
-                                    if viewModel.autoPlayNextItem {
+                                    if viewModel.autoplayEnabled {
                                         Image(systemName: "play.circle.fill")
                                     } else {
                                         Image(systemName: "play.circle")
@@ -117,7 +102,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                             
                             if !viewModel.subtitleStreams.isEmpty {
                                 Button {
-                                    viewModel.playerOverlayDelegate?.didSelectSubtitles()
+                                    viewModel.subtitlesEnabled.toggle()
                                 } label: {
                                     if viewModel.subtitlesEnabled {
                                         Image(systemName: "captions.bubble.fill")
@@ -192,9 +177,9 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                 Menu {
                                     ForEach(VideoPlayerJumpLength.allCases, id: \.self) { forwardLength in
                                         Button {
-                                            jumpForwardLength = forwardLength
+                                            viewModel.jumpForwardLength = forwardLength
                                         } label: {
-                                            if forwardLength == jumpForwardLength {
+                                            if forwardLength == viewModel.jumpForwardLength {
                                                 Label(forwardLength.shortLabel, systemImage: "checkmark")
                                             } else {
                                                 Text(forwardLength.shortLabel)
@@ -211,9 +196,9 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                                 Menu {
                                     ForEach(VideoPlayerJumpLength.allCases, id: \.self) { backwardLength in
                                         Button {
-                                            jumpBackwardLength = backwardLength
+                                            viewModel.jumpBackwardLength = backwardLength
                                         } label: {
-                                            if backwardLength == jumpBackwardLength {
+                                            if backwardLength == viewModel.jumpBackwardLength {
                                                 Label(backwardLength.shortLabel, systemImage: "checkmark")
                                             } else {
                                                 Text(backwardLength.shortLabel)
@@ -247,6 +232,11 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                 }
             }
             
+            // MARK: Center
+            
+            Spacer()
+            
+            
             Spacer()
             
             // MARK: Bottom Bar
@@ -264,7 +254,7 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                         Button {
                             viewModel.playerOverlayDelegate?.didSelectBackward()
                         } label: {
-                            Image(systemName: jumpBackwardLength.backwardImageLabel)
+                            Image(systemName: viewModel.jumpBackwardLength.backwardImageLabel)
                                 .padding(.horizontal, 5)
                         }
                         
@@ -279,12 +269,11 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
                         Button {
                             viewModel.playerOverlayDelegate?.didSelectForward()
                         } label: {
-                            Image(systemName: jumpForwardLength.forwardImageLabel)
+                            Image(systemName: viewModel.jumpForwardLength.forwardImageLabel)
                                 .padding(.horizontal, 5)
                         }
                     }
                     .font(.system(size: 24, weight: .semibold, design: .default))
-//                    .padding(.trailing, 10)
                     
                     Text(viewModel.leftLabelText)
                         .font(.system(size: 18, weight: .semibold, design: .default))
@@ -332,32 +321,43 @@ struct VLCPlayerCompactOverlayView: View, VideoPlayerOverlay {
 }
 
 struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
+    
+    static let videoPlayerViewModel = VideoPlayerViewModel(item: BaseItemDto(),
+                                                    title: "Glorious Purpose",
+                                                    subtitle: "Loki - S1E1",
+                                                    streamURL: URL(string: "www.apple.com")!,
+                                                    hlsURL: URL(string: "www.apple.com")!,
+                                                    response: PlaybackInfoResponse(),
+                                                    audioStreams: [MediaStream(displayTitle: "English", index: -1)],
+                                                    subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
+                                                    selectedAudioStreamIndex: -1,
+                                                    selectedSubtitleStreamIndex: -1,
+                                                    subtitlesEnabled: true,
+                                                    autoplayEnabled: false,
+                                                    overlayType: .compact,
+                                                    shouldShowPlayPreviousItem: true,
+                                                    shouldShowPlayNextItem: true,
+                                                    shouldShowAutoPlayNextItem: true)
+    
     static var previews: some View {
         ZStack {
             Color.red
                 .ignoresSafeArea()
             
-            VLCPlayerCompactOverlayView(viewModel: VideoPlayerViewModel(item: BaseItemDto(runTimeTicks: 720 * 10_000_000),
-                                                                        title: "Glorious Purpose",
-                                                                        subtitle: "Loki - S1E1",
-                                                                        streamURL: URL(string: "www.apple.com")!,
-                                                                        hlsURL: URL(string: "www.apple.com")!,
-                                                                        response: PlaybackInfoResponse(),
-                                                                        audioStreams: [MediaStream(displayTitle: "English", index: -1)],
-                                                                        subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
-                                                                        defaultAudioStreamIndex: -1,
-                                                                        defaultSubtitleStreamIndex: -1,
-                                                                        playerState: .playing,
-                                                                        shouldShowGoogleCast: false,
-                                                                        shouldShowAirplay: false,
-                                                                        subtitlesEnabled: true,
-                                                                        sliderPercentage: 0.432,
-                                                                        selectedAudioStreamIndex: -1,
-                                                                        selectedSubtitleStreamIndex: -1,
-                                                                        showAdjacentItems: true,
-                                                                        shouldShowAutoPlayNextItem: true,
-                                                                        autoPlayNextItem: true))
+            VLCPlayerOverlayView(viewModel: videoPlayerViewModel)
         }
         .previewInterfaceOrientation(.landscapeLeft)
     }
+}
+
+// MARK: TitleSubtitleAlignment
+extension HorizontalAlignment {
+    
+    private struct TitleSubtitleAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[HorizontalAlignment.leading]
+        }
+    }
+
+    static let EpisodeSeriesAlignmentGuide = HorizontalAlignment(TitleSubtitleAlignment.self)
 }

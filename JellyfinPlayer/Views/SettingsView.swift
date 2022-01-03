@@ -23,7 +23,6 @@ struct SettingsView: View {
     @Default(.appAppearance) var appAppearance
     @Default(.videoPlayerJumpForward) var jumpForwardLength
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
-    @Default(.nativeVideoPlayer) var nativeVideoPlayer
 
     var body: some View {
         Form {
@@ -83,8 +82,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section(header: Text("Playback")) {
-                Toggle("Native Player", isOn: $nativeVideoPlayer)
+            Section(header: Text("Networking")) {
                 Picker("Default local quality", selection: $inNetworkStreamBitrate) {
                     ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
                         Text(bitrate.name).tag(bitrate.value)
@@ -96,43 +94,45 @@ struct SettingsView: View {
                         Text(bitrate.name).tag(bitrate.value)
                     }
                 }
-
+            }
+            
+            Section(header: Text("Video Player")) {
                 Picker("Jump Forward Length", selection: $jumpForwardLength) {
-                    ForEach(self.viewModel.videoPlayerJumpLengths, id: \.self) { length in
+                    ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
                         Text(length.label).tag(length.rawValue)
                     }
                 }
 
                 Picker("Jump Backward Length", selection: $jumpBackwardLength) {
-                    ForEach(self.viewModel.videoPlayerJumpLengths, id: \.self) { length in
+                    ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
                         Text(length.label).tag(length.rawValue)
                     }
                 }
             }
 
             Section(header: L10n.accessibility.text) {
-                Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
-                SearchablePicker(label: "Preferred subtitle language",
-                                 options: viewModel.langs,
-                                 optionToString: { $0.name },
-                                 selected: Binding<TrackLanguage>(get: {
-                                                                      viewModel.langs
-                                                                          .first(where: { $0.isoCode == autoSelectSubtitlesLangcode
-                                                                          }) ??
-                                                                          .auto
-                                                                  },
-                                                                  set: { autoSelectSubtitlesLangcode = $0.isoCode }))
-                SearchablePicker(label: "Preferred audio language",
-                                 options: viewModel.langs,
-                                 optionToString: { $0.name },
-                                 selected: Binding<TrackLanguage>(get: {
-                                                                      viewModel.langs
-                                                                          .first(where: { $0.isoCode == autoSelectAudioLangcode }) ??
-                                                                          .auto
-                                                                  },
-                                                                  set: { autoSelectAudioLangcode = $0.isoCode }))
+//                Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
+//                SearchablePicker(label: "Preferred subtitle language",
+//                                 options: viewModel.langs,
+//                                 optionToString: { $0.name },
+//                                 selected: Binding<TrackLanguage>(get: {
+//                                                                      viewModel.langs
+//                                                                          .first(where: { $0.isoCode == autoSelectSubtitlesLangcode
+//                                                                          }) ??
+//                                                                          .auto
+//                                                                  },
+//                                                                  set: { autoSelectSubtitlesLangcode = $0.isoCode }))
+//                SearchablePicker(label: "Preferred audio language",
+//                                 options: viewModel.langs,
+//                                 optionToString: { $0.name },
+//                                 selected: Binding<TrackLanguage>(get: {
+//                                                                      viewModel.langs
+//                                                                          .first(where: { $0.isoCode == autoSelectAudioLangcode }) ??
+//                                                                          .auto
+//                                                                  },
+//                                                                  set: { autoSelectAudioLangcode = $0.isoCode }))
                 Picker(L10n.appearance, selection: $appAppearance) {
-                    ForEach(self.viewModel.appearances, id: \.self) { appearance in
+                    ForEach(AppAppearance.allCases, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)
                     }
                 }

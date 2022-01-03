@@ -27,7 +27,7 @@ class ViewModel: ObservableObject {
     func handleAPIRequestError(displayMessage: String? = nil, logLevel: LogLevel = .error, tag: String = "", function: String = #function, file: String = #file, line: UInt = #line, completion: Subscribers.Completion<Error>) {
         switch completion {
         case .finished:
-            break
+            self.errorMessage = nil
         case .failure(let error):
             let logConstructor = LogConstructor(message: "__NOTHING__", tag: tag, level: logLevel, function: function, file: file, line: line)
 

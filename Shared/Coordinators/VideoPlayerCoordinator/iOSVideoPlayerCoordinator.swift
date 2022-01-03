@@ -19,7 +19,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     @Root var start = makeStart
 
-    @Default(.nativeVideoPlayer) var nativeVideoPlayer
     let viewModel: VideoPlayerViewModel
 
     init(viewModel: VideoPlayerViewModel) {
@@ -27,24 +26,13 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder func makeStart() -> some View {
-        if nativeVideoPlayer {
-            PreferenceUIHostingControllerView {
-                NativePlayerView(viewModel: self.viewModel)
-                    .navigationBarHidden(true)
-                    .statusBar(hidden: true)
-                    .ignoresSafeArea()
-                    .prefersHomeIndicatorAutoHidden(true)
-                    .supportedOrientations(.landscape)
-            }.ignoresSafeArea()
-        } else {
-            PreferenceUIHostingControllerView {
-                VLCPlayerView(viewModel: self.viewModel)
-                    .navigationBarHidden(true)
-                    .statusBar(hidden: true)
-                    .ignoresSafeArea()
-                    .prefersHomeIndicatorAutoHidden(true)
-                    .supportedOrientations(.landscape)
-            }.ignoresSafeArea()
-        }
+        PreferenceUIHostingControllerView {
+            VLCPlayerView(viewModel: self.viewModel)
+                .navigationBarHidden(true)
+                .statusBar(hidden: true)
+                .ignoresSafeArea()
+                .prefersHomeIndicatorAutoHidden(true)
+                .supportedOrientations(.landscape)
+        }.ignoresSafeArea()
     }
 }

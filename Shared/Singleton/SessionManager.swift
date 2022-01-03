@@ -31,7 +31,7 @@ final class SessionManager {
 
     // MARK: init
     private init() {
-        if let lastUserID = SwiftfinStore.Defaults.suite[.lastServerUserID],
+        if let lastUserID = Defaults[.lastServerUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
                                                             [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)]) {
 
@@ -64,7 +64,7 @@ final class SessionManager {
         var uriComponents = URLComponents(string: uri) ?? URLComponents()
 
         if uriComponents.scheme == nil {
-            uriComponents.scheme = SwiftfinStore.Defaults.suite[.defaultHTTPScheme].rawValue
+            uriComponents.scheme = Defaults[.defaultHTTPScheme].rawValue
         }
 
         var uri = uriComponents.string ?? ""
@@ -216,7 +216,7 @@ final class SessionManager {
                 let currentServer = SwiftfinStore.dataStack.fetchExisting(server)!
                 let currentUser = SwiftfinStore.dataStack.fetchExisting(user)!
 
-                SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
+                Defaults[.lastServerUserID] = user.id
 
                 currentLogin = (server: currentServer.state, user: currentUser.state)
                 SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
@@ -230,7 +230,7 @@ final class SessionManager {
     // MARK: loginUser
     func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
         JellyfinAPI.basePath = server.currentURI
-        SwiftfinStore.Defaults.suite[.lastServerUserID] = user.id
+        Defaults[.lastServerUserID] = user.id
         setAuthHeader(with: user.accessToken)
         currentLogin = (server: server, user: user)
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
@@ -241,7 +241,7 @@ final class SessionManager {
         currentLogin = nil
         JellyfinAPI.basePath = ""
         setAuthHeader(with: "")
-        SwiftfinStore.Defaults.suite[.lastServerUserID] = nil
+        Defaults[.lastServerUserID] = nil
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
     }
 
@@ -254,8 +254,8 @@ final class SessionManager {
             delete(server: server)
         }
 
-        // Delete UserDefaults
-        SwiftfinStore.Defaults.suite.removeAll()
+        // Delete general UserDefaults
+        SwiftfinStore.Defaults.generalSuite.removeAll()
 
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
     }

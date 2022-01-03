@@ -20,8 +20,33 @@ struct HomeView: View {
 
     @ViewBuilder
     var innerBody: some View {
-        if viewModel.isLoading {
+        if let errorMessage = viewModel.errorMessage {
+            VStack(spacing: 5) {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(width: 100, height: 100)
+                        .scaleEffect(2)
+                } else {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 72))
+                        .foregroundColor(Color.red)
+                        .frame(width: 100, height: 100)
+                }
+                
+                Text("\(errorMessage.code)")
+                Text(errorMessage.displayMessage)
+                    .frame(minWidth: 50, maxWidth: 240)
+                    .multilineTextAlignment(.center)
+                
+                PrimaryButtonView(title: "Retry") {
+                    viewModel.refresh()
+                }
+            }
+            .offset(y: -50)
+        } else if viewModel.isLoading {
             ProgressView()
+                .frame(width: 100, height: 100)
+                .scaleEffect(2)
         } else {
             ScrollView {
                 VStack(alignment: .leading) {

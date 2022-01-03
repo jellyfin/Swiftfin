@@ -122,6 +122,7 @@ struct EpisodeItemView: View {
                             .foregroundColor(.primary)
                         
                         MediaPlayButtonRowView(viewModel: viewModel)
+                            .environmentObject(itemRouter)
                     }
                 }.padding(.top, 50)
 

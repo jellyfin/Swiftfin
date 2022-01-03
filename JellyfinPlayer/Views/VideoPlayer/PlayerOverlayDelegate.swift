@@ -1,18 +1,17 @@
 //
-//  PlayerOverlayDelegate.swift
-//  JellyfinVideoPlayerDev
-//
-//  Created by Ethan Pippin on 12/27/21.
-//
+ /*
+  * SwiftFin is subject to the terms of the Mozilla Public
+  * License, v2.0. If a copy of the MPL was not distributed with this
+  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+  *
+  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+  */
 
 import Foundation
 
 protocol PlayerOverlayDelegate {
     
     func didSelectClose()
-    func didSelectGoogleCast()
-    func didSelectAirplay()
-    func didSelectSubtitles()
     func didSelectMenu()
     func didDeselectMenu()
     
@@ -28,6 +27,6 @@ protocol PlayerOverlayDelegate {
     func didSelectAudioStream(index: Int)
     func didSelectSubtitleStream(index: Int)
     
-    func didSelectPreviousItem()
-    func didSelectNextItem()
+    func didSelectPlayPreviousItem()
+    func didSelectPlayNextItem()
 }

@@ -1,9 +1,11 @@
 //
-//  VideoPlayerViewModel.swift
-//  JellyfinVideoPlayerDev
-//
-//  Created by Ethan Pippin on 11/12/21.
-//
+ /*
+  * SwiftFin is subject to the terms of the Mozilla Public
+  * License, v2.0. If a copy of the MPL was not distributed with this
+  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
+  *
+  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
+  */
 
 import Combine
 import Defaults
@@ -19,71 +21,59 @@ import MobileVLCKit
 
 final class VideoPlayerViewModel: ViewModel {
     
+    // MARK: Published
+    
     // Manually kept state because VLCKit doesn't properly set "played"
     // on the VLCMediaPlayer object
-    @Published var playerState: VLCMediaPlayerState
-    @Published var shouldShowGoogleCast: Bool
-    @Published var shouldShowAirplay: Bool
-    @Published var subtitlesEnabled: Bool {
-        didSet {
-            if subtitlesEnabled != oldValue {
-                previousItemVideoPlayerViewModel?.matchSubtitlesEnabled(with: self)
-                nextItemVideoPlayerViewModel?.matchSubtitlesEnabled(with: self)
-            }
-        }
-    }
+    @Published var playerState: VLCMediaPlayerState = .buffering
     @Published var leftLabelText: String = "--:--"
     @Published var rightLabelText: String = "--:--"
     @Published var playbackSpeed: PlaybackSpeed = .one
-    @Published var sliderPercentage: Double {
+    @Published var subtitlesEnabled: Bool
+    @Published var selectedAudioStreamIndex: Int
+    @Published var selectedSubtitleStreamIndex: Int
+    @Published var previousItemVideoPlayerViewModel: VideoPlayerViewModel?
+    @Published var nextItemVideoPlayerViewModel: VideoPlayerViewModel?
+    @Published var jumpBackwardLength: VideoPlayerJumpLength
+    @Published var jumpForwardLength: VideoPlayerJumpLength
+    @Published var sliderIsScrubbing: Bool = false
+    @Published var sliderPercentage: Double = 0 {
         willSet {
             sliderScrubbingSubject.send(self)
             sliderPercentageChanged(newValue: newValue)
         }
     }
-    @Published var sliderIsScrubbing: Bool = false
-    @Published var selectedAudioStreamIndex: Int {
-        didSet {
-            previousItemVideoPlayerViewModel?.matchAudioStream(with: self)
-            nextItemVideoPlayerViewModel?.matchAudioStream(with: self)
-        }
-    }
-    @Published var selectedSubtitleStreamIndex: Int {
-        didSet {
-            previousItemVideoPlayerViewModel?.matchSubtitleStream(with:  self)
-            nextItemVideoPlayerViewModel?.matchSubtitleStream(with: self)
-        }
-    }
-    @Published var showAdjacentItems: Bool
-    @Published var shouldShowAutoPlayNextItem: Bool {
+    @Published var autoplayEnabled: Bool {
         willSet {
-            Defaults[.shouldShowAutoPlayNextItem] = newValue
+            Defaults[.autoplayEnabled] = newValue
         }
     }
-    @Published var autoPlayNextItem: Bool {
-        willSet {
-            Defaults[.autoPlayNextItem] = newValue
-        }
-    }
-    @Published var previousItemVideoPlayerViewModel: VideoPlayerViewModel?
-    @Published var nextItemVideoPlayerViewModel: VideoPlayerViewModel?
     
+    // MARK: ShouldShowItems
+    
+    let shouldShowPlayPreviousItem: Bool
+    let shouldShowPlayNextItem: Bool
+    let shouldShowAutoPlayNextItem: Bool
+    
+    // MARK: General
     let item: BaseItemDto
     let title: String
     let subtitle: String?
     let streamURL: URL
     let hlsURL: URL
-    // Full response kept for convenience
-    let response: PlaybackInfoResponse
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
-    let defaultAudioStreamIndex: Int
-    let defaultSubtitleStreamIndex: Int
+    let overlayType: OverlayType
+    
+    // Full response kept for convenience
+    let response: PlaybackInfoResponse
     
     var playerOverlayDelegate: PlayerOverlayDelegate?
     
-    // Ticks of the time the media has begun
-    var startTimeTicks: Int64?
+    // Ticks of the time the media began playing
+    private var startTimeTicks: Int64 = 0
+    
+    // MARK: Current Time
     
     var currentSeconds: Double {
         let videoDuration = Double(item.runTimeTicks! / 10_000_000)
@@ -107,18 +97,16 @@ final class VideoPlayerViewModel: ViewModel {
          response: PlaybackInfoResponse,
          audioStreams: [MediaStream],
          subtitleStreams: [MediaStream],
-         defaultAudioStreamIndex: Int,
-         defaultSubtitleStreamIndex: Int,
-         playerState: VLCMediaPlayerState,
-         shouldShowGoogleCast: Bool,
-         shouldShowAirplay: Bool,
-         subtitlesEnabled: Bool,
-         sliderPercentage: Double,
          selectedAudioStreamIndex: Int,
          selectedSubtitleStreamIndex: Int,
-         showAdjacentItems: Bool,
-         shouldShowAutoPlayNextItem: Bool,
-         autoPlayNextItem: Bool) {
+         subtitlesEnabled: Bool,
+         autoplayEnabled: Bool,
+         overlayType: OverlayType,
+         shouldShowPlayPreviousItem: Bool,
+         shouldShowPlayNextItem: Bool,
+         shouldShowAutoPlayNextItem: Bool
+         
+         ) {
         self.item = item
         self.title = title
         self.subtitle = subtitle
@@ -127,26 +115,21 @@ final class VideoPlayerViewModel: ViewModel {
         self.response = response
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
-        self.defaultAudioStreamIndex = defaultAudioStreamIndex
-        self.defaultSubtitleStreamIndex = defaultSubtitleStreamIndex
-        self.playerState = playerState
-        self.shouldShowGoogleCast = shouldShowGoogleCast
-        self.shouldShowAirplay = shouldShowAirplay
-        self.subtitlesEnabled = subtitlesEnabled
-        self.sliderPercentage = sliderPercentage
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
-        self.showAdjacentItems = showAdjacentItems
+        self.subtitlesEnabled = subtitlesEnabled
+        self.autoplayEnabled = autoplayEnabled
+        self.overlayType = overlayType
+        self.shouldShowPlayPreviousItem = shouldShowPlayPreviousItem
+        self.shouldShowPlayNextItem = shouldShowPlayNextItem
         self.shouldShowAutoPlayNextItem = shouldShowAutoPlayNextItem
-        self.autoPlayNextItem = autoPlayNextItem
+        
+        self.jumpBackwardLength = Defaults[.videoPlayerJumpBackward]
+        self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
         
         super.init()
         
-        self.sliderPercentageChanged(newValue: (item.userData?.playedPercentage ?? 0) / 100)
-        
-        if item.itemType != .episode {
-            self.showAdjacentItems = false
-        }
+        self.sliderPercentage = (item.userData?.playedPercentage ?? 0) / 100
     }
     
     private func sliderPercentageChanged(newValue: Double) {
