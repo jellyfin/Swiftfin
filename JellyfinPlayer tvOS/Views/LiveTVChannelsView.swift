@@ -12,16 +12,15 @@ import JellyfinAPI
 import SwiftUI
 import SwiftUICollection
 
-
 struct LiveTVChannelsView: View {
     @EnvironmentObject var router: LiveTVChannelsCoordinator.Router
     @StateObject var viewModel = LiveTVChannelsViewModel()
-    
+
     var body: some View {
         if viewModel.isLoading == true {
             ProgressView()
         } else if !viewModel.rows.isEmpty {
-            CollectionView(rows: viewModel.rows) { section, env in
+            CollectionView(rows: viewModel.rows) { _, _ in
                 return createGridLayout()
             } cell: { indexPath, cell in
                 makeCellView(indexPath: indexPath, cell: cell)
@@ -48,7 +47,7 @@ struct LiveTVChannelsView: View {
             }
         }
     }
-    
+
     @ViewBuilder func makeCellView(indexPath: IndexPath, cell: LiveTVChannelRowCell) -> some View {
         let item = cell.item
         let channel = item.channel
@@ -67,7 +66,7 @@ struct LiveTVChannelsView: View {
             .buttonStyle(PlainNavigationLinkButtonStyle())
         }
     }
-    
+
     private func createGridLayout() -> NSCollectionLayoutSection {
         // I don't know why tvOS has a margin on the sides of a collection view
         // But it does, even with contentInset = .zero and ignoreSafeArea. 
@@ -82,10 +81,9 @@ struct LiveTVChannelsView: View {
             trailing: .fixed(8),
             bottom: .fixed(8)
         )
-        
-        
+
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension:  .absolute(itemWidth))
+                                               heightDimension: .absolute(itemWidth))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
                                                        subitems: [item])
         group.edgeSpacing = .init(
@@ -95,12 +93,11 @@ struct LiveTVChannelsView: View {
             bottom: .fixed(16)
         )
         group.contentInsets = .zero
-        
-        
+
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .zero
 
         return section
     }
-    
+
 }

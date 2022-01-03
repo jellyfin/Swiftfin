@@ -25,7 +25,7 @@ struct LiveTVChannelProgram: Hashable {
 }
 
 final class LiveTVChannelsViewModel: ViewModel {
-    
+
     @Published var channels = [BaseItemDto]()
     @Published var channelPrograms = [LiveTVChannelProgram]() {
         didSet {
@@ -37,41 +37,41 @@ final class LiveTVChannelsViewModel: ViewModel {
         }
     }
     @Published var rows = [LiveTVChannelRow]()
-    
+
     private var programs = [BaseItemDto]()
     private var channelProgramsList = [BaseItemDto: [BaseItemDto]]()
     private var timer: Timer?
-    
+
     var timeFormatter: DateFormatter {
         let df = DateFormatter()
         df.dateFormat = "h:mm"
         return df
     }
-    
+
     override init() {
         super.init()
-        
+
         getChannels()
         startScheduleCheckTimer()
     }
-    
+
     deinit {
         stopScheduleCheckTimer()
     }
-    
+
     private func getGuideInfo() {
         LiveTvAPI.getGuideInfo()
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
+            }, receiveValue: { [weak self] _ in
                 LogManager.shared.log.debug("Received Guide Info")
                 guard let self = self else { return }
                 self.getChannels()
             })
             .store(in: &cancellables)
     }
-    
+
     func getChannels() {
         LiveTvAPI.getLiveTvChannels(
             userId: SessionManager.main.currentLogin.user.id,
@@ -92,7 +92,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             })
             .store(in: &cancellables)
     }
-    
+
     private func getPrograms() {
         // http://192.168.1.50:8096/LiveTv/Programs
         guard channels.count > 0 else {
@@ -100,10 +100,10 @@ final class LiveTVChannelsViewModel: ViewModel {
             return
         }
         let channelIds = channels.compactMap { $0.id }
-        
+
         let minEndDate = Date.now.addComponentsToDate(hours: -1)
         let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
-        
+
         let getProgramsDto = GetProgramsDto(
             channelIds: channelIds,
             userId: SessionManager.main.currentLogin.user.id,
@@ -116,7 +116,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             enableImageTypes: [.primary],
             enableUserData: false
         )
-        
+
         LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
@@ -129,7 +129,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             })
             .store(in: &cancellables)
     }
-    
+
     private func processChannelPrograms() -> [LiveTVChannelProgram] {
         var channelPrograms = [LiveTVChannelProgram]()
         let now = Date()
@@ -140,7 +140,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             DispatchQueue.main.async {
                 self.channelProgramsList[channel] = prgs
             }
-            
+
             var currentPrg: BaseItemDto?
             for prg in prgs {
                 if let startDate = prg.startDate,
@@ -150,28 +150,28 @@ final class LiveTVChannelsViewModel: ViewModel {
                     currentPrg = prg
                 }
             }
-            
+
             channelPrograms.append(LiveTVChannelProgram(channel: channel, program: currentPrg))
         }
         return channelPrograms
     }
-    
+
     func startScheduleCheckTimer() {
         let date = Date()
         let calendar = Calendar.current
         var components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute], from: date)
-        
+
         // Run on 10th min of every hour
         guard let minute = components.minute else { return }
         components.second = 0
         components.minute = minute + (10 - (minute % 10))
-        
+
         guard let nextMinute = calendar.date(from: components) else { return }
-        
+
         if let existingTimer = timer {
             existingTimer.invalidate()
         }
-        timer = Timer(fire: nextMinute, interval: 60 * 10, repeats: true) { [weak self] timer in
+        timer = Timer(fire: nextMinute, interval: 60 * 10, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             LogManager.shared.log.debug("LiveTVChannels schedule check...")
             DispatchQueue.global(qos: .background).async {
@@ -185,7 +185,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             RunLoop.main.add(timer, forMode: .default)
         }
     }
-    
+
     func stopScheduleCheckTimer() {
         timer?.invalidate()
     }
@@ -216,7 +216,7 @@ extension Date {
         }
         return Calendar.current.date(byAdding: dc, to: self)!
     }
-    
+
     func midnightUTCDate() -> Date {
         var dc: DateComponents = Calendar.current.dateComponents([.year, .month, .day], from: self)
         dc.hour = 0
