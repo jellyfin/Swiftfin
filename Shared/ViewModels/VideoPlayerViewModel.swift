@@ -53,7 +53,7 @@ final class VideoPlayerViewModel: ViewModel {
     
     let shouldShowPlayPreviousItem: Bool
     let shouldShowPlayNextItem: Bool
-    let shouldShowAutoPlayNextItem: Bool
+    let shouldShowAutoPlay: Bool
     
     // MARK: General
     let item: BaseItemDto
@@ -104,9 +104,7 @@ final class VideoPlayerViewModel: ViewModel {
          overlayType: OverlayType,
          shouldShowPlayPreviousItem: Bool,
          shouldShowPlayNextItem: Bool,
-         shouldShowAutoPlayNextItem: Bool
-         
-         ) {
+         shouldShowAutoPlay: Bool) {
         self.item = item
         self.title = title
         self.subtitle = subtitle
@@ -122,7 +120,7 @@ final class VideoPlayerViewModel: ViewModel {
         self.overlayType = overlayType
         self.shouldShowPlayPreviousItem = shouldShowPlayPreviousItem
         self.shouldShowPlayNextItem = shouldShowPlayNextItem
-        self.shouldShowAutoPlayNextItem = shouldShowAutoPlayNextItem
+        self.shouldShowAutoPlay = shouldShowAutoPlay
         
         self.jumpBackwardLength = Defaults[.videoPlayerJumpBackward]
         self.jumpForwardLength = Defaults[.videoPlayerJumpForward]

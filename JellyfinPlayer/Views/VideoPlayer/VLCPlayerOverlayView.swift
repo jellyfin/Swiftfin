@@ -88,7 +88,7 @@ struct VLCPlayerOverlayView: View {
                                 .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
                             }
                             
-                            if viewModel.shouldShowAutoPlayNextItem {
+                            if viewModel.shouldShowAutoPlay {
                                 Button {
                                     viewModel.autoplayEnabled.toggle()
                                 } label: {
@@ -337,7 +337,7 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
                                                     overlayType: .compact,
                                                     shouldShowPlayPreviousItem: true,
                                                     shouldShowPlayNextItem: true,
-                                                    shouldShowAutoPlayNextItem: true)
+                                                    shouldShowAutoPlay: true)
     
     static var previews: some View {
         ZStack {

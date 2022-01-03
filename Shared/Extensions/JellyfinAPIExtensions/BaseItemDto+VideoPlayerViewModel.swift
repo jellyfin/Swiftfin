@@ -116,7 +116,7 @@ extension BaseItemDto {
                                                                 overlayType: overlayType,
                                                                 shouldShowPlayPreviousItem: shouldShowPlayPreviousItem,
                                                                 shouldShowPlayNextItem: shouldShowPlayNextItem,
-                                                                shouldShowAutoPlayNextItem: shouldShowAutoPlay)
+                                                                shouldShowAutoPlay: shouldShowAutoPlay)
                 
                 return videoPlayerViewModel
             })

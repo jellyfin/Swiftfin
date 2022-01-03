@@ -75,7 +75,7 @@ struct tvOSOverlayContentView_Previews: PreviewProvider {
                                                     overlayType: .compact,
                                                     shouldShowPlayPreviousItem: true,
                                                     shouldShowPlayNextItem: true,
-                                                    shouldShowAutoPlayNextItem: true)
+                                                    shouldShowAutoPlay: true)
     
     static var previews: some View {
         ZStack {

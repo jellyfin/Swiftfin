@@ -55,7 +55,6 @@ struct tvOSVLCOverlay: View {
 
                     Spacer()
                     
-                    
                     if viewModel.shouldShowPlayPreviousItem {
                         SFSymbolButton(systemName: "chevron.left.circle", action: {
                             viewModel.playerOverlayDelegate?.didSelectPlayPreviousItem()
@@ -72,6 +71,18 @@ struct tvOSVLCOverlay: View {
                         .frame(maxWidth: 30, maxHeight: 30)
                         .disabled(viewModel.nextItemVideoPlayerViewModel == nil)
                         .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+                    }
+                    
+                    if viewModel.shouldShowAutoPlay {
+                        Button {
+                            viewModel.autoplayEnabled.toggle()
+                        } label: {
+                            if viewModel.autoplayEnabled {
+                                Image(systemName: "play.circle.fill")
+                            } else {
+                                Image(systemName: "stop.circle")
+                            }
+                        }
                     }
                     
                     if !viewModel.subtitleStreams.isEmpty {
@@ -140,7 +151,7 @@ struct tvOSVLCOverlay_Previews: PreviewProvider {
                                                     overlayType: .compact,
                                                     shouldShowPlayPreviousItem: true,
                                                     shouldShowPlayNextItem: true,
-                                                    shouldShowAutoPlayNextItem: true)
+                                                    shouldShowAutoPlay: true)
     
     static var previews: some View {
         ZStack {
