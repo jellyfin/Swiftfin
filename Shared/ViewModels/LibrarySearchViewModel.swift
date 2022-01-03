@@ -11,6 +11,7 @@ import Combine
 import CombineExt
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
 final class LibrarySearchViewModel: ViewModel {
 
@@ -42,8 +43,7 @@ final class LibrarySearchViewModel: ViewModel {
     }
 
     func setupPublishersForSupportedItemType() {
-
-        let supportedItemTypeListPublishers = Publishers.CombineLatest3($movieItems, $showItems, $episodeItems)
+        Publishers.CombineLatest3($movieItems, $showItems, $episodeItems)
             .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .map { arg -> [ItemType] in
                 var typeList = [ItemType]()
@@ -58,21 +58,29 @@ final class LibrarySearchViewModel: ViewModel {
                 }
                 return typeList
             }
-
-        supportedItemTypeListPublishers
-            .assign(to: \.supportedItemTypeList, on: self)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] typeList in
+                withAnimation {
+                    self?.supportedItemTypeList = typeList
+                }
+            })
             .store(in: &cancellables)
 
-        supportedItemTypeListPublishers
-            .withLatestFrom(supportedItemTypeListPublishers, $selectedItemType)
-            .compactMap { typeList, selectedItemType in
-                if typeList.contains(selectedItemType) {
+        $supportedItemTypeList
+            .receive(on: DispatchQueue.main)
+            .withLatestFrom($selectedItemType)
+            .compactMap { selectedItemType in
+                if self.supportedItemTypeList.contains(selectedItemType) {
                     return selectedItemType
                 } else {
-                    return typeList.first
+                    return self.supportedItemTypeList.first
                 }
             }
-            .assign(to: \.selectedItemType, on: self)
+            .sink(receiveValue: { [weak self] itemType in
+                withAnimation {
+                    self?.selectedItemType = itemType
+                }
+            })
             .store(in: &cancellables)
     }
 
@@ -87,6 +95,7 @@ final class LibrarySearchViewModel: ViewModel {
                                   enableTotalRecordCount: false,
                                   enableImages: false)
             .trackActivity(loading)
+            .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
@@ -99,8 +108,10 @@ final class LibrarySearchViewModel: ViewModel {
         ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
                                   sortOrder: [.ascending], parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-                                  includeItemTypes: [ItemType.movie.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)
+                                  includeItemTypes: [ItemType.movie.rawValue], sortBy: ["SortName"], enableUserData: true,
+                                  enableImages: true)
             .trackActivity(loading)
+            .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
@@ -110,8 +121,10 @@ final class LibrarySearchViewModel: ViewModel {
         ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
                                   sortOrder: [.ascending], parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-                                  includeItemTypes: [ItemType.series.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)
+                                  includeItemTypes: [ItemType.series.rawValue], sortBy: ["SortName"], enableUserData: true,
+                                  enableImages: true)
             .trackActivity(loading)
+            .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
@@ -121,8 +134,10 @@ final class LibrarySearchViewModel: ViewModel {
         ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
                                   sortOrder: [.ascending], parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-                                  includeItemTypes: [ItemType.episode.rawValue], sortBy: ["SortName"], enableUserData: true, enableImages: true)
+                                  includeItemTypes: [ItemType.episode.rawValue], sortBy: ["SortName"], enableUserData: true,
+                                  enableImages: true)
             .trackActivity(loading)
+            .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
