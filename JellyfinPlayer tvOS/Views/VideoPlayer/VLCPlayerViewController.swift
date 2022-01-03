@@ -27,7 +27,7 @@ class VLCPlayerViewController: UIViewController {
     private var vlcMediaPlayer = VLCMediaPlayer()
     private var lastPlayerTicks: Int64 = 0
     private var lastProgressReportTicks: Int64 = 0
-    private var viewModelReactCancellables = Set<AnyCancellable>()
+    private var viewModelListeners = Set<AnyCancellable>()
     private var overlayDismissTimer: Timer?
     
     private var currentPlayerTicks: Int64 {
@@ -40,14 +40,6 @@ class VLCPlayerViewController: UIViewController {
     
     private var displayingContentOverlay: Bool {
         return currentOverlayContentHostingController?.view.alpha ?? 0 > 0
-    }
-    
-    private var jumpForwardLength: VideoPlayerJumpLength {
-        return Defaults[.videoPlayerJumpForward]
-    }
-
-    private var jumpBackwardLength: VideoPlayerJumpLength {
-        return Defaults[.videoPlayerJumpBackward]
     }
     
     private lazy var videoContentView = makeVideoContentView()
@@ -170,7 +162,7 @@ class VLCPlayerViewController: UIViewController {
     
     private func makeJumpBackwardOverlayView() -> UIImageView {
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 72)
-        let forwardSymbolImage = UIImage(systemName: jumpBackwardLength.backwardImageLabel, withConfiguration: symbolConfig)
+        let forwardSymbolImage = UIImage(systemName: viewModel.jumpBackwardLength.backwardImageLabel, withConfiguration: symbolConfig)
         let imageView = UIImageView(image: forwardSymbolImage)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -179,7 +171,7 @@ class VLCPlayerViewController: UIViewController {
     
     private func makeJumpForwardOverlayView() -> UIImageView {
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 72)
-        let forwardSymbolImage = UIImage(systemName: jumpForwardLength.forwardImageLabel, withConfiguration: symbolConfig)
+        let forwardSymbolImage = UIImage(systemName: viewModel.jumpForwardLength.forwardImageLabel, withConfiguration: symbolConfig)
         let imageView = UIImageView(image: forwardSymbolImage)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -262,7 +254,6 @@ class VLCPlayerViewController: UIViewController {
 
                 currentOverlayHostingController.view.removeFromSuperview()
                 currentOverlayHostingController.removeFromParent()
-//                self.currentOverlayHostingController = nil
             }
         }
 
@@ -346,7 +337,7 @@ extension VLCPlayerViewController {
         
         // Stop current media if there is one
         if vlcMediaPlayer.media != nil {
-            viewModelReactCancellables.forEach({ $0.cancel() })
+            viewModelListeners.forEach({ $0.cancel() })
             
             vlcMediaPlayer.stop()
             viewModel.sendStopReport()
@@ -368,7 +359,7 @@ extension VLCPlayerViewController {
         newViewModel.getAdjacentEpisodes()
         newViewModel.playerOverlayDelegate = self
         
-        let startPercentage = viewModel.item.userData?.playedPercentage ?? 0
+        let startPercentage = newViewModel.item.userData?.playedPercentage ?? 0
         
         if startPercentage > 0 {
             newViewModel.sliderPercentage = startPercentage / 100
@@ -393,7 +384,7 @@ extension VLCPlayerViewController {
     private func setupViewModelListeners(viewModel: VideoPlayerViewModel) {
         viewModel.$playbackSpeed.sink { newSpeed in
             self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
-        }.store(in: &viewModelReactCancellables)
+        }.store(in: &viewModelListeners)
         
         viewModel.$sliderIsScrubbing.sink { sliderIsScrubbing in
             if sliderIsScrubbing {
@@ -401,15 +392,19 @@ extension VLCPlayerViewController {
             } else {
                 self.didEndScrubbing()
             }
-        }.store(in: &viewModelReactCancellables)
+        }.store(in: &viewModelListeners)
         
         viewModel.$selectedAudioStreamIndex.sink { newAudioStreamIndex in
             self.didSelectAudioStream(index: newAudioStreamIndex)
-        }.store(in: &viewModelReactCancellables)
+        }.store(in: &viewModelListeners)
         
         viewModel.$selectedSubtitleStreamIndex.sink { newSubtitleStreamIndex in
             self.didSelectSubtitleStream(index: newSubtitleStreamIndex)
-        }.store(in: &viewModelReactCancellables)
+        }.store(in: &viewModelListeners)
+        
+        viewModel.$subtitlesEnabled.sink { newSubtitlesEnabled in
+            self.didToggleSubtitles(newValue: newSubtitlesEnabled)
+        }.store(in: &viewModelListeners)
     }
     
     func setMediaPlayerTimeAtCurrentSlider() {
@@ -554,8 +549,8 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         viewModel.playerState = vlcMediaPlayer.state
         
         if vlcMediaPlayer.state == VLCMediaPlayerState.ended {
-            if viewModel.autoPlayNextItem && viewModel.shouldShowAutoPlayNextItem && viewModel.nextItemVideoPlayerViewModel != nil {
-                didSelectNextItem()
+            if viewModel.autoplayEnabled && viewModel.nextItemVideoPlayerViewModel != nil {
+                didSelectPlayNextItem()
             } else {
                 didSelectClose()
             }
@@ -565,9 +560,8 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
     // MARK: mediaPlayerTimeChanged
     func mediaPlayerTimeChanged(_ aNotification: Notification!) {
         
-        guard !viewModel.sliderIsScrubbing else {
-            lastPlayerTicks = currentPlayerTicks
-            return
+        if !viewModel.sliderIsScrubbing {
+            viewModel.sliderPercentage = Double(vlcMediaPlayer.position)
         }
         
         viewModel.sliderPercentage = Double(vlcMediaPlayer.position)
@@ -581,6 +575,9 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         // If needing to fix subtitle streams during playback
         if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex && viewModel.subtitlesEnabled {
             didSelectSubtitleStream(index: viewModel.selectedSubtitleStreamIndex)
+        }
+        
+        if vlcMediaPlayer.currentAudioTrackIndex != viewModel.selectedAudioStreamIndex {
             didSelectAudioStream(index: viewModel.selectedAudioStreamIndex)
         }
         
@@ -606,12 +603,11 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         lastProgressReportTicks = currentPlayerTicks
     }
     
+    /// Do not call when setting to index -1
     func didSelectSubtitleStream(index: Int) {
-        if viewModel.subtitlesEnabled {
-            vlcMediaPlayer.currentVideoSubTitleIndex = Int32(index)
-        } else {
-            vlcMediaPlayer.currentVideoSubTitleIndex = -1
-        }
+        
+        viewModel.subtitlesEnabled = true
+        vlcMediaPlayer.currentVideoSubTitleIndex = Int32(index)
         
         viewModel.sendProgressReport()
         
@@ -626,19 +622,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         dismiss(animated: true, completion: nil)
     }
     
-    func didSelectGoogleCast() {
-        print("didSelectCast")
-    }
-    
-    func didSelectAirplay() {
-        print("didSelectAirplay")
-    }
-    
-    func didSelectSubtitles() {
-        
-        viewModel.subtitlesEnabled = !viewModel.subtitlesEnabled
-        
-        if viewModel.subtitlesEnabled {
+    func didToggleSubtitles(newValue: Bool) {
+        if newValue {
             vlcMediaPlayer.currentVideoSubTitleIndex = Int32(viewModel.selectedSubtitleStreamIndex)
         } else {
             vlcMediaPlayer.currentVideoSubTitleIndex = -1
@@ -648,38 +633,41 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     // TODO: Implement properly in overlays
     func didSelectMenu() {
         stopOverlayDismissTimer()
-
-        hideOverlay()
-        showOverlayContent()
     }
     
     // TODO: Implement properly in overlays
     func didDeselectMenu() {
-        
+        restartOverlayDismissTimer()
     }
     
     func didSelectBackward() {
+        
         flashJumpBackwardOverlay()
         
-        vlcMediaPlayer.jumpBackward(jumpBackwardLength.rawValue)
+        vlcMediaPlayer.jumpBackward(viewModel.jumpBackwardLength.rawValue)
         
-        restartOverlayDismissTimer()
+        if displayingOverlay {
+            restartOverlayDismissTimer()
+        }
         
         viewModel.sendProgressReport()
         
-        self.lastProgressReportTicks = currentPlayerTicks
+        lastProgressReportTicks = currentPlayerTicks
     }
     
     func didSelectForward() {
+        
         flashJumpFowardOverlay()
         
-        vlcMediaPlayer.jumpForward(jumpForwardLength.rawValue)
+        vlcMediaPlayer.jumpForward(viewModel.jumpForwardLength.rawValue)
         
-        restartOverlayDismissTimer()
+        if displayingOverlay {
+            restartOverlayDismissTimer()
+        }
         
         viewModel.sendProgressReport()
         
-        self.lastProgressReportTicks = currentPlayerTicks
+        lastProgressReportTicks = currentPlayerTicks
     }
     
     func didSelectMain() {
@@ -691,8 +679,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         case .playing:
             viewModel.sendPauseReport(paused: true)
             vlcMediaPlayer.pause()
-            showOverlay()
-            restartOverlayDismissTimer(interval: 10)
+            restartOverlayDismissTimer(interval: 5)
         case .paused:
             viewModel.sendPauseReport(paused: false)
             vlcMediaPlayer.play()
@@ -718,20 +705,20 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         
         viewModel.sendProgressReport()
         
-        self.lastProgressReportTicks = currentPlayerTicks
+        lastProgressReportTicks = currentPlayerTicks
     }
     
-    func didSelectPreviousItem() {
-        setupMediaPlayer(newViewModel: viewModel.previousItemVideoPlayerViewModel!)
-        startPlayback()
+    func didSelectPlayPreviousItem() {
+        if let previousItemVideoPlayerViewModel = viewModel.previousItemVideoPlayerViewModel {
+            setupMediaPlayer(newViewModel: previousItemVideoPlayerViewModel)
+            startPlayback()
+        }
     }
     
-    func didSelectNextItem() {
-        setupMediaPlayer(newViewModel: viewModel.nextItemVideoPlayerViewModel!)
-        startPlayback()
-    }
-    
-    func didFocusOnButton() {
-        restartOverlayDismissTimer(interval: 8)
+    func didSelectPlayNextItem() {
+        if let nextItemVideoPlayerViewModel = viewModel.nextItemVideoPlayerViewModel {
+            setupMediaPlayer(newViewModel: nextItemVideoPlayerViewModel)
+            startPlayback()
+        }
     }
 }

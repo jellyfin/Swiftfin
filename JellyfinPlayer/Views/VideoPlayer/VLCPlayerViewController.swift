@@ -266,7 +266,7 @@ class VLCPlayerViewController: UIViewController {
         view.addSubview(newJumpForwardImageView)
         
         NSLayoutConstraint.activate([
-            newJumpForwardImageView.leftAnchor.constraint(equalTo: view.rightAnchor, constant: -150),
+            newJumpForwardImageView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -150),
             newJumpForwardImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         

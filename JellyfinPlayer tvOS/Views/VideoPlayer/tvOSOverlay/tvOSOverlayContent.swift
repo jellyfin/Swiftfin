@@ -59,31 +59,30 @@ struct tvOSOverlayContentView: View {
 }
 
 struct tvOSOverlayContentView_Previews: PreviewProvider {
+    
+    static let videoPlayerViewModel = VideoPlayerViewModel(item: BaseItemDto(),
+                                                    title: "Glorious Purpose",
+                                                    subtitle: "Loki - S1E1",
+                                                    streamURL: URL(string: "www.apple.com")!,
+                                                    hlsURL: URL(string: "www.apple.com")!,
+                                                    response: PlaybackInfoResponse(),
+                                                    audioStreams: [MediaStream(displayTitle: "English", index: -1)],
+                                                    subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
+                                                    selectedAudioStreamIndex: -1,
+                                                    selectedSubtitleStreamIndex: -1,
+                                                    subtitlesEnabled: true,
+                                                    autoplayEnabled: false,
+                                                    overlayType: .compact,
+                                                    shouldShowPlayPreviousItem: true,
+                                                    shouldShowPlayNextItem: true,
+                                                    shouldShowAutoPlayNextItem: true)
+    
     static var previews: some View {
         ZStack {
             Color.red
                 .ignoresSafeArea()
             
-            tvOSOverlayContentView(viewModel: VideoPlayerViewModel(item: BaseItemDto(runTimeTicks: 720 * 10_000_000),
-                                                                   title: "Glorious Purpose",
-                                                                   subtitle: "Loki - S1E1",
-                                                                   streamURL: URL(string: "www.apple.com")!,
-                                                                   hlsURL: URL(string: "www.apple.com")!,
-                                                                   response: PlaybackInfoResponse(),
-                                                                   audioStreams: [MediaStream(displayTitle: "English", index: -1)],
-                                                                   subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
-                                                                   defaultAudioStreamIndex: -1,
-                                                                   defaultSubtitleStreamIndex: -1,
-                                                                   playerState: .error,
-                                                                   shouldShowGoogleCast: false,
-                                                                   shouldShowAirplay: false,
-                                                                   subtitlesEnabled: true,
-                                                                   sliderPercentage: 0.432,
-                                                                   selectedAudioStreamIndex: -1,
-                                                                   selectedSubtitleStreamIndex: -1,
-                                                                   showAdjacentItems: true,
-                                                                   shouldShowAutoPlayNextItem: true,
-                                                                   autoPlayNextItem: true))
+            tvOSOverlayContentView(viewModel: videoPlayerViewModel)
         }
     }
 }

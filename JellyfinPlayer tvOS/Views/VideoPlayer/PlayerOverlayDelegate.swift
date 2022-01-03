@@ -12,9 +12,6 @@ import Foundation
 protocol PlayerOverlayDelegate {
     
     func didSelectClose()
-    func didSelectGoogleCast()
-    func didSelectAirplay()
-    func didSelectSubtitles()
     func didSelectMenu()
     func didDeselectMenu()
     
@@ -30,8 +27,6 @@ protocol PlayerOverlayDelegate {
     func didSelectAudioStream(index: Int)
     func didSelectSubtitleStream(index: Int)
     
-    func didSelectPreviousItem()
-    func didSelectNextItem()
-    
-    func didFocusOnButton()
+    func didSelectPlayPreviousItem()
+    func didSelectPlayNextItem()
 }

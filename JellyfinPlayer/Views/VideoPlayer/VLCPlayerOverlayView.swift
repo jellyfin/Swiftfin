@@ -95,7 +95,7 @@ struct VLCPlayerOverlayView: View {
                                     if viewModel.autoplayEnabled {
                                         Image(systemName: "play.circle.fill")
                                     } else {
-                                        Image(systemName: "play.circle")
+                                        Image(systemName: "stop.circle")
                                     }
                                 }
                             }

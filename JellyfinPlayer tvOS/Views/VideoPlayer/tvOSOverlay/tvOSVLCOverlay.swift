@@ -55,16 +55,19 @@ struct tvOSVLCOverlay: View {
 
                     Spacer()
                     
-                    if viewModel.showAdjacentItems {
+                    
+                    if viewModel.shouldShowPlayPreviousItem {
                         SFSymbolButton(systemName: "chevron.left.circle", action: {
-                            viewModel.playerOverlayDelegate?.didSelectPreviousItem()
+                            viewModel.playerOverlayDelegate?.didSelectPlayPreviousItem()
                         })
                         .frame(maxWidth: 30, maxHeight: 30)
                         .disabled(viewModel.previousItemVideoPlayerViewModel == nil)
                         .foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
-                        
+                    }
+                 
+                    if viewModel.shouldShowPlayNextItem {
                         SFSymbolButton(systemName: "chevron.right.circle", action: {
-                            viewModel.playerOverlayDelegate?.didSelectNextItem()
+                            viewModel.playerOverlayDelegate?.didSelectPlayNextItem()
                         })
                         .frame(maxWidth: 30, maxHeight: 30)
                         .disabled(viewModel.nextItemVideoPlayerViewModel == nil)
@@ -74,12 +77,12 @@ struct tvOSVLCOverlay: View {
                     if !viewModel.subtitleStreams.isEmpty {
                         if viewModel.subtitlesEnabled {
                             SFSymbolButton(systemName: "captions.bubble.fill") {
-                                viewModel.playerOverlayDelegate?.didSelectSubtitles()
+                                viewModel.subtitlesEnabled.toggle()
                             }
                             .frame(maxWidth: 30, maxHeight: 30)
                         } else {
                             SFSymbolButton(systemName: "captions.bubble") {
-                                viewModel.playerOverlayDelegate?.didSelectSubtitles()
+                                viewModel.subtitlesEnabled.toggle()
                             }
                             .frame(maxWidth: 30, maxHeight: 30)
                         }
@@ -121,32 +124,30 @@ struct tvOSVLCOverlay: View {
 }
 
 struct tvOSVLCOverlay_Previews: PreviewProvider {
+    
+    static let videoPlayerViewModel = VideoPlayerViewModel(item: BaseItemDto(),
+                                                    title: "Glorious Purpose",
+                                                    subtitle: "Loki - S1E1",
+                                                    streamURL: URL(string: "www.apple.com")!,
+                                                    hlsURL: URL(string: "www.apple.com")!,
+                                                    response: PlaybackInfoResponse(),
+                                                    audioStreams: [MediaStream(displayTitle: "English", index: -1)],
+                                                    subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
+                                                    selectedAudioStreamIndex: -1,
+                                                    selectedSubtitleStreamIndex: -1,
+                                                    subtitlesEnabled: true,
+                                                    autoplayEnabled: false,
+                                                    overlayType: .compact,
+                                                    shouldShowPlayPreviousItem: true,
+                                                    shouldShowPlayNextItem: true,
+                                                    shouldShowAutoPlayNextItem: true)
+    
     static var previews: some View {
         ZStack {
             Color.red
                 .ignoresSafeArea()
             
-            tvOSVLCOverlay(viewModel: VideoPlayerViewModel(item: BaseItemDto(runTimeTicks: 720 * 10_000_000),
-                                                                        title: "Glorious Purpose",
-                                                                        subtitle: "Loki - S1E1",
-                                                                        streamURL: URL(string: "www.apple.com")!,
-                                                                        hlsURL: URL(string: "www.apple.com")!,
-                                                                        response: PlaybackInfoResponse(),
-                                                                        audioStreams: [MediaStream(displayTitle: "English", index: -1)],
-                                                                        subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
-                                                                        defaultAudioStreamIndex: -1,
-                                                                        defaultSubtitleStreamIndex: -1,
-                                                                        playerState: .error,
-                                                                        shouldShowGoogleCast: false,
-                                                                        shouldShowAirplay: false,
-                                                                        subtitlesEnabled: true,
-                                                                        sliderPercentage: 0.432,
-                                                                        selectedAudioStreamIndex: -1,
-                                                                        selectedSubtitleStreamIndex: -1,
-                                                                        showAdjacentItems: true,
-                                                                        shouldShowAutoPlayNextItem: true,
-                                                                        autoPlayNextItem: true))
+            tvOSVLCOverlay(viewModel: videoPlayerViewModel)
         }
-        .previewInterfaceOrientation(.landscapeLeft)
     }
 }

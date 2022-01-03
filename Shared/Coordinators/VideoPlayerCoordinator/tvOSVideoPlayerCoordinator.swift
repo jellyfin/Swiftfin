@@ -19,7 +19,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     @Root var start = makeStart
 
-    @Default(.nativeVideoPlayer) var nativeVideoPlayer
     let viewModel: VideoPlayerViewModel
 
     init(viewModel: VideoPlayerViewModel) {
@@ -27,9 +26,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder func makeStart() -> some View {
-//        NativePlayerView(viewModel: viewModel)
-//            .navigationBarHidden(true)
-//            .ignoresSafeArea()
         VLCPlayerView(viewModel: viewModel)
             .navigationBarHidden(true)
             .ignoresSafeArea()

@@ -12,15 +12,16 @@ import SwiftUI
 
 struct SmallMediaStreamSelectionView: View {
     
-    @State var selectedItem: MediaStream?
+    @Binding var selectedItem: MediaStream?
+    private let title: String
     private var items: [MediaStream]
     private var selectedAction: (MediaStream) -> Void
     
-    init(items: [MediaStream], selectedItem: MediaStream? = nil, selectedAction: @escaping (MediaStream) -> Void) {
-        self.items = items
-        self.selectedItem = selectedItem
-        self.selectedAction = selectedAction
-    }
+//    init(items: [MediaStream], selectedItem: MediaStream?, selectedAction: @escaping (MediaStream) -> Void) {
+//        self.items = items
+//        self.selectedItem = selectedItem
+//        self.selectedAction = selectedAction
+//    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -35,7 +36,7 @@ struct SmallMediaStreamSelectionView: View {
                 Spacer()
                 
                 HStack {
-                    Text("Subtitles")
+                    Text(title)
                         .font(.title3)
                     Spacer()
                 }
@@ -44,7 +45,7 @@ struct SmallMediaStreamSelectionView: View {
                     HStack {
                         ForEach(items, id: \.self) { item in
                             Button {
-//                                self.selectedItem = item
+                                self.selectedAction(item)
                             } label: {
                                 if item == selectedItem {
                                     Label(item.displayTitle ?? "No Title", systemImage: "checkmark")
