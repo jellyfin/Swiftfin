@@ -12,20 +12,14 @@ import SwiftUI
 
 struct SmallMediaStreamSelectionView: View {
     
-    @Binding var selectedItem: MediaStream?
-    private let title: String
-    private var items: [MediaStream]
-    private var selectedAction: (MediaStream) -> Void
-    
-//    init(items: [MediaStream], selectedItem: MediaStream?, selectedAction: @escaping (MediaStream) -> Void) {
-//        self.items = items
-//        self.selectedItem = selectedItem
-//        self.selectedAction = selectedAction
-//    }
+    @ObservedObject var viewModel: VideoPlayerViewModel
+    let title: String
+    var items: [MediaStream]
+    var selectedAction: (MediaStream) -> Void
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
+            LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.9)]),
                            startPoint: .top,
                            endPoint: .bottom)
                 .ignoresSafeArea()
@@ -36,8 +30,8 @@ struct SmallMediaStreamSelectionView: View {
                 Spacer()
                 
                 HStack {
-                    Text(title)
-                        .font(.title3)
+                    Text("Subtitles")
+
                     Spacer()
                 }
                 
@@ -45,9 +39,9 @@ struct SmallMediaStreamSelectionView: View {
                     HStack {
                         ForEach(items, id: \.self) { item in
                             Button {
-                                self.selectedAction(item)
+                                viewModel.playerOverlayDelegate?.didSelectSubtitleStream(index: item.index ?? -1)
                             } label: {
-                                if item == selectedItem {
+                                if item.index ?? -1 == viewModel.selectedSubtitleStreamIndex {
                                     Label(item.displayTitle ?? "No Title", systemImage: "checkmark")
                                 } else {
                                     Text(item.displayTitle ?? "No Title")

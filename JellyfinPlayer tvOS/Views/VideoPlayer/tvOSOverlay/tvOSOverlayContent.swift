@@ -27,24 +27,32 @@ struct tvOSOverlayContentView: View {
                     } label: {
                         Text("About")
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .background(Color.clear)
                     
                     Button {
                         print("here")
                     } label: {
                         Text("Chapters")
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .background(Color.clear)
                     
                     Button {
                         print("here")
                     } label: {
                         Text("Subtitles")
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .background(Color.clear)
                     
                     Button {
                         print("here")
                     } label: {
                         Text("Audio")
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .background(Color.clear)
                 }
                 .frame(height: 50)
                 

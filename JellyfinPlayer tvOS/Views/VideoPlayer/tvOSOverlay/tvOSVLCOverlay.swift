@@ -74,14 +74,16 @@ struct tvOSVLCOverlay: View {
                     }
                     
                     if viewModel.shouldShowAutoPlay {
-                        Button {
-                            viewModel.autoplayEnabled.toggle()
-                        } label: {
-                            if viewModel.autoplayEnabled {
-                                Image(systemName: "play.circle.fill")
-                            } else {
-                                Image(systemName: "stop.circle")
+                        if viewModel.autoplayEnabled {
+                            SFSymbolButton(systemName: "play.circle.fill") {
+                                viewModel.autoplayEnabled.toggle()
                             }
+                            .frame(maxWidth: 30, maxHeight: 30)
+                        } else {
+                            SFSymbolButton(systemName: "stop.circle") {
+                                viewModel.autoplayEnabled.toggle()
+                            }
+                            .frame(maxWidth: 30, maxHeight: 30)
                         }
                     }
                     

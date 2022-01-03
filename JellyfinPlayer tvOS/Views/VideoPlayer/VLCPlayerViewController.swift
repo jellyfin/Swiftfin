@@ -46,7 +46,7 @@ class VLCPlayerViewController: UIViewController {
     private lazy var jumpBackwardOverlayView = makeJumpBackwardOverlayView()
     private lazy var jumpForwardOverlayView = makeJumpForwardOverlayView()
     private var currentOverlayHostingController: UIHostingController<tvOSVLCOverlay>?
-    private var currentOverlayContentHostingController: UIHostingController<tvOSOverlayContentView>?
+    private var currentOverlayContentHostingController: UIHostingController<SmallMediaStreamSelectionView>?
     
     // MARK: init
     
@@ -195,12 +195,21 @@ class VLCPlayerViewController: UIViewController {
         case .select:
             didGenerallyTap()
         case .upArrow:
+            if displayingContentOverlay {
+                hideOverlayContent()
+                
+                showOverlay()
+                restartOverlayDismissTimer()
+            }
+            
            print("Up arrow")
         case .downArrow:
-            stopOverlayDismissTimer()
+            if !displayingContentOverlay {
+                stopOverlayDismissTimer()
 
-            hideOverlay()
-            showOverlayContent()
+                hideOverlay()
+                showOverlayContent()
+            }
         case .leftArrow:
             didSelectBackward()
            print("Left arrow")
@@ -292,13 +301,14 @@ class VLCPlayerViewController: UIViewController {
             currentOverlayContentHostingController.removeFromParent()
         }
         
-//        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(items: viewModel.subtitleStreams,
-//                                                                    selectedItem: viewModel.subtitleStreams.first(where: { $0.index == viewModel.selectedSubtitleStreamIndex })) { selectedMediaStream in
-//            self.didSelectSubtitleStream(index: selectedMediaStream.index ?? -1)
-//        }
-//        let newOverlayContentHostingController = UIHostingController(rootView: newSmallMenuOverlayView)
-        let newOverlayContentView = tvOSOverlayContentView(viewModel: viewModel)
-        let newOverlayContentHostingController = UIHostingController(rootView: newOverlayContentView)
+        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(viewModel: viewModel,
+                                                                    title: "Subtitles",
+                                                                    items: viewModel.subtitleStreams) { selectedMediaStream in
+            self.didSelectSubtitleStream(index: selectedMediaStream.index ?? -1)
+        }
+        let newOverlayContentHostingController = UIHostingController(rootView: newSmallMenuOverlayView)
+//        let newOverlayContentView = tvOSOverlayContentView(viewModel: viewModel)
+//        let newOverlayContentHostingController = UIHostingController(rootView: newOverlayContentView)
         
         newOverlayContentHostingController.view.translatesAutoresizingMaskIntoConstraints = false
         newOverlayContentHostingController.view.backgroundColor = UIColor.clear
