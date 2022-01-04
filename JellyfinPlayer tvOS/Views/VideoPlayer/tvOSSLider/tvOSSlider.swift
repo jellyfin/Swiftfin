@@ -33,7 +33,6 @@ private let defaultFocusScaleFactor: CGFloat = 1.05
 private let defaultStepValue: Float = 0.1
 private let decelerationRate: Float = 0.92
 private let decelerationMaxVelocity: Float = 1000
-private let fineTunningVelocityThreshold: Float = 600
 
 /// A control used to select a single value from a continuous range of values.
 public final class TvOSSlider: UIControl {
@@ -116,6 +115,8 @@ public final class TvOSSlider: UIControl {
     
     // Size for thumb view
     public var thumbSize: CGFloat = 30
+    
+    public var fineTunningVelocityThreshold: Float = 600
     
     /**
      Sets the slider’s current value, allowing you to animate the change visually.

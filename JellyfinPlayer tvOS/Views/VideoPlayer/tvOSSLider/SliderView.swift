@@ -32,6 +32,7 @@ struct SliderView: UIViewRepresentable {
         slider.minimumTrackTintColor = .white
         slider.focusScaleFactor = 1.4
         slider.panDampingValue = 50
+        slider.fineTunningVelocityThreshold = 1000
         
         return slider
     }

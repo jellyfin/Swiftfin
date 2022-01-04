@@ -20,6 +20,8 @@ struct SettingsView: View {
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
     @Default(.downActionShowsMenu) var downActionShowsMenu
     @Default(.confirmClose) var confirmClose
+    @Default(.tvOSEpisodeItemCinematicView) var tvOSEpisodeItemCinematicView
+    @Default(.tvOSMovieItemCinematicView) var tvOSMovieItemCinematicView
 
     var body: some View {
         GeometryReader { reader in
@@ -37,6 +39,7 @@ struct SettingsView: View {
                             Text(viewModel.user.username)
                                 .foregroundColor(.jellyfinPurple)
                         }
+                        .focusable()
 
                         Button {
                             settingsRouter.route(to: \.serverDetail)
@@ -100,6 +103,13 @@ struct SettingsView: View {
                                 Image(systemName: "chevron.right")
                             }
                         }
+                    }
+                    
+                    Section {
+                        Toggle("Episode Item Cinematic View", isOn: $tvOSEpisodeItemCinematicView)
+                        Toggle("Movie Item Cinematic View", isOn: $tvOSMovieItemCinematicView)
+                    } header: {
+                        Text("Views")
                     }
                 }
             }

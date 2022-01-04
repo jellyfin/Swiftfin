@@ -63,6 +63,7 @@ struct EpisodesRowView: View {
                     .padding(.horizontal, 50)
                     .padding(.vertical)
                     .onAppear {
+                        // TODO: Get this working
                         reader.scrollTo(viewModel.item.name)
                     }
                 }

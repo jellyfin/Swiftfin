@@ -196,7 +196,7 @@ class VLCPlayerViewController: UIViewController {
         guard let buttonPress = presses.first?.type else { return }
              
         switch(buttonPress) {
-        case .menu: () // Captured by other gesture
+        case .menu: () // Captured by other recognizer
         case .playPause:
             hideConfirmCloseOverlay()
             
@@ -207,13 +207,6 @@ class VLCPlayerViewController: UIViewController {
             didGenerallyTap()
         case .upArrow:
             hideConfirmCloseOverlay()
-            
-            if displayingContentOverlay {
-                hideOverlayContent()
-                
-                showOverlay()
-                restartOverlayDismissTimer()
-            }
         case .downArrow:
             hideConfirmCloseOverlay()
             
@@ -776,6 +769,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         case .playing:
             viewModel.sendPauseReport(paused: true)
             vlcMediaPlayer.pause()
+            
+            showOverlay()
             restartOverlayDismissTimer(interval: 5)
         case .paused:
             viewModel.sendPauseReport(paused: false)

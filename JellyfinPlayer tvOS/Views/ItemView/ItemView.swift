@@ -5,9 +5,10 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
+import Defaults
 import Introspect
 import JellyfinAPI
+import SwiftUI
 
 // Useless view necessary in tvOS because of iOS's implementation
 struct ItemNavigationView: View {
@@ -23,6 +24,10 @@ struct ItemNavigationView: View {
 }
 
 struct ItemView: View {
+    
+    @Default(.tvOSEpisodeItemCinematicView) var tvOSEpisodeItemCinematicView
+    @Default(.tvOSMovieItemCinematicView) var tvOSMovieItemCinematicView
+    
     private var item: BaseItemDto
 
     init(item: BaseItemDto) {
@@ -32,13 +37,21 @@ struct ItemView: View {
     var body: some View {
         Group {
             if item.type == "Movie" {
-                CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
+                if tvOSMovieItemCinematicView {
+                    CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
+                } else {
+                    MovieItemView(viewModel: MovieItemViewModel(item: item))
+                }
             } else if item.type == "Series" {
                 SeriesItemView(viewModel: .init(item: item))
             } else if item.type == "Season" {
                 SeasonItemView(viewModel: .init(item: item))
             } else if item.type == "Episode" {
-                CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
+                if tvOSEpisodeItemCinematicView {
+                    CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
+                } else {
+                    EpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
+                }
             } else {
                 Text(L10n.notImplementedYetWithType(item.type ?? ""))
             }
