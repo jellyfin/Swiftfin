@@ -17,13 +17,19 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @Root var start = makeStart
     @Route(.push) var serverDetail = makeServerDetail
+    @Route(.push) var overlaySettings = makeOverlaySettings
 
     @ViewBuilder func makeServerDetail() -> some View {
         let viewModel = ServerDetailViewModel(server: SessionManager.main.currentLogin.server)
         ServerDetailView(viewModel: viewModel)
     }
+    
+    @ViewBuilder func makeOverlaySettings() -> some View {
+        OverlaySettingsView()
+    }
 
     @ViewBuilder func makeStart() -> some View {
-        SettingsView(viewModel: .init())
+        let viewModel = SettingsViewModel(server: SessionManager.main.currentLogin.server, user: SessionManager.main.currentLogin.user)
+        SettingsView(viewModel: viewModel)
     }
 }

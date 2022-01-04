@@ -28,11 +28,13 @@ struct ItemLandscapeTopBarView: View {
 
                 if viewModel.item.itemType.showDetails {
                     // MARK: Runtime
-                    Text(viewModel.item.getItemRuntime())
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .padding(.leading, 16)
+                    if let runtime = viewModel.item.getItemRuntime() {
+                        Text(runtime)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 16)
+                    }
                 }
 
                 // MARK: Details

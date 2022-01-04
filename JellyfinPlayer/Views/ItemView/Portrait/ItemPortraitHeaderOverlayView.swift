@@ -38,11 +38,13 @@ struct PortraitHeaderOverlayView: View {
                     if viewModel.item.itemType.showDetails {
                         // MARK: Runtime
                         if viewModel.shouldDisplayRuntime() {
-                            Text(viewModel.item.getItemRuntime())
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
+                            if let runtime = viewModel.item.getItemRuntime() {
+                                Text(runtime)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
                         }
                     }
 

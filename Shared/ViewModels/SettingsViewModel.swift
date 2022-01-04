@@ -15,8 +15,14 @@ final class SettingsViewModel: ObservableObject {
     
     var bitrates: [Bitrates] = []
     var langs: [TrackLanguage] = []
+    
+    let server: SwiftfinStore.State.Server
+    let user: SwiftfinStore.State.User
 
-    init() {
+    init(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
+        
+        self.server = server
+        self.user = user
         
         // Bitrates
         let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!

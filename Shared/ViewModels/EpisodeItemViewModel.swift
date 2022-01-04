@@ -13,7 +13,15 @@ import JellyfinAPI
 import Stinsen
 
 final class EpisodeItemViewModel: ItemViewModel {
+    
     @RouterObject var itemRouter: ItemCoordinator.Router?
+    var seasonEpisodes: [BaseItemDto] = []
+    
+    override init(item: BaseItemDto) {
+        super.init(item: item)
+        
+        getSeasonEpisodes()
+    }
 
     override func getItemDisplayName() -> String {
         guard let episodeLocator = item.getEpisodeLocator() else { return item.name ?? "" }
@@ -45,6 +53,20 @@ final class EpisodeItemViewModel: ItemViewModel {
             }, receiveValue: { [weak self] item in
                 self?.itemRouter?.route(to: \.item, item)
             })
+            .store(in: &cancellables)
+    }
+    
+    private func getSeasonEpisodes() {
+        guard let seriesID = item.seriesId else { return }
+        TvShowsAPI.getEpisodes(seriesId: seriesID,
+                               userId: SessionManager.main.currentLogin.user.id,
+                               fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                               seasonId: item.seasonId ?? "")
+            .sink { [weak self] completion in
+                self?.handleAPIRequestError(completion: completion)
+            } receiveValue: { [weak self] item in
+                self?.seasonEpisodes = item.items ?? []
+            }
             .store(in: &cancellables)
     }
 }

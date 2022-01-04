@@ -21,54 +21,32 @@ struct SettingsView: View {
     @Default(.autoSelectSubtitlesLangCode) var autoSelectSubtitlesLangcode
     @Default(.autoSelectAudioLangCode) var autoSelectAudioLangcode
     @Default(.appAppearance) var appAppearance
+    @Default(.overlayType) var overlayType
     @Default(.videoPlayerJumpForward) var jumpForwardLength
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
+    @Default(.jumpGesturesEnabled) var jumpGesturesEnabled
 
     var body: some View {
         Form {
             Section(header: EmptyView()) {
+                HStack {
+                    Text("User")
+                    Spacer()
+                    Text(viewModel.user.username)
+                        .foregroundColor(.jellyfinPurple)
+                }
 
-                // There is a bug where the SettingsView attmempts to remake itself upon signing out
-                //     so this check is made
-                if SessionManager.main.currentLogin == nil {
+                Button {
+                    settingsRouter.route(to: \.serverDetail)
+                } label: {
                     HStack {
-                        Text("User")
+                        Text("Server")
+                            .foregroundColor(.white)
                         Spacer()
-                        Text("")
+                        Text(viewModel.server.name)
                             .foregroundColor(.jellyfinPurple)
-                    }
 
-                    Button {
-                        settingsRouter.route(to: \.serverDetail)
-                    } label: {
-                        HStack {
-                            Text("Server")
-                            Spacer()
-                            Text("")
-                                .foregroundColor(.jellyfinPurple)
-
-                            Image(systemName: "chevron.right")
-                        }
-                    }
-                } else {
-                    HStack {
-                        Text("User")
-                        Spacer()
-                        Text(SessionManager.main.currentLogin.user.username)
-                            .foregroundColor(.jellyfinPurple)
-                    }
-
-                    Button {
-                        settingsRouter.route(to: \.serverDetail)
-                    } label: {
-                        HStack {
-                            Text("Server")
-                            Spacer()
-                            Text(SessionManager.main.currentLogin.server.name)
-                                .foregroundColor(.jellyfinPurple)
-
-                            Image(systemName: "chevron.right")
-                        }
+                        Image(systemName: "chevron.right")
                     }
                 }
 
@@ -77,7 +55,7 @@ struct SettingsView: View {
                         SessionManager.main.logout()
                     }
                 } label: {
-                    Text("Sign out")
+                    Text("Switch User")
                         .font(.callout)
                 }
             }
@@ -106,6 +84,21 @@ struct SettingsView: View {
                 Picker("Jump Backward Length", selection: $jumpBackwardLength) {
                     ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
                         Text(length.label).tag(length.rawValue)
+                    }
+                }
+                
+                Toggle("Jump Gestures Enabled", isOn: $jumpGesturesEnabled)
+                
+                Button {
+                    settingsRouter.route(to: \.overlaySettings)
+                } label: {
+                    HStack {
+                        Text("Overlay")
+                            .foregroundColor(.white)
+                        Spacer()
+                        Text(overlayType.label)
+                        
+                        Image(systemName: "chevron.right")
                     }
                 }
             }

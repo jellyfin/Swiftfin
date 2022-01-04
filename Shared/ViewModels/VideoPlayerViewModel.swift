@@ -34,8 +34,16 @@ final class VideoPlayerViewModel: ViewModel {
     @Published var selectedSubtitleStreamIndex: Int
     @Published var previousItemVideoPlayerViewModel: VideoPlayerViewModel?
     @Published var nextItemVideoPlayerViewModel: VideoPlayerViewModel?
-    @Published var jumpBackwardLength: VideoPlayerJumpLength
-    @Published var jumpForwardLength: VideoPlayerJumpLength
+    @Published var jumpBackwardLength: VideoPlayerJumpLength {
+        willSet {
+            Defaults[.videoPlayerJumpBackward] = newValue
+        }
+    }
+    @Published var jumpForwardLength: VideoPlayerJumpLength {
+        willSet {
+            Defaults[.videoPlayerJumpForward] = newValue
+        }
+    }
     @Published var sliderIsScrubbing: Bool = false
     @Published var sliderPercentage: Double = 0 {
         willSet {
@@ -64,6 +72,7 @@ final class VideoPlayerViewModel: ViewModel {
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
     let overlayType: OverlayType
+    let jumpGesturesEnabled: Bool
     
     // Full response kept for convenience
     let response: PlaybackInfoResponse
@@ -124,6 +133,7 @@ final class VideoPlayerViewModel: ViewModel {
         
         self.jumpBackwardLength = Defaults[.videoPlayerJumpBackward]
         self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
+        self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
         
         super.init()
         
@@ -241,6 +251,9 @@ extension VideoPlayerViewModel {
             })
             .store(in: &cancellables)
     }
+    
+    // Potential for experimental feature of syncing subtitle states among adjacent episodes
+    // when using previous & next item buttons and auto-play
     
     private func matchSubtitleStream(with masterViewModel: VideoPlayerViewModel) {
         if !masterViewModel.subtitlesEnabled {

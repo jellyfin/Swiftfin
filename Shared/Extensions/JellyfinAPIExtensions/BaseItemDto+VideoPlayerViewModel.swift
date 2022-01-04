@@ -91,7 +91,7 @@ extension BaseItemDto {
                     }
                 }
                 
-                let subtitlesEnabled = Defaults[.subtitlesEnabledIfDefault] && defaultSubtitleStream != nil
+                let subtitlesEnabled = defaultSubtitleStream != nil
                 
                 let shouldShowAutoPlay = Defaults[.shouldShowAutoPlay] && itemType == .episode
                 let autoplayEnabled = Defaults[.autoplayEnabled] && shouldShowAutoPlay

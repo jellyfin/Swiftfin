@@ -32,13 +32,13 @@ struct ItemView: View {
     var body: some View {
         Group {
             if item.type == "Movie" {
-                MovieItemView(viewModel: .init(item: item))
+                CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
             } else if item.type == "Series" {
                 SeriesItemView(viewModel: .init(item: item))
             } else if item.type == "Season" {
                 SeasonItemView(viewModel: .init(item: item))
             } else if item.type == "Episode" {
-                EpisodeItemView(viewModel: .init(item: item))
+                CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
             } else {
                 Text(L10n.notImplementedYetWithType(item.type ?? ""))
             }

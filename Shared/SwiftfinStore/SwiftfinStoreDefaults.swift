@@ -39,10 +39,9 @@ extension Defaults.Keys {
     static let autoSelectAudioLangCode = Key<String>("AutoSelectAudioLangCode", default: "Auto", suite: SwiftfinStore.Defaults.generalSuite)
     
     static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: SwiftfinStore.Defaults.generalSuite)
-    static let gesturesEnabled = Key<Bool>("gesturesEnabled", default: true, suite: SwiftfinStore.Defaults.generalSuite)
+    static let jumpGesturesEnabled = Key<Bool>("gesturesEnabled", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>("videoPlayerJumpForward", default: .fifteen, suite: SwiftfinStore.Defaults.generalSuite)
     static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>("videoPlayerJumpBackward", default: .fifteen, suite: SwiftfinStore.Defaults.generalSuite)
-    static let subtitlesEnabledIfDefault = Key<Bool>("subtitlesEnabledIfDefault", default: false, suite: SwiftfinStore.Defaults.generalSuite)
     static let autoplayEnabled = Key<Bool>("autoPlayNextItem", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     
     // Should show video player items

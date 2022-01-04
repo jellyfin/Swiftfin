@@ -104,6 +104,8 @@ class VLCPlayerViewController: UIViewController {
         // they aren't unnecessarily set more than once
         vlcMediaPlayer.delegate = self
         vlcMediaPlayer.drawable = videoContentView
+        
+        // TODO: Custom subtitle sizes
         vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
         
         setupMediaPlayer(newViewModel: viewModel)
@@ -152,15 +154,20 @@ class VLCPlayerViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         
         let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        
         let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didRightSwipe))
         rightSwipeGesture.direction = .right
+        
         let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didLeftSwipe))
         leftSwipeGesture.direction = .left
         
         view.addGestureRecognizer(singleTapGesture)
-        view.addGestureRecognizer(rightSwipeGesture)
-        view.addGestureRecognizer(leftSwipeGesture)
         
+        if viewModel.jumpGesturesEnabled {
+            view.addGestureRecognizer(rightSwipeGesture)
+            view.addGestureRecognizer(leftSwipeGesture)
+        }
+
         return view
     }
     
@@ -420,7 +427,7 @@ extension VLCPlayerViewController {
 extension VLCPlayerViewController {
     
     private func flashJumpBackwardOverlay() {
-        guard let currentJumpBackwardOverlayView = currentJumpBackwardOverlayView else { return }
+        guard !displayingOverlay, let currentJumpBackwardOverlayView = currentJumpBackwardOverlayView else { return }
         
         currentJumpBackwardOverlayView.layer.removeAllAnimations()
         
@@ -440,7 +447,7 @@ extension VLCPlayerViewController {
     }
     
     private func flashJumpFowardOverlay() {
-        guard let currentJumpForwardOverlayView = currentJumpForwardOverlayView else { return }
+        guard !displayingOverlay, let currentJumpForwardOverlayView = currentJumpForwardOverlayView else { return }
         
         currentJumpForwardOverlayView.layer.removeAllAnimations()
         

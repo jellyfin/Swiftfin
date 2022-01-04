@@ -59,10 +59,13 @@ struct EpisodeItemView: View {
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
-                    Text(viewModel.item.getItemRuntime()).font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+                    if let runtime = viewModel.item.getItemRuntime() {
+                        Text(runtime).font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                    
                     if viewModel.item.officialRating != nil {
                         Text(viewModel.item.officialRating!).font(.subheadline)
                             .fontWeight(.semibold)

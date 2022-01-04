@@ -13,5 +13,13 @@ import Foundation
 enum OverlayType: String, CaseIterable, Defaults.Serializable {
     case normal
     case compact
-    case bottom
+    
+    var label: String {
+        switch self {
+        case .normal:
+            return "Normal"
+        case .compact:
+            return "Compact"
+        }
+    }
 }

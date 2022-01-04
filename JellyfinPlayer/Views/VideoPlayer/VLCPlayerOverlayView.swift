@@ -19,15 +19,29 @@ struct VLCPlayerOverlayView: View {
     
     @ViewBuilder
     private var mainButtonView: some View {
-        switch viewModel.playerState {
-        case .stopped, .paused:
-            Image(systemName: "play.fill")
-                .font(.system(size: 28, weight: .heavy, design: .default))
-        case .playing:
-            Image(systemName: "pause")
-                .font(.system(size: 28, weight: .heavy, design: .default))
-        default:
-            ProgressView()
+        if viewModel.overlayType == .normal {
+            switch viewModel.playerState {
+            case .stopped, .paused:
+                Image(systemName: "play.fill")
+                    .font(.system(size: 56, weight: .semibold, design: .default))
+            case .playing:
+                Image(systemName: "pause")
+                    .font(.system(size: 56, weight: .semibold, design: .default))
+            default:
+                ProgressView()
+                    .scaleEffect(2)
+            }
+        } else if viewModel.overlayType == .compact {
+            switch viewModel.playerState {
+            case .stopped, .paused:
+                Image(systemName: "play.fill")
+                    .font(.system(size: 28, weight: .heavy, design: .default))
+            case .playing:
+                Image(systemName: "pause")
+                    .font(.system(size: 28, weight: .heavy, design: .default))
+            default:
+                ProgressView()
+            }
         }
     }
     
@@ -38,11 +52,13 @@ struct VLCPlayerOverlayView: View {
             // MARK: Top Bar
             ZStack {
                 
-                LinearGradient(gradient: Gradient(colors: [.black.opacity(0.7), .clear]),
-                               startPoint: .top,
-                               endPoint: .bottom)
-                    .ignoresSafeArea()
-                    .frame(height: 80)
+                if viewModel.overlayType == .compact {
+                    LinearGradient(gradient: Gradient(colors: [.black.opacity(0.7), .clear]),
+                                   startPoint: .top,
+                                   endPoint: .bottom)
+                        .ignoresSafeArea()
+                        .frame(height: 80)
+                }
                 
                 VStack(alignment: .EpisodeSeriesAlignmentGuide) {
                     
@@ -236,44 +252,71 @@ struct VLCPlayerOverlayView: View {
             
             Spacer()
             
+            if viewModel.overlayType == .normal {
+                HStack(spacing: 80) {
+                    Button {
+                        viewModel.playerOverlayDelegate?.didSelectBackward()
+                    } label: {
+                        Image(systemName: viewModel.jumpBackwardLength.backwardImageLabel)
+                    }
+                    
+                    Button {
+                        viewModel.playerOverlayDelegate?.didSelectMain()
+                    } label: {
+                        mainButtonView
+                    }
+                    .frame(width: 200)
+                    
+                    Button {
+                        viewModel.playerOverlayDelegate?.didSelectForward()
+                    } label: {
+                        Image(systemName: viewModel.jumpForwardLength.forwardImageLabel)
+                    }
+                }
+                .font(.system(size: 48))
+            }
             
             Spacer()
             
             // MARK: Bottom Bar
             ZStack {
                 
-                LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
-                               startPoint: .top,
-                               endPoint: .bottom)
-                    .ignoresSafeArea()
-                    .frame(height: 70)
+                if viewModel.overlayType == .compact {
+                    LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
+                                   startPoint: .top,
+                                   endPoint: .bottom)
+                        .ignoresSafeArea()
+                        .frame(height: 70)
+                }
                 
                 HStack {
                     
-                    HStack {
-                        Button {
-                            viewModel.playerOverlayDelegate?.didSelectBackward()
-                        } label: {
-                            Image(systemName: viewModel.jumpBackwardLength.backwardImageLabel)
-                                .padding(.horizontal, 5)
+                    if viewModel.overlayType == .compact {
+                        HStack {
+                            Button {
+                                viewModel.playerOverlayDelegate?.didSelectBackward()
+                            } label: {
+                                Image(systemName: viewModel.jumpBackwardLength.backwardImageLabel)
+                                    .padding(.horizontal, 5)
+                            }
+                            
+                            Button {
+                                viewModel.playerOverlayDelegate?.didSelectMain()
+                            } label: {
+                                mainButtonView
+                                    .frame(minWidth: 30, maxWidth: 30)
+                                    .padding(.horizontal, 10)
+                            }
+                            
+                            Button {
+                                viewModel.playerOverlayDelegate?.didSelectForward()
+                            } label: {
+                                Image(systemName: viewModel.jumpForwardLength.forwardImageLabel)
+                                    .padding(.horizontal, 5)
+                            }
                         }
-                        
-                        Button {
-                            viewModel.playerOverlayDelegate?.didSelectMain()
-                        } label: {
-                            mainButtonView
-                                .frame(minWidth: 30, maxWidth: 30)
-                                .padding(.horizontal, 10)
-                        }
-                        
-                        Button {
-                            viewModel.playerOverlayDelegate?.didSelectForward()
-                        } label: {
-                            Image(systemName: viewModel.jumpForwardLength.forwardImageLabel)
-                                .padding(.horizontal, 5)
-                        }
+                        .font(.system(size: 24, weight: .semibold, design: .default))
                     }
-                    .font(.system(size: 24, weight: .semibold, design: .default))
                     
                     Text(viewModel.leftLabelText)
                         .font(.system(size: 18, weight: .semibold, design: .default))
@@ -296,6 +339,7 @@ struct VLCPlayerOverlayView: View {
                                                        thumbInteractiveSize: CGSize.Circle(radius: 40),
                                                            options: .defaultOptions)
                         )
+                        .frame(maxHeight: 50)
                     
                     Text(viewModel.rightLabelText)
                         .font(.system(size: 18, weight: .semibold, design: .default))
@@ -312,11 +356,22 @@ struct VLCPlayerOverlayView: View {
     }
     
     var body: some View {
-        mainBody
-            .contentShape(Rectangle())
-            .onTapGesture {
-                viewModel.playerOverlayDelegate?.didGenerallyTap()
-            }
+        if viewModel.overlayType == .normal {
+            mainBody
+                .background {
+                    Color(uiColor: .black.withAlphaComponent(0.5))
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            viewModel.playerOverlayDelegate?.didGenerallyTap()
+                        }
+                }
+        } else {
+            mainBody
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.playerOverlayDelegate?.didGenerallyTap()
+                }
+        }
     }
 }
 

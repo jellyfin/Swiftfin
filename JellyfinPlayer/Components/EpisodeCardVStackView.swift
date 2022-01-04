@@ -81,10 +81,12 @@ struct EpisodeCardVStackView: View {
                                     .fontWeight(.medium)
                                     .foregroundColor(.secondary)
 
-                                Text(item.getItemRuntime())
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.secondary)
+                                if let runtime = item.getItemRuntime() {
+                                    Text(runtime)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.secondary)
+                                }
 
                                 Spacer()
                             }

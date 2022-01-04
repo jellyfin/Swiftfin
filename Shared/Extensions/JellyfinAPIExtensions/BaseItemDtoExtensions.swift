@@ -142,7 +142,7 @@ public extension BaseItemDto {
 
     // MARK: Calculations
 
-    func getItemRuntime() -> String {
+    func getItemRuntime() -> String? {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()
             formatter.unitsStyle = .abbreviated
@@ -151,7 +151,7 @@ public extension BaseItemDto {
         }()
 
         guard let runTimeTicks = runTimeTicks,
-              let text = timeHMSFormatter.string(from: Double(runTimeTicks / 10_000_000)) else { return "" }
+              let text = timeHMSFormatter.string(from: Double(runTimeTicks / 10_000_000)) else { return nil }
 
         return text
     }
