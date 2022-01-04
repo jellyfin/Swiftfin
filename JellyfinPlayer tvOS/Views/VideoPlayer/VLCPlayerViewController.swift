@@ -657,8 +657,6 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
             viewModel.sliderPercentage = Double(vlcMediaPlayer.position)
         }
         
-        viewModel.sliderPercentage = Double(vlcMediaPlayer.position)
-        
         // Have to manually set playing because VLCMediaPlayer doesn't
         // properly set it itself
         if abs(currentPlayerTicks - lastPlayerTicks) >= 10_000 {
