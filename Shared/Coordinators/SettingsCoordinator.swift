@@ -18,6 +18,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Root var start = makeStart
     @Route(.push) var serverDetail = makeServerDetail
     @Route(.push) var overlaySettings = makeOverlaySettings
+    @Route(.push) var experimentalSettings = makeExperimentalSettings
 
     @ViewBuilder func makeServerDetail() -> some View {
         let viewModel = ServerDetailViewModel(server: SessionManager.main.currentLogin.server)
@@ -26,6 +27,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     
     @ViewBuilder func makeOverlaySettings() -> some View {
         OverlaySettingsView()
+    }
+    
+    @ViewBuilder func makeExperimentalSettings() -> some View {
+        ExperimentalSettingsView()
     }
 
     @ViewBuilder func makeStart() -> some View {

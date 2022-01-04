@@ -29,9 +29,23 @@ final class VideoPlayerViewModel: ViewModel {
     @Published var leftLabelText: String = "--:--"
     @Published var rightLabelText: String = "--:--"
     @Published var playbackSpeed: PlaybackSpeed = .one
-    @Published var subtitlesEnabled: Bool
+    @Published var subtitlesEnabled: Bool {
+        didSet {
+            if syncSubtitleStateWithAdjacent {
+                previousItemVideoPlayerViewModel?.matchSubtitlesEnabled(with: self)
+                nextItemVideoPlayerViewModel?.matchSubtitlesEnabled(with: self)
+            }
+        }
+    }
     @Published var selectedAudioStreamIndex: Int
-    @Published var selectedSubtitleStreamIndex: Int
+    @Published var selectedSubtitleStreamIndex: Int  {
+        didSet {
+            if syncSubtitleStateWithAdjacent {
+                previousItemVideoPlayerViewModel?.matchSubtitleStream(with: self)
+                nextItemVideoPlayerViewModel?.matchSubtitleStream(with: self)
+            }
+        }
+    }
     @Published var previousItemVideoPlayerViewModel: VideoPlayerViewModel?
     @Published var nextItemVideoPlayerViewModel: VideoPlayerViewModel?
     @Published var jumpBackwardLength: VideoPlayerJumpLength {
@@ -74,6 +88,9 @@ final class VideoPlayerViewModel: ViewModel {
     let subtitleStreams: [MediaStream]
     let overlayType: OverlayType
     let jumpGesturesEnabled: Bool
+    
+    // MARK: Experimental
+    let syncSubtitleStateWithAdjacent: Bool
     
     // Full response kept for convenience
     let response: PlaybackInfoResponse
@@ -136,6 +153,8 @@ final class VideoPlayerViewModel: ViewModel {
         self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
         self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
         self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
+        
+        self.syncSubtitleStateWithAdjacent = Defaults[.Experimental.syncSubtitleStateWithAdjacent]
         
         super.init()
         

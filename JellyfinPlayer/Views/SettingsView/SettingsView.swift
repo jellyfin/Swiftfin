@@ -97,7 +97,17 @@ struct SettingsView: View {
                             .foregroundColor(.primary)
                         Spacer()
                         Text(overlayType.label)
-                        
+                        Image(systemName: "chevron.right")
+                    }
+                }
+                
+                Button {
+                    settingsRouter.route(to: \.experimentalSettings)
+                } label: {
+                    HStack {
+                        Text("Experimental")
+                            .foregroundColor(.primary)
+                        Spacer()
                         Image(systemName: "chevron.right")
                     }
                 }

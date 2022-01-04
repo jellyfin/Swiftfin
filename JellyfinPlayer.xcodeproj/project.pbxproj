@@ -383,6 +383,7 @@
 		E1E5D5442783BB5100692DFE /* ItemDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */; };
 		E1E5D5462783C28100692DFE /* CinematicItemAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5452783C28100692DFE /* CinematicItemAboutView.swift */; };
 		E1E5D5492783CDD700692DFE /* OverlaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */; };
+		E1E5D54C2783E27200692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */; };
 		E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1FA2F7427818A8800B4C270 /* SmallMenuOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */; };
@@ -666,6 +667,7 @@
 		E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailsView.swift; sourceTree = "<group>"; };
 		E1E5D5452783C28100692DFE /* CinematicItemAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicItemAboutView.swift; sourceTree = "<group>"; };
 		E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySettingsView.swift; sourceTree = "<group>"; };
+		E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallMenuOverlay.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -1295,10 +1297,9 @@
 				53DF641D263D9C0600A7CD1A /* LibraryView.swift */,
 				53892771263C8C6F0035E14B /* LoadingView.swift */,
 				5389276F263C25230035E14B /* NextUpView.swift */,
-				E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */,
+				E1E5D54A2783E26100692DFE /* SettingsView */,
 				E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */,
 				E13DD3E427177D15009D4DAF /* ServerListView.swift */,
-				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
 				E13DD3FB2717EAE8009D4DAF /* UserListView.swift */,
 				E13DD3F4271793BB009D4DAF /* UserSignInView.swift */,
 				E193D5452719418B00900D82 /* VideoPlayer */,
@@ -1447,6 +1448,16 @@
 				E1E5D53D2783B05200692DFE /* CinematicMovieItemView.swift */,
 			);
 			path = CinematicItemView;
+			sourceTree = "<group>";
+		};
+		E1E5D54A2783E26100692DFE /* SettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
+				E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */,
+				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+			);
+			path = SettingsView;
 			sourceTree = "<group>";
 		};
 		E1FCD08E26C466F3007C8DCF /* Errors */ = {
@@ -2131,6 +2142,7 @@
 				C4BE0769271FC164003F4AD1 /* TVLibrariesView.swift in Sources */,
 				E1267D3E271A1F46003C492E /* PreferenceUIHostingController.swift in Sources */,
 				6220D0BA26D6092100B8E046 /* FilterCoordinator.swift in Sources */,
+				E1E5D54C2783E27200692DFE /* ExperimentalSettingsView.swift in Sources */,
 				6267B3DA2671138200A7371D /* ImageExtensions.swift in Sources */,
 				62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */,
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
