@@ -41,7 +41,7 @@ struct SettingsView: View {
                 } label: {
                     HStack {
                         Text("Server")
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         Spacer()
                         Text(viewModel.server.name)
                             .foregroundColor(.jellyfinPurple)
@@ -94,7 +94,7 @@ struct SettingsView: View {
                 } label: {
                     HStack {
                         Text("Overlay")
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         Spacer()
                         Text(overlayType.label)
                         

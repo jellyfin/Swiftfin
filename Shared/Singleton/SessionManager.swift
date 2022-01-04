@@ -254,9 +254,6 @@ final class SessionManager {
             delete(server: server)
         }
 
-        // Delete general UserDefaults
-        SwiftfinStore.Defaults.generalSuite.removeAll()
-
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
     }
 

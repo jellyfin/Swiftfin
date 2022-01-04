@@ -62,6 +62,7 @@ final class VideoPlayerViewModel: ViewModel {
     let shouldShowPlayPreviousItem: Bool
     let shouldShowPlayNextItem: Bool
     let shouldShowAutoPlay: Bool
+    let shouldShowJumpButtonsInOverlayMenu: Bool
     
     // MARK: General
     let item: BaseItemDto
@@ -134,6 +135,7 @@ final class VideoPlayerViewModel: ViewModel {
         self.jumpBackwardLength = Defaults[.videoPlayerJumpBackward]
         self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
         self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
+        self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
         
         super.init()
         

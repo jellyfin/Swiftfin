@@ -190,44 +190,45 @@ struct VLCPlayerOverlayView: View {
                                     }
                                 }
                                 
-                                Menu {
-                                    ForEach(VideoPlayerJumpLength.allCases, id: \.self) { forwardLength in
-                                        Button {
-                                            viewModel.jumpForwardLength = forwardLength
-                                        } label: {
-                                            if forwardLength == viewModel.jumpForwardLength {
-                                                Label(forwardLength.shortLabel, systemImage: "checkmark")
-                                            } else {
-                                                Text(forwardLength.shortLabel)
+                                if viewModel.shouldShowJumpButtonsInOverlayMenu {
+                                    Menu {
+                                        ForEach(VideoPlayerJumpLength.allCases, id: \.self) { forwardLength in
+                                            Button {
+                                                viewModel.jumpForwardLength = forwardLength
+                                            } label: {
+                                                if forwardLength == viewModel.jumpForwardLength {
+                                                    Label(forwardLength.shortLabel, systemImage: "checkmark")
+                                                } else {
+                                                    Text(forwardLength.shortLabel)
+                                                }
                                             }
                                         }
-                                    }
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "goforward")
-                                        Text("Jump Forward Length")
-                                    }
-                                }
-                                
-                                Menu {
-                                    ForEach(VideoPlayerJumpLength.allCases, id: \.self) { backwardLength in
-                                        Button {
-                                            viewModel.jumpBackwardLength = backwardLength
-                                        } label: {
-                                            if backwardLength == viewModel.jumpBackwardLength {
-                                                Label(backwardLength.shortLabel, systemImage: "checkmark")
-                                            } else {
-                                                Text(backwardLength.shortLabel)
-                                            }
+                                    } label: {
+                                        HStack {
+                                            Image(systemName: "goforward")
+                                            Text("Jump Forward Length")
                                         }
                                     }
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "gobackward")
-                                        Text("Jump Backward Length")
+                                    
+                                    Menu {
+                                        ForEach(VideoPlayerJumpLength.allCases, id: \.self) { backwardLength in
+                                            Button {
+                                                viewModel.jumpBackwardLength = backwardLength
+                                            } label: {
+                                                if backwardLength == viewModel.jumpBackwardLength {
+                                                    Label(backwardLength.shortLabel, systemImage: "checkmark")
+                                                } else {
+                                                    Text(backwardLength.shortLabel)
+                                                }
+                                            }
+                                        }
+                                    } label: {
+                                        HStack {
+                                            Image(systemName: "gobackward")
+                                            Text("Jump Backward Length")
+                                        }
                                     }
                                 }
-
                             } label: {
                                 Image(systemName: "ellipsis.circle")
                             }

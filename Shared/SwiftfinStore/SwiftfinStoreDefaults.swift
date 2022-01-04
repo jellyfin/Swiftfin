@@ -49,6 +49,9 @@ extension Defaults.Keys {
     static let shouldShowPlayNextItem = Key<Bool>("shouldShowNextItem", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     static let shouldShowAutoPlay = Key<Bool>("shouldShowAutoPlayNextItem", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     
+    // Should show video player items in overlay menu
+    static let shouldShowJumpButtonsInOverlayMenu = Key<Bool>("shouldShowJumpButtonsInMenu", default: true, suite: SwiftfinStore.Defaults.generalSuite)
+    
     // Experimental settings
     struct Experimental {
         static let syncSubtitleStateWithAdjacent = Key<Bool>("experimental.syncSubtitleState", default: false, suite: SwiftfinStore.Defaults.generalSuite)

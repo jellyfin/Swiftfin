@@ -15,7 +15,9 @@ struct BasicAppSettingsView: View {
 
     @EnvironmentObject var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
     @ObservedObject var viewModel: BasicAppSettingsViewModel
-    @State var resetTapped: Bool = false
+    @State var resetUserSettingsTapped: Bool = false
+    @State var resetAppSettingsTapped: Bool = false
+    @State var removeAllUsersTapped: Bool = false
 
     @Default(.appAppearance) var appAppearance
     @Default(.defaultHTTPScheme) var defaultHTTPScheme
@@ -43,15 +45,40 @@ struct BasicAppSettingsView: View {
             }
 
             Button {
-                resetTapped = true
+                resetUserSettingsTapped = true
+            } label: {
+                Text("Reset User Settings")
+            }
+            
+            Button {
+                resetAppSettingsTapped = true
+            } label: {
+                Text("Reset App Settings")
+            }
+            
+            Button {
+                removeAllUsersTapped = true
+            } label: {
+                Text("Remove All Users")
+            }
+        }
+        .alert("Reset User Settings", isPresented: $resetUserSettingsTapped, actions: {
+            Button(role: .destructive) {
+                viewModel.resetUserSettings()
             } label: {
                 L10n.reset.text
             }
-        }
-        .alert(L10n.reset, isPresented: $resetTapped, actions: {
+        })
+        .alert("Reset App Settings", isPresented: $resetAppSettingsTapped, actions: {
             Button(role: .destructive) {
-                viewModel.reset()
-                basicAppSettingsRouter.dismissCoordinator()
+                viewModel.resetAppSettings()
+            } label: {
+                L10n.reset.text
+            }
+        })
+        .alert("Remove All Users", isPresented: $removeAllUsersTapped, actions: {
+            Button(role: .destructive) {
+                viewModel.removeAllUsers()
             } label: {
                 L10n.reset.text
             }
