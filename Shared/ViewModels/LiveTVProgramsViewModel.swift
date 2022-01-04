@@ -11,26 +11,26 @@ import Foundation
 import JellyfinAPI
 
 final class LiveTVProgramsViewModel: ViewModel {
-    
+
     @Published var recommendedItems = [BaseItemDto]()
     @Published var seriesItems = [BaseItemDto]()
     @Published var movieItems = [BaseItemDto]()
     @Published var sportsItems = [BaseItemDto]()
     @Published var kidsItems = [BaseItemDto]()
     @Published var newsItems = [BaseItemDto]()
-    
-    private var channels = [String:BaseItemDto]()
-    
+
+    private var channels = [String: BaseItemDto]()
+
     override init() {
         super.init()
-        
+
         getChannels()
     }
-    
+
     func findChannel(id: String) -> BaseItemDto? {
         return channels[id]
     }
-    
+
     private func getChannels() {
         LiveTvAPI.getLiveTvChannels(
             userId: SessionManager.main.currentLogin.user.id,
@@ -62,7 +62,7 @@ final class LiveTVProgramsViewModel: ViewModel {
             })
             .store(in: &cancellables)
     }
-    
+
     private func getRecommendedPrograms() {
         LiveTvAPI.getRecommendedPrograms(
             userId: SessionManager.main.currentLogin.user.id,
@@ -83,7 +83,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         })
         .store(in: &cancellables)
     }
-    
+
     private func getSeries() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
@@ -97,8 +97,8 @@ final class LiveTVProgramsViewModel: ViewModel {
                 enableImageTypes: [.primary, .thumb],
                 fields: [.channelInfo, .primaryImageAspectRatio]
             )
-        
-        LiveTvAPI.getPrograms(getProgramsDto:  getProgramsDto)
+
+        LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
         .trackActivity(loading)
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
@@ -109,7 +109,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         })
         .store(in: &cancellables)
     }
-    
+
     private func getMovies() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
@@ -123,8 +123,8 @@ final class LiveTVProgramsViewModel: ViewModel {
                 enableImageTypes: [.primary, .thumb],
                 fields: [.channelInfo, .primaryImageAspectRatio]
             )
-        
-        LiveTvAPI.getPrograms(getProgramsDto:  getProgramsDto)
+
+        LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
         .trackActivity(loading)
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
@@ -135,7 +135,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         })
         .store(in: &cancellables)
     }
-    
+
     private func getSports() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
@@ -145,8 +145,8 @@ final class LiveTVProgramsViewModel: ViewModel {
                 enableImageTypes: [.primary, .thumb],
                 fields: [.channelInfo, .primaryImageAspectRatio]
             )
-        
-        LiveTvAPI.getPrograms(getProgramsDto:  getProgramsDto)
+
+        LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
         .trackActivity(loading)
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
@@ -157,7 +157,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         })
         .store(in: &cancellables)
     }
-    
+
     private func getKids() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
@@ -167,8 +167,8 @@ final class LiveTVProgramsViewModel: ViewModel {
                 enableImageTypes: [.primary, .thumb],
                 fields: [.channelInfo, .primaryImageAspectRatio]
             )
-        
-        LiveTvAPI.getPrograms(getProgramsDto:  getProgramsDto)
+
+        LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
         .trackActivity(loading)
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
@@ -179,7 +179,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         })
         .store(in: &cancellables)
     }
-    
+
     private func getNews() {
         let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
                 hasAired: false,
@@ -189,8 +189,8 @@ final class LiveTVProgramsViewModel: ViewModel {
                 enableImageTypes: [.primary, .thumb],
                 fields: [.channelInfo, .primaryImageAspectRatio]
             )
-        
-        LiveTvAPI.getPrograms(getProgramsDto:  getProgramsDto)
+
+        LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
         .trackActivity(loading)
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)

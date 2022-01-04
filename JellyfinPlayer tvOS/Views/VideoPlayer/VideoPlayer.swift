@@ -15,7 +15,7 @@ struct VideoPlayerView: UIViewControllerRepresentable {
     @EnvironmentObject var router: VideoPlayerCoordinator.Router
 
     var item: BaseItemDto
-    
+
     func makeUIViewController(context: Context) -> some UIViewController {
 
         let storyboard = UIStoryboard(name: "VideoPlayer", bundle: nil)
