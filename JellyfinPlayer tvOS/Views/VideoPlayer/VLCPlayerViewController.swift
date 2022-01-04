@@ -29,6 +29,7 @@ class VLCPlayerViewController: UIViewController {
     private var lastProgressReportTicks: Int64 = 0
     private var viewModelListeners = Set<AnyCancellable>()
     private var overlayDismissTimer: Timer?
+    private var confirmCloseOverlayDismissTimer: Timer?
     
     private var currentPlayerTicks: Int64 {
         return Int64(vlcMediaPlayer.time.intValue) * 100_000
@@ -42,11 +43,16 @@ class VLCPlayerViewController: UIViewController {
         return currentOverlayContentHostingController?.view.alpha ?? 0 > 0
     }
     
+    private var displayingConfirmClose: Bool {
+        return currentConfirmCloseHostingController?.view.alpha ?? 0 > 0
+    }
+    
     private lazy var videoContentView = makeVideoContentView()
     private lazy var jumpBackwardOverlayView = makeJumpBackwardOverlayView()
     private lazy var jumpForwardOverlayView = makeJumpForwardOverlayView()
     private var currentOverlayHostingController: UIHostingController<tvOSVLCOverlay>?
     private var currentOverlayContentHostingController: UIHostingController<SmallMediaStreamSelectionView>?
+    private var currentConfirmCloseHostingController: UIHostingController<ConfirmCloseOverlay>?
     
     // MARK: init
     
@@ -192,10 +198,16 @@ class VLCPlayerViewController: UIViewController {
         switch(buttonPress) {
         case .menu: () // Captured by other gesture
         case .playPause:
+            hideConfirmCloseOverlay()
+            
             didSelectMain()
         case .select:
+            hideConfirmCloseOverlay()
+            
             didGenerallyTap()
         case .upArrow:
+            hideConfirmCloseOverlay()
+            
             if displayingContentOverlay {
                 hideOverlayContent()
                 
@@ -203,16 +215,22 @@ class VLCPlayerViewController: UIViewController {
                 restartOverlayDismissTimer()
             }
         case .downArrow:
+            hideConfirmCloseOverlay()
+            
             if Defaults[.downActionShowsMenu] {
                 if !displayingContentOverlay {
                     didSelectMenu()
                 }
             }
         case .leftArrow:
+            hideConfirmCloseOverlay()
+            
             if !displayingContentOverlay {
                 didSelectBackward()
             }
         case .rightArrow:
+            hideConfirmCloseOverlay()
+            
             if !displayingContentOverlay {
                 didSelectForward()
             }
@@ -229,6 +247,7 @@ class VLCPlayerViewController: UIViewController {
         view.addGestureRecognizer(pressRecognizer)
     }
     
+    // MARK: didPressMenu
     @objc private func didPressMenu() {
         if displayingOverlay {
             hideOverlay()
@@ -237,6 +256,11 @@ class VLCPlayerViewController: UIViewController {
             
             showOverlay()
             restartOverlayDismissTimer()
+        } else if viewModel.confirmClose && !displayingConfirmClose {
+            
+            showConfirmCloseOverlay()
+            restartConfirmCloseDismissTimer()
+            
         } else {
             vlcMediaPlayer.pause()
             
@@ -255,7 +279,7 @@ class VLCPlayerViewController: UIViewController {
 
         // TODO: Look at injecting viewModel into the environment so it updates the current overlay
         
-        // Overlay
+        // Main overlay
         if let currentOverlayHostingController = currentOverlayHostingController {
             // UX fade-out
             UIView.animate(withDuration: 0.5) {
@@ -295,7 +319,7 @@ class VLCPlayerViewController: UIViewController {
 
         self.currentOverlayHostingController = newOverlayHostingController
         
-        // OverlayContent
+        // Media Stream selection
         if let currentOverlayContentHostingController = currentOverlayContentHostingController {
             currentOverlayContentHostingController.view.isHidden = true
 
@@ -303,26 +327,9 @@ class VLCPlayerViewController: UIViewController {
             currentOverlayContentHostingController.removeFromParent()
         }
         
-//        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(viewModel: viewModel,
-//                                                                    title: "Subtitles",
-//                                                                    items: viewModel.subtitleStreams) { selectedMediaStream in
-//            self.didSelectSubtitleStream(index: selectedMediaStream.index ?? -1)
-//        }
-//        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(viewModel: viewModel,
-//                                                                    items: viewModel.subtitleStreams,
-//                                                                    selectedIndex: viewModel.selectedSubtitleStreamIndex,
-//                                                                    title: "Subtitles") { selectedMediaStream in
-//            DispatchQueue.main.async {
-//                self.viewModel.selectedSubtitleStreamIndex = selectedMediaStream.index ?? -1
-//                self.didSelectSubtitleStream(index: selectedMediaStream.index ?? -1)
-//            }
-//        }
-        
         let newSmallMenuOverlayView = SmallMediaStreamSelectionView(viewModel: viewModel)
         
         let newOverlayContentHostingController = UIHostingController(rootView: newSmallMenuOverlayView)
-//        let newOverlayContentView = tvOSOverlayContentView(viewModel: viewModel)
-//        let newOverlayContentHostingController = UIHostingController(rootView: newOverlayContentView)
         
         newOverlayContentHostingController.view.translatesAutoresizingMaskIntoConstraints = false
         newOverlayContentHostingController.view.backgroundColor = UIColor.clear
@@ -341,6 +348,36 @@ class VLCPlayerViewController: UIViewController {
         ])
         
         self.currentOverlayContentHostingController = newOverlayContentHostingController
+        
+        // Confirm close
+        if let currentConfirmCloseHostingController = currentConfirmCloseHostingController {
+            currentConfirmCloseHostingController.view.isHidden = true
+
+            currentConfirmCloseHostingController.view.removeFromSuperview()
+            currentConfirmCloseHostingController.removeFromParent()
+        }
+        
+        let newConfirmCloseOverlay = ConfirmCloseOverlay()
+        
+        let newConfirmCloseHostingController = UIHostingController(rootView: newConfirmCloseOverlay)
+        
+        newConfirmCloseHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        newConfirmCloseHostingController.view.backgroundColor = UIColor.clear
+
+        newConfirmCloseHostingController.view.alpha = 0
+
+        addChild(newConfirmCloseHostingController)
+        view.addSubview(newConfirmCloseHostingController.view)
+        newConfirmCloseHostingController.didMove(toParent: self)
+
+        NSLayoutConstraint.activate([
+            newConfirmCloseHostingController.view.topAnchor.constraint(equalTo: videoContentView.topAnchor),
+            newConfirmCloseHostingController.view.bottomAnchor.constraint(equalTo: videoContentView.bottomAnchor),
+            newConfirmCloseHostingController.view.leftAnchor.constraint(equalTo: videoContentView.leftAnchor),
+            newConfirmCloseHostingController.view.rightAnchor.constraint(equalTo: videoContentView.rightAnchor)
+        ])
+        
+        self.currentConfirmCloseHostingController = newConfirmCloseHostingController
 
         // There is a behavior when setting this that the navigation bar
         // on the current navigation controller pops up, re-hide it
@@ -543,6 +580,26 @@ extension VLCPlayerViewController {
     }
 }
 
+// MARK: Show/Hide Confirm close
+extension VLCPlayerViewController {
+    
+    private func showConfirmCloseOverlay() {
+        guard let currentConfirmCloseHostingController = currentConfirmCloseHostingController else { return }
+        
+        UIView.animate(withDuration: 0.2) {
+            currentConfirmCloseHostingController.view.alpha = 1
+        }
+    }
+    
+    private func hideConfirmCloseOverlay() {
+        guard let currentConfirmCloseHostingController = currentConfirmCloseHostingController else { return }
+        
+        UIView.animate(withDuration: 0.5) {
+            currentConfirmCloseHostingController.view.alpha = 0
+        }
+    }
+}
+
 // MARK: OverlayTimer
 extension VLCPlayerViewController {
     
@@ -552,11 +609,28 @@ extension VLCPlayerViewController {
     }
     
     @objc private func dismissTimerFired() {
-        self.hideOverlay()
+        hideOverlay()
     }
     
     private func stopOverlayDismissTimer() {
-        self.overlayDismissTimer?.invalidate()
+        overlayDismissTimer?.invalidate()
+    }
+}
+
+// MARK: Confirm Close Overlay Timer
+extension VLCPlayerViewController {
+    
+    private func restartConfirmCloseDismissTimer() {
+        self.confirmCloseOverlayDismissTimer?.invalidate()
+        self.confirmCloseOverlayDismissTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(confirmCloseTimerFired), userInfo: nil, repeats: false)
+    }
+    
+    @objc private func confirmCloseTimerFired() {
+        hideConfirmCloseOverlay()
+    }
+    
+    private func stopConfirmCloseDismissTimer() {
+        confirmCloseOverlayDismissTimer?.invalidate()
     }
 }
 

@@ -19,6 +19,7 @@ struct SettingsView: View {
     @Default(.videoPlayerJumpForward) var jumpForwardLength
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
     @Default(.downActionShowsMenu) var downActionShowsMenu
+    @Default(.confirmClose) var confirmClose
 
     var body: some View {
         GeometryReader { reader in
@@ -75,6 +76,8 @@ struct SettingsView: View {
                         }
                         
                         Toggle("Press Down for Menu", isOn: $downActionShowsMenu)
+                        
+                        Toggle("Confirm Close", isOn: $confirmClose)
                         
                         Button {
                             settingsRouter.route(to: \.overlaySettings)

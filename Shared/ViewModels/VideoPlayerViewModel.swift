@@ -92,6 +92,9 @@ final class VideoPlayerViewModel: ViewModel {
     // MARK: Experimental
     let syncSubtitleStateWithAdjacent: Bool
     
+    // MARK: tvOS
+    let confirmClose: Bool
+    
     // Full response kept for convenience
     let response: PlaybackInfoResponse
     
@@ -160,6 +163,8 @@ final class VideoPlayerViewModel: ViewModel {
         self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
         
         self.syncSubtitleStateWithAdjacent = Defaults[.Experimental.syncSubtitleStateWithAdjacent]
+        
+        self.confirmClose = Defaults[.confirmClose]
         
         super.init()
         
@@ -355,7 +360,7 @@ extension VideoPlayerViewModel {
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
-                print("Playback start report sent!")
+                LogManager.shared.log.debug("Start report sent for item: \(self.item.id ?? "No ID")")
             }
             .store(in: &cancellables)
     }
@@ -391,7 +396,7 @@ extension VideoPlayerViewModel {
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
-                print("Pause report sent!")
+                LogManager.shared.log.debug("Pause report sent for item: \(self.item.id ?? "No ID")")
             }
             .store(in: &cancellables)
     }
@@ -434,9 +439,11 @@ extension VideoPlayerViewModel {
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
-                print("Playback progress sent!")
+                LogManager.shared.log.debug("Playback progress sent for item: \(self.item.id ?? "No ID")")
             }
             .store(in: &cancellables)
+        
+        self.lastProgressReport = nil
     }
     
     // MARK: sendStopReport
@@ -458,7 +465,7 @@ extension VideoPlayerViewModel {
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
-                print("Playback stop report sent!")
+                LogManager.shared.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
             }
             .store(in: &cancellables)
     }

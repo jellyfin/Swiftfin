@@ -385,6 +385,7 @@
 		E1E5D54C2783E27200692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */; };
 		E1E5D54F2783E67100692DFE /* OverlaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54E2783E67100692DFE /* OverlaySettingsView.swift */; };
 		E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */; };
+		E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */; };
 		E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1FA2F7427818A8800B4C270 /* SmallMenuOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */; };
@@ -670,6 +671,7 @@
 		E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D54E2783E67100692DFE /* OverlaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySettingsView.swift; sourceTree = "<group>"; };
 		E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
+		E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCloseOverlay.swift; sourceTree = "<group>"; };
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallMenuOverlay.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -1332,6 +1334,7 @@
 		E17885A7278130690094FBCF /* tvOSOverlay */ = {
 			isa = PBXGroup;
 			children = (
+				E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */,
 				E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */,
 				E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */,
 			);
@@ -1983,6 +1986,7 @@
 				53ABFDEE26799DCD00886593 /* ImageView.swift in Sources */,
 				62E632E4267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
 				53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */,
+				E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */,
 				E13DD3D6271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
 				E193D549271941CC00900D82 /* UserSignInView.swift in Sources */,
 				535870AA2669D8AE00D05A09 /* BlurHashDecode.swift in Sources */,
