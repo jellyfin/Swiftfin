@@ -56,4 +56,7 @@ extension Defaults.Keys {
     struct Experimental {
         static let syncSubtitleStateWithAdjacent = Key<Bool>("experimental.syncSubtitleState", default: false, suite: SwiftfinStore.Defaults.generalSuite)
     }
+    
+    // tvos specific
+    static let downActionShowsMenu = Key<Bool>("downActionShowsMenu", default: true, suite: SwiftfinStore.Defaults.generalSuite)
 }

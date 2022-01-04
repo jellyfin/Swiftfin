@@ -114,6 +114,11 @@ final class VideoPlayerViewModel: ViewModel {
     // Necessary PassthroughSubject to capture manual scrubbing from sliders
     let sliderScrubbingSubject = PassthroughSubject<VideoPlayerViewModel, Never>()
     
+    // During scrubbing, many progress reports were spammed
+    // Send only the current report after a delay
+    private var progressReportTimer: Timer?
+    private var lastProgressReport: PlaybackProgressInfo?
+    
     // MARK: init
     
     init(item: BaseItemDto,
@@ -304,6 +309,15 @@ extension VideoPlayerViewModel {
     }
 }
 
+// MARK: Progress Report Timer
+extension VideoPlayerViewModel {
+    
+    private func sendNewProgressReportWithTimer() {
+        self.progressReportTimer?.invalidate()
+        self.progressReportTimer = Timer.scheduledTimer(timeInterval: 0.7, target: self, selector: #selector(_sendProgressReport), userInfo: nil, repeats: false)
+    }
+}
+
 // MARK: Updates
 extension VideoPlayerViewModel {
     
@@ -408,7 +422,15 @@ extension VideoPlayerViewModel {
                                                 nowPlayingQueue: nil,
                                                 playlistItemId: "playlistItem0")
         
-        PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: progressInfo)
+        self.lastProgressReport = progressInfo
+        
+        self.sendNewProgressReportWithTimer()
+    }
+    
+    @objc private func _sendProgressReport() {
+        guard let lastProgressReport = lastProgressReport else { return }
+        
+        PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: lastProgressReport)
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
@@ -440,4 +462,11 @@ extension VideoPlayerViewModel {
             }
             .store(in: &cancellables)
     }
+}
+
+// MARK: Embedded SubtitleStreamViewModel
+extension VideoPlayerViewModel {
+    
+    
+    
 }

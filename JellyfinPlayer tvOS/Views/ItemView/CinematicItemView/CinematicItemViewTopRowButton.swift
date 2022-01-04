@@ -38,7 +38,10 @@ struct CinematicItemViewTopRowButton<Content: View>: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                         wrappedScrollView?.scrollToTop()
                     }
-                    print("Scroll to top")
+                    
+                    withAnimation(.linear(duration: 0.15)) {
+                        self.focused = newValue
+                    }
                 }
             }
     }

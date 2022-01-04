@@ -13,7 +13,6 @@ protocol PlayerOverlayDelegate {
     
     func didSelectClose()
     func didSelectMenu()
-    func didDeselectMenu()
     
     func didSelectBackward()
     func didSelectForward()

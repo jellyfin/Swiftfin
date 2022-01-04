@@ -116,6 +116,8 @@ class VLCPlayerViewController: UIViewController {
         // aren't unnecessarily set more than once
         vlcMediaPlayer.delegate = self
         vlcMediaPlayer.drawable = videoContentView
+        
+        // TODO: custom font sizes
         vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 16)
         
         setupMediaPlayer(newViewModel: viewModel)
@@ -188,8 +190,7 @@ class VLCPlayerViewController: UIViewController {
         guard let buttonPress = presses.first?.type else { return }
              
         switch(buttonPress) {
-        case .menu:
-           print("Menu")
+        case .menu: () // Captured by other gesture
         case .playPause:
             didSelectMain()
         case .select:
@@ -201,24 +202,22 @@ class VLCPlayerViewController: UIViewController {
                 showOverlay()
                 restartOverlayDismissTimer()
             }
-            
-           print("Up arrow")
         case .downArrow:
-            if !displayingContentOverlay {
-                stopOverlayDismissTimer()
-
-                hideOverlay()
-                showOverlayContent()
+            if Defaults[.downActionShowsMenu] {
+                if !displayingContentOverlay {
+                    didSelectMenu()
+                }
             }
         case .leftArrow:
-            didSelectBackward()
-           print("Left arrow")
+            if !displayingContentOverlay {
+                didSelectBackward()
+            }
         case .rightArrow:
-            didSelectForward()
-        case .pageUp:
-            print("page up")
-        case .pageDown:
-            print("page down")
+            if !displayingContentOverlay {
+                didSelectForward()
+            }
+        case .pageUp: ()
+        case .pageDown: ()
         @unknown default: ()
         }
     }
@@ -235,6 +234,9 @@ class VLCPlayerViewController: UIViewController {
             hideOverlay()
         } else if displayingContentOverlay {
             hideOverlayContent()
+            
+            showOverlay()
+            restartOverlayDismissTimer()
         } else {
             vlcMediaPlayer.pause()
             
@@ -301,11 +303,23 @@ class VLCPlayerViewController: UIViewController {
             currentOverlayContentHostingController.removeFromParent()
         }
         
-        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(viewModel: viewModel,
-                                                                    title: "Subtitles",
-                                                                    items: viewModel.subtitleStreams) { selectedMediaStream in
-            self.didSelectSubtitleStream(index: selectedMediaStream.index ?? -1)
-        }
+//        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(viewModel: viewModel,
+//                                                                    title: "Subtitles",
+//                                                                    items: viewModel.subtitleStreams) { selectedMediaStream in
+//            self.didSelectSubtitleStream(index: selectedMediaStream.index ?? -1)
+//        }
+//        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(viewModel: viewModel,
+//                                                                    items: viewModel.subtitleStreams,
+//                                                                    selectedIndex: viewModel.selectedSubtitleStreamIndex,
+//                                                                    title: "Subtitles") { selectedMediaStream in
+//            DispatchQueue.main.async {
+//                self.viewModel.selectedSubtitleStreamIndex = selectedMediaStream.index ?? -1
+//                self.didSelectSubtitleStream(index: selectedMediaStream.index ?? -1)
+//            }
+//        }
+        
+        let newSmallMenuOverlayView = SmallMediaStreamSelectionView(viewModel: viewModel)
+        
         let newOverlayContentHostingController = UIHostingController(rootView: newSmallMenuOverlayView)
 //        let newOverlayContentView = tvOSOverlayContentView(viewModel: viewModel)
 //        let newOverlayContentHostingController = UIHostingController(rootView: newOverlayContentView)
@@ -357,6 +371,8 @@ extension VLCPlayerViewController {
         lastPlayerTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
         lastProgressReportTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
 
+        // TODO: Custom buffer/cache amounts
+        
         let media = VLCMedia(url: newViewModel.streamURL)
         media.addOption("--prefetch-buffer-size=1048576")
         media.addOption("--network-caching=5000")
@@ -640,14 +656,11 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
         }
     }
     
-    // TODO: Implement properly in overlays
     func didSelectMenu() {
         stopOverlayDismissTimer()
-    }
-    
-    // TODO: Implement properly in overlays
-    func didDeselectMenu() {
-        restartOverlayDismissTimer()
+
+        hideOverlay()
+        showOverlayContent()
     }
     
     func didSelectBackward() {

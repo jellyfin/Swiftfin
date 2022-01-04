@@ -25,68 +25,86 @@ struct CinematicItemViewTopRow: View {
                 .ignoresSafeArea()
                 .frame(height: 210)
             
-            HStack(alignment: .bottom) {
-                VStack(alignment: .leading) {
-                    HStack(alignment: .PlayInformationAlignmentGuide) {
-                        CinematicItemViewTopRowButton(wrappedScrollView: wrappedScrollView) {
+            VStack {
+                Spacer()
+                
+                HStack(alignment: .bottom) {
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .PlayInformationAlignmentGuide) {
+                            
+                            // MARK: Play
                             Button {
                                 itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
                             } label: {
-                                ZStack {
-                                    Color.white.frame(width: 230, height: 100)
-
-                                    Text("Play")
+                                HStack(spacing: 15) {
+                                    Image(systemName: "play.fill")
+                                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                                         .font(.title3)
-                                        .foregroundColor(.black)
+                                    Text(viewModel.playButtonText())
+                                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
+//                                        .font(.title3)
+                                        .fontWeight(.semibold)
                                 }
+                                .frame(width: 230, height: 100)
+                                .background(viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white)
+                                .cornerRadius(10)
+                                
+//                                ZStack {
+//                                    Color.white.frame(width: 230, height: 100)
+//
+//                                    Text("Play")
+//                                        .font(.title3)
+//                                        .foregroundColor(.black)
+//                                }
                             }
                             .buttonStyle(CardButtonStyle())
                             .disabled(viewModel.itemVideoPlayerViewModel == nil)
                         }
                     }
-                }
-                
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(viewModel.item.name ?? "")
-                        .font(.title2)
-                        .lineLimit(2)
                     
-                    if let seriesName = viewModel.item.seriesName, let episodeLocator = viewModel.item.getEpisodeLocator() {
-                        Text("\(seriesName) - \(episodeLocator)")
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(viewModel.item.name ?? "")
+                            .font(.title2)
+                            .lineLimit(2)
+                        
+                        if let seriesName = viewModel.item.seriesName, let episodeLocator = viewModel.item.getEpisodeLocator() {
+                            Text("\(seriesName) - \(episodeLocator)")
+                        }
+                        
+                        HStack(alignment: .PlayInformationAlignmentGuide, spacing: 20) {
+                            
+                            if let runtime = viewModel.item.getItemRuntime() {
+                                Text(runtime)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                            }
+                            
+                            if let productionYear = viewModel.item.productionYear {
+                                Text(String(productionYear))
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .lineLimit(1)
+                            }
+                            
+                            if let officialRating = viewModel.item.officialRating {
+                                Text(officialRating)
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                                    .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                    .overlay(RoundedRectangle(cornerRadius: 2)
+                                        .stroke(Color.secondary, lineWidth: 1))
+                            }
+                        }
+                        .foregroundColor(.secondary)
                     }
                     
-                    HStack(alignment: .PlayInformationAlignmentGuide, spacing: 20) {
-                        
-                        if let runtime = viewModel.item.getItemRuntime() {
-                            Text(runtime)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                        }
-                        
-                        if let productionYear = viewModel.item.productionYear {
-                            Text(String(productionYear))
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .lineLimit(1)
-                        }
-                        
-                        if let officialRating = viewModel.item.officialRating {
-                            Text(officialRating)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .lineLimit(1)
-                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                                .overlay(RoundedRectangle(cornerRadius: 2)
-                                    .stroke(Color.secondary, lineWidth: 1))
-                        }
-                    }
-                    .foregroundColor(.secondary)
+                    Spacer()
                 }
-                
-                Spacer()
+                .padding(.horizontal, 50)
+                .padding(.bottom, 50)
             }
-            .padding(.horizontal, 50)
-            .padding(.bottom, 50)
+            
         }
         .onChange(of: envFocused) { envFocus in
             if envFocus == true {

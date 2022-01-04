@@ -67,7 +67,7 @@ struct ServerListView: View {
             Text("Connect to a Jellyfin server to get started")
                 .frame(minWidth: 50, maxWidth: 500)
                 .multilineTextAlignment(.center)
-                .font(.callout)
+                .font(.body)
 
             Button {
                 serverListRouter.route(to: \.connectToServer)
@@ -75,8 +75,12 @@ struct ServerListView: View {
                 L10n.connect.text
                     .bold()
                     .font(.callout)
+                    .padding(.vertical)
+                    .padding(.horizontal, 30)
+                    .background(Color.jellyfinPurple)
             }
             .padding(.top, 40)
+            .buttonStyle(CardButtonStyle())
         }
     }
 

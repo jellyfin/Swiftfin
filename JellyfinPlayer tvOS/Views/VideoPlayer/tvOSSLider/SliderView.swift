@@ -13,9 +13,11 @@ struct SliderView: UIViewRepresentable {
     
     @ObservedObject var viewModel: VideoPlayerViewModel
     
+    // TODO: look at adjusting value dependent on item runtime
     private let maxValue: Double = 1000
     
     func updateUIView(_ uiView: TvOSSlider, context: Context) {
+        guard !viewModel.sliderIsScrubbing else { return }
         uiView.value = Float(maxValue * viewModel.sliderPercentage)
     }
     

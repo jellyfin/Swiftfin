@@ -13,23 +13,10 @@ import SwiftUI
 struct CinematicMovieItemView: View {
     
     @ObservedObject var viewModel: MovieItemViewModel
-    @State var verticalScrollViewOffset: CGFloat = 0
     @State var wrappedScrollView: UIScrollView?
     
     var body: some View {
         ZStack {
-            
-            VStack {
-                Spacer()
-                
-                GeometryReader { overlayGeoReader in
-                    Text("")
-                        .onAppear {
-                            self.verticalScrollViewOffset = overlayGeoReader.frame(in: .global).origin.y + overlayGeoReader.frame(in: .global).height - 200
-                        }
-                }
-                .frame(height: 50)
-            }
             
             ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920),
                       bh: viewModel.item.getBackdropImageBlurHash())
@@ -38,10 +25,9 @@ struct CinematicMovieItemView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     
-                    Spacer(minLength: verticalScrollViewOffset)
-                    
                     CinematicItemViewTopRow(viewModel: viewModel, wrappedScrollView: wrappedScrollView)
                         .focusSection()
+                        .frame(height: UIScreen.main.bounds.height - 10)
 
                     ZStack(alignment: .topLeading) {
                         

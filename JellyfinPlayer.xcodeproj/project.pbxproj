@@ -294,7 +294,6 @@
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
-		E17885A6278130610094FBCF /* tvOSOverlayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A5278130610094FBCF /* tvOSOverlayContent.swift */; };
 		E18845F526DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F626DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F826DEA9C900B0C5B7 /* ItemViewBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */; };
@@ -384,6 +383,8 @@
 		E1E5D5462783C28100692DFE /* CinematicItemAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5452783C28100692DFE /* CinematicItemAboutView.swift */; };
 		E1E5D5492783CDD700692DFE /* OverlaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */; };
 		E1E5D54C2783E27200692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */; };
+		E1E5D54F2783E67100692DFE /* OverlaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54E2783E67100692DFE /* OverlaySettingsView.swift */; };
+		E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */; };
 		E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1FA2F7427818A8800B4C270 /* SmallMenuOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */; };
@@ -615,7 +616,6 @@
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVLCOverlay.swift; sourceTree = "<group>"; };
 		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
-		E17885A5278130610094FBCF /* tvOSOverlayContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSOverlayContent.swift; sourceTree = "<group>"; };
 		E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+Stackable.swift"; sourceTree = "<group>"; };
 		E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewBody.swift; sourceTree = "<group>"; };
 		E18845FF26DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLandscapeTopBarView.swift; sourceTree = "<group>"; };
@@ -668,6 +668,8 @@
 		E1E5D5452783C28100692DFE /* CinematicItemAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicItemAboutView.swift; sourceTree = "<group>"; };
 		E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySettingsView.swift; sourceTree = "<group>"; };
 		E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
+		E1E5D54E2783E67100692DFE /* OverlaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySettingsView.swift; sourceTree = "<group>"; };
+		E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallMenuOverlay.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -1255,7 +1257,7 @@
 				531690EE267ABF72005D8AB9 /* NextUpView.swift */,
 				E193D54F2719430400900D82 /* ServerDetailView.swift */,
 				E193D54A271941D300900D82 /* ServerListView.swift */,
-				5398514426B64DA100101B49 /* SettingsView.swift */,
+				E1E5D54D2783E66600692DFE /* SettingsView */,
 				E193D546271941C500900D82 /* UserListView.swift */,
 				E193D548271941CC00900D82 /* UserSignInView.swift */,
 				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
@@ -1331,7 +1333,6 @@
 			isa = PBXGroup;
 			children = (
 				E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */,
-				E17885A5278130610094FBCF /* tvOSOverlayContent.swift */,
 				E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */,
 			);
 			path = tvOSOverlay;
@@ -1456,6 +1457,16 @@
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
 				E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */,
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+			);
+			path = SettingsView;
+			sourceTree = "<group>";
+		};
+		E1E5D54D2783E66600692DFE /* SettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */,
+				E1E5D54E2783E67100692DFE /* OverlaySettingsView.swift */,
+				5398514426B64DA100101B49 /* SettingsView.swift */,
 			);
 			path = SettingsView;
 			sourceTree = "<group>";
@@ -1916,7 +1927,6 @@
 				091B5A8E268315D400D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				E10EAA50277BBCC4000269ED /* CGSizeExtensions.swift in Sources */,
 				E1E5D5422783B33900692DFE /* PortraitItemsRowView.swift in Sources */,
-				E17885A6278130610094FBCF /* tvOSOverlayContent.swift in Sources */,
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
 				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
@@ -1983,6 +1993,7 @@
 				C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */,
 				E1D4BF822719D22800A11E64 /* AppAppearance.swift in Sources */,
 				C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */,
+				E1E5D54F2783E67100692DFE /* OverlaySettingsView.swift in Sources */,
 				53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */,
 				09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */,
 				E1C812D2277AE50A00918266 /* URLComponentsExtensions.swift in Sources */,
@@ -2016,6 +2027,7 @@
 				531690FA267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift in Sources */,
 				C4BE0764271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift in Sources */,
 				E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */,
+				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
 				C4BE076A271FC164003F4AD1 /* TVLibrariesView.swift in Sources */,
 				E13DD3C327164941009D4DAF /* SwiftfinStore.swift in Sources */,
 				09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */,

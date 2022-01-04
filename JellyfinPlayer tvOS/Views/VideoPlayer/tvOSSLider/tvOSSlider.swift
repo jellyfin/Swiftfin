@@ -457,6 +457,9 @@ public final class TvOSSlider: UIControl {
         if !isFocused || abs(deceleratingVelocity) < 1 {
             stopDeceleratingTimer()
         }
+        
+        viewModel.sliderPercentage = Double(percent)
+        viewModel.sliderIsScrubbing = false
     }
     
     private func stopDeceleratingTimer() {
@@ -504,7 +507,6 @@ public final class TvOSSlider: UIControl {
             
             viewModel.sliderPercentage = Double(percent)
         case .ended, .cancelled:
-            viewModel.sliderIsScrubbing = false
             
             thumbViewCenterXConstraintConstant = Float(thumbViewCenterXConstraint.constant)
             
@@ -514,6 +516,7 @@ public final class TvOSSlider: UIControl {
                 deceleratingTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(handleDeceleratingTimer(timer:)), userInfo: nil, repeats: true)
             }
             else {
+                viewModel.sliderIsScrubbing = false
                 stopDeceleratingTimer()
             }
         default:

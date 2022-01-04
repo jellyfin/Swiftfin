@@ -39,7 +39,7 @@ struct BasicAppSettingsView: View {
         }
         .alert(L10n.reset, isPresented: $resetTapped, actions: {
             Button(role: .destructive) {
-                viewModel.reset()
+                viewModel.resetAppSettings()
                 basicAppSettingsRouter.dismissCoordinator()
             } label: {
                 L10n.reset.text

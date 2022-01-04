@@ -7,12 +7,14 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct tvOSVLCOverlay: View {
     
     @ObservedObject var viewModel: VideoPlayerViewModel
+    @Default(.downActionShowsMenu) var downActionShowsMenu
     
     @ViewBuilder
     private var mainButtonView: some View {
@@ -29,7 +31,7 @@ struct tvOSVLCOverlay: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             
-            LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.7), .black]),
+            LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.8), .black]),
                            startPoint: .top,
                            endPoint: .bottom)
                 .ignoresSafeArea()
@@ -101,16 +103,12 @@ struct tvOSVLCOverlay: View {
                         }
                     }
                     
-                    SFSymbolButton(systemName: "ellipsis.circle") {
-                        viewModel.playerOverlayDelegate?.didSelectMenu()
-                    }
-                    .frame(maxWidth: 30, maxHeight: 30)
-                    .contextMenu {
-                        SFSymbolButton(systemName: "speedometer") {
-                            print("here")
+                    if !downActionShowsMenu {
+                        SFSymbolButton(systemName: "ellipsis.circle") {
+                            viewModel.playerOverlayDelegate?.didSelectMenu()
                         }
-                    }
-                }
+                        .frame(maxWidth: 30, maxHeight: 30)
+                    }                }
                 .offset(x: 0, y: 10)
                 
                 SliderView(viewModel: viewModel)

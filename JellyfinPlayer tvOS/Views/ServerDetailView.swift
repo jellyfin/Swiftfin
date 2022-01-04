@@ -22,6 +22,7 @@ struct ServerDetailView: View {
                     Text(SessionManager.main.currentLogin.server.name)
                         .foregroundColor(.secondary)
                 }
+                .focusable()
 
                 HStack {
                     Text("URI")
