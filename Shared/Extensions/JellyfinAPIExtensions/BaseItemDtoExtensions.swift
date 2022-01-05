@@ -252,7 +252,7 @@ public extension BaseItemDto {
             let subtitleStreams = mediaStreams.filter({ $0.type == .subtitle })
             
             if !audioStreams.isEmpty {
-                let audioList = audioStreams.compactMap({ $0.displayTitle }).joined(separator: ", ")
+                let audioList = audioStreams.compactMap({ "\($0.displayTitle ?? "No Title") (\($0.codec ?? "No Codec"))" }).joined(separator: ", ")
                 mediaItems.append(ItemDetail(title: "Audio", content: audioList))
             }
             
