@@ -248,6 +248,8 @@ struct VLCPlayerOverlayView: View {
                     }
                 }
             }
+            .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 50 : 0)
+            .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 10 : 0)
             
             // MARK: Center
             
