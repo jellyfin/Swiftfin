@@ -552,7 +552,6 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     
     /// Do not call when setting to index -1
     func didSelectSubtitleStream(index: Int) {
-        
         viewModel.subtitlesEnabled = true
         vlcMediaPlayer.currentVideoSubTitleIndex = Int32(index)
         

@@ -471,9 +471,23 @@ extension VideoPlayerViewModel {
     }
 }
 
-// MARK: Embedded SubtitleStreamViewModel
+// MARK: Embedded/Normal Subtitle Streams
 extension VideoPlayerViewModel {
     
-    
-    
+    func createEmbeddedSubtitleStream(with subtitleStream: MediaStream) -> URL {
+        
+        guard let baseURL = URLComponents(url: streamURL, resolvingAgainstBaseURL: false) else { fatalError() }
+        guard let queryItems = baseURL.queryItems else { fatalError() }
+        
+        var newURL = baseURL
+        var newQueryItems = queryItems
+        
+        newQueryItems.removeAll(where: { $0.name == "SubtitleStreamIndex" })
+        newQueryItems.removeAll(where: { $0.name == "SubtitleMethod" })
+        
+        newURL.addQueryItem(name: "SubtitleMethod", value: "Encode")
+        newURL.addQueryItem(name: "SubtitleStreamIndex", value: "\(subtitleStream.index ?? -1)")
+        
+        return newURL.url!
+    }
 }
