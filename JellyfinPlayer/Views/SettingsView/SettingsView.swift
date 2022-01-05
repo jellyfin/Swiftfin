@@ -25,6 +25,8 @@ struct SettingsView: View {
     @Default(.videoPlayerJumpForward) var jumpForwardLength
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
     @Default(.jumpGesturesEnabled) var jumpGesturesEnabled
+    @Default(.showPosterLabels) var showPosterLabels
+    @Default(.showCastAndCrew) var showCastAndCrew
 
     var body: some View {
         Form {
@@ -114,26 +116,9 @@ struct SettingsView: View {
             }
 
             Section(header: L10n.accessibility.text) {
-//                Toggle("Automatically show subtitles", isOn: $isAutoSelectSubtitles)
-//                SearchablePicker(label: "Preferred subtitle language",
-//                                 options: viewModel.langs,
-//                                 optionToString: { $0.name },
-//                                 selected: Binding<TrackLanguage>(get: {
-//                                                                      viewModel.langs
-//                                                                          .first(where: { $0.isoCode == autoSelectSubtitlesLangcode
-//                                                                          }) ??
-//                                                                          .auto
-//                                                                  },
-//                                                                  set: { autoSelectSubtitlesLangcode = $0.isoCode }))
-//                SearchablePicker(label: "Preferred audio language",
-//                                 options: viewModel.langs,
-//                                 optionToString: { $0.name },
-//                                 selected: Binding<TrackLanguage>(get: {
-//                                                                      viewModel.langs
-//                                                                          .first(where: { $0.isoCode == autoSelectAudioLangcode }) ??
-//                                                                          .auto
-//                                                                  },
-//                                                                  set: { autoSelectAudioLangcode = $0.isoCode }))
+                Toggle("Show Poster Labels", isOn: $showPosterLabels)
+                Toggle("Show Cast and Crew", isOn: $showCastAndCrew)
+                
                 Picker(L10n.appearance, selection: $appAppearance) {
                     ForEach(AppAppearance.allCases, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)

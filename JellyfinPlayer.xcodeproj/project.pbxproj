@@ -76,7 +76,6 @@
 		5377CBFC263B596B003A4E83 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBFB263B596B003A4E83 /* Preview Assets.xcassets */; };
 		5389276E263C25100035E14B /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389276D263C25100035E14B /* ContinueWatchingView.swift */; };
 		53892770263C25230035E14B /* NextUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389276F263C25230035E14B /* NextUpView.swift */; };
-		53892772263C8C6F0035E14B /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53892771263C8C6F0035E14B /* LoadingView.swift */; };
 		5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5389277B263CC3DB0035E14B /* BlurHashDecode.swift */; };
 		53913BEF26D323FE00EB3286 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53913BC926D323FE00EB3286 /* Localizable.strings */; };
 		53913BF026D323FE00EB3286 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53913BC926D323FE00EB3286 /* Localizable.strings */; };
@@ -230,6 +229,13 @@
 		C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E508172703E8190045C9AB /* LibraryListView.swift */; };
 		C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */; };
 		E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */; };
+		E10D87DA2784E4F100BD264C /* ItemViewDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87D92784E4F100BD264C /* ItemViewDetailsView.swift */; };
+		E10D87DC2784EC5200BD264C /* EpisodesRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87DB2784EC5200BD264C /* EpisodesRowView.swift */; };
+		E10D87DE278510E400BD264C /* PosterSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87DD278510E300BD264C /* PosterSize.swift */; };
+		E10D87DF278510E400BD264C /* PosterSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87DD278510E300BD264C /* PosterSize.swift */; };
+		E10D87E0278510E400BD264C /* PosterSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87DD278510E300BD264C /* PosterSize.swift */; };
+		E10D87E227852FD000BD264C /* EpisodesRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87E127852FD000BD264C /* EpisodesRowViewModel.swift */; };
+		E10D87E327852FD000BD264C /* EpisodesRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87E127852FD000BD264C /* EpisodesRowViewModel.swift */; };
 		E10EAA45277BB646000269ED /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E10EAA44277BB646000269ED /* JellyfinAPI */; };
 		E10EAA47277BB670000269ED /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E10EAA46277BB670000269ED /* JellyfinAPI */; };
 		E10EAA4D277BB716000269ED /* Sliders in Frameworks */ = {isa = PBXBuildFile; productRef = E10EAA4C277BB716000269ED /* Sliders */; };
@@ -493,7 +499,6 @@
 		5377CC02263B596B003A4E83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5389276D263C25100035E14B /* ContinueWatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
 		5389276F263C25230035E14B /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
-		53892771263C8C6F0035E14B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		5389277B263CC3DB0035E14B /* BlurHashDecode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurHashDecode.swift; sourceTree = "<group>"; };
 		53913BCA26D323FE00EB3286 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Localizable.strings; sourceTree = "<group>"; };
 		53913BCD26D323FE00EB3286 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = Localizable.strings; sourceTree = "<group>"; };
@@ -587,6 +592,10 @@
 		C4E508172703E8190045C9AB /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
 		E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayButtonRowView.swift; sourceTree = "<group>"; };
+		E10D87D92784E4F100BD264C /* ItemViewDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewDetailsView.swift; sourceTree = "<group>"; };
+		E10D87DB2784EC5200BD264C /* EpisodesRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesRowView.swift; sourceTree = "<group>"; };
+		E10D87DD278510E300BD264C /* PosterSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterSize.swift; sourceTree = "<group>"; };
+		E10D87E127852FD000BD264C /* EpisodesRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesRowViewModel.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtensions.swift; sourceTree = "<group>"; };
 		E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+VideoPlayerViewModel.swift"; sourceTree = "<group>"; };
 		E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPIError.swift; sourceTree = "<group>"; };
@@ -767,6 +776,7 @@
 				E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */,
 				625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */,
 				62E632E5267D3F5B0063E547 /* EpisodeItemViewModel.swift */,
+				E10D87E127852FD000BD264C /* EpisodesRowViewModel.swift */,
 				625CB5722678C32A00530A6E /* HomeViewModel.swift */,
 				62E632F2267D54030063E547 /* ItemViewModel.swift */,
 				62E632D9267D2BC40063E547 /* LatestMediaViewModel.swift */,
@@ -891,6 +901,7 @@
 				E1AA331E2782639D00F6439C /* OverlayType.swift */,
 				E193D4DA27193CCA00900D82 /* PillStackable.swift */,
 				E193D4D727193CAC00900D82 /* PortraitImageStackable.swift */,
+				E10D87DD278510E300BD264C /* PosterSize.swift */,
 				E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */,
 				535870AC2669D8DD00D05A09 /* Typings.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
@@ -1299,7 +1310,6 @@
 				6213388F265F83A900A81A2A /* LibraryListView.swift */,
 				53EE24E5265060780068F029 /* LibrarySearchView.swift */,
 				53DF641D263D9C0600A7CD1A /* LibraryView.swift */,
-				53892771263C8C6F0035E14B /* LoadingView.swift */,
 				5389276F263C25230035E14B /* NextUpView.swift */,
 				E1E5D54A2783E26100692DFE /* SettingsView */,
 				E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */,
@@ -1315,7 +1325,9 @@
 			isa = PBXGroup;
 			children = (
 				535BAE9E2649E569005FA86D /* ItemView.swift */,
+				E10D87DB2784EC5200BD264C /* EpisodesRowView.swift */,
 				E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */,
+				E10D87D92784E4F100BD264C /* ItemViewDetailsView.swift */,
 				E18845FB26DEACC400B0C5B7 /* Landscape */,
 				E18845FA26DEACBE00B0C5B7 /* Portrait */,
 			);
@@ -1955,6 +1967,7 @@
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				C4BE0767271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */,
 				E193D53727193F8700900D82 /* LibraryListCoordinator.swift in Sources */,
+				E10D87DF278510E400BD264C /* PosterSize.swift in Sources */,
 				E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */,
 				E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */,
 				E193D54D2719426600900D82 /* LibraryFilterView.swift in Sources */,
@@ -2020,6 +2033,7 @@
 				E1E5D5392783A56B00692DFE /* EpisodesRowView.swift in Sources */,
 				E1E5D5442783BB5100692DFE /* ItemDetailsView.swift in Sources */,
 				536D3D74267BA8170004248C /* BackgroundManager.swift in Sources */,
+				E10D87E327852FD000BD264C /* EpisodesRowViewModel.swift in Sources */,
 				535870632669D21600D05A09 /* JellyfinPlayer_tvOSApp.swift in Sources */,
 				E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E193D547271941C500900D82 /* UserListView.swift in Sources */,
@@ -2066,6 +2080,7 @@
 				E1C812C0277A8E5D00918266 /* VLCPlayerView.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				E10EAA4F277BBCC4000269ED /* CGSizeExtensions.swift in Sources */,
+				E10D87E227852FD000BD264C /* EpisodesRowViewModel.swift in Sources */,
 				C40CD925271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */,
 				6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */,
 				6220D0AD26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
@@ -2100,6 +2115,7 @@
 				C4BE0763271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift in Sources */,
 				53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */,
 				E1C812CE277AE43100918266 /* VideoPlayerViewModel.swift in Sources */,
+				E10D87DA2784E4F100BD264C /* ItemViewDetailsView.swift in Sources */,
 				E1C812C3277A8E5D00918266 /* VLCPlayerOverlayView.swift in Sources */,
 				E188460026DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift in Sources */,
 				091B5A8B2683142E00D78B61 /* UDPBroadCastConnection.swift in Sources */,
@@ -2125,6 +2141,7 @@
 				E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */,
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
 				6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */,
+				E10D87DC2784EC5200BD264C /* EpisodesRowView.swift in Sources */,
 				E1C812BE277A8E5D00918266 /* VLCPlayerViewController.swift in Sources */,
 				E1AA331D2782541500F6439C /* PrimaryButtonView.swift in Sources */,
 				62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */,
@@ -2172,10 +2189,10 @@
 				E13DD3EF27178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
 				C40CD928271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */,
+				E10D87DE278510E400BD264C /* PosterSize.swift in Sources */,
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,
-				53892772263C8C6F0035E14B /* LoadingView.swift in Sources */,
 				625CB5752678C33500530A6E /* LibraryListViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2195,6 +2212,7 @@
 				E11B1B6E2718CDBA006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				628B95372670CB800091AF3B /* JellyfinWidget.swift in Sources */,
 				6264E88E273850380081A12A /* Strings.swift in Sources */,
+				E10D87E0278510E400BD264C /* PosterSize.swift in Sources */,
 				E1AD105426D97161003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
 				E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */,
 				628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */,

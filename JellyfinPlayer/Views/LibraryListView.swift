@@ -38,27 +38,6 @@ struct LibraryListView: View {
                 .shadow(radius: 5)
                 .padding(.bottom, 5)
 
-                NavigationLink(destination: LazyView {
-                    L10n.wip.text
-                }) {
-                    ZStack {
-                        HStack {
-                            Spacer()
-                            L10n.allGenres.text
-                                .foregroundColor(.black)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                            Spacer()
-                        }
-                    }
-                    .padding(16)
-                    .background(Color.white)
-                    .frame(minWidth: 100, maxWidth: .infinity)
-                }
-                .cornerRadius(10)
-                .shadow(radius: 5)
-                .padding(.bottom, 15)
-
                 if !viewModel.isLoading {
                     ForEach(viewModel.libraries, id: \.id) { library in
                         if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {

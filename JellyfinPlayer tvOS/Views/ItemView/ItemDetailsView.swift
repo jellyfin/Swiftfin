@@ -12,54 +12,7 @@ import SwiftUI
 struct ItemDetailsView: View {
     
     @ObservedObject var viewModel: ItemViewModel
-    private let detailItems: [(String, String)]
-    private let mediaItems: [(String, String)]
     @FocusState private var focused: Bool
-    
-    init(viewModel: ItemViewModel) {
-        self.viewModel = viewModel
-        
-        var initialDetailItems: [(String, String)] = []
-        
-        if let productionYear = viewModel.item.productionYear {
-            initialDetailItems.append(("Released", "\(productionYear)"))
-        }
-        
-        if let rating = viewModel.item.officialRating {
-            initialDetailItems.append(("Rated", "\(rating)"))
-        }
-        
-        if let runtime = viewModel.item.getItemRuntime() {
-            initialDetailItems.append(("Runtime", "\(runtime)"))
-        }
-        
-        var initialMediatems: [(String, String)] = []
-        
-        if let container = viewModel.item.container {
-            let containerList = container.split(separator: ",")
-            if containerList.count > 1 {
-                initialMediatems.append(("Containers", containerList.joined(separator: ", ")))
-            } else {
-                initialMediatems.append(("Container", containerList.joined(separator: ", ")))
-            }
-        }
-        
-        if let itemVideoPlayerViewModel = viewModel.itemVideoPlayerViewModel {
-            
-            if !itemVideoPlayerViewModel.audioStreams.isEmpty {
-                let audioList = itemVideoPlayerViewModel.audioStreams.compactMap({ $0.displayTitle }).joined(separator: ", ")
-                initialMediatems.append(("Audio", audioList))
-            }
-            
-            if !itemVideoPlayerViewModel.subtitleStreams.isEmpty {
-                let subtitlesList = itemVideoPlayerViewModel.subtitleStreams.compactMap({ $0.displayTitle }).joined(separator: ", ")
-                initialMediatems.append(("Subtitles", subtitlesList))
-            }
-        }
-        
-        detailItems = initialDetailItems
-        mediaItems = initialMediatems
-    }
     
     var body: some View {
         

@@ -38,6 +38,11 @@ extension Defaults.Keys {
     static let autoSelectSubtitlesLangCode = Key<String>("AutoSelectSubtitlesLangCode", default: "Auto", suite: SwiftfinStore.Defaults.generalSuite)
     static let autoSelectAudioLangCode = Key<String>("AutoSelectAudioLangCode", default: "Auto", suite: SwiftfinStore.Defaults.generalSuite)
     
+    // Customize settings
+    static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: SwiftfinStore.Defaults.generalSuite)
+    static let showCastAndCrew = Key<Bool>("showCastAndCrew", default: true, suite: SwiftfinStore.Defaults.generalSuite)
+    
+    // Video player / overlay settings
     static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: SwiftfinStore.Defaults.generalSuite)
     static let jumpGesturesEnabled = Key<Bool>("gesturesEnabled", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>("videoPlayerJumpForward", default: .fifteen, suite: SwiftfinStore.Defaults.generalSuite)

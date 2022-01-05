@@ -60,7 +60,6 @@ struct EpisodeCardVStackView: View {
                             .overlay(
                                 Rectangle()
                                     .fill(Color.jellyfinPurple)
-                                    .mask(ProgressBar())
                                     .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 1.5), height: 7)
                                     .padding(0), alignment: .bottomLeading
                             )

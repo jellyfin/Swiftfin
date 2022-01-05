@@ -19,7 +19,11 @@ struct ItemNavigationView: View {
 
     var body: some View {
         ItemView(item: item)
-            .navigationBarTitle("", displayMode: .inline)
+            .navigationBarTitle(item.name ?? "", displayMode: .inline)
+            .introspectNavigationController { navigationController in
+                let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
+                navigationController.navigationBar.titleTextAttributes = textAttributes
+            }
     }
 }
 
@@ -56,21 +60,6 @@ private struct ItemView: View {
                     (viewModel as? SeasonItemViewModel)?.routeToSeriesItem()
                 } label: {
                     Label("Show Series", systemImage: "text.below.photo")
-                }
-            } label: {
-                Image(systemName: "ellipsis.circle.fill")
-            }
-        case .episode:
-            Menu {
-                Button {
-                    (viewModel as? EpisodeItemViewModel)?.routeToSeriesItem()
-                } label: {
-                    Label("Show Series", systemImage: "text.below.photo")
-                }
-                Button {
-                    (viewModel as? EpisodeItemViewModel)?.routeToSeasonItem()
-                } label: {
-                    Label("Show Season", systemImage: "square.fill.text.grid.1x2")
                 }
             } label: {
                 Image(systemName: "ellipsis.circle.fill")

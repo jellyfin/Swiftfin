@@ -84,6 +84,11 @@ extension BaseItemDto {
                 
                 var subtitle: String? = nil
                 
+                // MARK: Attach media content to self
+                
+                var modifiedSelfItem = self
+                modifiedSelfItem.mediaStreams = mediaSource.mediaStreams
+                
                 // TODO: other forms of media subtitle
                 if self.itemType == .episode {
                     if let seriesName = self.seriesName, let episodeLocator = self.getEpisodeLocator() {
@@ -101,8 +106,8 @@ extension BaseItemDto {
                 let shouldShowPlayPreviousItem = Defaults[.shouldShowPlayPreviousItem] && itemType == .episode
                 let shouldShowPlayNextItem = Defaults[.shouldShowPlayNextItem] && itemType == .episode
                 
-                let videoPlayerViewModel = VideoPlayerViewModel(item: self,
-                                                                title: self.name ?? "",
+                let videoPlayerViewModel = VideoPlayerViewModel(item: modifiedSelfItem,
+                                                                title: modifiedSelfItem.name ?? "",
                                                                 subtitle: subtitle,
                                                                 streamURL: streamURL.url!,
                                                                 hlsURL: hlsURL.url!,

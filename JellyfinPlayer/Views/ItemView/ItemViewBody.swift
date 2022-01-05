@@ -7,12 +7,15 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ItemViewBody: View {
+    
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
     @EnvironmentObject private var viewModel: ItemViewModel
+    @Default(.showCastAndCrew) var showCastAndCrew
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -27,13 +30,11 @@ struct ItemViewBody: View {
 
             if let seriesViewModel = viewModel as? SeriesItemViewModel {
                 PortraitImageHStackView(items: seriesViewModel.seasons,
-                                        maxWidth: 150,
                                         topBarView: {
                     L10n.seasons.text
-                                                .font(.callout)
                                                 .fontWeight(.semibold)
-                                                .padding(.top, 3)
-                                                .padding(.leading, 16)
+                                                .padding(.bottom)
+                                                .padding(.horizontal)
                                         }, selectedAction: { season in
                                             itemRouter.route(to: \.item, season)
                                         })
@@ -46,6 +47,7 @@ struct ItemViewBody: View {
                            selectedAction: { genre in
                                itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                            })
+                .padding(.bottom)
 
             // MARK: Studios
 
@@ -54,41 +56,65 @@ struct ItemViewBody: View {
                                items: studios) { studio in
                     itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                 }
+                               .padding(.bottom)
+            }
+            
+            // MARK: Episodes
+            
+            if let episodeViewModel = viewModel as? EpisodeItemViewModel {
+                EpisodesRowView(viewModel: EpisodesRowViewModel(episodeItemViewModel: episodeViewModel))
+            }
+            
+            if let episodeViewModel = viewModel as? EpisodeItemViewModel {
+                if let seriesItem = episodeViewModel.series {
+                    let a = [seriesItem]
+                    PortraitImageHStackView(items: a) {
+                        Text("Series")
+                            .fontWeight(.semibold)
+                            .padding(.bottom)
+                            .padding(.horizontal)
+                    } selectedAction: { seriesItem in
+                        itemRouter.route(to: \.item, seriesItem)
+                    }
+                }
             }
 
             // MARK: Cast & Crew
 
-            if let castAndCrew = viewModel.item.people {
-                PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                                        maxWidth: 150,
-                                        topBarView: {
-                                            Text("Cast & Crew")
-                                                .font(.callout)
-                                                .fontWeight(.semibold)
-                                                .padding(.top, 3)
-                                                .padding(.leading, 16)
-                                        },
-                                        selectedAction: { person in
-                                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                                        })
+            if showCastAndCrew {
+                if let castAndCrew = viewModel.item.people {
+                    PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                                            topBarView: {
+                                                Text("Cast & Crew")
+                                                    .fontWeight(.semibold)
+                                                    .padding(.bottom)
+                                                    .padding(.horizontal)
+                                            },
+                                            selectedAction: { person in
+                                                itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                                            })
+                }
             }
 
             // MARK: More Like This
 
             if !viewModel.similarItems.isEmpty {
                 PortraitImageHStackView(items: viewModel.similarItems,
-                                        maxWidth: 150,
                                         topBarView: {
                     L10n.moreLikeThis.text
-                                                .font(.callout)
                                                 .fontWeight(.semibold)
-                                                .padding(.top, 3)
-                                                .padding(.leading, 16)
+                                                .padding(.bottom)
+                                                .padding(.horizontal)
                                         },
                                         selectedAction: { item in
                                             itemRouter.route(to: \.item, item)
                                         })
             }
+            
+            // MARK: Details
+            
+            ItemViewDetailsView(viewModel: viewModel)
+                .padding()
         }
     }
 }
