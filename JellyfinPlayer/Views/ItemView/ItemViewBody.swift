@@ -65,6 +65,8 @@ struct ItemViewBody: View {
                 EpisodesRowView(viewModel: EpisodesRowViewModel(episodeItemViewModel: episodeViewModel))
             }
             
+            // MARK: Series
+            
             if let episodeViewModel = viewModel as? EpisodeItemViewModel {
                 if let seriesItem = episodeViewModel.series {
                     let a = [seriesItem]

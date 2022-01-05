@@ -72,6 +72,7 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
                             }
                             .frame(width: maxWidth)
                         }
+                        .padding(.bottom)
                     }
                 }
                 .padding(.horizontal)

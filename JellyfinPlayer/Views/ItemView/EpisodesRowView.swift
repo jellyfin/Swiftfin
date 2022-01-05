@@ -71,6 +71,7 @@ struct EpisodesRowView: View {
                                     Spacer()
                                 }
                                 .frame(width: 200)
+                                .shadow(radius: 4, y: 2)
                         } else if let selectedSeason = viewModel.selectedSeason {
                             if viewModel.seasonsEpisodes[selectedSeason]!.isEmpty {
                                 VStack(alignment: .leading) {
@@ -92,6 +93,7 @@ struct EpisodesRowView: View {
                                     Spacer()
                                 }
                                 .frame(width: 200)
+                                .shadow(radius: 4, y: 2)
                             } else {
                                 ForEach(viewModel.seasonsEpisodes[selectedSeason]!, id:\.self) { episode in
                                     Button {
@@ -123,6 +125,7 @@ struct EpisodesRowView: View {
                                                 Spacer()
                                             }
                                             .frame(width: 200)
+                                            .shadow(radius: 4, y: 2)
                                         }
                                     }
                                     .buttonStyle(PlainButtonStyle())
