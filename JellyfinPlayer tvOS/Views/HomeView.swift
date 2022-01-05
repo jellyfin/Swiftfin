@@ -21,38 +21,49 @@ struct HomeView: View {
             Color.black
                 .ignoresSafeArea()
             
-            ScrollView {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else {
+            if viewModel.isLoading {
+                ProgressView()
+                    .scaleEffect(2)
+            } else {
+                ScrollView {
                     LazyVStack(alignment: .leading) {
                         if !viewModel.resumeItems.isEmpty {
                             ContinueWatchingView(items: viewModel.resumeItems)
                         }
+                        
                         if !viewModel.nextUpItems.isEmpty {
                             NextUpView(items: viewModel.nextUpItems)
                         }
 
-                        if !viewModel.librariesShowRecentlyAddedIDs.isEmpty {
-                            ForEach(viewModel.librariesShowRecentlyAddedIDs, id: \.self) { libraryID in
-                                VStack(alignment: .leading) {
-                                    let library = viewModel.libraries.first(where: { $0.id == libraryID })
-
-                                    Button {
-                                        self.homeRouter.route(to: \.modalLibrary, (.init(parentID: libraryID, filters: viewModel.recentFilterSet), title: library?.name ?? ""))
-                                    } label: {
-                                        HStack {
-                                            Text(L10n.latestWithString(library?.name ?? ""))
-                                            .font(.headline)
-                                            .fontWeight(.semibold)
-                                            Image(systemName: "chevron.forward.circle.fill")
-                                        }
-                                    }.padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
-                                    LatestMediaView(usingParentID: libraryID)
+                        ForEach(viewModel.libraries, id: \.self) { library in
+                            Button {
+                                self.homeRouter.route(to: \.modalLibrary, (.init(parentID: library.id, filters: viewModel.recentFilterSet), title: library.name ?? ""))
+                            } label: {
+                                HStack {
+                                    Text(L10n.latestWithString(library.name ?? ""))
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    Image(systemName: "chevron.forward.circle.fill")
                                 }
-                            }
+                            }.padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
+                            
+                            LatestMediaView(usingParentID: library.id ?? "")
                         }
-                        Spacer().frame(height: 30)
+                        
+                        Spacer(minLength: 100)
+                        
+                        HStack {
+                            Spacer()
+                            
+                            Button {
+                                viewModel.refresh()
+                            } label: {
+                                Text("Refresh")
+                            }
+                            
+                            Spacer()
+                        }
+                        .focusSection()
                     }
                 }
             }

@@ -16,6 +16,13 @@ struct PortraitItemsRowView: View {
     
     let rowTitle: String
     let items: [BaseItemDto]
+    let showItemTitles: Bool
+    
+    init(rowTitle: String, items: [BaseItemDto], showItemTitles: Bool = true) {
+        self.rowTitle = rowTitle
+        self.items = items
+        self.showItemTitles = showItemTitles
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -32,15 +39,17 @@ struct PortraitItemsRowView: View {
                             Button {
                                 itemRouter.route(to: \.item, item)
                             } label: {
-                                ImageView(src: item.portraitHeaderViewURL(maxWidth: 200))
-                                    .frame(width: 200, height: 334)
+                                ImageView(src: item.portraitHeaderViewURL(maxWidth: 257))
+                                    .frame(width: 257, height: 380)
                             }
-                            .frame(height: 334)
+                            .frame(height: 380)
                             .buttonStyle(PlainButtonStyle())
                             
-                            Text(item.title)
-                                .lineLimit(2)
-                                .frame(width: 200)
+                            if showItemTitles {
+                                Text(item.title)
+                                    .lineLimit(2)
+                                    .frame(width: 257)
+                            }
                         }
                     }
                 }

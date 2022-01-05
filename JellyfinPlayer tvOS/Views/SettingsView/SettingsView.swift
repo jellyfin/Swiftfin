@@ -22,12 +22,14 @@ struct SettingsView: View {
     @Default(.confirmClose) var confirmClose
     @Default(.tvOSEpisodeItemCinematicView) var tvOSEpisodeItemCinematicView
     @Default(.tvOSMovieItemCinematicView) var tvOSMovieItemCinematicView
+    @Default(.showPosterLabels) var showPosterLabels
 
     var body: some View {
         GeometryReader { reader in
             HStack {
                 
                 Image(uiImage: UIImage(named: "App Icon")!)
+                    .cornerRadius(30)
                     .scaleEffect(2)
                     .frame(width: reader.size.width / 2)
                 
@@ -108,8 +110,10 @@ struct SettingsView: View {
                     Section {
                         Toggle("Episode Item Cinematic View", isOn: $tvOSEpisodeItemCinematicView)
                         Toggle("Movie Item Cinematic View", isOn: $tvOSMovieItemCinematicView)
+                        Toggle("Show Poster Labels", isOn: $showPosterLabels)
+                        
                     } header: {
-                        Text("Views")
+                        Text("Appearance")
                     }
                 }
             }

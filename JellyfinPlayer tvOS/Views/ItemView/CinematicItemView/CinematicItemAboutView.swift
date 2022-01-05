@@ -31,6 +31,7 @@ struct CinematicItemAboutView: View {
 
                     Text(viewModel.item.overview ?? "No details available")
                         .padding(.top, 2)
+                        .lineLimit(7)
                 }
                 .padding()
             }

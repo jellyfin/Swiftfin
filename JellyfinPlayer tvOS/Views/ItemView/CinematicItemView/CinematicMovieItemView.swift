@@ -7,6 +7,7 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import Defaults
 import Introspect
 import SwiftUI
 
@@ -14,6 +15,7 @@ struct CinematicMovieItemView: View {
     
     @ObservedObject var viewModel: MovieItemViewModel
     @State var wrappedScrollView: UIScrollView?
+    @Default(.showPosterLabels) var showPosterLabels
     
     var body: some View {
         ZStack {
@@ -38,18 +40,12 @@ struct CinematicMovieItemView: View {
                             CinematicItemAboutView(viewModel: viewModel)
                             
                             if !viewModel.similarItems.isEmpty {
-                                PortraitItemsRowView(rowTitle: "Recommended", items: viewModel.similarItems)
+                                PortraitItemsRowView(rowTitle: "Recommended",
+                                                     items: viewModel.similarItems,
+                                                     showItemTitles: showPosterLabels)
                             }
                             
                             ItemDetailsView(viewModel: viewModel)
-                            
-//                            HStack {
-//                                SFSymbolButton(systemName: "heart.fill", pointSize: 48, action: {})
-//                                    .frame(width: 60, height: 60)
-//                                SFSymbolButton(systemName: "checkmark.circle", pointSize: 48, action: {})
-//                                    .frame(width: 60, height: 60)
-//                            }
-//                            .padding(.horizontal, 50)
                         }
                         .padding(.top, 50)
                         
