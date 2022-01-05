@@ -85,8 +85,6 @@ class VLCPlayerViewController: UIViewController {
         super.viewWillDisappear(animated)
         
         NotificationCenter.default.removeObserver(self)
-        
-        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didEndPlayback, object: nil)
     }
     
     // MARK: viewDidLoad
