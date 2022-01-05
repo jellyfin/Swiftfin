@@ -23,6 +23,7 @@ struct SettingsView: View {
     @Default(.tvOSEpisodeItemCinematicView) var tvOSEpisodeItemCinematicView
     @Default(.tvOSMovieItemCinematicView) var tvOSMovieItemCinematicView
     @Default(.showPosterLabels) var showPosterLabels
+    @Default(.resumeOffset) var resumeOffset
 
     var body: some View {
         GeometryReader { reader in
@@ -79,6 +80,8 @@ struct SettingsView: View {
                                 Text(length.label).tag(length.rawValue)
                             }
                         }
+                        
+                        Toggle("Resume 5 Second Offset", isOn: $resumeOffset)
                         
                         Toggle("Press Down for Menu", isOn: $downActionShowsMenu)
                         

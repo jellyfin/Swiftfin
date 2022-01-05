@@ -27,6 +27,7 @@ struct SettingsView: View {
     @Default(.jumpGesturesEnabled) var jumpGesturesEnabled
     @Default(.showPosterLabels) var showPosterLabels
     @Default(.showCastAndCrew) var showCastAndCrew
+    @Default(.resumeOffset) var resumeOffset
 
     var body: some View {
         Form {
@@ -90,6 +91,8 @@ struct SettingsView: View {
                 }
                 
                 Toggle("Jump Gestures Enabled", isOn: $jumpGesturesEnabled)
+                
+                Toggle("Resume 5 Second Offset", isOn: $resumeOffset)
                 
                 Button {
                     settingsRouter.route(to: \.overlaySettings)

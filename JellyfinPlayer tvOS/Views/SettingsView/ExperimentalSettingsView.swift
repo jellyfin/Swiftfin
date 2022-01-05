@@ -13,12 +13,15 @@ import SwiftUI
 struct ExperimentalSettingsView: View {
     
     @Default(.Experimental.syncSubtitleStateWithAdjacent) var syncSubtitleStateWithAdjacent
+    @Default(.Experimental.liveTVAlphaEnabled) var liveTVAlphaEnabled
     
     var body: some View {
         Form {
             Section {
                 
                 Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
+                
+                Toggle("Live TV (Alpha)", isOn: $liveTVAlphaEnabled)
                 
             } header: {
                 Text("Experimental")

@@ -88,6 +88,7 @@ final class VideoPlayerViewModel: ViewModel {
     let subtitleStreams: [MediaStream]
     let overlayType: OverlayType
     let jumpGesturesEnabled: Bool
+    let resumeOffset: Bool
     
     // MARK: Experimental
     let syncSubtitleStateWithAdjacent: Bool
@@ -161,6 +162,8 @@ final class VideoPlayerViewModel: ViewModel {
         self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
         self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
         self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
+        
+        self.resumeOffset = Defaults[.resumeOffset]
         
         self.syncSubtitleStateWithAdjacent = Defaults[.Experimental.syncSubtitleStateWithAdjacent]
         

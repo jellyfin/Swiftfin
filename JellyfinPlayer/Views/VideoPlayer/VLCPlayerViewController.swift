@@ -316,7 +316,15 @@ extension VLCPlayerViewController {
         let startPercentage = newViewModel.item.userData?.playedPercentage ?? 0
         
         if startPercentage > 0 {
-            newViewModel.sliderPercentage = startPercentage / 100
+            if viewModel.resumeOffset {
+                let videoDurationSeconds = Double(viewModel.item.runTimeTicks! / 10_000_000)
+                var startSeconds = round((startPercentage / 100) * videoDurationSeconds)
+                startSeconds = startSeconds.subtract(5, floor: 0)
+                let newStartPercentage = startSeconds / videoDurationSeconds
+                newViewModel.sliderPercentage = newStartPercentage
+            } else {
+                newViewModel.sliderPercentage = startPercentage / 100
+            }
         }
         
         viewModel = newViewModel
@@ -522,6 +530,7 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
             didSelectSubtitleStream(index: viewModel.selectedSubtitleStreamIndex)
         }
         
+        // If needing to fix audio stream during playback
         if vlcMediaPlayer.currentAudioTrackIndex != viewModel.selectedAudioStreamIndex {
             didSelectAudioStream(index: viewModel.selectedAudioStreamIndex)
         }

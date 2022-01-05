@@ -48,6 +48,7 @@ extension Defaults.Keys {
     static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>("videoPlayerJumpForward", default: .fifteen, suite: SwiftfinStore.Defaults.generalSuite)
     static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>("videoPlayerJumpBackward", default: .fifteen, suite: SwiftfinStore.Defaults.generalSuite)
     static let autoplayEnabled = Key<Bool>("autoPlayNextItem", default: true, suite: SwiftfinStore.Defaults.generalSuite)
+    static let resumeOffset = Key<Bool>("resumeOffset", default: false, suite: SwiftfinStore.Defaults.generalSuite)
     
     // Should show video player items
     static let shouldShowPlayPreviousItem = Key<Bool>("shouldShowPreviousItem", default: true, suite: SwiftfinStore.Defaults.generalSuite)
@@ -60,6 +61,7 @@ extension Defaults.Keys {
     // Experimental settings
     struct Experimental {
         static let syncSubtitleStateWithAdjacent = Key<Bool>("experimental.syncSubtitleState", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+        static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
     }
     
     // tvos specific
