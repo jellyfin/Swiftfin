@@ -359,12 +359,13 @@ struct VLCPlayerOverlayView: View {
     var body: some View {
         if viewModel.overlayType == .normal {
             mainBody
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.playerOverlayDelegate?.didGenerallyTap()
+                }
                 .background {
                     Color(uiColor: .black.withAlphaComponent(0.5))
                         .ignoresSafeArea()
-                        .onTapGesture {
-                            viewModel.playerOverlayDelegate?.didGenerallyTap()
-                        }
                 }
         } else {
             mainBody
