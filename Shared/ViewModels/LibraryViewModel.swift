@@ -48,14 +48,13 @@ final class LibraryViewModel: ViewModel {
         }
     }
 
-    init(
-        parentID: String? = nil,
-        person: BaseItemPerson? = nil,
-        genre: NameGuidPair? = nil,
-        studio: NameGuidPair? = nil,
-        filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]),
-        columns: Int = 7
-    ) {
+    init(parentID: String? = nil,
+         person: BaseItemPerson? = nil,
+         genre: NameGuidPair? = nil,
+         studio: NameGuidPair? = nil,
+         filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]),
+         columns: Int = 7)
+    {
         self.parentID = parentID
         self.person = person
         self.genre = genre
@@ -67,7 +66,6 @@ final class LibraryViewModel: ViewModel {
         $filters
             .sink(receiveValue: requestItems(with:))
             .store(in: &cancellables)
-
     }
 
     func requestItems(with filters: LibraryFilters) {
@@ -80,8 +78,9 @@ final class LibraryViewModel: ViewModel {
             genreIDs = filters.withGenres.compactMap(\.id)
         }
         let sortBy = filters.sortBy.map(\.rawValue)
-        let shouldBeRecursive: Bool = filters.filters.contains(.isFavorite) || personIDs != [] || studioIDs != [] || genreIDs != []
-        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * 100, limit: 100, recursive: shouldBeRecursive,
+
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * 100, limit: 100,
+                                  recursive: true,
                                   searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
                                   filters: filters.filters, sortBy: sortBy, tags: filters.tags,
@@ -112,8 +111,9 @@ final class LibraryViewModel: ViewModel {
             genreIDs = filters.withGenres.compactMap(\.id)
         }
         let sortBy = filters.sortBy.map(\.rawValue)
-        let shouldBeRecursive: Bool = filters.filters.contains(.isFavorite) || personIDs != [] || studioIDs != [] || genreIDs != []
-        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * 100, limit: 100, recursive: shouldBeRecursive,
+
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * 100, limit: 100,
+                                  recursive: true,
                                   searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
                                   fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
                                   filters: filters.filters, sortBy: sortBy, tags: filters.tags,
@@ -148,10 +148,10 @@ final class LibraryViewModel: ViewModel {
     }
 
     private func calculateRows(for itemList: [BaseItemDto]) -> [LibraryRow] {
-        guard itemList.count > 0 else { return [] }
+        guard !itemList.isEmpty else { return [] }
         let rowCount = itemList.count / columns
         var calculatedRows = [LibraryRow]()
-        for i in (0...rowCount) {
+        for i in 0 ... rowCount {
             let firstItemIndex = i * columns
             var lastItemIndex = firstItemIndex + columns
             if lastItemIndex > itemList.count {
@@ -159,22 +159,18 @@ final class LibraryViewModel: ViewModel {
             }
 
             var rowCells = [LibraryRowCell]()
-            for item in itemList[firstItemIndex..<lastItemIndex] {
+            for item in itemList[firstItemIndex ..< lastItemIndex] {
                 let newCell = LibraryRowCell(item: item)
                 rowCells.append(newCell)
             }
-            if i == rowCount && hasNextPage {
+            if i == rowCount, hasNextPage {
                 var loadingCell = LibraryRowCell(item: nil)
                 loadingCell.loadingCell = true
                 rowCells.append(loadingCell)
             }
 
-            calculatedRows.append(
-                LibraryRow(
-                  section: i,
-                  items: rowCells
-                )
-            )
+            calculatedRows.append(LibraryRow(section: i,
+                                             items: rowCells))
         }
         return calculatedRows
     }

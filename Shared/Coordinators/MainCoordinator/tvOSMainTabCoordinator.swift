@@ -60,7 +60,7 @@ final class MainTabCoordinator: TabCoordinatable {
     }
 
     func makeOther() -> NavigationViewCoordinator<LibraryListCoordinator> {
-        return NavigationViewCoordinator(LibraryListCoordinator())
+        return NavigationViewCoordinator(LibraryListCoordinator(viewModel: LibraryListViewModel()))
     }
 
     @ViewBuilder func makeOtherTab(isActive: Bool) -> some View {
