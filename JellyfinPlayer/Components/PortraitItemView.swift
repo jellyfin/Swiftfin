@@ -22,9 +22,9 @@ struct PortraitItemView: View {
                 .shadow(radius: 4, y: 2)
                 .shadow(radius: 4, y: 2)
                 .overlay(Rectangle()
-                    .fill(Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255))
-                    .frame(width: CGFloat(item.userData?.playedPercentage ?? 0), height: 7)
-                    .padding(0), alignment: .bottomLeading)
+                            .fill(Color.jellyfinPurple)
+                            .frame(width: CGFloat(item.userData?.playedPercentage ?? 0), height: 7)
+                            .padding(0), alignment: .bottomLeading)
                 .overlay(ZStack {
                     if item.userData?.isFavorite ?? false {
                         Image(systemName: "circle.fill")

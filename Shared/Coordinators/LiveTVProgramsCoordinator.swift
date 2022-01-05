@@ -19,8 +19,9 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
     @Root var start = makeStart
     @Route(.fullScreen) var videoPlayer = makeVideoPlayer
     
-    func makeVideoPlayer(item: BaseItemDto) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(item: item))
+    func makeVideoPlayer(item: BaseItemDto) -> NavigationViewCoordinator<EmptyViewCoordinator> {
+//        NavigationViewCoordinator(VideoPlayerCoordinator(item: item))
+        NavigationViewCoordinator(EmptyViewCoordinator())
     }
     
     @ViewBuilder
