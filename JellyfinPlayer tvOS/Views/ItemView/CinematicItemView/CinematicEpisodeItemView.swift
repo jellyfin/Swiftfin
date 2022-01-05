@@ -32,12 +32,13 @@ struct CinematicEpisodeItemView: View {
                     ZStack(alignment: .topLeading) {
                         
                         Color.black.ignoresSafeArea()
+                            .frame(minHeight: UIScreen.main.bounds.height)
                         
                         VStack(alignment: .leading, spacing: 20) {
                             
                             CinematicItemAboutView(viewModel: viewModel)
                             
-                            EpisodesRowView(viewModel: viewModel)
+                            EpisodesRowView(viewModel: EpisodesRowViewModel(episodeItemViewModel: viewModel))
                                 .focusSection()
                             
                             if !viewModel.similarItems.isEmpty {

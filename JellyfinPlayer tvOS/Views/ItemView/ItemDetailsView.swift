@@ -23,12 +23,12 @@ struct ItemDetailsView: View {
             
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Details")
+                    Text("Information")
                         .font(.title3)
                         .padding(.bottom, 5)
 
-                    ForEach(detailItems, id: \.self.0) { (title, content) in
-                        ItemDetail(title: title, content: content)
+                    ForEach(viewModel.informationItems, id: \.self.title) { informationItem in
+                        ItemDetail(title: informationItem.title, content: informationItem.content)
                     }
                 }
                 
@@ -39,8 +39,8 @@ struct ItemDetailsView: View {
                         .font(.title3)
                         .padding(.bottom, 5)
 
-                    ForEach(mediaItems, id: \.self.0) { (title, content) in
-                        ItemDetail(title: title, content: content)
+                    ForEach(viewModel.mediaItems, id: \.self.title) { mediaItem in
+                        ItemDetail(title: mediaItem.title, content: mediaItem.content)
                     }
                 }
                 
@@ -49,8 +49,7 @@ struct ItemDetailsView: View {
             .ignoresSafeArea()
             .focusable()
             .focused($focused)
-            .padding(.horizontal, 50)
-            .padding(.bottom, 50)
+            .padding(50)
         }
     }
 }

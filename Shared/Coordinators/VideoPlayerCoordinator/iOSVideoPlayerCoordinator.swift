@@ -32,7 +32,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
                 .statusBar(hidden: true)
                 .ignoresSafeArea()
                 .prefersHomeIndicatorAutoHidden(true)
-                .supportedOrientations(.landscape)
+                .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
         }.ignoresSafeArea()
     }
 }

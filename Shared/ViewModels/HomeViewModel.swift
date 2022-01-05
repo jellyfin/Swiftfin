@@ -32,11 +32,6 @@ final class HomeViewModel: ViewModel {
         let nc = SwiftfinNotificationCenter.main
         nc.addObserver(self, selector: #selector(didSignIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
         nc.addObserver(self, selector: #selector(didSignOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
-        nc.addObserver(self, selector: #selector(didEndPlayback), name: SwiftfinNotificationCenter.Keys.didEndPlayback, object: nil)
-    }
-    
-    deinit {
-        SwiftfinNotificationCenter.main.removeObserver(self)
     }
 
     @objc private func didSignIn() {
@@ -58,11 +53,6 @@ final class HomeViewModel: ViewModel {
         }
 
         cancellables.removeAll()
-    }
-    
-    @objc private func didEndPlayback() {
-        refreshResumeItems()
-        refreshNextUpItems()
     }
 
     @objc func refresh() {

@@ -59,10 +59,10 @@ struct EpisodesRowView: View {
                                         .frame(width: 200, height: 112)
 
                                     VStack(alignment: .leading) {
-                                        Text("--")
+                                        Text("S-E-")
                                             .font(.footnote)
                                             .foregroundColor(.secondary)
-                                        Text("Loading")
+                                        Text("--")
                                             .font(.body)
                                             .padding(.bottom, 1)
                                             .lineLimit(2)

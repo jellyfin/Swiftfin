@@ -70,7 +70,7 @@ struct LandscapeItemElement: View {
                                 .frame(width: 445, height: 90)
                                 .mask(CutOffShadow())
                             VStack(alignment: .leading) {
-                                Text("CONTINUE • \(item.getItemProgressString())")
+                                Text("CONTINUE • \(item.getItemProgressString() ?? "")")
                                     .font(.caption)
                                     .fontWeight(.medium)
                                     .offset(y: 5)

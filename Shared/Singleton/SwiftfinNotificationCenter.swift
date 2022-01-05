@@ -21,7 +21,5 @@ enum SwiftfinNotificationCenter {
         static let processDeepLink = Notification.Name("processDeepLink")
         static let didPurge = Notification.Name("didPurge")
         static let didChangeServerCurrentURI = Notification.Name("didChangeCurrentLoginURI")
-        
-        static let didEndPlayback = Notification.Name("didEndPlayback")
     }
 }
