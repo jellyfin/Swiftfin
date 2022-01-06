@@ -13,7 +13,6 @@ struct PillHStackView<ItemType: PillStackable>: View {
 
     let title: String
     let items: [ItemType]
-//    let navigationView: (ItemType) -> NavigationView
     let selectedAction: (ItemType) -> Void
 
     var body: some View {

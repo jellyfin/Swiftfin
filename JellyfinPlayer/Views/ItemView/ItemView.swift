@@ -9,11 +9,6 @@ import Introspect
 import JellyfinAPI
 import SwiftUI
 
-class VideoPlayerItem: ObservableObject {
-    @Published var shouldShowPlayer: Bool = false
-    @Published var itemToPlay = BaseItemDto()
-}
-
 // Intermediary view for ItemView to set navigation bar settings
 struct ItemNavigationView: View {
     private let item: BaseItemDto
@@ -24,17 +19,18 @@ struct ItemNavigationView: View {
 
     var body: some View {
         ItemView(item: item)
-            .navigationBarTitle("", displayMode: .inline)
+            .navigationBarTitle(item.name ?? "", displayMode: .inline)
+            .introspectNavigationController { navigationController in
+                let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
+                navigationController.navigationBar.titleTextAttributes = textAttributes
+            }
     }
 }
 
 private struct ItemView: View {
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
 
-    @State private var videoIsLoading: Bool = false // This variable is only changed by the underlying VLC view.
-    @State private var viewDidLoad: Bool = false
     @State private var orientation: UIDeviceOrientation = .unknown
-    @StateObject private var videoPlayerItem = VideoPlayerItem()
     @Environment(\.horizontalSizeClass) private var hSizeClass
     @Environment(\.verticalSizeClass) private var vSizeClass
 
@@ -68,21 +64,6 @@ private struct ItemView: View {
             } label: {
                 Image(systemName: "ellipsis.circle.fill")
             }
-        case .episode:
-            Menu {
-                Button {
-                    (viewModel as? EpisodeItemViewModel)?.routeToSeriesItem()
-                } label: {
-                    Label("Show Series", systemImage: "text.below.photo")
-                }
-                Button {
-                    (viewModel as? EpisodeItemViewModel)?.routeToSeasonItem()
-                } label: {
-                    Label("Show Season", systemImage: "square.fill.text.grid.1x2")
-                }
-            } label: {
-                Image(systemName: "ellipsis.circle.fill")
-            }
         default:
             EmptyView()
         }
@@ -91,18 +72,12 @@ private struct ItemView: View {
     var body: some View {
         Group {
             if hSizeClass == .compact && vSizeClass == .regular {
-                ItemPortraitMainView(videoIsLoading: $videoIsLoading)
-                    .environmentObject(videoPlayerItem)
+                ItemPortraitMainView()
                     .environmentObject(viewModel)
             } else {
-                ItemLandscapeMainView(videoIsLoading: $videoIsLoading)
-                    .environmentObject(videoPlayerItem)
+                ItemLandscapeMainView()
                     .environmentObject(viewModel)
             }
-        }
-        .onReceive(videoPlayerItem.$shouldShowPlayer) { flag in
-            guard flag else { return }
-            self.itemRouter.route(to: \.videoPlayer, viewModel.item)
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {

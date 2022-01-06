@@ -14,6 +14,15 @@ struct JellyfinPlayer_tvOSApp: App {
     var body: some Scene {
         WindowGroup {
             MainCoordinator().view()
+                .onAppear {
+                    JellyfinPlayer_tvOSApp.setupAppearance()
+                }
         }
+    }
+    
+    static func setupAppearance() {
+        let scenes = UIApplication.shared.connectedScenes
+        let windowScene = scenes.first as? UIWindowScene
+        windowScene?.windows.first?.overrideUserInterfaceStyle = .dark
     }
 }

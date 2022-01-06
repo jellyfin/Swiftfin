@@ -8,21 +8,18 @@
 import Stinsen
 import SwiftUI
 
-struct LatestMediaView: View {
+struct LatestMediaView<TopBarView: View>: View {
+    
     @EnvironmentObject var homeRouter: HomeCoordinator.Router
     @StateObject var viewModel: LatestMediaViewModel
+    var topBarView: () -> TopBarView
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack {
-                ForEach(viewModel.items, id: \.id) { item in
-                    Button {
-                        homeRouter.route(to: \.item, item)
-                    } label: {
-                        PortraitItemView(item: item)
-                    }
-                }.padding(.trailing, 16)
-            }.padding(.leading, 20)
-        }.frame(height: 200)
+        PortraitImageHStackView(items: viewModel.items,
+                                horizontalAlignment: .leading) {
+            topBarView()
+        } selectedAction: { item in
+            homeRouter.route(to: \.item, item)
+        }
     }
 }

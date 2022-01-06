@@ -7,6 +7,7 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import Defaults
 import Foundation
 import SwiftUI
 
@@ -14,6 +15,8 @@ struct LibraryListView: View {
     @EnvironmentObject var mainCoordinator: MainCoordinator.Router
     @EnvironmentObject var libraryListRouter: LibraryListCoordinator.Router
     @StateObject var viewModel = LibraryListViewModel()
+    
+    @Default(.Experimental.liveTVAlphaEnabled) var liveTVAlphaEnabled
 
     var body: some View {
         ScrollView {
@@ -23,32 +26,55 @@ struct LibraryListView: View {
                         if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" || library.collectionType ?? "" == "music" {
                             EmptyView()
                         } else {
-                            Button() {
-                                if library.collectionType == "livetv" {
-                                    self.mainCoordinator.root(\.liveTV)
-                                } else {
+                            if library.collectionType == "livetv" {
+                                if liveTVAlphaEnabled {
+                                    Button() {
+                                        self.mainCoordinator.root(\.liveTV)
+                                    }
+                                    label: {
+                                        ZStack {
+                                            HStack {
+                                                Spacer()
+                                                VStack {
+                                                    Text(library.name ?? "")
+                                                        .foregroundColor(.white)
+                                                        .font(.title2)
+                                                        .fontWeight(.semibold)
+                                                }
+                                                Spacer()
+                                            }.padding(32)
+                                        }
+                                        .frame(minWidth: 100, maxWidth: .infinity)
+                                        .frame(height: 100)
+                                    }
+                                    .cornerRadius(10)
+                                    .shadow(radius: 5)
+                                    .padding(.bottom, 5)
+                                }
+                            } else {
+                                Button() {
                                     self.libraryListRouter.route(to: \.library, (viewModel: LibraryViewModel(), title: library.name ?? ""))
                                 }
-                            }
-                            label: {
-                                ZStack {
-                                    HStack {
-                                        Spacer()
-                                        VStack {
-                                            Text(library.name ?? "")
-                                                .foregroundColor(.white)
-                                                .font(.title2)
-                                                .fontWeight(.semibold)
-                                        }
-                                        Spacer()
-                                    }.padding(32)
+                                label: {
+                                    ZStack {
+                                        HStack {
+                                            Spacer()
+                                            VStack {
+                                                Text(library.name ?? "")
+                                                    .foregroundColor(.white)
+                                                    .font(.title2)
+                                                    .fontWeight(.semibold)
+                                            }
+                                            Spacer()
+                                        }.padding(32)
+                                    }
+                                    .frame(minWidth: 100, maxWidth: .infinity)
+                                    .frame(height: 100)
                                 }
-                                .frame(minWidth: 100, maxWidth: .infinity)
-                                .frame(height: 100)
+                                .cornerRadius(10)
+                                .shadow(radius: 5)
+                                .padding(.bottom, 5)
                             }
-                            .cornerRadius(10)
-                            .shadow(radius: 5)
-                            .padding(.bottom, 5)
                         }
                     }
                 } else {

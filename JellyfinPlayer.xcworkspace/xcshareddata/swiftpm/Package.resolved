@@ -110,6 +110,15 @@
         }
       },
       {
+        "package": "Sliders",
+        "repositoryURL": "https://github.com/spacenation/swiftui-sliders",
+        "state": {
+          "branch": "master",
+          "revision": "518bed3bfc7bd522f3c49404a0d1efb98fa1bf2c",
+          "version": null
+        }
+      },
+      {
         "package": "SwiftUICollection",
         "repositoryURL": "https://github.com/ABJC/SwiftUICollection",
         "state": {

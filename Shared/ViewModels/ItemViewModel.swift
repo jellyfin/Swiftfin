@@ -7,8 +7,10 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import Combine
 import Foundation
 import JellyfinAPI
+import UIKit
 
 class ItemViewModel: ViewModel {
 
@@ -17,6 +19,9 @@ class ItemViewModel: ViewModel {
     @Published var similarItems: [BaseItemDto] = []
     @Published var isWatched = false
     @Published var isFavorited = false
+    @Published var informationItems: [BaseItemDto.ItemDetail]
+    @Published var mediaItems: [BaseItemDto.ItemDetail]
+    var itemVideoPlayerViewModel: VideoPlayerViewModel?
 
     init(item: BaseItemDto) {
         self.item = item
@@ -26,16 +31,32 @@ class ItemViewModel: ViewModel {
             self.playButtonItem = item
         default: ()
         }
+        
+        informationItems = item.createInformationItems()
+        mediaItems = item.createMediaItems()
 
         isFavorited = item.userData?.isFavorite ?? false
         isWatched = item.userData?.played ?? false
         super.init()
 
         getSimilarItems()
+        
+        item.createVideoPlayerViewModel()
+            .sink { completion in
+                self.handleAPIRequestError(completion: completion)
+            } receiveValue: { videoPlayerViewModel in
+                self.itemVideoPlayerViewModel = videoPlayerViewModel
+                self.mediaItems = videoPlayerViewModel.item.createMediaItems()
+            }
+            .store(in: &cancellables)
     }
 
     func playButtonText() -> String {
-        return item.getItemProgressString() == "" ? L10n.play : item.getItemProgressString()
+        if let itemProgressString = item.getItemProgressString() {
+            return itemProgressString
+        }
+        
+        return L10n.play
     }
 
     func getItemDisplayName() -> String {

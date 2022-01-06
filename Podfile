@@ -5,14 +5,14 @@ def shared_pods
 end
 
 target 'JellyfinPlayer iOS' do
-  platform :ios, '14.0'
+  platform :ios, '15.0'
   shared_pods
   pod 'google-cast-sdk'
   pod 'MobileVLCKit'
   pod 'SwizzleSwift'
 end
 target 'JellyfinPlayer tvOS' do
-  platform :tvos, '14.0'
+  platform :tvos, '15.0'
   shared_pods
   pod 'TVVLCKit'
 end

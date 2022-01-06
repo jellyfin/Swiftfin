@@ -142,7 +142,7 @@ public extension BaseItemDto {
 
     // MARK: Calculations
 
-    func getItemRuntime() -> String {
+    func getItemRuntime() -> String? {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()
             formatter.unitsStyle = .abbreviated
@@ -151,14 +151,14 @@ public extension BaseItemDto {
         }()
 
         guard let runTimeTicks = runTimeTicks,
-              let text = timeHMSFormatter.string(from: Double(runTimeTicks / 10_000_000)) else { return "" }
+              let text = timeHMSFormatter.string(from: Double(runTimeTicks / 10_000_000)) else { return nil }
 
         return text
     }
 
-    func getItemProgressString() -> String {
+    func getItemProgressString() -> String? {
         if userData?.playbackPositionTicks == nil || userData?.playbackPositionTicks == 0 {
-            return ""
+            return nil
         }
 
         let remainingSecs = ((runTimeTicks ?? 0) - (userData?.playbackPositionTicks ?? 0)) / 10_000_000
@@ -234,5 +234,61 @@ public extension BaseItemDto {
         case .unknown:
             return getPrimaryImage(maxWidth: maxWidth)
         }
+    }
+    
+    // MARK: ItemDetail
+    
+    struct ItemDetail {
+        let title: String
+        let content: String
+    }
+    
+    func createInformationItems() -> [ItemDetail] {
+        var informationItems: [ItemDetail] = []
+        
+        if let productionYear = productionYear {
+            informationItems.append(ItemDetail(title: "Released", content: "\(productionYear)"))
+        }
+        
+        if let rating = officialRating {
+            informationItems.append(ItemDetail(title: "Rated", content: "\(rating)"))
+        }
+        
+        if let runtime = getItemRuntime() {
+            informationItems.append(ItemDetail(title: "Runtime", content: runtime))
+        }
+        
+        return informationItems
+    }
+    
+    func createMediaItems() -> [ItemDetail] {
+        var mediaItems: [ItemDetail] = []
+        
+        if let container = container {
+            let containerList = container.split(separator: ",").joined(separator: ", ")
+            
+            if containerList.count > 1 {
+                mediaItems.append(ItemDetail(title: "Containers", content: containerList))
+            } else {
+                mediaItems.append(ItemDetail(title: "Container", content: containerList))
+            }
+        }
+        
+        if let mediaStreams = mediaStreams {
+            let audioStreams = mediaStreams.filter({ $0.type == .audio })
+            let subtitleStreams = mediaStreams.filter({ $0.type == .subtitle })
+            
+            if !audioStreams.isEmpty {
+                let audioList = audioStreams.compactMap({ "\($0.displayTitle ?? "No Title") (\($0.codec ?? "No Codec"))" }).joined(separator: ", ")
+                mediaItems.append(ItemDetail(title: "Audio", content: audioList))
+            }
+            
+            if !subtitleStreams.isEmpty {
+                let subtitleList = subtitleStreams.compactMap({ "\($0.displayTitle ?? "No Title") (\($0.codec ?? "No Codec"))" }).joined(separator: ", ")
+                mediaItems.append(ItemDetail(title: "Subtitles", content: subtitleList))
+            }
+        }
+        
+        return mediaItems
     }
 }

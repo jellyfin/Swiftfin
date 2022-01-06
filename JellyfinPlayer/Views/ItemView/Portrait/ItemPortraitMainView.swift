@@ -11,14 +11,9 @@ import JellyfinAPI
 import SwiftUI
 
 struct ItemPortraitMainView: View {
+    
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
-    @Binding private var videoIsLoading: Bool
     @EnvironmentObject private var viewModel: ItemViewModel
-    @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
-
-    init(videoIsLoading: Binding<Bool>) {
-        self._videoIsLoading = videoIsLoading
-    }
 
     // MARK: portraitHeaderView
 

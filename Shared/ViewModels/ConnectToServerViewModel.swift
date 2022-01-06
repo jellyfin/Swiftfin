@@ -48,9 +48,11 @@ final class ConnectToServerViewModel: ViewModel {
             uri = "http://localhost:8096"
         }
         #endif
+        
+        let trimmedURI = uri.trimmingCharacters(in: .whitespaces)
 
-        LogManager.shared.log.debug("Attempting to connect to server at \"\(uri)\"", tag: "connectToServer")
-        SessionManager.main.connectToServer(with: uri)
+        LogManager.shared.log.debug("Attempting to connect to server at \"\(trimmedURI)\"", tag: "connectToServer")
+        SessionManager.main.connectToServer(with: trimmedURI)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 // This is disgusting. ViewModel Error handling overall needs to be refactored

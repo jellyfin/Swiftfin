@@ -28,12 +28,15 @@
 		<true/>
 	</dict>
 	<key>UILaunchScreen</key>
-	<dict/>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchScreenBackground</string>
+	</dict>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
 	</array>
 	<key>UIUserInterfaceStyle</key>
-	<string>Automatic</string>
+	<string>Dark</string>
 </dict>
 </plist>

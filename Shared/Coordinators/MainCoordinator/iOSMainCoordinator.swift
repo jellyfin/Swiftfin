@@ -7,6 +7,8 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Combine
+import Defaults
 import Foundation
 import Nuke
 import Stinsen
@@ -18,6 +20,8 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @Root var mainTab = makeMainTab
     @Root var serverList = makeServerList
+    
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         if SessionManager.main.currentLogin != nil {
@@ -45,6 +49,12 @@ final class MainCoordinator: NavigationCoordinatable {
         nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
         nc.addObserver(self, selector: #selector(processDeepLink), name: SwiftfinNotificationCenter.Keys.processDeepLink, object: nil)
         nc.addObserver(self, selector: #selector(didChangeServerCurrentURI), name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: nil)
+        
+        Defaults.publisher(.appAppearance)
+            .sink { _ in
+                JellyfinPlayerApp.setupAppearance()
+            }
+            .store(in: &cancellables)
     }
 
     @objc func didLogIn() {

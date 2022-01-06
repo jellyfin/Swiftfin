@@ -7,6 +7,7 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -18,14 +19,20 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     @Root var start = makeStart
 
-    let item: BaseItemDto
+    let viewModel: VideoPlayerViewModel
 
-    init(item: BaseItemDto) {
-        self.item = item
+    init(viewModel: VideoPlayerViewModel) {
+        self.viewModel = viewModel
     }
 
     @ViewBuilder func makeStart() -> some View {
-        VideoPlayerView(item: item)
-            .ignoresSafeArea()
+        PreferenceUIHostingControllerView {
+            VLCPlayerView(viewModel: self.viewModel)
+                .navigationBarHidden(true)
+                .statusBar(hidden: true)
+                .ignoresSafeArea()
+                .prefersHomeIndicatorAutoHidden(true)
+                .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+        }.ignoresSafeArea()
     }
 }

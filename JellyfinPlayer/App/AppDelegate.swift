@@ -7,6 +7,7 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import AVFAudio
 import SwiftUI
 import UIKit
 
@@ -17,6 +18,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // Lazily initialize datastack
         _ = SwiftfinStore.dataStack
+        
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(.playback)
+        } catch {
+            print("setting category AVAudioSessionCategoryPlayback failed")
+        }
 
         return true
     }

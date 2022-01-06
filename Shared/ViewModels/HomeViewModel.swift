@@ -34,7 +34,7 @@ final class HomeViewModel: ViewModel {
         nc.addObserver(self, selector: #selector(didSignOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
     }
 
-    @objc func didSignIn() {
+    @objc private func didSignIn() {
         for cancellable in cancellables {
             cancellable.cancel()
         }
@@ -47,7 +47,7 @@ final class HomeViewModel: ViewModel {
         refresh()
     }
 
-    @objc func didSignOut() {
+    @objc private func didSignOut() {
         for cancellable in cancellables {
             cancellable.cancel()
         }
@@ -55,8 +55,16 @@ final class HomeViewModel: ViewModel {
         cancellables.removeAll()
     }
 
-    func refresh() {
+    @objc func refresh() {
         LogManager.shared.log.debug("Refresh called.")
+        
+        refreshLibrariesLatest()
+        refreshResumeItems()
+        refreshNextUpItems()
+    }
+    
+    // MARK: Libraries Latest Items
+    private func refreshLibrariesLatest() {
         UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
@@ -64,8 +72,9 @@ final class HomeViewModel: ViewModel {
                 case .finished: ()
                 case .failure:
                     self.libraries = []
-                    self.handleAPIRequestError(completion: completion)
                 }
+                
+                self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
 
                 var newLibraries: [BaseItemDto] = []
@@ -100,9 +109,12 @@ final class HomeViewModel: ViewModel {
                     .store(in: &self.cancellables)
             })
             .store(in: &cancellables)
-
+    }
+    
+    // MARK: Resume Items
+    private func refreshResumeItems() {
         ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id, limit: 12,
-                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+                                fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters],
                                 mediaTypes: ["Video"],
                                 imageTypeLimit: 1,
                                 enableImageTypes: [.primary, .backdrop, .thumb])
@@ -120,9 +132,12 @@ final class HomeViewModel: ViewModel {
                 self.resumeItems = response.items ?? []
             })
             .store(in: &cancellables)
-
+    }
+    
+    // MARK: Next Up Items
+    private func refreshNextUpItems() {
         TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id, limit: 12,
-                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
+                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters])
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 switch completion {

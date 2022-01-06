@@ -20,6 +20,7 @@ struct ImageView: View {
         self.failureInitials = failureInitials
     }
 
+    // TODO: fix placeholder hash image
     @ViewBuilder
     private var placeholderImage: some View {
         Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ?? UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
@@ -47,7 +48,12 @@ struct ImageView: View {
             } else if phase.error != nil {
                 failureImage
             } else {
-                placeholderImage
+                // TODO: remove once placeholder hash image fixed
+                ZStack {
+                    Color.gray.ignoresSafeArea()
+                    
+                    ProgressView()
+                }
             }
         }
     }

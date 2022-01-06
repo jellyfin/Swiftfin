@@ -13,7 +13,15 @@ final class BasicAppSettingsViewModel: ViewModel {
 
     let appearances = AppAppearance.allCases
 
-    func reset() {
+    func resetUserSettings() {
+        SwiftfinStore.Defaults.generalSuite.removeAll()
+    }
+    
+    func resetAppSettings() {
+        SwiftfinStore.Defaults.universalSuite.removeAll()
+    }
+    
+    func removeAllUsers() {
         SessionManager.main.purge()
     }
 }

@@ -20,41 +20,80 @@ struct HomeView: View {
 
     @ViewBuilder
     var innerBody: some View {
-        if viewModel.isLoading {
+        if let errorMessage = viewModel.errorMessage {
+            VStack(spacing: 5) {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(width: 100, height: 100)
+                        .scaleEffect(2)
+                } else {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 72))
+                        .foregroundColor(Color.red)
+                        .frame(width: 100, height: 100)
+                }
+                
+                Text("\(errorMessage.code)")
+                Text(errorMessage.displayMessage)
+                    .frame(minWidth: 50, maxWidth: 240)
+                    .multilineTextAlignment(.center)
+                
+                PrimaryButtonView(title: "Retry") {
+                    viewModel.refresh()
+                }
+            }
+            .offset(y: -50)
+        } else if viewModel.isLoading {
             ProgressView()
+                .frame(width: 100, height: 100)
+                .scaleEffect(2)
         } else {
             ScrollView {
                 VStack(alignment: .leading) {
                     if !viewModel.resumeItems.isEmpty {
-                        ContinueWatchingView(items: viewModel.resumeItems)
+                        ContinueWatchingView(viewModel: viewModel)
                     }
                     if !viewModel.nextUpItems.isEmpty {
-                        NextUpView(items: viewModel.nextUpItems)
-                    }
-
-                    ForEach(viewModel.libraries, id: \.self) { library in
-                        HStack {
-                            Text(L10n.latestWithString(library.name ?? ""))
+                        PortraitImageHStackView(items: viewModel.nextUpItems,
+                                                horizontalAlignment: .leading) {
+                            L10n.nextUp.text
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Spacer()
-                            Button {
-                                homeRouter
-                                    .route(to: \.library, (viewModel: .init(parentID: library.id!,
-                                                                            filters: viewModel.recentFilterSet),
-                                                           title: library.name ?? ""))
-                            } label: {
-                                HStack {
-                                    L10n.seeAll.text.font(.subheadline).fontWeight(.bold)
-                                    Image(systemName: "chevron.right").font(Font.subheadline.bold())
+                                .padding()
+                        } selectedAction: { item in
+                            homeRouter.route(to: \.item, item)
+                        }
+
+                    }
+                    
+                    ForEach(viewModel.libraries, id: \.self) { library in
+                        
+                        LatestMediaView(viewModel: LatestMediaViewModel(libraryID: library.id!)) {
+                            HStack {
+                                Text(L10n.latestWithString(library.name ?? ""))
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                
+                                Spacer()
+                                
+                                Button {
+                                    homeRouter
+                                        .route(to: \.library, (viewModel: .init(parentID: library.id!,
+                                                                                filters: viewModel.recentFilterSet),
+                                                               title: library.name ?? ""))
+                                } label: {
+                                    HStack {
+                                        L10n.seeAll.text.font(.subheadline).fontWeight(.bold)
+                                        Image(systemName: "chevron.right").font(Font.subheadline.bold())
+                                    }
                                 }
                             }
-                        }.padding(.leading, 16)
-                            .padding(.trailing, 16)
-                        LatestMediaView(viewModel: .init(libraryID: library.id!))
+                            .padding()
+                        }
+                        
                     }
                 }
-                .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 20 : 30)
+                .padding(.bottom, 50)
             }
             .introspectScrollView { scrollView in
                 let control = UIRefreshControl()

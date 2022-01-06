@@ -15,20 +15,16 @@ import SwiftUI
 struct JellyfinPlayerApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @Default(.appAppearance) var appAppearance
 
     var body: some Scene {
         WindowGroup {
             EmptyView()
                 .ignoresSafeArea()
-                .onAppear {
-                    setupAppearance()
-                }
-                .withHostingWindow { window in
+                .withHostingWindow({ window in
                     window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
-                }
-                .onShake {
-                    EmailHelper.shared.sendLogs(logURL: LogManager.shared.logFileURL())
+                })
+                .onAppear {
+                    JellyfinPlayerApp.setupAppearance()
                 }
                 .onOpenURL { url in
                     AppURLHandler.shared.processDeepLink(url: url)
@@ -36,8 +32,10 @@ struct JellyfinPlayerApp: App {
         }
     }
 
-    private func setupAppearance() {
-        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = appAppearance.style
+    static func setupAppearance() {
+        let scenes = UIApplication.shared.connectedScenes
+        let windowScene = scenes.first as? UIWindowScene
+        windowScene?.windows.first?.overrideUserInterfaceStyle = Defaults[.appAppearance].style
     }
 }
 

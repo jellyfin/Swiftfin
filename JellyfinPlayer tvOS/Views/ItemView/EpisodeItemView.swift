@@ -11,6 +11,8 @@ import SwiftUI
 import JellyfinAPI
 
 struct EpisodeItemView: View {
+    
+    @EnvironmentObject var itemRouter: ItemCoordinator.Router
     @ObservedObject var viewModel: EpisodeItemViewModel
 
     @State var actors: [BaseItemPerson] = []
@@ -57,10 +59,13 @@ struct EpisodeItemView: View {
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
-                    Text(viewModel.item.getItemRuntime()).font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+                    if let runtime = viewModel.item.getItemRuntime() {
+                        Text(runtime).font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                    
                     if viewModel.item.officialRating != nil {
                         Text(viewModel.item.officialRating!).font(.subheadline)
                             .fontWeight(.semibold)
@@ -118,36 +123,9 @@ struct EpisodeItemView: View {
                             .font(.body)
                             .fontWeight(.medium)
                             .foregroundColor(.primary)
-
-                        HStack {
-                            VStack {
-                                Button {
-                                    viewModel.updateFavoriteState()
-                                } label: {
-                                    MediaViewActionButton(icon: "heart.fill", iconColor: viewModel.isFavorited ? .red : .white)
-                                }
-                                Text(viewModel.isFavorited ? "Unfavorite" : "Favorite")
-                                    .font(.caption)
-                            }
-                            VStack {
-                              NavigationLink(destination: VideoPlayerView(item: viewModel.item).ignoresSafeArea()) {
-                                    MediaViewActionButton(icon: "play.fill")
-                                }
-                                Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString()) left" : L10n.play)
-                                    .font(.caption)
-                            }
-                            VStack {
-                                Button {
-                                    viewModel.updateWatchState()
-                                } label: {
-                                    MediaViewActionButton(icon: "eye.fill", iconColor: viewModel.isWatched ? .red : .white)
-                                }
-                                Text(viewModel.isWatched ? "Unwatch" : "Mark Watched")
-                                    .font(.caption)
-                            }
-                            Spacer()
-                        }
-                        .padding(.top, 15)
+                        
+                        MediaPlayButtonRowView(viewModel: viewModel)
+                            .environmentObject(itemRouter)
                     }
                 }.padding(.top, 50)
 

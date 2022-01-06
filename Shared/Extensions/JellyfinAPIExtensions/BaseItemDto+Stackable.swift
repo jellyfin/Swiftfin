@@ -7,24 +7,36 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import Defaults
 import Foundation
 import JellyfinAPI
 
 // MARK: PortraitImageStackable
 extension BaseItemDto: PortraitImageStackable {
+    public var portraitImageID: String {
+        return id ?? "no id"
+    }
+    
     public func imageURLContsructor(maxWidth: Int) -> URL {
-        return self.getPrimaryImage(maxWidth: maxWidth)
+        switch self.itemType {
+        case .episode:
+            return getSeriesPrimaryImage(maxWidth: maxWidth)
+        default:
+            return self.getPrimaryImage(maxWidth: maxWidth)
+        }
     }
 
     public var title: String {
-        return self.name ?? ""
+        switch self.itemType {
+        case .episode:
+            return self.seriesName ?? self.name ?? ""
+        default:
+            return self.name ?? ""
+        }
     }
 
-    public var description: String? {
+    public var subtitle: String? {
         switch self.itemType {
-        case .season:
-            guard let productionYear = productionYear else { return nil }
-            return "\(productionYear)"
         case .episode:
             return getEpisodeLocator()
         default:
@@ -40,5 +52,14 @@ extension BaseItemDto: PortraitImageStackable {
         guard let name = self.name else { return "" }
         let initials = name.split(separator: " ").compactMap({ String($0).first })
         return String(initials)
+    }
+    
+    public var showTitle: Bool {
+        switch self.itemType {
+        case .episode, .series, .movie:
+            return Defaults[.showPosterLabels]
+        default:
+            return true
+        }
     }
 }

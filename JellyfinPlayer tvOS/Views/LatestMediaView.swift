@@ -13,8 +13,9 @@ struct LatestMediaView: View {
 
     @StateObject var tempViewModel = ViewModel()
     @State var items: [BaseItemDto] = []
-    private var library_id: String = ""
     @State private var viewDidLoad: Bool = false
+    
+    private var library_id: String = ""
 
     init(usingParentID: String) {
         library_id = usingParentID
@@ -26,15 +27,13 @@ struct LatestMediaView: View {
         }
         viewDidLoad = true
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people], enableUserData: true, limit: 12)
-                .sink(receiveCompletion: { completion in
-                    print(completion)
-                }, receiveValue: { response in
-                    items = response
-                })
-                .store(in: &tempViewModel.cancellables)
-        }
+        UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters], enableUserData: true, limit: 12)
+            .sink(receiveCompletion: { completion in
+                print(completion)
+            }, receiveValue: { response in
+                items = response
+            })
+            .store(in: &tempViewModel.cancellables)
     }
 
     var body: some View {

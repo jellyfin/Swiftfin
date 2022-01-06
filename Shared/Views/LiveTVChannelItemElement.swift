@@ -61,7 +61,7 @@ struct LiveTVChannelItemElement: View {
                             .opacity(0.4)
                         .frame(minWidth: 100, maxWidth: .infinity, minHeight: 12, maxHeight: 12)
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color(red: 172/255, green: 92/255, blue: 195/255))
+                            .fill(Color.jellyfinPurple)
                             .frame(width: CGFloat(progressPercent * gp.size.width), height: 12)
                     }
                 }

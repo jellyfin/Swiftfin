@@ -12,13 +12,7 @@ import SwiftUI
 
 struct ItemLandscapeMainView: View {
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
-    @Binding private var videoIsLoading: Bool
     @EnvironmentObject private var viewModel: ItemViewModel
-    @EnvironmentObject private var videoPlayerItem: VideoPlayerItem
-
-    init(videoIsLoading: Binding<Bool>) {
-        self._videoIsLoading = videoIsLoading
-    }
 
     // MARK: innerBody
 
@@ -27,21 +21,17 @@ struct ItemLandscapeMainView: View {
             // MARK: Sidebar Image
 
             VStack {
-                ImageView(src: viewModel.item.getPrimaryImage(maxWidth: 130),
+                ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 130),
                           bh: viewModel.item.getPrimaryImageBlurHash())
                     .frame(width: 130, height: 195)
                     .cornerRadius(10)
 
                 Spacer().frame(height: 15)
 
+                // MARK: Play
                 Button {
-                    if let playButtonItem = viewModel.playButtonItem {
-                        self.videoPlayerItem.itemToPlay = playButtonItem
-                        self.videoPlayerItem.shouldShowPlayer = true
-                    }
+                    self.itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
                 } label: {
-                    // MARK: Play
-
                     HStack {
                         Image(systemName: "play.fill")
                             .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
@@ -54,7 +44,8 @@ struct ItemLandscapeMainView: View {
                     .frame(width: 130, height: 40)
                     .background(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
                     .cornerRadius(10)
-                }.disabled(viewModel.playButtonItem == nil)
+                }
+                .disabled(viewModel.playButtonItem == nil || viewModel.itemVideoPlayerViewModel == nil)
 
                 Spacer()
             }

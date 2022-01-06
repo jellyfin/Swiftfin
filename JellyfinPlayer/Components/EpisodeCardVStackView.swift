@@ -60,7 +60,6 @@ struct EpisodeCardVStackView: View {
                             .overlay(
                                 Rectangle()
                                     .fill(Color.jellyfinPurple)
-                                    .mask(ProgressBar())
                                     .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 1.5), height: 7)
                                     .padding(0), alignment: .bottomLeading
                             )
@@ -81,10 +80,12 @@ struct EpisodeCardVStackView: View {
                                     .fontWeight(.medium)
                                     .foregroundColor(.secondary)
 
-                                Text(item.getItemRuntime())
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.secondary)
+                                if let runtime = item.getItemRuntime() {
+                                    Text(runtime)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.secondary)
+                                }
 
                                 Spacer()
                             }

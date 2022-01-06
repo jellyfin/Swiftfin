@@ -12,13 +12,19 @@ import SwiftUI
 import Defaults
 
 final class SettingsViewModel: ObservableObject {
-    let currentLocale = Locale.current
+    
     var bitrates: [Bitrates] = []
-    var langs = [TrackLanguage]()
-    let appearances = AppAppearance.allCases
-    let videoPlayerJumpLengths = VideoPlayerJumpLength.allCases
+    var langs: [TrackLanguage] = []
+    
+    let server: SwiftfinStore.State.Server
+    let user: SwiftfinStore.State.User
 
-    init() {
+    init(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
+        
+        self.server = server
+        self.user = user
+        
+        // Bitrates
         let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!
 
         do {
@@ -32,8 +38,9 @@ final class SettingsViewModel: ObservableObject {
             LogManager.shared.log.error("Error processing JSON file `bitrates.json`")
         }
 
+        // Track languages
         self.langs = Locale.isoLanguageCodes.compactMap {
-            guard let name = currentLocale.localizedString(forLanguageCode: $0) else { return nil }
+            guard let name = Locale.current.localizedString(forLanguageCode: $0) else { return nil }
             return TrackLanguage(name: name, isoCode: $0)
         }.sorted(by: { $0.name < $1.name })
         self.langs.insert(.auto, at: 0)
