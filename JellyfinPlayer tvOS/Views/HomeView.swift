@@ -11,62 +11,48 @@ import Foundation
 import SwiftUI
 
 struct HomeView: View {
+    
     @EnvironmentObject var homeRouter: HomeCoordinator.Router
-    @StateObject var viewModel = HomeViewModel()
+    @ObservedObject var viewModel = HomeViewModel()
 
     @State var showingSettings = false
 
     var body: some View {
-        ZStack {
-            Color.black
-                .ignoresSafeArea()
-            
-            if viewModel.isLoading {
-                ProgressView()
-                    .scaleEffect(2)
-            } else {
-                ScrollView {
-                    LazyVStack(alignment: .leading) {
-                        if !viewModel.resumeItems.isEmpty {
-                            ContinueWatchingView(items: viewModel.resumeItems)
-                        }
-                        
-                        if !viewModel.nextUpItems.isEmpty {
-                            NextUpView(items: viewModel.nextUpItems)
-                        }
-
-                        ForEach(viewModel.libraries, id: \.self) { library in
-                            Button {
-                                self.homeRouter.route(to: \.modalLibrary, (.init(parentID: library.id, filters: viewModel.recentFilterSet), title: library.name ?? ""))
-                            } label: {
-                                HStack {
-                                    Text(L10n.latestWithString(library.name ?? ""))
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-                                    Image(systemName: "chevron.forward.circle.fill")
-                                }
-                            }.padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
-                            
-                            LatestMediaView(usingParentID: library.id ?? "")
-                        }
-                        
-                        Spacer(minLength: 100)
-                        
-                        HStack {
-                            Spacer()
-                            
-                            Button {
-                                viewModel.refresh()
-                            } label: {
-                                Text("Refresh")
-                            }
-                            
-                            Spacer()
-                        }
-                        .focusSection()
+        if viewModel.isLoading {
+            ProgressView()
+                .scaleEffect(2)
+        } else {
+            ScrollView {
+                LazyVStack(alignment: .leading) {
+                    if !viewModel.resumeItems.isEmpty {
+                        ContinueWatchingView(items: viewModel.resumeItems)
                     }
+                    
+                    if !viewModel.nextUpItems.isEmpty {
+                        NextUpView(items: viewModel.nextUpItems)
+                    }
+
+                    ForEach(viewModel.libraries, id: \.self) { library in
+                        LatestMediaView(viewModel: LatestMediaViewModel(library: library))
+                    }
+                    
+                    Spacer(minLength: 100)
+                    
+                    HStack {
+                        Spacer()
+                        
+                        Button {
+                            viewModel.refresh()
+                        } label: {
+                            Text("Refresh")
+                        }
+                        
+                        Spacer()
+                    }
+                    .focusSection()
                 }
             }
+            .edgesIgnoringSafeArea(.horizontal)
         }
     }
 }

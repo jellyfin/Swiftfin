@@ -13,6 +13,7 @@ import SwiftUI
 
 struct CinematicEpisodeItemView: View {
     
+    @EnvironmentObject var itemRouter: ItemCoordinator.Router
     @ObservedObject var viewModel: EpisodeItemViewModel
     @State var wrappedScrollView: UIScrollView?
     @Default(.showPosterLabels) var showPosterLabels
@@ -46,7 +47,9 @@ struct CinematicEpisodeItemView: View {
                             if !viewModel.similarItems.isEmpty {
                                 PortraitItemsRowView(rowTitle: "Recommended",
                                                      items: viewModel.similarItems,
-                                                     showItemTitles: showPosterLabels)
+                                                     showItemTitles: showPosterLabels) { item in
+                                    itemRouter.route(to: \.item, item)
+                                }
                             }
                             
                             ItemDetailsView(viewModel: viewModel)
