@@ -73,18 +73,6 @@ final class SeasonItemViewModel: ItemViewModel {
         }
     }
     
-    func routeToSeriesItem() {
-        guard let id = item.seriesId else { return }
-        UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] item in
-                self?.itemRouter?.route(to: \.item, item)
-            })
-            .store(in: &cancellables)
-    }
-    
     private func getSeriesItem() {
         guard let seriesID = item.seriesId else { return }
         UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id,

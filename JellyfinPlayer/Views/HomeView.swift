@@ -68,7 +68,7 @@ struct HomeView: View {
                     
                     ForEach(viewModel.libraries, id: \.self) { library in
                         
-                        LatestMediaView(viewModel: LatestMediaViewModel(libraryID: library.id!)) {
+                        LatestMediaView(viewModel: LatestMediaViewModel(library: library)) {
                             HStack {
                                 Text(L10n.latestWithString(library.name ?? ""))
                                     .font(.title2)

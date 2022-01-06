@@ -51,24 +51,6 @@ private struct ItemView: View {
         }
     }
 
-    @ViewBuilder
-    var toolbarItemContent: some View {
-        switch viewModel.item.itemType {
-        case .season:
-            Menu {
-                Button {
-                    (viewModel as? SeasonItemViewModel)?.routeToSeriesItem()
-                } label: {
-                    Label("Show Series", systemImage: "text.below.photo")
-                }
-            } label: {
-                Image(systemName: "ellipsis.circle.fill")
-            }
-        default:
-            EmptyView()
-        }
-    }
-
     var body: some View {
         Group {
             if hSizeClass == .compact && vSizeClass == .regular {
@@ -77,11 +59,6 @@ private struct ItemView: View {
             } else {
                 ItemLandscapeMainView()
                     .environmentObject(viewModel)
-            }
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                toolbarItemContent
             }
         }
     }
