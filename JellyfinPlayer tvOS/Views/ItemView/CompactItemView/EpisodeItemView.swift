@@ -136,10 +136,13 @@ struct EpisodeItemView: View {
                     ScrollView(.horizontal) {
                         LazyHStack {
                             Spacer().frame(width: 45)
-                            ForEach(viewModel.similarItems, id: \.id) { similarItems in
-                                NavigationLink(destination: ItemView(item: similarItems)) {
-                                    PortraitItemElement(item: similarItems)
-                                }.buttonStyle(PlainNavigationLinkButtonStyle())
+                            ForEach(viewModel.similarItems, id: \.id) { similarItem in
+                                Button {
+                                    itemRouter.route(to: \.item, similarItem)
+                                } label: {
+                                    PortraitItemElement(item: similarItem)
+                                }
+                                .buttonStyle(PlainNavigationLinkButtonStyle())
                             }
                             Spacer().frame(width: 45)
                         }
