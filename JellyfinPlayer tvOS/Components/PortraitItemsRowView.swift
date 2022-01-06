@@ -63,5 +63,6 @@ struct PortraitItemsRowView: View {
             }
             .edgesIgnoringSafeArea(.horizontal)
         }
+        .focusSection()
     }
 }

@@ -20,8 +20,7 @@ struct SettingsView: View {
     @Default(.videoPlayerJumpBackward) var jumpBackwardLength
     @Default(.downActionShowsMenu) var downActionShowsMenu
     @Default(.confirmClose) var confirmClose
-    @Default(.tvOSEpisodeItemCinematicView) var tvOSEpisodeItemCinematicView
-    @Default(.tvOSMovieItemCinematicView) var tvOSMovieItemCinematicView
+    @Default(.tvOSCinematicViews) var tvOSCinematicViews
     @Default(.showPosterLabels) var showPosterLabels
     @Default(.resumeOffset) var resumeOffset
 
@@ -111,8 +110,7 @@ struct SettingsView: View {
                     }
                     
                     Section {
-                        Toggle("Episode Item Cinematic View", isOn: $tvOSEpisodeItemCinematicView)
-                        Toggle("Movie Item Cinematic View", isOn: $tvOSMovieItemCinematicView)
+                        Toggle("Cinematic Views", isOn: $tvOSCinematicViews)
                         Toggle("Show Poster Labels", isOn: $showPosterLabels)
                         
                     } header: {

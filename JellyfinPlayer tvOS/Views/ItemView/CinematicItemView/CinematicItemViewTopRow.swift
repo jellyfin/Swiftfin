@@ -16,6 +16,8 @@ struct CinematicItemViewTopRow: View {
     @Environment(\.isFocused) var envFocused: Bool
     @State var focused: Bool = false
     @State var wrappedScrollView: UIScrollView?
+    @State var title: String
+    @State var subtitle: String?
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -34,7 +36,11 @@ struct CinematicItemViewTopRow: View {
                             
                             // MARK: Play
                             Button {
-                                itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
+                                if let itemVideoPlayerViewModel = viewModel.itemVideoPlayerViewModel {
+                                    itemRouter.route(to: \.videoPlayer, itemVideoPlayerViewModel)
+                                } else {
+                                    LogManager.shared.log.error("Attempted to play item but no playback information available")
+                                }
                             } label: {
                                 HStack(spacing: 15) {
                                     Image(systemName: "play.fill")
@@ -42,48 +48,46 @@ struct CinematicItemViewTopRow: View {
                                         .font(.title3)
                                     Text(viewModel.playButtonText())
                                         .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-//                                        .font(.title3)
                                         .fontWeight(.semibold)
                                 }
                                 .frame(width: 230, height: 100)
                                 .background(viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white)
                                 .cornerRadius(10)
-                                
-//                                ZStack {
-//                                    Color.white.frame(width: 230, height: 100)
-//
-//                                    Text("Play")
-//                                        .font(.title3)
-//                                        .foregroundColor(.black)
-//                                }
                             }
                             .buttonStyle(CardButtonStyle())
-                            .disabled(viewModel.itemVideoPlayerViewModel == nil)
                         }
                     }
                     
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(viewModel.item.name ?? "")
+                        Text(title)
                             .font(.title2)
                             .lineLimit(2)
                         
-                        if let seriesName = viewModel.item.seriesName, let episodeLocator = viewModel.item.getEpisodeLocator() {
-                            Text("\(seriesName) - \(episodeLocator)")
+                        if let subtitle = subtitle {
+                            Text(subtitle)
                         }
                         
                         HStack(alignment: .PlayInformationAlignmentGuide, spacing: 20) {
                             
-                            if let runtime = viewModel.item.getItemRuntime() {
-                                Text(runtime)
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                            }
-                            
-                            if let productionYear = viewModel.item.productionYear {
-                                Text(String(productionYear))
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .lineLimit(1)
+                            if viewModel.item.itemType == .series {
+                                if let airTime = viewModel.item.airTime {
+                                    Text(airTime)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                }
+                            } else {
+                                if let runtime = viewModel.item.getItemRuntime() {
+                                    Text(runtime)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                }
+                                
+                                if let productionYear = viewModel.item.productionYear {
+                                    Text(String(productionYear))
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .lineLimit(1)
+                                }
                             }
                             
                             if let officialRating = viewModel.item.officialRating {
@@ -119,17 +123,6 @@ struct CinematicItemViewTopRow: View {
             }
         }
     }
-}
-
-extension HorizontalAlignment {
-    
-    private struct TitleSubtitleAlignment: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            context[HorizontalAlignment.leading]
-        }
-    }
-
-    static let EpisodeSeriesAlignmentGuide = HorizontalAlignment(TitleSubtitleAlignment.self)
 }
 
 extension VerticalAlignment {

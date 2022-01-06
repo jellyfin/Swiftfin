@@ -15,7 +15,18 @@ import UIKit
 class ItemViewModel: ViewModel {
 
     @Published var item: BaseItemDto
-    @Published var playButtonItem: BaseItemDto?
+    @Published var playButtonItem: BaseItemDto? {
+        didSet {
+            playButtonItem?.createVideoPlayerViewModel()
+                .sink { completion in
+                    self.handleAPIRequestError(completion: completion)
+                } receiveValue: { videoPlayerViewModel in
+                    self.itemVideoPlayerViewModel = videoPlayerViewModel
+                    self.mediaItems = videoPlayerViewModel.item.createMediaItems()
+                }
+                .store(in: &cancellables)
+        }
+    }
     @Published var similarItems: [BaseItemDto] = []
     @Published var isWatched = false
     @Published var isFavorited = false

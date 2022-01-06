@@ -8,41 +8,39 @@
   */
 
 import Defaults
-import Introspect
 import SwiftUI
 
-struct CinematicEpisodeItemView: View {
+struct CinematicSeasonItemView: View {
     
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
-    @ObservedObject var viewModel: EpisodeItemViewModel
+    @ObservedObject var viewModel: SeasonItemViewModel
     @State var wrappedScrollView: UIScrollView?
     @Default(.showPosterLabels) var showPosterLabels
-    
-    func generateSubtitle() -> String? {
-        guard let seriesName = viewModel.item.seriesName, let episodeLocator = viewModel.item.getEpisodeLocator() else {
-            return nil
-        }
-        
-        return "\(seriesName) - \(episodeLocator)"
-    }
     
     var body: some View {
         ZStack {
             
-            ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920),
-                      bh: viewModel.item.getBackdropImageBlurHash())
+            ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920), bh: viewModel.item.getBackdropImageBlurHash())
                 .ignoresSafeArea()
             
             ScrollView {
                 VStack(spacing: 0) {
                     
-                    CinematicItemViewTopRow(viewModel: viewModel,
-                                            wrappedScrollView: wrappedScrollView,
-                                            title: viewModel.item.name ?? "",
-                                            subtitle: generateSubtitle())
-                        .focusSection()
-                        .frame(height: UIScreen.main.bounds.height - 10)
-
+                    if let seriesItem = viewModel.seriesItem {
+                        CinematicItemViewTopRow(viewModel: viewModel,
+                                                wrappedScrollView: wrappedScrollView,
+                                                title: viewModel.item.name ?? "",
+                                                subtitle: seriesItem.name)
+                            .focusSection()
+                            .frame(height: UIScreen.main.bounds.height - 10)
+                    } else {
+                        CinematicItemViewTopRow(viewModel: viewModel,
+                                                wrappedScrollView: wrappedScrollView,
+                                                title: viewModel.item.name ?? "")
+                            .focusSection()
+                            .frame(height: UIScreen.main.bounds.height - 10)
+                    }
+                    
                     ZStack(alignment: .topLeading) {
                         
                         Color.black.ignoresSafeArea()
@@ -52,10 +50,9 @@ struct CinematicEpisodeItemView: View {
                             
                             CinematicItemAboutView(viewModel: viewModel)
                             
-                            EpisodesRowView(viewModel: EpisodesRowViewModel(episodeItemViewModel: viewModel))
-                                .focusSection()
+                            SingleSeasonEpisodesRowView(viewModel: SingleSeasonEpisodesRowViewModel(seasonItemViewModel: viewModel))
                             
-                            if let seriesItem = viewModel.series {
+                            if let seriesItem = viewModel.seriesItem {
                                 PortraitItemsRowView(rowTitle: "Series",
                                                      items: [seriesItem]) { seriesItem in
                                     itemRouter.route(to: \.item, seriesItem)
@@ -69,10 +66,8 @@ struct CinematicEpisodeItemView: View {
                                     itemRouter.route(to: \.item, item)
                                 }
                             }
-                            
-                            ItemDetailsView(viewModel: viewModel)
                         }
-                        .padding(.top, 50)
+                        .padding(.vertical, 50)
                     }
                 }
             }
