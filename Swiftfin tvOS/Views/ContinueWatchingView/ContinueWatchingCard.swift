@@ -57,6 +57,7 @@ struct ContinueWatchingCard: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
+                    .frame(width: 500, alignment: .leading)
 
                 if item.itemType == .episode {
                     Text(item.getEpisodeLocator() ?? "")
@@ -64,8 +65,11 @@ struct ContinueWatchingCard: View {
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
+                } else {
+                    Text("")
                 }
             }
         }
+        .padding(.vertical)
     }
 }
