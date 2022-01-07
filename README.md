@@ -17,9 +17,6 @@
 <p align="center">
   <b>Swiftfin</b> is a modern client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
-<p align="center">
-Swiftfin is currently available for <b>iOS and iPadOS</b>. tvOS support is being worked on, but is not available for public testing at this time.
-</p>
 
 ## ⚡️ Links!
 
