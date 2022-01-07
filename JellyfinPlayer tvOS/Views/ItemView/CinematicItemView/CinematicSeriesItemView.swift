@@ -8,21 +8,19 @@
   */
 
 import Defaults
-import Introspect
 import SwiftUI
 
-struct CinematicMovieItemView: View {
+struct CinematicSeriesItemView: View {
     
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
-    @ObservedObject var viewModel: MovieItemViewModel
+    @ObservedObject var viewModel: SeriesItemViewModel
     @State var wrappedScrollView: UIScrollView?
     @Default(.showPosterLabels) var showPosterLabels
     
     var body: some View {
         ZStack {
             
-            ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920),
-                      bh: viewModel.item.getBackdropImageBlurHash())
+            ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920), bh: viewModel.item.getBackdropImageBlurHash())
                 .ignoresSafeArea()
             
             ScrollView {
@@ -34,14 +32,21 @@ struct CinematicMovieItemView: View {
                                             subtitle: nil)
                         .focusSection()
                         .frame(height: UIScreen.main.bounds.height - 10)
-
+                    
                     ZStack(alignment: .topLeading) {
                         
                         Color.black.ignoresSafeArea()
+                            .frame(minHeight: UIScreen.main.bounds.height)
                         
                         VStack(alignment: .leading, spacing: 20) {
                             
                             CinematicItemAboutView(viewModel: viewModel)
+                            
+                            PortraitItemsRowView(rowTitle: "Seasons",
+                                                 items: viewModel.seasons,
+                                                 showItemTitles: showPosterLabels) { season in
+                                itemRouter.route(to: \.item, season)
+                            }
                             
                             if !viewModel.similarItems.isEmpty {
                                 PortraitItemsRowView(rowTitle: "Recommended",
@@ -50,11 +55,8 @@ struct CinematicMovieItemView: View {
                                     itemRouter.route(to: \.item, item)
                                 }
                             }
-                            
-                            ItemDetailsView(viewModel: viewModel)
                         }
-                        .padding(.top, 50)
-                        
+                        .padding(.vertical, 50)
                     }
                 }
             }

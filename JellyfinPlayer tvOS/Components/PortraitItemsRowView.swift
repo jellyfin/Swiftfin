@@ -17,11 +17,16 @@ struct PortraitItemsRowView: View {
     let rowTitle: String
     let items: [BaseItemDto]
     let showItemTitles: Bool
+    let selectedAction: (BaseItemDto) -> Void
     
-    init(rowTitle: String, items: [BaseItemDto], showItemTitles: Bool = true) {
+    init(rowTitle: String,
+         items: [BaseItemDto],
+         showItemTitles: Bool = true,
+         selectedAction: @escaping (BaseItemDto) -> Void) {
         self.rowTitle = rowTitle
         self.items = items
         self.showItemTitles = showItemTitles
+        self.selectedAction = selectedAction
     }
     
     var body: some View {
@@ -37,7 +42,7 @@ struct PortraitItemsRowView: View {
                         
                         VStack(spacing: 15) {
                             Button {
-                                itemRouter.route(to: \.item, item)
+                                selectedAction(item)
                             } label: {
                                 ImageView(src: item.portraitHeaderViewURL(maxWidth: 257))
                                     .frame(width: 257, height: 380)
@@ -58,5 +63,6 @@ struct PortraitItemsRowView: View {
             }
             .edgesIgnoringSafeArea(.horizontal)
         }
+        .focusSection()
     }
 }

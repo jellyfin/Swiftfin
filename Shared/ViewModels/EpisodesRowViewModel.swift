@@ -12,6 +12,8 @@ import SwiftUI
 
 final class EpisodesRowViewModel: ViewModel {
     
+    // TODO: Protocol these viewmodels for generalization instead of Episode
+    
     @ObservedObject var episodeItemViewModel: EpisodeItemViewModel
     @Published var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
     @Published var selectedSeason: BaseItemDto? {
@@ -61,5 +63,19 @@ final class EpisodesRowViewModel: ViewModel {
                 self.seasonsEpisodes[season] = episodes.items ?? []
             }
             .store(in: &cancellables)
+    }
+}
+
+final class SingleSeasonEpisodesRowViewModel: ViewModel {
+    
+    // TODO: Protocol these viewmodels for generalization instead of Season
+    
+    @ObservedObject var seasonItemViewModel: SeasonItemViewModel
+    @Published var episodes: [BaseItemDto]
+    
+    init(seasonItemViewModel: SeasonItemViewModel) {
+        self.seasonItemViewModel = seasonItemViewModel
+        self.episodes = seasonItemViewModel.episodes
+        super.init()
     }
 }

@@ -5,49 +5,21 @@
  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
  */
 
-import SwiftUI
+import Defaults
 import JellyfinAPI
-import Combine
+import SwiftUI
 
 struct LatestMediaView: View {
-
-    @StateObject var tempViewModel = ViewModel()
-    @State var items: [BaseItemDto] = []
-    @State private var viewDidLoad: Bool = false
     
-    private var library_id: String = ""
-
-    init(usingParentID: String) {
-        library_id = usingParentID
-    }
-
-    func onAppear() {
-        if viewDidLoad == true {
-            return
-        }
-        viewDidLoad = true
-
-        UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id, parentId: library_id, fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters], enableUserData: true, limit: 12)
-            .sink(receiveCompletion: { completion in
-                print(completion)
-            }, receiveValue: { response in
-                items = response
-            })
-            .store(in: &tempViewModel.cancellables)
-    }
-
+    @EnvironmentObject var homeRouter: HomeCoordinator.Router
+    @StateObject var viewModel: LatestMediaViewModel
+    @Default(.showPosterLabels) var showPosterLabels
+    
     var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack {
-                    Spacer().frame(width: 45)
-                    ForEach(items, id: \.id) { item in
-                            NavigationLink(destination: LazyView { ItemView(item: item) }) {
-                                PortraitItemElement(item: item)
-                            }.buttonStyle(PlainNavigationLinkButtonStyle())
-                    }
-                    Spacer().frame(width: 45)
-                }
-            }.frame(height: 480)
-            .onAppear(perform: onAppear)
+        PortraitItemsRowView(rowTitle: L10n.latestWithString(viewModel.library.name ?? ""),
+                             items: viewModel.items,
+                             showItemTitles: showPosterLabels) { item in
+            homeRouter.route(to: \.modalItem, item)
+        }
     }
 }

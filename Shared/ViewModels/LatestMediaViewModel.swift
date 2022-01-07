@@ -14,11 +14,11 @@ import JellyfinAPI
 final class LatestMediaViewModel: ViewModel {
 
     @Published var items = [BaseItemDto]()
+    
+    let library: BaseItemDto
 
-    var libraryID: String
-
-    init(libraryID: String) {
-        self.libraryID = libraryID
+    init(library: BaseItemDto) {
+        self.library = library
         super.init()
 
         requestLatestMedia()
@@ -27,7 +27,7 @@ final class LatestMediaViewModel: ViewModel {
     func requestLatestMedia() {
         LogManager.shared.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id)")
         UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
-                                      parentId: libraryID,
+                                      parentId: library.id ?? "",
                                       fields: [
                                         .primaryImageAspectRatio,
                                         .seriesPrimaryImage,

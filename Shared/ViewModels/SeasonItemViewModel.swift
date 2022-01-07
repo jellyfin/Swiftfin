@@ -13,13 +13,15 @@ import JellyfinAPI
 import Stinsen
 
 final class SeasonItemViewModel: ItemViewModel {
+    
     @RouterObject var itemRouter: ItemCoordinator.Router?
-    @Published private(set) var episodes: [BaseItemDto] = []
+    @Published var episodes: [BaseItemDto] = []
+    @Published var seriesItem: BaseItemDto?
 
     override init(item: BaseItemDto) {
         super.init(item: item)
-        self.item = item
 
+        getSeriesItem()
         requestEpisodes()
     }
 
@@ -70,16 +72,17 @@ final class SeasonItemViewModel: ItemViewModel {
             playButtonItem = firstEpisode
         }
     }
-
-    func routeToSeriesItem() {
-        guard let id = item.seriesId else { return }
-        UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)
+    
+    private func getSeriesItem() {
+        guard let seriesID = item.seriesId else { return }
+        UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id,
+                               itemId: seriesID)
             .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
+            .sink { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] item in
-                self?.itemRouter?.route(to: \.item, item)
-            })
+            } receiveValue: { [weak self] seriesItem in
+                self?.seriesItem = seriesItem
+            }
             .store(in: &cancellables)
     }
 }

@@ -25,8 +25,7 @@ struct ItemNavigationView: View {
 
 struct ItemView: View {
     
-    @Default(.tvOSEpisodeItemCinematicView) var tvOSEpisodeItemCinematicView
-    @Default(.tvOSMovieItemCinematicView) var tvOSMovieItemCinematicView
+    @Default(.tvOSCinematicViews) var tvOSCinematicViews
     
     private var item: BaseItemDto
 
@@ -36,23 +35,32 @@ struct ItemView: View {
 
     var body: some View {
         Group {
-            if item.type == "Movie" {
-                if tvOSMovieItemCinematicView {
+            switch item.itemType {
+            case .movie:
+                if tvOSCinematicViews {
                     CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
                 } else {
                     MovieItemView(viewModel: MovieItemViewModel(item: item))
                 }
-            } else if item.type == "Series" {
-                SeriesItemView(viewModel: .init(item: item))
-            } else if item.type == "Season" {
-                SeasonItemView(viewModel: .init(item: item))
-            } else if item.type == "Episode" {
-                if tvOSEpisodeItemCinematicView {
+            case .episode:
+                if tvOSCinematicViews {
                     CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
                 } else {
                     EpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
                 }
-            } else {
+            case .season:
+                if tvOSCinematicViews {
+                    CinematicSeasonItemView(viewModel: SeasonItemViewModel(item: item))
+                } else {
+                    SeasonItemView(viewModel: .init(item: item))
+                }
+            case .series:
+                if tvOSCinematicViews {
+                    CinematicSeriesItemView(viewModel: SeriesItemViewModel(item: item))
+                } else {
+                    SeriesItemView(viewModel: SeriesItemViewModel(item: item))
+                }
+            default:
                 Text(L10n.notImplementedYetWithType(item.type ?? ""))
             }
         }
