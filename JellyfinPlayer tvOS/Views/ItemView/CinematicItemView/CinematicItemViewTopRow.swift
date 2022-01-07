@@ -18,6 +18,19 @@ struct CinematicItemViewTopRow: View {
     @State var wrappedScrollView: UIScrollView?
     @State var title: String
     @State var subtitle: String?
+    let showDetails: Bool
+    
+    init(viewModel: ItemViewModel,
+         wrappedScrollView: UIScrollView? = nil,
+         title: String,
+         subtitle: String? = nil,
+         showDetails: Bool = true) {
+        self.viewModel = viewModel
+        self.wrappedScrollView = wrappedScrollView
+        self.title = title
+        self.subtitle = subtitle
+        self.showDetails = showDetails
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -69,35 +82,39 @@ struct CinematicItemViewTopRow: View {
                         
                         HStack(alignment: .PlayInformationAlignmentGuide, spacing: 20) {
                             
-                            if viewModel.item.itemType == .series {
-                                if let airTime = viewModel.item.airTime {
-                                    Text(airTime)
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                }
-                            } else {
-                                if let runtime = viewModel.item.getItemRuntime() {
-                                    Text(runtime)
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
+                            if showDetails {
+                                if viewModel.item.itemType == .series {
+                                    if let airTime = viewModel.item.airTime {
+                                        Text(airTime)
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                    }
+                                } else {
+                                    if let runtime = viewModel.item.getItemRuntime() {
+                                        Text(runtime)
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                    }
+                                    
+                                    if let productionYear = viewModel.item.productionYear {
+                                        Text(String(productionYear))
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                            .lineLimit(1)
+                                    }
                                 }
                                 
-                                if let productionYear = viewModel.item.productionYear {
-                                    Text(String(productionYear))
+                                if let officialRating = viewModel.item.officialRating {
+                                    Text(officialRating)
                                         .font(.subheadline)
-                                        .fontWeight(.medium)
+                                        .fontWeight(.semibold)
                                         .lineLimit(1)
+                                        .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                        .overlay(RoundedRectangle(cornerRadius: 2)
+                                            .stroke(Color.secondary, lineWidth: 1))
                                 }
-                            }
-                            
-                            if let officialRating = viewModel.item.officialRating {
-                                Text(officialRating)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(1)
-                                    .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                                    .overlay(RoundedRectangle(cornerRadius: 2)
-                                        .stroke(Color.secondary, lineWidth: 1))
+                            } else {
+                                Text("")
                             }
                         }
                         .foregroundColor(.secondary)

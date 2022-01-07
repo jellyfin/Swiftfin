@@ -60,6 +60,8 @@ struct ItemView: View {
                 } else {
                     SeriesItemView(viewModel: SeriesItemViewModel(item: item))
                 }
+            case .boxset:
+                CinematicCollectionItemView(viewModel: CollectionItemViewModel(item: item))
             default:
                 Text(L10n.notImplementedYetWithType(item.type ?? ""))
             }
