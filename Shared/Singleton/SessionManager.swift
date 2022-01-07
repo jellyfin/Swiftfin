@@ -15,6 +15,10 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+#if os(tvOS)
+import TVServices
+#endif
+
 typealias CurrentLogin = (server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User)
 
 // MARK: NewSessionManager
@@ -31,7 +35,21 @@ final class SessionManager {
 
     // MARK: init
     private init() {
-        if let lastUserID = Defaults[.lastServerUserID],
+        
+        let serverUserID: String?
+        
+        #if os(tvOS)
+        let userManager = TVUserManager()
+        if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
+            serverUserID = Defaults[.tvOSUserMap][currentTVOSUserID]
+        } else {
+            serverUserID = nil
+        }
+        #else
+        serverUserID = Defaults[.lastServerUserID]
+        #endif
+        
+        if let lastUserID = serverUserID,
            let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
                                                             [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)]) {
 
@@ -226,7 +244,16 @@ final class SessionManager {
     // MARK: loginUser
     func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
         JellyfinAPI.basePath = server.currentURI
+        
+        #if os(tvOS)
+        let userManager = TVUserManager()
+        if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
+            Defaults[.tvOSUserMap][currentTVOSUserID] = user.id
+        }
+        #else
         Defaults[.lastServerUserID] = user.id
+        #endif
+        
         setAuthHeader(with: user.accessToken)
         currentLogin = (server: server, user: user)
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
@@ -236,7 +263,16 @@ final class SessionManager {
     func logout() {
         currentLogin = nil
         JellyfinAPI.basePath = ""
+        
+        #if os(tvOS)
+        let userManager = TVUserManager()
+        if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
+            Defaults[.tvOSUserMap].removeValue(forKey: currentTVOSUserID)
+        }
+        #else
         Defaults[.lastServerUserID] = nil
+        #endif
+        
         setAuthHeader(with: "")
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
     }
