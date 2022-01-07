@@ -205,6 +205,7 @@ public extension BaseItemDto {
         case season = "Season"
         case episode = "Episode"
         case series = "Series"
+        case boxset = "BoxSet"
 
         case unknown
 
@@ -227,7 +228,7 @@ public extension BaseItemDto {
 
     func portraitHeaderViewURL(maxWidth: Int) -> URL {
         switch itemType {
-        case .movie, .season, .series:
+        case .movie, .season, .series, .boxset:
             return getPrimaryImage(maxWidth: maxWidth)
         case .episode:
             return getSeriesPrimaryImage(maxWidth: maxWidth)

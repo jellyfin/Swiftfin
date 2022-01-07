@@ -80,6 +80,19 @@ struct ItemViewBody: View {
                     }
                 }
             }
+            
+            // MARK: Collection Items
+            
+            if let collectionViewModel = viewModel as? CollectionItemViewModel {
+                PortraitImageHStackView(items: collectionViewModel.collectionItems) {
+                    Text("Items")
+                        .fontWeight(.semibold)
+                        .padding(.bottom)
+                        .padding(.horizontal)
+                } selectedAction: { collectionItem in
+                    itemRouter.route(to: \.item, collectionItem)
+                }
+            }
 
             // MARK: Cast & Crew
 
@@ -115,8 +128,14 @@ struct ItemViewBody: View {
             
             // MARK: Details
             
-            ItemViewDetailsView(viewModel: viewModel)
-                .padding()
+            switch viewModel.item.itemType {
+            case .movie, .episode:
+                ItemViewDetailsView(viewModel: viewModel)
+                    .padding()
+            default:
+                EmptyView()
+                    .frame(height: 50)
+            }
         }
     }
 }

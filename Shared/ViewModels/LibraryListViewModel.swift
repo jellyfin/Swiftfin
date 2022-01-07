@@ -12,7 +12,7 @@ import JellyfinAPI
 
 final class LibraryListViewModel: ViewModel {
 
-    @Published var libraries = [BaseItemDto]()
+    @Published var libraries: [BaseItemDto] = []
 
     // temp
     var withFavorites = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
@@ -29,7 +29,7 @@ final class LibraryListViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
-                self.libraries.append(contentsOf: response.items ?? [])
+                self.libraries = response.items ?? []
             })
             .store(in: &cancellables)
     }
