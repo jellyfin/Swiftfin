@@ -658,6 +658,7 @@
 		E13F26B22787597300DF4761 /* SingleSeasonEpisodesRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSeasonEpisodesRowView.swift; sourceTree = "<group>"; };
 		E14F7D0626DB36EF007C3AE6 /* ItemPortraitMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPortraitMainView.swift; sourceTree = "<group>"; };
 		E14F7D0826DB36F7007C3AE6 /* ItemLandscapeMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLandscapeMainView.swift; sourceTree = "<group>"; };
+		E1576CCF2788237E00AC40B7 /* JellyfinPlayer tvOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "JellyfinPlayer tvOS.entitlements"; sourceTree = "<group>"; };
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
@@ -896,6 +897,7 @@
 		535870612669D21600D05A09 /* JellyfinPlayer tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				E1576CCF2788237E00AC40B7 /* JellyfinPlayer tvOS.entitlements */,
 				E12186DF2718F2030010884C /* App */,
 				535870662669D21700D05A09 /* Assets.xcassets */,
 				536D3D77267BB9650004248C /* Components */,
@@ -2486,6 +2488,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Dev App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = "JellyfinPlayer tvOS/JellyfinPlayer tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_ASSET_PATHS = "\"JellyfinPlayer tvOS/Preview Content\"";
@@ -2516,6 +2519,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = "JellyfinPlayer tvOS/JellyfinPlayer tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_ASSET_PATHS = "\"JellyfinPlayer tvOS/Preview Content\"";
