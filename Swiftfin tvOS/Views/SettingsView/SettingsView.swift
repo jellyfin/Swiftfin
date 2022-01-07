@@ -35,13 +35,17 @@ struct SettingsView: View {
                 
                 Form {
                     Section(header: EmptyView()) {
-                        HStack {
-                            Text("User")
-                            Spacer()
-                            Text(viewModel.user.username)
-                                .foregroundColor(.jellyfinPurple)
+                        
+                        Button {
+                            
+                        } label: {
+                            HStack {
+                                Text("User")
+                                Spacer()
+                                Text(viewModel.user.username)
+                                    .foregroundColor(.jellyfinPurple)
+                            }
                         }
-                        .focusable()
 
                         Button {
                             settingsRouter.route(to: \.serverDetail)
