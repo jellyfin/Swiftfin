@@ -42,7 +42,6 @@ struct SettingsView: View {
                             Text(viewModel.user.username)
                                 .foregroundColor(.jellyfinPurple)
                         }
-                        .focusable()
 
                         Button {
                             settingsRouter.route(to: \.serverDetail)
