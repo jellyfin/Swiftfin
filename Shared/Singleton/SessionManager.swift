@@ -15,10 +15,6 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-#if os(tvOS)
-import TVServices
-#endif
-
 typealias CurrentLogin = (server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User)
 
 // MARK: NewSessionManager
@@ -35,23 +31,7 @@ final class SessionManager {
 
     // MARK: init
     private init() {
-        
-        let serverUserID: String?
-        
-        #if os(tvOS)
-        NotificationCenter.default.addObserver(self, selector: #selector(tvOSDidChangeuser), name: TVUserManager.currentUserIdentifierDidChangeNotification, object: nil)
-        
-        let userManager = TVUserManager()
-        if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
-            serverUserID = Defaults[.tvOSUserMap][currentTVOSUserID]
-        } else {
-            serverUserID = nil
-        }
-        #else
-        serverUserID = Defaults[.lastServerUserID]
-        #endif
-        
-        if let lastUserID = serverUserID,
+        if let lastUserID =  Defaults[.lastServerUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
                                                             [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)]) {
 
@@ -63,26 +43,6 @@ final class SessionManager {
             currentLogin = (server: existingServer.state, user: user.state)
         }
     }
-    
-    #if os(tvOS)
-    @objc private func tvOSDidChangeuser() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            let userManager = TVUserManager()
-            if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
-                if let serverUserID = Defaults[.tvOSUserMap][currentTVOSUserID],
-                   let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
-                                                                    [Where<SwiftfinStore.Models.StoredUser>("id == %@", serverUserID)]) {
-                    guard let server = user.server, let _ = user.accessToken else { fatalError("No associated server or access token for last user?") }
-                    guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { self.logout(); return }
-                    
-                    self.loginUser(server: existingServer.state, user: user.state)
-                } else {
-                    self.logout()
-                }
-            }
-        }
-    }
-    #endif
 
     // MARK: fetchServers
     func fetchServers() -> [SwiftfinStore.State.Server] {
@@ -266,16 +226,7 @@ final class SessionManager {
     // MARK: loginUser
     func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
         JellyfinAPI.basePath = server.currentURI
-        
-        #if os(tvOS)
-        let userManager = TVUserManager()
-        if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
-            Defaults[.tvOSUserMap][currentTVOSUserID] = user.id
-        }
-        #else
         Defaults[.lastServerUserID] = user.id
-        #endif
-        
         setAuthHeader(with: user.accessToken)
         currentLogin = (server: server, user: user)
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
@@ -285,16 +236,7 @@ final class SessionManager {
     func logout() {
         currentLogin = nil
         JellyfinAPI.basePath = ""
-        
-        #if os(tvOS)
-        let userManager = TVUserManager()
-        if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
-            Defaults[.tvOSUserMap].removeValue(forKey: currentTVOSUserID)
-        }
-        #else
         Defaults[.lastServerUserID] = nil
-        #endif
-        
         setAuthHeader(with: "")
         SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
     }
