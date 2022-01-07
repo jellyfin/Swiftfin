@@ -17,8 +17,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "628B951F2670CABD0091AF3B"
                BuildableName = "WidgetExtension.appex"
-               BlueprintName = "WidgetExtension"
-               ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
+               BlueprintName = "Swiftfin Widget"
+               ReferencedContainer = "container:Swiftfin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -30,9 +30,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5377CBF0263B596A003A4E83"
-               BuildableName = "JellyfinPlayer iOS.app"
-               BlueprintName = "JellyfinPlayer iOS"
-               ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
+               BuildableName = "Swiftfin iOS.app"
+               BlueprintName = "Swiftfin iOS"
+               ReferencedContainer = "container:Swiftfin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -64,17 +64,17 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "628B951F2670CABD0091AF3B"
             BuildableName = "WidgetExtension.appex"
-            BlueprintName = "WidgetExtension"
-            ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
+            BlueprintName = "Swiftfin Widget"
+            ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>
       </RemoteRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5377CBF0263B596A003A4E83"
-            BuildableName = "JellyfinPlayer iOS.app"
-            BlueprintName = "JellyfinPlayer iOS"
-            ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
+            BuildableName = "Swiftfin iOS.app"
+            BlueprintName = "Swiftfin iOS"
+            ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <EnvironmentVariables>
@@ -107,9 +107,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5377CBF0263B596A003A4E83"
-            BuildableName = "JellyfinPlayer iOS.app"
-            BlueprintName = "JellyfinPlayer iOS"
-            ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
+            BuildableName = "Swiftfin iOS.app"
+            BlueprintName = "Swiftfin iOS"
+            ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

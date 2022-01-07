@@ -2,9 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:JellyfinPlayer.xcodeproj">
+      location = "group:/Users/epippin/Developer/GitHub/SwiftFin/Swiftfin.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Swiftfin.xcodeproj">
    </FileRef>
 </Workspace>
