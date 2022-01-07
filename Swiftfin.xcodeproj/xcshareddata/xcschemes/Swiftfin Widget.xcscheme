@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "628B951F2670CABD0091AF3B"
-               BuildableName = "WidgetExtension.appex"
+               BuildableName = "Swiftfin Widget.appex"
                BlueprintName = "Swiftfin Widget"
                ReferencedContainer = "container:Swiftfin.xcodeproj">
             </BuildableReference>
@@ -63,7 +63,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "628B951F2670CABD0091AF3B"
-            BuildableName = "WidgetExtension.appex"
+            BuildableName = "Swiftfin Widget.appex"
             BlueprintName = "Swiftfin Widget"
             ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>
