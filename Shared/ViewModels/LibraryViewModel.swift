@@ -79,12 +79,23 @@ final class LibraryViewModel: ViewModel {
         }
         let sortBy = filters.sortBy.map(\.rawValue)
 
-        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * 100, limit: 100,
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id,
+                                  startIndex: currentPage * 100,
+                                  limit: 100,
                                   recursive: true,
-                                  searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
-                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
-                                  filters: filters.filters, sortBy: sortBy, tags: filters.tags,
-                                  enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
+                                  searchTerm: nil,
+                                  sortOrder: filters.sortOrder,
+                                  parentId: parentID,
+                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters],
+                                  includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series", "BoxSet"],
+                                  filters: filters.filters,
+                                  sortBy: sortBy,
+                                  tags: filters.tags,
+                                  enableUserData: true,
+                                  personIds: personIDs,
+                                  studioIds: studioIDs,
+                                  genreIds: genreIDs,
+                                  enableImages: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
@@ -112,12 +123,22 @@ final class LibraryViewModel: ViewModel {
         }
         let sortBy = filters.sortBy.map(\.rawValue)
 
-        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * 100, limit: 100,
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * 100,
+                                  limit: 100,
                                   recursive: true,
-                                  searchTerm: nil, sortOrder: filters.sortOrder, parentId: parentID,
-                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters], includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
-                                  filters: filters.filters, sortBy: sortBy, tags: filters.tags,
-                                  enableUserData: true, personIds: personIDs, studioIds: studioIDs, genreIds: genreIDs, enableImages: true)
+                                  searchTerm: nil,
+                                  sortOrder: filters.sortOrder,
+                                  parentId: parentID,
+                                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters],
+                                  includeItemTypes: filters.filters.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
+                                  filters: filters.filters,
+                                  sortBy: sortBy,
+                                  tags: filters.tags,
+                                  enableUserData: true,
+                                  personIds: personIDs,
+                                  studioIds: studioIDs,
+                                  genreIds: genreIDs,
+                                  enableImages: true)
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
