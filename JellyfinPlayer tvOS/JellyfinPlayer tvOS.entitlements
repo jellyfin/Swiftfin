@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.user-management</key>
 	<array>
-		<string>runs-as-current-user</string>
+		<string>get-current-user</string>
 	</array>
 </dict>
 </plist>

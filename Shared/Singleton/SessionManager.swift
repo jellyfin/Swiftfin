@@ -39,6 +39,8 @@ final class SessionManager {
         let serverUserID: String?
         
         #if os(tvOS)
+        NotificationCenter.default.addObserver(self, selector: #selector(tvOSDidChangeuser), name: TVUserManager.currentUserIdentifierDidChangeNotification, object: nil)
+        
         let userManager = TVUserManager()
         if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
             serverUserID = Defaults[.tvOSUserMap][currentTVOSUserID]
@@ -61,6 +63,26 @@ final class SessionManager {
             currentLogin = (server: existingServer.state, user: user.state)
         }
     }
+    
+    #if os(tvOS)
+    @objc private func tvOSDidChangeuser() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            let userManager = TVUserManager()
+            if let currentTVOSUserID = userManager.currentUserIdentifier?.stringValue {
+                if let serverUserID = Defaults[.tvOSUserMap][currentTVOSUserID],
+                   let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
+                                                                    [Where<SwiftfinStore.Models.StoredUser>("id == %@", serverUserID)]) {
+                    guard let server = user.server, let _ = user.accessToken else { fatalError("No associated server or access token for last user?") }
+                    guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { self.logout(); return }
+                    
+                    self.loginUser(server: existingServer.state, user: user.state)
+                } else {
+                    self.logout()
+                }
+            }
+        }
+    }
+    #endif
 
     // MARK: fetchServers
     func fetchServers() -> [SwiftfinStore.State.Server] {
