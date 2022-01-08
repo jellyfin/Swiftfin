@@ -47,7 +47,7 @@ struct tvOSVLCOverlay: View {
                         if let subtitle = viewModel.subtitle {
                             Text(subtitle)
                                 .font(.subheadline)
-                                .foregroundColor(.lightGray)
+                                .foregroundColor(.white)
                         }
                         
                         Text(viewModel.title)

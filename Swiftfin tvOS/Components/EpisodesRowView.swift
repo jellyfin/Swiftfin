@@ -84,7 +84,7 @@ struct EpisodesRowView: View {
                                         HStack(alignment: .top) {
                                             VStack(alignment: .leading) {
 
-                                                ImageView(src: episode.getBackdropImage(maxWidth: 445),
+                                                ImageView(src: episode.getBackdropImage(maxWidth: 500),
                                                           bh: episode.getBackdropImageBlurHash())
                                                     .mask(Rectangle().frame(width: 500, height: 280))
                                                     .frame(width: 500, height: 280)

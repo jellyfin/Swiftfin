@@ -22,8 +22,13 @@ struct ContinueWatchingCard: View {
             } label: {
                 ZStack(alignment: .bottom) {
 
-                    ImageView(src: item.getBackdropImage(maxWidth: 500))
-                        .frame(width: 500, height: 281.25)
+                    if item.itemType == .episode {
+                        ImageView(src: item.getSeriesBackdropImage(maxWidth: 500))
+                            .frame(width: 500, height: 281.25)
+                    } else {
+                        ImageView(src: item.getBackdropImage(maxWidth: 500))
+                            .frame(width: 500, height: 281.25)
+                    }
 
                     VStack(alignment: .leading, spacing: 0)  {
                         Text(item.getItemProgressString() ?? "")

@@ -204,20 +204,20 @@ class VLCPlayerViewController: UIViewController {
             hideConfirmCloseOverlay()
             
             if Defaults[.downActionShowsMenu] {
-                if !displayingContentOverlay {
+                if !displayingContentOverlay && !displayingOverlay {
                     didSelectMenu()
                 }
             }
         case .leftArrow:
             hideConfirmCloseOverlay()
             
-            if !displayingContentOverlay {
+            if !displayingContentOverlay && !displayingOverlay {
                 didSelectBackward()
             }
         case .rightArrow:
             hideConfirmCloseOverlay()
             
-            if !displayingContentOverlay {
+            if !displayingContentOverlay && !displayingOverlay {
                 didSelectForward()
             }
         case .pageUp: ()
@@ -239,9 +239,6 @@ class VLCPlayerViewController: UIViewController {
             hideOverlay()
         } else if displayingContentOverlay {
             hideOverlayContent()
-            
-            showOverlay()
-            restartOverlayDismissTimer()
         } else if viewModel.confirmClose && !displayingConfirmClose {
             
             showConfirmCloseOverlay()
