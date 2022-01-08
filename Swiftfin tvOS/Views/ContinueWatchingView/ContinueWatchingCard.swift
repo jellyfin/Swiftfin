@@ -22,8 +22,13 @@ struct ContinueWatchingCard: View {
             } label: {
                 ZStack(alignment: .bottom) {
 
-                    ImageView(src: item.getBackdropImage(maxWidth: 500))
-                        .frame(width: 500, height: 281.25)
+                    if item.itemType == .episode {
+                        ImageView(src: item.getSeriesBackdropImage(maxWidth: 500))
+                            .frame(width: 500, height: 281.25)
+                    } else {
+                        ImageView(src: item.getBackdropImage(maxWidth: 500))
+                            .frame(width: 500, height: 281.25)
+                    }
 
                     VStack(alignment: .leading, spacing: 0)  {
                         Text(item.getItemProgressString() ?? "")
@@ -57,6 +62,7 @@ struct ContinueWatchingCard: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
+                    .frame(width: 500, alignment: .leading)
 
                 if item.itemType == .episode {
                     Text(item.getEpisodeLocator() ?? "")
@@ -64,8 +70,11 @@ struct ContinueWatchingCard: View {
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
+                } else {
+                    Text("")
                 }
             }
         }
+        .padding(.vertical)
     }
 }

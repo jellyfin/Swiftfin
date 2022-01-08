@@ -527,12 +527,14 @@ public final class TvOSSlider: UIControl {
     
     @objc
     private func leftTapWasTriggered() {
-        setValue(value-stepValue, animated: true)
+//        setValue(value-stepValue, animated: true)
+        viewModel.playerOverlayDelegate?.didSelectBackward()
     }
     
     @objc
     private func rightTapWasTriggered() {
-        setValue(value+stepValue, animated: true)
+//        setValue(value+stepValue, animated: true)
+        viewModel.playerOverlayDelegate?.didSelectForward()
     }
     
     public override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {

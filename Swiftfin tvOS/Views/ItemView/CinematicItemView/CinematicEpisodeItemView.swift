@@ -31,6 +31,7 @@ struct CinematicEpisodeItemView: View {
             
             ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920),
                       bh: viewModel.item.getBackdropImageBlurHash())
+                .frame(height: UIScreen.main.bounds.height - 10)
                 .ignoresSafeArea()
             
             ScrollView {

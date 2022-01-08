@@ -7,6 +7,7 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+import CachedAsyncImage
 import SwiftUI
 
 struct ImageView: View {
@@ -31,7 +32,7 @@ struct ImageView: View {
     private var failureImage: some View {
         ZStack {
             Rectangle()
-               .foregroundColor(Color.systemFill)
+               .foregroundColor(Color(UIColor.darkGray))
 
             Text(failureInitials)
                 .font(.largeTitle)
@@ -40,21 +41,36 @@ struct ImageView: View {
     }
 
     var body: some View {
-        AsyncImage(url: source) { phase in
-            if let image = phase.image {
+        CachedAsyncImage(url: source, urlCache: .imageCache, transaction: Transaction(animation: .easeInOut)) { phase in
+            switch phase {
+            case .success(let image):
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-            } else if phase.error != nil {
+            case .failure(_):
                 failureImage
-            } else {
+            default:
                 // TODO: remove once placeholder hash image fixed
+
+                #if os(tvOS)
                 ZStack {
-                    Color.gray.ignoresSafeArea()
-                    
+                    Color.black.ignoresSafeArea()
+
                     ProgressView()
                 }
+                #else
+                ZStack {
+                    Color.gray.ignoresSafeArea()
+
+                    ProgressView()
+                }
+                #endif
             }
         }
     }
+}
+
+extension URLCache {
+    
+    static let imageCache = URLCache(memoryCapacity: 512*1000*1000, diskCapacity: 10*1000*1000*1000)
 }
