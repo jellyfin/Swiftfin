@@ -32,17 +32,17 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 
 ## ⚙️ Development
 
-Xcode 13.0 with command line tools.
 
-### Build Process
 
-```bash
-# install Cocoapods (if not installed)
-$ sudo gem install cocoapods
+## Intended Behaviors Due to Technical Limitations
 
-# install dependencies
-$ pod install
+The following behaviors are intended due to technical limitations:
 
-# open workspace and build it
-$ open Swiftfin.xcworkspace
-```
+- Pausing playback when app is backgrounded
+  - Due to VLCKit pausing video output at the same moment
+
+- Audio delay after un-pausing
+  - Due to VLCKit, may be fixed in VLCKit v4
+
+- No aspect fill
+  - VLCKit doesn't have the ability to aspect fill the view that the video output occupies
