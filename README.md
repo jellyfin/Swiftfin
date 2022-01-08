@@ -32,7 +32,9 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 
 ## ⚙️ Development
 
-Thank you for your interest in Swiftfin, please check out the [Contribution Guidelines](https://github.com/jellyfin/SwiftFin/contributing.md).
+Thank you for your interest in Swiftfin, please check out the [Contribution Guidelines](https://github.com/jellyfin/SwiftFin/contributing.md) to get started.
+
+-----
 
 ### Intended Behaviors Due to Technical Limitations
 
