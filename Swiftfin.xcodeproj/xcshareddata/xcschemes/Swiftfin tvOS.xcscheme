@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5358705F2669D21600D05A09"
-               BuildableName = "JellyfinPlayer tvOS.app"
-               BlueprintName = "JellyfinPlayer tvOS"
-               ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
+               BuildableName = "Swiftfin tvOS.app"
+               BlueprintName = "Swiftfin tvOS"
+               ReferencedContainer = "container:Swiftfin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5358705F2669D21600D05A09"
-            BuildableName = "JellyfinPlayer tvOS.app"
-            BlueprintName = "JellyfinPlayer tvOS"
-            ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
+            BuildableName = "Swiftfin tvOS.app"
+            BlueprintName = "Swiftfin tvOS"
+            ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5358705F2669D21600D05A09"
-            BuildableName = "JellyfinPlayer tvOS.app"
-            BlueprintName = "JellyfinPlayer tvOS"
-            ReferencedContainer = "container:JellyfinPlayer.xcodeproj">
+            BuildableName = "Swiftfin tvOS.app"
+            BlueprintName = "Swiftfin tvOS"
+            ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

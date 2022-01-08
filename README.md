@@ -44,5 +44,5 @@ $ sudo gem install cocoapods
 $ pod install
 
 # open workspace and build it
-$ open JellyfinPlayer.xcworkspace
+$ open Swiftfin.xcworkspace
 ```
