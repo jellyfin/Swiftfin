@@ -34,7 +34,7 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 
 Thank you for your interest in Swiftfin, please check out the [Contribution Guidelines](https://github.com/jellyfin/SwiftFin/contributing.md).
 
-## Intended Behaviors Due to Technical Limitations
+### Intended Behaviors Due to Technical Limitations
 
 The following behaviors are intended due to technical limitations:
 
