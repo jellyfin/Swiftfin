@@ -1,5 +1,5 @@
 <p align="center">
-      <img alt="Swiftfin" height="125" src="https://github.com/jellyfin/SwiftFin/raw/main/JellyfinPlayer/Assets.xcassets/AppIcon.appiconset/152.png">
+      <img alt="Swiftfin" height="125" src="https://github.com/jellyfin/SwiftFin/raw/main/Swiftfin/Assets.xcassets/AppIcon.appiconset/152.png">
   <h2 align="center">Swiftfin</h2>
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
@@ -32,7 +32,7 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 
 ## ⚙️ Development
 
-
+Thank you for your interest in Swiftfin, please check out the [Contribution Guidelines](https://github.com/jellyfin/SwiftFin/contributing.md).
 
 ## Intended Behaviors Due to Technical Limitations
 
