@@ -404,6 +404,7 @@
 		E1D4BF8C2719F39F00A11E64 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
 		E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */; };
+		E1D7E5A827892566009D0EF7 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1D7E5A727892566009D0EF7 /* Nuke */; };
 		E1E00A35278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A37278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
@@ -792,6 +793,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1D7E5A827892566009D0EF7 /* Nuke in Frameworks */,
 				628B95242670CABD0091AF3B /* SwiftUI.framework in Frameworks */,
 				531ABF6C2671F5CC00C0FE20 /* WidgetKit.framework in Frameworks */,
 				E13DD3DD27175CE3009D4DAF /* Defaults in Frameworks */,
@@ -1708,6 +1710,7 @@
 				E13DD3CE27164E1F009D4DAF /* CoreStore */,
 				E13DD3DC27175CE3009D4DAF /* Defaults */,
 				E10EAA46277BB670000269ED /* JellyfinAPI */,
+				E1D7E5A727892566009D0EF7 /* Nuke */,
 			);
 			productName = WidgetExtensionExtension;
 			productReference = 628B95202670CABD0091AF3B /* Swiftfin Widget.appex */;
@@ -2529,7 +2532,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Swiftfin tvOS/Info.plist";
@@ -2559,7 +2562,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Swiftfin tvOS/Info.plist";
@@ -2711,7 +2714,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2748,7 +2751,7 @@
 				CURRENT_PROJECT_VERSION = 66;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2779,7 +2782,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2806,7 +2809,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3120,6 +3123,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
+		};
+		E1D7E5A727892566009D0EF7 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
 		};
 		E1E0F4D7278911680084F701 /* CachedAsyncImage */ = {
 			isa = XCSwiftPackageProductDependency;
