@@ -138,6 +138,10 @@
 		53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE24E5265060780068F029 /* LibrarySearchView.swift */; };
 		53F866442687A45F00DCD1D7 /* PortraitItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F866432687A45F00DCD1D7 /* PortraitItemView.swift */; };
 		53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF7F29263CF3F500585C35 /* LatestMediaView.swift */; };
+		5D1603FC278A3D5800D22B99 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
+		5D1603FD278A40DB00D22B99 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
+		5D1603FE278A40DC00D22B99 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
+		5D160403278A41FD00D22B99 /* VLCPlayer+subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */; };
 		5D64683D277B1649009E09AE /* PreferenceUIHostingSwizzling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D64683C277B1649009E09AE /* PreferenceUIHostingSwizzling.swift */; };
 		62133890265F83A900A81A2A /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388F265F83A900A81A2A /* LibraryListView.swift */; };
 		621338932660107500A81A2A /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
@@ -558,6 +562,8 @@
 		53EE24E5265060780068F029 /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
 		53F866432687A45F00DCD1D7 /* PortraitItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitItemView.swift; sourceTree = "<group>"; };
 		53FF7F29263CF3F500585C35 /* LatestMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestMediaView.swift; sourceTree = "<group>"; };
+		5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleSize.swift; sourceTree = "<group>"; };
+		5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VLCPlayer+subtitles.swift"; sourceTree = "<group>"; };
 		5D64683C277B1649009E09AE /* PreferenceUIHostingSwizzling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingSwizzling.swift; sourceTree = "<group>"; };
 		6213388F265F83A900A81A2A /* LibraryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryListView.swift; sourceTree = "<group>"; };
 		621338922660107500A81A2A /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
@@ -953,6 +959,7 @@
 				E193D4DA27193CCA00900D82 /* PillStackable.swift */,
 				E193D4D727193CAC00900D82 /* PortraitImageStackable.swift */,
 				E10D87DD278510E300BD264C /* PosterSize.swift */,
+				5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */,
 				E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */,
 				535870AC2669D8DD00D05A09 /* Typings.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
@@ -1010,6 +1017,7 @@
 				62ECA01926FA6D6900E8EBB7 /* AppURLHandler */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
 				53F866422687A45400DCD1D7 /* Components */,
+				5D160401278A41BA00D22B99 /* Extensions */,
 				5377CC02263B596B003A4E83 /* Info.plist */,
 				E13D02842788B634000FCB04 /* Swiftfin.entitlements */,
 				5377CBFA263B596B003A4E83 /* Preview Content */,
@@ -1186,6 +1194,14 @@
 				E1AA331C2782541500F6439C /* PrimaryButtonView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		5D160401278A41BA00D22B99 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		5D64683B277B15E4009E09AE /* PreferenceUIHosting */ = {
@@ -1615,6 +1631,7 @@
 			buildPhases = (
 				3D0F2756C71CDF6B9EEBD4E0 /* [CP] Check Pods Manifest.lock */,
 				6286F0A3271C0ABA00C40ED5 /* R.swift */,
+				C6EE6AB295A273FF14E6EF56 /* [CP] Prepare Artifacts */,
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
@@ -1648,6 +1665,7 @@
 			buildPhases = (
 				1C7487D3432E90546DA855B5 /* [CP] Check Pods Manifest.lock */,
 				6286F09E271C093000C40ED5 /* R.swift */,
+				AB001A5552FE000244A447A4 /* [CP] Prepare Artifacts */,
 				5377CBED263B596A003A4E83 /* Sources */,
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
@@ -1759,7 +1777,7 @@
 				536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */,
 				53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */,
 				62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */,
-				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */,
+				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */,
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
 				E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */,
 				E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
@@ -1973,6 +1991,40 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		AB001A5552FE000244A447A4 /* [CP] Prepare Artifacts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-artifacts-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Prepare Artifacts";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-artifacts-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-artifacts.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C6EE6AB295A273FF14E6EF56 /* [CP] Prepare Artifacts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-artifacts-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Prepare Artifacts";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-artifacts-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-artifacts.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		D4D3981ADF75BCD341D590C0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2107,6 +2159,7 @@
 				E1AD104E26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
 				62E632DD267D2E130063E547 /* LibrarySearchViewModel.swift in Sources */,
 				536D3D81267BDFC60004248C /* PortraitItemElement.swift in Sources */,
+				5D1603FD278A40DB00D22B99 /* SubtitleSize.swift in Sources */,
 				E1AA33232782648000F6439C /* OverlaySliderColor.swift in Sources */,
 				62E1DCC4273CE19800C9AE76 /* URLExtensions.swift in Sources */,
 				5398514726B64E4100101B49 /* SearchBarView.swift in Sources */,
@@ -2212,6 +2265,7 @@
 				E13DD3EC27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				C4BE07852728446F003F4AD1 /* LiveTVChannelsViewModel.swift in Sources */,
+				5D160403278A41FD00D22B99 /* VLCPlayer+subtitles.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				C4BE078B272844AF003F4AD1 /* LiveTVChannelsView.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
@@ -2251,6 +2305,7 @@
 				091B5A8B2683142E00D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
+				5D1603FC278A3D5800D22B99 /* SubtitleSize.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
@@ -2362,6 +2417,7 @@
 				62E1DCC5273CE19800C9AE76 /* URLExtensions.swift in Sources */,
 				62EC353226766849000E9F2D /* SessionManager.swift in Sources */,
 				536D3D79267BD5D00004248C /* ViewModel.swift in Sources */,
+				5D1603FE278A40DC00D22B99 /* SubtitleSize.swift in Sources */,
 				E1AA332427829B5200F6439C /* OverlayType.swift in Sources */,
 				E1D4BF8C2719F39F00A11E64 /* AppAppearance.swift in Sources */,
 			);
@@ -2936,7 +2992,7 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */ = {
+		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
 			requirement = {
@@ -3060,17 +3116,17 @@
 		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3CC27164CA7009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3CE27164E1F009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3D227168E65009D4DAF /* Defaults */ = {

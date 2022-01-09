@@ -102,9 +102,8 @@ class VLCPlayerViewController: UIViewController {
         vlcMediaPlayer.delegate = self
         vlcMediaPlayer.drawable = videoContentView
         
-        // TODO: Custom subtitle sizes
-        vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
-        
+        vlcMediaPlayer.setSubtitleSize(Defaults[.subtitleSize])
+
         setupMediaPlayer(newViewModel: viewModel)
         
         refreshJumpBackwardOverlayView(with: viewModel.jumpBackwardLength)

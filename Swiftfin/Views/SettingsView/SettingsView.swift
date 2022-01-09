@@ -28,6 +28,7 @@ struct SettingsView: View {
     @Default(.showPosterLabels) var showPosterLabels
     @Default(.showCastAndCrew) var showCastAndCrew
     @Default(.resumeOffset) var resumeOffset
+    @Default(.subtitleSize) var subtitleSize
 
     var body: some View {
         Form {
@@ -125,6 +126,11 @@ struct SettingsView: View {
                 Picker(L10n.appearance, selection: $appAppearance) {
                     ForEach(AppAppearance.allCases, id: \.self) { appearance in
                         Text(appearance.localizedName).tag(appearance.rawValue)
+                    }
+                }
+                Picker("Subtitle size", selection: $subtitleSize) {
+                    ForEach(SubtitleSize.allCases, id: \.self) { size in
+                        Text(size.label).tag(size.rawValue)
                     }
                 }
             }
