@@ -18,7 +18,7 @@ struct LatestMediaView: View {
     var body: some View {
         VStack(alignment: .leading) {
             
-            L10n.latestInWithString(viewModel.library.name ?? "").text
+            L10n.latestWithString(viewModel.library.name ?? "").text
                 .font(.title3)
                 .padding(.horizontal, 50)
             

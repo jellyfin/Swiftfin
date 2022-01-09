@@ -81,7 +81,7 @@ struct HomeView: View {
                         
                         LatestMediaView(viewModel: LatestMediaViewModel(library: library)) {
                             HStack {
-                                Text(L10n.latestInWithString(library.name ?? ""))
+                                Text(L10n.latestWithString(library.name ?? ""))
                                     .font(.title2)
                                     .fontWeight(.bold)
                                 

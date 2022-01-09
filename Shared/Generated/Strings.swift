@@ -68,9 +68,9 @@ internal enum L10n {
   internal static let genres = L10n.tr("Localizable", "genres")
   /// Home
   internal static let home = L10n.tr("Localizable", "home")
-  /// Latest in %@
-  internal static func latestInWithString(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "latestInWithString", String(describing: p1))
+  /// Latest %@
+  internal static func latestWithString(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "latestWithString", String(describing: p1))
   }
   /// Library
   internal static let library = L10n.tr("Localizable", "library")
