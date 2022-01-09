@@ -1,5 +1,5 @@
 <p align="center">
-      <img alt="Swiftfin" height="125" src="https://github.com/jellyfin/SwiftFin/raw/main/JellyfinPlayer/Assets.xcassets/AppIcon.appiconset/152.png">
+      <img alt="Swiftfin" height="125" src="https://github.com/jellyfin/Swiftfin/blob/main/Swiftfin/Assets.xcassets/AppIcon.appiconset/152.png">
   <h2 align="center">Swiftfin</h2>
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
@@ -32,17 +32,19 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 
 ## ⚙️ Development
 
-Xcode 13.0 with command line tools.
+Thank you for your interest in Swiftfin, please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/contributing.md) to get started.
 
-### Build Process
+-----
 
-```bash
-# install Cocoapods (if not installed)
-$ sudo gem install cocoapods
+### Intended Behaviors Due to Technical Limitations
 
-# install dependencies
-$ pod install
+The following behaviors are intended due to technical limitations:
 
-# open workspace and build it
-$ open Swiftfin.xcworkspace
-```
+- Pausing playback when app is backgrounded
+  - Due to VLCKit pausing video output at the same moment
+
+- Audio delay after un-pausing
+  - Due to VLCKit, may be fixed in VLCKit v4
+
+- No aspect fill
+  - VLCKit doesn't have the ability to aspect fill the view that the video output occupies

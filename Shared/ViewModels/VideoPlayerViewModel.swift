@@ -67,6 +67,8 @@ final class VideoPlayerViewModel: ViewModel {
     }
     @Published var autoplayEnabled: Bool {
         willSet {
+            previousItemVideoPlayerViewModel?.autoplayEnabled = newValue
+            nextItemVideoPlayerViewModel?.autoplayEnabled = newValue
             Defaults[.autoplayEnabled] = newValue
         }
     }
@@ -113,6 +115,16 @@ final class VideoPlayerViewModel: ViewModel {
     
     var currentSecondTicks: Int64 {
         return Int64(currentSeconds) * 10_000_000
+    }
+    
+    // MARK: Helpers
+    
+    var currentAudioStream: MediaStream? {
+        return audioStreams.first(where: { $0.index == selectedAudioStreamIndex })
+    }
+    
+    var currentSubtitleStream: MediaStream? {
+        return subtitleStreams.first(where: { $0.index == selectedSubtitleStreamIndex })
     }
     
     // Necessary PassthroughSubject to capture manual scrubbing from sliders

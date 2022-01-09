@@ -101,6 +101,15 @@
         }
       },
       {
+        "package": "CachedAsyncImage",
+        "repositoryURL": "https://github.com/lorenzofiamingo/SwiftUI-CachedAsyncImage",
+        "state": {
+          "branch": "main",
+          "revision": "eb489a699be1f6e6c1a19fecdd6bfdc556474fd6",
+          "version": null
+        }
+      },
+      {
         "package": "Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {

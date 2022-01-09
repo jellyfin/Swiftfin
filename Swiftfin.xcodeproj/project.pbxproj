@@ -274,10 +274,9 @@
 		E11D224227378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */; };
 		E11D224327378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */; };
 		E12186DE2718F1C50010884C /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E12186DD2718F1C50010884C /* Defaults */; };
-		E1218C9A271A26BA00EA0737 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C99271A26BA00EA0737 /* Nuke */; };
-		E1218C9C271A26C400EA0737 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C9B271A26C400EA0737 /* Nuke */; };
 		E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C9D271A2CD600EA0737 /* CombineExt */; };
-		E1218CA0271A2CF200EA0737 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C9F271A2CF200EA0737 /* Nuke */; };
+		E122A9132788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */; };
+		E122A9142788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */; };
 		E1267D3E271A1F46003C492E /* PreferenceUIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */; };
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
@@ -376,6 +375,8 @@
 		E1AD105C26D9ABDD003E4A08 /* PillHStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105B26D9ABDD003E4A08 /* PillHStackView.swift */; };
 		E1AD105F26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105E26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift */; };
 		E1AD106226D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD106126D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift */; };
+		E1AE8E7C2789135A00FBDDAA /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1AE8E7B2789135A00FBDDAA /* Nuke */; };
+		E1AE8E7E2789136D00FBDDAA /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1AE8E7D2789136D00FBDDAA /* Nuke */; };
 		E1B59FD52786ADE500A5287E /* ContinueWatchingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B59FD42786ADE500A5287E /* ContinueWatchingCard.swift */; };
 		E1B59FD92786AE4600A5287E /* NextUpCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B59FD82786AE4600A5287E /* NextUpCard.swift */; };
 		E1B6DCE8271A23780015B715 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = E1B6DCE7271A23780015B715 /* CombineExt */; };
@@ -407,9 +408,12 @@
 		E1D4BF8C2719F39F00A11E64 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
 		E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */; };
+		E1D7E5A827892566009D0EF7 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1D7E5A727892566009D0EF7 /* Nuke */; };
 		E1E00A35278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A37278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
+		E1E0F4D8278911680084F701 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = E1E0F4D7278911680084F701 /* CachedAsyncImage */; };
+		E1E0F4DA278911A30084F701 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = E1E0F4D9278911A30084F701 /* CachedAsyncImage */; };
 		E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */; };
 		E1E5D5372783A52C00692DFE /* CinematicEpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5362783A52C00692DFE /* CinematicEpisodeItemView.swift */; };
 		E1E5D5392783A56B00692DFE /* EpisodesRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5382783A56B00692DFE /* EpisodesRowView.swift */; };
@@ -651,6 +655,7 @@
 		E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+VideoPlayerViewModel.swift"; sourceTree = "<group>"; };
 		E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPIError.swift; sourceTree = "<group>"; };
 		E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailCoordinator.swift; sourceTree = "<group>"; };
+		E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStreamExtension.swift; sourceTree = "<group>"; };
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
 		E131691626C583BC0074BFEE /* LogConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogConstructor.swift; sourceTree = "<group>"; };
 		E1384943278036C70024FB48 /* VLCPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerViewController.swift; sourceTree = "<group>"; };
@@ -754,13 +759,14 @@
 			files = (
 				53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */,
 				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
-				E1218CA0271A2CF200EA0737 /* Nuke in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				E1A9999B271A343C008E78C0 /* SwiftUICollection in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
+				E1E0F4DA278911A30084F701 /* CachedAsyncImage in Frameworks */,
+				E1AE8E7E2789136D00FBDDAA /* Nuke in Frameworks */,
 				E178857D278037FD0094FBCF /* JellyfinAPI in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				53ABFDED26799D7700886593 /* ActivityIndicator in Frameworks */,
@@ -777,10 +783,11 @@
 				E10EAA4D277BB716000269ED /* Sliders in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */,
-				E1218C9A271A26BA00EA0737 /* Nuke in Frameworks */,
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
+				E1E0F4D8278911680084F701 /* CachedAsyncImage in Frameworks */,
+				E1AE8E7C2789135A00FBDDAA /* Nuke in Frameworks */,
 				625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */,
 				E1B6DCE8271A23780015B715 /* CombineExt in Frameworks */,
 				E10EAA45277BB646000269ED /* JellyfinAPI in Frameworks */,
@@ -792,13 +799,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1D7E5A827892566009D0EF7 /* Nuke in Frameworks */,
 				628B95242670CABD0091AF3B /* SwiftUI.framework in Frameworks */,
 				531ABF6C2671F5CC00C0FE20 /* WidgetKit.framework in Frameworks */,
 				E13DD3DD27175CE3009D4DAF /* Defaults in Frameworks */,
 				53649AB5269D423A00A2D8B7 /* Puppy in Frameworks */,
 				536D3D7D267BD5F90004248C /* ActivityIndicator in Frameworks */,
 				E13DD3CF27164E1F009D4DAF /* CoreStore in Frameworks */,
-				E1218C9C271A26C400EA0737 /* Nuke in Frameworks */,
 				E10EAA47277BB670000269ED /* JellyfinAPI in Frameworks */,
 				3B8BA25B211CA261017ABA16 /* Pods_Swiftfin_Widget.framework in Frameworks */,
 			);
@@ -1518,10 +1525,11 @@
 			isa = PBXGroup;
 			children = (
 				E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */,
-				E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */,
 				E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */,
+				E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */,
 				5364F454266CA0DC0026ECBA /* BaseItemPersonExtensions.swift */,
 				E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */,
+				E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */,
 				E1AD105E26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift */,
 			);
 			path = JellyfinAPIExtensions;
@@ -1651,9 +1659,10 @@
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
 				E1218C9D271A2CD600EA0737 /* CombineExt */,
-				E1218C9F271A2CF200EA0737 /* Nuke */,
 				E1A9999A271A343C008E78C0 /* SwiftUICollection */,
 				E178857C278037FD0094FBCF /* JellyfinAPI */,
+				E1E0F4D9278911A30084F701 /* CachedAsyncImage */,
+				E1AE8E7D2789136D00FBDDAA /* Nuke */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -1689,10 +1698,11 @@
 				E13DD3D227168E65009D4DAF /* Defaults */,
 				E1B6DCE7271A23780015B715 /* CombineExt */,
 				E1B6DCE9271A23880015B715 /* SwiftyJSON */,
-				E1218C99271A26BA00EA0737 /* Nuke */,
 				E1A99998271A3429008E78C0 /* SwiftUICollection */,
 				E10EAA44277BB646000269ED /* JellyfinAPI */,
 				E10EAA4C277BB716000269ED /* Sliders */,
+				E1E0F4D7278911680084F701 /* CachedAsyncImage */,
+				E1AE8E7B2789135A00FBDDAA /* Nuke */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -1717,8 +1727,8 @@
 				53649AB4269D423A00A2D8B7 /* Puppy */,
 				E13DD3CE27164E1F009D4DAF /* CoreStore */,
 				E13DD3DC27175CE3009D4DAF /* Defaults */,
-				E1218C9B271A26C400EA0737 /* Nuke */,
 				E10EAA46277BB670000269ED /* JellyfinAPI */,
+				E1D7E5A727892566009D0EF7 /* Nuke */,
 			);
 			productName = WidgetExtensionExtension;
 			productReference = 628B95202670CABD0091AF3B /* Swiftfin Widget.appex */;
@@ -1781,10 +1791,11 @@
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
 				E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */,
 				E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
-				E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */,
 				C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */,
 				E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */,
+				E1E0F4D6278911680084F701 /* XCRemoteSwiftPackageReference "SwiftUI-CachedAsyncImage" */,
+				E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -2103,6 +2114,7 @@
 				E1C812CC277AE40A00918266 /* VideoPlayerView.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
 				53CD2A42268A4B38002ABD4E /* MovieItemView.swift in Sources */,
+				E122A9142788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */,
 				E178859E2780F53B0094FBCF /* SliderView.swift in Sources */,
 				536D3D7F267BDF100004248C /* LatestMediaView.swift in Sources */,
 				E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */,
@@ -2244,6 +2256,7 @@
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
+				E122A9132788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */,
 				E1C812C5277A90B200918266 /* URLComponentsExtensions.swift in Sources */,
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				625CB5732678C32A00530A6E /* HomeViewModel.swift in Sources */,
@@ -2976,14 +2989,6 @@
 				kind = branch;
 			};
 		};
-		E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kean/Nuke";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
-			};
-		};
 		E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CombineCommunity/CombineExt";
@@ -3008,12 +3013,28 @@
 				minimumVersion = 6.0.0;
 			};
 		};
+		E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 9.6.0;
+			};
+		};
 		E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.0;
+			};
+		};
+		E1E0F4D6278911680084F701 /* XCRemoteSwiftPackageReference "SwiftUI-CachedAsyncImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lorenzofiamingo/SwiftUI-CachedAsyncImage";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -3094,25 +3115,10 @@
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
-		E1218C99271A26BA00EA0737 /* Nuke */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = Nuke;
-		};
-		E1218C9B271A26C400EA0737 /* Nuke */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = Nuke;
-		};
 		E1218C9D271A2CD600EA0737 /* CombineExt */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */;
 			productName = CombineExt;
-		};
-		E1218C9F271A2CF200EA0737 /* Nuke */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1218C98271A26BA00EA0737 /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = Nuke;
 		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3154,6 +3160,16 @@
 			package = C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
 			productName = SwiftUICollection;
 		};
+		E1AE8E7B2789135A00FBDDAA /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		E1AE8E7D2789136D00FBDDAA /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
 		E1B6DCE7271A23780015B715 /* CombineExt */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */;
@@ -3163,6 +3179,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
+		};
+		E1D7E5A727892566009D0EF7 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		E1E0F4D7278911680084F701 /* CachedAsyncImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1E0F4D6278911680084F701 /* XCRemoteSwiftPackageReference "SwiftUI-CachedAsyncImage" */;
+			productName = CachedAsyncImage;
+		};
+		E1E0F4D9278911A30084F701 /* CachedAsyncImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1E0F4D6278911680084F701 /* XCRemoteSwiftPackageReference "SwiftUI-CachedAsyncImage" */;
+			productName = CachedAsyncImage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

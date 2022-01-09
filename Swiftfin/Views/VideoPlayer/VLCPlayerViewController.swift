@@ -24,7 +24,7 @@ class VLCPlayerViewController: UIViewController {
     // MARK: variables
     
     private var viewModel: VideoPlayerViewModel
-    private var vlcMediaPlayer = VLCMediaPlayer()
+    private var vlcMediaPlayer: VLCMediaPlayer
     private var lastPlayerTicks: Int64 = 0
     private var lastProgressReportTicks: Int64 = 0
     private var viewModelListeners = Set<AnyCancellable>()
@@ -49,6 +49,7 @@ class VLCPlayerViewController: UIViewController {
     init(viewModel: VideoPlayerViewModel) {
         
         self.viewModel = viewModel
+        self.vlcMediaPlayer = VLCMediaPlayer()
         
         super.init(nibName: nil, bundle: nil)
         
@@ -97,13 +98,6 @@ class VLCPlayerViewController: UIViewController {
         
         view.backgroundColor = .black
         
-        // These are kept outside of 'setupMediaPlayer' such that
-        // they aren't unnecessarily set more than once
-        vlcMediaPlayer.delegate = self
-        vlcMediaPlayer.drawable = videoContentView
-        
-        vlcMediaPlayer.setSubtitleSize(Defaults[.subtitleSize])
-
         setupMediaPlayer(newViewModel: viewModel)
         
         refreshJumpBackwardOverlayView(with: viewModel.jumpBackwardLength)
@@ -286,9 +280,8 @@ extension VLCPlayerViewController {
     /// Use case for this is setting new media within the same VLCPlayerViewController
     func setupMediaPlayer(newViewModel: VideoPlayerViewModel) {
         
-        stopOverlayDismissTimer()
+        // remove old player
         
-        // Stop current media if there is one
         if vlcMediaPlayer.media != nil {
             viewModelListeners.forEach({ $0.cancel() })
             
@@ -296,6 +289,19 @@ extension VLCPlayerViewController {
             viewModel.sendStopReport()
             viewModel.playerOverlayDelegate = nil
         }
+        
+        vlcMediaPlayer = VLCMediaPlayer()
+        
+        // setup with new player and view model
+        
+        vlcMediaPlayer = VLCMediaPlayer()
+        
+        vlcMediaPlayer.delegate = self
+        vlcMediaPlayer.drawable = videoContentView
+
+        vlcMediaPlayer.setSubtitleSize(Defaults[.subtitleSize])
+        
+        stopOverlayDismissTimer()
         
         lastPlayerTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
         lastProgressReportTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
@@ -332,6 +338,13 @@ extension VLCPlayerViewController {
     // MARK: startPlayback
     func startPlayback() {
         vlcMediaPlayer.play()
+        
+        // Setup external subtitles
+        for externalSubtitle in viewModel.subtitleStreams.filter({ $0.deliveryMethod == .external }) {
+            if let deliveryURL = externalSubtitle.externalURL(base: SessionManager.main.currentLogin.server.currentURI) {
+                vlcMediaPlayer.addPlaybackSlave(deliveryURL, type: .subtitle, enforce: false)
+            }
+        }
         
         setMediaPlayerTimeAtCurrentSlider()
         
@@ -525,7 +538,8 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         }
         
         // If needing to fix subtitle streams during playback
-        if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex && viewModel.subtitlesEnabled {
+        if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex &&
+            viewModel.subtitlesEnabled {
             didSelectSubtitleStream(index: viewModel.selectedSubtitleStreamIndex)
         }
         

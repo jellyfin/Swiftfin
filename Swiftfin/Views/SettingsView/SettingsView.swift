@@ -64,19 +64,20 @@ struct SettingsView: View {
                 }
             }
 
-            Section(header: Text("Networking")) {
-                Picker("Default local quality", selection: $inNetworkStreamBitrate) {
-                    ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
-                        Text(bitrate.name).tag(bitrate.value)
-                    }
-                }
-
-                Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
-                    ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
-                        Text(bitrate.name).tag(bitrate.value)
-                    }
-                }
-            }
+            // TODO: Implement these for playback
+//            Section(header: Text("Networking")) {
+//                Picker("Default local quality", selection: $inNetworkStreamBitrate) {
+//                    ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
+//                        Text(bitrate.name).tag(bitrate.value)
+//                    }
+//                }
+//
+//                Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
+//                    ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
+//                        Text(bitrate.name).tag(bitrate.value)
+//                    }
+//                }
+//            }
             
             Section(header: Text("Video Player")) {
                 Picker("Jump Forward Length", selection: $jumpForwardLength) {

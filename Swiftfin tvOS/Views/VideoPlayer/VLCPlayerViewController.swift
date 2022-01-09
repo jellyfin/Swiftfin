@@ -24,7 +24,7 @@ class VLCPlayerViewController: UIViewController {
     // MARK: variables
     
     private var viewModel: VideoPlayerViewModel
-    private var vlcMediaPlayer = VLCMediaPlayer()
+    private var vlcMediaPlayer: VLCMediaPlayer
     private var lastPlayerTicks: Int64 = 0
     private var lastProgressReportTicks: Int64 = 0
     private var viewModelListeners = Set<AnyCancellable>()
@@ -59,6 +59,7 @@ class VLCPlayerViewController: UIViewController {
     init(viewModel: VideoPlayerViewModel) {
         
         self.viewModel = viewModel
+        self.vlcMediaPlayer = VLCMediaPlayer()
         
         super.init(nibName: nil, bundle: nil)
         
@@ -117,14 +118,6 @@ class VLCPlayerViewController: UIViewController {
         setupConstraints()
         
         view.backgroundColor = .black
-        
-        // Outside of 'setupMediaPlayer' such that they
-        // aren't unnecessarily set more than once
-        vlcMediaPlayer.delegate = self
-        vlcMediaPlayer.drawable = videoContentView
-        
-        // TODO: custom font sizes
-        vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 16)
         
         setupMediaPlayer(newViewModel: viewModel)
         
@@ -211,20 +204,20 @@ class VLCPlayerViewController: UIViewController {
             hideConfirmCloseOverlay()
             
             if Defaults[.downActionShowsMenu] {
-                if !displayingContentOverlay {
+                if !displayingContentOverlay && !displayingOverlay {
                     didSelectMenu()
                 }
             }
         case .leftArrow:
             hideConfirmCloseOverlay()
             
-            if !displayingContentOverlay {
+            if !displayingContentOverlay && !displayingOverlay {
                 didSelectBackward()
             }
         case .rightArrow:
             hideConfirmCloseOverlay()
             
-            if !displayingContentOverlay {
+            if !displayingContentOverlay && !displayingOverlay {
                 didSelectForward()
             }
         case .pageUp: ()
@@ -246,9 +239,6 @@ class VLCPlayerViewController: UIViewController {
             hideOverlay()
         } else if displayingContentOverlay {
             hideOverlayContent()
-            
-            showOverlay()
-            restartOverlayDismissTimer()
         } else if viewModel.confirmClose && !displayingConfirmClose {
             
             showConfirmCloseOverlay()
@@ -387,6 +377,28 @@ extension VLCPlayerViewController {
     /// Use case for this is setting new media within the same VLCPlayerViewController
     func setupMediaPlayer(newViewModel: VideoPlayerViewModel) {
         
+        // remove old player
+        
+        if vlcMediaPlayer.media != nil {
+            viewModelListeners.forEach({ $0.cancel() })
+            
+            vlcMediaPlayer.stop()
+            viewModel.sendStopReport()
+            viewModel.playerOverlayDelegate = nil
+        }
+        
+        vlcMediaPlayer = VLCMediaPlayer()
+        
+        // setup with new player and view model
+        
+        vlcMediaPlayer = VLCMediaPlayer()
+        
+        vlcMediaPlayer.delegate = self
+        vlcMediaPlayer.drawable = videoContentView
+        
+        // TODO: Custom subtitle sizes
+        vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 16)
+        
         stopOverlayDismissTimer()
         
         // Stop current media if there is one
@@ -435,6 +447,13 @@ extension VLCPlayerViewController {
     // MARK: startPlayback
     func startPlayback() {
         vlcMediaPlayer.play()
+        
+        // Setup external subtitles
+        for externalSubtitle in viewModel.subtitleStreams.filter({ $0.deliveryMethod == .external }) {
+            if let deliveryURL = externalSubtitle.externalURL(base: SessionManager.main.currentLogin.server.currentURI) {
+                vlcMediaPlayer.addPlaybackSlave(deliveryURL, type: .subtitle, enforce: false)
+            }
+        }
         
         setMediaPlayerTimeAtCurrentSlider()
         
@@ -672,7 +691,8 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         }
         
         // If needing to fix subtitle streams during playback
-        if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex && viewModel.subtitlesEnabled {
+        if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex &&
+            viewModel.subtitlesEnabled {
             didSelectSubtitleStream(index: viewModel.selectedSubtitleStreamIndex)
         }
         

@@ -25,7 +25,7 @@ struct ContinueWatchingView: View {
                 .padding(.leading, 50)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack {
+                LazyHStack(alignment: .top) {
                     ForEach(items, id: \.self) { item in
                         ContinueWatchingCard(item: item)
                     }
