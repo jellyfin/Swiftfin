@@ -977,7 +977,7 @@
 			isa = PBXGroup;
 			children = (
 				E1E5D5382783A56B00692DFE /* EpisodesRowView.swift */,
-				E13F26B22787597300DF4761 /* SingleSeasonEpisodesRowView.swift */,
+				E103A6A1278A7EB500820EC7 /* HomeCinematicView */,
 				E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */,
 				531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */,
 				E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */,
@@ -987,7 +987,7 @@
 				E1E5D5412783B33900692DFE /* PortraitItemsRowView.swift */,
 				536D3D87267C17350004248C /* PublicUserButton.swift */,
 				E17885A3278105170094FBCF /* SFSymbolButton.swift */,
-				E103A6A1278A7EB500820EC7 /* HomeCinematicView */,
+				E13F26B22787597300DF4761 /* SingleSeasonEpisodesRowView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
