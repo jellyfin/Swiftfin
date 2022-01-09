@@ -408,8 +408,6 @@
 		E1E00A35278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A37278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
-		E1E0F4D8278911680084F701 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = E1E0F4D7278911680084F701 /* CachedAsyncImage */; };
-		E1E0F4DA278911A30084F701 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = E1E0F4D9278911A30084F701 /* CachedAsyncImage */; };
 		E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */; };
 		E1E5D5372783A52C00692DFE /* CinematicEpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5362783A52C00692DFE /* CinematicEpisodeItemView.swift */; };
 		E1E5D5392783A56B00692DFE /* EpisodesRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5382783A56B00692DFE /* EpisodesRowView.swift */; };
@@ -759,7 +757,6 @@
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				E1A9999B271A343C008E78C0 /* SwiftUICollection in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
-				E1E0F4DA278911A30084F701 /* CachedAsyncImage in Frameworks */,
 				E1AE8E7E2789136D00FBDDAA /* Nuke in Frameworks */,
 				E178857D278037FD0094FBCF /* JellyfinAPI in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
@@ -780,7 +777,6 @@
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
-				E1E0F4D8278911680084F701 /* CachedAsyncImage in Frameworks */,
 				E1AE8E7C2789135A00FBDDAA /* Nuke in Frameworks */,
 				625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */,
 				E1B6DCE8271A23780015B715 /* CombineExt in Frameworks */,
@@ -1644,7 +1640,6 @@
 				E1218C9D271A2CD600EA0737 /* CombineExt */,
 				E1A9999A271A343C008E78C0 /* SwiftUICollection */,
 				E178857C278037FD0094FBCF /* JellyfinAPI */,
-				E1E0F4D9278911A30084F701 /* CachedAsyncImage */,
 				E1AE8E7D2789136D00FBDDAA /* Nuke */,
 			);
 			productName = "JellyfinPlayer tvOS";
@@ -1683,7 +1678,6 @@
 				E1A99998271A3429008E78C0 /* SwiftUICollection */,
 				E10EAA44277BB646000269ED /* JellyfinAPI */,
 				E10EAA4C277BB716000269ED /* Sliders */,
-				E1E0F4D7278911680084F701 /* CachedAsyncImage */,
 				E1AE8E7B2789135A00FBDDAA /* Nuke */,
 			);
 			productName = JellyfinPlayer;
@@ -1776,7 +1770,6 @@
 				C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */,
 				E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */,
-				E1E0F4D6278911680084F701 /* XCRemoteSwiftPackageReference "SwiftUI-CachedAsyncImage" */,
 				E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
@@ -2973,14 +2966,6 @@
 				minimumVersion = 5.0.0;
 			};
 		};
-		E1E0F4D6278911680084F701 /* XCRemoteSwiftPackageReference "SwiftUI-CachedAsyncImage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/lorenzofiamingo/SwiftUI-CachedAsyncImage";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3128,16 +3113,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = Nuke;
-		};
-		E1E0F4D7278911680084F701 /* CachedAsyncImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1E0F4D6278911680084F701 /* XCRemoteSwiftPackageReference "SwiftUI-CachedAsyncImage" */;
-			productName = CachedAsyncImage;
-		};
-		E1E0F4D9278911A30084F701 /* CachedAsyncImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1E0F4D6278911680084F701 /* XCRemoteSwiftPackageReference "SwiftUI-CachedAsyncImage" */;
-			productName = CachedAsyncImage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
