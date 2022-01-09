@@ -47,7 +47,7 @@ struct HomeView: View {
                         PortraitItemsRowView(rowTitle: "Recently Added",
                                              items: viewModel.latestAddedItems,
                                              showItemTitles: showPosterLabels) { item in
-                            homeRouter.route(to: \.item, item)
+                            homeRouter.route(to: \.modalItem, item)
                         }
                     }
 
