@@ -274,6 +274,8 @@
 		E122A9132788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */; };
 		E122A9142788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */; };
 		E1267D3E271A1F46003C492E /* PreferenceUIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */; };
+		E126F741278A656C00A522BF /* ServerStreamType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E126F740278A656C00A522BF /* ServerStreamType.swift */; };
+		E126F742278A656C00A522BF /* ServerStreamType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E126F740278A656C00A522BF /* ServerStreamType.swift */; };
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
@@ -384,7 +386,6 @@
 		E1C812C3277A8E5D00918266 /* VLCPlayerOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812BB277A8E5D00918266 /* VLCPlayerOverlayView.swift */; };
 		E1C812C5277A90B200918266 /* URLComponentsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */; };
 		E1C812CA277AE40900918266 /* PlayerOverlayDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C6277AE40900918266 /* PlayerOverlayDelegate.swift */; };
-		E1C812CB277AE40900918266 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C7277AE40900918266 /* NativePlayerViewController.swift */; };
 		E1C812CC277AE40A00918266 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C8277AE40900918266 /* VideoPlayerView.swift */; };
 		E1C812CD277AE40A00918266 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */; };
 		E1C812CE277AE43100918266 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */; };
@@ -649,6 +650,7 @@
 		E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailCoordinator.swift; sourceTree = "<group>"; };
 		E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStreamExtension.swift; sourceTree = "<group>"; };
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
+		E126F740278A656C00A522BF /* ServerStreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStreamType.swift; sourceTree = "<group>"; };
 		E131691626C583BC0074BFEE /* LogConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogConstructor.swift; sourceTree = "<group>"; };
 		E1384943278036C70024FB48 /* VLCPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerViewController.swift; sourceTree = "<group>"; };
 		E13D02842788B634000FCB04 /* Swiftfin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Swiftfin.entitlements; sourceTree = "<group>"; };
@@ -710,7 +712,6 @@
 		E1C812BB277A8E5D00918266 /* VLCPlayerOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VLCPlayerOverlayView.swift; sourceTree = "<group>"; };
 		E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLComponentsExtensions.swift; sourceTree = "<group>"; };
 		E1C812C6277AE40900918266 /* PlayerOverlayDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerOverlayDelegate.swift; sourceTree = "<group>"; };
-		E1C812C7277AE40900918266 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
 		E1C812C8277AE40900918266 /* VideoPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
 		E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVideoPlayerCoordinator.swift; sourceTree = "<group>"; };
@@ -816,7 +817,6 @@
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				E1C812C7277AE40900918266 /* NativePlayerViewController.swift */,
 				E1C812C6277AE40900918266 /* PlayerOverlayDelegate.swift */,
 				E178859C2780F5300094FBCF /* tvOSSLider */,
 				E17885A7278130690094FBCF /* tvOSOverlay */,
@@ -850,7 +850,7 @@
 				E13DD3F82717E961009D4DAF /* UserListViewModel.swift */,
 				E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */,
 				09389CC626819B4500AE350E /* VideoPlayerModel.swift */,
-				E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */,
+				E126F73F278A655300A522BF /* VideoPlayerViewModel */,
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
 			);
 			path = ViewModels;
@@ -1360,6 +1360,15 @@
 				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		E126F73F278A655300A522BF /* VideoPlayerViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				E126F740278A656C00A522BF /* ServerStreamType.swift */,
+				E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */,
+			);
+			path = VideoPlayerViewModel;
 			sourceTree = "<group>";
 		};
 		E13DD3BB27163C3E009D4DAF /* App */ = {
@@ -2041,7 +2050,6 @@
 				E11D224327378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */,
 				E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E1E5D53B2783A80900692DFE /* CinematicItemViewTopRow.swift in Sources */,
-				E1C812CB277AE40900918266 /* NativePlayerViewController.swift in Sources */,
 				E13DD3FA2717E961009D4DAF /* UserListViewModel.swift in Sources */,
 				C40CD926271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */,
 				62E632DE267D2E170063E547 /* LatestMediaViewModel.swift in Sources */,
@@ -2061,6 +2069,7 @@
 				E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */,
 				091B5A8E268315D400D78B61 /* UDPBroadCastConnection.swift in Sources */,
 				E10EAA50277BBCC4000269ED /* CGSizeExtensions.swift in Sources */,
+				E126F742278A656C00A522BF /* ServerStreamType.swift in Sources */,
 				E1E5D5422783B33900692DFE /* PortraitItemsRowView.swift in Sources */,
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
@@ -2322,6 +2331,7 @@
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
 				E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */,
+				E126F741278A656C00A522BF /* ServerStreamType.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */,
