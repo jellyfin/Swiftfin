@@ -15,13 +15,13 @@ class LogManager {
     let log = Puppy()
 
     init() {
-        let console = ConsoleLogger("me.vigue.jellyfin.ConsoleLogger")
+        let console = ConsoleLogger("com.swiftfin.ConsoleLogger")
         let fileURL = self.getDocumentsDirectory().appendingPathComponent("logs.txt")
         let FM = FileManager()
         _ = try? FM.removeItem(at: fileURL)
 
         do {
-            let file = try FileLogger("me.vigue.jellyfin", fileURL: fileURL)
+            let file = try FileLogger("com.swiftfin", fileURL: fileURL)
             file.format = LogFormatter()
             log.add(file, withLevel: .debug)
         } catch let err {
