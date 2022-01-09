@@ -11,6 +11,8 @@ import SwiftUI
 import UIKit
 import JellyfinAPI
 
+// TODO: Generalize this view such that it can be used in other contexts like for a library
+
 struct HomeCinematicViewItem: Hashable {
     
     enum TopRowType {

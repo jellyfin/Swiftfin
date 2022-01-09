@@ -41,7 +41,7 @@ class UICinematicBackgroundView: UIView {
         
         selectDelayTimer?.invalidate()
         
-        selectDelayTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(delayTimerTimed), userInfo: imageView, repeats: false)
+        selectDelayTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(delayTimerTimed), userInfo: imageView, repeats: false)
         
     }
     
