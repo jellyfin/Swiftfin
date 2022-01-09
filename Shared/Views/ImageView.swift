@@ -7,7 +7,6 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
-import CachedAsyncImage
 import SwiftUI
 
 struct ImageView: View {
@@ -41,7 +40,7 @@ struct ImageView: View {
     }
 
     var body: some View {
-        CachedAsyncImage(url: source, urlCache: .imageCache, transaction: Transaction(animation: .easeInOut)) { phase in
+        AsyncImage(url: source, transaction: Transaction(animation: .easeInOut)) { phase in
             switch phase {
             case .success(let image):
                 image
@@ -68,9 +67,4 @@ struct ImageView: View {
             }
         }
     }
-}
-
-extension URLCache {
-    
-    static let imageCache = URLCache(memoryCapacity: 512*1000*1000, diskCapacity: 10*1000*1000*1000)
 }
