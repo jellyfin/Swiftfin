@@ -382,21 +382,21 @@ struct VLCPlayerOverlayView: View {
 struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
     
     static let videoPlayerViewModel = VideoPlayerViewModel(item: BaseItemDto(),
-                                                    title: "Glorious Purpose",
-                                                    subtitle: "Loki - S1E1",
-                                                    streamURL: URL(string: "www.apple.com")!,
-                                                    hlsURL: URL(string: "www.apple.com")!,
-                                                    response: PlaybackInfoResponse(),
-                                                    audioStreams: [MediaStream(displayTitle: "English", index: -1)],
-                                                    subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
-                                                    selectedAudioStreamIndex: -1,
-                                                    selectedSubtitleStreamIndex: -1,
-                                                    subtitlesEnabled: true,
-                                                    autoplayEnabled: false,
-                                                    overlayType: .compact,
-                                                    shouldShowPlayPreviousItem: true,
-                                                    shouldShowPlayNextItem: true,
-                                                    shouldShowAutoPlay: true)
+                                                           title: "Glorious Purpose",
+                                                           subtitle: "Loki - S1E1",
+                                                           streamURL: URL(string: "www.apple.com")!,
+                                                           streamType: .direct,
+                                                           response: PlaybackInfoResponse(),
+                                                           audioStreams: [MediaStream(displayTitle: "English", index: -1)],
+                                                           subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
+                                                           selectedAudioStreamIndex: -1,
+                                                           selectedSubtitleStreamIndex: -1,
+                                                           subtitlesEnabled: true,
+                                                           autoplayEnabled: false,
+                                                           overlayType: .compact,
+                                                           shouldShowPlayPreviousItem: true,
+                                                           shouldShowPlayNextItem: true,
+                                                           shouldShowAutoPlay: true)
     
     static var previews: some View {
         ZStack {

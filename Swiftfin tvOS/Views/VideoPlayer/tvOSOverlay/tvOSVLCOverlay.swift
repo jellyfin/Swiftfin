@@ -140,7 +140,7 @@ struct tvOSVLCOverlay_Previews: PreviewProvider {
                                                     title: "Glorious Purpose",
                                                     subtitle: "Loki - S1E1",
                                                     streamURL: URL(string: "www.apple.com")!,
-                                                    hlsURL: URL(string: "www.apple.com")!,
+                                                    streamType: .direct,
                                                     response: PlaybackInfoResponse(),
                                                     audioStreams: [MediaStream(displayTitle: "English", index: -1)],
                                                     subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
