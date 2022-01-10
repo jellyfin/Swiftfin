@@ -14,7 +14,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 	static var orientationLock = UIInterfaceOrientationMask.all
 
 	func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool
+	                 didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool
 	{
 
 		// Lazily initialize datastack
