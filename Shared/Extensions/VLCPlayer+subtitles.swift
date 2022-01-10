@@ -7,13 +7,16 @@
   * Copyright 2021 Aiden Vigue & Jellyfin Contributors
   */
 
+#if os(tvOS)
+import TVVLCKit
+#else
 import MobileVLCKit
+#endif
 
 extension VLCMediaPlayer {
     /// Applies font size to the player
     ///
     /// This is pretty hacky until VLCKit 4 has a public API to support this
-    /// Supposedly it also does not work for tvOS
     func setSubtitleSize(_ size: SubtitleSize) {
         perform(
             Selector(("setTextRendererFontSize:")),

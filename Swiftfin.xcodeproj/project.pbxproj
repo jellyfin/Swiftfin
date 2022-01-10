@@ -142,6 +142,8 @@
 		5D1603FD278A40DB00D22B99 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
 		5D1603FE278A40DC00D22B99 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
 		5D160403278A41FD00D22B99 /* VLCPlayer+subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */; };
+		5D32EA12278C95E30020E292 /* VLCPlayer+subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */; };
+		5D32EA13278C95E40020E292 /* VLCPlayer+subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */; };
 		5D64683D277B1649009E09AE /* PreferenceUIHostingSwizzling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D64683C277B1649009E09AE /* PreferenceUIHostingSwizzling.swift */; };
 		62133890265F83A900A81A2A /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388F265F83A900A81A2A /* LibraryListView.swift */; };
 		621338932660107500A81A2A /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
@@ -1206,7 +1208,6 @@
 		5D160401278A41BA00D22B99 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1234,6 +1235,7 @@
 				E13DD3C727164B1E009D4DAF /* UIDeviceExtensions.swift */,
 				E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */,
 				62E1DCC2273CE19800C9AE76 /* URLExtensions.swift */,
+				5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */,
 				6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */,
 			);
 			path = Extensions;
@@ -2098,6 +2100,7 @@
 				E13DD3F027178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				E11D224327378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */,
+				5D32EA12278C95E30020E292 /* VLCPlayer+subtitles.swift in Sources */,
 				E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E1E5D53B2783A80900692DFE /* CinematicItemViewTopRow.swift in Sources */,
 				E1C812CB277AE40900918266 /* NativePlayerViewController.swift in Sources */,
@@ -2420,6 +2423,7 @@
 				E1AD105426D97161003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
 				E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */,
 				628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */,
+				5D32EA13278C95E40020E292 /* VLCPlayer+subtitles.swift in Sources */,
 				E13DD3F72717E87D009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */,
 				6220D0AF26D5EABE00B8E046 /* ViewExtensions.swift in Sources */,
