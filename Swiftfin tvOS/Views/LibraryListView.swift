@@ -48,9 +48,9 @@ struct LibraryListView: View {
 								.frame(minWidth: 100, maxWidth: .infinity)
 								.frame(height: 100)
 							}
-							.cornerRadius(10)
-							.shadow(radius: 5)
-							.padding(.bottom, 5)
+								.cornerRadius(10)
+								.shadow(radius: 5)
+								.padding(.bottom, 5)
 					}
 
 					ForEach(viewModel.libraries.filter { $0.collectionType != "boxsets" }, id: \.id) { library in
@@ -75,9 +75,9 @@ struct LibraryListView: View {
 										.frame(minWidth: 100, maxWidth: .infinity)
 										.frame(height: 100)
 									}
-									.cornerRadius(10)
-									.shadow(radius: 5)
-									.padding(.bottom, 5)
+										.cornerRadius(10)
+										.shadow(radius: 5)
+										.padding(.bottom, 5)
 							}
 						} else {
 							Button {
@@ -99,9 +99,9 @@ struct LibraryListView: View {
 									.frame(minWidth: 100, maxWidth: .infinity)
 									.frame(height: 100)
 								}
-								.cornerRadius(10)
-								.shadow(radius: 5)
-								.padding(.bottom, 5)
+									.cornerRadius(10)
+									.shadow(radius: 5)
+									.padding(.bottom, 5)
 						}
 					}
 				} else {

@@ -40,9 +40,10 @@
     blankLinesAtStartOfScope,\
     andOperator,            \
     redundantFileprivate,   \
-    redundantSelf
+    redundantSelf,          \
+    redundantClosure,       \
+    redundantType
 
 --exclude Pods
 
 --header "\nSwiftfin is subject to the terms of the Mozilla Public\nLicense, v2.0. If a copy of the MPL was not distributed with this\nfile, you can obtain one at https://mozilla.org/MPL/2.0/.\n\nCopyright (c) {year} Jellyfin & Jellyfin Contributors\n"
-

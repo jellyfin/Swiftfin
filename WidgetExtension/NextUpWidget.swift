@@ -458,9 +458,9 @@ private struct InnerShadow: ViewModifier {
 				.overlay(LinearGradient(gradient: Gradient(colors: self.colors), startPoint: .top, endPoint: .bottom)
 					.frame(height: self.radius * self.minSide(geo)),
 					alignment: .top)
-					.overlay(LinearGradient(gradient: Gradient(colors: self.colors), startPoint: .bottom, endPoint: .top)
-						.frame(height: self.radius * self.minSide(geo)),
-						alignment: .bottom)
+				.overlay(LinearGradient(gradient: Gradient(colors: self.colors), startPoint: .bottom, endPoint: .top)
+					.frame(height: self.radius * self.minSide(geo)),
+					alignment: .bottom)
 		}
 	}
 
