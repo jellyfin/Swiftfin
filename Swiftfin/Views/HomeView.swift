@@ -53,6 +53,7 @@ struct HomeView: View {
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(viewModel: viewModel)
                     }
+                    
                     if !viewModel.nextUpItems.isEmpty {
                         PortraitImageHStackView(items: viewModel.nextUpItems,
                                                 horizontalAlignment: .leading) {
@@ -63,7 +64,17 @@ struct HomeView: View {
                         } selectedAction: { item in
                             homeRouter.route(to: \.item, item)
                         }
-
+                    }
+                    
+                    if !viewModel.latestAddedItems.isEmpty {
+                        PortraitImageHStackView(items: viewModel.latestAddedItems) {
+                            Text("Recently Added")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .padding()
+                        } selectedAction: { item in
+                            homeRouter.route(to: \.item, item)
+                        }
                     }
                     
                     ForEach(viewModel.libraries, id: \.self) { library in

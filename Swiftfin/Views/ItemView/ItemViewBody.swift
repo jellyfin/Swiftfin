@@ -13,6 +13,8 @@ import SwiftUI
 
 struct ItemViewBody: View {
     
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    @Environment(\.verticalSizeClass) private var vSizeClass
     @EnvironmentObject var itemRouter: ItemCoordinator.Router
     @EnvironmentObject private var viewModel: ItemViewModel
     @Default(.showCastAndCrew) var showCastAndCrew
@@ -20,11 +22,26 @@ struct ItemViewBody: View {
     var body: some View {
         VStack(alignment: .leading) {
             // MARK: Overview
-
-            Text(viewModel.item.overview ?? "")
-                .font(.footnote)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 3)
+            
+            if let itemOverview = viewModel.item.overview {
+                if hSizeClass == .compact && vSizeClass == .regular {
+                    TruncatedTextView(itemOverview,
+                                      lineLimit: 5,
+                                      font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                        itemRouter.route(to: \.itemOverview, viewModel.item)
+                    }
+                                      .padding(.horizontal)
+                                      .padding(.top)
+                } else {
+                    Text(itemOverview)
+                        .font(.footnote)
+                        .padding()
+                }
+            } else {
+                Text("No overview available")
+                    .font(.footnote)
+                    .padding()
+            }
 
             // MARK: Seasons
 

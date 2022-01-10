@@ -17,14 +17,9 @@ class ItemViewModel: ViewModel {
     @Published var item: BaseItemDto
     @Published var playButtonItem: BaseItemDto? {
         didSet {
-            playButtonItem?.createVideoPlayerViewModel()
-                .sink { completion in
-                    self.handleAPIRequestError(completion: completion)
-                } receiveValue: { videoPlayerViewModel in
-                    self.itemVideoPlayerViewModel = videoPlayerViewModel
-                    self.mediaItems = videoPlayerViewModel.item.createMediaItems()
-                }
-                .store(in: &cancellables)
+            if let playButtonItem = playButtonItem {
+                refreshItemVideoPlayerViewModel(for: playButtonItem)
+            }
         }
     }
     @Published var similarItems: [BaseItemDto] = []
@@ -52,6 +47,10 @@ class ItemViewModel: ViewModel {
 
         getSimilarItems()
         
+        refreshItemVideoPlayerViewModel(for: item)
+    }
+    
+    func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
         item.createVideoPlayerViewModel()
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
