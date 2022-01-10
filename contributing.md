@@ -27,6 +27,8 @@ If your Pull Request relates to an Issue, link the issue or mention it in the Is
 
 Pull Requests must pass the automated `iOS` and `tvOS` builds in order to be merged and cannot have your developer account attached.
 
+[SwiftFormat](https://github.com/nicklockwood/SwiftFormat) is our linter and must also pass. You can run `swiftformat .` in the project directory or install SwiftFormat's Xcode extension.
+
 Swiftfin follows the same Pull Request Guidelines as outlined in the [official Jellyfin contribution guidelines](https://jellyfin.org/docs/general/contributing/development.html#pull-request-guidelines).
 
 ## Architecture
