@@ -30,7 +30,8 @@ struct ItemViewBody: View {
                                       font: UIFont.preferredFont(forTextStyle: .footnote)) {
                         itemRouter.route(to: \.itemOverview, viewModel.item)
                     }
-                                      .padding()
+                                      .padding(.horizontal)
+                                      .padding(.top)
                 } else {
                     Text(itemOverview)
                         .font(.footnote)
