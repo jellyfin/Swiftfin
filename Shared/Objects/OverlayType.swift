@@ -16,9 +16,9 @@ enum OverlayType: String, CaseIterable, Defaults.Serializable {
 	var label: String {
 		switch self {
 		case .normal:
-            return L10n.normal
+			return L10n.normal
 		case .compact:
-            return L10n.compact
+			return L10n.compact
 		}
 	}
 }

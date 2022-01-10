@@ -85,7 +85,7 @@ struct LibraryView: View {
 			VStack {
 				L10n.noResults.text
 				Button {} label: {
-                    L10n.refresh.text
+					L10n.refresh.text
 				}
 			}
 		}

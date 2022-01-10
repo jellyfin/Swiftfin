@@ -21,7 +21,7 @@ struct ExperimentalSettingsView: View {
 				Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
 
 			} header: {
-                L10n.experimental.text
+				L10n.experimental.text
 			}
 		}
 	}

@@ -22,15 +22,15 @@ extension SubtitleSize {
 	var label: String {
 		switch self {
 		case .smallest:
-            return L10n.smallest
+			return L10n.smallest
 		case .smaller:
-            return L10n.smaller
+			return L10n.smaller
 		case .regular:
-            return L10n.regular
+			return L10n.regular
 		case .larger:
-            return L10n.larger
+			return L10n.larger
 		case .largest:
-            return L10n.largest
+			return L10n.largest
 		}
 	}
 }

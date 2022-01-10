@@ -25,7 +25,7 @@ struct ExperimentalSettingsView: View {
 				Toggle("Live TV (Alpha)", isOn: $liveTVAlphaEnabled)
 
 			} header: {
-                L10n.experimental.text
+				L10n.experimental.text
 			}
 		}
 	}

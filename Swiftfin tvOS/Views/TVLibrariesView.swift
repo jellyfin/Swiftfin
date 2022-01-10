@@ -73,7 +73,7 @@ struct TVLibrariesView: View {
 				Button {
 					print("tvLibraries reload")
 				} label: {
-                    L10n.refresh.text
+					L10n.refresh.text
 				}
 			}
 		}

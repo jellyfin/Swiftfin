@@ -64,7 +64,7 @@ final class SeriesItemViewModel: ItemViewModel {
 			endYear = dateFormatter.string(from: item.endDate!)
 		}
 
-        return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
+		return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
 	}
 
 	private func requestSeasons() {

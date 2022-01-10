@@ -37,7 +37,7 @@ struct ConnectToServerView: View {
 					Button(role: .destructive) {
 						viewModel.cancelConnection()
 					} label: {
-                        L10n.cancel.text
+						L10n.cancel.text
 					}
 				} else {
 					Button {
@@ -48,14 +48,14 @@ struct ConnectToServerView: View {
 					.disabled(uri.isEmpty)
 				}
 			} header: {
-                L10n.connectToJellyfinServer.text
+				L10n.connectToJellyfinServer.text
 			}
 
 			Section {
 				if viewModel.searching {
 					HStack(alignment: .center, spacing: 5) {
 						Spacer()
-                        L10n.searchingDots.text
+						L10n.searchingDots.text
 							.foregroundColor(.secondary)
 						Spacer()
 					}
@@ -63,7 +63,7 @@ struct ConnectToServerView: View {
 					if viewModel.discoveredServers.isEmpty {
 						HStack(alignment: .center) {
 							Spacer()
-                            L10n.noLocalServersFound.text
+							L10n.noLocalServersFound.text
 								.font(.callout)
 								.foregroundColor(.secondary)
 							Spacer()
@@ -103,7 +103,7 @@ struct ConnectToServerView: View {
 		}
 		.alert(item: $viewModel.errorMessage) { _ in
 			Alert(title: Text(viewModel.alertTitle),
-                  message: Text(viewModel.errorMessage?.displayMessage ?? L10n.unknownError),
+			      message: Text(viewModel.errorMessage?.displayMessage ?? L10n.unknownError),
 			      dismissButton: .cancel())
 		}
 		.alert(item: $viewModel.addServerURIPayload) { _ in

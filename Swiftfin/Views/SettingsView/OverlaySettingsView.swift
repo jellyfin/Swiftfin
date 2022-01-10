@@ -24,35 +24,35 @@ struct OverlaySettingsView: View {
 
 	var body: some View {
 		Form {
-            Section(header: L10n.overlay.text) {
-                Picker(L10n.overlayType, selection: $overlayType) {
+			Section(header: L10n.overlay.text) {
+				Picker(L10n.overlayType, selection: $overlayType) {
 					ForEach(OverlayType.allCases, id: \.self) { overlay in
 						Text(overlay.label).tag(overlay)
 					}
 				}
 
-                Toggle(isOn: $shouldShowPlayPreviousItem) {
-                    HStack {
-                        Image(systemName: "chevron.left.circle")
-                        L10n.playPreviousItem.text
-                    }
-                }
-                
-                Toggle(isOn: $shouldShowPlayNextItem) {
-                    HStack {
-                        Image(systemName: "chevron.right.circle")
-                        L10n.playNextItem.text
-                    }
-                }
-                
-                Toggle(isOn: $shouldShowAutoPlay) {
-                    HStack {
-                        Image(systemName: "play.circle.fill")
-                        L10n.autoPlay.text
-                    }
-                }
-                
-                Toggle(L10n.editJumpLengths, isOn: $shouldShowJumpButtonsInOverlayMenu)
+				Toggle(isOn: $shouldShowPlayPreviousItem) {
+					HStack {
+						Image(systemName: "chevron.left.circle")
+						L10n.playPreviousItem.text
+					}
+				}
+
+				Toggle(isOn: $shouldShowPlayNextItem) {
+					HStack {
+						Image(systemName: "chevron.right.circle")
+						L10n.playNextItem.text
+					}
+				}
+
+				Toggle(isOn: $shouldShowAutoPlay) {
+					HStack {
+						Image(systemName: "play.circle.fill")
+						L10n.autoPlay.text
+					}
+				}
+
+				Toggle(L10n.editJumpLengths, isOn: $shouldShowJumpButtonsInOverlayMenu)
 			}
 		}
 	}

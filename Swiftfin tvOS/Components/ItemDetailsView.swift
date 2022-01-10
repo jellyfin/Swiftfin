@@ -24,7 +24,7 @@ struct ItemDetailsView: View {
 
 			HStack(alignment: .top) {
 				VStack(alignment: .leading, spacing: 20) {
-                    L10n.information.text
+					L10n.information.text
 						.font(.title3)
 						.padding(.bottom, 5)
 
@@ -36,7 +36,7 @@ struct ItemDetailsView: View {
 				Spacer()
 
 				VStack(alignment: .leading, spacing: 20) {
-                    L10n.media.text
+					L10n.media.text
 						.font(.title3)
 						.padding(.bottom, 5)
 

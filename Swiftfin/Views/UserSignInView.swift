@@ -34,26 +34,26 @@ struct UserSignInView: View {
 					Button(role: .destructive) {
 						viewModel.cancelSignIn()
 					} label: {
-                        L10n.cancel.text
+						L10n.cancel.text
 					}
 				} else {
 					Button {
 						viewModel.login(username: username, password: password)
 					} label: {
-                        L10n.signIn.text
+						L10n.signIn.text
 					}
 					.disabled(username.isEmpty)
 				}
 			} header: {
-                L10n.signInToServer(viewModel.server.name).text
+				L10n.signInToServer(viewModel.server.name).text
 			}
 		}
 		.alert(item: $viewModel.errorMessage) { _ in
 			Alert(title: Text(viewModel.alertTitle),
-                  message: Text(viewModel.errorMessage?.displayMessage ?? L10n.unknownError),
+			      message: Text(viewModel.errorMessage?.displayMessage ?? L10n.unknownError),
 			      dismissButton: .cancel())
 		}
-        .navigationTitle(L10n.signIn)
+		.navigationTitle(L10n.signIn)
 		.navigationBarBackButtonHidden(viewModel.isLoading)
 	}
 }

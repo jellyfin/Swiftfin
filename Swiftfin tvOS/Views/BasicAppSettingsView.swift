@@ -48,6 +48,6 @@ struct BasicAppSettingsView: View {
 				L10n.reset.text
 			}
 		})
-        .navigationTitle(L10n.settings)
+		.navigationTitle(L10n.settings)
 	}
 }

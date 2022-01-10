@@ -56,14 +56,14 @@ struct CinematicSeasonItemView: View {
 							SingleSeasonEpisodesRowView(viewModel: SingleSeasonEpisodesRowViewModel(seasonItemViewModel: viewModel))
 
 							if let seriesItem = viewModel.seriesItem {
-                                PortraitItemsRowView(rowTitle: L10n.series,
+								PortraitItemsRowView(rowTitle: L10n.series,
 								                     items: [seriesItem]) { seriesItem in
 									itemRouter.route(to: \.item, seriesItem)
 								}
 							}
 
 							if !viewModel.similarItems.isEmpty {
-                                PortraitItemsRowView(rowTitle: L10n.recommended,
+								PortraitItemsRowView(rowTitle: L10n.recommended,
 								                     items: viewModel.similarItems,
 								                     showItemTitles: showPosterLabels) { item in
 									itemRouter.route(to: \.item, item)

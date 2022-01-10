@@ -56,7 +56,7 @@ struct ServerListView: View {
 						Button(role: .destructive) {
 							viewModel.remove(server: server)
 						} label: {
-                            Label(L10n.remove, systemImage: "trash")
+							Label(L10n.remove, systemImage: "trash")
 						}
 					}
 				}
@@ -66,7 +66,7 @@ struct ServerListView: View {
 
 	private var noServerView: some View {
 		VStack {
-            L10n.connectToJellyfinServerStart.text
+			L10n.connectToJellyfinServerStart.text
 				.frame(minWidth: 50, maxWidth: 240)
 				.multilineTextAlignment(.center)
 
@@ -109,7 +109,7 @@ struct ServerListView: View {
 
 	var body: some View {
 		innerBody
-            .navigationTitle(L10n.servers)
+			.navigationTitle(L10n.servers)
 			.toolbar {
 				ToolbarItemGroup(placement: .navigationBarTrailing) {
 					trailingToolbarContent

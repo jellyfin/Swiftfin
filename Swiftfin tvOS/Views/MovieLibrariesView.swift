@@ -73,7 +73,7 @@ struct MovieLibrariesView: View {
 				Button {
 					print("movieLibraries reload")
 				} label: {
-                    L10n.refresh.text
+					L10n.refresh.text
 				}
 			}
 		}

@@ -248,15 +248,15 @@ public extension BaseItemDto {
 		var informationItems: [ItemDetail] = []
 
 		if let productionYear = productionYear {
-            informationItems.append(ItemDetail(title: L10n.released, content: "\(productionYear)"))
+			informationItems.append(ItemDetail(title: L10n.released, content: "\(productionYear)"))
 		}
 
 		if let rating = officialRating {
-            informationItems.append(ItemDetail(title: L10n.rated, content: "\(rating)"))
+			informationItems.append(ItemDetail(title: L10n.rated, content: "\(rating)"))
 		}
 
 		if let runtime = getItemRuntime() {
-            informationItems.append(ItemDetail(title: L10n.runtime, content: runtime))
+			informationItems.append(ItemDetail(title: L10n.runtime, content: runtime))
 		}
 
 		return informationItems
@@ -267,7 +267,7 @@ public extension BaseItemDto {
 
 		if let container = container {
 			let containerList = container.split(separator: ",").joined(separator: ", ")
-            mediaItems.append(ItemDetail(title: L10n.containers, content: containerList))
+			mediaItems.append(ItemDetail(title: L10n.containers, content: containerList))
 		}
 
 		if let mediaStreams = mediaStreams {
@@ -275,15 +275,15 @@ public extension BaseItemDto {
 			let subtitleStreams = mediaStreams.filter { $0.type == .subtitle }
 
 			if !audioStreams.isEmpty {
-                let audioList = audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
+				let audioList = audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
 					.joined(separator: ", ")
-                mediaItems.append(ItemDetail(title: L10n.audio, content: audioList))
+				mediaItems.append(ItemDetail(title: L10n.audio, content: audioList))
 			}
 
 			if !subtitleStreams.isEmpty {
-                let subtitleList = subtitleStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
+				let subtitleList = subtitleStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
 					.joined(separator: ", ")
-                mediaItems.append(ItemDetail(title: L10n.subtitles, content: subtitleList))
+				mediaItems.append(ItemDetail(title: L10n.subtitles, content: subtitleList))
 			}
 		}
 

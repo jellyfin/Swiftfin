@@ -47,7 +47,7 @@ struct CinematicMovieItemView: View {
 							CinematicItemAboutView(viewModel: viewModel)
 
 							if !viewModel.similarItems.isEmpty {
-                                PortraitItemsRowView(rowTitle: L10n.recommended,
+								PortraitItemsRowView(rowTitle: L10n.recommended,
 								                     items: viewModel.similarItems,
 								                     showItemTitles: showPosterLabels) { item in
 									itemRouter.route(to: \.item, item)

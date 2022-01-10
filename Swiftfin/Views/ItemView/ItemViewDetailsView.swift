@@ -19,7 +19,7 @@ struct ItemViewDetailsView: View {
 
 			if !viewModel.informationItems.isEmpty {
 				VStack(alignment: .leading, spacing: 20) {
-                    L10n.information.text
+					L10n.information.text
 						.font(.title3)
 						.fontWeight(.bold)
 
@@ -38,7 +38,7 @@ struct ItemViewDetailsView: View {
 
 			if !viewModel.mediaItems.isEmpty {
 				VStack(alignment: .leading, spacing: 20) {
-                    L10n.media.text
+					L10n.media.text
 						.font(.title3)
 						.fontWeight(.bold)
 

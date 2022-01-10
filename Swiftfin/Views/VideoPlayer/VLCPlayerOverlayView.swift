@@ -142,16 +142,16 @@ struct VLCPlayerOverlayView: View {
 											viewModel.selectedAudioStreamIndex = audioStream.index ?? -1
 										} label: {
 											if audioStream.index == viewModel.selectedAudioStreamIndex {
-                                                Label(audioStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
+												Label(audioStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
 											} else {
-                                                Text(audioStream.displayTitle ?? L10n.noTitle)
+												Text(audioStream.displayTitle ?? L10n.noTitle)
 											}
 										}
 									}
 								} label: {
 									HStack {
 										Image(systemName: "speaker.wave.3")
-                                        L10n.audio.text
+										L10n.audio.text
 									}
 								}
 
@@ -161,16 +161,16 @@ struct VLCPlayerOverlayView: View {
 											viewModel.selectedSubtitleStreamIndex = subtitleStream.index ?? -1
 										} label: {
 											if subtitleStream.index == viewModel.selectedSubtitleStreamIndex {
-                                                Label(subtitleStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
+												Label(subtitleStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
 											} else {
-                                                Text(subtitleStream.displayTitle ?? L10n.noTitle)
+												Text(subtitleStream.displayTitle ?? L10n.noTitle)
 											}
 										}
 									}
 								} label: {
 									HStack {
 										Image(systemName: "captions.bubble")
-                                        L10n.subtitles.text
+										L10n.subtitles.text
 									}
 								}
 
@@ -189,7 +189,7 @@ struct VLCPlayerOverlayView: View {
 								} label: {
 									HStack {
 										Image(systemName: "speedometer")
-                                        L10n.playbackSpeed.text
+										L10n.playbackSpeed.text
 									}
 								}
 
@@ -209,7 +209,7 @@ struct VLCPlayerOverlayView: View {
 									} label: {
 										HStack {
 											Image(systemName: "goforward")
-                                            L10n.jumpForwardLength.text
+											L10n.jumpForwardLength.text
 										}
 									}
 
@@ -228,7 +228,7 @@ struct VLCPlayerOverlayView: View {
 									} label: {
 										HStack {
 											Image(systemName: "gobackward")
-                                            L10n.jumpBackwardLength.text
+											L10n.jumpBackwardLength.text
 										}
 									}
 								}

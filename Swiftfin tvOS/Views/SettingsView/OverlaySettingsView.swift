@@ -20,28 +20,28 @@ struct OverlaySettingsView: View {
 
 	var body: some View {
 		Form {
-            Section(header: L10n.overlay.text) {
+			Section(header: L10n.overlay.text) {
 
-                Toggle(isOn: $shouldShowPlayPreviousItem) {
-                    HStack {
-                        Image(systemName: "chevron.left.circle")
-                        L10n.playPreviousItem.text
-                    }
-                }
-                
-                Toggle(isOn: $shouldShowPlayNextItem) {
-                    HStack {
-                        Image(systemName: "chevron.right.circle")
-                        L10n.playNextItem.text
-                    }
-                }
-                
-                Toggle(isOn: $shouldShowAutoPlay) {
-                    HStack {
-                        Image(systemName: "play.circle.fill")
-                        L10n.autoPlay.text
-                    }
-                }
+				Toggle(isOn: $shouldShowPlayPreviousItem) {
+					HStack {
+						Image(systemName: "chevron.left.circle")
+						L10n.playPreviousItem.text
+					}
+				}
+
+				Toggle(isOn: $shouldShowPlayNextItem) {
+					HStack {
+						Image(systemName: "chevron.right.circle")
+						L10n.playNextItem.text
+					}
+				}
+
+				Toggle(isOn: $shouldShowAutoPlay) {
+					HStack {
+						Image(systemName: "play.circle.fill")
+						L10n.autoPlay.text
+					}
+				}
 			}
 		}
 	}

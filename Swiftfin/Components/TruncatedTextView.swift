@@ -23,7 +23,7 @@ struct TruncatedTextView: View {
 		if !truncated {
 			return ""
 		} else {
-            return L10n.seeMore
+			return L10n.seeMore
 		}
 	}
 
