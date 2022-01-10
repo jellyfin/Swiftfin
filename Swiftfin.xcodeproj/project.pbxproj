@@ -143,7 +143,6 @@
 		5D1603FE278A40DC00D22B99 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
 		5D160403278A41FD00D22B99 /* VLCPlayer+subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */; };
 		5D32EA12278C95E30020E292 /* VLCPlayer+subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */; };
-		5D32EA13278C95E40020E292 /* VLCPlayer+subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */; };
 		5D64683D277B1649009E09AE /* PreferenceUIHostingSwizzling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D64683C277B1649009E09AE /* PreferenceUIHostingSwizzling.swift */; };
 		62133890265F83A900A81A2A /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6213388F265F83A900A81A2A /* LibraryListView.swift */; };
 		621338932660107500A81A2A /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
@@ -2474,7 +2473,6 @@
 				E1AD105426D97161003E4A08 /* BaseItemDtoExtensions.swift in Sources */,
 				E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */,
 				628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */,
-				5D32EA13278C95E40020E292 /* VLCPlayer+subtitles.swift in Sources */,
 				E13DD3F72717E87D009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */,
 				6220D0AF26D5EABE00B8E046 /* ViewExtensions.swift in Sources */,
