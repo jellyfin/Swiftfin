@@ -40,7 +40,7 @@ final class ConnectToServerViewModel: ViewModel {
 		if errorMessage?.code != ErrorMessage.noShowErrorCode {
 			message.append(contentsOf: "\(errorMessage?.code ?? ErrorMessage.noShowErrorCode)\n")
 		}
-		message.append(contentsOf: "\(errorMessage?.title ?? "Unkown Error")")
+        message.append(contentsOf: "\(errorMessage?.title ?? L10n.unknownError)")
 		return message
 	}
 
@@ -70,12 +70,12 @@ final class ConnectToServerViewModel: ViewModel {
 							self.addServerURIPayload = AddServerURIPayload(server: server, uri: uri)
 							self.backAddServerURIPayload = AddServerURIPayload(server: server, uri: uri)
 						default:
-							self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical,
+                            self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical,
 							                           tag: "connectToServer",
 							                           completion: completion)
 						}
 					default:
-						self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical,
+                        self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical,
 						                           tag: "connectToServer",
 						                           completion: completion)
 					}
@@ -106,12 +106,12 @@ final class ConnectToServerViewModel: ViewModel {
 	func addURIToServer(addServerURIPayload: AddServerURIPayload) {
 		SessionManager.main.addURIToServer(server: addServerURIPayload.server, uri: addServerURIPayload.uri)
 			.sink { completion in
-				self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "connectToServer",
+                self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical, tag: "connectToServer",
 				                           completion: completion)
 			} receiveValue: { server in
 				SessionManager.main.setServerCurrentURI(server: server, uri: addServerURIPayload.uri)
 					.sink { completion in
-						self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical,
+                        self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical,
 						                           tag: "connectToServer",
 						                           completion: completion)
 					} receiveValue: { _ in

@@ -30,9 +30,9 @@ class ServerListViewModel: ObservableObject {
 
 	func userTextFor(server: SwiftfinStore.State.Server) -> String {
 		if server.userIDs.count == 1 {
-			return "1 user"
+            return L10n.oneUser
 		} else {
-			return "\(server.userIDs.count) users"
+            return L10n.multipleUsers(server.userIDs.count)
 		}
 	}
 

@@ -36,7 +36,7 @@ struct LiveTVChannelItemElement: View {
 				.font(.footnote)
 				.lineLimit(1)
 				.frame(alignment: .center)
-			Text(program?.name ?? "N/A")
+            Text(program?.name ?? L10n.notAvailableSlash)
 				.font(.body)
 				.lineLimit(1)
 				.foregroundColor(.green)

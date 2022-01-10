@@ -198,18 +198,18 @@ extension SwiftfinStore.Errors: LocalizedError {
 	var title: String {
 		switch self {
 		case .existingServer:
-			return "Existing Server"
+            return L10n.existingServer
 		case .existingUser:
-			return "Existing User"
+            return L10n.existingUser
 		}
 	}
 
 	var errorDescription: String? {
 		switch self {
 		case let .existingServer(server):
-			return "Server \(server.name) already exists with same server ID"
+            return L10n.serverAlreadyConnected(server.name)
 		case let .existingUser(user):
-			return "User \(user.username) already exists with same user ID"
+            return L10n.userAlreadySignedIn(user.username)
 		}
 	}
 }

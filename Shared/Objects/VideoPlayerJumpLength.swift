@@ -16,7 +16,7 @@ enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable {
 	case five = 5
 
 	var label: String {
-		"\(self.rawValue) seconds"
+        L10n.jumpLengthSeconds("\(self.rawValue)")
 	}
 
 	var shortLabel: String {

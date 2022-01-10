@@ -39,7 +39,7 @@ struct CinematicNextUpCardView: View {
 
 					if showOverlay {
 						VStack(alignment: .leading, spacing: 0) {
-							Text("Next")
+                            L10n.next.text
 								.font(.subheadline)
 								.padding(.vertical, 5)
 								.padding(.leading, 10)

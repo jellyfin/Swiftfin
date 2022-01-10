@@ -21,7 +21,7 @@ struct LibraryListView: View {
 			LazyVStack {
 				Button {
 					libraryListRouter.route(to: \.library,
-					                        (viewModel: LibraryViewModel(filters: viewModel.withFavorites), title: "Favorites"))
+                                            (viewModel: LibraryViewModel(filters: viewModel.withFavorites), title: L10n.favorites))
 				} label: {
 					ZStack {
 						HStack {

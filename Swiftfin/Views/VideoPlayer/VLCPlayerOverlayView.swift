@@ -142,16 +142,16 @@ struct VLCPlayerOverlayView: View {
 											viewModel.selectedAudioStreamIndex = audioStream.index ?? -1
 										} label: {
 											if audioStream.index == viewModel.selectedAudioStreamIndex {
-												Label(audioStream.displayTitle ?? "No Title", systemImage: "checkmark")
+                                                Label(audioStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
 											} else {
-												Text(audioStream.displayTitle ?? "No Title")
+                                                Text(audioStream.displayTitle ?? L10n.noTitle)
 											}
 										}
 									}
 								} label: {
 									HStack {
 										Image(systemName: "speaker.wave.3")
-										Text("Audio")
+                                        L10n.audio.text
 									}
 								}
 
@@ -161,16 +161,16 @@ struct VLCPlayerOverlayView: View {
 											viewModel.selectedSubtitleStreamIndex = subtitleStream.index ?? -1
 										} label: {
 											if subtitleStream.index == viewModel.selectedSubtitleStreamIndex {
-												Label(subtitleStream.displayTitle ?? "No Title", systemImage: "checkmark")
+                                                Label(subtitleStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
 											} else {
-												Text(subtitleStream.displayTitle ?? "No Title")
+                                                Text(subtitleStream.displayTitle ?? L10n.noTitle)
 											}
 										}
 									}
 								} label: {
 									HStack {
 										Image(systemName: "captions.bubble")
-										Text("Subtitles")
+                                        L10n.subtitles.text
 									}
 								}
 
@@ -189,7 +189,7 @@ struct VLCPlayerOverlayView: View {
 								} label: {
 									HStack {
 										Image(systemName: "speedometer")
-										Text("Playback Speed")
+                                        L10n.playbackSpeed.text
 									}
 								}
 
@@ -209,7 +209,7 @@ struct VLCPlayerOverlayView: View {
 									} label: {
 										HStack {
 											Image(systemName: "goforward")
-											Text("Jump Forward Length")
+                                            L10n.jumpForwardLength.text
 										}
 									}
 
@@ -228,7 +228,7 @@ struct VLCPlayerOverlayView: View {
 									} label: {
 										HStack {
 											Image(systemName: "gobackward")
-											Text("Jump Backward Length")
+                                            L10n.jumpBackwardLength.text
 										}
 									}
 								}
@@ -337,10 +337,7 @@ struct VLCPlayerOverlayView: View {
 								Capsule().foregroundColor(.purple))
 								.background(Capsule().foregroundColor(Color.gray.opacity(0.25)))
 								.frame(height: 4),
-							thumb: Circle().foregroundColor(.purple)
-								.onLongPressGesture(perform: {
-									print("got it here")
-								}),
+							thumb: Circle().foregroundColor(.purple),
 							thumbSize: CGSize.Circle(radius: viewModel.sliderIsScrubbing ? 20 : 15),
 							thumbInteractiveSize: CGSize.Circle(radius: 40),
 							options: .defaultOptions))

@@ -26,10 +26,10 @@ struct CinematicItemAboutView: View {
 					.frame(height: 385.5)
 
 				VStack(alignment: .leading) {
-					Text("About")
+                    L10n.about.text
 						.font(.title3)
 
-					Text(viewModel.item.overview ?? "No details available")
+                    Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
 						.padding(.top, 2)
 						.lineLimit(7)
 				}

@@ -44,14 +44,14 @@ struct UserSignInView: View {
 				.disabled(viewModel.isLoading || username.isEmpty)
 
 			} header: {
-				Text("Sign In to \(viewModel.server.name)")
+                L10n.signInToServer(viewModel.server.name).text
 			}
 		}
 		.alert(item: $viewModel.errorMessage) { _ in
 			Alert(title: Text(viewModel.alertTitle),
-			      message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
+                  message: Text(viewModel.errorMessage?.displayMessage ?? L10n.unknownError),
 			      dismissButton: .cancel())
 		}
-		.navigationTitle("Sign In")
+        .navigationTitle(L10n.signIn)
 	}
 }

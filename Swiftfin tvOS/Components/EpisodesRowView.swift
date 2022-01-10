@@ -19,7 +19,7 @@ struct EpisodesRowView: View {
 	var body: some View {
 		VStack(alignment: .leading) {
 
-			Text(viewModel.selectedSeason?.name ?? "Episodes")
+            Text(viewModel.selectedSeason?.name ?? L10n.episodes)
 				.font(.title3)
 				.padding(.horizontal, 50)
 
@@ -67,7 +67,7 @@ struct EpisodesRowView: View {
 										Text("--")
 											.font(.caption)
 											.foregroundColor(.secondary)
-										Text("No episodes available")
+                                        L10n.noEpisodesAvailable.text
 											.font(.footnote)
 											.padding(.bottom, 1)
 									}

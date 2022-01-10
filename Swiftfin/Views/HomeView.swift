@@ -39,7 +39,7 @@ struct HomeView: View {
 					.frame(minWidth: 50, maxWidth: 240)
 					.multilineTextAlignment(.center)
 
-				PrimaryButtonView(title: "Retry") {
+                PrimaryButtonView(title: L10n.retry) {
 					viewModel.refresh()
 				}
 			}
@@ -69,7 +69,7 @@ struct HomeView: View {
 
 					if !viewModel.latestAddedItems.isEmpty {
 						PortraitImageHStackView(items: viewModel.latestAddedItems) {
-							Text("Recently Added")
+                            L10n.recentlyAdded.text
 								.font(.title2)
 								.fontWeight(.bold)
 								.padding()

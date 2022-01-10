@@ -37,7 +37,7 @@ struct ConnectToServerView: View {
 					Button(role: .destructive) {
 						viewModel.cancelConnection()
 					} label: {
-						Text("Cancel")
+                        L10n.cancel.text
 					}
 				} else {
 					Button {
@@ -48,17 +48,14 @@ struct ConnectToServerView: View {
 					.disabled(uri.isEmpty)
 				}
 			} header: {
-				Text("Connect to a Jellyfin server")
+                L10n.connectToJellyfinServer.text
 			}
 
 			Section {
 				if viewModel.searching {
 					HStack(alignment: .center, spacing: 5) {
 						Spacer()
-						// Oct. 15, 2021
-						// There is a bug where ProgressView() won't appear sometimes when searching,
-						//     dots were used instead but ProgressView() is preferred
-						Text("Searching...")
+                        L10n.searchingDots.text
 							.foregroundColor(.secondary)
 						Spacer()
 					}
@@ -66,7 +63,7 @@ struct ConnectToServerView: View {
 					if viewModel.discoveredServers.isEmpty {
 						HStack(alignment: .center) {
 							Spacer()
-							Text("No local servers found")
+                            L10n.noLocalServersFound.text
 								.font(.callout)
 								.foregroundColor(.secondary)
 							Spacer()
@@ -106,7 +103,7 @@ struct ConnectToServerView: View {
 		}
 		.alert(item: $viewModel.errorMessage) { _ in
 			Alert(title: Text(viewModel.alertTitle),
-			      message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
+                  message: Text(viewModel.errorMessage?.displayMessage ?? L10n.unknownError),
 			      dismissButton: .cancel())
 		}
 		.alert(item: $viewModel.addServerURIPayload) { _ in

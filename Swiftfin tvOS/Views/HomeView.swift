@@ -33,7 +33,7 @@ struct HomeView: View {
 
 					if viewModel.resumeItems.isEmpty {
 						HomeCinematicView(items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
-						                  forcedItemSubtitle: "Recently Added")
+                                          forcedItemSubtitle: L10n.recentlyAdded)
 
 						if !viewModel.nextUpItems.isEmpty {
 							NextUpView(items: viewModel.nextUpItems)
@@ -47,7 +47,7 @@ struct HomeView: View {
 								.focusSection()
 						}
 
-						PortraitItemsRowView(rowTitle: "Recently Added",
+                        PortraitItemsRowView(rowTitle: L10n.recentlyAdded,
 						                     items: viewModel.latestAddedItems,
 						                     showItemTitles: showPosterLabels) { item in
 							homeRouter.route(to: \.modalItem, item)
@@ -67,7 +67,7 @@ struct HomeView: View {
 						Button {
 							viewModel.refresh()
 						} label: {
-							Text("Refresh")
+                            L10n.refresh.text
 						}
 
 						Spacer()

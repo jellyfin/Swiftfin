@@ -46,7 +46,7 @@ struct ConnectToServerView: View {
 				}
 				.disabled(viewModel.isLoading || uri.isEmpty)
 			} header: {
-				Text("Connect to a Jellyfin server")
+                L10n.connectToJellyfinServer.text
 			}
 
 			Section(header: L10n.localServers.text) {
@@ -77,7 +77,7 @@ struct ConnectToServerView: View {
 		}
 		.alert(item: $viewModel.errorMessage) { _ in
 			Alert(title: Text(viewModel.alertTitle),
-			      message: Text(viewModel.errorMessage?.displayMessage ?? "Unknown Error"),
+                  message: Text(viewModel.errorMessage?.displayMessage ?? L10n.unknownError),
 			      dismissButton: .cancel())
 		}
 		.navigationTitle(L10n.connect)

@@ -42,7 +42,7 @@ struct LibrarySearchView: View {
 		.onChange(of: searchQuery) { query in
 			viewModel.searchQuerySubject.send(query)
 		}
-		.navigationBarTitle("Search")
+        .navigationBarTitle(L10n.search)
 	}
 
 	var suggestionsListView: some View {

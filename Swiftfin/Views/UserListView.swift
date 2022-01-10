@@ -45,7 +45,7 @@ struct UserListView: View {
 						Button(role: .destructive) {
 							viewModel.remove(user: user)
 						} label: {
-							Label("Remove", systemImage: "trash")
+                            Label(L10n.remove, systemImage: "trash")
 						}
 					}
 				}
@@ -55,7 +55,7 @@ struct UserListView: View {
 
 	private var noUserView: some View {
 		VStack {
-			Text("Sign in to get started")
+            L10n.signInGetStarted.text
 				.frame(minWidth: 50, maxWidth: 240)
 				.multilineTextAlignment(.center)
 
@@ -71,7 +71,7 @@ struct UserListView: View {
 						.padding(.horizontal, 30)
 						.padding([.top, .bottom], 20)
 
-					Text("Sign in")
+                    L10n.signIn.text
 						.foregroundColor(Color.white)
 						.bold()
 				}

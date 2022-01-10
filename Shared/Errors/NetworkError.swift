@@ -67,7 +67,7 @@ enum NetworkError: Error {
 	{
 
 		let errorMessage: ErrorMessage
-		var logMessage = "An error has occurred."
+        var logMessage = L10n.unknownError
 		var logConstructor = logConstructor
 
 		switch response {
@@ -77,14 +77,14 @@ enum NetworkError: Error {
 			// https://developer.apple.com/documentation/foundation/1508628-url_loading_system_error_codes
 			switch err._code {
 			case -1001:
-				logMessage = "Network timed out."
+                logMessage = L10n.networkTimedOut
 				logConstructor.message = logMessage
 				errorMessage = ErrorMessage(code: err._code,
-				                            title: "Timed Out",
+                                            title: L10n.error,
 				                            displayMessage: displayMessage,
 				                            logConstructor: logConstructor)
 			case -1004:
-				logMessage = "Cannot connect to host."
+                logMessage = L10n.cannotConnectToHost
 				logConstructor.message = logMessage
 				errorMessage = ErrorMessage(code: err._code,
 				                            title: L10n.error,
@@ -128,7 +128,7 @@ enum NetworkError: Error {
 	{
 
 		let errorMessage: ErrorMessage
-		var logMessage = "An error has occurred."
+        var logMessage = L10n.unknownError
 		var logConstructor = logConstructor
 
 		switch response {
@@ -137,10 +137,10 @@ enum NetworkError: Error {
 			// Generic HTTP status codes
 			switch code {
 			case 401:
-				logMessage = "User is unauthorized."
+                logMessage = L10n.unauthorizedUser
 				logConstructor.message = logMessage
 				errorMessage = ErrorMessage(code: code,
-				                            title: "Unauthorized",
+                                            title: L10n.unauthorized,
 				                            displayMessage: displayMessage,
 				                            logConstructor: logConstructor)
 			default:

@@ -17,7 +17,7 @@ struct SearchBar: View {
 
 	var body: some View {
 		HStack(spacing: 8) {
-			TextField(L10n.search, text: $text)
+			TextField(L10n.searchDots, text: $text)
 				.padding(8)
 				.padding(.horizontal, 16)
 			#if os(iOS)

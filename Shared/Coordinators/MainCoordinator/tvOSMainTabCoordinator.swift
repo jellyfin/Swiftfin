@@ -43,26 +43,26 @@ final class MainTabCoordinator: TabCoordinatable {
 	}
 
 	func makeTv() -> NavigationViewCoordinator<TVLibrariesCoordinator> {
-		NavigationViewCoordinator(TVLibrariesCoordinator(viewModel: TVLibrariesViewModel(), title: "TV Shows"))
+        NavigationViewCoordinator(TVLibrariesCoordinator(viewModel: TVLibrariesViewModel(), title: L10n.tvShows))
 	}
 
 	@ViewBuilder
 	func makeTvTab(isActive: Bool) -> some View {
 		HStack {
 			Image(systemName: "tv")
-			Text("TV Shows")
+            L10n.tvShows.text
 		}
 	}
 
 	func makeMovies() -> NavigationViewCoordinator<MovieLibrariesCoordinator> {
-		NavigationViewCoordinator(MovieLibrariesCoordinator(viewModel: MovieLibrariesViewModel(), title: "Movies"))
+        NavigationViewCoordinator(MovieLibrariesCoordinator(viewModel: MovieLibrariesViewModel(), title: L10n.movies))
 	}
 
 	@ViewBuilder
 	func makeMoviesTab(isActive: Bool) -> some View {
 		HStack {
 			Image(systemName: "film")
-			Text("Movies")
+            L10n.movies.text
 		}
 	}
 
@@ -74,7 +74,7 @@ final class MainTabCoordinator: TabCoordinatable {
 	func makeOtherTab(isActive: Bool) -> some View {
 		HStack {
 			Image(systemName: "folder")
-			Text("Other")
+            L10n.other.text
 		}
 	}
 

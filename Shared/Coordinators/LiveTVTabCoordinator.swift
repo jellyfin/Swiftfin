@@ -32,7 +32,7 @@ final class LiveTVTabCoordinator: TabCoordinatable {
 	func makeProgramsTab(isActive: Bool) -> some View {
 		HStack {
 			Image(systemName: "tv")
-			Text("Programs")
+            L10n.programs.text
 		}
 	}
 
@@ -44,7 +44,7 @@ final class LiveTVTabCoordinator: TabCoordinatable {
 	func makeChannelsTab(isActive: Bool) -> some View {
 		HStack {
 			Image(systemName: "square.grid.3x3")
-			Text("Channels")
+            L10n.channels.text
 		}
 	}
 
@@ -56,7 +56,7 @@ final class LiveTVTabCoordinator: TabCoordinatable {
 	func makeHomeTab(isActive: Bool) -> some View {
 		HStack {
 			Image(systemName: "house")
-			Text("Home")
+            L10n.home.text
 		}
 	}
 }

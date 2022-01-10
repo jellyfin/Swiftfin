@@ -42,7 +42,7 @@ struct ItemViewBody: View {
 						.padding()
 				}
 			} else {
-				Text("No overview available")
+                L10n.noOverviewAvailable.text
 					.font(.footnote)
 					.padding()
 			}
@@ -92,7 +92,7 @@ struct ItemViewBody: View {
 				if let seriesItem = episodeViewModel.series {
 					let a = [seriesItem]
 					PortraitImageHStackView(items: a) {
-						Text("Series")
+                        L10n.series.text
 							.fontWeight(.semibold)
 							.padding(.bottom)
 							.padding(.horizontal)
@@ -106,7 +106,7 @@ struct ItemViewBody: View {
 
 			if let collectionViewModel = viewModel as? CollectionItemViewModel {
 				PortraitImageHStackView(items: collectionViewModel.collectionItems) {
-					Text("Items")
+                    L10n.items.text
 						.fontWeight(.semibold)
 						.padding(.bottom)
 						.padding(.horizontal)
@@ -121,7 +121,7 @@ struct ItemViewBody: View {
 				if let castAndCrew = viewModel.item.people {
 					PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
 					                        topBarView: {
-					                        	Text("Cast & Crew")
+                                                L10n.castAndCrew.text
 					                        		.fontWeight(.semibold)
 					                        		.padding(.bottom)
 					                        		.padding(.horizontal)

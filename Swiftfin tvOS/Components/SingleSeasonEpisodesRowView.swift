@@ -19,7 +19,7 @@ struct SingleSeasonEpisodesRowView: View {
 	var body: some View {
 		VStack(alignment: .leading) {
 
-			Text("Episodes")
+            L10n.episodes.text
 				.font(.title3)
 				.padding(.horizontal, 50)
 
@@ -66,7 +66,7 @@ struct SingleSeasonEpisodesRowView: View {
 									Text("--")
 										.font(.caption)
 										.foregroundColor(.secondary)
-									Text("No episodes available")
+                                    L10n.noEpisodesAvailable.text
 										.font(.footnote)
 										.padding(.bottom, 1)
 								}

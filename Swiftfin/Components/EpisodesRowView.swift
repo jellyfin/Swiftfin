@@ -26,15 +26,15 @@ struct EpisodesRowView: View {
 							viewModel.selectedSeason = season
 						} label: {
 							if season.id == viewModel.selectedSeason?.id {
-								Label(season.name ?? "Season", systemImage: "checkmark")
+                                Label(season.name ?? L10n.season, systemImage: "checkmark")
 							} else {
-								Text(season.name ?? "Season")
+                                Text(season.name ?? L10n.season)
 							}
 						}
 					}
 				} label: {
 					HStack(spacing: 5) {
-						Text(viewModel.selectedSeason?.name ?? "Unknown")
+                        Text(viewModel.selectedSeason?.name ?? L10n.unknown)
 							.fontWeight(.semibold)
 							.fixedSize()
 						Image(systemName: "chevron.down")
@@ -85,7 +85,8 @@ struct EpisodesRowView: View {
 										Text("--")
 											.font(.footnote)
 											.foregroundColor(.secondary)
-										Text("No episodes available")
+                                        
+                                        L10n.noEpisodesAvailable.text
 											.font(.body)
 											.padding(.bottom, 1)
 											.lineLimit(2)

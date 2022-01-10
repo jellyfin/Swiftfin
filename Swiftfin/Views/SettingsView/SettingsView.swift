@@ -51,7 +51,7 @@ struct SettingsView: View {
 		Form {
 			Section(header: EmptyView()) {
 				HStack {
-					Text("User")
+                    L10n.user.text
 					Spacer()
 					Text(viewModel.user.username)
 						.foregroundColor(.jellyfinPurple)
@@ -61,7 +61,7 @@ struct SettingsView: View {
 					settingsRouter.route(to: \.serverDetail)
 				} label: {
 					HStack {
-						Text("Server")
+                        L10n.server.text
 							.foregroundColor(.primary)
 						Spacer()
 						Text(viewModel.server.name)
@@ -76,7 +76,7 @@ struct SettingsView: View {
 						SessionManager.main.logout()
 					}
 				} label: {
-					Text("Switch User")
+                    L10n.switchUser.text
 						.font(.callout)
 				}
 			}
@@ -96,28 +96,28 @@ struct SettingsView: View {
 			//                }
 			//            }
 
-			Section(header: Text("Video Player")) {
-				Picker("Jump Forward Length", selection: $jumpForwardLength) {
+            Section(header: L10n.videoPlayer.text) {
+                Picker(L10n.jumpForwardLength, selection: $jumpForwardLength) {
 					ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
 						Text(length.label).tag(length.rawValue)
 					}
 				}
 
-				Picker("Jump Backward Length", selection: $jumpBackwardLength) {
+                Picker(L10n.jumpBackwardLength, selection: $jumpBackwardLength) {
 					ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
 						Text(length.label).tag(length.rawValue)
 					}
 				}
 
-				Toggle("Jump Gestures Enabled", isOn: $jumpGesturesEnabled)
+                Toggle(L10n.jumpGesturesEnabled, isOn: $jumpGesturesEnabled)
 
-				Toggle("Resume 5 Second Offset", isOn: $resumeOffset)
+                Toggle(L10n.resume5SecondOffset, isOn: $resumeOffset)
 
 				Button {
 					settingsRouter.route(to: \.overlaySettings)
 				} label: {
 					HStack {
-						Text("Overlay")
+                        L10n.overlay.text
 							.foregroundColor(.primary)
 						Spacer()
 						Text(overlayType.label)
@@ -129,7 +129,7 @@ struct SettingsView: View {
 					settingsRouter.route(to: \.experimentalSettings)
 				} label: {
 					HStack {
-						Text("Experimental")
+                        L10n.experimental.text
 							.foregroundColor(.primary)
 						Spacer()
 						Image(systemName: "chevron.right")
@@ -138,22 +138,22 @@ struct SettingsView: View {
 			}
 
 			Section(header: L10n.accessibility.text) {
-				Toggle("Show Poster Labels", isOn: $showPosterLabels)
-				Toggle("Show Cast and Crew", isOn: $showCastAndCrew)
+                Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
+                Toggle(L10n.showCastAndCrew, isOn: $showCastAndCrew)
 
 				Picker(L10n.appearance, selection: $appAppearance) {
 					ForEach(AppAppearance.allCases, id: \.self) { appearance in
 						Text(appearance.localizedName).tag(appearance.rawValue)
 					}
 				}
-				Picker("Subtitle size", selection: $subtitleSize) {
+                Picker(L10n.subtitleSize, selection: $subtitleSize) {
 					ForEach(SubtitleSize.allCases, id: \.self) { size in
 						Text(size.label).tag(size.rawValue)
 					}
 				}
 			}
 		}
-		.navigationBarTitle("Settings", displayMode: .inline)
+        .navigationBarTitle(L10n.settings, displayMode: .inline)
 		.toolbar {
 			ToolbarItemGroup(placement: .navigationBarLeading) {
 				Button {

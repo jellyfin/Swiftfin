@@ -21,7 +21,7 @@ struct ItemOverviewView: View {
 				.font(.footnote)
 				.padding()
 		}
-		.navigationBarTitle("Overview", displayMode: .inline)
+        .navigationBarTitle(L10n.overview, displayMode: .inline)
 		.toolbar {
 			ToolbarItemGroup(placement: .navigationBarLeading) {
 				Button {

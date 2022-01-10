@@ -43,7 +43,7 @@ struct ContinueWatchingView: View {
 												.frame(height: 35)
 
 											VStack(alignment: .leading, spacing: 0) {
-												Text(item.getItemProgressString() ?? "Continue")
+                                                Text(item.getItemProgressString() ?? L10n.continue)
 													.font(.subheadline)
 													.padding(.bottom, 5)
 													.padding(.leading, 10)

@@ -46,13 +46,13 @@ struct CinematicCollectionItemView: View {
 
 							CinematicItemAboutView(viewModel: viewModel)
 
-							PortraitItemsRowView(rowTitle: "Items",
+                            PortraitItemsRowView(rowTitle: L10n.items,
 							                     items: viewModel.collectionItems) { item in
 								itemRouter.route(to: \.item, item)
 							}
 
 							if !viewModel.similarItems.isEmpty {
-								PortraitItemsRowView(rowTitle: "Recommended",
+                                PortraitItemsRowView(rowTitle: L10n.recommended,
 								                     items: viewModel.similarItems,
 								                     showItemTitles: showPosterLabels) { item in
 									itemRouter.route(to: \.item, item)

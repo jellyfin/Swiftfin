@@ -74,7 +74,7 @@ struct SmallMediaStreamSelectionView: View {
 						if updateFocusedLayer == .subtitles {
 							HStack(spacing: 15) {
 								Image(systemName: "captions.bubble")
-								Text("Subtitles")
+                                L10n.subtitles.text
 							}
 							.padding()
 							.background(Color.white)
@@ -82,7 +82,7 @@ struct SmallMediaStreamSelectionView: View {
 						} else {
 							HStack(spacing: 15) {
 								Image(systemName: "captions.bubble")
-								Text("Subtitles")
+                                L10n.subtitles.text
 							}
 							.padding()
 						}
@@ -106,7 +106,7 @@ struct SmallMediaStreamSelectionView: View {
 						if updateFocusedLayer == .audio {
 							HStack(spacing: 15) {
 								Image(systemName: "speaker.wave.3")
-								Text("Audio")
+                                L10n.audio.text
 							}
 							.padding()
 							.background(Color.white)
@@ -114,7 +114,7 @@ struct SmallMediaStreamSelectionView: View {
 						} else {
 							HStack(spacing: 15) {
 								Image(systemName: "speaker.wave.3")
-								Text("Audio")
+                                L10n.audio.text
 							}
 							.padding()
 						}
@@ -138,7 +138,7 @@ struct SmallMediaStreamSelectionView: View {
 						if updateFocusedLayer == .playbackSpeed {
 							HStack(spacing: 15) {
 								Image(systemName: "speedometer")
-								Text("Playback Speed")
+                                L10n.playbackSpeed.text
 							}
 							.padding()
 							.background(Color.white)
@@ -146,7 +146,7 @@ struct SmallMediaStreamSelectionView: View {
 						} else {
 							HStack(spacing: 15) {
 								Image(systemName: "speedometer")
-								Text("Playback Speed")
+                                L10n.playbackSpeed.text
 							}
 							.padding()
 						}
@@ -185,7 +185,7 @@ struct SmallMediaStreamSelectionView: View {
 						HStack {
 							if viewModel.subtitleStreams.isEmpty {
 								Button {} label: {
-									Text("None")
+                                    L10n.none.text
 								}
 							} else {
 								ForEach(viewModel.subtitleStreams, id: \.self) { subtitleStream in
@@ -193,9 +193,9 @@ struct SmallMediaStreamSelectionView: View {
 										viewModel.selectedSubtitleStreamIndex = subtitleStream.index ?? -1
 									} label: {
 										if subtitleStream.index == viewModel.selectedSubtitleStreamIndex {
-											Label(subtitleStream.displayTitle ?? "No Title", systemImage: "checkmark")
+                                            Label(subtitleStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
 										} else {
-											Text(subtitleStream.displayTitle ?? "No Title")
+                                            Text(subtitleStream.displayTitle ?? L10n.noTitle)
 										}
 									}
 								}
@@ -220,9 +220,9 @@ struct SmallMediaStreamSelectionView: View {
 										viewModel.selectedAudioStreamIndex = audioStream.index ?? -1
 									} label: {
 										if audioStream.index == viewModel.selectedAudioStreamIndex {
-											Label(audioStream.displayTitle ?? "No Title", systemImage: "checkmark")
+                                            Label(audioStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
 										} else {
-											Text(audioStream.displayTitle ?? "No Title")
+                                            Text(audioStream.displayTitle ?? L10n.noTitle)
 										}
 									}
 								}

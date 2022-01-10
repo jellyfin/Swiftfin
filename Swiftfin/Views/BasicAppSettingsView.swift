@@ -41,55 +41,55 @@ struct BasicAppSettingsView: View {
 			}
 
 			Section {
-				Picker("Default Scheme", selection: $defaultHTTPScheme) {
+                Picker(L10n.defaultScheme, selection: $defaultHTTPScheme) {
 					ForEach(HTTPScheme.allCases, id: \.self) { scheme in
 						Text("\(scheme.rawValue)")
 					}
 				}
 			} header: {
-				Text("Networking")
+                L10n.networking.text
 			}
 
 			Button {
 				resetUserSettingsTapped = true
 			} label: {
-				Text("Reset User Settings")
+                L10n.resetUserSettings.text
 			}
 
 			Button {
 				resetAppSettingsTapped = true
 			} label: {
-				Text("Reset App Settings")
+                L10n.resetAppSettings.text
 			}
 
 			Button {
 				removeAllUsersTapped = true
 			} label: {
-				Text("Remove All Users")
+                L10n.removeAllUsers.text
 			}
 		}
-		.alert("Reset User Settings", isPresented: $resetUserSettingsTapped, actions: {
+        .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsTapped, actions: {
 			Button(role: .destructive) {
 				viewModel.resetUserSettings()
 			} label: {
 				L10n.reset.text
 			}
 		})
-		.alert("Reset App Settings", isPresented: $resetAppSettingsTapped, actions: {
+        .alert(L10n.resetAppSettings, isPresented: $resetAppSettingsTapped, actions: {
 			Button(role: .destructive) {
 				viewModel.resetAppSettings()
 			} label: {
 				L10n.reset.text
 			}
 		})
-		.alert("Remove All Users", isPresented: $removeAllUsersTapped, actions: {
+        .alert(L10n.removeAllUsers, isPresented: $removeAllUsersTapped, actions: {
 			Button(role: .destructive) {
 				viewModel.removeAllUsers()
 			} label: {
 				L10n.reset.text
 			}
 		})
-		.navigationBarTitle("Settings", displayMode: .inline)
+        .navigationBarTitle(L10n.settings, displayMode: .inline)
 		.toolbar {
 			ToolbarItemGroup(placement: .navigationBarLeading) {
 				Button {

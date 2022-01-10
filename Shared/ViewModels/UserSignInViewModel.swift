@@ -36,7 +36,7 @@ final class UserSignInViewModel: ViewModel {
 		SessionManager.main.loginUser(server: server, username: username, password: password)
 			.trackActivity(loading)
 			.sink { completion in
-				self.handleAPIRequestError(displayMessage: "Unable to connect to server.", logLevel: .critical, tag: "login",
+                self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical, tag: "login",
 				                           completion: completion)
 			} receiveValue: { _ in
 			}

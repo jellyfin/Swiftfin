@@ -375,8 +375,6 @@
 		E1AA33222782648000F6439C /* OverlaySliderColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA33212782648000F6439C /* OverlaySliderColor.swift */; };
 		E1AA33232782648000F6439C /* OverlaySliderColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA33212782648000F6439C /* OverlaySliderColor.swift */; };
 		E1AA332427829B5200F6439C /* OverlayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331E2782639D00F6439C /* OverlayType.swift */; };
-		E1AD104A26D94822003E4A08 /* DetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104926D94822003E4A08 /* DetailItem.swift */; };
-		E1AD104B26D94822003E4A08 /* DetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104926D94822003E4A08 /* DetailItem.swift */; };
 		E1AD104D26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */; };
 		E1AD104E26D96CE3003E4A08 /* BaseItemDtoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */; };
 		E1AD105426D97161003E4A08 /* BaseItemDtoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */; };
@@ -721,7 +719,6 @@
 		E1AA331C2782541500F6439C /* PrimaryButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonView.swift; sourceTree = "<group>"; };
 		E1AA331E2782639D00F6439C /* OverlayType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayType.swift; sourceTree = "<group>"; };
 		E1AA33212782648000F6439C /* OverlaySliderColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySliderColor.swift; sourceTree = "<group>"; };
-		E1AD104926D94822003E4A08 /* DetailItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailItem.swift; sourceTree = "<group>"; };
 		E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseItemDtoExtensions.swift; sourceTree = "<group>"; };
 		E1AD105526D981CE003E4A08 /* PortraitHStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitHStackView.swift; sourceTree = "<group>"; };
 		E1AD105B26D9ABDD003E4A08 /* PillHStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillHStackView.swift; sourceTree = "<group>"; };
@@ -974,7 +971,6 @@
 			children = (
 				E1D4BF802719D22800A11E64 /* AppAppearance.swift */,
 				E1D4BF862719D27100A11E64 /* Bitrates.swift */,
-				E1AD104926D94822003E4A08 /* DetailItem.swift */,
 				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
 				62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */,
 				E19169CD272514760085832A /* HTTPScheme.swift */,
@@ -1674,7 +1670,6 @@
 			buildPhases = (
 				3D0F2756C71CDF6B9EEBD4E0 /* [CP] Check Pods Manifest.lock */,
 				6286F0A3271C0ABA00C40ED5 /* R.swift */,
-				C6EE6AB295A273FF14E6EF56 /* [CP] Prepare Artifacts */,
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
@@ -1819,7 +1814,7 @@
 				536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */,
 				53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */,
 				62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */,
-				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */,
+				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */,
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
 				E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */,
 				E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
@@ -2033,23 +2028,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C6EE6AB295A273FF14E6EF56 /* [CP] Prepare Artifacts */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-artifacts-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Prepare Artifacts";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-artifacts-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-artifacts.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		D4D3981ADF75BCD341D590C0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2148,7 +2126,6 @@
 				62EC3530267666A5000E9F2D /* SessionManager.swift in Sources */,
 				E1E5D5372783A52C00692DFE /* CinematicEpisodeItemView.swift in Sources */,
 				C4BE078E27298818003F4AD1 /* LiveTVHomeView.swift in Sources */,
-				E1AD104B26D94822003E4A08 /* DetailItem.swift in Sources */,
 				E13DD3E227176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */,
 				E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */,
@@ -2375,7 +2352,6 @@
 				E13DD3E927177ED6009D4DAF /* ServerListCoordinator.swift in Sources */,
 				E1C812BD277A8E5D00918266 /* PlayerOverlayDelegate.swift in Sources */,
 				E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */,
-				E1AD104A26D94822003E4A08 /* DetailItem.swift in Sources */,
 				62E632E0267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
 				E193D4DB27193CCA00900D82 /* PillStackable.swift in Sources */,
 				E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */,
@@ -2797,7 +2773,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2834,7 +2810,7 @@
 				CURRENT_PROJECT_VERSION = 66;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2865,7 +2841,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2892,7 +2868,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3024,7 +3000,7 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
+		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
 			requirement = {
@@ -3141,17 +3117,17 @@
 		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
 			productName = CoreStore;
 		};
 		E13DD3CC27164CA7009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
 			productName = CoreStore;
 		};
 		E13DD3CE27164E1F009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
 			productName = CoreStore;
 		};
 		E13DD3D227168E65009D4DAF /* Defaults */ = {

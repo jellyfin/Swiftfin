@@ -15,9 +15,9 @@ struct ServerDetailView: View {
 
 	var body: some View {
 		Form {
-			Section(header: Text("Server Details")) {
+            Section(header: L10n.serverDetails.text) {
 				HStack {
-					Text("Name")
+                    L10n.name.text
 					Spacer()
 					Text(SessionManager.main.currentLogin.server.name)
 						.foregroundColor(.secondary)
@@ -25,21 +25,21 @@ struct ServerDetailView: View {
 				.focusable()
 
 				HStack {
-					Text("URI")
+                    L10n.url.text
 					Spacer()
 					Text(SessionManager.main.currentLogin.server.currentURI)
 						.foregroundColor(.secondary)
 				}
 
 				HStack {
-					Text("Version")
+                    L10n.version.text
 					Spacer()
 					Text(SessionManager.main.currentLogin.server.version)
 						.foregroundColor(.secondary)
 				}
 
 				HStack {
-					Text("Operating System")
+                    L10n.operatingSystem.text
 					Spacer()
 					Text(SessionManager.main.currentLogin.server.os)
 						.foregroundColor(.secondary)
