@@ -981,6 +981,7 @@
 				E1AA33212782648000F6439C /* OverlaySliderColor.swift */,
 				E1AA331E2782639D00F6439C /* OverlayType.swift */,
 				E193D4DA27193CCA00900D82 /* PillStackable.swift */,
+				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
 				E193D4D727193CAC00900D82 /* PortraitImageStackable.swift */,
 				E10D87DD278510E300BD264C /* PosterSize.swift */,
 				5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */,
@@ -1042,7 +1043,6 @@
 				62ECA01926FA6D6900E8EBB7 /* AppURLHandler */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
 				53F866422687A45400DCD1D7 /* Components */,
-				5D160401278A41BA00D22B99 /* Extensions */,
 				5377CC02263B596B003A4E83 /* Info.plist */,
 				E13D02842788B634000FCB04 /* Swiftfin.entitlements */,
 				5377CBFA263B596B003A4E83 /* Preview Content */,
@@ -1221,13 +1221,6 @@
 				E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */,
 			);
 			path = Components;
-			sourceTree = "<group>";
-		};
-		5D160401278A41BA00D22B99 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		5D64683B277B15E4009E09AE /* PreferenceUIHosting */ = {
@@ -1544,7 +1537,6 @@
 		E193D5452719418B00900D82 /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
 				E1C812B5277A8E5D00918266 /* PlayerOverlayDelegate.swift */,
 				E1C812BB277A8E5D00918266 /* VLCPlayerOverlayView.swift */,
 				E1C812B8277A8E5D00918266 /* VLCPlayerView.swift */,

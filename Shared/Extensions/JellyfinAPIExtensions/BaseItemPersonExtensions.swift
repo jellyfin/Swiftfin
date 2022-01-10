@@ -1,9 +1,10 @@
-/* SwiftFin is subject to the terms of the Mozilla Public
- * License, v2.0. If a copy of the MPL was not distributed with this
- * file, you can obtain one at https://mozilla.org/MPL/2.0/.
- *
- * Copyright 2021 Aiden Vigue & Jellyfin Contributors
- */
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+//
 
 import Foundation
 import JellyfinAPI
@@ -11,99 +12,103 @@ import UIKit
 
 extension BaseItemPerson {
 
-    // MARK: Get Image
-    func getImage(baseURL: String, maxWidth: Int) -> URL {
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+	// MARK: Get Image
 
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
-                                                                imageType: .primary,
-                                                                maxWidth: Int(x),
-                                                                quality: 96,
-                                                                tag: primaryImageTag).URLString
-        return URL(string: urlString)!
-    }
+	func getImage(baseURL: String, maxWidth: Int) -> URL {
+		let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-    func getBlurHash() -> String {
-        let imgURL = getImage(baseURL: "", maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"],
-              let hash = imageBlurHashes?.primary?[imgTag]
-        else {
-            return "001fC^"
-        }
+		let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
+		                                                        imageType: .primary,
+		                                                        maxWidth: Int(x),
+		                                                        quality: 96,
+		                                                        tag: primaryImageTag).URLString
+		return URL(string: urlString)!
+	}
 
-        return hash
-    }
+	func getBlurHash() -> String {
+		let imgURL = getImage(baseURL: "", maxWidth: 1)
+		guard let imgTag = imgURL.queryParameters?["tag"],
+		      let hash = imageBlurHashes?.primary?[imgTag]
+		else {
+			return "001fC^"
+		}
 
-    // MARK: First Role
+		return hash
+	}
 
-    // Jellyfin will grab all roles the person played in the show which makes the role
-    //    text too long. This will grab the first role which:
-    //      - assumes that the most important role is the first
-    //      - will also grab the last "(<text>)" instance, like "(voice)"
-    func firstRole() -> String? {
-        guard let role = self.role else { return nil }
-        let split = role.split(separator: "/")
-        guard split.count > 1 else { return role }
+	// MARK: First Role
 
-        guard let firstRole = split.first?.trimmingCharacters(in: CharacterSet(charactersIn: " ")), let lastRole = split.last?.trimmingCharacters(in: CharacterSet(charactersIn: " ")) else { return role }
+	// Jellyfin will grab all roles the person played in the show which makes the role
+	//    text too long. This will grab the first role which:
+	//      - assumes that the most important role is the first
+	//      - will also grab the last "(<text>)" instance, like "(voice)"
+	func firstRole() -> String? {
+		guard let role = self.role else { return nil }
+		let split = role.split(separator: "/")
+		guard split.count > 1 else { return role }
 
-        var final = firstRole
+		guard let firstRole = split.first?.trimmingCharacters(in: CharacterSet(charactersIn: " ")),
+		      let lastRole = split.last?.trimmingCharacters(in: CharacterSet(charactersIn: " ")) else { return role }
 
-        if let lastOpenIndex = lastRole.lastIndex(of: "("), let lastClosingIndex = lastRole.lastIndex(of: ")") {
-            let roleText = lastRole[lastOpenIndex...lastClosingIndex]
-            final.append(" \(roleText)")
-        }
+		var final = firstRole
 
-        return final
-    }
+		if let lastOpenIndex = lastRole.lastIndex(of: "("), let lastClosingIndex = lastRole.lastIndex(of: ")") {
+			let roleText = lastRole[lastOpenIndex ... lastClosingIndex]
+			final.append(" \(roleText)")
+		}
+
+		return final
+	}
 }
 
 // MARK: PortraitImageStackable
+
 extension BaseItemPerson: PortraitImageStackable {
-    public var portraitImageID: String {
-        return (id ?? "noid") + title + (subtitle ?? "nodescription") + blurHash + failureInitials
-    }
-    
-    public func imageURLContsructor(maxWidth: Int) -> URL {
-        return self.getImage(baseURL: SessionManager.main.currentLogin.server.currentURI, maxWidth: maxWidth)
-    }
+	public var portraitImageID: String {
+		(id ?? "noid") + title + (subtitle ?? "nodescription") + blurHash + failureInitials
+	}
 
-    public var title: String {
-        return self.name ?? ""
-    }
+	public func imageURLContsructor(maxWidth: Int) -> URL {
+		self.getImage(baseURL: SessionManager.main.currentLogin.server.currentURI, maxWidth: maxWidth)
+	}
 
-    public var subtitle: String? {
-        return self.firstRole()
-    }
+	public var title: String {
+		self.name ?? ""
+	}
 
-    public var blurHash: String {
-        return self.getBlurHash()
-    }
+	public var subtitle: String? {
+		self.firstRole()
+	}
 
-    public var failureInitials: String {
-        guard let name = self.name else { return "" }
-        let initials = name.split(separator: " ").compactMap({ String($0).first })
-        return String(initials)
-    }
-    
-    public var showTitle: Bool {
-        return true
-    }
+	public var blurHash: String {
+		self.getBlurHash()
+	}
+
+	public var failureInitials: String {
+		guard let name = self.name else { return "" }
+		let initials = name.split(separator: " ").compactMap { String($0).first }
+		return String(initials)
+	}
+
+	public var showTitle: Bool {
+		true
+	}
 }
 
 // MARK: DiplayedType
+
 extension BaseItemPerson {
 
-    // Only displayed person types.
-    // Will ignore people like "GuestStar"
-    enum DisplayedType: String, CaseIterable {
-        case actor = "Actor"
-        case director = "Director"
-        case writer = "Writer"
-        case producer = "Producer"
+	// Only displayed person types.
+	// Will ignore people like "GuestStar"
+	enum DisplayedType: String, CaseIterable {
+		case actor = "Actor"
+		case director = "Director"
+		case writer = "Writer"
+		case producer = "Producer"
 
-        static var allCasesRaw: [String] {
-            return self.allCases.map({ $0.rawValue })
-        }
-    }
+		static var allCasesRaw: [String] {
+			self.allCases.map(\.rawValue)
+		}
+	}
 }

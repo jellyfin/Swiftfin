@@ -1,198 +1,215 @@
 //
- /*
-  * SwiftFin is subject to the terms of the Mozilla Public
-  * License, v2.0. If a copy of the MPL was not distributed with this
-  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
-  *
-  * Copyright 2021 Aiden Vigue & Jellyfin Contributors
-  */
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+//
 
-import Foundation
 import CoreStore
 import Defaults
+import Foundation
 
 enum SwiftfinStore {
 
-    // MARK: State
-    // Safe, copyable representations of their underlying CoreStoredObject
-    // Relationships are represented by the related object's IDs or value
-    enum State {
+	// MARK: State
 
-        struct Server {
-            let uris: Set<String>
-            let currentURI: String
-            let name: String
-            let id: String
-            let os: String
-            let version: String
-            let userIDs: [String]
+	// Safe, copyable representations of their underlying CoreStoredObject
+	// Relationships are represented by the related object's IDs or value
+	enum State {
 
-            fileprivate init(uris: Set<String>, currentURI: String, name: String, id: String, os: String, version: String, usersIDs: [String]) {
-                self.uris = uris
-                self.currentURI = currentURI
-                self.name = name
-                self.id = id
-                self.os = os
-                self.version = version
-                self.userIDs = usersIDs
-            }
+		struct Server {
+			let uris: Set<String>
+			let currentURI: String
+			let name: String
+			let id: String
+			let os: String
+			let version: String
+			let userIDs: [String]
 
-            static var sample: Server {
-                return Server(uris: ["https://www.notaurl.com", "http://www.maybeaurl.org"],
-                              currentURI: "https://www.notaurl.com",
-                              name: "Johnny's Tree",
-                              id: "123abc",
-                              os: "macOS",
-                              version: "1.1.1",
-                              usersIDs: ["1", "2"])
-            }
-        }
+			fileprivate init(uris: Set<String>, currentURI: String, name: String, id: String, os: String, version: String,
+			                 usersIDs: [String])
+			{
+				self.uris = uris
+				self.currentURI = currentURI
+				self.name = name
+				self.id = id
+				self.os = os
+				self.version = version
+				self.userIDs = usersIDs
+			}
 
-        struct User {
-            let username: String
-            let id: String
-            let serverID: String
-            let accessToken: String
+			static var sample: Server {
+				Server(uris: ["https://www.notaurl.com", "http://www.maybeaurl.org"],
+				       currentURI: "https://www.notaurl.com",
+				       name: "Johnny's Tree",
+				       id: "123abc",
+				       os: "macOS",
+				       version: "1.1.1",
+				       usersIDs: ["1", "2"])
+			}
+		}
 
-            fileprivate init(username: String, id: String, serverID: String, accessToken: String) {
-                self.username = username
-                self.id = id
-                self.serverID = serverID
-                self.accessToken = accessToken
-            }
+		struct User {
+			let username: String
+			let id: String
+			let serverID: String
+			let accessToken: String
 
-            static var sample: User {
-                return User(username: "JohnnyAppleseed",
-                            id: "123abc",
-                            serverID: "123abc",
-                            accessToken: "open-sesame")
-            }
-        }
-    }
+			fileprivate init(username: String, id: String, serverID: String, accessToken: String) {
+				self.username = username
+				self.id = id
+				self.serverID = serverID
+				self.accessToken = accessToken
+			}
 
-    // MARK: Models
-    enum Models {
+			static var sample: User {
+				User(username: "JohnnyAppleseed",
+				     id: "123abc",
+				     serverID: "123abc",
+				     accessToken: "open-sesame")
+			}
+		}
+	}
 
-        final class StoredServer: CoreStoreObject {
+	// MARK: Models
 
-            @Field.Coded("uris", coder: FieldCoders.Json.self)
-            var uris: Set<String> = []
+	enum Models {
 
-            @Field.Stored("currentURI")
-            var currentURI: String = ""
+		final class StoredServer: CoreStoreObject {
 
-            @Field.Stored("name")
-            var name: String = ""
+			@Field.Coded("uris", coder: FieldCoders.Json.self)
+			var uris: Set<String> = []
 
-            @Field.Stored("id")
-            var id: String = ""
+			@Field.Stored("currentURI")
+			var currentURI: String = ""
 
-            @Field.Stored("os")
-            var os: String = ""
+			@Field.Stored("name")
+			var name: String = ""
 
-            @Field.Stored("version")
-            var version: String = ""
+			@Field.Stored("id")
+			var id: String = ""
 
-            @Field.Relationship("users", inverse: \StoredUser.$server)
-            var users: Set<StoredUser>
+			@Field.Stored("os")
+			var os: String = ""
 
-            var state: State.Server {
-                return State.Server(uris: uris,
-                                    currentURI: currentURI,
-                                    name: name,
-                                    id: id,
-                                    os: os,
-                                    version: version,
-                                    usersIDs: users.map({ $0.id }))
-            }
-        }
+			@Field.Stored("version")
+			var version: String = ""
 
-        final class StoredUser: CoreStoreObject {
+			@Field.Relationship("users", inverse: \StoredUser.$server)
+			var users: Set<StoredUser>
 
-            @Field.Stored("username")
-            var username: String = ""
+			var state: State.Server {
+				State.Server(uris: uris,
+				             currentURI: currentURI,
+				             name: name,
+				             id: id,
+				             os: os,
+				             version: version,
+				             usersIDs: users.map(\.id))
+			}
+		}
 
-            @Field.Stored("id")
-            var id: String = ""
+		final class StoredUser: CoreStoreObject {
 
-            @Field.Stored("appleTVID")
-            var appleTVID: String = ""
+			@Field.Stored("username")
+			var username: String = ""
 
-            @Field.Relationship("server")
-            var server: StoredServer?
+			@Field.Stored("id")
+			var id: String = ""
 
-            @Field.Relationship("accessToken", inverse: \StoredAccessToken.$user)
-            var accessToken: StoredAccessToken?
+			@Field.Stored("appleTVID")
+			var appleTVID: String = ""
 
-            var state: State.User {
-                guard let server = server else { fatalError("No server associated with user") }
-                guard let accessToken = accessToken else { fatalError("No access token associated with user") }
-                return State.User(username: username,
-                                  id: id,
-                                  serverID: server.id,
-                                  accessToken: accessToken.value)
-            }
-        }
+			@Field.Relationship("server")
+			var server: StoredServer?
 
-        final class StoredAccessToken: CoreStoreObject {
+			@Field.Relationship("accessToken", inverse: \StoredAccessToken.$user)
+			var accessToken: StoredAccessToken?
 
-            @Field.Stored("value")
-            var value: String = ""
+			var state: State.User {
+				guard let server = server else { fatalError("No server associated with user") }
+				guard let accessToken = accessToken else { fatalError("No access token associated with user") }
+				return State.User(username: username,
+				                  id: id,
+				                  serverID: server.id,
+				                  accessToken: accessToken.value)
+			}
+		}
 
-            @Field.Relationship("user")
-            var user: StoredUser?
-        }
-    }
+		final class StoredAccessToken: CoreStoreObject {
 
-    // MARK: Errors
-    enum Errors {
-        case existingServer(State.Server)
-        case existingUser(State.User)
-    }
+			@Field.Stored("value")
+			var value: String = ""
 
-    // MARK: dataStack
-    static let dataStack: DataStack = {
-        let schema = CoreStoreSchema(modelVersion: "V1",
-                                     entities: [
-                                        Entity<SwiftfinStore.Models.StoredServer>("Server"),
-                                        Entity<SwiftfinStore.Models.StoredUser>("User"),
-                                        Entity<SwiftfinStore.Models.StoredAccessToken>("AccessToken")
-                                     ],
-                                     versionLock: [
-                                         "AccessToken": [0xa8c475e874494bb1, 0x79486e93449f0b3d, 0xa7dc4a0003541edb, 0x94183fae7580ef72],
-                                         "Server": [0x936b46acd8e8f0e3, 0x59890d4d9f3f885f, 0x819cf7a4abf98b22, 0xe16125c5af885a06],
-                                         "User": [0x845de08a74bc53ed, 0xe95a406a29f3a5d0, 0x9eda732821a15ea9, 0xb5afa531e41ce8a]
-                                     ])
+			@Field.Relationship("user")
+			var user: StoredUser?
+		}
+	}
 
-        let _dataStack = DataStack(schema)
-        try! _dataStack.addStorageAndWait(
-            SQLiteStore(
-                fileName: "Swiftfin.sqlite",
-                localStorageOptions: .recreateStoreOnModelMismatch
-            )
-        )
-        return _dataStack
-    }()
+	// MARK: Errors
+
+	enum Errors {
+		case existingServer(State.Server)
+		case existingUser(State.User)
+	}
+
+	// MARK: dataStack
+
+	static let dataStack: DataStack = {
+		let schema = CoreStoreSchema(modelVersion: "V1",
+		                             entities: [
+		                             	Entity<SwiftfinStore.Models.StoredServer>("Server"),
+		                             	Entity<SwiftfinStore.Models.StoredUser>("User"),
+		                             	Entity<SwiftfinStore.Models.StoredAccessToken>("AccessToken"),
+		                             ],
+		                             versionLock: [
+		                             	"AccessToken": [
+		                             		0xA8C4_75E8_7449_4BB1,
+		                             		0x7948_6E93_449F_0B3D,
+		                             		0xA7DC_4A00_0354_1EDB,
+		                             		0x9418_3FAE_7580_EF72,
+		                             	],
+		                             	"Server": [
+		                             		0x936B_46AC_D8E8_F0E3,
+		                             		0x5989_0D4D_9F3F_885F,
+		                             		0x819C_F7A4_ABF9_8B22,
+		                             		0xE161_25C5_AF88_5A06,
+		                             	],
+		                             	"User": [
+		                             		0x845D_E08A_74BC_53ED,
+		                             		0xE95A_406A_29F3_A5D0,
+		                             		0x9EDA_7328_21A1_5EA9,
+		                             		0xB5A_FA53_1E41_CE8A,
+		                             	],
+		                             ])
+
+		let _dataStack = DataStack(schema)
+		try! _dataStack.addStorageAndWait(SQLiteStore(fileName: "Swiftfin.sqlite",
+		                                              localStorageOptions: .recreateStoreOnModelMismatch))
+		return _dataStack
+	}()
 }
 
 // MARK: LocalizedError
+
 extension SwiftfinStore.Errors: LocalizedError {
 
-    var title: String {
-        switch self {
-        case .existingServer:
-            return "Existing Server"
-        case .existingUser:
-            return "Existing User"
-        }
-    }
+	var title: String {
+		switch self {
+		case .existingServer:
+			return "Existing Server"
+		case .existingUser:
+			return "Existing User"
+		}
+	}
 
-    var errorDescription: String? {
-        switch self {
-        case .existingServer(let server):
-            return "Server \(server.name) already exists with same server ID"
-        case .existingUser(let user):
-            return "User \(user.username) already exists with same user ID"
-        }
-    }
+	var errorDescription: String? {
+		switch self {
+		case let .existingServer(server):
+			return "Server \(server.name) already exists with same server ID"
+		case let .existingUser(user):
+			return "User \(user.username) already exists with same user ID"
+		}
+	}
 }
