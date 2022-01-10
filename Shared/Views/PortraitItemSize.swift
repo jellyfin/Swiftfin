@@ -14,6 +14,6 @@ extension View {
     /// Applies Portrait Poster frame with proper corner radius ratio against the width
     func portraitPoster(width: CGFloat) -> some View {
         self.frame(width: width, height: width * 1.5)
-            .cornerRadius(width / 24)
+            .cornerRadius((width * 1.5) / 40)
     }
 }

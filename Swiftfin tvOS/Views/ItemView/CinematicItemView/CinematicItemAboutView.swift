@@ -17,13 +17,12 @@ struct CinematicItemAboutView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 257))
-                .frame(width: 257, height: 380)
-                .cornerRadius(10)
+                .portraitPoster(width: 257)
             
             ZStack(alignment: .topLeading) {
                 Color(UIColor.darkGray).opacity(focused ? 0.2 : 0)
-                    .cornerRadius(30)
-                    .frame(height: 380)
+                    .cornerRadius(9.5)
+                    .frame(height: 385.5)
                 
                 VStack(alignment: .leading) {
                     Text("About")
