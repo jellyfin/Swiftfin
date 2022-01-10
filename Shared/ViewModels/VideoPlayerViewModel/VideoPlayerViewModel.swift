@@ -24,8 +24,10 @@ final class VideoPlayerViewModel: ViewModel {
 
 	// Manually kept state because VLCKit doesn't properly set "played"
 	// on the VLCMediaPlayer object
-	@Published var playerState: VLCMediaPlayerState = .buffering
-	@Published var leftLabelText: String = "--:--"
+	@Published
+	var playerState: VLCMediaPlayerState = .buffering
+	@Published
+	var leftLabelText: String = "--:--"
 	@Published
 	var rightLabelText: String = "--:--"
 	@Published
