@@ -1814,7 +1814,7 @@
 				536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */,
 				53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */,
 				62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */,
-				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */,
+				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */,
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
 				E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */,
 				E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
@@ -2773,7 +2773,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2810,7 +2810,7 @@
 				CURRENT_PROJECT_VERSION = 66;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2841,7 +2841,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2868,7 +2868,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3000,7 +3000,7 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */ = {
+		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
 			requirement = {
@@ -3117,17 +3117,17 @@
 		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3CC27164CA7009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3CE27164E1F009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore.git" */;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
 			productName = CoreStore;
 		};
 		E13DD3D227168E65009D4DAF /* Defaults */ = {
