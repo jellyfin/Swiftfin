@@ -1043,7 +1043,6 @@
 				62ECA01926FA6D6900E8EBB7 /* AppURLHandler */,
 				5377CBF8263B596B003A4E83 /* Assets.xcassets */,
 				53F866422687A45400DCD1D7 /* Components */,
-				5D160401278A41BA00D22B99 /* Extensions */,
 				5377CC02263B596B003A4E83 /* Info.plist */,
 				E13D02842788B634000FCB04 /* Swiftfin.entitlements */,
 				5377CBFA263B596B003A4E83 /* Preview Content */,
@@ -1222,13 +1221,6 @@
 				E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */,
 			);
 			path = Components;
-			sourceTree = "<group>";
-		};
-		5D160401278A41BA00D22B99 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		5D64683B277B15E4009E09AE /* PreferenceUIHosting */ = {
