@@ -284,138 +284,136 @@ class VLCPlayerViewController: UIViewController {
 
 extension VLCPlayerViewController {
 
-	/// Main function that handles setting up the media player with the current VideoPlayerViewModel
-	/// and also takes the role of setting the 'viewModel' property with the given viewModel
-	///
-	/// Use case for this is setting new media within the same VLCPlayerViewController
-	func setupMediaPlayer(newViewModel: VideoPlayerViewModel) {
+    /// Main function that handles setting up the media player with the current VideoPlayerViewModel
+    /// and also takes the role of setting the 'viewModel' property with the given viewModel
+    ///
+    /// Use case for this is setting new media within the same VLCPlayerViewController
+    func setupMediaPlayer(newViewModel: VideoPlayerViewModel) {
 
-		// remove old player
+        // remove old player
 
-		if vlcMediaPlayer.media != nil {
-			viewModelListeners.forEach { $0.cancel() }
+        if vlcMediaPlayer.media != nil {
+            viewModelListeners.forEach({ $0.cancel() })
 
-			vlcMediaPlayer.stop()
-			viewModel.sendStopReport()
-			viewModel.playerOverlayDelegate = nil
-		}
+            vlcMediaPlayer.stop()
+            viewModel.sendStopReport()
+            viewModel.playerOverlayDelegate = nil
+        }
 
-		vlcMediaPlayer = VLCMediaPlayer()
+        vlcMediaPlayer = VLCMediaPlayer()
 
-		// setup with new player and view model
+        // setup with new player and view model
 
-		vlcMediaPlayer = VLCMediaPlayer()
+        vlcMediaPlayer = VLCMediaPlayer()
 
-		vlcMediaPlayer.delegate = self
-		vlcMediaPlayer.drawable = videoContentView
+        vlcMediaPlayer.delegate = self
+        vlcMediaPlayer.drawable = videoContentView
 
-		// TODO: Custom subtitle sizes
-		vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
+        vlcMediaPlayer.setSubtitleSize(Defaults[.subtitleSize])
 
-		stopOverlayDismissTimer()
+        stopOverlayDismissTimer()
 
-		lastPlayerTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
-		lastProgressReportTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
+        lastPlayerTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
+        lastProgressReportTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
 
-		let media = VLCMedia(url: newViewModel.streamURL)
-		media.addOption("--prefetch-buffer-size=1048576")
-		media.addOption("--network-caching=5000")
+        let media = VLCMedia(url: newViewModel.streamURL)
+        media.addOption("--prefetch-buffer-size=1048576")
+        media.addOption("--network-caching=5000")
 
-		vlcMediaPlayer.media = media
+        vlcMediaPlayer.media = media
 
-		setupOverlayHostingController(viewModel: newViewModel)
-		setupViewModelListeners(viewModel: newViewModel)
+        setupOverlayHostingController(viewModel: newViewModel)
+        setupViewModelListeners(viewModel: newViewModel)
 
-		newViewModel.getAdjacentEpisodes()
-		newViewModel.playerOverlayDelegate = self
+        newViewModel.getAdjacentEpisodes()
+        newViewModel.playerOverlayDelegate = self
 
-		let startPercentage = newViewModel.item.userData?.playedPercentage ?? 0
+        let startPercentage = newViewModel.item.userData?.playedPercentage ?? 0
 
-		if startPercentage > 0 {
-			if viewModel.resumeOffset {
-				let videoDurationSeconds = Double(viewModel.item.runTimeTicks! / 10_000_000)
-				var startSeconds = round((startPercentage / 100) * videoDurationSeconds)
-				startSeconds = startSeconds.subtract(5, floor: 0)
-				let newStartPercentage = startSeconds / videoDurationSeconds
-				newViewModel.sliderPercentage = newStartPercentage
-			} else {
-				newViewModel.sliderPercentage = startPercentage / 100
-			}
-		}
+        if startPercentage > 0 {
+            if viewModel.resumeOffset {
+                let videoDurationSeconds = Double(viewModel.item.runTimeTicks! / 10_000_000)
+                var startSeconds = round((startPercentage / 100) * videoDurationSeconds)
+                startSeconds = startSeconds.subtract(5, floor: 0)
+                let newStartPercentage = startSeconds / videoDurationSeconds
+                newViewModel.sliderPercentage = newStartPercentage
+            } else {
+                newViewModel.sliderPercentage = startPercentage / 100
+            }
+        }
 
-		viewModel = newViewModel
-	}
+        viewModel = newViewModel
+    }
 
-	// MARK: startPlayback
+    // MARK: startPlayback
+    func startPlayback() {
+        vlcMediaPlayer.play()
 
-	func startPlayback() {
-		vlcMediaPlayer.play()
+        // Setup external subtitles
+        for externalSubtitle in viewModel.subtitleStreams.filter({ $0.deliveryMethod == .external }) {
+            if let deliveryURL = externalSubtitle.externalURL(base: SessionManager.main.currentLogin.server.currentURI) {
+                vlcMediaPlayer.addPlaybackSlave(deliveryURL, type: .subtitle, enforce: false)
+            }
+        }
 
-		// Setup external subtitles
-		for externalSubtitle in viewModel.subtitleStreams.filter({ $0.deliveryMethod == .external }) {
-			if let deliveryURL = externalSubtitle.externalURL(base: SessionManager.main.currentLogin.server.currentURI) {
-				vlcMediaPlayer.addPlaybackSlave(deliveryURL, type: .subtitle, enforce: false)
-			}
-		}
+        setMediaPlayerTimeAtCurrentSlider()
 
-		setMediaPlayerTimeAtCurrentSlider()
+        viewModel.sendPlayReport()
 
-		viewModel.sendPlayReport()
+        restartOverlayDismissTimer()
+    }
 
-		restartOverlayDismissTimer()
-	}
+    // MARK: setupViewModelListeners
 
-	// MARK: setupViewModelListeners
+    private func setupViewModelListeners(viewModel: VideoPlayerViewModel) {
 
-	private func setupViewModelListeners(viewModel: VideoPlayerViewModel) {
+        viewModel.$playbackSpeed.sink { newSpeed in
+            self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
+        }.store(in: &viewModelListeners)
 
-		viewModel.$playbackSpeed.sink { newSpeed in
-			self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
-		}.store(in: &viewModelListeners)
+        viewModel.$sliderIsScrubbing.sink { sliderIsScrubbing in
+            if sliderIsScrubbing {
+                self.didBeginScrubbing()
+            } else {
+                self.didEndScrubbing()
+            }
+        }.store(in: &viewModelListeners)
 
-		viewModel.$sliderIsScrubbing.sink { sliderIsScrubbing in
-			if sliderIsScrubbing {
-				self.didBeginScrubbing()
-			} else {
-				self.didEndScrubbing()
-			}
-		}.store(in: &viewModelListeners)
+        viewModel.$selectedAudioStreamIndex.sink { newAudioStreamIndex in
+            self.didSelectAudioStream(index: newAudioStreamIndex)
+        }.store(in: &viewModelListeners)
 
-		viewModel.$selectedAudioStreamIndex.sink { newAudioStreamIndex in
-			self.didSelectAudioStream(index: newAudioStreamIndex)
-		}.store(in: &viewModelListeners)
+        viewModel.$selectedSubtitleStreamIndex.sink { newSubtitleStreamIndex in
+            self.didSelectSubtitleStream(index: newSubtitleStreamIndex)
+        }.store(in: &viewModelListeners)
 
-		viewModel.$selectedSubtitleStreamIndex.sink { newSubtitleStreamIndex in
-			self.didSelectSubtitleStream(index: newSubtitleStreamIndex)
-		}.store(in: &viewModelListeners)
+        viewModel.$subtitlesEnabled.sink { newSubtitlesEnabled in
+            self.didToggleSubtitles(newValue: newSubtitlesEnabled)
+        }.store(in: &viewModelListeners)
 
-		viewModel.$subtitlesEnabled.sink { newSubtitlesEnabled in
-			self.didToggleSubtitles(newValue: newSubtitlesEnabled)
-		}.store(in: &viewModelListeners)
+        viewModel.$jumpBackwardLength.sink { newJumpBackwardLength in
+            self.refreshJumpBackwardOverlayView(with: newJumpBackwardLength)
+        }.store(in: &viewModelListeners)
 
-		viewModel.$jumpBackwardLength.sink { newJumpBackwardLength in
-			self.refreshJumpBackwardOverlayView(with: newJumpBackwardLength)
-		}.store(in: &viewModelListeners)
+        viewModel.$jumpForwardLength.sink { newJumpForwardLength in
+            self.refreshJumpForwardOverlayView(with: newJumpForwardLength)
+        }.store(in: &viewModelListeners)
+    }
 
-		viewModel.$jumpForwardLength.sink { newJumpForwardLength in
-			self.refreshJumpForwardOverlayView(with: newJumpForwardLength)
-		}.store(in: &viewModelListeners)
-	}
+    func setMediaPlayerTimeAtCurrentSlider() {
+        // Necessary math as VLCMediaPlayer doesn't work well
+        //     by just setting the position
+        let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
+        let videoDuration = Double(viewModel.item.runTimeTicks! / 10_000_000)
+        let secondsScrubbedTo = round(viewModel.sliderPercentage * videoDuration)
+        let newPositionOffset = secondsScrubbedTo - videoPosition
 
-	func setMediaPlayerTimeAtCurrentSlider() {
-		// Necessary math as VLCMediaPlayer doesn't work well
-		//     by just setting the position
-		let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
-		let videoDuration = Double(viewModel.item.runTimeTicks! / 10_000_000)
-		let secondsScrubbedTo = round(viewModel.sliderPercentage * videoDuration)
-		let newPositionOffset = secondsScrubbedTo - videoPosition
-
-		if newPositionOffset > 0 {
-			vlcMediaPlayer.jumpForward(Int32(newPositionOffset))
-		} else {
-			vlcMediaPlayer.jumpBackward(Int32(abs(newPositionOffset)))
-		}
-	}
+        if newPositionOffset > 0 {
+            vlcMediaPlayer.jumpForward(Int32(newPositionOffset))
+        } else {
+            vlcMediaPlayer.jumpBackward(Int32(abs(newPositionOffset)))
+        }
+    }
 }
 
 // MARK: Show/Hide Overlay

@@ -13,126 +13,127 @@ import SwiftUI
 
 struct SettingsView: View {
 
-	@EnvironmentObject
-	var settingsRouter: SettingsCoordinator.Router
-	@ObservedObject
-	var viewModel: SettingsViewModel
+    @EnvironmentObject var settingsRouter: SettingsCoordinator.Router
+    @ObservedObject var viewModel: SettingsViewModel
 
-	@Default(.autoSelectAudioLangCode)
-	var autoSelectAudioLangcode
-	@Default(.videoPlayerJumpForward)
-	var jumpForwardLength
-	@Default(.videoPlayerJumpBackward)
-	var jumpBackwardLength
-	@Default(.downActionShowsMenu)
-	var downActionShowsMenu
-	@Default(.confirmClose)
-	var confirmClose
-	@Default(.tvOSCinematicViews)
-	var tvOSCinematicViews
-	@Default(.showPosterLabels)
-	var showPosterLabels
-	@Default(.resumeOffset)
-	var resumeOffset
+    @Default(.autoSelectAudioLangCode) var autoSelectAudioLangcode
+    @Default(.videoPlayerJumpForward) var jumpForwardLength
+    @Default(.videoPlayerJumpBackward) var jumpBackwardLength
+    @Default(.downActionShowsMenu) var downActionShowsMenu
+    @Default(.confirmClose) var confirmClose
+    @Default(.tvOSCinematicViews) var tvOSCinematicViews
+    @Default(.showPosterLabels) var showPosterLabels
+    @Default(.resumeOffset) var resumeOffset
+    @Default(.subtitleSize) var subtitleSize
 
-	var body: some View {
-		GeometryReader { reader in
-			HStack {
+    var body: some View {
+        GeometryReader { reader in
+            HStack {
 
-				Image(uiImage: UIImage(named: "App Icon")!)
-					.cornerRadius(30)
-					.scaleEffect(2)
-					.frame(width: reader.size.width / 2)
+                Image(uiImage: UIImage(named: "App Icon")!)
+                    .cornerRadius(30)
+                    .scaleEffect(2)
+                    .frame(width: reader.size.width / 2)
 
-				Form {
-					Section(header: EmptyView()) {
+                Form {
+                    Section(header: EmptyView()) {
 
-						Button {} label: {
-							HStack {
-								Text("User")
-								Spacer()
-								Text(viewModel.user.username)
-									.foregroundColor(.jellyfinPurple)
-							}
-						}
+                        Button {
 
-						Button {
-							settingsRouter.route(to: \.serverDetail)
-						} label: {
-							HStack {
-								Text("Server")
-									.foregroundColor(.primary)
-								Spacer()
-								Text(viewModel.server.name)
-									.foregroundColor(.jellyfinPurple)
+                        } label: {
+                            HStack {
+                                Text("User")
+                                Spacer()
+                                Text(viewModel.user.username)
+                                    .foregroundColor(.jellyfinPurple)
+                            }
+                        }
 
-								Image(systemName: "chevron.right")
-									.foregroundColor(.jellyfinPurple)
-							}
-						}
+                        Button {
+                            settingsRouter.route(to: \.serverDetail)
+                        } label: {
+                            HStack {
+                                Text("Server")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text(viewModel.server.name)
+                                    .foregroundColor(.jellyfinPurple)
 
-						Button {
-							SessionManager.main.logout()
-						} label: {
-							Text("Switch User")
-								.foregroundColor(Color.jellyfinPurple)
-								.font(.callout)
-						}
-					}
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.jellyfinPurple)
+                            }
+                        }
 
-					Section(header: Text("Video Player")) {
-						Picker("Jump Forward Length", selection: $jumpForwardLength) {
-							ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
-								Text(length.label).tag(length.rawValue)
-							}
-						}
+                        Button {
+                            SessionManager.main.logout()
+                        } label: {
+                            Text("Switch User")
+                                .foregroundColor(Color.jellyfinPurple)
+                                .font(.callout)
+                        }
+                    }
 
-						Picker("Jump Backward Length", selection: $jumpBackwardLength) {
-							ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
-								Text(length.label).tag(length.rawValue)
-							}
-						}
+                    Section(header: Text("Video Player")) {
+                        Picker("Jump Forward Length", selection: $jumpForwardLength) {
+                            ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
+                                Text(length.label).tag(length.rawValue)
+                            }
+                        }
 
-						Toggle("Resume 5 Second Offset", isOn: $resumeOffset)
+                        Picker("Jump Backward Length", selection: $jumpBackwardLength) {
+                            ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
+                                Text(length.label).tag(length.rawValue)
+                            }
+                        }
 
-						Toggle("Press Down for Menu", isOn: $downActionShowsMenu)
+                        Toggle("Resume 5 Second Offset", isOn: $resumeOffset)
 
-						Toggle("Confirm Close", isOn: $confirmClose)
+                        Toggle("Press Down for Menu", isOn: $downActionShowsMenu)
 
-						Button {
-							settingsRouter.route(to: \.overlaySettings)
-						} label: {
-							HStack {
-								Text("Overlay")
-									.foregroundColor(.primary)
-								Spacer()
-								Image(systemName: "chevron.right")
-							}
-						}
+                        Toggle("Confirm Close", isOn: $confirmClose)
 
-						Button {
-							settingsRouter.route(to: \.experimentalSettings)
-						} label: {
-							HStack {
-								Text("Experimental")
-									.foregroundColor(.primary)
-								Spacer()
-								Image(systemName: "chevron.right")
-							}
-						}
-					}
+                        Button {
+                            settingsRouter.route(to: \.overlaySettings)
+                        } label: {
+                            HStack {
+                                Text("Overlay")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                        }
 
-					Section {
-						Toggle("Cinematic Views", isOn: $tvOSCinematicViews)
-						Toggle("Show Poster Labels", isOn: $showPosterLabels)
+                        Button {
+                            settingsRouter.route(to: \.experimentalSettings)
+                        } label: {
+                            HStack {
+                                Text("Experimental")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                        }
+                    }
 
-					} header: {
-						Text("Appearance")
-					}
-				}
-			}
-		}
-	}
+                    Section {
+                        Toggle("Cinematic Views", isOn: $tvOSCinematicViews)
+                    } header: {
+                        Text("Appearance")
+                    }
+
+                    Section(header: L10n.accessibility.text) {
+                        Toggle("Show Poster Labels", isOn: $showPosterLabels)
+
+                        Picker("Subtitle size", selection: $subtitleSize) {
+                            ForEach(SubtitleSize.allCases, id: \.self) { size in
+                                Text(size.label).tag(size.rawValue)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 struct SettingsView_Previews: PreviewProvider {
