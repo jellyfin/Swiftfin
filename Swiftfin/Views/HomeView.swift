@@ -119,5 +119,8 @@ struct HomeView: View {
                     }
                 }
             }
+            .onAppear {
+                refreshHelper.refreshStaleData()
+            }
     }
 }
