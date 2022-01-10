@@ -298,9 +298,8 @@ extension VLCPlayerViewController {
         
         vlcMediaPlayer.delegate = self
         vlcMediaPlayer.drawable = videoContentView
-        
-        // TODO: Custom subtitle sizes
-        vlcMediaPlayer.perform(Selector(("setTextRendererFontSize:")), with: 14)
+
+        vlcMediaPlayer.setSubtitleSize(Defaults[.subtitleSize])
         
         stopOverlayDismissTimer()
         

@@ -23,6 +23,7 @@ struct SettingsView: View {
     @Default(.tvOSCinematicViews) var tvOSCinematicViews
     @Default(.showPosterLabels) var showPosterLabels
     @Default(.resumeOffset) var resumeOffset
+    @Default(.subtitleSize) var subtitleSize
 
     var body: some View {
         GeometryReader { reader in
@@ -115,10 +116,18 @@ struct SettingsView: View {
                     
                     Section {
                         Toggle("Cinematic Views", isOn: $tvOSCinematicViews)
-                        Toggle("Show Poster Labels", isOn: $showPosterLabels)
-                        
                     } header: {
                         Text("Appearance")
+                    }
+
+                    Section(header: L10n.accessibility.text) {
+                        Toggle("Show Poster Labels", isOn: $showPosterLabels)
+
+                        Picker("Subtitle size", selection: $subtitleSize) {
+                            ForEach(SubtitleSize.allCases, id: \.self) { size in
+                                Text(size.label).tag(size.rawValue)
+                            }
+                        }
                     }
                 }
             }
