@@ -28,7 +28,7 @@ struct ParallaxHeaderScrollView<Header: View, StaticOverlayView: View, Content: 
     }
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             GeometryReader { proxy in
                 let yOffset = proxy.frame(in: .global).minY > 0 ? -proxy.frame(in: .global).minY : 0
                 header

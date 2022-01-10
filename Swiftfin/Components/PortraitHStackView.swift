@@ -46,8 +46,7 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
                                 ImageView(src: item.imageURLContsructor(maxWidth: Int(maxWidth)),
                                           bh: item.blurHash,
                                           failureInitials: item.failureInitials)
-                                    .frame(width: maxWidth, height: maxWidth * 1.5)
-                                    .cornerRadius(10)
+                                    .portraitPoster(width: maxWidth)
                                     .shadow(radius: 4, y: 2)
 
                                 if item.showTitle {

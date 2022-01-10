@@ -14,10 +14,11 @@ import JellyfinAPI
 
 final class HomeViewModel: ViewModel {
 
-    @Published var librariesShowRecentlyAddedIDs: [String] = []
-    @Published var libraries: [BaseItemDto] = []
+    @Published var latestAddedItems: [BaseItemDto] = []
     @Published var resumeItems: [BaseItemDto] = []
     @Published var nextUpItems: [BaseItemDto] = []
+    @Published var librariesShowRecentlyAddedIDs: [String] = []
+    @Published var libraries: [BaseItemDto] = []
 
     // temp
     var recentFilterSet: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: [.dateAdded])
@@ -59,6 +60,7 @@ final class HomeViewModel: ViewModel {
         LogManager.shared.log.debug("Refresh called.")
         
         refreshLibrariesLatest()
+        refreshLatestAddedItems()
         refreshResumeItems()
         refreshNextUpItems()
     }
@@ -111,13 +113,34 @@ final class HomeViewModel: ViewModel {
             .store(in: &cancellables)
     }
     
+    // MARK: Latest Added Items
+    private func refreshLatestAddedItems() {
+        UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
+                                      fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters],
+                                      enableImageTypes: [.primary, .backdrop, .thumb],
+                                      enableUserData: true,
+                                      limit: 8)
+            .sink { completion in
+                switch completion {
+                case .finished: ()
+                case .failure:
+                    self.nextUpItems = []
+                    self.handleAPIRequestError(completion: completion)
+                }
+            } receiveValue: { items in
+                LogManager.shared.log.debug("Retrieved \(String(items.count)) resume items")
+                
+                self.latestAddedItems = items
+            }
+            .store(in: &cancellables)
+    }
+    
     // MARK: Resume Items
     private func refreshResumeItems() {
-        ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id, limit: 12,
+        ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id,
+                                limit: 6,
                                 fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters],
-                                mediaTypes: ["Video"],
-                                imageTypeLimit: 1,
-                                enableImageTypes: [.primary, .backdrop, .thumb])
+                                enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -136,8 +159,10 @@ final class HomeViewModel: ViewModel {
     
     // MARK: Next Up Items
     private func refreshNextUpItems() {
-        TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id, limit: 12,
-                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters])
+        TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id,
+                             limit: 6,
+                             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people, .chapters],
+                             enableUserData: true)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 switch completion {

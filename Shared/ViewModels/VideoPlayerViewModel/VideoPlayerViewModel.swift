@@ -85,12 +85,12 @@ final class VideoPlayerViewModel: ViewModel {
     let title: String
     let subtitle: String?
     let streamURL: URL
-    let hlsURL: URL
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
     let overlayType: OverlayType
     let jumpGesturesEnabled: Bool
     let resumeOffset: Bool
+    let streamType: ServerStreamType
     
     // MARK: Experimental
     let syncSubtitleStateWithAdjacent: Bool
@@ -141,7 +141,7 @@ final class VideoPlayerViewModel: ViewModel {
          title: String,
          subtitle: String?,
          streamURL: URL,
-         hlsURL: URL,
+         streamType: ServerStreamType,
          response: PlaybackInfoResponse,
          audioStreams: [MediaStream],
          subtitleStreams: [MediaStream],
@@ -157,7 +157,7 @@ final class VideoPlayerViewModel: ViewModel {
         self.title = title
         self.subtitle = subtitle
         self.streamURL = streamURL
-        self.hlsURL = hlsURL
+        self.streamType = streamType
         self.response = response
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
