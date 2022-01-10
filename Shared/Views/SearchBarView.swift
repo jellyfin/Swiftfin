@@ -23,7 +23,7 @@ struct SearchBar: View {
 			#if os(iOS)
 				.background(Color(.systemGray6))
 			#endif
-			.cornerRadius(8)
+				.cornerRadius(8)
 			if !text.isEmpty {
 				Button(action: {
 					self.text = ""

@@ -67,8 +67,8 @@ struct LandscapeItemElement: View {
 							.fill(LinearGradient(gradient: Gradient(colors: [.black, .clear]),
 							                     startPoint: .bottom,
 							                     endPoint: .top))
-								.frame(width: 445, height: 90)
-								.mask(CutOffShadow())
+							.frame(width: 445, height: 90)
+							.mask(CutOffShadow())
 						VStack(alignment: .leading) {
 							Text("CONTINUE • \(item.getItemProgressString() ?? "")")
 								.font(.caption)
