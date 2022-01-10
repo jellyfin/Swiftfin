@@ -106,6 +106,13 @@ struct EpisodesRowView: View {
                                                           bh: episode.getBackdropImageBlurHash())
                                                     .mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
                                                     .frame(width: 200, height: 112)
+                                                    .overlay {
+                                                        if episode.id == viewModel.episodeItemViewModel.item.id {
+                                                            RoundedRectangle(cornerRadius: 6)
+                                                                .stroke(Color.jellyfinPurple, lineWidth: 4)
+                                                        }
+                                                    }
+                                                    .padding(.top)
         
                                                 VStack(alignment: .leading) {
                                                     Text(episode.getEpisodeLocator() ?? "")

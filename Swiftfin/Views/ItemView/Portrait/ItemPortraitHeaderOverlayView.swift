@@ -21,8 +21,7 @@ struct PortraitHeaderOverlayView: View {
 
                 // MARK: Portrait Image
                 ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 130))
-                    .frame(width: 130, height: 195)
-                    .cornerRadius(10)
+                    .portraitPoster(width: 130)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Spacer()
