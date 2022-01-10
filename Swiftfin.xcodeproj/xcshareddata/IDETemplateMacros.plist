@@ -4,12 +4,11 @@
 <dict>
 	<key>FILEHEADER</key>
 	<string>
- /* 
-  * SwiftFin is subject to the terms of the Mozilla Public
-  * License, v2.0. If a copy of the MPL was not distributed with this
-  * file, you can obtain one at https://mozilla.org/MPL/2.0/.
-  *
-  * Copyright 2021 Aiden Vigue &amp; Jellyfin Contributors
-  */</string>
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) ___YEAR___ Jellyfin &amp; Jellyfin Contributors
+//</string>
 </dict>
 </plist>

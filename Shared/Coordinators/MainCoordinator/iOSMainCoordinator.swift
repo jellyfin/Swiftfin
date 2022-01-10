@@ -1,11 +1,10 @@
 //
-/*
- * SwiftFin is subject to the terms of the Mozilla Public
- * License, v2.0. If a copy of the MPL was not distributed with this
- * file, you can obtain one at https://mozilla.org/MPL/2.0/.
- *
- * Copyright 2021 Aiden Vigue & Jellyfin Contributors
- */
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+//
 
 import Combine
 import Defaults
@@ -16,83 +15,91 @@ import SwiftUI
 import WidgetKit
 
 final class MainCoordinator: NavigationCoordinatable {
-    var stack: NavigationStack<MainCoordinator>
+	var stack: NavigationStack<MainCoordinator>
 
-    @Root var mainTab = makeMainTab
-    @Root var serverList = makeServerList
-    
-    private var cancellables = Set<AnyCancellable>()
+	@Root
+	var mainTab = makeMainTab
+	@Root
+	var serverList = makeServerList
 
-    init() {
-        if SessionManager.main.currentLogin != nil {
-            self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
-        } else {
-            self.stack = NavigationStack(initial: \MainCoordinator.serverList)
-        }
+	private var cancellables = Set<AnyCancellable>()
 
-        ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
-        DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
+	init() {
+		if SessionManager.main.currentLogin != nil {
+			self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
+		} else {
+			self.stack = NavigationStack(initial: \MainCoordinator.serverList)
+		}
 
-        WidgetCenter.shared.reloadAllTimelines()
-        UIScrollView.appearance().keyboardDismissMode = .onDrag
+		ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
+		DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
-        // Back bar button item setup
-        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
-        let barAppearance = UINavigationBar.appearance()
-        barAppearance.backIndicatorImage = backButtonBackgroundImage
-        barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
-        barAppearance.tintColor = UIColor(Color.jellyfinPurple)
+		WidgetCenter.shared.reloadAllTimelines()
+		UIScrollView.appearance().keyboardDismissMode = .onDrag
 
-        // Notification setup for state
-        let nc = SwiftfinNotificationCenter.main
-        nc.addObserver(self, selector: #selector(didLogIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
-        nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
-        nc.addObserver(self, selector: #selector(processDeepLink), name: SwiftfinNotificationCenter.Keys.processDeepLink, object: nil)
-        nc.addObserver(self, selector: #selector(didChangeServerCurrentURI), name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: nil)
-        
-        Defaults.publisher(.appAppearance)
-            .sink { _ in
-                JellyfinPlayerApp.setupAppearance()
-            }
-            .store(in: &cancellables)
-    }
+		// Back bar button item setup
+		let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
+		let barAppearance = UINavigationBar.appearance()
+		barAppearance.backIndicatorImage = backButtonBackgroundImage
+		barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
+		barAppearance.tintColor = UIColor(Color.jellyfinPurple)
 
-    @objc func didLogIn() {
-        LogManager.shared.log.info("Received `didSignIn` from SwiftfinNotificationCenter.")
-        root(\.mainTab)
-    }
+		// Notification setup for state
+		let nc = SwiftfinNotificationCenter.main
+		nc.addObserver(self, selector: #selector(didLogIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
+		nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+		nc.addObserver(self, selector: #selector(processDeepLink), name: SwiftfinNotificationCenter.Keys.processDeepLink, object: nil)
+		nc.addObserver(self, selector: #selector(didChangeServerCurrentURI),
+		               name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: nil)
 
-    @objc func didLogOut() {
-        LogManager.shared.log.info("Received `didSignOut` from SwiftfinNotificationCenter.")
-        root(\.serverList)
-    }
+		Defaults.publisher(.appAppearance)
+			.sink { _ in
+				JellyfinPlayerApp.setupAppearance()
+			}
+			.store(in: &cancellables)
+	}
 
-    @objc func processDeepLink(_ notification: Notification) {
-        guard let deepLink = notification.object as? DeepLink else { return }
-        if let coordinator = hasRoot(\.mainTab) {
-            switch deepLink {
-            case let .item(item):
-                coordinator.focusFirst(\.home)
-                    .child
-                    .popToRoot()
-                    .route(to: \.item, item)
-            }
-        }
-    }
+	@objc
+	func didLogIn() {
+		LogManager.shared.log.info("Received `didSignIn` from SwiftfinNotificationCenter.")
+		root(\.mainTab)
+	}
 
-    @objc func didChangeServerCurrentURI(_ notification: Notification) {
-        guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server else { fatalError("Need to have new current login state server") }
-        guard SessionManager.main.currentLogin != nil else { return }
-        if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
-            SessionManager.main.loginUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
-        }
-    }
+	@objc
+	func didLogOut() {
+		LogManager.shared.log.info("Received `didSignOut` from SwiftfinNotificationCenter.")
+		root(\.serverList)
+	}
 
-    func makeMainTab() -> MainTabCoordinator {
-        MainTabCoordinator()
-    }
+	@objc
+	func processDeepLink(_ notification: Notification) {
+		guard let deepLink = notification.object as? DeepLink else { return }
+		if let coordinator = hasRoot(\.mainTab) {
+			switch deepLink {
+			case let .item(item):
+				coordinator.focusFirst(\.home)
+					.child
+					.popToRoot()
+					.route(to: \.item, item)
+			}
+		}
+	}
 
-    func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
-        NavigationViewCoordinator(ServerListCoordinator())
-    }
+	@objc
+	func didChangeServerCurrentURI(_ notification: Notification) {
+		guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server
+		else { fatalError("Need to have new current login state server") }
+		guard SessionManager.main.currentLogin != nil else { return }
+		if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
+			SessionManager.main.loginUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
+		}
+	}
+
+	func makeMainTab() -> MainTabCoordinator {
+		MainTabCoordinator()
+	}
+
+	func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
+		NavigationViewCoordinator(ServerListCoordinator())
+	}
 }
