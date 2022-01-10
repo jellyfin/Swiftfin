@@ -254,6 +254,8 @@
 		E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E107BB9227880A8F00354E07 /* CollectionItemViewModel.swift */; };
 		E107BB9427880A8F00354E07 /* CollectionItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E107BB9227880A8F00354E07 /* CollectionItemViewModel.swift */; };
 		E107BB972788104100354E07 /* CinematicCollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E107BB952788104100354E07 /* CinematicCollectionItemView.swift */; };
+		E10C0941278B8DAB009DBF93 /* PortraitItemSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10C0940278B8DAB009DBF93 /* PortraitItemSize.swift */; };
+		E10C0942278B8DAB009DBF93 /* PortraitItemSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10C0940278B8DAB009DBF93 /* PortraitItemSize.swift */; };
 		E10D87DA2784E4F100BD264C /* ItemViewDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87D92784E4F100BD264C /* ItemViewDetailsView.swift */; };
 		E10D87DC2784EC5200BD264C /* EpisodesRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87DB2784EC5200BD264C /* EpisodesRowView.swift */; };
 		E10D87DE278510E400BD264C /* PosterSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87DD278510E300BD264C /* PosterSize.swift */; };
@@ -650,6 +652,7 @@
 		E103A6A8278AB6FF00820EC7 /* CinematicNextUpCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicNextUpCardView.swift; sourceTree = "<group>"; };
 		E107BB9227880A8F00354E07 /* CollectionItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemViewModel.swift; sourceTree = "<group>"; };
 		E107BB952788104100354E07 /* CinematicCollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicCollectionItemView.swift; sourceTree = "<group>"; };
+		E10C0940278B8DAB009DBF93 /* PortraitItemSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitItemSize.swift; sourceTree = "<group>"; };
 		E10D87D92784E4F100BD264C /* ItemViewDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewDetailsView.swift; sourceTree = "<group>"; };
 		E10D87DB2784EC5200BD264C /* EpisodesRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesRowView.swift; sourceTree = "<group>"; };
 		E10D87DD278510E300BD264C /* PosterSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterSize.swift; sourceTree = "<group>"; };
@@ -1193,6 +1196,7 @@
 			isa = PBXGroup;
 			children = (
 				E188460326DEF04800B0C5B7 /* EpisodeCardVStackView.swift */,
+				E10D87DB2784EC5200BD264C /* EpisodesRowView.swift */,
 				E1AD105B26D9ABDD003E4A08 /* PillHStackView.swift */,
 				E1AD105526D981CE003E4A08 /* PortraitHStackView.swift */,
 				C4BE076D2720FEA8003F4AD1 /* PortraitItemElement.swift */,
@@ -1453,7 +1457,6 @@
 		E14F7D0A26DB3714007C3AE6 /* ItemView */ = {
 			isa = PBXGroup;
 			children = (
-				E10D87DB2784EC5200BD264C /* EpisodesRowView.swift */,
 				535BAE9E2649E569005FA86D /* ItemView.swift */,
 				E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */,
 				E10D87D92784E4F100BD264C /* ItemViewDetailsView.swift */,
@@ -1550,12 +1553,13 @@
 		E1AD105326D96F5A003E4A08 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */,
-				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				621338B22660A07800A81A2A /* LazyView.swift */,
+				C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */,
 				53E4E648263F725B00F67C6B /* MultiSelectorView.swift */,
 				6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */,
+				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
+				E10C0940278B8DAB009DBF93 /* PortraitItemSize.swift */,
 				624C21742685CF60007F1390 /* SearchablePickerView.swift */,
 				53DE4BD1267098F300739748 /* SearchBarView.swift */,
 			);
@@ -2195,6 +2199,7 @@
 				6264E88D273850380081A12A /* Strings.swift in Sources */,
 				536D3D76267BA9BB0004248C /* MainTabViewModel.swift in Sources */,
 				E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */,
+				E10C0942278B8DAB009DBF93 /* PortraitItemSize.swift in Sources */,
 				C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */,
 				E193D53B27193F9200900D82 /* SettingsCoordinator.swift in Sources */,
 				E1E5D5392783A56B00692DFE /* EpisodesRowView.swift in Sources */,
@@ -2319,6 +2324,7 @@
 				E10D87DC2784EC5200BD264C /* EpisodesRowView.swift in Sources */,
 				E1C812BE277A8E5D00918266 /* VLCPlayerViewController.swift in Sources */,
 				E1AA331D2782541500F6439C /* PrimaryButtonView.swift in Sources */,
+				E10C0941278B8DAB009DBF93 /* PortraitItemSize.swift in Sources */,
 				62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */,
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				C4BE07762725EBEA003F4AD1 /* LiveTVProgramsViewModel.swift in Sources */,
@@ -2745,7 +2751,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2782,7 +2788,7 @@
 				CURRENT_PROJECT_VERSION = 66;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2813,7 +2819,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2840,7 +2846,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 66;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
