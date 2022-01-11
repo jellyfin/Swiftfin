@@ -21,26 +21,33 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 		VStack(alignment: .leading, spacing: 0) {
 
 			HStack {
-				Menu {
-					ForEach(Array(viewModel.seasonsEpisodes.keys).sorted(by: { $0.name ?? "" < $1.name ?? "" }), id: \.self) { season in
-						Button {
-							viewModel.selectedSeason = season
-						} label: {
-							if season.id == viewModel.selectedSeason?.id {
-								Label(season.name ?? L10n.season, systemImage: "checkmark")
-							} else {
-								Text(season.name ?? L10n.season)
-							}
-						}
-					}
-				} label: {
-					HStack(spacing: 5) {
-						Text(viewModel.selectedSeason?.name ?? L10n.unknown)
-							.fontWeight(.semibold)
-							.fixedSize()
-						Image(systemName: "chevron.down")
-					}
-				}
+                
+                if onlyCurrentSeason {
+                    if let currentSeason = Array(viewModel.seasonsEpisodes.keys).first(where: { $0.id == viewModel.item.id }) {
+                        Text(currentSeason.name ?? L10n.noTitle)
+                    }
+                } else {
+                    Menu {
+                        ForEach(Array(viewModel.seasonsEpisodes.keys).sorted(by: { $0.name ?? "" < $1.name ?? "" }), id: \.self) { season in
+                            Button {
+                                viewModel.select(season: season)
+                            } label: {
+                                if season.id == viewModel.selectedSeason?.id {
+                                    Label(season.name ?? L10n.season, systemImage: "checkmark")
+                                } else {
+                                    Text(season.name ?? L10n.season)
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 5) {
+                            Text(viewModel.selectedSeason?.name ?? L10n.unknown)
+                                .fontWeight(.semibold)
+                                .fixedSize()
+                            Image(systemName: "chevron.down")
+                        }
+                    }
+                }
 
 				Spacer()
 			}
