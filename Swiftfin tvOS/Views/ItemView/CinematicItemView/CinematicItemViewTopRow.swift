@@ -24,8 +24,8 @@ struct CinematicItemViewTopRow: View {
 	var title: String
 	@State
 	var subtitle: String?
-    @State
-    private var playButtonText: String = ""
+	@State
+	private var playButtonText: String = ""
 	let showDetails: Bool
 
 	init(viewModel: ItemViewModel,
@@ -136,12 +136,12 @@ struct CinematicItemViewTopRow: View {
 				.padding(.bottom, 50)
 			}
 		}
-        .onAppear {
-            playButtonText = viewModel.playButtonText()
-        }
-        .onChange(of: viewModel.item, perform: { newValue in
-            playButtonText = viewModel.playButtonText()
-        })
+		.onAppear {
+			playButtonText = viewModel.playButtonText()
+		}
+		.onChange(of: viewModel.item, perform: { _ in
+			playButtonText = viewModel.playButtonText()
+		})
 		.onChange(of: envFocused) { envFocus in
 			if envFocus == true {
 				wrappedScrollView?.scrollToTop()
