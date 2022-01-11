@@ -16,6 +16,10 @@ internal enum L10n {
   internal static let accessibility = L10n.tr("Localizable", "accessibility")
   /// Add URL
   internal static let addURL = L10n.tr("Localizable", "addURL")
+  /// Airs %s
+  internal static func airWithDate(_ p1: UnsafePointer<CChar>) -> String {
+    return L10n.tr("Localizable", "airWithDate", p1)
+  }
   /// All Genres
   internal static let allGenres = L10n.tr("Localizable", "allGenres")
   /// All Media
@@ -144,6 +148,8 @@ internal enum L10n {
   }
   /// Media
   internal static let media = L10n.tr("Localizable", "media")
+  /// Missing
+  internal static let missing = L10n.tr("Localizable", "missing")
   /// More Like This
   internal static let moreLikeThis = L10n.tr("Localizable", "moreLikeThis")
   /// Movies
@@ -340,6 +346,8 @@ internal enum L10n {
   internal static let tvShows = L10n.tr("Localizable", "tvShows")
   /// Unable to connect to server
   internal static let unableToConnectServer = L10n.tr("Localizable", "unableToConnectServer")
+  /// Unaired
+  internal static let unaired = L10n.tr("Localizable", "unaired")
   /// Unauthorized
   internal static let unauthorized = L10n.tr("Localizable", "unauthorized")
   /// Unauthorized user

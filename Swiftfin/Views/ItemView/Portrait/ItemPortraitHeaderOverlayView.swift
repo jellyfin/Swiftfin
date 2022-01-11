@@ -42,6 +42,16 @@ struct PortraitHeaderOverlayView: View {
 					// MARK: Details
 
 					HStack {
+						if viewModel.item.unaired {
+							if let premiereDateLabel = viewModel.item.airDateLabel {
+								Text(premiereDateLabel)
+									.font(.subheadline)
+									.fontWeight(.medium)
+									.foregroundColor(.secondary)
+									.lineLimit(1)
+							}
+						}
+
 						if viewModel.shouldDisplayRuntime() {
 							if let runtime = viewModel.item.getItemRuntime() {
 								Text(runtime)

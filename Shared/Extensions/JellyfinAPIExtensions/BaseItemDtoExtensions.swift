@@ -289,4 +289,31 @@ public extension BaseItemDto {
 
 		return mediaItems
 	}
+
+	// MARK: Missing and Unaired
+
+	var missing: Bool {
+		locationType == .virtual
+	}
+
+	var unaired: Bool {
+		if let premierDate = premiereDate {
+			return premierDate > Date()
+		} else {
+			return true
+		}
+	}
+
+	var airDateLabel: String? {
+		guard let premiereDateFormatted = premiereDateFormatted else { return nil }
+		return L10n.airWithDate(premiereDateFormatted)
+	}
+
+	var premiereDateFormatted: String? {
+		guard let premiereDate = premiereDate else { return nil }
+
+		let dateFormatter = DateFormatter()
+		dateFormatter.dateStyle = .medium
+		return dateFormatter.string(from: premiereDate)
+	}
 }
