@@ -54,7 +54,25 @@ class ItemViewModel: ViewModel {
 
 		getSimilarItems()
 
+		SwiftfinNotificationCenter.main.addObserver(self,
+		                                            selector: #selector(receivedStopReport(_:)),
+		                                            name: SwiftfinNotificationCenter.Keys.didSendStopReport,
+		                                            object: nil)
+
 		refreshItemVideoPlayerViewModel(for: item)
+	}
+
+	@objc
+	private func receivedStopReport(_ notification: NSNotification) {
+		guard let itemID = notification.object as? String else { return }
+
+		if itemID == item.id {
+			updateItem()
+		} else {
+			// Remove if necessary. Note that this cannot be in deinit as
+			// holding as an observer won't allow the object to be deinit-ed
+			SwiftfinNotificationCenter.main.removeObserver(self)
+		}
 	}
 
 	func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
@@ -139,4 +157,7 @@ class ItemViewModel: ViewModel {
 				.store(in: &cancellables)
 		}
 	}
+
+	// Overridden by subclasses
+	func updateItem() {}
 }

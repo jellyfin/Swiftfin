@@ -15,6 +15,8 @@ struct PortraitHeaderOverlayView: View {
 	var itemRouter: ItemCoordinator.Router
 	@EnvironmentObject
 	private var viewModel: ItemViewModel
+	@State
+	private var playButtonText: String = ""
 
 	var body: some View {
 		VStack(alignment: .leading) {
@@ -37,9 +39,9 @@ struct PortraitHeaderOverlayView: View {
 						.fixedSize(horizontal: false, vertical: true)
 						.padding(.bottom, 10)
 
-					if viewModel.item.itemType.showDetails {
-						// MARK: Runtime
+					// MARK: Details
 
+					HStack {
 						if viewModel.shouldDisplayRuntime() {
 							if let runtime = viewModel.item.getItemRuntime() {
 								Text(runtime)
@@ -49,11 +51,7 @@ struct PortraitHeaderOverlayView: View {
 									.lineLimit(1)
 							}
 						}
-					}
 
-					// MARK: Details
-
-					HStack {
 						if let productionYear = viewModel.item.productionYear {
 							Text(String(productionYear))
 								.font(.subheadline)
@@ -88,7 +86,7 @@ struct PortraitHeaderOverlayView: View {
 						Image(systemName: "play.fill")
 							.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
 							.font(.system(size: 20))
-						Text(viewModel.playButtonText())
+						Text(playButtonText)
 							.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
 							.font(.callout)
 							.fontWeight(.semibold)
@@ -137,7 +135,10 @@ struct PortraitHeaderOverlayView: View {
 				}
 			}.padding(.top, 8)
 		}
-		.padding(.horizontal, 16)
+		.onAppear {
+			playButtonText = viewModel.playButtonText()
+		}
+		.padding(.horizontal)
 		.padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? -189 : -64)
 	}
 }

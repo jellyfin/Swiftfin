@@ -13,6 +13,9 @@ import UIKit
 
 extension BaseItemDto {
 	func createVideoPlayerViewModel() -> AnyPublisher<VideoPlayerViewModel, Error> {
+
+		LogManager.shared.log.debug("Creating video player view model for item: \(id ?? "")")
+
 		let builder = DeviceProfileBuilder()
 		// TODO: fix bitrate settings
 		builder.setMaxBitrate(bitrate: 60_000_000)

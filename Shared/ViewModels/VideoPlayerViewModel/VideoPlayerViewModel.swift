@@ -247,7 +247,7 @@ extension VideoPlayerViewModel {
 		                       adjacentTo: item.id,
 		                       limit: 3)
 			.sink(receiveCompletion: { completion in
-				print(completion)
+				self.handleAPIRequestError(completion: completion)
 			}, receiveValue: { response in
 
 				// 4 possible states:
@@ -510,6 +510,8 @@ extension VideoPlayerViewModel {
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
 				LogManager.shared.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
+				SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSendStopReport,
+				                                     object: self.item.id)
 			}
 			.store(in: &cancellables)
 	}
@@ -534,5 +536,15 @@ extension VideoPlayerViewModel {
 		newURL.addQueryItem(name: "SubtitleStreamIndex", value: "\(subtitleStream.index ?? -1)")
 
 		return newURL.url!
+	}
+}
+
+// MARK: Equatable
+
+extension VideoPlayerViewModel: Equatable {
+
+	static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
+		lhs.item.id == rhs.item.id &&
+			lhs.item.userData?.playbackPositionTicks == rhs.item.userData?.playbackPositionTicks
 	}
 }
