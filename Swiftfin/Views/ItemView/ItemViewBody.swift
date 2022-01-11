@@ -63,12 +63,14 @@ struct ItemViewBody: View {
 
 			// MARK: Genres
 
-			PillHStackView(title: L10n.genres,
-			               items: viewModel.item.genreItems ?? [],
-			               selectedAction: { genre in
-			               	itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-			               })
-			               	.padding(.bottom)
+            if let genres = viewModel.item.genreItems {
+                PillHStackView(title: L10n.genres,
+                               items: genres,
+                               selectedAction: { genre in
+                                itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+                               })
+                                .padding(.bottom)
+            }
 
 			// MARK: Studios
 
@@ -118,7 +120,7 @@ struct ItemViewBody: View {
 			// MARK: Cast & Crew
 
 			if showCastAndCrew {
-				if let castAndCrew = viewModel.item.people {
+                if let castAndCrew = viewModel.item.people, castAndCrew.count > 0 {
 					PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
 					                        topBarView: {
 					                        	L10n.castAndCrew.text
