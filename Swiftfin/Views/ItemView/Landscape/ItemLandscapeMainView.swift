@@ -14,6 +14,8 @@ struct ItemLandscapeMainView: View {
 	var itemRouter: ItemCoordinator.Router
 	@EnvironmentObject
 	private var viewModel: ItemViewModel
+	@State
+	private var playButtonText: String = ""
 
 	// MARK: innerBody
 
@@ -71,6 +73,9 @@ struct ItemLandscapeMainView: View {
 					}
 				}
 			}
+		}
+		.onAppear {
+			playButtonText = viewModel.playButtonText()
 		}
 	}
 

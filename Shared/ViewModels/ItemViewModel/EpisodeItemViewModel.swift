@@ -29,10 +29,6 @@ final class EpisodeItemViewModel: ItemViewModel {
 		return "\(episodeLocator)\n\(item.name ?? "")"
 	}
 
-	override func shouldDisplayRuntime() -> Bool {
-		false
-	}
-
 	func getEpisodeSeries() {
 		guard let id = item.seriesId else { return }
 		UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)
@@ -42,6 +38,31 @@ final class EpisodeItemViewModel: ItemViewModel {
 			}, receiveValue: { [weak self] item in
 				self?.series = item
 			})
+			.store(in: &cancellables)
+	}
+
+	override func updateItem() {
+		ItemsAPI.getItems(userId: SessionManager.main.currentLogin.user.id,
+		                  limit: 1,
+		                  fields: [
+		                  	.primaryImageAspectRatio,
+		                  	.seriesPrimaryImage,
+		                  	.seasonUserData,
+		                  	.overview,
+		                  	.genres,
+		                  	.people,
+		                  	.chapters,
+		                  ],
+		                  enableUserData: true,
+		                  ids: [item.id ?? ""])
+			.sink { completion in
+				self.handleAPIRequestError(completion: completion)
+			} receiveValue: { response in
+				if let item = response.items?.first {
+					self.item = item
+					self.playButtonItem = item
+				}
+			}
 			.store(in: &cancellables)
 	}
 }
