@@ -13,8 +13,8 @@ struct CinematicResumeCardView: View {
 
 	@EnvironmentObject
 	var homeRouter: HomeCoordinator.Router
-    @ObservedObject
-    var viewModel: HomeViewModel
+	@ObservedObject
+	var viewModel: HomeViewModel
 	let item: BaseItemDto
 
 	var body: some View {
@@ -55,15 +55,15 @@ struct CinematicResumeCardView: View {
 				}
 				.frame(width: 350, height: 210)
 			}
-            .buttonStyle(CardButtonStyle())
-            .padding(.top)
-            .contextMenu {
-                Button(role: .destructive) {
-                    viewModel.removeItemFromResume(item)
-                } label: {
-                    L10n.removeFromResume.text
-                }
-            }
+			.buttonStyle(CardButtonStyle())
+			.padding(.top)
+			.contextMenu {
+				Button(role: .destructive) {
+					viewModel.removeItemFromResume(item)
+				} label: {
+					L10n.removeFromResume.text
+				}
+			}
 		}
 		.padding(.vertical)
 	}

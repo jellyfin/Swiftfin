@@ -32,8 +32,8 @@ struct HomeView: View {
 				LazyVStack(alignment: .leading) {
 
 					if viewModel.resumeItems.isEmpty {
-                        HomeCinematicView(viewModel: viewModel,
-                                          items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
+						HomeCinematicView(viewModel: viewModel,
+						                  items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
 						                  forcedItemSubtitle: L10n.recentlyAdded)
 
 						if !viewModel.nextUpItems.isEmpty {
@@ -42,7 +42,7 @@ struct HomeView: View {
 						}
 					} else {
 						HomeCinematicView(viewModel: viewModel,
-                                          items: viewModel.resumeItems.map { .init(item: $0, type: .resume) })
+						                  items: viewModel.resumeItems.map { .init(item: $0, type: .resume) })
 
 						if !viewModel.nextUpItems.isEmpty {
 							NextUpView(items: viewModel.nextUpItems)
