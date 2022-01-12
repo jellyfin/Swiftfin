@@ -90,6 +90,12 @@ struct CinematicItemViewTopRow: View {
                                     } label: {
                                         Label(L10n.playFromBeginning, systemImage: "gobackward")
                                     }
+                                    
+                                    Button(role: .cancel) {
+                                        
+                                    } label: {
+                                        L10n.cancel.text
+                                    }
                                 }
                             }
 						}
