@@ -26,8 +26,19 @@ struct ItemLandscapeTopBarView: View {
 					.padding(.leading, 16)
 					.padding(.bottom, 10)
 
-				if viewModel.item.itemType.showDetails {
-					// MARK: Runtime
+				// MARK: Details
+
+				HStack {
+
+					if viewModel.item.unaired {
+						if let premiereDateLabel = viewModel.item.airDateLabel {
+							Text(premiereDateLabel)
+								.font(.subheadline)
+								.fontWeight(.medium)
+								.foregroundColor(.secondary)
+								.lineLimit(1)
+						}
+					}
 
 					if let runtime = viewModel.item.getItemRuntime() {
 						Text(runtime)
@@ -36,11 +47,7 @@ struct ItemLandscapeTopBarView: View {
 							.foregroundColor(.secondary)
 							.padding(.leading, 16)
 					}
-				}
 
-				// MARK: Details
-
-				HStack {
 					if viewModel.item.productionYear != nil {
 						Text(String(viewModel.item.productionYear ?? 0))
 							.font(.subheadline)

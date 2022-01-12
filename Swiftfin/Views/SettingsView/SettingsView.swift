@@ -141,6 +141,17 @@ struct SettingsView: View {
 				Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 				Toggle(L10n.showCastAndCrew, isOn: $showCastAndCrew)
 
+				Button {
+					settingsRouter.route(to: \.missingSettings)
+				} label: {
+					HStack {
+						L10n.missingItems.text
+							.foregroundColor(.primary)
+						Spacer()
+						Image(systemName: "chevron.right")
+					}
+				}
+
 				Picker(L10n.appearance, selection: $appAppearance) {
 					ForEach(AppAppearance.allCases, id: \.self) { appearance in
 						Text(appearance.localizedName).tag(appearance.rawValue)

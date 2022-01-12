@@ -56,7 +56,7 @@ struct CinematicEpisodeItemView: View {
 
 							CinematicItemAboutView(viewModel: viewModel)
 
-							EpisodesRowView(viewModel: EpisodesRowViewModel(episodeItemViewModel: viewModel))
+							EpisodesRowView(viewModel: viewModel, onlyCurrentSeason: true)
 								.focusSection()
 
 							if let seriesItem = viewModel.series {

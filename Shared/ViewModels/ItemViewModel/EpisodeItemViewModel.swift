@@ -11,17 +11,22 @@ import Foundation
 import JellyfinAPI
 import Stinsen
 
-final class EpisodeItemViewModel: ItemViewModel {
+final class EpisodeItemViewModel: ItemViewModel, EpisodesRowManager {
 
 	@RouterObject
 	var itemRouter: ItemCoordinator.Router?
 	@Published
 	var series: BaseItemDto?
+	@Published
+	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
+	@Published
+	var selectedSeason: BaseItemDto?
 
 	override init(item: BaseItemDto) {
 		super.init(item: item)
 
 		getEpisodeSeries()
+		retrieveSeasons()
 	}
 
 	override func getItemDisplayName() -> String {

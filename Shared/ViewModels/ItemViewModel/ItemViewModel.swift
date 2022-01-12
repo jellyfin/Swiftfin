@@ -41,7 +41,9 @@ class ItemViewModel: ViewModel {
 
 		switch item.itemType {
 		case .episode, .movie:
-			self.playButtonItem = item
+			if !item.missing && !item.unaired {
+				self.playButtonItem = item
+			}
 		default: ()
 		}
 
@@ -76,6 +78,9 @@ class ItemViewModel: ViewModel {
 	}
 
 	func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
+		guard item.itemType == .episode || item.itemType == .movie else { return }
+		guard !item.missing, !item.unaired else { return }
+
 		item.createVideoPlayerViewModel()
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
@@ -87,6 +92,15 @@ class ItemViewModel: ViewModel {
 	}
 
 	func playButtonText() -> String {
+
+		if item.unaired {
+			return L10n.unaired
+		}
+
+		if item.missing {
+			return L10n.missing
+		}
+
 		if let itemProgressString = item.getItemProgressString() {
 			return itemProgressString
 		}
@@ -103,7 +117,9 @@ class ItemViewModel: ViewModel {
 	}
 
 	func getSimilarItems() {
-		LibraryAPI.getSimilarItems(itemId: item.id!, userId: SessionManager.main.currentLogin.user.id, limit: 20,
+		LibraryAPI.getSimilarItems(itemId: item.id!,
+		                           userId: SessionManager.main.currentLogin.user.id,
+		                           limit: 10,
 		                           fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
@@ -116,7 +132,8 @@ class ItemViewModel: ViewModel {
 
 	func updateWatchState() {
 		if isWatched {
-			PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+			PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id,
+			                              itemId: item.id!)
 				.trackActivity(loading)
 				.sink(receiveCompletion: { [weak self] completion in
 					self?.handleAPIRequestError(completion: completion)
@@ -125,7 +142,8 @@ class ItemViewModel: ViewModel {
 				})
 				.store(in: &cancellables)
 		} else {
-			PlaystateAPI.markPlayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+			PlaystateAPI.markPlayedItem(userId: SessionManager.main.currentLogin.user.id,
+			                            itemId: item.id!)
 				.trackActivity(loading)
 				.sink(receiveCompletion: { [weak self] completion in
 					self?.handleAPIRequestError(completion: completion)

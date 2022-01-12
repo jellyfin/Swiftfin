@@ -62,7 +62,7 @@ struct ItemViewBody: View {
 
 			// MARK: Genres
 
-			if let genres = viewModel.item.genreItems {
+			if let genres = viewModel.item.genreItems, !genres.isEmpty {
 				PillHStackView(title: L10n.genres,
 				               items: genres,
 				               selectedAction: { genre in
@@ -84,7 +84,9 @@ struct ItemViewBody: View {
 			// MARK: Episodes
 
 			if let episodeViewModel = viewModel as? EpisodeItemViewModel {
-				EpisodesRowView(viewModel: EpisodesRowViewModel(episodeItemViewModel: episodeViewModel))
+				EpisodesRowView(viewModel: episodeViewModel, onlyCurrentSeason: false)
+			} else if let seasonViewModel = viewModel as? SeasonItemViewModel {
+				EpisodesRowView(viewModel: seasonViewModel, onlyCurrentSeason: true)
 			}
 
 			// MARK: Series
@@ -133,12 +135,12 @@ struct ItemViewBody: View {
 				}
 			}
 
-			// MARK: More Like This
+			// MARK: Recommended
 
 			if !viewModel.similarItems.isEmpty {
 				PortraitImageHStackView(items: viewModel.similarItems,
 				                        topBarView: {
-				                        	L10n.moreLikeThis.text
+				                        	L10n.recommended.text
 				                        		.fontWeight(.semibold)
 				                        		.padding(.bottom)
 				                        		.padding(.horizontal)

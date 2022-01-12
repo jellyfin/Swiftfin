@@ -22,6 +22,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	var overlaySettings = makeOverlaySettings
 	@Route(.push)
 	var experimentalSettings = makeExperimentalSettings
+	@Route(.push)
+	var missingSettings = makeMissingSettings
 
 	@ViewBuilder
 	func makeServerDetail() -> some View {
@@ -37,6 +39,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	@ViewBuilder
 	func makeExperimentalSettings() -> some View {
 		ExperimentalSettingsView()
+	}
+
+	@ViewBuilder
+	func makeMissingSettings() -> some View {
+		MissingItemsSettingsView()
 	}
 
 	@ViewBuilder

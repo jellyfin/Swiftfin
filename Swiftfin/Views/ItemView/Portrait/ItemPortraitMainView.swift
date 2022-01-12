@@ -46,16 +46,8 @@ struct ItemPortraitMainView: View {
 					Spacer()
 						.frame(height: 70)
 
-					if let episodeViewModel = viewModel as? SeasonItemViewModel {
-						Spacer()
-						EpisodeCardVStackView(items: episodeViewModel.episodes) { episode in
-							itemRouter.route(to: \.item, episode)
-						}
-						.padding(.top, 5)
-					} else {
-						ItemViewBody()
-							.environmentObject(viewModel)
-					}
+					ItemViewBody()
+						.environmentObject(viewModel)
 				}
 			}
 		}

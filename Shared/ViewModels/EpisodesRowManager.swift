@@ -6,36 +6,26 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
-final class EpisodesRowViewModel: ViewModel {
+protocol EpisodesRowManager: ViewModel {
+	var item: BaseItemDto { get }
+	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] { get set }
+	var selectedSeason: BaseItemDto? { get set }
+	func retrieveSeasons()
+	func retrieveEpisodesForSeason(_ season: BaseItemDto)
+	func select(season: BaseItemDto)
+}
 
-	// TODO: Protocol these viewmodels for generalization instead of Episode
+extension EpisodesRowManager {
 
-	@ObservedObject
-	var episodeItemViewModel: EpisodeItemViewModel
-	@Published
-	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
-	@Published
-	var selectedSeason: BaseItemDto? {
-		willSet {
-			if seasonsEpisodes[newValue!]!.isEmpty {
-				retrieveEpisodesForSeason(newValue!)
-			}
-		}
-	}
-
-	init(episodeItemViewModel: EpisodeItemViewModel) {
-		self.episodeItemViewModel = episodeItemViewModel
-		super.init()
-
-		retrieveSeasons()
-	}
-
-	private func retrieveSeasons() {
-		TvShowsAPI.getSeasons(seriesId: episodeItemViewModel.item.seriesId ?? "",
-		                      userId: SessionManager.main.currentLogin.user.id)
+	// Also retrieves the current season episodes if available
+	func retrieveSeasons() {
+		TvShowsAPI.getSeasons(seriesId: item.seriesId ?? "",
+		                      userId: SessionManager.main.currentLogin.user.id,
+		                      isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false)
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { response in
@@ -43,21 +33,26 @@ final class EpisodesRowViewModel: ViewModel {
 				seasons.forEach { season in
 					self.seasonsEpisodes[season] = []
 
-					if season.id == self.episodeItemViewModel.item.seasonId ?? "" {
+					if season.id == self.item.seasonId ?? "" {
 						self.selectedSeason = season
+						self.retrieveEpisodesForSeason(season)
+					} else if season.id == self.item.id ?? "" {
+						self.selectedSeason = season
+						self.retrieveEpisodesForSeason(season)
 					}
 				}
 			}
 			.store(in: &cancellables)
 	}
 
-	private func retrieveEpisodesForSeason(_ season: BaseItemDto) {
+	func retrieveEpisodesForSeason(_ season: BaseItemDto) {
 		guard let seasonID = season.id else { return }
 
-		TvShowsAPI.getEpisodes(seriesId: episodeItemViewModel.item.seriesId ?? "",
+		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "",
 		                       userId: SessionManager.main.currentLogin.user.id,
 		                       fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                       seasonId: seasonID)
+		                       seasonId: seasonID,
+		                       isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false)
 			.trackActivity(loading)
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
@@ -65,6 +60,14 @@ final class EpisodesRowViewModel: ViewModel {
 				self.seasonsEpisodes[season] = episodes.items ?? []
 			}
 			.store(in: &cancellables)
+	}
+
+	func select(season: BaseItemDto) {
+		self.selectedSeason = season
+
+		if seasonsEpisodes[season]!.isEmpty {
+			retrieveEpisodesForSeason(season)
+		}
 	}
 }
 

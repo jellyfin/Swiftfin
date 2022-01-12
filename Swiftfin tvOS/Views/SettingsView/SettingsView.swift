@@ -133,6 +133,17 @@ struct SettingsView: View {
 					Section(header: L10n.accessibility.text) {
 						Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
+						Button {
+							settingsRouter.route(to: \.missingSettings)
+						} label: {
+							HStack {
+								L10n.missingItems.text
+									.foregroundColor(.primary)
+								Spacer()
+								Image(systemName: "chevron.right")
+							}
+						}
+
 						Picker(L10n.subtitleSize, selection: $subtitleSize) {
 							ForEach(SubtitleSize.allCases, id: \.self) { size in
 								Text(size.label).tag(size.rawValue)
