@@ -144,12 +144,12 @@ struct SettingsView: View {
 				Button {
 					settingsRouter.route(to: \.missingSettings)
 				} label: {
-                    HStack {
-                        Text("Missing Items")
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                    }
+					HStack {
+						L10n.missingItems.text
+							.foregroundColor(.primary)
+						Spacer()
+						Image(systemName: "chevron.right")
+					}
 				}
 
 				Picker(L10n.appearance, selection: $appAppearance) {

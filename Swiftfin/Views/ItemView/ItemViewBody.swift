@@ -86,7 +86,7 @@ struct ItemViewBody: View {
 			if let episodeViewModel = viewModel as? EpisodeItemViewModel {
 				EpisodesRowView(viewModel: episodeViewModel, onlyCurrentSeason: false)
 			} else if let seasonViewModel = viewModel as? SeasonItemViewModel {
-                EpisodesRowView(viewModel: seasonViewModel, onlyCurrentSeason: true)
+				EpisodesRowView(viewModel: seasonViewModel, onlyCurrentSeason: true)
 			}
 
 			// MARK: Series

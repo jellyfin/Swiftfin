@@ -53,7 +53,8 @@ struct CinematicSeasonItemView: View {
 
 							CinematicItemAboutView(viewModel: viewModel)
 
-							SingleSeasonEpisodesRowView(viewModel: SingleSeasonEpisodesRowViewModel(seasonItemViewModel: viewModel))
+							EpisodesRowView(viewModel: viewModel, onlyCurrentSeason: true)
+								.focusSection()
 
 							if let seriesItem = viewModel.seriesItem {
 								PortraitItemsRowView(rowTitle: L10n.series,

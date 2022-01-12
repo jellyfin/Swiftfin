@@ -19,17 +19,17 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 	var episodes: [BaseItemDto] = []
 	@Published
 	var seriesItem: BaseItemDto?
-    @Published
+	@Published
 	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
-    @Published
+	@Published
 	var selectedSeason: BaseItemDto?
 
 	override init(item: BaseItemDto) {
 		super.init(item: item)
 
 		getSeriesItem()
-        selectedSeason = item
-        retrieveSeasons()
+		selectedSeason = item
+		retrieveSeasons()
 	}
 
 	override func playButtonText() -> String {

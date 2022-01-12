@@ -150,6 +150,8 @@ internal enum L10n {
   internal static let media = L10n.tr("Localizable", "media")
   /// Missing
   internal static let missing = L10n.tr("Localizable", "missing")
+  /// Missing Items
+  internal static let missingItems = L10n.tr("Localizable", "missingItems")
   /// More Like This
   internal static let moreLikeThis = L10n.tr("Localizable", "moreLikeThis")
   /// Movies
@@ -304,6 +306,10 @@ internal enum L10n {
   internal static let settings = L10n.tr("Localizable", "settings")
   /// Show Cast & Crew
   internal static let showCastAndCrew = L10n.tr("Localizable", "showCastAndCrew")
+  /// Show Missing Episodes
+  internal static let showMissingEpisodes = L10n.tr("Localizable", "showMissingEpisodes")
+  /// Show Missing Seasons
+  internal static let showMissingSeasons = L10n.tr("Localizable", "showMissingSeasons")
   /// Show Poster Labels
   internal static let showPosterLabels = L10n.tr("Localizable", "showPosterLabels")
   /// Signed in as %@

@@ -21,11 +21,11 @@ protocol EpisodesRowManager: ViewModel {
 
 extension EpisodesRowManager {
 
-    // Also retrieves the current season episodes if available
+	// Also retrieves the current season episodes if available
 	func retrieveSeasons() {
 		TvShowsAPI.getSeasons(seriesId: item.seriesId ?? "",
 		                      userId: SessionManager.main.currentLogin.user.id,
-		                      isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false)
+		                      isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false)
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { response in
@@ -35,7 +35,10 @@ extension EpisodesRowManager {
 
 					if season.id == self.item.seasonId ?? "" {
 						self.selectedSeason = season
-                        self.retrieveEpisodesForSeason(season)
+						self.retrieveEpisodesForSeason(season)
+					} else if season.id == self.item.id ?? "" {
+						self.selectedSeason = season
+						self.retrieveEpisodesForSeason(season)
 					}
 				}
 			}

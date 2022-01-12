@@ -18,95 +18,69 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 	let onlyCurrentSeason: Bool
 
 	var body: some View {
-		VStack(alignment: .leading, spacing: 0) {
+		VStack(alignment: .leading) {
 
-			HStack {
+			Text(viewModel.selectedSeason?.name ?? L10n.episodes)
+				.font(.title3)
+				.padding(.horizontal, 50)
 
-				if onlyCurrentSeason {
-					if let currentSeason = Array(viewModel.seasonsEpisodes.keys).first(where: { $0.id == viewModel.item.id }) {
-						Text(currentSeason.name ?? L10n.noTitle)
-					}
-				} else {
-					Menu {
-						ForEach(Array(viewModel.seasonsEpisodes.keys).sorted(by: { $0.name ?? "" < $1.name ?? "" }), id: \.self) { season in
-							Button {
-								viewModel.select(season: season)
-							} label: {
-								if season.id == viewModel.selectedSeason?.id {
-									Label(season.name ?? L10n.season, systemImage: "checkmark")
-								} else {
-									Text(season.name ?? L10n.season)
-								}
-							}
-						}
-					} label: {
-						HStack(spacing: 5) {
-							Text(viewModel.selectedSeason?.name ?? L10n.unknown)
-								.fontWeight(.semibold)
-								.fixedSize()
-							Image(systemName: "chevron.down")
-						}
-					}
-				}
-
-				Spacer()
-			}
-			.padding()
-
-			ScrollView(.horizontal, showsIndicators: false) {
+			ScrollView(.horizontal) {
 				ScrollViewReader { reader in
-					HStack(alignment: .top, spacing: 15) {
+					HStack(alignment: .top) {
 						if viewModel.isLoading {
 							VStack(alignment: .leading) {
 
 								ZStack {
-									Color.gray.ignoresSafeArea()
+									Color.secondary.ignoresSafeArea()
 
 									ProgressView()
 								}
-								.mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
-								.frame(width: 200, height: 112)
+								.mask(Rectangle().frame(width: 500, height: 280))
+								.frame(width: 500, height: 280)
 
 								VStack(alignment: .leading) {
-									Text("S-:E-")
-										.font(.footnote)
+									Text("S-E-")
+										.font(.caption)
 										.foregroundColor(.secondary)
 									Text("--")
-										.font(.body)
+										.font(.footnote)
 										.padding(.bottom, 1)
-										.lineLimit(2)
+									Text("--")
+										.font(.caption)
+										.fontWeight(.light)
+										.lineLimit(4)
 								}
+								.padding(.horizontal)
 
 								Spacer()
 							}
-							.frame(width: 200)
-							.shadow(radius: 4, y: 2)
+							.frame(width: 500)
+							.focusable()
 						} else if let selectedSeason = viewModel.selectedSeason {
 							if let seasonEpisodes = viewModel.seasonsEpisodes[selectedSeason] {
 								if seasonEpisodes.isEmpty {
 									VStack(alignment: .leading) {
 
-										Color.gray.ignoresSafeArea()
-											.mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
-											.frame(width: 200, height: 112)
+										Color.secondary
+											.mask(Rectangle().frame(width: 500, height: 280))
+											.frame(width: 500, height: 280)
 
 										VStack(alignment: .leading) {
 											Text("--")
-												.font(.footnote)
+												.font(.caption)
 												.foregroundColor(.secondary)
-
 											L10n.noEpisodesAvailable.text
-												.font(.body)
+												.font(.footnote)
 												.padding(.bottom, 1)
-												.lineLimit(2)
 										}
+										.padding(.horizontal)
 
 										Spacer()
 									}
-									.frame(width: 200)
-									.shadow(radius: 4, y: 2)
+									.frame(width: 500)
+									.focusable()
 								} else {
-									ForEach(seasonEpisodes, id: \.self) { episode in
+									ForEach(viewModel.seasonsEpisodes[selectedSeason]!, id: \.self) { episode in
 										EpisodeRowCard(viewModel: viewModel, episode: episode)
 											.id(episode.id)
 									}
@@ -114,7 +88,8 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 							}
 						}
 					}
-					.padding(.horizontal)
+					.padding(.horizontal, 50)
+					.padding(.vertical)
 					.onChange(of: viewModel.selectedSeason) { _ in
 						if viewModel.selectedSeason?.id == viewModel.item.seasonId {
 							reader.scrollTo(viewModel.item.id)

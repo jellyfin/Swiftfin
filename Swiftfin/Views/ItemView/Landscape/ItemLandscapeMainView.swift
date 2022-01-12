@@ -63,8 +63,8 @@ struct ItemLandscapeMainView: View {
 
 					// MARK: ItemViewBody
 
-                    ItemViewBody()
-                        .environmentObject(viewModel)
+					ItemViewBody()
+						.environmentObject(viewModel)
 				}
 			}
 		}

@@ -123,6 +123,18 @@ struct CinematicItemViewTopRow: View {
 										.overlay(RoundedRectangle(cornerRadius: 2)
 											.stroke(Color.secondary, lineWidth: 1))
 								}
+
+								if viewModel.item.unaired {
+									if let premiereDate = viewModel.item.airDateLabel {
+										Text(premiereDate)
+											.font(.subheadline)
+											.fontWeight(.medium)
+											.lineLimit(1)
+									}
+								}
+
+								// Dud text in case nothing was shown, something is necessary for proper alignment
+								Text("")
 							} else {
 								Text("")
 							}

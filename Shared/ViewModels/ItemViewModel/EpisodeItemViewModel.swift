@@ -17,16 +17,16 @@ final class EpisodeItemViewModel: ItemViewModel, EpisodesRowManager {
 	var itemRouter: ItemCoordinator.Router?
 	@Published
 	var series: BaseItemDto?
-    @Published
+	@Published
 	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
-    @Published
+	@Published
 	var selectedSeason: BaseItemDto?
 
 	override init(item: BaseItemDto) {
 		super.init(item: item)
 
 		getEpisodeSeries()
-        retrieveSeasons()
+		retrieveSeasons()
 	}
 
 	override func getItemDisplayName() -> String {

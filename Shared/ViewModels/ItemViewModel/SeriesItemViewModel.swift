@@ -81,7 +81,7 @@ final class SeriesItemViewModel: ItemViewModel {
 		LogManager.shared.log.debug("Getting seasons of show \(self.item.id!) (\(self.item.name!))")
 		TvShowsAPI.getSeasons(seriesId: item.id ?? "", userId: SessionManager.main.currentLogin.user.id,
 		                      fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                      isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
+		                      isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false,
 		                      enableUserData: true)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
