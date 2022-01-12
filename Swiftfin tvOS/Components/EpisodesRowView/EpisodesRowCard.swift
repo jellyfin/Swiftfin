@@ -17,45 +17,47 @@ struct EpisodeRowCard: View {
 	let episode: BaseItemDto
 
 	var body: some View {
-		Button {
-			itemRouter.route(to: \.item, episode)
-		} label: {
-			HStack(alignment: .top) {
-				VStack(alignment: .leading) {
+        VStack {
+            Button {
+                itemRouter.route(to: \.item, episode)
+            } label: {
+                ImageView(src: episode.getBackdropImage(maxWidth: 550),
+                          bh: episode.getBackdropImageBlurHash())
+                    .mask(Rectangle().frame(width: 550, height: 308))
+                    .frame(width: 550, height: 308)
+            }
+            .buttonStyle(CardButtonStyle())
+            
+            VStack(alignment: .leading) {
 
-					ImageView(src: episode.getBackdropImage(maxWidth: 500),
-					          bh: episode.getBackdropImageBlurHash())
-						.mask(Rectangle().frame(width: 500, height: 280))
-						.frame(width: 500, height: 280)
+                VStack(alignment: .leading) {
+                    Text(episode.getEpisodeLocator() ?? "")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(episode.name ?? "")
+                        .font(.footnote)
+                        .padding(.bottom, 1)
 
-					VStack(alignment: .leading) {
-						Text(episode.getEpisodeLocator() ?? "")
-							.font(.caption)
-							.foregroundColor(.secondary)
-						Text(episode.name ?? "")
-							.font(.footnote)
-							.padding(.bottom, 1)
+                    if episode.unaired {
+                        Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .fontWeight(.light)
+                            .lineLimit(3)
+                    } else {
+                        Text(episode.overview ?? "")
+                            .font(.caption)
+                            .fontWeight(.light)
+                            .lineLimit(4)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
 
-						if episode.unaired {
-							Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
-								.font(.caption)
-								.foregroundColor(.secondary)
-								.fontWeight(.light)
-								.lineLimit(3)
-						} else {
-							Text(episode.overview ?? "")
-								.font(.caption)
-								.fontWeight(.light)
-								.lineLimit(4)
-						}
-					}
-					.padding(.horizontal)
-
-					Spacer()
-				}
-				.frame(width: 500)
-			}
-		}
-		.buttonStyle(PlainButtonStyle())
+                Spacer()
+            }
+            .padding()
+            .frame(width: 550)
+        }
+        .focusSection()
 	}
 }

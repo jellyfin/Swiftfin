@@ -70,19 +70,3 @@ extension EpisodesRowManager {
 		}
 	}
 }
-
-final class SingleSeasonEpisodesRowViewModel: ViewModel {
-
-	// TODO: Protocol these viewmodels for generalization instead of Season
-
-	@ObservedObject
-	var seasonItemViewModel: SeasonItemViewModel
-	@Published
-	var episodes: [BaseItemDto]
-
-	init(seasonItemViewModel: SeasonItemViewModel) {
-		self.seasonItemViewModel = seasonItemViewModel
-		self.episodes = seasonItemViewModel.episodes
-		super.init()
-	}
-}
