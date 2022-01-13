@@ -103,7 +103,7 @@ final class VideoPlayerViewModel: ViewModel {
 
 	// MARK: General
 
-	let item: BaseItemDto
+	private(set) var item: BaseItemDto
 	let title: String
 	let subtitle: String?
 	let streamURL: URL
@@ -246,6 +246,22 @@ final class VideoPlayerViewModel: ViewModel {
 		}
 
 		return timeText
+	}
+}
+
+// MARK: Injected Values
+
+extension VideoPlayerViewModel {
+
+	// Injects custom values that override certain settings
+	func injectCustomValues(startFromBeginning: Bool = false) {
+
+		if startFromBeginning {
+			item.userData?.playbackPositionTicks = 0
+			item.userData?.playedPercentage = 0
+			sliderPercentage = 0
+			sliderPercentageChanged(newValue: 0)
+		}
 	}
 }
 

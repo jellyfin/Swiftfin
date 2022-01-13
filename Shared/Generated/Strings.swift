@@ -224,6 +224,8 @@ internal enum L10n {
   internal static let playbackSettings = L10n.tr("Localizable", "playbackSettings")
   /// Playback Speed
   internal static let playbackSpeed = L10n.tr("Localizable", "playbackSpeed")
+  /// Play From Beginning
+  internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning")
   /// Play Next
   internal static let playNext = L10n.tr("Localizable", "playNext")
   /// Play Next Item
@@ -252,6 +254,8 @@ internal enum L10n {
   internal static let remove = L10n.tr("Localizable", "remove")
   /// Remove All Users
   internal static let removeAllUsers = L10n.tr("Localizable", "removeAllUsers")
+  /// Remove From Resume
+  internal static let removeFromResume = L10n.tr("Localizable", "removeFromResume")
   /// Reset
   internal static let reset = L10n.tr("Localizable", "reset")
   /// Reset App Settings

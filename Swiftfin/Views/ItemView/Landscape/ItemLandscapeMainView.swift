@@ -50,6 +50,20 @@ struct ItemLandscapeMainView: View {
 					.cornerRadius(10)
 				}
 				.disabled(viewModel.playButtonItem == nil || viewModel.selectedVideoPlayerViewModel == nil)
+				.contextMenu {
+					if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+						Button {
+							if let itemVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+								itemVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+								itemRouter.route(to: \.videoPlayer, itemVideoPlayerViewModel)
+							} else {
+								LogManager.shared.log.error("Attempted to play item but no playback information available")
+							}
+						} label: {
+							Label(L10n.playFromBeginning, systemImage: "gobackward")
+						}
+					}
+				}
 
 				Spacer()
 			}

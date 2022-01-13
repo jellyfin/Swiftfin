@@ -113,7 +113,11 @@ struct PortraitHeaderOverlayView: View {
 				// MARK: Play
 
 				Button {
-					self.itemRouter.route(to: \.videoPlayer, viewModel.selectedVideoPlayerViewModel!)
+					if let itemVideoPlayerViewModel = viewModel.itemVideoPlayerViewModel {
+						itemRouter.route(to: \.videoPlayer, itemVideoPlayerViewModel)
+					} else {
+						LogManager.shared.log.error("Attempted to play item but no playback information available")
+					}
 				} label: {
 					HStack {
 						Image(systemName: "play.fill")
@@ -128,7 +132,21 @@ struct PortraitHeaderOverlayView: View {
 					.background(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
 					.cornerRadius(10)
 				}
-				.disabled(viewModel.playButtonItem == nil || viewModel.selectedVideoPlayerViewModel == nil)
+				.disabled(viewModel.playButtonItem == nil)
+				.contextMenu {
+					if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+						Button {
+							if let itemVideoPlayerViewModel = viewModel.itemVideoPlayerViewModel {
+								itemVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+								itemRouter.route(to: \.videoPlayer, itemVideoPlayerViewModel)
+							} else {
+								LogManager.shared.log.error("Attempted to play item but no playback information available")
+							}
+						} label: {
+							Label(L10n.playFromBeginning, systemImage: "gobackward")
+						}
+					}
+				}
 
 				Spacer()
 

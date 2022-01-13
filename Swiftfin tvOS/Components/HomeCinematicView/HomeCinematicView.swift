@@ -33,6 +33,8 @@ struct HomeCinematicView: View {
 
 	@FocusState
 	var selectedItem: BaseItemDto?
+	@ObservedObject
+	var viewModel: HomeViewModel
 	@State
 	private var updatedSelectedItem: BaseItemDto?
 	@State
@@ -41,7 +43,8 @@ struct HomeCinematicView: View {
 	private let items: [HomeCinematicViewItem]
 	private let backgroundViewModel = DynamicCinematicBackgroundViewModel()
 
-	init(items: [HomeCinematicViewItem], forcedItemSubtitle: String? = nil) {
+	init(viewModel: HomeViewModel, items: [HomeCinematicViewItem], forcedItemSubtitle: String? = nil) {
+		self.viewModel = viewModel
 		self.items = items
 		self.forcedItemSubtitle = forcedItemSubtitle
 	}
@@ -99,7 +102,7 @@ struct HomeCinematicView: View {
 								CinematicNextUpCardView(item: item.item, showOverlay: true)
 									.focused($selectedItem, equals: item.item)
 							case .resume:
-								CinematicResumeCardView(item: item.item)
+								CinematicResumeCardView(viewModel: viewModel, item: item.item)
 									.focused($selectedItem, equals: item.item)
 							case .plain:
 								CinematicNextUpCardView(item: item.item, showOverlay: false)
