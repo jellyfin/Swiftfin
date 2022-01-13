@@ -244,7 +244,7 @@ class DeviceProfileBuilder {
 		case "iPad8,9", "iPad8,10", "iPad8,11", "iPad8,12": return .A12Z
 		case "iPad11,3", "iPad11,4", "iPad11,6", "iPad11,7": return .A12
 		case "iPad13,1", "iPad13,2": return .A14
-		case "iPad13,8,", "iPad13,9", "iPad13,10", "iPad13,11": return .M1
+		case "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return .M1
 		case "AppleTV5,3": return .A8
 		case "AppleTV6,2": return .A10X
 		case "AppleTV11,1": return .A12
