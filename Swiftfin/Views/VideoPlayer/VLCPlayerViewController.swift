@@ -343,6 +343,13 @@ extension VLCPlayerViewController {
 		}
 
 		viewModel = newViewModel
+
+		switch viewModel.streamType {
+		case .transcode:
+			LogManager.shared.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? "--")")
+		case .direct:
+			LogManager.shared.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? "--")")
+		}
 	}
 
 	// MARK: startPlayback
