@@ -35,13 +35,15 @@ struct ItemDetailsView: View {
 
 				Spacer()
 
-				VStack(alignment: .leading, spacing: 20) {
-					L10n.media.text
-						.font(.title3)
-						.padding(.bottom, 5)
+				if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+					VStack(alignment: .leading, spacing: 20) {
+						L10n.media.text
+							.font(.title3)
+							.padding(.bottom, 5)
 
-					ForEach(viewModel.mediaItems, id: \.self.title) { mediaItem in
-						ItemDetail(title: mediaItem.title, content: mediaItem.content)
+						ForEach(selectedVideoPlayerViewModel.mediaItems, id: \.self.title) { mediaItem in
+							ItemDetail(title: mediaItem.title, content: mediaItem.content)
+						}
 					}
 				}
 

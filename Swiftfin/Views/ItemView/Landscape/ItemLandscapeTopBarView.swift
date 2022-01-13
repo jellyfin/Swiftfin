@@ -99,7 +99,31 @@ struct ItemLandscapeTopBarView: View {
 						.disabled(viewModel.isLoading)
 					}
 				}
-				.padding(.leading, 16)
+				.padding(.leading)
+
+				if viewModel.videoPlayerViewModels.count > 1 {
+					Menu {
+						ForEach(viewModel.videoPlayerViewModels, id: \.versionName) { viewModelOption in
+							Button {
+								viewModel.selectedVideoPlayerViewModel = viewModelOption
+							} label: {
+								if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
+									Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
+								} else {
+									Text(viewModelOption.versionName ?? L10n.noTitle)
+								}
+							}
+						}
+					} label: {
+						HStack(spacing: 5) {
+							Text(viewModel.selectedVideoPlayerViewModel?.versionName ?? L10n.noTitle)
+								.fontWeight(.semibold)
+								.fixedSize()
+							Image(systemName: "chevron.down")
+						}
+					}
+					.padding(.leading)
+				}
 			}
 		}
 	}

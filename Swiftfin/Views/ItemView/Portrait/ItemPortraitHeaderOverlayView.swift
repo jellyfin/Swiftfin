@@ -81,6 +81,29 @@ struct PortraitHeaderOverlayView: View {
 									.stroke(Color.secondary, lineWidth: 1))
 						}
 					}
+
+					if viewModel.videoPlayerViewModels.count > 1 {
+						Menu {
+							ForEach(viewModel.videoPlayerViewModels, id: \.versionName) { viewModelOption in
+								Button {
+									viewModel.selectedVideoPlayerViewModel = viewModelOption
+								} label: {
+									if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
+										Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
+									} else {
+										Text(viewModelOption.versionName ?? L10n.noTitle)
+									}
+								}
+							}
+						} label: {
+							HStack(spacing: 5) {
+								Text(viewModel.selectedVideoPlayerViewModel?.versionName ?? L10n.noTitle)
+									.fontWeight(.semibold)
+									.fixedSize()
+								Image(systemName: "chevron.down")
+							}
+						}
+					}
 				}
 				.padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 30)
 			}
@@ -90,8 +113,8 @@ struct PortraitHeaderOverlayView: View {
 				// MARK: Play
 
 				Button {
-					if let itemVideoPlayerViewModel = viewModel.itemVideoPlayerViewModel {
-						itemRouter.route(to: \.videoPlayer, itemVideoPlayerViewModel)
+					if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+						itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
 					} else {
 						LogManager.shared.log.error("Attempted to play item but no playback information available")
 					}
@@ -109,13 +132,13 @@ struct PortraitHeaderOverlayView: View {
 					.background(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
 					.cornerRadius(10)
 				}
-				.disabled(viewModel.playButtonItem == nil)
+				.disabled(viewModel.playButtonItem == nil || viewModel.selectedVideoPlayerViewModel == nil)
 				.contextMenu {
 					if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
 						Button {
-							if let itemVideoPlayerViewModel = viewModel.itemVideoPlayerViewModel {
-								itemVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-								itemRouter.route(to: \.videoPlayer, itemVideoPlayerViewModel)
+							if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+								selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+								itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
 							} else {
 								LogManager.shared.log.error("Attempted to play item but no playback information available")
 							}

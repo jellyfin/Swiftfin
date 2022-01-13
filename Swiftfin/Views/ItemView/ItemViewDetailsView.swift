@@ -36,20 +36,34 @@ struct ItemViewDetailsView: View {
 				.padding(.bottom, 20)
 			}
 
-			if !viewModel.mediaItems.isEmpty {
-				VStack(alignment: .leading, spacing: 20) {
-					L10n.media.text
-						.font(.title3)
-						.fontWeight(.bold)
+			VStack(alignment: .leading, spacing: 20) {
+				L10n.media.text
+					.font(.title3)
+					.fontWeight(.bold)
 
-					ForEach(viewModel.mediaItems, id: \.self.title) { mediaItem in
-						VStack(alignment: .leading, spacing: 2) {
-							Text(mediaItem.title)
-								.font(.subheadline)
-							Text(mediaItem.content)
-								.font(.subheadline)
-								.foregroundColor(Color.secondary)
-						}
+				VStack(alignment: .leading, spacing: 2) {
+					L10n.file.text
+						.font(.subheadline)
+					Text(viewModel.selectedVideoPlayerViewModel?.filename ?? "--")
+						.font(.subheadline)
+						.foregroundColor(Color.secondary)
+				}
+
+				VStack(alignment: .leading, spacing: 2) {
+					L10n.containers.text
+						.font(.subheadline)
+					Text(viewModel.selectedVideoPlayerViewModel?.container ?? "--")
+						.font(.subheadline)
+						.foregroundColor(Color.secondary)
+				}
+
+				ForEach(viewModel.selectedVideoPlayerViewModel?.mediaItems ?? [], id: \.self.title) { mediaItem in
+					VStack(alignment: .leading, spacing: 2) {
+						Text(mediaItem.title)
+							.font(.subheadline)
+						Text(mediaItem.content)
+							.font(.subheadline)
+							.foregroundColor(Color.secondary)
 					}
 				}
 			}
