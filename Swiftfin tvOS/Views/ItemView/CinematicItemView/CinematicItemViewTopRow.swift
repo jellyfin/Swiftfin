@@ -59,8 +59,8 @@ struct CinematicItemViewTopRow: View {
 							// MARK: Play
 
 							Button {
-								if let itemVideoPlayerViewModel = viewModel.itemVideoPlayerViewModel {
-									itemRouter.route(to: \.videoPlayer, itemVideoPlayerViewModel)
+								if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+									itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
 								} else {
 									LogManager.shared.log.error("Attempted to play item but no playback information available")
 								}

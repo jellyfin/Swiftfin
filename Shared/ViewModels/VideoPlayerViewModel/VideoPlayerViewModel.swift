@@ -91,6 +91,9 @@ final class VideoPlayerViewModel: ViewModel {
 		}
 	}
 
+	@Published
+	var mediaItems: [BaseItemDto.ItemDetail]
+
 	// MARK: ShouldShowItems
 
 	let shouldShowPlayPreviousItem: Bool
@@ -110,6 +113,9 @@ final class VideoPlayerViewModel: ViewModel {
 	let jumpGesturesEnabled: Bool
 	let resumeOffset: Bool
 	let streamType: ServerStreamType
+	let container: String
+	let filename: String?
+	let versionName: String?
 
 	// MARK: Experimental
 
@@ -173,7 +179,10 @@ final class VideoPlayerViewModel: ViewModel {
 	     overlayType: OverlayType,
 	     shouldShowPlayPreviousItem: Bool,
 	     shouldShowPlayNextItem: Bool,
-	     shouldShowAutoPlay: Bool)
+	     shouldShowAutoPlay: Bool,
+	     container: String,
+	     filename: String?,
+	     versionName: String?)
 	{
 		self.item = item
 		self.title = title
@@ -191,6 +200,9 @@ final class VideoPlayerViewModel: ViewModel {
 		self.shouldShowPlayPreviousItem = shouldShowPlayPreviousItem
 		self.shouldShowPlayNextItem = shouldShowPlayNextItem
 		self.shouldShowAutoPlay = shouldShowAutoPlay
+		self.container = container
+		self.filename = filename
+		self.versionName = versionName
 
 		self.jumpBackwardLength = Defaults[.videoPlayerJumpBackward]
 		self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
@@ -202,6 +214,8 @@ final class VideoPlayerViewModel: ViewModel {
 		self.syncSubtitleStateWithAdjacent = Defaults[.Experimental.syncSubtitleStateWithAdjacent]
 
 		self.confirmClose = Defaults[.confirmClose]
+
+		self.mediaItems = item.createMediaItems()
 
 		super.init()
 
@@ -267,11 +281,13 @@ extension VideoPlayerViewModel {
 						nextItem.createVideoPlayerViewModel()
 							.sink { completion in
 								self.handleAPIRequestError(completion: completion)
-							} receiveValue: { videoPlayerViewModel in
-								videoPlayerViewModel.matchSubtitleStream(with: self)
-								videoPlayerViewModel.matchAudioStream(with: self)
+							} receiveValue: { viewModels in
+								for viewModel in viewModels {
+									viewModel.matchSubtitleStream(with: self)
+									viewModel.matchAudioStream(with: self)
+								}
 
-								self.nextItemVideoPlayerViewModel = videoPlayerViewModel
+								self.nextItemVideoPlayerViewModel = viewModels.first
 							}
 							.store(in: &self.cancellables)
 					} else {
@@ -281,11 +297,13 @@ extension VideoPlayerViewModel {
 						previousItem.createVideoPlayerViewModel()
 							.sink { completion in
 								self.handleAPIRequestError(completion: completion)
-							} receiveValue: { videoPlayerViewModel in
-								videoPlayerViewModel.matchSubtitleStream(with: self)
-								videoPlayerViewModel.matchAudioStream(with: self)
+							} receiveValue: { viewModels in
+								for viewModel in viewModels {
+									viewModel.matchSubtitleStream(with: self)
+									viewModel.matchAudioStream(with: self)
+								}
 
-								self.previousItemVideoPlayerViewModel = videoPlayerViewModel
+								self.previousItemVideoPlayerViewModel = viewModels.first
 							}
 							.store(in: &self.cancellables)
 					}
@@ -298,22 +316,26 @@ extension VideoPlayerViewModel {
 					previousItem.createVideoPlayerViewModel()
 						.sink { completion in
 							self.handleAPIRequestError(completion: completion)
-						} receiveValue: { videoPlayerViewModel in
-							videoPlayerViewModel.matchSubtitleStream(with: self)
-							videoPlayerViewModel.matchAudioStream(with: self)
+						} receiveValue: { viewModels in
+							for viewModel in viewModels {
+								viewModel.matchSubtitleStream(with: self)
+								viewModel.matchAudioStream(with: self)
+							}
 
-							self.previousItemVideoPlayerViewModel = videoPlayerViewModel
+							self.previousItemVideoPlayerViewModel = viewModels.first
 						}
 						.store(in: &self.cancellables)
 
 					nextItem.createVideoPlayerViewModel()
 						.sink { completion in
 							self.handleAPIRequestError(completion: completion)
-						} receiveValue: { videoPlayerViewModel in
-							videoPlayerViewModel.matchSubtitleStream(with: self)
-							videoPlayerViewModel.matchAudioStream(with: self)
+						} receiveValue: { viewModels in
+							for viewModel in viewModels {
+								viewModel.matchSubtitleStream(with: self)
+								viewModel.matchAudioStream(with: self)
+							}
 
-							self.nextItemVideoPlayerViewModel = videoPlayerViewModel
+							self.nextItemVideoPlayerViewModel = viewModels.first
 						}
 						.store(in: &self.cancellables)
 				}
@@ -546,5 +568,17 @@ extension VideoPlayerViewModel: Equatable {
 	static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
 		lhs.item.id == rhs.item.id &&
 			lhs.item.userData?.playbackPositionTicks == rhs.item.userData?.playbackPositionTicks
+	}
+}
+
+// MARK: Hashable
+
+extension VideoPlayerViewModel: Hashable {
+
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(item)
+		hasher.combine(streamURL)
+		hasher.combine(filename)
+		hasher.combine(versionName)
 	}
 }

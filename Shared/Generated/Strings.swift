@@ -102,6 +102,8 @@ internal enum L10n {
   internal static let experimental = L10n.tr("Localizable", "experimental")
   /// Favorites
   internal static let favorites = L10n.tr("Localizable", "favorites")
+  /// File
+  internal static let file = L10n.tr("Localizable", "file")
   /// Filter Results
   internal static let filterResults = L10n.tr("Localizable", "filterResults")
   /// Filters

@@ -34,7 +34,7 @@ struct ItemLandscapeMainView: View {
 				// MARK: Play
 
 				Button {
-					self.itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
+					self.itemRouter.route(to: \.videoPlayer, viewModel.selectedVideoPlayerViewModel!)
 				} label: {
 					HStack {
 						Image(systemName: "play.fill")
@@ -49,7 +49,7 @@ struct ItemLandscapeMainView: View {
 					.background(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
 					.cornerRadius(10)
 				}
-				.disabled(viewModel.playButtonItem == nil || viewModel.itemVideoPlayerViewModel == nil)
+				.disabled(viewModel.playButtonItem == nil || viewModel.selectedVideoPlayerViewModel == nil)
 
 				Spacer()
 			}

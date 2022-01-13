@@ -265,11 +265,6 @@ public extension BaseItemDto {
 	func createMediaItems() -> [ItemDetail] {
 		var mediaItems: [ItemDetail] = []
 
-		if let container = container {
-			let containerList = container.split(separator: ",").joined(separator: ", ")
-			mediaItems.append(ItemDetail(title: L10n.containers, content: containerList))
-		}
-
 		if let mediaStreams = mediaStreams {
 			let audioStreams = mediaStreams.filter { $0.type == .audio }
 			let subtitleStreams = mediaStreams.filter { $0.type == .subtitle }
