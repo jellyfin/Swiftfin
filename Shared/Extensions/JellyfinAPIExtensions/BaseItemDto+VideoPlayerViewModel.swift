@@ -99,7 +99,6 @@ extension BaseItemDto {
 					var fileName: String?
 					if let lastInPath = currentMediaSource.path?.split(separator: "/").last {
 						fileName = String(lastInPath)
-						print("FILENAME: \(lastInPath)")
 					}
 
 					let videoPlayerViewModel = VideoPlayerViewModel(item: modifiedSelfItem,
