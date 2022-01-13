@@ -395,7 +395,10 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
 	                                                       overlayType: .compact,
 	                                                       shouldShowPlayPreviousItem: true,
 	                                                       shouldShowPlayNextItem: true,
-	                                                       shouldShowAutoPlay: true)
+	                                                       shouldShowAutoPlay: true,
+	                                                       container: "",
+	                                                       filename: nil,
+	                                                       versionName: nil)
 
 	static var previews: some View {
 		ZStack {
