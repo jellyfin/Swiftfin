@@ -47,27 +47,24 @@ extension BaseItemDto {
 					let defaultSubtitleStream = subtitleStreams
 						.first(where: { $0.index! == currentMediaSource.defaultSubtitleStreamIndex ?? -1 })
 
-					// MARK: Stream
-
-					var streamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI)!
-
+					var streamURL: URLComponents
 					let streamType: ServerStreamType
 
 					if let transcodeURL = currentMediaSource.transcodingUrl {
 						streamType = .transcode
-						streamURL.path = transcodeURL
+						streamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI.appending(transcodeURL))!
 					} else {
 						streamType = .direct
+						streamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI)!
 						streamURL.path = "/Videos/\(self.id!)/stream"
-					}
+						streamURL.addQueryItem(name: "Static", value: "true")
+						streamURL.addQueryItem(name: "MediaSourceId", value: self.id!)
+						streamURL.addQueryItem(name: "Tag", value: self.etag)
+						streamURL.addQueryItem(name: "MinSegments", value: "6")
 
-					streamURL.addQueryItem(name: "Static", value: "true")
-					streamURL.addQueryItem(name: "MediaSourceId", value: self.id!)
-					streamURL.addQueryItem(name: "Tag", value: self.etag)
-					streamURL.addQueryItem(name: "MinSegments", value: "6")
-
-					if mediaSources.count > 1 {
-						streamURL.addQueryItem(name: "MediaSourceId", value: currentMediaSource.id)
+						if mediaSources.count > 1 {
+							streamURL.addQueryItem(name: "MediaSourceId", value: currentMediaSource.id)
+						}
 					}
 
 					// MARK: VidoPlayerViewModel Creation
