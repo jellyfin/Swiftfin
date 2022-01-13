@@ -15,7 +15,7 @@ struct HomeView: View {
 
 	@EnvironmentObject
 	var homeRouter: HomeCoordinator.Router
-	@ObservedObject
+	@StateObject
 	var viewModel = HomeViewModel()
 	@Default(.showPosterLabels)
 	var showPosterLabels
@@ -32,7 +32,8 @@ struct HomeView: View {
 				LazyVStack(alignment: .leading) {
 
 					if viewModel.resumeItems.isEmpty {
-						HomeCinematicView(items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
+						HomeCinematicView(viewModel: viewModel,
+						                  items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
 						                  forcedItemSubtitle: L10n.recentlyAdded)
 
 						if !viewModel.nextUpItems.isEmpty {
@@ -40,7 +41,8 @@ struct HomeView: View {
 								.focusSection()
 						}
 					} else {
-						HomeCinematicView(items: viewModel.resumeItems.map { .init(item: $0, type: .resume) })
+						HomeCinematicView(viewModel: viewModel,
+						                  items: viewModel.resumeItems.map { .init(item: $0, type: .resume) })
 
 						if !viewModel.nextUpItems.isEmpty {
 							NextUpView(items: viewModel.nextUpItems)

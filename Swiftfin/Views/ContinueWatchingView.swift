@@ -81,6 +81,13 @@ struct ContinueWatchingView: View {
 							}
 						}
 					}
+					.contextMenu {
+						Button(role: .destructive) {
+							viewModel.removeItemFromResume(item)
+						} label: {
+							L10n.removeFromResume.text
+						}
+					}
 				}
 			}
 			.padding(.horizontal)
