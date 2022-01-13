@@ -7,10 +7,12 @@
 //
 
 import Foundation
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
 struct LibraryListView: View {
+    
 	@EnvironmentObject
 	var libraryListRouter: LibraryListCoordinator.Router
 	@StateObject
@@ -21,7 +23,7 @@ struct LibraryListView: View {
 			LazyVStack {
 				Button {
 					libraryListRouter.route(to: \.library,
-					                        (viewModel: LibraryViewModel(filters: viewModel.withFavorites), title: L10n.favorites))
+                                            LibraryViewModel(libraryItem: BaseItemDto(), filters: viewModel.withFavorites))
 				} label: {
                     HStack {
                         Spacer()
@@ -43,8 +45,9 @@ struct LibraryListView: View {
 					if let collectionsLibraryItem = viewModel.libraries.first(where: { $0.collectionType == "boxsets" }) {
 						Button {
 							libraryListRouter.route(to: \.library,
-							                        (viewModel: LibraryViewModel(parentID: collectionsLibraryItem.id),
-							                         title: collectionsLibraryItem.name ?? ""))
+                                                    LibraryViewModel(libraryItem: collectionsLibraryItem))
+//							                        (viewModel: LibraryViewModel(parentID: collectionsLibraryItem.id),
+//							                         title: collectionsLibraryItem.name ?? ""))
 						} label: {
 							ZStack {
 								ImageView(src: collectionsLibraryItem.getPrimaryImage(maxWidth: 500),

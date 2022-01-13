@@ -42,9 +42,9 @@ final class LibraryCoordinator: NavigationCoordinatable {
 	}
 
 	func makeFilter(params: FilterCoordinatorParams) -> NavigationViewCoordinator<FilterCoordinator> {
-		NavigationViewCoordinator(FilterCoordinator(filters: params.filters,
-		                                            enabledFilterType: params.enabledFilterType,
-		                                            parentId: params.parentId))
+        NavigationViewCoordinator(FilterCoordinator(libraryItem: viewModel.libraryItem,
+                                                    filters: params.filters,
+                                                    enabledFilterType: params.enabledFilterType))
 	}
 
 	func makeItem(item: BaseItemDto) -> ItemCoordinator {

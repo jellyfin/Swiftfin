@@ -27,8 +27,8 @@ final class LibraryListCoordinator: NavigationCoordinatable {
 		self.viewModel = viewModel
 	}
 
-	func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
-		LibraryCoordinator(viewModel: params.viewModel, title: params.title)
+    func makeLibrary(viewModel: LibraryViewModel) -> LibraryCoordinator {
+        LibraryCoordinator(viewModel: viewModel)
 	}
 
 	func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
