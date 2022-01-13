@@ -33,8 +33,8 @@ class ItemViewModel: ViewModel {
 	@Published
 	var informationItems: [BaseItemDto.ItemDetail]
 	@Published
-	var mediaItems: [BaseItemDto.ItemDetail]
-	var itemVideoPlayerViewModel: VideoPlayerViewModel?
+	var selectedVideoPlayerViewModel: VideoPlayerViewModel?
+	var videoPlayerViewModels: [VideoPlayerViewModel] = []
 
 	init(item: BaseItemDto) {
 		self.item = item
@@ -48,7 +48,6 @@ class ItemViewModel: ViewModel {
 		}
 
 		informationItems = item.createInformationItems()
-		mediaItems = item.createMediaItems()
 
 		isFavorited = item.userData?.isFavorite ?? false
 		isWatched = item.userData?.played ?? false
@@ -84,9 +83,9 @@ class ItemViewModel: ViewModel {
 		item.createVideoPlayerViewModel()
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
-			} receiveValue: { videoPlayerViewModel in
-				self.itemVideoPlayerViewModel = videoPlayerViewModel
-				self.mediaItems = videoPlayerViewModel.item.createMediaItems()
+			} receiveValue: { viewModels in
+				self.videoPlayerViewModels = viewModels
+				self.selectedVideoPlayerViewModel = viewModels.first
 			}
 			.store(in: &cancellables)
 	}

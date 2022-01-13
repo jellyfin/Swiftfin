@@ -20,7 +20,7 @@ struct MediaPlayButtonRowView: View {
 		HStack {
 			VStack {
 				Button {
-					itemRouter.route(to: \.videoPlayer, viewModel.itemVideoPlayerViewModel!)
+					itemRouter.route(to: \.videoPlayer, viewModel.selectedVideoPlayerViewModel!)
 				} label: {
 					MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
 				}
