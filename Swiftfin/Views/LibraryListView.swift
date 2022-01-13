@@ -23,23 +23,20 @@ struct LibraryListView: View {
 					libraryListRouter.route(to: \.library,
 					                        (viewModel: LibraryViewModel(filters: viewModel.withFavorites), title: L10n.favorites))
 				} label: {
-					ZStack {
-						HStack {
-							Spacer()
-							L10n.yourFavorites.text
-								.foregroundColor(.black)
-								.font(.subheadline)
-								.fontWeight(.semibold)
-							Spacer()
-						}
-					}
-					.padding(16)
+                    HStack {
+                        Spacer()
+                        L10n.yourFavorites.text
+                            .foregroundColor(.black)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                        Spacer()
+                    }
+                    .frame(height: 100)
 					.background(Color.white)
-					.frame(minWidth: 100, maxWidth: .infinity)
 				}
 				.cornerRadius(10)
 				.shadow(radius: 5)
-				.padding(.bottom, 5)
+                .padding()
 
 				if !viewModel.isLoading {
 
@@ -62,17 +59,17 @@ struct LibraryListView: View {
 											.fontWeight(.semibold)
 									}
 									Spacer()
-								}.padding(32)
-							}.background(Color.black)
-								.frame(minWidth: 100, maxWidth: .infinity)
-								.frame(height: 100)
+								}
+							}
+                            .background(Color.black)
+                            .frame(height: 100)
 						}
 						.cornerRadius(10)
 						.shadow(radius: 5)
-						.padding(.bottom, 5)
+                        .padding()
 					}
 
-					ForEach(viewModel.libraries, id: \.id) { library in
+                    ForEach(Array(viewModel.libraryRandomItems.keys), id: \.id) { library in
 						if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
 							Button {
 								libraryListRouter.route(to: \.library,
@@ -80,25 +77,24 @@ struct LibraryListView: View {
 								                         title: library.name ?? ""))
 							} label: {
 								ZStack {
-									ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
-										.opacity(0.4)
-									HStack {
-										Spacer()
-										VStack {
-											Text(library.name ?? "")
-												.foregroundColor(.white)
-												.font(.title2)
-												.fontWeight(.semibold)
-										}
-										Spacer()
-									}.padding(32)
-								}.background(Color.black)
-									.frame(minWidth: 100, maxWidth: .infinity)
-									.frame(height: 100)
+//									ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
+//										.opacity(0.4)
+                                    
+                                    ImageView(src: viewModel.libraryRandomItems[library]!.getBackdropImage(maxWidth: 500))
+                                    
+                                    VStack {
+                                        Text(library.name ?? "")
+                                            .foregroundColor(.white)
+                                            .font(.title2)
+                                            .fontWeight(.semibold)
+                                    }
+								}
+                                .background(Color.black)
+                                .frame(height: 100)
 							}
 							.cornerRadius(10)
-							.shadow(radius: 5)
-							.padding(.bottom, 5)
+                            .shadow(radius: 5)
+                            .padding()
 						} else {
 							EmptyView()
 						}
@@ -106,9 +102,7 @@ struct LibraryListView: View {
 				} else {
 					ProgressView()
 				}
-			}.padding(.leading, 16)
-				.padding(.trailing, 16)
-				.padding(.top, 8)
+			}
 		}
 		.navigationTitle(L10n.allMedia)
 		.toolbar {

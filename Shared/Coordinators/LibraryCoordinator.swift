@@ -11,8 +11,6 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-typealias LibraryCoordinatorParams = (viewModel: LibraryViewModel, title: String)
-
 final class LibraryCoordinator: NavigationCoordinatable {
 
 	let stack = NavigationStack(initial: \LibraryCoordinator.start)
@@ -29,16 +27,14 @@ final class LibraryCoordinator: NavigationCoordinatable {
 	var modalItem = makeModalItem
 
 	let viewModel: LibraryViewModel
-	let title: String
 
-	init(viewModel: LibraryViewModel, title: String) {
+	init(viewModel: LibraryViewModel) {
 		self.viewModel = viewModel
-		self.title = title
 	}
 
 	@ViewBuilder
 	func makeStart() -> some View {
-		LibraryView(viewModel: self.viewModel, title: title)
+		LibraryView(viewModel: self.viewModel)
 	}
 
 	func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
