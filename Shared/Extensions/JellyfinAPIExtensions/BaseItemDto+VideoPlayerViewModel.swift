@@ -45,22 +45,22 @@ extension BaseItemDto {
 
 				// MARK: Stream
 
-				var streamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI)!
+				var streamURL: URLComponents
 
 				let streamType: ServerStreamType
 
 				if let transcodeURL = mediaSource.transcodingUrl {
 					streamType = .transcode
-					streamURL.path = transcodeURL
+					streamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI.appending(transcodeURL))!
 				} else {
 					streamType = .direct
+					streamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI)!
 					streamURL.path = "/Videos/\(self.id!)/stream"
+					streamURL.addQueryItem(name: "Static", value: "true")
+					streamURL.addQueryItem(name: "MediaSourceId", value: self.id!)
+					streamURL.addQueryItem(name: "Tag", value: self.etag)
+					streamURL.addQueryItem(name: "MinSegments", value: "6")
 				}
-
-				streamURL.addQueryItem(name: "Static", value: "true")
-				streamURL.addQueryItem(name: "MediaSourceId", value: self.id!)
-				streamURL.addQueryItem(name: "Tag", value: self.etag)
-				streamURL.addQueryItem(name: "MinSegments", value: "6")
 
 				// MARK: VidoPlayerViewModel Creation
 
