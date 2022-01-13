@@ -281,6 +281,7 @@
 		E11B1B6E2718CDBA006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11D224227378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */; };
 		E11D224327378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11D224127378428003F9CB3 /* ServerDetailCoordinator.swift */; };
+		E11D83AF278FA998006E9776 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E11D83AE278FA998006E9776 /* NukeUI */; };
 		E12186DE2718F1C50010884C /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E12186DD2718F1C50010884C /* Defaults */; };
 		E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = E1218C9D271A2CD600EA0737 /* CombineExt */; };
 		E122A9132788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */; };
@@ -291,6 +292,7 @@
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
+		E1361DA7278FA7A300BEC523 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1361DA6278FA7A300BEC523 /* NukeUI */; };
 		E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1384943278036C70024FB48 /* VLCPlayerViewController.swift */; };
 		E13849452780370B0024FB48 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
 		E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */; };
@@ -779,6 +781,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */,
+				E11D83AF278FA998006E9776 /* NukeUI in Frameworks */,
 				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
@@ -799,6 +802,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E13DD3D327168E65009D4DAF /* Defaults in Frameworks */,
+				E1361DA7278FA7A300BEC523 /* NukeUI in Frameworks */,
 				53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */,
 				E10EAA4D277BB716000269ED /* Sliders in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
@@ -1714,6 +1718,7 @@
 				E1A9999A271A343C008E78C0 /* SwiftUICollection */,
 				E178857C278037FD0094FBCF /* JellyfinAPI */,
 				E1AE8E7D2789136D00FBDDAA /* Nuke */,
+				E11D83AE278FA998006E9776 /* NukeUI */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -1752,6 +1757,7 @@
 				E10EAA44277BB646000269ED /* JellyfinAPI */,
 				E10EAA4C277BB716000269ED /* Sliders */,
 				E1AE8E7B2789135A00FBDDAA /* Nuke */,
+				E1361DA6278FA7A300BEC523 /* NukeUI */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -1844,6 +1850,7 @@
 				E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */,
 				E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */,
+				E1361DA5278FA7A300BEC523 /* XCRemoteSwiftPackageReference "NukeUI" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3024,6 +3031,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		E1361DA5278FA7A300BEC523 /* XCRemoteSwiftPackageReference "NukeUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/NukeUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.7.0;
+			};
+		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
@@ -3044,8 +3059,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 9.6.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
 			};
 		};
 		E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
@@ -3129,6 +3144,11 @@
 			package = E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */;
 			productName = Sliders;
 		};
+		E11D83AE278FA998006E9776 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1361DA5278FA7A300BEC523 /* XCRemoteSwiftPackageReference "NukeUI" */;
+			productName = NukeUI;
+		};
 		E12186DD2718F1C50010884C /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
@@ -3138,6 +3158,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */;
 			productName = CombineExt;
+		};
+		E1361DA6278FA7A300BEC523 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1361DA5278FA7A300BEC523 /* XCRemoteSwiftPackageReference "NukeUI" */;
+			productName = NukeUI;
 		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;

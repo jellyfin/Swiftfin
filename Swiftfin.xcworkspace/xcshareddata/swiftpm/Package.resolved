@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/CombineCommunity/CombineExt",
         "state": {
           "branch": null,
-          "revision": "0880829102152185190064fd17847a7c681d2127",
-          "version": "1.5.1"
+          "revision": "8ca006df5e3cc6bb176b70238e2b0014bbc3a235",
+          "version": "1.0.0"
         }
       },
       {
@@ -42,8 +42,17 @@
         "repositoryURL": "https://github.com/sindresorhus/Defaults",
         "state": {
           "branch": null,
-          "revision": "55f3302c3ab30a8760f10042d0ebc0a6907f865a",
-          "version": "6.1.0"
+          "revision": "8a6e4a96fd38504a05903d136c85634b65fd7c4d",
+          "version": "6.0.0"
+        }
+      },
+      {
+        "package": "Gifu",
+        "repositoryURL": "https://github.com/kaishin/Gifu",
+        "state": {
+          "branch": null,
+          "revision": "51f2eab32903e336f590c013267cfa4d7f8b06c4",
+          "version": "3.3.1"
         }
       },
       {
@@ -60,8 +69,17 @@
         "repositoryURL": "https://github.com/kean/Nuke",
         "state": {
           "branch": null,
-          "revision": "7f73ceaeacd5df75a7994cd82e165ad9ff1815db",
-          "version": "9.6.1"
+          "revision": "6be3e778f1663b16dd645b7e8a0a01f73b5ed7f3",
+          "version": "10.6.1"
+        }
+      },
+      {
+        "package": "NukeUI",
+        "repositoryURL": "https://github.com/kean/NukeUI",
+        "state": {
+          "branch": null,
+          "revision": "08e953d8d80b409bebcd95ba0635fdd748934ce0",
+          "version": "0.7.0"
         }
       },
       {
@@ -78,8 +96,8 @@
         "repositoryURL": "https://github.com/sushichop/Puppy",
         "state": {
           "branch": null,
-          "revision": "95ce04b0e778b8d7c351876bc98bbf68328dfc9b",
-          "version": "0.3.1"
+          "revision": "dc82e65c749cee431ffbb8c0913680b61ccd7e08",
+          "version": "0.2.0"
         }
       },
       {

@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import NukeUI
 import SwiftUI
 
 struct ImageView: View {
@@ -40,17 +41,12 @@ struct ImageView: View {
 	}
 
 	var body: some View {
-		AsyncImage(url: source, transaction: Transaction(animation: .easeInOut)) { phase in
-			switch phase {
-			case let .success(image):
+		LazyImage(source: source) { state in
+			if let image = state.image {
 				image
-					.resizable()
-					.aspectRatio(contentMode: .fill)
-			case .failure:
+			} else if state.error != nil {
 				failureImage
-			default:
-				// TODO: remove once placeholder hash image fixed
-
+			} else {
 				#if os(tvOS)
 					ZStack {
 						Color.black.ignoresSafeArea()
@@ -66,5 +62,6 @@ struct ImageView: View {
 				#endif
 			}
 		}
+		.pipeline(ImagePipeline(configuration: .withDataCache))
 	}
 }
