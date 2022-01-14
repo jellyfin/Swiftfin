@@ -18,18 +18,18 @@ extension BaseItemDto {
 
 		let builder = DeviceProfileBuilder()
 		// TODO: fix bitrate settings
-		builder.setMaxBitrate(bitrate: 60_000_000)
+		builder.setMaxBitrate(bitrate: 120_000_000)
 		let profile = builder.buildProfile()
 
 		let playbackInfo = PlaybackInfoDto(userId: SessionManager.main.currentLogin.user.id,
-		                                   maxStreamingBitrate: 60_000_000,
+		                                   maxStreamingBitrate: 120_000_000,
 		                                   startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
 		                                   deviceProfile: profile,
 		                                   autoOpenLiveStream: true)
 
 		return MediaInfoAPI.getPostedPlaybackInfo(itemId: self.id!,
 		                                          userId: SessionManager.main.currentLogin.user.id,
-		                                          maxStreamingBitrate: 60_000_000,
+		                                          maxStreamingBitrate: 120_000_000,
 		                                          startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
 		                                          autoOpenLiveStream: true,
 		                                          playbackInfoDto: playbackInfo)

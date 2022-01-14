@@ -39,7 +39,11 @@ struct ParallaxHeaderScrollView<Header: View, StaticOverlayView: View, Content: 
 					.offset(y: yOffset)
 			}
 			.frame(height: headerHeight)
-			content()
+
+			HStack {
+				content()
+				Spacer(minLength: 0)
+			}
 		}
 	}
 }

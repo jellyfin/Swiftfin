@@ -296,7 +296,7 @@ public extension BaseItemDto {
 		if let premierDate = premiereDate {
 			return premierDate > Date()
 		} else {
-			return true
+			return false
 		}
 	}
 
