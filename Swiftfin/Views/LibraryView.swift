@@ -10,6 +10,7 @@ import Stinsen
 import SwiftUI
 
 struct LibraryView: View {
+
 	@EnvironmentObject
 	var libraryRouter: LibraryCoordinator.Router
 	@StateObject
@@ -21,87 +22,75 @@ struct LibraryView: View {
 	var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
 
 	@State
-	private var tracks: [GridItem] = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
+	private var tracks: [GridItem] = Array(repeating: .init(.flexible(), alignment: .top),
+	                                       count: Int(UIScreen.main.bounds.size.width) / 125)
 
 	func recalcTracks() {
-		tracks = Array(repeating: .init(.flexible()), count: Int(UIScreen.main.bounds.size.width) / 125)
+		tracks = Array(repeating: .init(.flexible(), alignment: .top), count: Int(UIScreen.main.bounds.size.width) / 125)
+	}
+
+	@ViewBuilder
+	private var loadingView: some View {
+		ProgressView()
+	}
+
+	@ViewBuilder
+	private var noResultsView: some View {
+		L10n.noResults.text
+	}
+
+	@ViewBuilder
+	private var libraryItemsView: some View {
+		DetectBottomScrollView {
+			VStack {
+				LazyVGrid(columns: tracks) {
+					ForEach(viewModel.items, id: \.id) { item in
+						if item.type != "Folder" {
+							PortraitItemButton(item: item) { item in
+								libraryRouter.route(to: \.item, item)
+							}
+						}
+					}
+				}
+				.ignoresSafeArea()
+				.listRowSeparator(.hidden)
+				.onRotate { _ in
+					recalcTracks()
+				}
+
+				Spacer()
+					.frame(height: 30)
+			}
+		} didReachBottom: { newValue in
+			if newValue && viewModel.hasNextPage {
+				viewModel.requestNextPageAsync()
+			}
+		}
 	}
 
 	var body: some View {
 		Group {
-			if viewModel.isLoading == true {
+			if viewModel.isLoading && viewModel.items.isEmpty {
 				ProgressView()
 			} else if !viewModel.items.isEmpty {
-				VStack {
-					ScrollView(.vertical) {
-						Spacer().frame(height: 16)
-						LazyVGrid(columns: tracks) {
-							ForEach(viewModel.items, id: \.id) { item in
-								if item.type != "Folder" {
-									Button {
-										libraryRouter.route(to: \.item, item)
-									} label: {
-										PortraitItemView(item: item)
-									}
-								}
-							}
-						}.onRotate { _ in
-							recalcTracks()
-						}
-						if viewModel.hasNextPage || viewModel.hasPreviousPage {
-							HStack {
-								Spacer()
-								HStack {
-									Button {
-										viewModel.requestPreviousPage()
-									} label: {
-										Image(systemName: "chevron.left")
-											.font(.system(size: 25))
-									}.disabled(!viewModel.hasPreviousPage)
-									Text(L10n.pageOfWithNumbers(String(viewModel.currentPage + 1), String(viewModel.totalPages)))
-										.font(.subheadline)
-										.fontWeight(.medium)
-									Button {
-										viewModel.requestNextPage()
-									} label: {
-										Image(systemName: "chevron.right")
-											.font(.system(size: 25))
-									}.disabled(!viewModel.hasNextPage)
-								}
-								Spacer()
-							}
-						}
-						Spacer().frame(height: 16)
-					}
-				}
+				libraryItemsView
 			} else {
-				L10n.noResults.text
+				noResultsView
 			}
 		}
-		.navigationBarTitle(title, displayMode: .inline)
+		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
 			ToolbarItemGroup(placement: .navigationBarTrailing) {
-				if viewModel.hasPreviousPage {
-					Button {
-						viewModel.requestPreviousPage()
-					} label: {
-						Image(systemName: "chevron.left")
-					}.disabled(viewModel.isLoading)
+
+				Button {
+					libraryRouter
+						.route(to: \.filter, (filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType,
+						                      parentId: viewModel.parentID ?? ""))
+				} label: {
+					Image(systemName: "line.horizontal.3.decrease.circle")
 				}
-				if viewModel.hasNextPage {
-					Button {
-						viewModel.requestNextPage()
-					} label: {
-						Image(systemName: "chevron.right")
-					}.disabled(viewModel.isLoading)
-				}
-				Label("Icon One", systemImage: "line.horizontal.3.decrease.circle")
-					.foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
-					.onTapGesture {
-						libraryRouter
-							.route(to: \.filter, (filters: $viewModel.filters, enabledFilterType: viewModel.enabledFilterType,
-							                      parentId: viewModel.parentID ?? ""))
-					}
+				.foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
+
 				Button {
 					libraryRouter.route(to: \.search, .init(parentID: viewModel.parentID))
 				} label: {
@@ -111,6 +100,3 @@ struct LibraryView: View {
 		}
 	}
 }
-
-// stream BM^S by nicki!
-//

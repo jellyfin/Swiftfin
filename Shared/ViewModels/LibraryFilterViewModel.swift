@@ -67,7 +67,8 @@ final class LibraryFilterViewModel: ViewModel {
 	}
 
 	func requestQueryFilters() {
-		FilterAPI.getQueryFilters(userId: SessionManager.main.currentLogin.user.id, parentId: self.parentId)
+		FilterAPI.getQueryFilters(userId: SessionManager.main.currentLogin.user.id,
+		                          parentId: self.parentId)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)

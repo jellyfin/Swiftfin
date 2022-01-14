@@ -91,6 +91,3 @@ struct LibraryView: View {
 		}
 	}
 }
-
-// stream BM^S by nicki!
-//

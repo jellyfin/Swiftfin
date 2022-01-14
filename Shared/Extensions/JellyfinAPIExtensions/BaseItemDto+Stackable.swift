@@ -56,7 +56,7 @@ extension BaseItemDto: PortraitImageStackable {
 
 	public var showTitle: Bool {
 		switch self.itemType {
-		case .episode, .series, .movie:
+		case .episode, .series, .movie, .boxset:
 			return Defaults[.showPosterLabels]
 		default:
 			return true

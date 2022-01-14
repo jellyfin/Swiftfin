@@ -38,10 +38,6 @@ struct SettingsView: View {
 	var jumpBackwardLength
 	@Default(.jumpGesturesEnabled)
 	var jumpGesturesEnabled
-	@Default(.showPosterLabels)
-	var showPosterLabels
-	@Default(.showCastAndCrew)
-	var showCastAndCrew
 	@Default(.resumeOffset)
 	var resumeOffset
 	@Default(.subtitleSize)
@@ -138,8 +134,17 @@ struct SettingsView: View {
 			}
 
 			Section(header: L10n.accessibility.text) {
-				Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
-				Toggle(L10n.showCastAndCrew, isOn: $showCastAndCrew)
+
+				Button {
+					settingsRouter.route(to: \.customizeViewsSettings)
+				} label: {
+					HStack {
+						L10n.customize.text
+							.foregroundColor(.primary)
+						Spacer()
+						Image(systemName: "chevron.right")
+					}
+				}
 
 				Button {
 					settingsRouter.route(to: \.missingSettings)
