@@ -32,8 +32,8 @@ final class HomeCoordinator: NavigationCoordinatable {
 		NavigationViewCoordinator(SettingsCoordinator())
 	}
 
-    func makeLibrary(viewModel: LibraryViewModel) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: viewModel)
+	func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
+		LibraryCoordinator(viewModel: params.viewModel, title: params.title)
 	}
 
 	func makeItem(item: BaseItemDto) -> ItemCoordinator {
@@ -44,8 +44,8 @@ final class HomeCoordinator: NavigationCoordinatable {
 		NavigationViewCoordinator(ItemCoordinator(item: item))
 	}
 
-    func makeModalLibrary(viewModel: LibraryViewModel) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
+	func makeModalLibrary(params: LibraryCoordinatorParams) -> NavigationViewCoordinator<LibraryCoordinator> {
+		NavigationViewCoordinator(LibraryCoordinator(viewModel: params.viewModel, title: params.title))
 	}
 
 	@ViewBuilder

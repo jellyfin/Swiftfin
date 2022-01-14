@@ -90,9 +90,9 @@ struct HomeView: View {
 
 								Button {
 									homeRouter
-//										.route(to: \.library, (viewModel: .init(parentID: library.id!,
-//										                                        filters: viewModel.recentFilterSet),
-//										                       title: library.name ?? ""))
+										.route(to: \.library, (viewModel: .init(parentID: library.id!,
+										                                        filters: viewModel.recentFilterSet),
+										                       title: library.name ?? ""))
 								} label: {
 									HStack {
 										L10n.seeAll.text.font(.subheadline).fontWeight(.bold)

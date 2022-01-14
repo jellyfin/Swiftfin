@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-typealias FilterCoordinatorParams = (libraryItem: BaseItemDto, filters: Binding<LibraryFilters>, enabledFilterType: [FilterType])
+typealias FilterCoordinatorParams = (filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String)
 
 final class FilterCoordinator: NavigationCoordinatable {
 
@@ -20,19 +19,19 @@ final class FilterCoordinator: NavigationCoordinatable {
 	@Root
 	var start = makeStart
 
-    let libraryItem: BaseItemDto
 	@Binding
 	var filters: LibraryFilters
 	var enabledFilterType: [FilterType]
+	var parentId: String = ""
 
-    init(libraryItem: BaseItemDto, filters: Binding<LibraryFilters>, enabledFilterType: [FilterType]) {
-        self.libraryItem =  libraryItem
+	init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String) {
 		_filters = filters
 		self.enabledFilterType = enabledFilterType
+		self.parentId = parentId
 	}
 
 	@ViewBuilder
 	func makeStart() -> some View {
-        LibraryFilterView(filters: $filters, enabledFilterType: enabledFilterType, parentId: libraryItem.id!)
+		LibraryFilterView(filters: $filters, enabledFilterType: enabledFilterType, parentId: parentId)
 	}
 }

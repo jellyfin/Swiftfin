@@ -88,7 +88,7 @@ struct LibrarySearchView: View {
 								Button {
 									searchRouter.route(to: \.item, item)
 								} label: {
-                                    PortraitItemElement(item: item)
+									PortraitItemElement(item: item)
 								}
 							}
 						}

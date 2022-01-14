@@ -23,9 +23,9 @@ struct LibraryRowCell: Hashable {
 final class LibraryViewModel: ViewModel {
 
 	@Published
-    var items: [BaseItemDto] = []
+	var items: [BaseItemDto] = []
 	@Published
-    var rows: [LibraryRow] = []
+	var rows: [LibraryRow] = []
 
 	@Published
 	var totalPages = 0
@@ -37,13 +37,13 @@ final class LibraryViewModel: ViewModel {
 	// temp
 	@Published
 	var filters: LibraryFilters
-    
-    let libraryItem: BaseItemDto
-    var person: BaseItemPerson?
-    var genre: NameGuidPair?
-    var studio: NameGuidPair?
+
+	var parentID: String?
+	var person: BaseItemPerson?
+	var genre: NameGuidPair?
+	var studio: NameGuidPair?
 	private let columns: Int
-    private let pageItemSize: Int
+	private let pageItemSize: Int
 
 	var enabledFilterType: [FilterType] {
 		if genre == nil {
@@ -53,40 +53,38 @@ final class LibraryViewModel: ViewModel {
 		}
 	}
 
-    init(libraryItem: BaseItemDto,
+	init(parentID: String? = nil,
 	     person: BaseItemPerson? = nil,
 	     genre: NameGuidPair? = nil,
 	     studio: NameGuidPair? = nil,
 	     filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]),
 	     columns: Int = 7)
 	{
-        self.libraryItem = libraryItem
+		self.parentID = parentID
 		self.person = person
 		self.genre = genre
 		self.studio = studio
 		self.filters = filters
 		self.columns = columns
-        
-        // Size is typical size of portrait items
-        self.pageItemSize = UIScreen.itemsFillableOnScreen(width: 130, height: 185)
-        
-        print("Page item size: \(pageItemSize)")
-        
+
+		// Size is typical size of portrait items
+		self.pageItemSize = UIScreen.itemsFillableOnScreen(width: 130, height: 185)
+
 		super.init()
 
 		$filters
-            .sink(receiveValue: { newFilters in
-                self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
-            })
+			.sink(receiveValue: { newFilters in
+				self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
+			})
 			.store(in: &cancellables)
 	}
 
-    func requestItemsAsync(with filters: LibraryFilters, replaceCurrentItems: Bool = false) {
-        
-        if replaceCurrentItems {
-            self.items = []
-        }
-        
+	func requestItemsAsync(with filters: LibraryFilters, replaceCurrentItems: Bool = false) {
+
+		if replaceCurrentItems {
+			self.items = []
+		}
+
 		let personIDs: [String] = [person].compactMap(\.?.id)
 		let studioIDs: [String] = [studio].compactMap(\.?.id)
 		let genreIDs: [String]
@@ -102,7 +100,7 @@ final class LibraryViewModel: ViewModel {
 		                          recursive: true,
 		                          searchTerm: nil,
 		                          sortOrder: filters.sortOrder,
-                                  parentId: libraryItem.id,
+		                          parentId: parentID,
 		                          fields: [
 		                          	.primaryImageAspectRatio,
 		                          	.seriesPrimaryImage,
@@ -122,14 +120,14 @@ final class LibraryViewModel: ViewModel {
 		                          studioIds: studioIDs,
 		                          genreIds: genreIDs,
 		                          enableImages: true)
-            .trackActivity(loading)
+			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
 			}, receiveValue: { [weak self] response in
-                
+
 				guard let self = self else { return }
-                let totalPages = ceil(Double(response.totalRecordCount ?? 0) / Double(self.pageItemSize))
-                
+				let totalPages = ceil(Double(response.totalRecordCount ?? 0) / Double(self.pageItemSize))
+
 				self.totalPages = Int(totalPages)
 				self.hasNextPage = self.currentPage < self.totalPages - 1
 				self.items.append(contentsOf: response.items ?? [])
@@ -143,7 +141,7 @@ final class LibraryViewModel: ViewModel {
 		requestItemsAsync(with: filters)
 	}
 
-    // tvOS calculations for collection view
+	// tvOS calculations for collection view
 	private func calculateRows(for itemList: [BaseItemDto]) -> [LibraryRow] {
 		guard !itemList.isEmpty else { return [] }
 		let rowCount = itemList.count / columns
@@ -174,12 +172,12 @@ final class LibraryViewModel: ViewModel {
 }
 
 extension UIScreen {
-    
-    static func itemsFillableOnScreen(width: CGFloat, height: CGFloat) -> Int {
-        
-        let screenSize = UIScreen.main.bounds.height * UIScreen.main.bounds.width
-        let itemSize = width * height
-        
-        return Int(screenSize / itemSize)
-    }
+
+	static func itemsFillableOnScreen(width: CGFloat, height: CGFloat) -> Int {
+
+		let screenSize = UIScreen.main.bounds.height * UIScreen.main.bounds.width
+		let itemSize = width * height
+
+		return Int(screenSize / itemSize)
+	}
 }

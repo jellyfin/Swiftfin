@@ -12,7 +12,7 @@ import Stinsen
 import SwiftUI
 
 struct LibraryListView: View {
-    
+
 	@EnvironmentObject
 	var libraryListRouter: LibraryListCoordinator.Router
 	@StateObject
@@ -23,31 +23,30 @@ struct LibraryListView: View {
 			LazyVStack {
 				Button {
 					libraryListRouter.route(to: \.library,
-                                            LibraryViewModel(libraryItem: BaseItemDto(), filters: viewModel.withFavorites))
+					                        (viewModel: LibraryViewModel(filters: viewModel.withFavorites), title: L10n.favorites))
 				} label: {
-                    HStack {
-                        Spacer()
-                        L10n.yourFavorites.text
-                            .foregroundColor(.black)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                        Spacer()
-                    }
-                    .frame(height: 100)
+					HStack {
+						Spacer()
+						L10n.yourFavorites.text
+							.foregroundColor(.black)
+							.font(.subheadline)
+							.fontWeight(.semibold)
+						Spacer()
+					}
+					.frame(height: 100)
 					.background(Color.white)
 				}
 				.cornerRadius(10)
 				.shadow(radius: 5)
-                .padding()
+				.padding()
 
 				if !viewModel.isLoading {
 
 					if let collectionsLibraryItem = viewModel.libraries.first(where: { $0.collectionType == "boxsets" }) {
 						Button {
 							libraryListRouter.route(to: \.library,
-                                                    LibraryViewModel(libraryItem: collectionsLibraryItem))
-//							                        (viewModel: LibraryViewModel(parentID: collectionsLibraryItem.id),
-//							                         title: collectionsLibraryItem.name ?? ""))
+							                        (viewModel: LibraryViewModel(parentID: collectionsLibraryItem.id),
+							                         title: collectionsLibraryItem.name ?? ""))
 						} label: {
 							ZStack {
 								ImageView(src: collectionsLibraryItem.getPrimaryImage(maxWidth: 500),
@@ -64,15 +63,15 @@ struct LibraryListView: View {
 									Spacer()
 								}
 							}
-                            .background(Color.black)
-                            .frame(height: 100)
+							.background(Color.black)
+							.frame(height: 100)
 						}
 						.cornerRadius(10)
 						.shadow(radius: 5)
-                        .padding()
+						.padding()
 					}
 
-                    ForEach(Array(viewModel.libraryRandomItems.keys), id: \.id) { library in
+					ForEach(Array(viewModel.libraryRandomItems.keys), id: \.id) { library in
 						if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
 							Button {
 								libraryListRouter.route(to: \.library,
@@ -82,22 +81,22 @@ struct LibraryListView: View {
 								ZStack {
 //									ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
 //										.opacity(0.4)
-                                    
-                                    ImageView(src: viewModel.libraryRandomItems[library]!.getBackdropImage(maxWidth: 500))
-                                    
-                                    VStack {
-                                        Text(library.name ?? "")
-                                            .foregroundColor(.white)
-                                            .font(.title2)
-                                            .fontWeight(.semibold)
-                                    }
+
+									ImageView(src: viewModel.libraryRandomItems[library]!.getBackdropImage(maxWidth: 500))
+
+									VStack {
+										Text(library.name ?? "")
+											.foregroundColor(.white)
+											.font(.title2)
+											.fontWeight(.semibold)
+									}
 								}
-                                .background(Color.black)
-                                .frame(height: 100)
+								.background(Color.black)
+								.frame(height: 100)
 							}
 							.cornerRadius(10)
-                            .shadow(radius: 5)
-                            .padding()
+							.shadow(radius: 5)
+							.padding()
 						} else {
 							EmptyView()
 						}
