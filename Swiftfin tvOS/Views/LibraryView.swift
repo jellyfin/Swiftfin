@@ -15,7 +15,7 @@ struct LibraryView: View {
 	var libraryRouter: LibraryCoordinator.Router
 	@StateObject
 	var viewModel: LibraryViewModel
-    var title: String
+	var title: String
 
 	// MARK: tracks for grid
 
