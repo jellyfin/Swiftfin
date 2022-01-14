@@ -131,7 +131,16 @@ struct SettingsView: View {
 					}
 
 					Section(header: L10n.accessibility.text) {
-						Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
+						Button {
+							settingsRouter.route(to: \.customizeViewsSettings)
+						} label: {
+							HStack {
+								L10n.customize.text
+									.foregroundColor(.primary)
+								Spacer()
+								Image(systemName: "chevron.right")
+							}
+						}
 
 						Button {
 							settingsRouter.route(to: \.missingSettings)

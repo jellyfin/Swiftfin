@@ -76,6 +76,8 @@ internal enum L10n {
   internal static let `continue` = L10n.tr("Localizable", "continue")
   /// Continue Watching
   internal static let continueWatching = L10n.tr("Localizable", "continueWatching")
+  /// Customize
+  internal static let customize = L10n.tr("Localizable", "customize")
   /// Dark
   internal static let dark = L10n.tr("Localizable", "dark")
   /// Default Scheme

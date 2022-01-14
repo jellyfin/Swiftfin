@@ -395,6 +395,8 @@
 		E1C812CE277AE43100918266 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */; };
 		E1C812D1277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */; };
 		E1C812D2277AE50A00918266 /* URLComponentsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */; };
+		E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */; };
+		E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */; };
 		E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */; };
 		E1D4BF7E2719D1DD00A11E64 /* BasicAppSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */; };
 		E1D4BF7F2719D1DD00A11E64 /* BasicAppSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */; };
@@ -732,6 +734,8 @@
 		E1C812C8277AE40900918266 /* VideoPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
 		E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVideoPlayerCoordinator.swift; sourceTree = "<group>"; };
+		E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
+		E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
 		E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsViewModel.swift; sourceTree = "<group>"; };
 		E1D4BF802719D22800A11E64 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
@@ -1648,10 +1652,11 @@
 		E1E5D54A2783E26100692DFE /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
+				E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */,
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
+				E176DE6F278E369F001EFD8D /* MissingItemsSettingsView.swift */,
 				E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */,
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
-				E176DE6F278E369F001EFD8D /* MissingItemsSettingsView.swift */,
 			);
 			path = SettingsView;
 			sourceTree = "<group>";
@@ -1659,6 +1664,7 @@
 		E1E5D54D2783E66600692DFE /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
+				E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */,
 				E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */,
 				E1BDE358278E9ED2004E4022 /* MissingItemsSettingsView.swift */,
 				E1E5D54E2783E67100692DFE /* OverlaySettingsView.swift */,
@@ -2222,6 +2228,7 @@
 				E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */,
 				E1FA2F7427818A8800B4C270 /* SmallMenuOverlay.swift in Sources */,
 				E193D53C27193F9500900D82 /* UserListCoordinator.swift in Sources */,
+				E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E13DD3C927164B1E009D4DAF /* UIDeviceExtensions.swift in Sources */,
 				535870A62669D8AE00D05A09 /* LazyView.swift in Sources */,
 				E193D53A27193F9000900D82 /* ServerListCoordinator.swift in Sources */,
@@ -2314,6 +2321,7 @@
 				62E632DA267D2BC40063E547 /* LatestMediaViewModel.swift in Sources */,
 				E1AD105C26D9ABDD003E4A08 /* PillHStackView.swift in Sources */,
 				625CB56F2678C23300530A6E /* HomeView.swift in Sources */,
+				E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */,
 				E1E5D5492783CDD700692DFE /* OverlaySettingsView.swift in Sources */,
 				E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */,
