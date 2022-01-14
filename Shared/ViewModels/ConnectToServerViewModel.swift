@@ -44,7 +44,8 @@ final class ConnectToServerViewModel: ViewModel {
 		return message
 	}
 
-	func connectToServer(uri: String) {
+	func connectToServer(uri: String, redirectCount: Int = 0) {
+
 		#if targetEnvironment(simulator)
 			var uri = uri
 			if uri == "localhost" {
@@ -63,6 +64,28 @@ final class ConnectToServerViewModel: ViewModel {
 				case .finished: ()
 				case let .failure(error):
 					switch error {
+					case is ErrorResponse:
+						let errorResponse = error as! ErrorResponse
+						switch errorResponse {
+						case let .error(_, _, response, _):
+							// a url in the response is the result if a redirect
+							if let newURL = response?.url {
+								if redirectCount > 2 {
+									self.handleAPIRequestError(displayMessage: L10n.tooManyRedirects,
+									                           logLevel: .critical,
+									                           tag: "connectToServer",
+									                           completion: completion)
+								} else {
+									self
+										.connectToServer(uri: newURL.absoluteString
+											.removeRegexMatches(pattern: "/web/index.html", replaceWith: ""),
+											redirectCount: redirectCount + 1)
+								}
+							} else {
+								self.handleAPIRequestError(completion: completion)
+							}
+						}
+						print(errorResponse)
 					case is SwiftfinStore.Errors:
 						let swiftfinError = error as! SwiftfinStore.Errors
 						switch swiftfinError {

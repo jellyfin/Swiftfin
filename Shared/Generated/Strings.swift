@@ -354,6 +354,8 @@ internal enum L10n {
   internal static let system = L10n.tr("Localizable", "system")
   /// Tags
   internal static let tags = L10n.tr("Localizable", "tags")
+  /// Too Many Redirects
+  internal static let tooManyRedirects = L10n.tr("Localizable", "tooManyRedirects")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "tryAgain")
   /// TV Shows
