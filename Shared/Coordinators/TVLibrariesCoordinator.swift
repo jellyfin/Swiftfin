@@ -34,6 +34,6 @@ final class TVLibrariesCoordinator: NavigationCoordinatable {
 	}
 
 	func makeLibrary(library: BaseItemDto) -> LibraryCoordinator {
-		LibraryCoordinator(viewModel: .init(libraryItem: <#T##BaseItemDto#>))
+        LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
 	}
 }

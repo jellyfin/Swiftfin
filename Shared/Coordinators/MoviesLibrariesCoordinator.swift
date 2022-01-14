@@ -34,6 +34,6 @@ final class MovieLibrariesCoordinator: NavigationCoordinatable {
 	}
 
 	func makeLibrary(library: BaseItemDto) -> LibraryCoordinator {
-//		LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
+		LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
 	}
 }
