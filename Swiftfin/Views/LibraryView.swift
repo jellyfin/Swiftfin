@@ -92,7 +92,7 @@ struct LibraryView: View {
 				.foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
 
 				Button {
-//					libraryRouter.route(to: \.search, .init(parentID: viewModel.parentID))
+					libraryRouter.route(to: \.search, .init(parentID: viewModel.parentID))
 				} label: {
 					Image(systemName: "magnifyingglass")
 				}
