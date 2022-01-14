@@ -78,14 +78,13 @@ final class ConnectToServerViewModel: ViewModel {
 								} else {
 									self
 										.connectToServer(uri: newURL.absoluteString
-											.removeRegexMatches(pattern: "/web/index.html", replaceWith: ""),
+											.removeRegexMatches(pattern: "/web/index.html"),
 											redirectCount: redirectCount + 1)
 								}
 							} else {
 								self.handleAPIRequestError(completion: completion)
 							}
 						}
-						print(errorResponse)
 					case is SwiftfinStore.Errors:
 						let swiftfinError = error as! SwiftfinStore.Errors
 						switch swiftfinError {
