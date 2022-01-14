@@ -111,7 +111,8 @@ final class LibraryViewModel: ViewModel {
 		                          	.chapters,
 		                          ],
 		                          includeItemTypes: filters.filters
-		                          	.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode"] : ["Movie", "Series"],
+		                          	.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode", "BoxSet"] :
+		                          	["Movie", "Series", "BoxSet"],
 		                          filters: filters.filters,
 		                          sortBy: sortBy,
 		                          tags: filters.tags,

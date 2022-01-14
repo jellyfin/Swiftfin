@@ -13,8 +13,6 @@ final class LibraryListViewModel: ViewModel {
 
 	@Published
 	var libraries: [BaseItemDto] = []
-	@Published
-	var libraryRandomItems: [BaseItemDto: BaseItemDto] = [:]
 
 	// temp
 	var withFavorites = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
@@ -31,34 +29,8 @@ final class LibraryListViewModel: ViewModel {
 			.sink(receiveCompletion: { completion in
 				self.handleAPIRequestError(completion: completion)
 			}, receiveValue: { response in
-				if let libraries = response.items {
-					self.libraries = libraries
-
-					for library in libraries {
-						self.getRandomLibraryItem(for: library)
-					}
-				}
+				self.libraries = response.items ?? []
 			})
-			.store(in: &cancellables)
-	}
-
-	// MARK: Library random item
-
-	func getRandomLibraryItem(for library: BaseItemDto) {
-		guard library.itemType == .collectionFolder else { return }
-
-		ItemsAPI.getItems(userId: SessionManager.main.currentLogin.user.id,
-		                  limit: 1,
-		                  parentId: library.id)
-			.sink { completion in
-				self.handleAPIRequestError(completion: completion)
-			} receiveValue: { result in
-				if let item = result.items?.first {
-					self.libraryRandomItems[library] = item
-				} else {
-					self.libraryRandomItems[library] = library
-				}
-			}
 			.store(in: &cancellables)
 	}
 }
