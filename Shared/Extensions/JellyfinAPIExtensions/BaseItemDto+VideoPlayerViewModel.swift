@@ -67,8 +67,6 @@ extension BaseItemDto {
 						}
 					}
 
-					print(streamURL.url!)
-
 					// MARK: VidoPlayerViewModel Creation
 
 					var subtitle: String?
