@@ -70,6 +70,7 @@ extension Defaults.Keys {
 	enum Experimental {
 		static let syncSubtitleStateWithAdjacent = Key<Bool>("experimental.syncSubtitleState", default: false,
 		                                                     suite: SwiftfinStore.Defaults.generalSuite)
+		static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 		static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 	}
 

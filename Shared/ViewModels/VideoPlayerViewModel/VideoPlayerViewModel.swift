@@ -106,7 +106,8 @@ final class VideoPlayerViewModel: ViewModel {
 	private(set) var item: BaseItemDto
 	let title: String
 	let subtitle: String?
-	let streamURL: URL
+	let directStreamURL: URL
+	let transcodedStreamURL: URL?
 	let audioStreams: [MediaStream]
 	let subtitleStreams: [MediaStream]
 	let overlayType: OverlayType
@@ -167,7 +168,8 @@ final class VideoPlayerViewModel: ViewModel {
 	init(item: BaseItemDto,
 	     title: String,
 	     subtitle: String?,
-	     streamURL: URL,
+	     directStreamURL: URL,
+	     transcodedStreamURL: URL?,
 	     streamType: ServerStreamType,
 	     response: PlaybackInfoResponse,
 	     audioStreams: [MediaStream],
@@ -187,7 +189,8 @@ final class VideoPlayerViewModel: ViewModel {
 		self.item = item
 		self.title = title
 		self.subtitle = subtitle
-		self.streamURL = streamURL
+		self.directStreamURL = directStreamURL
+		self.transcodedStreamURL = transcodedStreamURL
 		self.streamType = streamType
 		self.response = response
 		self.audioStreams = audioStreams
@@ -561,7 +564,7 @@ extension VideoPlayerViewModel {
 
 	func createEmbeddedSubtitleStream(with subtitleStream: MediaStream) -> URL {
 
-		guard let baseURL = URLComponents(url: streamURL, resolvingAgainstBaseURL: false) else { fatalError() }
+		guard let baseURL = URLComponents(url: directStreamURL, resolvingAgainstBaseURL: false) else { fatalError() }
 		guard let queryItems = baseURL.queryItems else { fatalError() }
 
 		var newURL = baseURL
@@ -593,7 +596,7 @@ extension VideoPlayerViewModel: Hashable {
 
 	func hash(into hasher: inout Hasher) {
 		hasher.combine(item)
-		hasher.combine(streamURL)
+		hasher.combine(directStreamURL)
 		hasher.combine(filename)
 		hasher.combine(versionName)
 	}

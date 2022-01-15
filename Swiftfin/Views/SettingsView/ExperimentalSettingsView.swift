@@ -11,12 +11,16 @@ import SwiftUI
 
 struct ExperimentalSettingsView: View {
 
+	@Default(.Experimental.forceDirectPlay)
+	var forceDirectPlay
 	@Default(.Experimental.syncSubtitleStateWithAdjacent)
 	var syncSubtitleStateWithAdjacent
 
 	var body: some View {
 		Form {
 			Section {
+
+				Toggle("Force Direct Play", isOn: $forceDirectPlay)
 
 				Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
 

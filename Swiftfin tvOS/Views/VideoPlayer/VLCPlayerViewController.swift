@@ -425,7 +425,16 @@ extension VLCPlayerViewController {
 
 		// TODO: Custom buffer/cache amounts
 
-		let media = VLCMedia(url: newViewModel.streamURL)
+		let media: VLCMedia
+
+		if let transcodedURL = newViewModel.transcodedStreamURL,
+		   !Defaults[.Experimental.forceDirectPlay]
+		{
+			media = VLCMedia(url: transcodedURL)
+		} else {
+			media = VLCMedia(url: newViewModel.directStreamURL)
+		}
+
 		media.addOption("--prefetch-buffer-size=1048576")
 		media.addOption("--network-caching=5000")
 
@@ -452,6 +461,14 @@ extension VLCPlayerViewController {
 		}
 
 		viewModel = newViewModel
+
+		if viewModel.streamType == .direct {
+			LogManager.shared.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? "--")")
+		} else if viewModel.streamType == .transcode && Defaults[.Experimental.forceDirectPlay] {
+			LogManager.shared.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? "--")")
+		} else {
+			LogManager.shared.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? "--")")
+		}
 	}
 
 	// MARK: startPlayback
