@@ -50,6 +50,8 @@ internal enum L10n {
   internal static let changeServer = L10n.tr("Localizable", "changeServer")
   /// Channels
   internal static let channels = L10n.tr("Localizable", "channels")
+  /// Chapters
+  internal static let chapters = L10n.tr("Localizable", "chapters")
   /// Cinematic Views
   internal static let cinematicViews = L10n.tr("Localizable", "cinematicViews")
   /// Closed Captions

@@ -312,4 +312,22 @@ public extension BaseItemDto {
 		dateFormatter.dateStyle = .medium
 		return dateFormatter.string(from: premiereDate)
 	}
+
+	// MARK: Chapter Images
+
+	func getChapterImage(maxWidth: Int) -> [URL] {
+		guard let chapters = chapters, !chapters.isEmpty else { return [] }
+
+		var chapterImageURLs: [URL] = []
+
+		for chapterIndex in 0 ..< chapters.count {
+			let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
+			                                                        imageType: .chapter,
+			                                                        maxWidth: maxWidth,
+			                                                        imageIndex: chapterIndex).URLString
+			chapterImageURLs.append(URL(string: urlString)!)
+		}
+
+		return chapterImageURLs
+	}
 }

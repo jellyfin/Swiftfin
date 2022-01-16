@@ -112,6 +112,7 @@ extension BaseItemDto {
 					                                                response: response,
 					                                                audioStreams: audioStreams,
 					                                                subtitleStreams: subtitleStreams,
+					                                                chapters: modifiedSelfItem.chapters ?? [],
 					                                                selectedAudioStreamIndex: defaultAudioStream?.index ?? -1,
 					                                                selectedSubtitleStreamIndex: defaultSubtitleStream?.index ?? -1,
 					                                                subtitlesEnabled: subtitlesEnabled,

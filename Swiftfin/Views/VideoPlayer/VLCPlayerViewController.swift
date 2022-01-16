@@ -37,9 +37,14 @@ class VLCPlayerViewController: UIViewController {
 		currentOverlayHostingController?.view.alpha ?? 0 > 0
 	}
 
+	private var displayingChapterOverlay: Bool {
+		currentChapterOverlayHostingController?.view.alpha ?? 0 > 0
+	}
+
 	private lazy var videoContentView = makeVideoContentView()
 	private lazy var mainGestureView = makeTapGestureView()
 	private var currentOverlayHostingController: UIHostingController<VLCPlayerOverlayView>?
+	private var currentChapterOverlayHostingController: UIHostingController<VLCPlayerChapterOverlayView>?
 	private var currentJumpBackwardOverlayView: UIImageView?
 	private var currentJumpForwardOverlayView: UIImageView?
 
@@ -119,6 +124,8 @@ class VLCPlayerViewController: UIViewController {
 
 	@objc
 	private func appWillResignActive() {
+		hideChaptersOverlay()
+
 		showOverlay()
 
 		stopOverlayDismissTimer()
@@ -224,6 +231,38 @@ class VLCPlayerViewController: UIViewController {
 		}
 
 		self.currentOverlayHostingController = newOverlayHostingController
+
+		if let currentChapterOverlayHostingController = currentChapterOverlayHostingController {
+			UIView.animate(withDuration: 0.5) {
+				currentChapterOverlayHostingController.view.alpha = 0
+			} completion: { _ in
+				currentChapterOverlayHostingController.view.isHidden = true
+
+				currentChapterOverlayHostingController.view.removeFromSuperview()
+				currentChapterOverlayHostingController.removeFromParent()
+			}
+		}
+
+		let newChapterOverlayView = VLCPlayerChapterOverlayView(viewModel: viewModel)
+		let newChapterOverlayHostingController = UIHostingController(rootView: newChapterOverlayView)
+
+		newChapterOverlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+		newChapterOverlayHostingController.view.backgroundColor = UIColor.clear
+
+		newChapterOverlayHostingController.view.alpha = 0
+
+		addChild(newChapterOverlayHostingController)
+		view.addSubview(newChapterOverlayHostingController.view)
+		newChapterOverlayHostingController.didMove(toParent: self)
+
+		NSLayoutConstraint.activate([
+			newChapterOverlayHostingController.view.topAnchor.constraint(equalTo: videoContentView.topAnchor),
+			newChapterOverlayHostingController.view.bottomAnchor.constraint(equalTo: videoContentView.bottomAnchor),
+			newChapterOverlayHostingController.view.leftAnchor.constraint(equalTo: videoContentView.leftAnchor),
+			newChapterOverlayHostingController.view.rightAnchor.constraint(equalTo: videoContentView.rightAnchor),
+		])
+
+		self.currentChapterOverlayHostingController = newChapterOverlayHostingController
 
 		// There is a weird behavior when after setting the new overlays that the navigation bar pops up, re-hide it
 		self.navigationController?.isNavigationBarHidden = true
@@ -514,6 +553,31 @@ extension VLCPlayerViewController {
 	}
 }
 
+// MARK: Hide/Show Chapters
+
+extension VLCPlayerViewController {
+
+	private func showChaptersOverlay() {
+		guard let overlayHostingController = currentChapterOverlayHostingController else { return }
+
+		guard overlayHostingController.view.alpha != 1 else { return }
+
+		UIView.animate(withDuration: 0.2) {
+			overlayHostingController.view.alpha = 1
+		}
+	}
+
+	private func hideChaptersOverlay() {
+		guard let overlayHostingController = currentChapterOverlayHostingController else { return }
+
+		guard overlayHostingController.view.alpha != 0 else { return }
+
+		UIView.animate(withDuration: 0.2) {
+			overlayHostingController.view.alpha = 0
+		}
+	}
+}
+
 // MARK: OverlayTimer
 
 extension VLCPlayerViewController {
@@ -723,5 +787,28 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 			setupMediaPlayer(newViewModel: nextItemVideoPlayerViewModel)
 			startPlayback()
 		}
+	}
+
+	func didSelectChapters() {
+		if displayingChapterOverlay {
+			hideChaptersOverlay()
+		} else {
+			hideOverlay()
+			showChaptersOverlay()
+		}
+	}
+
+	func didSelectChapter(_ chapter: ChapterInfo) {
+		let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
+		let chapterSeconds = Double((chapter.startPositionTicks ?? 0) / 10_000_000)
+		let newPositionOffset = chapterSeconds - videoPosition
+
+		if newPositionOffset > 0 {
+			vlcMediaPlayer.jumpForward(Int32(newPositionOffset))
+		} else {
+			vlcMediaPlayer.jumpBackward(Int32(abs(newPositionOffset)))
+		}
+
+		viewModel.sendProgressReport()
 	}
 }

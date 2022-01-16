@@ -76,7 +76,8 @@ struct VLCPlayerOverlayView: View {
 							}
 
 							Text(viewModel.title)
-								.font(.system(size: 28, weight: .regular, design: .default))
+								.font(.title3)
+								.fontWeight(.bold)
 								.alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
 									context[.leading]
 								}
@@ -193,6 +194,17 @@ struct VLCPlayerOverlayView: View {
 									}
 								}
 
+								if !viewModel.chapters.isEmpty {
+									Button {
+										viewModel.playerOverlayDelegate?.didSelectChapters()
+									} label: {
+										HStack {
+											Image(systemName: "list.dash")
+											L10n.chapters.text
+										}
+									}
+								}
+
 								if viewModel.shouldShowJumpButtonsInOverlayMenu {
 									Menu {
 										ForEach(VideoPlayerJumpLength.allCases, id: \.self) { forwardLength in
@@ -247,7 +259,7 @@ struct VLCPlayerOverlayView: View {
 							.alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
 								context[.leading]
 							}
-							.offset(y: -10)
+							.offset(y: -20)
 					}
 				}
 			}
@@ -389,6 +401,7 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
 	                                                       response: PlaybackInfoResponse(),
 	                                                       audioStreams: [MediaStream(displayTitle: "English", index: -1)],
 	                                                       subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
+	                                                       chapters: [],
 	                                                       selectedAudioStreamIndex: -1,
 	                                                       selectedSubtitleStreamIndex: -1,
 	                                                       subtitlesEnabled: true,
