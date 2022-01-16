@@ -88,7 +88,7 @@ struct HomeView: View {
 									.font(.title2)
 									.fontWeight(.bold)
 									.accessibility(addTraits: [.isHeader])
-								
+
 								Spacer()
 
 								Button {

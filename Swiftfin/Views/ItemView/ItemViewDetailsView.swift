@@ -32,6 +32,7 @@ struct ItemViewDetailsView: View {
 								.font(.subheadline)
 								.foregroundColor(Color.secondary)
 						}
+						.accessibilityElement(children: .combine)
 					}
 				}
 				.padding(.bottom, 20)
@@ -50,6 +51,7 @@ struct ItemViewDetailsView: View {
 						.font(.subheadline)
 						.foregroundColor(Color.secondary)
 				}
+				.accessibilityElement(children: .combine)
 
 				VStack(alignment: .leading, spacing: 2) {
 					L10n.containers.text
@@ -58,6 +60,7 @@ struct ItemViewDetailsView: View {
 						.font(.subheadline)
 						.foregroundColor(Color.secondary)
 				}
+				.accessibilityElement(children: .combine)
 
 				ForEach(viewModel.selectedVideoPlayerViewModel?.mediaItems ?? [], id: \.self.title) { mediaItem in
 					VStack(alignment: .leading, spacing: 2) {
@@ -67,6 +70,7 @@ struct ItemViewDetailsView: View {
 							.font(.subheadline)
 							.foregroundColor(Color.secondary)
 					}
+					.accessibilityElement(children: .combine)
 				}
 			}
 		}
