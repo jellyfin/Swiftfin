@@ -25,6 +25,7 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 				if onlyCurrentSeason {
 					if let currentSeason = Array(viewModel.seasonsEpisodes.keys).first(where: { $0.id == viewModel.item.id }) {
 						Text(currentSeason.name ?? L10n.noTitle)
+							.accessibility(addTraits: [.isHeader])
 					}
 				} else {
 					Menu {

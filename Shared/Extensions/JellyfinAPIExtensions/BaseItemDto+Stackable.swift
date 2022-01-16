@@ -17,7 +17,7 @@ extension BaseItemDto: PortraitImageStackable {
 		id ?? "no id"
 	}
 
-	public func imageURLContsructor(maxWidth: Int) -> URL {
+	public func imageURLConstructor(maxWidth: Int) -> URL {
 		switch self.itemType {
 		case .episode:
 			return getSeriesPrimaryImage(maxWidth: maxWidth)

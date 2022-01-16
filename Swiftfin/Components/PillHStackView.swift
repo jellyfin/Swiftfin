@@ -21,6 +21,7 @@ struct PillHStackView<ItemType: PillStackable>: View {
 				.fontWeight(.semibold)
 				.padding(.top, 3)
 				.padding(.leading, 16)
+				.accessibility(addTraits: [.isHeader])
 
 			ScrollView(.horizontal, showsIndicators: false) {
 				HStack {

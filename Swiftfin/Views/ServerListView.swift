@@ -104,6 +104,7 @@ struct ServerListView: View {
 			serverListRouter.route(to: \.basicAppSettings)
 		} label: {
 			Image(systemName: "gearshape.fill")
+				.accessibilityLabel(L10n.settings)
 		}
 	}
 

@@ -34,6 +34,7 @@ struct EpisodeRowCard: View {
 							}
 						}
 						.padding(.top)
+						.accessibilityIgnoresInvertColors()
 
 					VStack(alignment: .leading) {
 						Text(episode.getEpisodeLocator() ?? "S-:E-")

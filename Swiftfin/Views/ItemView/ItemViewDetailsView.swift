@@ -22,6 +22,7 @@ struct ItemViewDetailsView: View {
 					L10n.information.text
 						.font(.title3)
 						.fontWeight(.bold)
+						.accessibility(addTraits: [.isHeader])
 
 					ForEach(viewModel.informationItems, id: \.self.title) { informationItem in
 						VStack(alignment: .leading, spacing: 2) {
@@ -31,6 +32,7 @@ struct ItemViewDetailsView: View {
 								.font(.subheadline)
 								.foregroundColor(Color.secondary)
 						}
+						.accessibilityElement(children: .combine)
 					}
 				}
 				.padding(.bottom, 20)
@@ -40,6 +42,7 @@ struct ItemViewDetailsView: View {
 				L10n.media.text
 					.font(.title3)
 					.fontWeight(.bold)
+					.accessibility(addTraits: [.isHeader])
 
 				VStack(alignment: .leading, spacing: 2) {
 					L10n.file.text
@@ -48,6 +51,7 @@ struct ItemViewDetailsView: View {
 						.font(.subheadline)
 						.foregroundColor(Color.secondary)
 				}
+				.accessibilityElement(children: .combine)
 
 				VStack(alignment: .leading, spacing: 2) {
 					L10n.containers.text
@@ -56,6 +60,7 @@ struct ItemViewDetailsView: View {
 						.font(.subheadline)
 						.foregroundColor(Color.secondary)
 				}
+				.accessibilityElement(children: .combine)
 
 				ForEach(viewModel.selectedVideoPlayerViewModel?.mediaItems ?? [], id: \.self.title) { mediaItem in
 					VStack(alignment: .leading, spacing: 2) {
@@ -65,6 +70,7 @@ struct ItemViewDetailsView: View {
 							.font(.subheadline)
 							.foregroundColor(Color.secondary)
 					}
+					.accessibilityElement(children: .combine)
 				}
 			}
 		}

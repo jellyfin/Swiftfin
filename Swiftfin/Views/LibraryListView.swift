@@ -82,6 +82,7 @@ struct LibraryListView: View {
 								ZStack {
 									ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
 										.opacity(0.4)
+										.accessibilityIgnoresInvertColors()
 									HStack {
 										Spacer()
 										VStack {
