@@ -22,6 +22,7 @@ struct ItemViewDetailsView: View {
 					L10n.information.text
 						.font(.title3)
 						.fontWeight(.bold)
+						.accessibility(addTraits: [.isHeader])
 
 					ForEach(viewModel.informationItems, id: \.self.title) { informationItem in
 						VStack(alignment: .leading, spacing: 2) {
@@ -40,6 +41,7 @@ struct ItemViewDetailsView: View {
 				L10n.media.text
 					.font(.title3)
 					.fontWeight(.bold)
+					.accessibility(addTraits: [.isHeader])
 
 				VStack(alignment: .leading, spacing: 2) {
 					L10n.file.text
