@@ -37,6 +37,7 @@ struct ImageView: View {
 			Text(failureInitials)
 				.font(.largeTitle)
 				.foregroundColor(.secondary)
+				.accessibilityHidden(true)
 		}
 	}
 
