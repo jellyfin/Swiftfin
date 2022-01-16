@@ -243,6 +243,7 @@
 		E1002B642793CEE800E47059 /* ChapterInfoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1002B632793CEE700E47059 /* ChapterInfoExtensions.swift */; };
 		E1002B652793CEE800E47059 /* ChapterInfoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1002B632793CEE700E47059 /* ChapterInfoExtensions.swift */; };
 		E1002B682793CFBA00E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B672793CFBA00E47059 /* Algorithms */; };
+		E1002B6B2793E36600E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B6A2793E36600E47059 /* Algorithms */; };
 		E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E100720626BDABC100CE3E31 /* MediaPlayButtonRowView.swift */; };
 		E103A6A0278A7E4500820EC7 /* UICinematicBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E103A69F278A7E4500820EC7 /* UICinematicBackgroundView.swift */; };
 		E103A6A3278A7EC400820EC7 /* CinematicBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E103A6A2278A7EC400820EC7 /* CinematicBackgroundView.swift */; };
@@ -783,6 +784,7 @@
 				53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */,
 				E11D83AF278FA998006E9776 /* NukeUI in Frameworks */,
 				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
+				E1002B6B2793E36600E47059 /* Algorithms in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
@@ -1732,6 +1734,7 @@
 				E178857C278037FD0094FBCF /* JellyfinAPI */,
 				E1AE8E7D2789136D00FBDDAA /* Nuke */,
 				E11D83AE278FA998006E9776 /* NukeUI */,
+				E1002B6A2793E36600E47059 /* Algorithms */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -3148,6 +3151,11 @@
 			productName = Stinsen;
 		};
 		E1002B672793CFBA00E47059 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+		E1002B6A2793E36600E47059 /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
 			productName = Algorithms;
