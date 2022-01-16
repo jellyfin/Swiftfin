@@ -127,6 +127,7 @@ struct HomeView: View {
 						homeRouter.route(to: \.settings)
 					} label: {
 						Image(systemName: "gearshape.fill")
+							.accessibilityLabel(L10n.settings)
 					}
 				}
 			}

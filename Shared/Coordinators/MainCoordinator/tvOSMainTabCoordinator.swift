@@ -85,5 +85,6 @@ final class MainTabCoordinator: TabCoordinatable {
 	@ViewBuilder
 	func makeSettingsTab(isActive: Bool) -> some View {
 		Image(systemName: "gearshape.fill")
+			.accessibilityLabel(L10n.settings)
 	}
 }
