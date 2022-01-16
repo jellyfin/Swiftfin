@@ -16,6 +16,7 @@ struct SmallMediaStreamSelectionView: View {
 		case subtitles
 		case audio
 		case playbackSpeed
+		case chapters
 	}
 
 	enum MediaSection: Hashable {
@@ -25,9 +26,12 @@ struct SmallMediaStreamSelectionView: View {
 
 	@ObservedObject
 	var viewModel: VideoPlayerViewModel
+	private let chapterImages: [URL]
 
 	@State
 	private var updateFocusedLayer: Layer = .subtitles
+	@State
+	private var lastFocusedLayer: Layer = .subtitles
 
 	@FocusState
 	private var subtitlesFocused: Bool
@@ -35,6 +39,8 @@ struct SmallMediaStreamSelectionView: View {
 	private var audioFocused: Bool
 	@FocusState
 	private var playbackSpeedFocused: Bool
+	@FocusState
+	private var chaptersFocused: Bool
 	@FocusState
 	private var focusedSection: MediaSection?
 	@FocusState
@@ -48,8 +54,10 @@ struct SmallMediaStreamSelectionView: View {
 		}
 	}
 
-	@State
-	private var lastFocusedLayer: Layer = .subtitles
+	init(viewModel: VideoPlayerViewModel) {
+		self.viewModel = viewModel
+		self.chapterImages = viewModel.item.getChapterImage(maxWidth: 500)
+	}
 
 	var body: some View {
 		ZStack(alignment: .bottom) {
@@ -161,6 +169,40 @@ struct SmallMediaStreamSelectionView: View {
 						}
 					}
 
+					// MARK: Chapters Header
+
+					if !viewModel.chapters.isEmpty {
+						Button {
+							updateFocusedLayer = .chapters
+							focusedLayer = .chapters
+						} label: {
+							if updateFocusedLayer == .chapters {
+								HStack(spacing: 15) {
+									Image(systemName: "list.dash")
+									L10n.chapters.text
+								}
+								.padding()
+								.background(Color.white)
+								.foregroundColor(.black)
+							} else {
+								HStack(spacing: 15) {
+									Image(systemName: "list.dash")
+									L10n.chapters.text
+								}
+								.padding()
+							}
+						}
+						.buttonStyle(PlainButtonStyle())
+						.background(Color.clear)
+						.focused($focusedLayer, equals: .chapters)
+						.focused($chaptersFocused)
+						.onChange(of: chaptersFocused) { isFocused in
+							if isFocused {
+								focusedLayer = .chapters
+							}
+						}
+					}
+
 					Spacer()
 				}
 				.padding()
@@ -181,78 +223,142 @@ struct SmallMediaStreamSelectionView: View {
 				if updateFocusedLayer == .subtitles && lastFocusedLayer == .subtitles {
 					// MARK: Subtitles
 
-					ScrollView(.horizontal) {
-						HStack {
-							if viewModel.subtitleStreams.isEmpty {
-								Button {} label: {
-									L10n.none.text
-								}
-							} else {
-								ForEach(viewModel.subtitleStreams, id: \.self) { subtitleStream in
-									Button {
-										viewModel.selectedSubtitleStreamIndex = subtitleStream.index ?? -1
-									} label: {
-										if subtitleStream.index == viewModel.selectedSubtitleStreamIndex {
-											Label(subtitleStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
-										} else {
-											Text(subtitleStream.displayTitle ?? L10n.noTitle)
-										}
-									}
-								}
-							}
-						}
-						.padding(.vertical)
-						.focusSection()
-						.focused($focusedSection, equals: .items)
-					}
+					subtitleMenuView
 				} else if updateFocusedLayer == .audio && lastFocusedLayer == .audio {
 					// MARK: Audio
 
-					ScrollView(.horizontal) {
-						HStack {
-							if viewModel.audioStreams.isEmpty {
-								Button {} label: {
-									Text("None")
-								}
-							} else {
-								ForEach(viewModel.audioStreams, id: \.self) { audioStream in
-									Button {
-										viewModel.selectedAudioStreamIndex = audioStream.index ?? -1
-									} label: {
-										if audioStream.index == viewModel.selectedAudioStreamIndex {
-											Label(audioStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
-										} else {
-											Text(audioStream.displayTitle ?? L10n.noTitle)
-										}
-									}
-								}
-							}
-						}
-						.padding(.vertical)
-						.focusSection()
-						.focused($focusedSection, equals: .items)
-					}
+					audioMenuView
 				} else if updateFocusedLayer == .playbackSpeed && lastFocusedLayer == .playbackSpeed {
-					// MARK: Rates
+					// MARK: Playback Speed
 
-					ScrollView(.horizontal) {
-						HStack {
-							ForEach(PlaybackSpeed.allCases, id: \.self) { playbackSpeed in
-								Button {
-									viewModel.playbackSpeed = playbackSpeed
-								} label: {
-									if playbackSpeed == viewModel.playbackSpeed {
-										Label(playbackSpeed.displayTitle, systemImage: "checkmark")
-									} else {
-										Text(playbackSpeed.displayTitle)
-									}
-								}
+					playbackSpeedMenuView
+				} else if updateFocusedLayer == .chapters && lastFocusedLayer == .chapters {
+					// MARK: Chapters
+
+					chaptersMenuView
+				}
+			}
+		}
+	}
+
+	@ViewBuilder
+	private var subtitleMenuView: some View {
+		ScrollView(.horizontal) {
+			HStack {
+				if viewModel.subtitleStreams.isEmpty {
+					Button {} label: {
+						L10n.none.text
+					}
+				} else {
+					ForEach(viewModel.subtitleStreams, id: \.self) { subtitleStream in
+						Button {
+							viewModel.selectedSubtitleStreamIndex = subtitleStream.index ?? -1
+						} label: {
+							if subtitleStream.index == viewModel.selectedSubtitleStreamIndex {
+								Label(subtitleStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
+							} else {
+								Text(subtitleStream.displayTitle ?? L10n.noTitle)
 							}
 						}
-						.padding(.vertical)
-						.focusSection()
-						.focused($focusedSection, equals: .items)
 					}
+				}
+			}
+			.padding(.vertical)
+			.focusSection()
+			.focused($focusedSection, equals: .items)
+		}
+	}
+
+	@ViewBuilder
+	private var audioMenuView: some View {
+		ScrollView(.horizontal) {
+			HStack {
+				if viewModel.audioStreams.isEmpty {
+					Button {} label: {
+						Text("None")
+					}
+				} else {
+					ForEach(viewModel.audioStreams, id: \.self) { audioStream in
+						Button {
+							viewModel.selectedAudioStreamIndex = audioStream.index ?? -1
+						} label: {
+							if audioStream.index == viewModel.selectedAudioStreamIndex {
+								Label(audioStream.displayTitle ?? L10n.noTitle, systemImage: "checkmark")
+							} else {
+								Text(audioStream.displayTitle ?? L10n.noTitle)
+							}
+						}
+					}
+				}
+			}
+			.padding(.vertical)
+			.focusSection()
+			.focused($focusedSection, equals: .items)
+		}
+	}
+
+	@ViewBuilder
+	private var playbackSpeedMenuView: some View {
+		ScrollView(.horizontal) {
+			HStack {
+				ForEach(PlaybackSpeed.allCases, id: \.self) { playbackSpeed in
+					Button {
+						viewModel.playbackSpeed = playbackSpeed
+					} label: {
+						if playbackSpeed == viewModel.playbackSpeed {
+							Label(playbackSpeed.displayTitle, systemImage: "checkmark")
+						} else {
+							Text(playbackSpeed.displayTitle)
+						}
+					}
+				}
+			}
+			.padding(.vertical)
+			.focusSection()
+			.focused($focusedSection, equals: .items)
+		}
+	}
+
+	@ViewBuilder
+	private var chaptersMenuView: some View {
+		ScrollView(.horizontal, showsIndicators: false) {
+			ScrollViewReader { reader in
+				HStack {
+					ForEach(0 ..< viewModel.chapters.count) { chapterIndex in
+						VStack(alignment: .leading) {
+							Button {
+								viewModel.playerOverlayDelegate?.didSelectChapter(viewModel.chapters[chapterIndex])
+							} label: {
+								ImageView(src: chapterImages[chapterIndex])
+									.cornerRadius(10)
+									.frame(width: 350, height: 210)
+							}
+							.buttonStyle(CardButtonStyle())
+
+							VStack(alignment: .leading, spacing: 5) {
+
+								Text(viewModel.chapters[chapterIndex].name ?? L10n.noTitle)
+									.font(.subheadline)
+									.fontWeight(.semibold)
+									.foregroundColor(.white)
+
+								Text(viewModel.chapters[chapterIndex].timestampLabel)
+									.font(.subheadline)
+									.fontWeight(.semibold)
+									.foregroundColor(Color(UIColor.systemBlue))
+									.padding(.vertical, 2)
+									.padding(.horizontal, 4)
+									.background {
+										Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
+									}
+							}
+						}
+						.id(viewModel.chapters[chapterIndex])
+					}
+				}
+				.padding(.top)
+				.onAppear {
+					reader.scrollTo(viewModel.currentChapter)
 				}
 			}
 		}

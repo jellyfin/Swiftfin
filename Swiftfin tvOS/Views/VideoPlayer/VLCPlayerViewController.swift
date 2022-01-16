@@ -881,4 +881,18 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 			startPlayback()
 		}
 	}
+
+	func didSelectChapter(_ chapter: ChapterInfo) {
+		let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
+		let chapterSeconds = Double((chapter.startPositionTicks ?? 0) / 10_000_000)
+		let newPositionOffset = chapterSeconds - videoPosition
+
+		if newPositionOffset > 0 {
+			vlcMediaPlayer.jumpForward(Int32(newPositionOffset))
+		} else {
+			vlcMediaPlayer.jumpBackward(Int32(abs(newPositionOffset)))
+		}
+
+		viewModel.sendProgressReport()
+	}
 }

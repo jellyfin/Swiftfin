@@ -147,6 +147,7 @@ struct tvOSVLCOverlay_Previews: PreviewProvider {
 	                                                       response: PlaybackInfoResponse(),
 	                                                       audioStreams: [MediaStream(displayTitle: "English", index: -1)],
 	                                                       subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
+	                                                       chapters: [],
 	                                                       selectedAudioStreamIndex: -1,
 	                                                       selectedSubtitleStreamIndex: -1,
 	                                                       subtitlesEnabled: true,
