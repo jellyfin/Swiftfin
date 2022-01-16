@@ -43,7 +43,7 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
 							selectedAction(item)
 						} label: {
 							VStack(alignment: horizontalAlignment) {
-								ImageView(src: item.imageURLContsructor(maxWidth: Int(maxWidth)),
+								ImageView(src: item.imageURLConstructor(maxWidth: Int(maxWidth)),
 								          bh: item.blurHash,
 								          failureInitials: item.failureInitials)
 									.portraitPoster(width: maxWidth)
