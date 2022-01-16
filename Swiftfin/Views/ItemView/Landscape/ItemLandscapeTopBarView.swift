@@ -25,6 +25,7 @@ struct ItemLandscapeTopBarView: View {
 					.foregroundColor(.primary)
 					.padding(.leading, 16)
 					.padding(.bottom, 10)
+					.accessibility(addTraits: [.isHeader])
 
 				// MARK: Details
 

@@ -62,6 +62,7 @@ struct HomeView: View {
 								.font(.title2)
 								.fontWeight(.bold)
 								.padding()
+								.accessibility(addTraits: [.isHeader])
 						} selectedAction: { item in
 							homeRouter.route(to: \.item, item)
 						}
@@ -73,6 +74,7 @@ struct HomeView: View {
 								.font(.title2)
 								.fontWeight(.bold)
 								.padding()
+								.accessibility(addTraits: [.isHeader])
 						} selectedAction: { item in
 							homeRouter.route(to: \.item, item)
 						}
@@ -85,7 +87,8 @@ struct HomeView: View {
 								Text(L10n.latestWithString(library.name ?? ""))
 									.font(.title2)
 									.fontWeight(.bold)
-
+									.accessibility(addTraits: [.isHeader])
+								
 								Spacer()
 
 								Button {
