@@ -40,6 +40,7 @@ struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
 				          failureInitials: item.failureInitials)
 					.portraitPoster(width: maxWidth)
 					.shadow(radius: 4, y: 2)
+					.accessibilityIgnoresInvertColors()
 
 				if item.showTitle {
 					Text(item.title)

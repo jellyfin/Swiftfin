@@ -28,6 +28,7 @@ struct ItemLandscapeMainView: View {
 				          bh: viewModel.item.getPrimaryImageBlurHash())
 					.frame(width: 130, height: 195)
 					.cornerRadius(10)
+					.accessibilityIgnoresInvertColors()
 
 				Spacer().frame(height: 15)
 
@@ -100,6 +101,7 @@ struct ItemLandscapeMainView: View {
 					.edgesIgnoringSafeArea(.all)
 					.blur(radius: 8)
 					.layoutPriority(-1)
+					.accessibilityIgnoresInvertColors()
 
 				// iPadOS is making the view go all the way to the edge.
 				// We have to accomodate this here
