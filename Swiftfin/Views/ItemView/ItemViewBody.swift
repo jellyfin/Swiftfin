@@ -55,6 +55,7 @@ struct ItemViewBody: View {
 				                        	L10n.seasons.text
 				                        		.fontWeight(.semibold)
 				                        		.padding()
+				                        		.accessibility(addTraits: [.isHeader])
 				                        }, selectedAction: { season in
 				                        	itemRouter.route(to: \.item, season)
 				                        })
@@ -113,6 +114,7 @@ struct ItemViewBody: View {
 						.fontWeight(.semibold)
 						.padding(.bottom)
 						.padding(.horizontal)
+						.accessibility(addTraits: [.isHeader])
 				} selectedAction: { collectionItem in
 					itemRouter.route(to: \.item, collectionItem)
 				}
@@ -128,6 +130,7 @@ struct ItemViewBody: View {
 					                        		.fontWeight(.semibold)
 					                        		.padding(.bottom)
 					                        		.padding(.horizontal)
+					                        		.accessibility(addTraits: [.isHeader])
 					                        },
 					                        selectedAction: { person in
 					                        	itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
@@ -144,6 +147,7 @@ struct ItemViewBody: View {
 				                        		.fontWeight(.semibold)
 				                        		.padding(.bottom)
 				                        		.padding(.horizontal)
+				                        		.accessibility(addTraits: [.isHeader])
 				                        },
 				                        selectedAction: { item in
 				                        	itemRouter.route(to: \.item, item)

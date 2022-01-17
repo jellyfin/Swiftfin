@@ -23,6 +23,7 @@ struct ItemPortraitMainView: View {
 		          bh: viewModel.item.getBackdropImageBlurHash())
 			.opacity(0.4)
 			.blur(radius: 2.0)
+			.accessibilityIgnoresInvertColors()
 	}
 
 	// MARK: portraitStaticOverlayView

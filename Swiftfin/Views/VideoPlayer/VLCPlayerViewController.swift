@@ -102,6 +102,7 @@ class VLCPlayerViewController: UIViewController {
 		setupConstraints()
 
 		view.backgroundColor = .black
+		view.accessibilityIgnoresInvertColors = true
 
 		setupMediaPlayer(newViewModel: viewModel)
 

@@ -68,7 +68,7 @@ extension BaseItemPerson: PortraitImageStackable {
 		(id ?? "noid") + title + (subtitle ?? "nodescription") + blurHash + failureInitials
 	}
 
-	public func imageURLContsructor(maxWidth: Int) -> URL {
+	public func imageURLConstructor(maxWidth: Int) -> URL {
 		self.getImage(baseURL: SessionManager.main.currentLogin.server.currentURI, maxWidth: maxWidth)
 	}
 

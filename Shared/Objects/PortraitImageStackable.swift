@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol PortraitImageStackable {
-	func imageURLContsructor(maxWidth: Int) -> URL
+	func imageURLConstructor(maxWidth: Int) -> URL
 	var title: String { get }
 	var subtitle: String? { get }
 	var blurHash: String { get }

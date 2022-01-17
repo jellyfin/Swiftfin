@@ -26,6 +26,7 @@ struct PortraitHeaderOverlayView: View {
 
 				ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 130))
 					.portraitPoster(width: 130)
+					.accessibilityIgnoresInvertColors()
 
 				VStack(alignment: .leading, spacing: 1) {
 					Spacer()
