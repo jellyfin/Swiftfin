@@ -340,6 +340,8 @@ struct VLCPlayerOverlayView: View {
 					Text(viewModel.leftLabelText)
 						.font(.system(size: 18, weight: .semibold, design: .default))
 						.frame(minWidth: 70, maxWidth: 70)
+						.accessibilityLabel(L10n.currentPosition)
+						.accessibilityValue(viewModel.leftLabelText)
 
 					ValueSlider(value: $viewModel.sliderPercentage, onEditingChanged: { editing in
 						viewModel.sliderIsScrubbing = editing
@@ -358,6 +360,8 @@ struct VLCPlayerOverlayView: View {
 					Text(viewModel.rightLabelText)
 						.font(.system(size: 18, weight: .semibold, design: .default))
 						.frame(minWidth: 70, maxWidth: 70)
+						.accessibilityLabel(L10n.remainingTime)
+						.accessibilityValue(viewModel.rightLabelText)
 				}
 				.padding(.horizontal)
 				.frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 800 : nil)
