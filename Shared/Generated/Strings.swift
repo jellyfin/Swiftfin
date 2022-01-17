@@ -78,6 +78,8 @@ internal enum L10n {
   internal static var `continue`: String { return L10n.tr("Localizable", "continue") }
   /// Continue Watching
   internal static var continueWatching: String { return L10n.tr("Localizable", "continueWatching") }
+  /// Current Position
+  internal static var currentPosition: String { return L10n.tr("Localizable", "currentPosition") }
   /// Customize
   internal static var customize: String { return L10n.tr("Localizable", "customize") }
   /// Dark
@@ -254,6 +256,8 @@ internal enum L10n {
   internal static var regular: String { return L10n.tr("Localizable", "regular") }
   /// Released
   internal static var released: String { return L10n.tr("Localizable", "released") }
+  /// Remaining Time
+  internal static var remainingTime: String { return L10n.tr("Localizable", "remainingTime") }
   /// Remove
   internal static var remove: String { return L10n.tr("Localizable", "remove") }
   /// Remove All Users

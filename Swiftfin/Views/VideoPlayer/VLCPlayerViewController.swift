@@ -489,6 +489,8 @@ extension VLCPlayerViewController {
 	}
 
 	private func hideOverlay() {
+		guard !UIAccessibility.isVoiceOverRunning else { return }
+
 		guard let overlayHostingController = currentOverlayHostingController else { return }
 
 		guard overlayHostingController.view.alpha != 0 else { return }

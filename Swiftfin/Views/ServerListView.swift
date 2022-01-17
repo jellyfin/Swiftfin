@@ -26,7 +26,6 @@ struct ServerListView: View {
 						ZStack(alignment: Alignment.leading) {
 							Rectangle()
 								.foregroundColor(Color(UIColor.secondarySystemFill))
-								.frame(height: 100)
 								.cornerRadius(10)
 
 							HStack(spacing: 10) {
@@ -48,7 +47,7 @@ struct ServerListView: View {
 										.font(.footnote)
 										.foregroundColor(.primary)
 								}
-							}.padding([.leading])
+							}.padding()
 						}
 						.padding()
 					}
