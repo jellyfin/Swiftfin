@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Algorithms
 import Combine
 import Defaults
 import Foundation
@@ -110,6 +111,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let transcodedStreamURL: URL?
 	let audioStreams: [MediaStream]
 	let subtitleStreams: [MediaStream]
+	let chapters: [ChapterInfo]
 	let overlayType: OverlayType
 	let jumpGesturesEnabled: Bool
 	let resumeOffset: Bool
@@ -155,6 +157,22 @@ final class VideoPlayerViewModel: ViewModel {
 		subtitleStreams.first(where: { $0.index == selectedSubtitleStreamIndex })
 	}
 
+	var currentChapter: ChapterInfo? {
+
+		let chapterPairs = chapters.adjacentPairs().map { ($0, $1) }
+		let chapterRanges = chapterPairs.map { ($0.startPositionTicks ?? 0, ($1.startPositionTicks ?? 1) - 1) }
+
+		for chapterRangeIndex in 0 ..< chapterRanges.count {
+			if chapterRanges[chapterRangeIndex].0 <= currentSecondTicks &&
+				currentSecondTicks < chapterRanges[chapterRangeIndex].1
+			{
+				return chapterPairs[chapterRangeIndex].0
+			}
+		}
+
+		return nil
+	}
+
 	// Necessary PassthroughSubject to capture manual scrubbing from sliders
 	let sliderScrubbingSubject = PassthroughSubject<VideoPlayerViewModel, Never>()
 
@@ -174,6 +192,7 @@ final class VideoPlayerViewModel: ViewModel {
 	     response: PlaybackInfoResponse,
 	     audioStreams: [MediaStream],
 	     subtitleStreams: [MediaStream],
+	     chapters: [ChapterInfo],
 	     selectedAudioStreamIndex: Int,
 	     selectedSubtitleStreamIndex: Int,
 	     subtitlesEnabled: Bool,
@@ -195,6 +214,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.response = response
 		self.audioStreams = audioStreams
 		self.subtitleStreams = subtitleStreams
+		self.chapters = chapters
 		self.selectedAudioStreamIndex = selectedAudioStreamIndex
 		self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
 		self.subtitlesEnabled = subtitlesEnabled

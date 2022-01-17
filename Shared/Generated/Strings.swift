@@ -50,6 +50,8 @@ internal enum L10n {
   internal static var changeServer: String { return L10n.tr("Localizable", "changeServer") }
   /// Channels
   internal static var channels: String { return L10n.tr("Localizable", "channels") }
+  /// Chapters
+  internal static var chapters: String { return L10n.tr("Localizable", "chapters") }
   /// Cinematic Views
   internal static var cinematicViews: String { return L10n.tr("Localizable", "cinematicViews") }
   /// Closed Captions

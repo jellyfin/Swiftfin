@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 
 protocol PlayerOverlayDelegate {
 
@@ -27,4 +28,6 @@ protocol PlayerOverlayDelegate {
 
 	func didSelectPlayPreviousItem()
 	func didSelectPlayNextItem()
+
+	func didSelectChapter(_ chapter: ChapterInfo)
 }
