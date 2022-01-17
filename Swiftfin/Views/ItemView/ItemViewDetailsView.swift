@@ -48,8 +48,8 @@ struct ItemViewDetailsView: View {
 					L10n.file.text
 						.font(.subheadline)
 					Text(viewModel.selectedVideoPlayerViewModel?.filename ?? "--")
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: true)
+						.lineLimit(nil)
+						.fixedSize(horizontal: false, vertical: true)
 						.font(.subheadline)
 						.foregroundColor(Color.secondary)
 				}
@@ -69,8 +69,8 @@ struct ItemViewDetailsView: View {
 						Text(mediaItem.title)
 							.font(.subheadline)
 						Text(mediaItem.content)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
+							.lineLimit(nil)
+							.fixedSize(horizontal: false, vertical: true)
 							.font(.subheadline)
 							.foregroundColor(Color.secondary)
 					}
