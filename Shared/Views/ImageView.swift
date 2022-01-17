@@ -10,26 +10,49 @@ import NukeUI
 import SwiftUI
 
 struct ImageView: View {
-	private let source: URL
+
+	private let sources: [URL]
 	private let blurhash: String
 	private let failureInitials: String
 
 	init(src: URL, bh: String = "001fC^", failureInitials: String = "") {
-		self.source = src
+		self.sources = [src]
 		self.blurhash = bh
 		self.failureInitials = failureInitials
 	}
 
-	// TODO: fix placeholder hash image
+	init(sources: [URL], bh: String = "001fC^", failureInitials: String = "") {
+		assert(!sources.isEmpty, "Must supply at least one source")
+
+		self.sources = sources
+		self.blurhash = bh
+		self.failureInitials = failureInitials
+	}
+
+	// TODO: fix placeholder hash view
 	@ViewBuilder
-	private var placeholderImage: some View {
-		Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ??
-			UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
-			.resizable()
+	private func placeholderView() -> some View {
+//		Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ??
+//			UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
+//			.resizable()
+
+		#if os(tvOS)
+			ZStack {
+				Color.black.ignoresSafeArea()
+
+				ProgressView()
+			}
+		#else
+			ZStack {
+				Color.gray.ignoresSafeArea()
+
+				ProgressView()
+			}
+		#endif
 	}
 
 	@ViewBuilder
-	private var failureImage: some View {
+	private func failureImage() -> some View {
 		ZStack {
 			Rectangle()
 				.foregroundColor(Color(UIColor.darkGray))
@@ -42,25 +65,66 @@ struct ImageView: View {
 	}
 
 	var body: some View {
-		LazyImage(source: source) { state in
+		ImageViewBackgroundA(index: 0,
+		                     sources: sources,
+		                     placeholderView: placeholderView,
+		                     failureView: failureImage)
+	}
+}
+
+// Two image view are necessary to switch between one another to appease the type system
+// as a recursive view with itself isn't valid
+
+fileprivate struct ImageViewBackgroundA<PlaceholderView: View, FailureView: View>: View {
+
+	let index: Int
+	let sources: [URL]
+	let placeholderView: () -> PlaceholderView
+	let failureView: () -> FailureView
+
+	var body: some View {
+		LazyImage(source: sources[index]) { state in
 			if let image = state.image {
 				image
 			} else if state.error != nil {
-				failureImage
+				if index + 1 == sources.count {
+					failureView()
+				} else {
+					ImageViewBackgroundB(index: index + 1,
+					                     sources: sources,
+					                     placeholderView: placeholderView,
+					                     failureView: failureView)
+				}
 			} else {
-				#if os(tvOS)
-					ZStack {
-						Color.black.ignoresSafeArea()
+				placeholderView()
+			}
+		}
+		.pipeline(ImagePipeline(configuration: .withDataCache))
+	}
+}
 
-						ProgressView()
-					}
-				#else
-					ZStack {
-						Color.gray.ignoresSafeArea()
+fileprivate struct ImageViewBackgroundB<PlaceholderView: View, FailureView: View>: View {
 
-						ProgressView()
-					}
-				#endif
+	let index: Int
+	let sources: [URL]
+	let placeholderView: () -> PlaceholderView
+	let failureView: () -> FailureView
+
+	var body: some View {
+		LazyImage(source: sources[index]) { state in
+			if let image = state.image {
+				image
+			} else if state.error != nil {
+				if index + 1 == sources.count {
+					failureView()
+				} else {
+					ImageViewBackgroundA(index: index + 1,
+					                     sources: sources,
+					                     placeholderView: placeholderView,
+					                     failureView: failureView)
+				}
+			} else {
+				placeholderView()
 			}
 		}
 		.pipeline(ImagePipeline(configuration: .withDataCache))

@@ -92,6 +92,19 @@ public extension BaseItemDto {
 		return URL(string: urlString)!
 	}
 
+	func getThumbImage(maxWidth: Int) -> URL {
+		let imageType = ImageType.thumb
+		let imageItemId = id ?? ""
+
+		let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+
+		let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: imageItemId,
+		                                                        imageType: imageType,
+		                                                        maxWidth: Int(x),
+		                                                        quality: 96).URLString
+		return URL(string: urlString)!
+	}
+
 	func getEpisodeLocator() -> String? {
 		if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
 			return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))

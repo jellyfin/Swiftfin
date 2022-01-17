@@ -27,7 +27,11 @@ struct ContinueWatchingView: View {
 						VStack(alignment: .leading) {
 
 							ZStack {
-								ImageView(src: item.getBackdropImage(maxWidth: 320), bh: item.getBackdropImageBlurHash())
+								ImageView(sources: [
+									item.getThumbImage(maxWidth: 320),
+									item.getBackdropImage(maxWidth: 320),
+								],
+								bh: item.getBackdropImageBlurHash())
 									.frame(width: 320, height: 180)
 									.accessibilityIgnoresInvertColors()
 
