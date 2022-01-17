@@ -48,8 +48,9 @@ extension BaseItemDto {
 					let defaultSubtitleStream = subtitleStreams
 						.first(where: { $0.index! == currentMediaSource.defaultSubtitleStreamIndex ?? -1 })
 
-					var directStreamURL: URLComponents
+					var directStreamURL: URL
 					let transcodedStreamURL: URLComponents?
+					let mediaSourceID: String
 					let streamType: ServerStreamType
 
 					if let transcodeURL = currentMediaSource.transcodingUrl {
@@ -61,16 +62,18 @@ extension BaseItemDto {
 						transcodedStreamURL = nil
 					}
 
-					directStreamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI)!
-					directStreamURL.path = "/Videos/\(self.id!)/stream"
-					directStreamURL.addQueryItem(name: "Static", value: "true")
-					directStreamURL.addQueryItem(name: "MediaSourceId", value: self.id!)
-					directStreamURL.addQueryItem(name: "Tag", value: self.etag)
-					directStreamURL.addQueryItem(name: "MinSegments", value: "6")
-
 					if mediaSources.count > 1 {
-						directStreamURL.addQueryItem(name: "MediaSourceId", value: currentMediaSource.id)
+						mediaSourceID = currentMediaSource.id!
+					} else {
+						mediaSourceID = self.id!
 					}
+
+					let requestBuilder = VideosAPI.getVideoStreamWithRequestBuilder(itemId: self.id!,
+					                                                                _static: true,
+					                                                                tag: self.etag,
+					                                                                minSegments: 6,
+					                                                                mediaSourceId: mediaSourceID)
+					directStreamURL = URL(string: requestBuilder.URLString)!
 
 					// MARK: VidoPlayerViewModel Creation
 
@@ -106,7 +109,7 @@ extension BaseItemDto {
 					let videoPlayerViewModel = VideoPlayerViewModel(item: modifiedSelfItem,
 					                                                title: modifiedSelfItem.name ?? "",
 					                                                subtitle: subtitle,
-					                                                directStreamURL: directStreamURL.url!,
+					                                                directStreamURL: directStreamURL,
 					                                                transcodedStreamURL: transcodedStreamURL?.url,
 					                                                streamType: streamType,
 					                                                response: response,
