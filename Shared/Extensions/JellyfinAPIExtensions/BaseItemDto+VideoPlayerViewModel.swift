@@ -48,24 +48,28 @@ extension BaseItemDto {
 					let defaultSubtitleStream = subtitleStreams
 						.first(where: { $0.index! == currentMediaSource.defaultSubtitleStreamIndex ?? -1 })
 
-					var streamURL: URLComponents
+					var directStreamURL: URLComponents
+					let transcodedStreamURL: URLComponents?
 					let streamType: ServerStreamType
 
 					if let transcodeURL = currentMediaSource.transcodingUrl {
 						streamType = .transcode
-						streamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI.appending(transcodeURL))!
+						transcodedStreamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI
+							.appending(transcodeURL))!
 					} else {
 						streamType = .direct
-						streamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI)!
-						streamURL.path = "/Videos/\(self.id!)/stream"
-						streamURL.addQueryItem(name: "Static", value: "true")
-						streamURL.addQueryItem(name: "MediaSourceId", value: self.id!)
-						streamURL.addQueryItem(name: "Tag", value: self.etag)
-						streamURL.addQueryItem(name: "MinSegments", value: "6")
+						transcodedStreamURL = nil
+					}
 
-						if mediaSources.count > 1 {
-							streamURL.addQueryItem(name: "MediaSourceId", value: currentMediaSource.id)
-						}
+					directStreamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI)!
+					directStreamURL.path = "/Videos/\(self.id!)/stream"
+					directStreamURL.addQueryItem(name: "Static", value: "true")
+					directStreamURL.addQueryItem(name: "MediaSourceId", value: self.id!)
+					directStreamURL.addQueryItem(name: "Tag", value: self.etag)
+					directStreamURL.addQueryItem(name: "MinSegments", value: "6")
+
+					if mediaSources.count > 1 {
+						directStreamURL.addQueryItem(name: "MediaSourceId", value: currentMediaSource.id)
 					}
 
 					// MARK: VidoPlayerViewModel Creation
@@ -102,7 +106,8 @@ extension BaseItemDto {
 					let videoPlayerViewModel = VideoPlayerViewModel(item: modifiedSelfItem,
 					                                                title: modifiedSelfItem.name ?? "",
 					                                                subtitle: subtitle,
-					                                                streamURL: streamURL.url!,
+					                                                directStreamURL: directStreamURL.url!,
+					                                                transcodedStreamURL: transcodedStreamURL?.url,
 					                                                streamType: streamType,
 					                                                response: response,
 					                                                audioStreams: audioStreams,
