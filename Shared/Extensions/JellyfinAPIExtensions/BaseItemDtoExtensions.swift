@@ -93,13 +93,10 @@ public extension BaseItemDto {
 	}
 
 	func getThumbImage(maxWidth: Int) -> URL {
-		let imageType = ImageType.thumb
-		let imageItemId = id ?? ""
-
 		let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
-		let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: imageItemId,
-		                                                        imageType: imageType,
+		let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
+		                                                        imageType: .thumb,
 		                                                        maxWidth: Int(x),
 		                                                        quality: 96).URLString
 		return URL(string: urlString)!
