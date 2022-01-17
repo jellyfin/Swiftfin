@@ -354,6 +354,8 @@ internal enum L10n {
   internal static var system: String { return L10n.tr("Localizable", "system") }
   /// Tags
   internal static var tags: String { return L10n.tr("Localizable", "tags") }
+  /// Too Many Redirects
+  internal static var tooManyRedirects: String { return L10n.tr("Localizable", "tooManyRedirects") }
   /// Try again
   internal static var tryAgain: String { return L10n.tr("Localizable", "tryAgain") }
   /// TV Shows
