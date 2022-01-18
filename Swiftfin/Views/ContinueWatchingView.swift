@@ -27,9 +27,22 @@ struct ContinueWatchingView: View {
 						VStack(alignment: .leading) {
 
 							ZStack {
-								ImageView(src: item.getBackdropImage(maxWidth: 320), bh: item.getBackdropImageBlurHash())
-									.frame(width: 320, height: 180)
-									.accessibilityIgnoresInvertColors()
+								Group {
+									if item.itemType == .episode {
+										ImageView(sources: [
+											item.getSeriesThumbImage(maxWidth: 320),
+											item.getSeriesBackdropImage(maxWidth: 320),
+										])
+											.frame(width: 320, height: 180)
+									} else {
+										ImageView(sources: [
+											item.getThumbImage(maxWidth: 320),
+											item.getBackdropImage(maxWidth: 320),
+										])
+											.frame(width: 320, height: 180)
+									}
+								}
+								.accessibilityIgnoresInvertColors()
 
 								HStack {
 									VStack {

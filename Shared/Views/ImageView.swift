@@ -10,26 +10,52 @@ import NukeUI
 import SwiftUI
 
 struct ImageView: View {
-	private let source: URL
+
+	@State
+	private var sources: [URL]
+	private var currentURL: URL? { sources.first }
+
 	private let blurhash: String
 	private let failureInitials: String
 
 	init(src: URL, bh: String = "001fC^", failureInitials: String = "") {
-		self.source = src
+		self.sources = [src]
 		self.blurhash = bh
 		self.failureInitials = failureInitials
 	}
 
-	// TODO: fix placeholder hash image
+	init(sources: [URL], bh: String = "001fC^", failureInitials: String = "") {
+		assert(!sources.isEmpty, "Must supply at least one source")
+
+		self.sources = sources
+		self.blurhash = bh
+		self.failureInitials = failureInitials
+	}
+
+	// TODO: fix placeholder hash view
 	@ViewBuilder
-	private var placeholderImage: some View {
-		Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ??
-			UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
-			.resizable()
+	private func placeholderView() -> some View {
+//		Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ??
+//			UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
+//			.resizable()
+
+		#if os(tvOS)
+			ZStack {
+				Color.black.ignoresSafeArea()
+
+				ProgressView()
+			}
+		#else
+			ZStack {
+				Color.gray.ignoresSafeArea()
+
+				ProgressView()
+			}
+		#endif
 	}
 
 	@ViewBuilder
-	private var failureImage: some View {
+	private func failureImage() -> some View {
 		ZStack {
 			Rectangle()
 				.foregroundColor(Color(UIColor.darkGray))
@@ -42,27 +68,20 @@ struct ImageView: View {
 	}
 
 	var body: some View {
-		LazyImage(source: source) { state in
-			if let image = state.image {
-				image
-			} else if state.error != nil {
-				failureImage
-			} else {
-				#if os(tvOS)
-					ZStack {
-						Color.black.ignoresSafeArea()
-
-						ProgressView()
-					}
-				#else
-					ZStack {
-						Color.gray.ignoresSafeArea()
-
-						ProgressView()
-					}
-				#endif
+		if let u = currentURL {
+			LazyImage(source: u) { state in
+				if let image = state.image {
+					image
+				} else if state.error != nil {
+					failureImage().onAppear { sources.removeFirst() }
+				} else {
+					placeholderView()
+				}
 			}
+			.pipeline(ImagePipeline(configuration: .withDataCache))
+			.id(u)
+		} else {
+			failureImage()
 		}
-		.pipeline(ImagePipeline(configuration: .withDataCache))
 	}
 }

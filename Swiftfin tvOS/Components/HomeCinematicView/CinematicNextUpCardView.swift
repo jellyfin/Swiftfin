@@ -24,10 +24,17 @@ struct CinematicNextUpCardView: View {
 				ZStack(alignment: .bottomLeading) {
 
 					if item.itemType == .episode {
-						ImageView(src: item.getSeriesBackdropImage(maxWidth: 350))
+						ImageView(sources: [
+							item.getSeriesThumbImage(maxWidth: 350),
+							item.getSeriesBackdropImage(maxWidth: 350),
+						])
 							.frame(width: 350, height: 210)
 					} else {
-						ImageView(src: item.getBackdropImage(maxWidth: 350))
+						ImageView(sources: [
+							item.getThumbImage(maxWidth: 350),
+							item.getBackdropImage(maxWidth: 350),
+						],
+						bh: item.getBackdropImageBlurHash())
 							.frame(width: 350, height: 210)
 					}
 
