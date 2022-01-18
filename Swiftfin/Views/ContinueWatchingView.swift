@@ -42,6 +42,7 @@ struct ContinueWatchingView: View {
 											.frame(width: 320, height: 180)
 									}
 								}
+								.accessibilityIgnoresInvertColors()
 
 								HStack {
 									VStack {
