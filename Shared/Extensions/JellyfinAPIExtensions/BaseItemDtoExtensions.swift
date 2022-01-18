@@ -129,6 +129,16 @@ public extension BaseItemDto {
 		return URL(string: urlString)!
 	}
 
+	func getSeriesThumbImage(maxWidth: Int) -> URL {
+		let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+		let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: seriesId ?? "",
+		                                                        imageType: .thumb,
+		                                                        maxWidth: Int(x),
+		                                                        quality: 96,
+		                                                        tag: seriesPrimaryImageTag).URLString
+		return URL(string: urlString)!
+	}
+
 	func getPrimaryImage(maxWidth: Int) -> URL {
 		let imageType = ImageType.primary
 		var imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
