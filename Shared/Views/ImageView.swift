@@ -11,7 +11,10 @@ import SwiftUI
 
 struct ImageView: View {
 
-	private let sources: [URL]
+	@State
+	private var sources: [URL]
+	private var currentURL: URL? { sources.first }
+
 	private let blurhash: String
 	private let failureInitials: String
 
@@ -65,68 +68,20 @@ struct ImageView: View {
 	}
 
 	var body: some View {
-		ImageViewBackgroundA(index: 0,
-		                     sources: sources,
-		                     placeholderView: placeholderView,
-		                     failureView: failureImage)
-	}
-}
-
-// Two image view are necessary to switch between one another to appease the type system
-// as a recursive view with itself isn't valid
-
-fileprivate struct ImageViewBackgroundA<PlaceholderView: View, FailureView: View>: View {
-
-	let index: Int
-	let sources: [URL]
-	let placeholderView: () -> PlaceholderView
-	let failureView: () -> FailureView
-
-	var body: some View {
-		LazyImage(source: sources[index]) { state in
-			if let image = state.image {
-				image
-			} else if state.error != nil {
-				if index + 1 == sources.count {
-					failureView()
+		if let u = currentURL {
+			LazyImage(source: u) { state in
+				if let image = state.image {
+					image
+				} else if state.error != nil {
+					failureImage().onAppear { sources.removeFirst() }
 				} else {
-					ImageViewBackgroundB(index: index + 1,
-					                     sources: sources,
-					                     placeholderView: placeholderView,
-					                     failureView: failureView)
+					placeholderView()
 				}
-			} else {
-				placeholderView()
 			}
+			.pipeline(ImagePipeline(configuration: .withDataCache))
+			.id(u)
+		} else {
+			failureImage()
 		}
-		.pipeline(ImagePipeline(configuration: .withDataCache))
-	}
-}
-
-fileprivate struct ImageViewBackgroundB<PlaceholderView: View, FailureView: View>: View {
-
-	let index: Int
-	let sources: [URL]
-	let placeholderView: () -> PlaceholderView
-	let failureView: () -> FailureView
-
-	var body: some View {
-		LazyImage(source: sources[index]) { state in
-			if let image = state.image {
-				image
-			} else if state.error != nil {
-				if index + 1 == sources.count {
-					failureView()
-				} else {
-					ImageViewBackgroundA(index: index + 1,
-					                     sources: sources,
-					                     placeholderView: placeholderView,
-					                     failureView: failureView)
-				}
-			} else {
-				placeholderView()
-			}
-		}
-		.pipeline(ImagePipeline(configuration: .withDataCache))
 	}
 }
