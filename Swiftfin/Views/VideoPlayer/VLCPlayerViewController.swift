@@ -29,6 +29,7 @@ class VLCPlayerViewController: UIViewController {
 	private var viewModelListeners = Set<AnyCancellable>()
 	private var overlayDismissTimer: Timer?
 	private var isScreenFilled: Bool = false
+	private var pinchScale: CGFloat = 1
 
 	private var currentPlayerTicks: Int64 {
 		Int64(vlcMediaPlayer.time.intValue) * 100_000
@@ -143,6 +144,13 @@ class VLCPlayerViewController: UIViewController {
 		startPlayback()
 	}
 
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		if isScreenFilled {
+			fillScreen(screenSize: size)
+		}
+		super.viewWillTransition(to: size, with: coordinator)
+	}
+
 	// MARK: subviews
 
 	private func makeVideoContentView() -> UIView {
@@ -192,8 +200,6 @@ class VLCPlayerViewController: UIViewController {
 	private func didLeftSwipe() {
 		self.didSelectBackward()
 	}
-
-	private var pinchScale: CGFloat = 1
 
 	@objc
 	private func didPinch(_ gestureRecognizer: UIPinchGestureRecognizer) {
@@ -847,8 +853,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		}
 	}
 
-	private func fillScreen() {
-		let screenSize = UIScreen.main.bounds.size
+	private func fillScreen(screenSize: CGSize = UIScreen.main.bounds.size) {
 		let videoSize = vlcMediaPlayer.videoSize
 		let fillSize = CGSize.aspectFill(aspectRatio: videoSize, minimumSize: screenSize)
 
