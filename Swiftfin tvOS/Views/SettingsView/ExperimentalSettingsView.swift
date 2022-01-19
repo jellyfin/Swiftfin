@@ -17,6 +17,8 @@ struct ExperimentalSettingsView: View {
 	var syncSubtitleStateWithAdjacent
 	@Default(.Experimental.liveTVAlphaEnabled)
 	var liveTVAlphaEnabled
+	@Default(.Experimental.nativePlayer)
+	var nativePlayer
 
 	var body: some View {
 		Form {
@@ -27,6 +29,8 @@ struct ExperimentalSettingsView: View {
 				Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
 
 				Toggle("Live TV (Alpha)", isOn: $liveTVAlphaEnabled)
+
+				Toggle("Native Player", isOn: $nativePlayer)
 
 			} header: {
 				L10n.experimental.text

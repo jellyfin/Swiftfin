@@ -40,6 +40,7 @@ extension BaseItemDto {
 				var viewModels: [VideoPlayerViewModel] = []
 
 				for currentMediaSource in mediaSources {
+					let videoStream = currentMediaSource.mediaStreams?.filter { $0.type == .video }.first
 					let audioStreams = currentMediaSource.mediaStreams?.filter { $0.type == .audio } ?? []
 					let subtitleStreams = currentMediaSource.mediaStreams?.filter { $0.type == .subtitle } ?? []
 
@@ -48,10 +49,27 @@ extension BaseItemDto {
 					let defaultSubtitleStream = subtitleStreams
 						.first(where: { $0.index! == currentMediaSource.defaultSubtitleStreamIndex ?? -1 })
 
-					var directStreamURL: URL
+					// MARK: Build Streams
+
+					let directStreamURL: URL
 					let transcodedStreamURL: URLComponents?
+					var hlsStreamURL: URL
 					let mediaSourceID: String
 					let streamType: ServerStreamType
+
+					if mediaSources.count > 1 {
+						mediaSourceID = currentMediaSource.id!
+					} else {
+						mediaSourceID = self.id!
+					}
+
+					let directStreamBuilder = VideosAPI.getVideoStreamWithRequestBuilder(itemId: self.id!,
+					                                                                     _static: true,
+					                                                                     tag: self.etag,
+					                                                                     playSessionId: response.playSessionId,
+					                                                                     minSegments: 6,
+					                                                                     mediaSourceId: mediaSourceID)
+					directStreamURL = URL(string: directStreamBuilder.URLString)!
 
 					if let transcodeURL = currentMediaSource.transcodingUrl {
 						streamType = .transcode
@@ -62,18 +80,30 @@ extension BaseItemDto {
 						transcodedStreamURL = nil
 					}
 
-					if mediaSources.count > 1 {
-						mediaSourceID = currentMediaSource.id!
-					} else {
-						mediaSourceID = self.id!
-					}
+					let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(itemId: id ?? "",
+					                                                                                 mediaSourceId: id ?? "",
+					                                                                                 _static: true,
+					                                                                                 tag: currentMediaSource.eTag,
+					                                                                                 deviceProfileId: nil,
+					                                                                                 playSessionId: response.playSessionId,
+					                                                                                 segmentContainer: "ts",
+					                                                                                 segmentLength: nil,
+					                                                                                 minSegments: 2,
+					                                                                                 deviceId: UIDevice.vendorUUIDString,
+					                                                                                 audioCodec: audioStreams
+					                                                                                 	.compactMap(\.codec)
+					                                                                                 	.joined(separator: ","),
+					                                                                                 breakOnNonKeyFrames: true,
+					                                                                                 requireAvc: true,
+					                                                                                 transcodingMaxAudioChannels: 6,
+					                                                                                 videoCodec: videoStream?.codec,
+					                                                                                 videoStreamIndex: videoStream?.index,
+					                                                                                 enableAdaptiveBitrateStreaming: true)
 
-					let requestBuilder = VideosAPI.getVideoStreamWithRequestBuilder(itemId: self.id!,
-					                                                                _static: true,
-					                                                                tag: self.etag,
-					                                                                minSegments: 6,
-					                                                                mediaSourceId: mediaSourceID)
-					directStreamURL = URL(string: requestBuilder.URLString)!
+					var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
+					hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
+
+					hlsStreamURL = hlsStreamComponents.url!
 
 					// MARK: VidoPlayerViewModel Creation
 
@@ -111,6 +141,7 @@ extension BaseItemDto {
 					                                                subtitle: subtitle,
 					                                                directStreamURL: directStreamURL,
 					                                                transcodedStreamURL: transcodedStreamURL?.url,
+					                                                hlsStreamURL: hlsStreamURL,
 					                                                streamType: streamType,
 					                                                response: response,
 					                                                audioStreams: audioStreams,

@@ -143,6 +143,7 @@ struct tvOSVLCOverlay_Previews: PreviewProvider {
 	                                                       subtitle: "Loki - S1E1",
 	                                                       directStreamURL: URL(string: "www.apple.com")!,
 	                                                       transcodedStreamURL: nil,
+	                                                       hlsStreamURL: URL(string: "www.apple.com")!,
 	                                                       streamType: .direct,
 	                                                       response: PlaybackInfoResponse(),
 	                                                       audioStreams: [MediaStream(displayTitle: "English", index: -1)],

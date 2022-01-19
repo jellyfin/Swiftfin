@@ -9,6 +9,20 @@
 import SwiftUI
 import UIKit
 
+struct NativePlayerView: UIViewControllerRepresentable {
+
+	let viewModel: VideoPlayerViewModel
+
+	typealias UIViewControllerType = NativePlayerViewController
+
+	func makeUIViewController(context: Context) -> NativePlayerViewController {
+
+		NativePlayerViewController(viewModel: viewModel)
+	}
+
+	func updateUIViewController(_ uiViewController: NativePlayerViewController, context: Context) {}
+}
+
 struct VLCPlayerView: UIViewControllerRepresentable {
 
 	let viewModel: VideoPlayerViewModel

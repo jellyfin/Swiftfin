@@ -27,8 +27,14 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
 	@ViewBuilder
 	func makeStart() -> some View {
-		VLCPlayerView(viewModel: viewModel)
-			.navigationBarHidden(true)
-			.ignoresSafeArea()
+		if Defaults[.Experimental.nativePlayer] {
+			NativePlayerView(viewModel: viewModel)
+				.navigationBarHidden(true)
+				.ignoresSafeArea()
+		} else {
+			VLCPlayerView(viewModel: viewModel)
+				.navigationBarHidden(true)
+				.ignoresSafeArea()
+		}
 	}
 }
