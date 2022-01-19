@@ -290,6 +290,8 @@
 		E1361DA7278FA7A300BEC523 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1361DA6278FA7A300BEC523 /* NukeUI */; };
 		E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1384943278036C70024FB48 /* VLCPlayerViewController.swift */; };
 		E13849452780370B0024FB48 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
+		E13AD72E2798BC8D00FDCEE8 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */; };
+		E13AD7302798C60F00FDCEE8 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */; };
 		E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */; };
 		E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
 		E13DD3C327164941009D4DAF /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
@@ -681,6 +683,8 @@
 		E126F740278A656C00A522BF /* ServerStreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStreamType.swift; sourceTree = "<group>"; };
 		E131691626C583BC0074BFEE /* LogConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogConstructor.swift; sourceTree = "<group>"; };
 		E1384943278036C70024FB48 /* VLCPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerViewController.swift; sourceTree = "<group>"; };
+		E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
+		E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
 		E13D02842788B634000FCB04 /* Swiftfin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Swiftfin.entitlements; sourceTree = "<group>"; };
 		E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E13DD3C127164941009D4DAF /* SwiftfinStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinStore.swift; sourceTree = "<group>"; };
@@ -861,6 +865,7 @@
 				E17885A7278130690094FBCF /* Overlays */,
 				E1C812C8277AE40900918266 /* VideoPlayerView.swift */,
 				E1384943278036C70024FB48 /* VLCPlayerViewController.swift */,
+				E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */,
 			);
 			path = VideoPlayer;
 			sourceTree = "<group>";
@@ -1565,8 +1570,9 @@
 		E193D5452719418B00900D82 /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				E1C812B5277A8E5D00918266 /* PlayerOverlayDelegate.swift */,
+				E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */,
 				E1002B692793E12E00E47059 /* Overlays */,
+				E1C812B5277A8E5D00918266 /* PlayerOverlayDelegate.swift */,
 				E1C812B8277A8E5D00918266 /* VLCPlayerView.swift */,
 				E1C812B6277A8E5D00918266 /* VLCPlayerViewController.swift */,
 			);
@@ -2249,6 +2255,7 @@
 				C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */,
 				E1D4BF822719D22800A11E64 /* AppAppearance.swift in Sources */,
 				C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */,
+				E13AD7302798C60F00FDCEE8 /* NativePlayerViewController.swift in Sources */,
 				E1E5D54F2783E67100692DFE /* OverlaySettingsView.swift in Sources */,
 				53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */,
 				09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */,
@@ -2339,6 +2346,7 @@
 				5D160403278A41FD00D22B99 /* VLCPlayer+subtitles.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
+				E13AD72E2798BC8D00FDCEE8 /* NativePlayerViewController.swift in Sources */,
 				E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */,
 				E18845F826DEA9C900B0C5B7 /* ItemViewBody.swift in Sources */,
 				E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */,
