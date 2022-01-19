@@ -52,14 +52,14 @@ struct VLCPlayerOverlayView: View {
 
 			// MARK: Top Bar
 
-			ZStack {
+			ZStack(alignment: .center) {
 
 				if viewModel.overlayType == .compact {
-					LinearGradient(gradient: Gradient(colors: [.black.opacity(0.7), .clear]),
+					LinearGradient(gradient: Gradient(colors: [.black.opacity(0.8), .clear]),
 					               startPoint: .top,
 					               endPoint: .bottom)
 						.ignoresSafeArea()
-						.frame(height: 80)
+						.frame(height: 70)
 				}
 
 				VStack(alignment: .EpisodeSeriesAlignmentGuide) {
@@ -78,6 +78,7 @@ struct VLCPlayerOverlayView: View {
 							Text(viewModel.title)
 								.font(.title3)
 								.fontWeight(.bold)
+								.lineLimit(1)
 								.alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
 									context[.leading]
 								}
@@ -297,12 +298,11 @@ struct VLCPlayerOverlayView: View {
 							.alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
 								context[.leading]
 							}
-							.offset(y: -20)
+							.offset(y: -18)
 					}
 				}
+				.padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 30 : 0)
 			}
-			.padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 50 : 0)
-			.padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 10 : 0)
 
 			// MARK: Center
 
@@ -336,10 +336,10 @@ struct VLCPlayerOverlayView: View {
 
 			// MARK: Bottom Bar
 
-			ZStack {
+			ZStack(alignment: .center) {
 
 				if viewModel.overlayType == .compact {
-					LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
+					LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.8)]),
 					               startPoint: .top,
 					               endPoint: .bottom)
 						.ignoresSafeArea()
@@ -401,12 +401,10 @@ struct VLCPlayerOverlayView: View {
 						.accessibilityLabel(L10n.remainingTime)
 						.accessibilityValue(viewModel.rightLabelText)
 				}
-				.padding(.horizontal)
-				.frame(maxWidth: UIDevice.current.userInterfaceIdiom == .pad ? 800 : nil)
+				.padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 30 : 0)
+				.padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 10 : 0)
 			}
-			.frame(maxHeight: 50)
 		}
-		.ignoresSafeArea(edges: .top)
 		.tint(Color.white)
 		.foregroundColor(Color.white)
 	}

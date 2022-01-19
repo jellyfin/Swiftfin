@@ -151,7 +151,7 @@ class VLCPlayerViewController: UIViewController {
 		super.viewWillTransition(to: size, with: coordinator)
 	}
 
-	// MARK: subviews
+	// MARK: VideoContentView
 
 	private func makeVideoContentView() -> UIView {
 		let view = UIView()
@@ -160,6 +160,8 @@ class VLCPlayerViewController: UIViewController {
 
 		return view
 	}
+
+	// MARK: MainGestureView
 
 	private func makeMainGestureView() -> UIView {
 		let view = UIView()
@@ -206,11 +208,11 @@ class VLCPlayerViewController: UIViewController {
 		if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
 			pinchScale = gestureRecognizer.scale
 		} else {
-			isScreenFilled.toggle()
-
-			if pinchScale > 1 {
+			if pinchScale > 1 && !isScreenFilled {
+				isScreenFilled.toggle()
 				fillScreen()
-			} else {
+			} else if pinchScale < 1 && isScreenFilled {
+				isScreenFilled.toggle()
 				shrinkScreen()
 			}
 		}
