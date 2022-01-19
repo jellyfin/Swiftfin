@@ -27,7 +27,13 @@ class NativePlayerViewController: AVPlayerViewController {
 
 		super.init(nibName: nil, bundle: nil)
 
-		let player = AVPlayer(url: viewModel.hlsStreamURL)
+		let player: AVPlayer
+
+		if let transcodedStreamURL = viewModel.transcodedStreamURL {
+			player = AVPlayer(url: transcodedStreamURL)
+		} else {
+			player = AVPlayer(url: viewModel.hlsStreamURL)
+		}
 
 		player.appliesMediaSelectionCriteriaAutomatically = false
 
