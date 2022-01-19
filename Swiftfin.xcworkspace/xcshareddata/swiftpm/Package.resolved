@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/CombineCommunity/CombineExt",
         "state": {
           "branch": null,
-          "revision": "8ca006df5e3cc6bb176b70238e2b0014bbc3a235",
-          "version": "1.0.0"
+          "revision": "0880829102152185190064fd17847a7c681d2127",
+          "version": "1.5.1"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/sindresorhus/Defaults",
         "state": {
           "branch": null,
-          "revision": "8a6e4a96fd38504a05903d136c85634b65fd7c4d",
-          "version": "6.0.0"
+          "revision": "55f3302c3ab30a8760f10042d0ebc0a6907f865a",
+          "version": "6.1.0"
         }
       },
       {
@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/sushichop/Puppy",
         "state": {
           "branch": null,
-          "revision": "dc82e65c749cee431ffbb8c0913680b61ccd7e08",
-          "version": "0.2.0"
+          "revision": "95ce04b0e778b8d7c351876bc98bbf68328dfc9b",
+          "version": "0.3.1"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/rundfunk47/stinsen",
         "state": {
           "branch": null,
-          "revision": "5e6c714f6f308877c8a988523915f9eb592d7d82",
-          "version": "2.0.3"
+          "revision": "36d97964075dc770046ddef9346a29bfa8982d6d",
+          "version": "2.0.7"
         }
       },
       {

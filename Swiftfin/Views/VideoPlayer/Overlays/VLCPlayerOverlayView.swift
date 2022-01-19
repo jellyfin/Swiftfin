@@ -87,6 +87,8 @@ struct VLCPlayerOverlayView: View {
 
 						HStack(spacing: 20) {
 
+							// MARK: Previous Item
+
 							if viewModel.shouldShowPlayPreviousItem {
 								Button {
 									viewModel.playerOverlayDelegate?.didSelectPlayPreviousItem()
@@ -97,6 +99,8 @@ struct VLCPlayerOverlayView: View {
 								.foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
 							}
 
+							// MARK: Next Item
+
 							if viewModel.shouldShowPlayNextItem {
 								Button {
 									viewModel.playerOverlayDelegate?.didSelectPlayNextItem()
@@ -106,6 +110,8 @@ struct VLCPlayerOverlayView: View {
 								.disabled(viewModel.nextItemVideoPlayerViewModel == nil)
 								.foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
 							}
+
+							// MARK: Autoplay
 
 							if viewModel.shouldShowAutoPlay {
 								Button {
@@ -118,6 +124,8 @@ struct VLCPlayerOverlayView: View {
 									}
 								}
 							}
+
+							// MARK: Subtitle Toggle
 
 							if !viewModel.subtitleStreams.isEmpty {
 								Button {
@@ -133,9 +141,31 @@ struct VLCPlayerOverlayView: View {
 								.foregroundColor(viewModel.selectedSubtitleStreamIndex == -1 ? .gray : .white)
 							}
 
+							// MARK: Screen Fill
+
+							Button {
+								viewModel.playerOverlayDelegate?.didSelectScreenFill()
+							} label: {
+								if viewModel.playerOverlayDelegate?.getScreenFilled() ?? true {
+									if viewModel.playerOverlayDelegate?.isVideoAspectRatioGreater() ?? true {
+										Image(systemName: "rectangle.arrowtriangle.2.inward")
+									} else {
+										Image(systemName: "rectangle.portrait.arrowtriangle.2.inward")
+									}
+								} else {
+									if viewModel.playerOverlayDelegate?.isVideoAspectRatioGreater() ?? true {
+										Image(systemName: "rectangle.arrowtriangle.2.outward")
+									} else {
+										Image(systemName: "rectangle.portrait.arrowtriangle.2.outward")
+									}
+								}
+							}
+
 							// MARK: Settings Menu
 
 							Menu {
+
+								// MARK: Audio Streams
 
 								Menu {
 									ForEach(viewModel.audioStreams, id: \.self) { audioStream in
@@ -156,6 +186,8 @@ struct VLCPlayerOverlayView: View {
 									}
 								}
 
+								// MARK: Subtitle Streams
+
 								Menu {
 									ForEach(viewModel.subtitleStreams, id: \.self) { subtitleStream in
 										Button {
@@ -174,6 +206,8 @@ struct VLCPlayerOverlayView: View {
 										L10n.subtitles.text
 									}
 								}
+
+								// MARK: Playback Speed
 
 								Menu {
 									ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
@@ -194,6 +228,8 @@ struct VLCPlayerOverlayView: View {
 									}
 								}
 
+								// MARK: Chapters
+
 								if !viewModel.chapters.isEmpty {
 									Button {
 										viewModel.playerOverlayDelegate?.didSelectChapters()
@@ -204,6 +240,8 @@ struct VLCPlayerOverlayView: View {
 										}
 									}
 								}
+
+								// MARK: Jump Button Lengths
 
 								if viewModel.shouldShowJumpButtonsInOverlayMenu {
 									Menu {

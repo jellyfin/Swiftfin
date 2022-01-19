@@ -32,4 +32,10 @@ protocol PlayerOverlayDelegate {
 
 	func didSelectChapters()
 	func didSelectChapter(_ chapter: ChapterInfo)
+
+	func didSelectScreenFill()
+	func getScreenFilled() -> Bool
+	// Returns whether the aspect ratio of the video
+	// is greater than the aspect ratio of the screen
+	func isVideoAspectRatioGreater() -> Bool
 }
