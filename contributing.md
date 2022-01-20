@@ -30,7 +30,7 @@ If your Pull Request relates to an Issue, mention the issue correctly in your PR
 The following must pass in order for a PR to be merged:
 - automated `iOS` and `tvOS` builds must succeed
 - developer account cannot be attached
-- SwiftFormat linting check must pas
+- SwiftFormat linting check must pass
 - new strings that are not part of an experimental feature must be localized
 - correct label(s) are attached, if applicable
 
