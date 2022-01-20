@@ -21,7 +21,7 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
 	var videoPlayer = makeVideoPlayer
 
 	func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))
+		NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))
 	}
 
 	@ViewBuilder

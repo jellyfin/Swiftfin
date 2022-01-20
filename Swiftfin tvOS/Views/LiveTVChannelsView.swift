@@ -55,9 +55,9 @@ struct LiveTVChannelsView: View {
 		let channel = item.channel
 		if channel.type != "Folder" {
 			Button {
-                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-                    self.router.route(to: \.videoPlayer, playerViewModel)
-                }
+				self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
+					self.router.route(to: \.videoPlayer, playerViewModel)
+				}
 			} label: {
 				LiveTVChannelItemElement(channel: channel,
 				                         program: item.program,

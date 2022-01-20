@@ -140,7 +140,7 @@ final class VideoPlayerViewModel: ViewModel {
 	// MARK: Current Time
 
 	var currentSeconds: Double {
-        let runTimeTicks = item.runTimeTicks ?? 0
+		let runTimeTicks = item.runTimeTicks ?? 0
 		let videoDuration = Double(runTimeTicks / 10_000_000)
 		return round(sliderPercentage * videoDuration)
 	}
@@ -257,7 +257,7 @@ final class VideoPlayerViewModel: ViewModel {
 	}
 
 	private func sliderPercentageChanged(newValue: Double) {
-        let runTimeTicks = item.runTimeTicks ?? 0
+		let runTimeTicks = item.runTimeTicks ?? 0
 		let videoDuration = Double(runTimeTicks / 10_000_000)
 		let secondsScrubbedRemaining = videoDuration - currentSeconds
 

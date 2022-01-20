@@ -197,16 +197,16 @@ final class LiveTVProgramsViewModel: ViewModel {
 			})
 			.store(in: &cancellables)
 	}
-    
-    func fetchVideoPlayerViewModel(item: BaseItemDto, completion: @escaping (VideoPlayerViewModel)->Void) {
-        item.createVideoPlayerViewModel()
-            .sink { completion in
-                self.handleAPIRequestError(completion: completion)
-            } receiveValue: { videoPlayerViewModels in
-                if let viewModel = videoPlayerViewModels.first {
-                    completion(viewModel)
-                }
-            }
-            .store(in: &self.cancellables)
-    }
+
+	func fetchVideoPlayerViewModel(item: BaseItemDto, completion: @escaping (VideoPlayerViewModel) -> Void) {
+		item.createVideoPlayerViewModel()
+			.sink { completion in
+				self.handleAPIRequestError(completion: completion)
+			} receiveValue: { videoPlayerViewModels in
+				if let viewModel = videoPlayerViewModels.first {
+					completion(viewModel)
+				}
+			}
+			.store(in: &self.cancellables)
+	}
 }
