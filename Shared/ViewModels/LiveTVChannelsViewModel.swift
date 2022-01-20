@@ -194,8 +194,10 @@ final class LiveTVChannelsViewModel: ViewModel {
         item.createVideoPlayerViewModel()
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
-            } receiveValue: { videoPlayerViewModel in
-                completion(videoPlayerViewModel)
+            } receiveValue: { videoPlayerViewModels in
+                if let viewModel = videoPlayerViewModels.first {
+                    completion(viewModel)
+                }
             }
             .store(in: &self.cancellables)
     }
