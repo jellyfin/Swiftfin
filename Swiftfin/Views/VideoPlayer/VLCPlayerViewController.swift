@@ -410,7 +410,7 @@ extension VLCPlayerViewController {
 
 		if startPercentage > 0 {
 			if viewModel.resumeOffset {
-                let runTimeTicks = viewModel.item.runTimeTicks ?? 0
+				let runTimeTicks = viewModel.item.runTimeTicks ?? 0
 				let videoDurationSeconds = Double(runTimeTicks / 10_000_000)
 				var startSeconds = round((startPercentage / 100) * videoDurationSeconds)
 				startSeconds = startSeconds.subtract(5, floor: 0)
@@ -491,7 +491,7 @@ extension VLCPlayerViewController {
 	func setMediaPlayerTimeAtCurrentSlider() {
 		// Necessary math as VLCMediaPlayer doesn't work well
 		//     by just setting the position
-        let runTimeTicks = viewModel.item.runTimeTicks ?? 0
+		let runTimeTicks = viewModel.item.runTimeTicks ?? 0
 		let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
 		let videoDuration = Double(runTimeTicks / 10_000_000)
 		let secondsScrubbedTo = round(viewModel.sliderPercentage * videoDuration)
