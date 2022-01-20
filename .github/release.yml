@@ -1,0 +1,14 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: New Features 🎉
+      labels:
+        - enhancement
+    - title: Bug Fixes 🛠
+      labels:
+        - bug
+        - crash

@@ -7,9 +7,6 @@
   <a href="https://matrix.to/#/+jellyfin:matrix.org">
     <img src="https://img.shields.io/matrix/jellyfin:matrix.org">
   </a>
-  <a href="https://sonarcloud.io/dashboard?id=jellyfin_SwiftFin">
-    <img src="https://sonarcloud.io/api/project_badges/measure?project=jellyfin_SwiftFin&metric=alert_status">
-  </a>
   <a href="https://discord.gg/zHBxVSXdBV">
     <img src="https://img.shields.io/badge/Talk%20on-Discord-brightgreen">
   </a>
@@ -18,7 +15,7 @@
   <b>Swiftfin</b> is a modern client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
 
-## ⚡️ Links!
+## ⚡️ TestFlight
 
 **✨New! Updated TestFlight Link**
 
@@ -27,6 +24,8 @@
 **For Apple TV (without an iOS/iPadOS device)**
 
 If you have an Apple TV and do not own an iOS device, please use this [Google Form](https://forms.gle/U5CczbfQzm8MbpJX9) to get an invitation code.
+
+## 📚 Translations
 
 **Don't see SwiftFin in your language?**
 
@@ -38,13 +37,4 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 
 ## ⚙️ Development
 
-Thank you for your interest in Swiftfin, please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/blob/main/contributing.md) to get started.
-
------
-
-### Intended Behaviors Due to Technical Limitations
-
-The following behaviors are intended due to technical limitations with VLCKit:
-
-- Pausing playback when app is backgrounded as VLCKit pauses video output at the same time
-- Audio delay when starting playback and un-pausing, may be fixed in VLCKit v4
+Thank you for your interest in Swiftfin! Please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/blob/main/contributing.md) to get started.
