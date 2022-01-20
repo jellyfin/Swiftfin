@@ -14,7 +14,6 @@ import Sliders
 import SwiftUI
 
 struct VLCPlayerOverlayView: View {
-
 	@ObservedObject
 	var viewModel: VideoPlayerViewModel
 
@@ -49,11 +48,9 @@ struct VLCPlayerOverlayView: View {
 	@ViewBuilder
 	private var mainBody: some View {
 		VStack {
-
 			// MARK: Top Bar
 
-			ZStack(alignment: .center) {
-
+			ZStack(alignment: .top) {
 				if viewModel.overlayType == .compact {
 					LinearGradient(gradient: Gradient(colors: [.black.opacity(0.8), .clear]),
 					               startPoint: .top,
@@ -63,9 +60,7 @@ struct VLCPlayerOverlayView: View {
 				}
 
 				VStack(alignment: .EpisodeSeriesAlignmentGuide) {
-
 					HStack(alignment: .center) {
-
 						HStack {
 							Button {
 								viewModel.playerOverlayDelegate?.didSelectClose()
@@ -87,7 +82,6 @@ struct VLCPlayerOverlayView: View {
 						Spacer()
 
 						HStack(spacing: 20) {
-
 							// MARK: Previous Item
 
 							if viewModel.shouldShowPlayPreviousItem {
@@ -165,7 +159,6 @@ struct VLCPlayerOverlayView: View {
 							// MARK: Settings Menu
 
 							Menu {
-
 								// MARK: Audio Streams
 
 								Menu {
@@ -337,7 +330,6 @@ struct VLCPlayerOverlayView: View {
 			// MARK: Bottom Bar
 
 			ZStack(alignment: .center) {
-
 				if viewModel.overlayType == .compact {
 					LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.8)]),
 					               startPoint: .top,
@@ -347,7 +339,6 @@ struct VLCPlayerOverlayView: View {
 				}
 
 				HStack {
-
 					if viewModel.overlayType == .compact {
 						HStack {
 							Button {
@@ -431,7 +422,6 @@ struct VLCPlayerOverlayView: View {
 }
 
 struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
-
 	static let videoPlayerViewModel = VideoPlayerViewModel(item: BaseItemDto(),
 	                                                       title: "Glorious Purpose",
 	                                                       subtitle: "Loki - S1E1",
@@ -469,7 +459,6 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
 // MARK: TitleSubtitleAlignment
 
 extension HorizontalAlignment {
-
 	private struct TitleSubtitleAlignment: AlignmentID {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat {
 			context[HorizontalAlignment.leading]
