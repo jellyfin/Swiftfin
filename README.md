@@ -38,13 +38,7 @@ Thank you for your interest in Swiftfin, please check out the [Contribution Guid
 
 ### Intended Behaviors Due to Technical Limitations
 
-The following behaviors are intended due to technical limitations:
+The following behaviors are intended due to technical limitations with VLCKit:
 
-- Pausing playback when app is backgrounded
-  - Due to VLCKit pausing video output at the same moment
-
-- Audio delay after un-pausing
-  - Due to VLCKit, may be fixed in VLCKit v4
-
-- No aspect fill
-  - VLCKit doesn't have the ability to aspect fill the view that the video output occupies
+- Pausing playback when app is backgrounded as VLCKit pauses video output at the same time
+- Audio delay when starting playback and un-pausing, may be fixed in VLCKit v4

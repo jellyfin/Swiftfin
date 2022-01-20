@@ -28,6 +28,8 @@ class VLCPlayerViewController: UIViewController {
 	private var lastProgressReportTicks: Int64 = 0
 	private var viewModelListeners = Set<AnyCancellable>()
 	private var overlayDismissTimer: Timer?
+	private var isScreenFilled: Bool = false
+	private var pinchScale: CGFloat = 1
 
 	private var currentPlayerTicks: Int64 {
 		Int64(vlcMediaPlayer.time.intValue) * 100_000
@@ -42,7 +44,7 @@ class VLCPlayerViewController: UIViewController {
 	}
 
 	private lazy var videoContentView = makeVideoContentView()
-	private lazy var mainGestureView = makeTapGestureView()
+	private lazy var mainGestureView = makeMainGestureView()
 	private var currentOverlayHostingController: UIHostingController<VLCPlayerOverlayView>?
 	private var currentChapterOverlayHostingController: UIHostingController<VLCPlayerChapterOverlayView>?
 	private var currentJumpBackwardOverlayView: UIImageView?
@@ -142,7 +144,14 @@ class VLCPlayerViewController: UIViewController {
 		startPlayback()
 	}
 
-	// MARK: subviews
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		if isScreenFilled {
+			fillScreen(screenSize: size)
+		}
+		super.viewWillTransition(to: size, with: coordinator)
+	}
+
+	// MARK: VideoContentView
 
 	private func makeVideoContentView() -> UIView {
 		let view = UIView()
@@ -152,7 +161,9 @@ class VLCPlayerViewController: UIViewController {
 		return view
 	}
 
-	private func makeTapGestureView() -> UIView {
+	// MARK: MainGestureView
+
+	private func makeMainGestureView() -> UIView {
 		let view = UIView()
 		view.translatesAutoresizingMaskIntoConstraints = false
 
@@ -164,7 +175,10 @@ class VLCPlayerViewController: UIViewController {
 		let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didLeftSwipe))
 		leftSwipeGesture.direction = .left
 
+		let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPinch(_:)))
+
 		view.addGestureRecognizer(singleTapGesture)
+		view.addGestureRecognizer(pinchGesture)
 
 		if viewModel.jumpGesturesEnabled {
 			view.addGestureRecognizer(rightSwipeGesture)
@@ -187,6 +201,21 @@ class VLCPlayerViewController: UIViewController {
 	@objc
 	private func didLeftSwipe() {
 		self.didSelectBackward()
+	}
+
+	@objc
+	private func didPinch(_ gestureRecognizer: UIPinchGestureRecognizer) {
+		if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
+			pinchScale = gestureRecognizer.scale
+		} else {
+			if pinchScale > 1 && !isScreenFilled {
+				isScreenFilled.toggle()
+				fillScreen()
+			} else if pinchScale < 1 && isScreenFilled {
+				isScreenFilled.toggle()
+				shrinkScreen()
+			}
+		}
 	}
 
 	// MARK: setupOverlayHostingController
@@ -813,5 +842,53 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		}
 
 		viewModel.sendProgressReport()
+	}
+
+	func didSelectScreenFill() {
+
+		isScreenFilled.toggle()
+
+		if isScreenFilled {
+			fillScreen()
+		} else {
+			shrinkScreen()
+		}
+	}
+
+	private func fillScreen(screenSize: CGSize = UIScreen.main.bounds.size) {
+		let videoSize = vlcMediaPlayer.videoSize
+		let fillSize = CGSize.aspectFill(aspectRatio: videoSize, minimumSize: screenSize)
+
+		let scale: CGFloat
+
+		if fillSize.height > screenSize.height {
+			scale = fillSize.height / screenSize.height
+		} else {
+			scale = fillSize.width / screenSize.width
+		}
+
+		UIView.animate(withDuration: 0.2) {
+			self.videoContentView.transform = CGAffineTransform(scaleX: scale, y: scale)
+		}
+	}
+
+	private func shrinkScreen() {
+		UIView.animate(withDuration: 0.2) {
+			self.videoContentView.transform = .identity
+		}
+	}
+
+	func getScreenFilled() -> Bool {
+		isScreenFilled
+	}
+
+	func isVideoAspectRatioGreater() -> Bool {
+		let screenSize = UIScreen.main.bounds.size
+		let videoSize = vlcMediaPlayer.videoSize
+
+		let screenAspectRatio = screenSize.width / screenSize.height
+		let videoAspectRatio = videoSize.width / videoSize.height
+
+		return videoAspectRatio > screenAspectRatio
 	}
 }
