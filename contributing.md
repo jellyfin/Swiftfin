@@ -32,7 +32,7 @@ The following must pass in order for a PR to be merged:
 - developer account cannot be attached
 - SwiftFormat linting check must pas
 - new strings that are not part of an experimental feature must be localized
-- correct label(s) are attached
+- correct label(s) are attached, if applicable
 
 Labeling PRs with `enhancement`, `bug`, or `crash` will allow the PR to be tracked in GitHub's [automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) should also have the `ignore-for-release` label since many PRs may be similar. If you think that no labels are required, that is acceptable.
 
