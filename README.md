@@ -20,7 +20,13 @@
 
 ## ⚡️ Links!
 
-<a href='https://testflight.apple.com/join/WiN0G62Q'><img height='70' alt='Join the Beta on TestFlight' src='https://anotherlens.app/testflight-badge.png'/></a>
+**✨New! Updated TestFlight Link**
+
+<a href='https://testflight.apple.com/join/oZd0QzWv'><img height='70' alt='Join the Beta on TestFlight' src='https://anotherlens.app/testflight-badge.png'/></a>
+
+**For Apple TV (without an iOS/iPadOS device)**
+
+If you have an Apple TV and do not own an iOS device, please use this [Google Form](https://forms.gle/U5CczbfQzm8MbpJX9) to get an invitation code.
 
 **Don't see SwiftFin in your language?**
 
