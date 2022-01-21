@@ -163,14 +163,14 @@ struct SettingsView: View {
 					Section {
 						Button {} label: {
 							HStack {
-								Text("Version")
+								L10n.version.text
 								Spacer()
 								Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
 									.foregroundColor(.secondary)
 							}
 						}
 					} header: {
-						Text("About")
+						L10n.about.text
 					}
 				}
 			}

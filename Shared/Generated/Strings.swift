@@ -264,6 +264,10 @@ internal enum L10n {
   internal static var removeAllUsers: String { return L10n.tr("Localizable", "removeAllUsers") }
   /// Remove From Resume
   internal static var removeFromResume: String { return L10n.tr("Localizable", "removeFromResume") }
+  /// Report an Issue
+  internal static var reportIssue: String { return L10n.tr("Localizable", "reportIssue") }
+  /// Request a Feature
+  internal static var requestFeature: String { return L10n.tr("Localizable", "requestFeature") }
   /// Reset
   internal static var reset: String { return L10n.tr("Localizable", "reset") }
   /// Reset App Settings
@@ -344,6 +348,8 @@ internal enum L10n {
   internal static var smallest: String { return L10n.tr("Localizable", "smallest") }
   /// Sort by
   internal static var sortBy: String { return L10n.tr("Localizable", "sortBy") }
+  /// Source Code
+  internal static var sourceCode: String { return L10n.tr("Localizable", "sourceCode") }
   /// STUDIO
   internal static var studio: String { return L10n.tr("Localizable", "studio") }
   /// Studios

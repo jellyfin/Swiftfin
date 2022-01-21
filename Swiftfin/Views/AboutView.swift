@@ -21,6 +21,7 @@ struct AboutView: View {
 							.cornerRadius(11)
 							.frame(width: 150, height: 150)
 
+						// App name, not to be localized
 						Text("Swiftfin")
 							.fontWeight(.semibold)
 							.font(.title2)
@@ -34,7 +35,7 @@ struct AboutView: View {
 			Section {
 
 				HStack {
-					Text("Version")
+					L10n.about.text
 					Spacer()
 					Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
 						.foregroundColor(.secondary)
@@ -46,7 +47,7 @@ struct AboutView: View {
 						.resizable()
 						.frame(width: 20, height: 20)
 						.foregroundColor(.primary)
-					Link("Source Code",
+					Link(L10n.sourceCode,
 					     destination: URL(string: "https://github.com/jellyfin/Swiftfin")!)
 						.foregroundColor(.primary)
 
@@ -58,7 +59,7 @@ struct AboutView: View {
 
 				HStack {
 					Image(systemName: "plus.circle.fill")
-					Link("Request a Feature",
+					Link(L10n.requestFeature,
 					     destination: URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
 						.foregroundColor(.primary)
 
@@ -70,7 +71,7 @@ struct AboutView: View {
 
 				HStack {
 					Image(systemName: "xmark.circle.fill")
-					Link("Report an Issue",
+					Link(L10n.reportIssue,
 					     destination: URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
 						.foregroundColor(.primary)
 

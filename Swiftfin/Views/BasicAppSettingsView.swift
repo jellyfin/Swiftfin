@@ -35,7 +35,7 @@ struct BasicAppSettingsView: View {
 				basicAppSettingsRouter.route(to: \.about)
 			} label: {
 				HStack {
-					Text("About")
+					L10n.about.text
 						.foregroundColor(.primary)
 					Spacer()
 					Image(systemName: "chevron.right")
