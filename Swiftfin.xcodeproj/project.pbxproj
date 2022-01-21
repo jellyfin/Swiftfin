@@ -217,6 +217,10 @@
 		C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */; };
 		C40CD926271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */; };
 		C40CD929271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */; };
+		C453497F279A2DA50045F1E2 /* LiveTVPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C453497E279A2DA50045F1E2 /* LiveTVPlayerViewController.swift */; };
+		C4534981279A3F140045F1E2 /* tvOSLiveTVOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4534980279A3F140045F1E2 /* tvOSLiveTVOverlay.swift */; };
+		C4534983279A40990045F1E2 /* tvOSLiveTVVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4534982279A40990045F1E2 /* tvOSLiveTVVideoPlayerCoordinator.swift */; };
+		C4534985279A40C60045F1E2 /* LiveTVVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4534984279A40C50045F1E2 /* LiveTVVideoPlayerView.swift */; };
 		C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		C4AE2C3027498D2300AE13CF /* LiveTVHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AE2C2F27498D2300AE13CF /* LiveTVHomeView.swift */; };
 		C4AE2C3227498D6A00AE13CF /* LiveTVProgramsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AE2C3127498D6A00AE13CF /* LiveTVProgramsView.swift */; };
@@ -652,6 +656,10 @@
 		C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesLibrariesCoordinator.swift; sourceTree = "<group>"; };
 		C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLibrariesViewModel.swift; sourceTree = "<group>"; };
 		C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLibrariesView.swift; sourceTree = "<group>"; };
+		C453497E279A2DA50045F1E2 /* LiveTVPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveTVPlayerViewController.swift; sourceTree = "<group>"; };
+		C4534980279A3F140045F1E2 /* tvOSLiveTVOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tvOSLiveTVOverlay.swift; sourceTree = "<group>"; };
+		C4534982279A40990045F1E2 /* tvOSLiveTVVideoPlayerCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tvOSLiveTVVideoPlayerCoordinator.swift; sourceTree = "<group>"; };
+		C4534984279A40C50045F1E2 /* LiveTVVideoPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveTVVideoPlayerView.swift; sourceTree = "<group>"; };
 		C4AE2C2F27498D2300AE13CF /* LiveTVHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVHomeView.swift; sourceTree = "<group>"; };
 		C4AE2C3127498D6A00AE13CF /* LiveTVProgramsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVProgramsView.swift; sourceTree = "<group>"; };
 		C4BE0762271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVLibrariesCoordinator.swift; sourceTree = "<group>"; };
@@ -880,6 +888,8 @@
 				E178859C2780F5300094FBCF /* tvOSSLider */,
 				E17885A7278130690094FBCF /* Overlays */,
 				E1C812C8277AE40900918266 /* VideoPlayerView.swift */,
+				C4534984279A40C50045F1E2 /* LiveTVVideoPlayerView.swift */,
+				C453497E279A2DA50045F1E2 /* LiveTVPlayerViewController.swift */,
 				E1384943278036C70024FB48 /* VLCPlayerViewController.swift */,
 				E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */,
 			);
@@ -1554,6 +1564,7 @@
 			children = (
 				E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */,
 				E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */,
+				C4534980279A3F140045F1E2 /* tvOSLiveTVOverlay.swift */,
 				E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */,
 			);
 			path = Overlays;
@@ -1672,6 +1683,7 @@
 			isa = PBXGroup;
 			children = (
 				6220D0C526D62D8700B8E046 /* iOSVideoPlayerCoordinator.swift */,
+				C4534982279A40990045F1E2 /* tvOSLiveTVVideoPlayerCoordinator.swift */,
 				E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */,
 			);
 			path = VideoPlayerCoordinator;
@@ -2162,6 +2174,7 @@
 				6267B3DC2671139500A7371D /* ImageExtensions.swift in Sources */,
 				E103A6A9278AB6FF00820EC7 /* CinematicNextUpCardView.swift in Sources */,
 				E107BB9427880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
+				C4534985279A40C60045F1E2 /* LiveTVVideoPlayerView.swift in Sources */,
 				E1A2C15A279A7D76005EC829 /* BundleExtensions.swift in Sources */,
 				C40CD929271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */,
 				C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */,
@@ -2207,6 +2220,7 @@
 				E1B59FD92786AE4600A5287E /* NextUpCard.swift in Sources */,
 				62EC3530267666A5000E9F2D /* SessionManager.swift in Sources */,
 				E1E5D5372783A52C00692DFE /* CinematicEpisodeItemView.swift in Sources */,
+				C453497F279A2DA50045F1E2 /* LiveTVPlayerViewController.swift in Sources */,
 				C4BE078E27298818003F4AD1 /* LiveTVHomeView.swift in Sources */,
 				E13DD3E227176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */,
@@ -2225,6 +2239,7 @@
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				C4BE0767271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */,
 				E193D53727193F8700900D82 /* LibraryListCoordinator.swift in Sources */,
+				C4534983279A40990045F1E2 /* tvOSLiveTVVideoPlayerCoordinator.swift in Sources */,
 				E10D87DF278510E400BD264C /* PosterSize.swift in Sources */,
 				E103A6A0278A7E4500820EC7 /* UICinematicBackgroundView.swift in Sources */,
 				E100720726BDABC100CE3E31 /* MediaPlayButtonRowView.swift in Sources */,
@@ -2265,6 +2280,7 @@
 				E1E5D5402783B0C000692DFE /* CinematicItemViewTopRowButton.swift in Sources */,
 				5398514626B64DBB00101B49 /* SearchablePickerView.swift in Sources */,
 				53ABFDEE26799DCD00886593 /* ImageView.swift in Sources */,
+				C4534981279A3F140045F1E2 /* tvOSLiveTVOverlay.swift in Sources */,
 				E13F26AF278754E300DF4761 /* CinematicSeriesItemView.swift in Sources */,
 				62E632E4267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
 				53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */,
