@@ -30,6 +30,18 @@ struct BasicAppSettingsView: View {
 
 	var body: some View {
 		Form {
+            
+            Button {
+                basicAppSettingsRouter.route(to: \.about)
+            } label: {
+                HStack {
+                    Text("About")
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                }
+            }
+            
 			Section {
 				Picker(L10n.appearance, selection: $appAppearance) {
 					ForEach(self.viewModel.appearances, id: \.self) { appearance in
