@@ -165,7 +165,7 @@ struct tvOSLiveTVOverlay_Previews: PreviewProvider {
 			Color.red
 				.ignoresSafeArea()
 
-            tvOSLiveTVOverlay(viewModel: videoPlayerViewModel)
+			tvOSLiveTVOverlay(viewModel: videoPlayerViewModel)
 		}
 	}
 }

@@ -17,7 +17,7 @@ struct LiveTVVideoPlayerView: UIViewControllerRepresentable {
 
 	func makeUIViewController(context: Context) -> LiveTVPlayerViewController {
 
-        LiveTVPlayerViewController(viewModel: viewModel)
+		LiveTVPlayerViewController(viewModel: viewModel)
 	}
 
 	func updateUIViewController(_ uiViewController: LiveTVPlayerViewController, context: Context) {}
