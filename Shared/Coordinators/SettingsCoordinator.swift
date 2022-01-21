@@ -26,8 +26,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	var customizeViewsSettings = makeCustomizeViewsSettings
 	@Route(.push)
 	var missingSettings = makeMissingSettings
-    @Route(.push)
-    var about = makeAbout
+	@Route(.push)
+	var about = makeAbout
 
 	@ViewBuilder
 	func makeServerDetail() -> some View {
@@ -54,11 +54,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	func makeMissingSettings() -> some View {
 		MissingItemsSettingsView()
 	}
-    
-    @ViewBuilder
-    func makeAbout() -> some View {
-        AboutView()
-    }
+
+	@ViewBuilder
+	func makeAbout() -> some View {
+		AboutView()
+	}
 
 	@ViewBuilder
 	func makeStart() -> some View {

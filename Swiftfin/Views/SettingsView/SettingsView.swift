@@ -168,17 +168,17 @@ struct SettingsView: View {
 					}
 				}
 			}
-            
-            Button {
-                settingsRouter.route(to: \.about)
-            } label: {
-                HStack {
-                    Text("About")
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                }
-            }
+
+			Button {
+				settingsRouter.route(to: \.about)
+			} label: {
+				HStack {
+					Text("About")
+						.foregroundColor(.primary)
+					Spacer()
+					Image(systemName: "chevron.right")
+				}
+			}
 		}
 		.navigationBarTitle(L10n.settings, displayMode: .inline)
 		.toolbar {
