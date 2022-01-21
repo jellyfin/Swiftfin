@@ -109,6 +109,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let subtitle: String?
 	let directStreamURL: URL
 	let transcodedStreamURL: URL?
+	let hlsStreamURL: URL
 	let audioStreams: [MediaStream]
 	let subtitleStreams: [MediaStream]
 	let chapters: [ChapterInfo]
@@ -145,6 +146,13 @@ final class VideoPlayerViewModel: ViewModel {
 
 	var currentSecondTicks: Int64 {
 		Int64(currentSeconds) * 10_000_000
+	}
+
+	func setSeconds(_ seconds: Int64) {
+		let videoDuration = item.runTimeTicks!
+		let percentage = Double(seconds * 10_000_000) / Double(videoDuration)
+
+		sliderPercentage = percentage
 	}
 
 	// MARK: Helpers
@@ -188,6 +196,7 @@ final class VideoPlayerViewModel: ViewModel {
 	     subtitle: String?,
 	     directStreamURL: URL,
 	     transcodedStreamURL: URL?,
+	     hlsStreamURL: URL,
 	     streamType: ServerStreamType,
 	     response: PlaybackInfoResponse,
 	     audioStreams: [MediaStream],
@@ -210,6 +219,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.subtitle = subtitle
 		self.directStreamURL = directStreamURL
 		self.transcodedStreamURL = transcodedStreamURL
+		self.hlsStreamURL = hlsStreamURL
 		self.streamType = streamType
 		self.response = response
 		self.audioStreams = audioStreams

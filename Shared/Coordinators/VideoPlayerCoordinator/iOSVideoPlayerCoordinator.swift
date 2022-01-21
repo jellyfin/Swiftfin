@@ -28,12 +28,21 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 	@ViewBuilder
 	func makeStart() -> some View {
 		PreferenceUIHostingControllerView {
-			VLCPlayerView(viewModel: self.viewModel)
-				.navigationBarHidden(true)
-				.statusBar(hidden: true)
-				.ignoresSafeArea()
-				.prefersHomeIndicatorAutoHidden(true)
-				.supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+			if Defaults[.Experimental.nativePlayer] {
+				NativePlayerView(viewModel: self.viewModel)
+					.navigationBarHidden(true)
+					.statusBar(hidden: true)
+					.ignoresSafeArea()
+					.prefersHomeIndicatorAutoHidden(true)
+					.supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+			} else {
+				VLCPlayerView(viewModel: self.viewModel)
+					.navigationBarHidden(true)
+					.statusBar(hidden: true)
+					.ignoresSafeArea()
+					.prefersHomeIndicatorAutoHidden(true)
+					.supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+			}
 		}.ignoresSafeArea()
 	}
 }
