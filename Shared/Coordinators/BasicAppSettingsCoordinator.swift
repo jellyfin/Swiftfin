@@ -16,6 +16,13 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
 
 	@Root
 	var start = makeStart
+	@Route(.push)
+	var about = makeAbout
+
+	@ViewBuilder
+	func makeAbout() -> some View {
+		AboutView()
+	}
 
 	@ViewBuilder
 	func makeStart() -> some View {
