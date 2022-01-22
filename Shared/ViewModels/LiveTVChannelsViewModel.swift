@@ -191,7 +191,7 @@ final class LiveTVChannelsViewModel: ViewModel {
 	}
 
 	func fetchVideoPlayerViewModel(item: BaseItemDto, completion: @escaping (VideoPlayerViewModel) -> Void) {
-		item.createVideoPlayerViewModel()
+		item.createLiveTVVideoPlayerViewModel()
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { videoPlayerViewModels in
