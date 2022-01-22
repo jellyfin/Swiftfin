@@ -405,6 +405,9 @@
 		E1C812CE277AE43100918266 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */; };
 		E1C812D1277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */; };
 		E1C812D2277AE50A00918266 /* URLComponentsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */; };
+		E1C88AB3279BEB130063E617 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E1C88AB2279BEB130063E617 /* Alamofire */; };
+		E1C88AB5279BEC0E0063E617 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C88AB4279BEC0E0063E617 /* DownloadManager.swift */; };
+		E1C88AB6279BF00B0063E617 /* URLComponentsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */; };
 		E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */; };
 		E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */; };
 		E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */; };
@@ -749,6 +752,7 @@
 		E1C812C8277AE40900918266 /* VideoPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		E1C812C9277AE40900918266 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
 		E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVideoPlayerCoordinator.swift; sourceTree = "<group>"; };
+		E1C88AB4279BEC0E0063E617 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
@@ -820,6 +824,7 @@
 				E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */,
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
+				E1C88AB3279BEB130063E617 /* Alamofire in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
 				E1AE8E7C2789135A00FBDDAA /* Nuke in Frameworks */,
 				625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */,
@@ -1660,6 +1665,7 @@
 			isa = PBXGroup;
 			children = (
 				E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */,
+				E1C88AB4279BEC0E0063E617 /* DownloadManager.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -1786,6 +1792,7 @@
 				E1AE8E7B2789135A00FBDDAA /* Nuke */,
 				E1361DA6278FA7A300BEC523 /* NukeUI */,
 				E1002B672793CFBA00E47059 /* Algorithms */,
+				E1C88AB2279BEB130063E617 /* Alamofire */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -1880,6 +1887,7 @@
 				E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */,
 				E1361DA5278FA7A300BEC523 /* XCRemoteSwiftPackageReference "NukeUI" */,
 				E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				E1C88AB1279BEB130063E617 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -2401,6 +2409,7 @@
 				53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */,
 				6220D0C626D62D8700B8E046 /* iOSVideoPlayerCoordinator.swift in Sources */,
 				E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
+				E1C88AB5279BEC0E0063E617 /* DownloadManager.swift in Sources */,
 				E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */,
 				621338B32660A07800A81A2A /* LazyView.swift in Sources */,
 				6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */,
@@ -2472,6 +2481,7 @@
 				E19169D0272514760085832A /* HTTPScheme.swift in Sources */,
 				E1E00A37278628A40022235B /* DoubleExtensions.swift in Sources */,
 				6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */,
+				E1C88AB6279BF00B0063E617 /* URLComponentsExtensions.swift in Sources */,
 				628B953C2670D2430091AF3B /* StringExtensions.swift in Sources */,
 				6267B3DB2671139400A7371D /* ImageExtensions.swift in Sources */,
 				E1AD105926D9A543003E4A08 /* LazyView.swift in Sources */,
@@ -2833,7 +2843,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2870,7 +2880,7 @@
 				CURRENT_PROJECT_VERSION = 70;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2901,7 +2911,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2928,7 +2938,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3108,6 +3118,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		E1C88AB1279BEB130063E617 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3270,6 +3288,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
+		};
+		E1C88AB2279BEB130063E617 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1C88AB1279BEB130063E617 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 		E1D7E5A727892566009D0EF7 /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

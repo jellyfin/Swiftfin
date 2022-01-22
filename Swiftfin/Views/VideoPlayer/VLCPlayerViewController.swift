@@ -369,8 +369,6 @@ extension VLCPlayerViewController {
 			viewModel.playerOverlayDelegate = nil
 		}
 
-		vlcMediaPlayer = VLCMediaPlayer()
-
 		// setup with new player and view model
 
 		vlcMediaPlayer = VLCMediaPlayer()
@@ -386,8 +384,11 @@ extension VLCPlayerViewController {
 		lastProgressReportTicks = newViewModel.item.userData?.playbackPositionTicks ?? 0
 
 		let media: VLCMedia
-
-		if let transcodedURL = newViewModel.transcodedStreamURL,
+        
+        if let localFileURL = newViewModel.localFileURL {
+            media = VLCMedia(url: localFileURL)
+            print("USING LOCAL FILE")
+        } else if let transcodedURL = newViewModel.transcodedStreamURL,
 		   !Defaults[.Experimental.forceDirectPlay]
 		{
 			media = VLCMedia(url: transcodedURL)

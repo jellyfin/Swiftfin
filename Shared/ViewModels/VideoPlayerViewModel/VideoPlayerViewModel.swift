@@ -109,6 +109,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let subtitle: String?
 	let directStreamURL: URL
 	let transcodedStreamURL: URL?
+    let localFileURL: URL?
 	let hlsStreamURL: URL
 	let audioStreams: [MediaStream]
 	let subtitleStreams: [MediaStream]
@@ -249,6 +250,16 @@ final class VideoPlayerViewModel: ViewModel {
 		self.confirmClose = Defaults[.confirmClose]
 
 		self.mediaItems = item.createMediaItems()
+        
+        var potentialLocalFileURL: URL? = nil
+        
+        if let filename = filename {
+            if DownloadManager.hasLocalFile(for: item, fileName: filename) {
+                potentialLocalFileURL = DownloadManager.localFileURL(for: item, fileName: filename)
+            }
+        }
+        
+        self.localFileURL = potentialLocalFileURL
 
 		super.init()
 

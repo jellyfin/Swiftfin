@@ -350,4 +350,18 @@ public extension BaseItemDto {
 
 		return chapterImageURLs
 	}
+    
+    // MARK: Download URL
+    
+    func getDownloadURL() -> URL? {
+        guard let id = id, itemType == .movie || itemType == .episode else { return nil }
+//        let fileURL = LibraryAPI.getFileWithRequestBuilder(itemId: id).URLString
+        let fileURL = LibraryAPI.getDownloadWithRequestBuilder(itemId: id).URLString
+        
+        var fileURLComponents = URLComponents(string: fileURL)!
+        fileURLComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user
+                                            .accessToken)
+        
+        return fileURLComponents.url
+    }
 }

@@ -29,10 +29,14 @@ class NativePlayerViewController: AVPlayerViewController {
 
 		let player: AVPlayer
 
-		if let transcodedStreamURL = viewModel.transcodedStreamURL {
+        if let localFileURL = viewModel.localFileURL {
+          player = AVPlayer(url: localFileURL)
+            print("USING LOCAL FILE")
+        } else if let transcodedStreamURL = viewModel.transcodedStreamURL {
 			player = AVPlayer(url: transcodedStreamURL)
 		} else {
 			player = AVPlayer(url: viewModel.hlsStreamURL)
+            print("USING HLS STREAM")
 		}
 
 		player.appliesMediaSelectionCriteriaAutomatically = false
