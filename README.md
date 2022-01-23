@@ -12,7 +12,7 @@
   </a>
 </p>
 <p align="center">
-  <b>Swiftfin</b> is a modern client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
+  <b>Swiftfin</b> is a modern video client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
 
 ## ⚡️ TestFlight
@@ -27,7 +27,7 @@ If you have an Apple TV and do not own an iOS device, please use this [Google Fo
 
 ## 📚 Translations
 
-**Don't see SwiftFin in your language?**
+**Don't see Swiftfin in your language?**
 
 Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfin/) to help translate Swiftfin and other projects.
 
