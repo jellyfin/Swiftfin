@@ -47,7 +47,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 	}
 
 //	private func requestEpisodes() {
-//		LogManager.shared.log
+//		LogManager.log
 //			.debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
 //		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.main.currentLogin.user.id,
 //		                       fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
@@ -57,7 +57,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 //				self?.handleAPIRequestError(completion: completion)
 //			}, receiveValue: { [weak self] response in
 //				self?.episodes = response.items ?? []
-//				LogManager.shared.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")
+//				LogManager.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")
 //
 //				self?.setNextUpInSeason()
 //			})

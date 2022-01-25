@@ -93,11 +93,11 @@
       },
       {
         "package": "Puppy",
-        "repositoryURL": "https://github.com/sushichop/Puppy",
+        "repositoryURL": "https://github.com/LePips/Puppy",
         "state": {
-          "branch": null,
-          "revision": "95ce04b0e778b8d7c351876bc98bbf68328dfc9b",
-          "version": "0.3.1"
+          "branch": "main",
+          "revision": "c34356e8e3879bb39656edd1b11622497ef6f290",
+          "version": null
         }
       },
       {

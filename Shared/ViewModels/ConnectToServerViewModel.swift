@@ -55,7 +55,7 @@ final class ConnectToServerViewModel: ViewModel {
 
 		let trimmedURI = uri.trimmingCharacters(in: .whitespaces)
 
-		LogManager.shared.log.debug("Attempting to connect to server at \"\(trimmedURI)\"", tag: "connectToServer")
+		LogManager.log.debug("Attempting to connect to server at \"\(trimmedURI)\"", tag: "connectToServer")
 		SessionManager.main.connectToServer(with: trimmedURI)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { completion in
@@ -103,7 +103,7 @@ final class ConnectToServerViewModel: ViewModel {
 					}
 				}
 			}, receiveValue: { server in
-				LogManager.shared.log.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
+				LogManager.log.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
 				self.router?.route(to: \.userSignIn, server)
 			})
 			.store(in: &cancellables)

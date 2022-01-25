@@ -44,19 +44,19 @@ enum NetworkError: Error {
 
 		switch logConstructor.level {
 		case .trace:
-			logFunction = LogManager.shared.log.trace
+			logFunction = LogManager.log.trace
 		case .debug:
-			logFunction = LogManager.shared.log.debug
+			logFunction = LogManager.log.debug
 		case .information:
-			logFunction = LogManager.shared.log.info
+			logFunction = LogManager.log.info
 		case .warning:
-			logFunction = LogManager.shared.log.warning
+			logFunction = LogManager.log.warning
 		case .error:
-			logFunction = LogManager.shared.log.error
+			logFunction = LogManager.log.error
 		case .critical:
-			logFunction = LogManager.shared.log.critical
+			logFunction = LogManager.log.critical
 		case ._none:
-			logFunction = LogManager.shared.log.debug
+			logFunction = LogManager.log.debug
 		}
 
 		logFunction(logConstructor.message, logConstructor.tag, logConstructor.function, logConstructor.file, logConstructor.line)

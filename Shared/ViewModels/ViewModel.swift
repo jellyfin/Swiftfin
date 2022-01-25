@@ -43,16 +43,16 @@ class ViewModel: ObservableObject {
 				case .error(-1, _, _, _):
 					networkError = .URLError(response: errorResponse, displayMessage: displayMessage, logConstructor: logConstructor)
 					// Use the errorResponse description for debugging, rather than the user-facing friendly description which may not be implemented
-					LogManager.shared.log
+					LogManager.log
 						.error("Request failed: URL request failed with error \(networkError.errorMessage.code): \(errorResponse.localizedDescription)")
 				case .error(-2, _, _, _):
 					networkError = .HTTPURLError(response: errorResponse, displayMessage: displayMessage, logConstructor: logConstructor)
-					LogManager.shared.log
+					LogManager.log
 						.error("Request failed: HTTP URL request failed with description: \(errorResponse.localizedDescription)")
 				default:
 					networkError = .JellyfinError(response: errorResponse, displayMessage: displayMessage, logConstructor: logConstructor)
 					// Able to use user-facing friendly description here since just HTTP status codes
-					LogManager.shared.log
+					LogManager.log
 						.error("Request failed: \(networkError.errorMessage.code) - \(networkError.errorMessage.title): \(networkError.errorMessage.logConstructor.message)\n\(error.localizedDescription)")
 				}
 
@@ -67,7 +67,7 @@ class ViewModel: ObservableObject {
 				                                displayMessage: swiftfinError.errorDescription ?? "",
 				                                logConstructor: logConstructor)
 				self.errorMessage = errorMessage
-				LogManager.shared.log.error("Request failed: \(swiftfinError.errorDescription ?? "")")
+				LogManager.log.error("Request failed: \(swiftfinError.errorDescription ?? "")")
 
 			default:
 				let genericErrorMessage = ErrorMessage(code: ErrorMessage.noShowErrorCode,
@@ -75,7 +75,7 @@ class ViewModel: ObservableObject {
 				                                       displayMessage: error.localizedDescription,
 				                                       logConstructor: logConstructor)
 				self.errorMessage = genericErrorMessage
-				LogManager.shared.log.error("Request failed: Generic error - \(error.localizedDescription)")
+				LogManager.log.error("Request failed: Generic error - \(error.localizedDescription)")
 			}
 		}
 	}

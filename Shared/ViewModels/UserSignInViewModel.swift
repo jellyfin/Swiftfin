@@ -30,8 +30,8 @@ final class UserSignInViewModel: ViewModel {
 	}
 
 	func login(username: String, password: String) {
-		LogManager.shared.log.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
-		LogManager.shared.log.debug("username: \(username), password: \(password)", tag: "login")
+		LogManager.log.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
+		LogManager.log.debug("username: \(username), password: \(password)", tag: "login")
 
 		SessionManager.main.loginUser(server: server, username: username, password: password)
 			.trackActivity(loading)

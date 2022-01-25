@@ -10,39 +10,44 @@ import Foundation
 import Puppy
 
 class LogManager {
-	static let shared = LogManager()
-	let log = Puppy()
+    
+    static let log = Puppy()
+    
+    static func setup() {
+        
+        let logsDirectory = getDocumentsDirectory().appendingPathComponent("logs", isDirectory: true)
+        
+        do {
+            try FileManager.default.createDirectory(atPath: logsDirectory.path,
+                                                    withIntermediateDirectories: true,
+                                                    attributes: nil)
+        } catch {
+            // logs directory already created
+        }
+        
+        let logFileURL = logsDirectory.appendingPathComponent("swiftfin_log.log")
+        
+        let fileRotationLogger = try! FileRotationLogger("org.jellyfin.swiftfin.logger.file-rotation",
+                                                   fileURL: logFileURL)
+        fileRotationLogger.suffixExtension = .numbering
+        fileRotationLogger.maxFileSize = 10 * 1024
+        fileRotationLogger.maxArchivedFilesCount = 5
+        fileRotationLogger.format = LogFormatter()
+        
+        let consoleLogger = ConsoleLogger("org.jellyfin.swiftfin.logger.console")
+        consoleLogger.format = LogFormatter()
+        
+        log.add(fileRotationLogger, withLevel: .debug)
+        log.add(consoleLogger, withLevel: .debug)
+    }
+    
+    private static func getDocumentsDirectory() -> URL {
+        // find all possible documents directories for this user
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
 
-	init() {
-		let console = ConsoleLogger("com.swiftfin.ConsoleLogger")
-		let fileURL = self.getDocumentsDirectory().appendingPathComponent("logs.txt")
-		let FM = FileManager()
-		_ = try? FM.removeItem(at: fileURL)
-
-		do {
-			let file = try FileLogger("com.swiftfin", fileURL: fileURL)
-			file.format = LogFormatter()
-			log.add(file, withLevel: .debug)
-		} catch let err {
-			log.error("Couldn't initialize file logger.")
-			print(err)
-		}
-		console.format = LogFormatter()
-		log.add(console, withLevel: .debug)
-		log.info("Logger initialized.")
-	}
-
-	func logFileURL() -> URL {
-		self.getDocumentsDirectory().appendingPathComponent("logs.txt")
-	}
-
-	func getDocumentsDirectory() -> URL {
-		// find all possible documents directories for this user
-		let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-
-		// just send back the first one, which ought to be the only one
-		return paths[0]
-	}
+        // just send back the first one, which ought to be the only one
+        return paths[0]
+    }
 }
 
 class LogFormatter: LogFormattable {
