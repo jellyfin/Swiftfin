@@ -73,36 +73,32 @@ struct LibraryListView: View {
 					}
 
 					ForEach(viewModel.libraries, id: \.id) { library in
-						if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
-							Button {
-								libraryListRouter.route(to: \.library,
-								                        (viewModel: LibraryViewModel(parentID: library.id),
-								                         title: library.name ?? ""))
-							} label: {
-								ZStack {
-									ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
-										.opacity(0.4)
-										.accessibilityIgnoresInvertColors()
-									HStack {
-										Spacer()
-										VStack {
-											Text(library.name ?? "")
-												.foregroundColor(.white)
-												.font(.title2)
-												.fontWeight(.semibold)
-										}
-										Spacer()
-									}.padding(32)
-								}.background(Color.black)
-									.frame(minWidth: 100, maxWidth: .infinity)
-									.frame(height: 100)
-							}
-							.cornerRadius(10)
-							.shadow(radius: 5)
-							.padding(.bottom, 5)
-						} else {
-							EmptyView()
+						Button {
+							libraryListRouter.route(to: \.library,
+							                        (viewModel: LibraryViewModel(parentID: library.id),
+							                         title: library.name ?? ""))
+						} label: {
+							ZStack {
+								ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
+									.opacity(0.4)
+									.accessibilityIgnoresInvertColors()
+								HStack {
+									Spacer()
+									VStack {
+										Text(library.name ?? "")
+											.foregroundColor(.white)
+											.font(.title2)
+											.fontWeight(.semibold)
+									}
+									Spacer()
+								}.padding(32)
+							}.background(Color.black)
+								.frame(minWidth: 100, maxWidth: .infinity)
+								.frame(height: 100)
 						}
+						.cornerRadius(10)
+						.shadow(radius: 5)
+						.padding(.bottom, 5)
 					}
 				} else {
 					ProgressView()

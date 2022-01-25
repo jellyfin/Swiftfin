@@ -94,10 +94,14 @@ final class LibraryViewModel: ViewModel {
 			genreIDs = filters.withGenres.compactMap(\.id)
 		}
 		let sortBy = filters.sortBy.map(\.rawValue)
+		let queryRecursive = filters.filters.contains(.isFavorite) ||
+			self.person != nil ||
+			self.genre != nil ||
+			self.studio != nil
 
 		ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * pageItemSize,
 		                          limit: pageItemSize,
-		                          recursive: true,
+		                          recursive: queryRecursive,
 		                          searchTerm: nil,
 		                          sortOrder: filters.sortOrder,
 		                          parentId: parentID,
@@ -112,7 +116,7 @@ final class LibraryViewModel: ViewModel {
 		                          ],
 		                          includeItemTypes: filters.filters
 		                          	.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode", "BoxSet"] :
-		                          	["Movie", "Series", "BoxSet"],
+		                          	["Movie", "Series", "BoxSet", "Folder"],
 		                          filters: filters.filters,
 		                          sortBy: sortBy,
 		                          tags: filters.tags,
