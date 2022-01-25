@@ -759,8 +759,8 @@ extension LiveTVPlayerViewController: VLCMediaPlayerDelegate {
 extension LiveTVPlayerViewController: PlayerOverlayDelegate {
 
 	func didSelectAudioStream(index: Int) {
-        // on live tv, it seems this gets set to -1 which disables the audio track.
-//		vlcMediaPlayer.currentAudioTrackIndex = Int32(index)	
+		// on live tv, it seems this gets set to -1 which disables the audio track.
+//		vlcMediaPlayer.currentAudioTrackIndex = Int32(index)
 
 		viewModel.sendProgressReport()
 
