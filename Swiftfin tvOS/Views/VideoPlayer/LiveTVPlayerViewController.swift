@@ -18,7 +18,7 @@ import UIKit
 
 // TODO: Look at making the VLC player layer a view
 
-class VLCPlayerViewController: UIViewController {
+class LiveTVPlayerViewController: UIViewController {
 
 	// MARK: variables
 
@@ -49,7 +49,7 @@ class VLCPlayerViewController: UIViewController {
 	private lazy var videoContentView = makeVideoContentView()
 	private lazy var jumpBackwardOverlayView = makeJumpBackwardOverlayView()
 	private lazy var jumpForwardOverlayView = makeJumpForwardOverlayView()
-	private var currentOverlayHostingController: UIHostingController<tvOSVLCOverlay>?
+	private var currentOverlayHostingController: UIHostingController<tvOSLiveTVOverlay>?
 	private var currentOverlayContentHostingController: UIHostingController<SmallMediaStreamSelectionView>?
 	private var currentConfirmCloseHostingController: UIHostingController<ConfirmCloseOverlay>?
 
@@ -285,7 +285,7 @@ class VLCPlayerViewController: UIViewController {
 			}
 		}
 
-		let newOverlayView = tvOSVLCOverlay(viewModel: viewModel)
+		let newOverlayView = tvOSLiveTVOverlay(viewModel: viewModel)
 		let newOverlayHostingController = UIHostingController(rootView: newOverlayView)
 
 		newOverlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -380,7 +380,7 @@ class VLCPlayerViewController: UIViewController {
 
 // MARK: setupMediaPlayer
 
-extension VLCPlayerViewController {
+extension LiveTVPlayerViewController {
 
 	/// Main function that handles setting up the media player with the current VideoPlayerViewModel
 	/// and also takes the role of setting the 'viewModel' property with the given viewModel
@@ -538,7 +538,7 @@ extension VLCPlayerViewController {
 
 // MARK: Show/Hide Overlay
 
-extension VLCPlayerViewController {
+extension LiveTVPlayerViewController {
 
 	private func showOverlay() {
 		guard let overlayHostingController = currentOverlayHostingController else { return }
@@ -597,7 +597,7 @@ extension VLCPlayerViewController {
 
 // MARK: Show/Hide Jump
 
-extension VLCPlayerViewController {
+extension LiveTVPlayerViewController {
 
 	private func flashJumpBackwardOverlay() {
 		jumpBackwardOverlayView.layer.removeAllAnimations()
@@ -634,7 +634,7 @@ extension VLCPlayerViewController {
 
 // MARK: Show/Hide Confirm close
 
-extension VLCPlayerViewController {
+extension LiveTVPlayerViewController {
 
 	private func showConfirmCloseOverlay() {
 		guard let currentConfirmCloseHostingController = currentConfirmCloseHostingController else { return }
@@ -655,7 +655,7 @@ extension VLCPlayerViewController {
 
 // MARK: OverlayTimer
 
-extension VLCPlayerViewController {
+extension LiveTVPlayerViewController {
 
 	private func restartOverlayDismissTimer(interval: Double = 5) {
 		self.overlayDismissTimer?.invalidate()
@@ -675,7 +675,7 @@ extension VLCPlayerViewController {
 
 // MARK: Confirm Close Overlay Timer
 
-extension VLCPlayerViewController {
+extension LiveTVPlayerViewController {
 
 	private func restartConfirmCloseDismissTimer() {
 		self.confirmCloseOverlayDismissTimer?.invalidate()
@@ -696,7 +696,7 @@ extension VLCPlayerViewController {
 
 // MARK: VLCMediaPlayerDelegate
 
-extension VLCPlayerViewController: VLCMediaPlayerDelegate {
+extension LiveTVPlayerViewController: VLCMediaPlayerDelegate {
 
 	// MARK: mediaPlayerStateChanged
 
@@ -756,10 +756,11 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
 
 // MARK: PlayerOverlayDelegate
 
-extension VLCPlayerViewController: PlayerOverlayDelegate {
+extension LiveTVPlayerViewController: PlayerOverlayDelegate {
 
 	func didSelectAudioStream(index: Int) {
-		vlcMediaPlayer.currentAudioTrackIndex = Int32(index)
+		// on live tv, it seems this gets set to -1 which disables the audio track.
+//		vlcMediaPlayer.currentAudioTrackIndex = Int32(index)
 
 		viewModel.sendProgressReport()
 
