@@ -343,6 +343,7 @@
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
+		E179D41327A20C7200885858 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C88AB4279BEC0E0063E617 /* DownloadManager.swift */; };
 		E18845F526DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F626DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F826DEA9C900B0C5B7 /* ItemViewBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */; };
@@ -421,7 +422,6 @@
 		E1C812D1277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */; };
 		E1C812D2277AE50A00918266 /* URLComponentsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */; };
 		E1C88AB3279BEB130063E617 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E1C88AB2279BEB130063E617 /* Alamofire */; };
-		E1C88AB5279BEC0E0063E617 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C88AB4279BEC0E0063E617 /* DownloadManager.swift */; };
 		E1C88AB6279BF00B0063E617 /* URLComponentsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */; };
 		E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */; };
 		E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */; };
@@ -2470,6 +2470,7 @@
 				E193D4DB27193CCA00900D82 /* PillStackable.swift in Sources */,
 				E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */,
 				E1A2C154279A7D5A005EC829 /* UIApplicationExtensions.swift in Sources */,
+				E179D41327A20C7200885858 /* DownloadManager.swift in Sources */,
 				E193D4D827193CAC00900D82 /* PortraitImageStackable.swift in Sources */,
 				624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */,
 				E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */,
