@@ -81,7 +81,8 @@ struct LibraryListView: View {
 							}
 						} else {
 							Button {
-								self.libraryListRouter.route(to: \.library, (viewModel: LibraryViewModel(), title: library.name ?? ""))
+								self.libraryListRouter.route(to: \.library,
+								                             (viewModel: LibraryViewModel(parentID: library.id), title: library.name ?? ""))
 							}
 								label: {
 									ZStack {
