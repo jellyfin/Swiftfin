@@ -189,6 +189,18 @@ final class LiveTVChannelsViewModel: ViewModel {
 	func stopScheduleCheckTimer() {
 		timer?.invalidate()
 	}
+
+	func fetchVideoPlayerViewModel(item: BaseItemDto, completion: @escaping (VideoPlayerViewModel) -> Void) {
+		item.createLiveTVVideoPlayerViewModel()
+			.sink { completion in
+				self.handleAPIRequestError(completion: completion)
+			} receiveValue: { videoPlayerViewModels in
+				if let viewModel = videoPlayerViewModels.first {
+					completion(viewModel)
+				}
+			}
+			.store(in: &self.cancellables)
+	}
 }
 
 extension Array {

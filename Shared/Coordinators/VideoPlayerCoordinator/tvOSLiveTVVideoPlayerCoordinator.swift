@@ -6,26 +6,29 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class BasicAppSettingsCoordinator: NavigationCoordinatable {
+final class LiveTVVideoPlayerCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \BasicAppSettingsCoordinator.start)
+	let stack = NavigationStack(initial: \LiveTVVideoPlayerCoordinator.start)
 
 	@Root
 	var start = makeStart
-	@Route(.push)
-	var about = makeAbout
 
-	@ViewBuilder
-	func makeAbout() -> some View {
-		AboutView()
+	let viewModel: VideoPlayerViewModel
+
+	init(viewModel: VideoPlayerViewModel) {
+		self.viewModel = viewModel
 	}
 
 	@ViewBuilder
 	func makeStart() -> some View {
-		BasicAppSettingsView(viewModel: BasicAppSettingsViewModel())
+		LiveTVVideoPlayerView(viewModel: viewModel)
+			.navigationBarHidden(true)
+			.ignoresSafeArea()
 	}
 }

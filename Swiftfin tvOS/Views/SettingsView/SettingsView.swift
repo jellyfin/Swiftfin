@@ -159,6 +159,19 @@ struct SettingsView: View {
 							}
 						}
 					}
+
+					Section {
+						Button {} label: {
+							HStack {
+								L10n.version.text
+								Spacer()
+								Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
+									.foregroundColor(.secondary)
+							}
+						}
+					} header: {
+						L10n.about.text
+					}
 				}
 			}
 		}
