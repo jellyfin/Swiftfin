@@ -67,7 +67,8 @@ private struct ItemView: View {
                             Button {
                                 guard let vm = viewModel.videoPlayerViewModels.first else { return }
                                 guard !DownloadManager.hasLocalFile(for: vm.item, fileName: vm.filename ?? "none") else { print("File exists"); return }
-                                DownloadManager.download(item: vm.item, fileName: vm.filename ?? "none")
+                                
+                                DownloadManager.main.addDownload(item: vm.item, fileName: vm.filename ?? "none")
                             } label: {
                                 Image(systemName: "xmark.circle.fill")
                             }
