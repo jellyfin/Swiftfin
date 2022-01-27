@@ -16,6 +16,8 @@ struct LibraryListView: View {
 	@StateObject
 	var viewModel = LibraryListViewModel()
 
+	let supportedCollectionTypes = ["movies", "tvshows", "boxsets", "other"]
+
 	var body: some View {
 		ScrollView {
 			LazyVStack {
@@ -42,37 +44,10 @@ struct LibraryListView: View {
 				.padding(.bottom, 5)
 
 				if !viewModel.isLoading {
-
-					if let collectionsLibraryItem = viewModel.libraries.first(where: { $0.collectionType == "boxsets" }) {
-						Button {
-							libraryListRouter.route(to: \.library,
-							                        (viewModel: LibraryViewModel(parentID: collectionsLibraryItem.id),
-							                         title: collectionsLibraryItem.name ?? ""))
-						} label: {
-							ZStack {
-								ImageView(src: collectionsLibraryItem.getPrimaryImage(maxWidth: 500),
-								          bh: collectionsLibraryItem.getPrimaryImageBlurHash())
-									.opacity(0.4)
-								HStack {
-									Spacer()
-									VStack {
-										Text(collectionsLibraryItem.name ?? "")
-											.foregroundColor(.white)
-											.font(.title2)
-											.fontWeight(.semibold)
-									}
-									Spacer()
-								}.padding(32)
-							}.background(Color.black)
-								.frame(minWidth: 100, maxWidth: .infinity)
-								.frame(height: 100)
-						}
-						.cornerRadius(10)
-						.shadow(radius: 5)
-						.padding(.bottom, 5)
-					}
-
-					ForEach(viewModel.libraries, id: \.id) { library in
+					ForEach(viewModel.libraries.filter { [self] library in
+						let collectionType = library.collectionType ?? "other"
+						return self.supportedCollectionTypes.contains(collectionType)
+					}, id: \.id) { library in
 						Button {
 							libraryListRouter.route(to: \.library,
 							                        (viewModel: LibraryViewModel(parentID: library.id),
