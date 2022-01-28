@@ -324,6 +324,8 @@ internal enum L10n {
   internal static var settings: String { return L10n.tr("Localizable", "settings") }
   /// Show Cast & Crew
   internal static var showCastAndCrew: String { return L10n.tr("Localizable", "showCastAndCrew") }
+  /// Show Flatten Library View
+  internal static var showFlattenView: String { return L10n.tr("Localizable", "showFlattenView") }
   /// Show Missing Episodes
   internal static var showMissingEpisodes: String { return L10n.tr("Localizable", "showMissingEpisodes") }
   /// Show Missing Seasons

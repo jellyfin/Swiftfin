@@ -41,6 +41,7 @@ extension Defaults.Keys {
 	// Customize settings
 	static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: SwiftfinStore.Defaults.generalSuite)
 	static let showCastAndCrew = Key<Bool>("showCastAndCrew", default: true, suite: SwiftfinStore.Defaults.generalSuite)
+	static let showFlattenView = Key<Bool>("showFlattenView", default: true, suite: SwiftfinStore.Defaults.generalSuite)
 
 	// Video player / overlay settings
 	static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: SwiftfinStore.Defaults.generalSuite)

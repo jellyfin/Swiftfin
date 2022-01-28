@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 import SwiftUICollection
@@ -94,10 +95,16 @@ final class LibraryViewModel: ViewModel {
 			genreIDs = filters.withGenres.compactMap(\.id)
 		}
 		let sortBy = filters.sortBy.map(\.rawValue)
-		let queryRecursive = filters.filters.contains(.isFavorite) ||
+		let queryRecursive = Defaults[.showFlattenView] || filters.filters.contains(.isFavorite) ||
 			self.person != nil ||
 			self.genre != nil ||
 			self.studio != nil
+		let includeItemTypes: [String]
+		if filters.filters.contains(.isFavorite) {
+			includeItemTypes = ["Movie", "Series", "Season", "Episode", "BoxSet"]
+		} else {
+			includeItemTypes = ["Movie", "Series", "BoxSet"] + (Defaults[.showFlattenView] ? [] : ["Folder"])
+		}
 
 		ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * pageItemSize,
 		                          limit: pageItemSize,
@@ -114,9 +121,7 @@ final class LibraryViewModel: ViewModel {
 		                          	.people,
 		                          	.chapters,
 		                          ],
-		                          includeItemTypes: filters.filters
-		                          	.contains(.isFavorite) ? ["Movie", "Series", "Season", "Episode", "BoxSet"] :
-		                          	["Movie", "Series", "BoxSet", "Folder"],
+		                          includeItemTypes: includeItemTypes,
 		                          filters: filters.filters,
 		                          sortBy: sortBy,
 		                          tags: filters.tags,
