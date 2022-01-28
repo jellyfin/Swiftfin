@@ -62,7 +62,7 @@ struct ItemView: View {
 				} else {
 					SeriesItemView(viewModel: SeriesItemViewModel(item: item))
 				}
-			case .boxset:
+			case .boxset, .folder:
 				CinematicCollectionItemView(viewModel: CollectionItemViewModel(item: item))
 			default:
 				Text(L10n.notImplementedYetWithType(item.type ?? ""))

@@ -15,6 +15,8 @@ struct CustomizeViewsSettings: View {
 	var showPosterLabels
 	@Default(.showCastAndCrew)
 	var showCastAndCrew
+	@Default(.showFlattenView)
+	var showFlattenView
 
 	var body: some View {
 		Form {
@@ -22,6 +24,7 @@ struct CustomizeViewsSettings: View {
 
 				Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 				Toggle(L10n.showCastAndCrew, isOn: $showCastAndCrew)
+				Toggle(L10n.showFlattenView, isOn: $showFlattenView)
 
 			} header: {
 				L10n.customize.text

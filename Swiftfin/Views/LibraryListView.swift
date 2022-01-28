@@ -16,6 +16,8 @@ struct LibraryListView: View {
 	@StateObject
 	var viewModel = LibraryListViewModel()
 
+	let supportedCollectionTypes = ["movies", "tvshows", "boxsets", "other"]
+
 	var body: some View {
 		ScrollView {
 			LazyVStack {
@@ -42,21 +44,23 @@ struct LibraryListView: View {
 				.padding(.bottom, 5)
 
 				if !viewModel.isLoading {
-
-					if let collectionsLibraryItem = viewModel.libraries.first(where: { $0.collectionType == "boxsets" }) {
+					ForEach(viewModel.libraries.filter { [self] library in
+						let collectionType = library.collectionType ?? "other"
+						return self.supportedCollectionTypes.contains(collectionType)
+					}, id: \.id) { library in
 						Button {
 							libraryListRouter.route(to: \.library,
-							                        (viewModel: LibraryViewModel(parentID: collectionsLibraryItem.id),
-							                         title: collectionsLibraryItem.name ?? ""))
+							                        (viewModel: LibraryViewModel(parentID: library.id),
+							                         title: library.name ?? ""))
 						} label: {
 							ZStack {
-								ImageView(src: collectionsLibraryItem.getPrimaryImage(maxWidth: 500),
-								          bh: collectionsLibraryItem.getPrimaryImageBlurHash())
+								ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
 									.opacity(0.4)
+									.accessibilityIgnoresInvertColors()
 								HStack {
 									Spacer()
 									VStack {
-										Text(collectionsLibraryItem.name ?? "")
+										Text(library.name ?? "")
 											.foregroundColor(.white)
 											.font(.title2)
 											.fontWeight(.semibold)
@@ -70,39 +74,6 @@ struct LibraryListView: View {
 						.cornerRadius(10)
 						.shadow(radius: 5)
 						.padding(.bottom, 5)
-					}
-
-					ForEach(viewModel.libraries, id: \.id) { library in
-						if library.collectionType ?? "" == "movies" || library.collectionType ?? "" == "tvshows" {
-							Button {
-								libraryListRouter.route(to: \.library,
-								                        (viewModel: LibraryViewModel(parentID: library.id),
-								                         title: library.name ?? ""))
-							} label: {
-								ZStack {
-									ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
-										.opacity(0.4)
-										.accessibilityIgnoresInvertColors()
-									HStack {
-										Spacer()
-										VStack {
-											Text(library.name ?? "")
-												.foregroundColor(.white)
-												.font(.title2)
-												.fontWeight(.semibold)
-										}
-										Spacer()
-									}.padding(32)
-								}.background(Color.black)
-									.frame(minWidth: 100, maxWidth: .infinity)
-									.frame(height: 100)
-							}
-							.cornerRadius(10)
-							.shadow(radius: 5)
-							.padding(.bottom, 5)
-						} else {
-							EmptyView()
-						}
 					}
 				} else {
 					ProgressView()

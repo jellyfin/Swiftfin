@@ -56,17 +56,15 @@ struct LibraryView: View {
 			} cell: { _, cell in
 				GeometryReader { _ in
 					if let item = cell.item {
-						if item.type != "Folder" {
-							Button {
-								libraryRouter.route(to: \.modalItem, item)
-							} label: {
-								PortraitItemElement(item: item)
-							}
-							.buttonStyle(PlainNavigationLinkButtonStyle())
-							.onAppear {
-								if item == viewModel.items.last && viewModel.hasNextPage {
-									viewModel.requestNextPageAsync()
-								}
+						Button {
+							libraryRouter.route(to: \.modalItem, item)
+						} label: {
+							PortraitItemElement(item: item)
+						}
+						.buttonStyle(PlainNavigationLinkButtonStyle())
+						.onAppear {
+							if item == viewModel.items.last && viewModel.hasNextPage {
+								viewModel.requestNextPageAsync()
 							}
 						}
 					} else if cell.loadingCell {
