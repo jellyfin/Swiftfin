@@ -55,11 +55,11 @@ public extension BaseItemDto {
 		}
 
 		if imgURL.queryParameters?[ImageType.backdrop.rawValue] == nil {
-            if itemType == .episode {
-                return imageBlurHashes?.backdrop?.values.first ?? "001fC^"
-            } else {
-                return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
-            }
+			if itemType == .episode {
+				return imageBlurHashes?.backdrop?.values.first ?? "001fC^"
+			} else {
+				return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
+			}
 		} else {
 			return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
 		}

@@ -99,7 +99,7 @@ struct ContinueWatchingView: View {
 						Button(role: .destructive) {
 							viewModel.removeItemFromResume(item)
 						} label: {
-                            Label(L10n.removeFromResume, systemImage: "minus.circle")
+							Label(L10n.removeFromResume, systemImage: "minus.circle")
 						}
 					}
 				}

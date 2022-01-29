@@ -36,7 +36,7 @@ struct ImageView: View {
 
 	// TODO: fix placeholder hash view
 	@ViewBuilder
-    private var placeholderView: some View {
+	private var placeholderView: some View {
 		Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 12, height: 12)) ??
 			UIImage(blurHash: "001fC^", size: CGSize(width: 12, height: 12))!)
 			.resizable()
