@@ -15,11 +15,17 @@ struct DownloadListView: View {
     var body: some View {
         ScrollView {
             
+            Button {
+                let _ = DownloadManager.main.getOfflineItems()
+            } label: {
+                Text("Try get offline items")
+            }
+            
             Text("Storage Used: \(DownloadManager.main.totalStorageUsed)")
             
             VStack {
                 ForEach(downloads, id: \.self) { download in
-                    DownloadRow(tracker: download)
+                    DownloadTrackerRow(tracker: download)
                 }
             }
         }
@@ -29,37 +35,69 @@ struct DownloadListView: View {
     }
 }
 
-struct DownloadRow: View {
+struct DownloadTrackerRow: View {
     
     @ObservedObject var tracker: DownloadTracker
     
     var body: some View {
         HStack {
+            
+            Color.gray
+                .frame(width: 100, height: 80)
+            
             VStack(alignment: .leading) {
                 Text(tracker.item.title)
+                    .fontWeight(.medium)
                 
-                Text("\(tracker.progress)")
+                if tracker.item.itemType == .episode {
+                    Text(tracker.item.getEpisodeLocator() ?? "--")
+                        .font(.subheadline)
+                }
+                
+                Spacer()
+                
+                HStack {
+                    switch tracker.state {
+                    case .idle:
+                        Button {
+                            tracker.start()
+                        } label: {
+                            Text("Start")
+                        }
+                    case .downloading:
+                        Button {
+                            tracker.pause()
+                        } label: {
+                            Text("Pause")
+                        }
+                        
+                        Text("\(tracker.progress * 100)")
+                    case .paused:
+                        Button {
+                            tracker.resume()
+                        } label: {
+                            Text("Resume")
+                        }
+                    case .cancelled:
+                        Text("Cancelled")
+                            .foregroundColor(.red)
+                    case .done:
+                        Text("Complete")
+                    case .error:
+                        Text("Error")
+                            .foregroundColor(.red)
+                    }
+                }
+                .font(.subheadline)
             }
+            .padding(.vertical, 2)
             
             Spacer()
             
-            Button {
-                tracker.start()
-            } label: {
-                Text("Start")
-            }
-            
-            Button {
-                tracker.pause()
-            } label: {
-                Text("Pause")
-            }
-            
-            Button {
-                tracker.resume()
-            } label: {
-                Text("Resume")
-            }
+            Image(systemName: "chevron.right")
+                .font(.system(size: 24))
         }
+        .frame(height: 80)
+        .padding(.horizontal)
     }
 }

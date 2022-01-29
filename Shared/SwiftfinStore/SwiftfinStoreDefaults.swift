@@ -23,6 +23,8 @@ extension SwiftfinStore {
 	}
 }
 
+// TODO: Organize into enums
+
 extension Defaults.Keys {
 
 	// Universal settings
@@ -65,6 +67,9 @@ extension Defaults.Keys {
 	// Should show video player items in overlay menu
 	static let shouldShowJumpButtonsInOverlayMenu = Key<Bool>("shouldShowJumpButtonsInMenu", default: true,
 	                                                          suite: SwiftfinStore.Defaults.generalSuite)
+    
+    // Offline mode
+    static let inOfflineMode = Key<Bool>("inOfflineMode", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 
 	// Experimental settings
 	enum Experimental {
@@ -73,6 +78,7 @@ extension Defaults.Keys {
 		static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 		static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 		static let nativePlayer = Key<Bool>("nativePlayer", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+        static let downloadsEnabled = Key<Bool>("downloadsEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 	}
 
 	// tvos specific

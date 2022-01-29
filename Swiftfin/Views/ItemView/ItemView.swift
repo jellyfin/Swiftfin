@@ -66,9 +66,9 @@ private struct ItemView: View {
                         ToolbarItemGroup(placement: .navigationBarTrailing) {
                             Button {
                                 guard let vm = viewModel.videoPlayerViewModels.first else { return }
-                                guard !DownloadManager.hasLocalFile(for: vm.item, fileName: vm.filename ?? "none") else { print("File exists"); return }
+                                guard !DownloadManager.main.hasLocalFile(for: vm.item, fileName: vm.filename ?? "none") else { print("File exists"); return }
                                 
-                                DownloadManager.main.addDownload(item: vm.item, fileName: vm.filename ?? "none")
+                                DownloadManager.main.addDownload(playbackInfo: vm.response, item: vm.item, fileName: vm.filename ?? "none")
                             } label: {
                                 Image(systemName: "xmark.circle.fill")
                             }

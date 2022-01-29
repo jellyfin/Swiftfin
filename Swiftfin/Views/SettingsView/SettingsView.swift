@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import CoreData
 import Defaults
 import Stinsen
 import SwiftUI
@@ -91,6 +90,16 @@ struct SettingsView: View {
 			//                    }
 			//                }
 			//            }
+            
+            if Defaults[.Experimental.downloadsEnabled] {
+                Button {
+                    Defaults[.inOfflineMode] = true
+                    SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.toggleOfflineMode, object: true)
+                    settingsRouter.dismissCoordinator()
+                } label: {
+                    Text("Enter Offline Mode")
+                }
+            }
 
 			Section(header: L10n.videoPlayer.text) {
 				Picker(L10n.jumpForwardLength, selection: $jumpForwardLength) {

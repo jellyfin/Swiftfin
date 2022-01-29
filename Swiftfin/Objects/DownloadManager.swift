@@ -7,73 +7,29 @@
 //
 
 import Alamofire
+import Combine
 import Foundation
 import JellyfinAPI
-
-class DownloadTracker: ObservableObject {
-    
-    @Published var progress: Double = 0
-    let downloadRequest: DownloadRequest
-    let item: BaseItemDto
-    let startDate: Date
-    
-    init(_ downloadRequest: DownloadRequest, item: BaseItemDto) {
-        self.downloadRequest = downloadRequest
-        self.item = item
-        self.startDate = Date.now
-    }
-    
-    func start() {
-        guard !downloadRequest.isCancelled else { return }
-        
-        downloadRequest
-            .downloadProgress { progress in
-                self.progress = progress.fractionCompleted
-            }
-            .responseData { response in
-                DownloadManager.main.removeDownload(self)
-                let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-                let jsonEncoder = JSONEncoder()
-                let jsonData = try! jsonEncoder.encode(self.item)
-                let json = String(data: jsonData, encoding: .utf8)
-                let itemFileURL = documentsURL.appendingPathComponent("\(self.item.id ?? "none")/item-data.json")
-                
-                try! json?.write(to: itemFileURL, atomically: true, encoding: .utf8)
-            }
-    }
-    
-    func cancel() {
-        downloadRequest.cancel()
-    }
-    
-    func pause() {
-        downloadRequest.suspend()
-    }
-    
-    func resume() {
-        downloadRequest.resume()
-    }
-}
-
-extension DownloadTracker: Hashable, Equatable {
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(startDate)
-        hasher.combine(downloadRequest.id)
-    }
-    
-    static func == (lhs: DownloadTracker, rhs: DownloadTracker) -> Bool {
-        return lhs.downloadRequest.id == rhs.downloadRequest.id
-    }
-}
+import Nuke
+import UIKit
 
 class DownloadManager {
     
     static let main = DownloadManager()
     
-    private init() { }
-    
+    let downloadsDirectory: URL
     private(set) var trackers = Set<DownloadTracker>()
+    
+    private init() {
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let downloadsDirectory = documentsDirectory.appendingPathComponent("Downloads")
+        
+        try! FileManager.default.createDirectory(at: downloadsDirectory,
+                                                 withIntermediateDirectories: true,
+                                                 attributes: nil)
+        
+        self.downloadsDirectory = downloadsDirectory
+    }
     
     var totalStorageUsed: Int {
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -86,17 +42,22 @@ class DownloadManager {
         }
     }
     
-    func addDownload(item: BaseItemDto, fileName: String) {
+    func addDownload(playbackInfo: PlaybackInfoResponse, item: BaseItemDto, fileName: String) {
         guard let itemFileURL = item.getDownloadURL() else { return }
+        
+        let itemDirectory = downloadsDirectory.appendingPathComponent("\(item.id ?? "error")", isDirectory: true)
 
         let destination: DownloadRequest.Destination = { _, _ in
-            let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileURL = documentsURL.appendingPathComponent("\(item.id ?? "none")/\(fileName)")
+            let mediaFileURL = itemDirectory.appendingPathComponent(fileName)
             
-            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+            return (mediaFileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
         
-        let newDownload = DownloadTracker(AF.download(itemFileURL, to: destination), item: item)
+        let afDownload = AF.download(itemFileURL, to: destination)
+        let newDownload = DownloadTracker(afDownload,
+                                          playbackInfo: playbackInfo,
+                                          item: item,
+                                          itemDirectory: itemDirectory)
         
         trackers.insert(newDownload)
     }
@@ -105,13 +66,69 @@ class DownloadManager {
         self.trackers.remove(download)
     }
     
-    static func hasLocalFile(for item: BaseItemDto, fileName: String) -> Bool {
+    func hasLocalFile(for item: BaseItemDto, fileName: String) -> Bool {
         let fileURL = localFileURL(for: item, fileName: fileName)
         return FileManager.default.fileExists(atPath: fileURL.path)
     }
     
-    static func localFileURL(for item: BaseItemDto, fileName: String) -> URL {
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return documentsURL.appendingPathComponent("\(item.id ?? "none")/\(fileName)")
+    func localFileURL(for item: BaseItemDto, fileName: String) -> URL {
+        return downloadsDirectory.appendingPathComponent("\(item.id ?? "none")/\(fileName)")
+    }
+    
+    // MARK: GetOfflineItems
+    func getOfflineItems() -> [OfflineItem] {
+        do {
+            let downloadDirectoryContents = try FileManager.default.contentsOfDirectory(atPath: downloadsDirectory.path)
+            
+            var offlineItems: [OfflineItem] = []
+            
+            for itemDirectory in downloadDirectoryContents {
+                let itemDirectory = downloadsDirectory.appendingPathComponent(itemDirectory, isDirectory: true)
+                let itemContents = try FileManager.default.contentsOfDirectory(atPath: itemDirectory.path)
+                
+                guard itemContents.count >= 3 else { continue }
+                
+                guard let itemJSONFile = itemContents.first(where: { $0 == "item.json" }),
+                      let playbackJSONFile = itemContents.first(where: { $0 == "playbackInfo.json" }) else { continue }
+                
+                let itemJSONPath = itemDirectory.appendingPathComponent(itemJSONFile)
+                let playbackJSONPath = itemDirectory.appendingPathComponent(playbackJSONFile)
+                
+                guard let itemJSONData = FileManager.default.contents(atPath: itemJSONPath.path),
+                      let playbackJSONData = FileManager.default.contents(atPath: playbackJSONPath.path) else { continue }
+                
+                let decoder = JSONDecoder()
+                
+                let item = try decoder.decode(BaseItemDto.self, from: itemJSONData)
+                let playbackInfo = try decoder.decode(PlaybackInfoResponse.self, from: playbackJSONData)
+                
+                let backdropImageURL: URL?
+                
+                if let backdropFile = itemContents.first(where: { $0 == "backdrop.png" }),
+                   let _ = FileManager.default.contents(atPath: itemDirectory.appendingPathComponent(backdropFile).path) {
+                    
+                    backdropImageURL = itemDirectory.appendingPathComponent(backdropFile)
+                } else {
+                    backdropImageURL = nil
+                }
+                
+                let newOfflineItem = OfflineItem(playbackInfo: playbackInfo,
+                                                 item: item,
+                                                 itemDirectory: itemDirectory,
+                                                 backdropImageURL: backdropImageURL)
+                
+                offlineItems.append(newOfflineItem)
+            }
+            
+            return offlineItems
+        } catch {
+            return []
+        }
+    }
+    
+    func deleteItem(_ offlineItem: OfflineItem) {
+        try! FileManager.default.removeItem(at: offlineItem.itemDirectory)
+        
+        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didDeleteOfflineItem, object: nil)
     }
 }

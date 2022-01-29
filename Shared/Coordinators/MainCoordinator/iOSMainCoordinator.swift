@@ -21,11 +21,15 @@ final class MainCoordinator: NavigationCoordinatable {
 	var mainTab = makeMainTab
 	@Root
 	var serverList = makeServerList
+    @Root
+    var offlineList = makeOfflineList
 
 	private var cancellables = Set<AnyCancellable>()
 
 	init() {
-		if SessionManager.main.currentLogin != nil {
+        if Defaults[.inOfflineMode] {
+            self.stack = NavigationStack(initial: \MainCoordinator.offlineList)
+        } else if SessionManager.main.currentLogin != nil {
 			self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
 		} else {
 			self.stack = NavigationStack(initial: \MainCoordinator.serverList)
@@ -51,6 +55,7 @@ final class MainCoordinator: NavigationCoordinatable {
 		nc.addObserver(self, selector: #selector(processDeepLink), name: SwiftfinNotificationCenter.Keys.processDeepLink, object: nil)
 		nc.addObserver(self, selector: #selector(didChangeServerCurrentURI),
 		               name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: nil)
+        nc.addObserver(self, selector: #selector(didToggleOfflineMode), name: SwiftfinNotificationCenter.Keys.toggleOfflineMode, object: nil)
 
 		Defaults.publisher(.appAppearance)
 			.sink { _ in
@@ -94,6 +99,17 @@ final class MainCoordinator: NavigationCoordinatable {
 			SessionManager.main.loginUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
 		}
 	}
+    
+    @objc
+    func didToggleOfflineMode(_ notification: Notification) {
+        // Default to online experience
+        let isOffline = notification.object as? Bool ?? false
+        if isOffline {
+            root(\.offlineList)
+        } else {
+            root(\.mainTab)
+        }
+    }
 
 	func makeMainTab() -> MainTabCoordinator {
 		MainTabCoordinator()
@@ -102,4 +118,8 @@ final class MainCoordinator: NavigationCoordinatable {
 	func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
 		NavigationViewCoordinator(ServerListCoordinator())
 	}
+    
+    func makeOfflineList() -> NavigationViewCoordinator<OfflineHomeCoordinator> {
+        NavigationViewCoordinator(OfflineHomeCoordinator())
+    }
 }

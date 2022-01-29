@@ -20,6 +20,8 @@ enum SwiftfinNotificationCenter {
 		static let processDeepLink = Notification.Name("processDeepLink")
 		static let didPurge = Notification.Name("didPurge")
 		static let didChangeServerCurrentURI = Notification.Name("didChangeCurrentLoginURI")
+        static let toggleOfflineMode = Notification.Name("toggleOfflineMode")
+        static let didDeleteOfflineItem = Notification.Name("didDeleteOfflineItem")
 
 		// Send with an item id to check if current item for item views
 		static let didSendStopReport = Notification.Name("didSendStopReport")

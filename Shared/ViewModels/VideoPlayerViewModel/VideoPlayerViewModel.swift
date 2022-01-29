@@ -105,6 +105,7 @@ final class VideoPlayerViewModel: ViewModel {
 	// MARK: General
 
 	private(set) var item: BaseItemDto
+    private(set) var networkType: PlayerNetworkType
 	let title: String
 	let subtitle: String?
 	let directStreamURL: URL
@@ -194,6 +195,7 @@ final class VideoPlayerViewModel: ViewModel {
 	// MARK: init
 
 	init(item: BaseItemDto,
+         networkType: PlayerNetworkType = .online,
 	     title: String,
 	     subtitle: String?,
 	     directStreamURL: URL,
@@ -217,6 +219,7 @@ final class VideoPlayerViewModel: ViewModel {
 	     versionName: String?)
 	{
 		self.item = item
+        self.networkType = networkType
 		self.title = title
 		self.subtitle = subtitle
 		self.directStreamURL = directStreamURL
@@ -255,8 +258,8 @@ final class VideoPlayerViewModel: ViewModel {
         var potentialLocalFileURL: URL? = nil
         
         if let filename = filename {
-            if DownloadManager.hasLocalFile(for: item, fileName: filename) {
-                potentialLocalFileURL = DownloadManager.localFileURL(for: item, fileName: filename)
+            if DownloadManager.main.hasLocalFile(for: item, fileName: filename) {
+                potentialLocalFileURL = DownloadManager.main.localFileURL(for: item, fileName: filename)
             }
         }
         
@@ -309,6 +312,10 @@ extension VideoPlayerViewModel {
 			sliderPercentageChanged(newValue: 0)
 		}
 	}
+    
+    func setNetworkType(_ networkType: PlayerNetworkType) {
+        self.networkType = networkType
+    }
 }
 
 // MARK: Adjacent Items
@@ -316,6 +323,7 @@ extension VideoPlayerViewModel {
 extension VideoPlayerViewModel {
 
 	func getAdjacentEpisodes() {
+        guard networkType == .online else { return }
 		guard let seriesID = item.seriesId, item.itemType == .episode else { return }
 
 		TvShowsAPI.getEpisodes(seriesId: seriesID,
@@ -455,6 +463,7 @@ extension VideoPlayerViewModel {
 	// MARK: sendPlayReport
 
 	func sendPlayReport() {
+        guard networkType == .online else { return }
 
 		self.startTimeTicks = Int64(Date().timeIntervalSince1970) * 10_000_000
 
@@ -493,6 +502,7 @@ extension VideoPlayerViewModel {
 	// MARK: sendPauseReport
 
 	func sendPauseReport(paused: Bool) {
+        guard networkType == .online else { return }
 
 		let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
 
@@ -529,6 +539,7 @@ extension VideoPlayerViewModel {
 	// MARK: sendProgressReport
 
 	func sendProgressReport() {
+        guard networkType == .online else { return }
 
 		let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
 
@@ -576,6 +587,7 @@ extension VideoPlayerViewModel {
 	// MARK: sendStopReport
 
 	func sendStopReport() {
+        guard networkType == .online else { return }
 
 		let stopInfo = PlaybackStopInfo(item: item,
 		                                itemId: item.id,
