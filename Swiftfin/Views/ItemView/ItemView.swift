@@ -51,7 +51,7 @@ private struct ItemView: View {
 			self.viewModel = EpisodeItemViewModel(item: item)
 		case .series:
 			self.viewModel = SeriesItemViewModel(item: item)
-		case .boxset:
+		case .boxset, .folder:
 			self.viewModel = CollectionItemViewModel(item: item)
 		default:
 			self.viewModel = ItemViewModel(item: item)
