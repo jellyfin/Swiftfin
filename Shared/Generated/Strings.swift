@@ -54,6 +54,8 @@ internal enum L10n {
   internal static var chapters: String { return L10n.tr("Localizable", "chapters") }
   /// Cinematic Views
   internal static var cinematicViews: String { return L10n.tr("Localizable", "cinematicViews") }
+  /// Close
+  internal static var close: String { return L10n.tr("Localizable", "close") }
   /// Closed Captions
   internal static var closedCaptions: String { return L10n.tr("Localizable", "closedCaptions") }
   /// Compact
@@ -122,8 +124,12 @@ internal enum L10n {
   internal static var information: String { return L10n.tr("Localizable", "information") }
   /// Items
   internal static var items: String { return L10n.tr("Localizable", "items") }
+  /// Jump Backward
+  internal static var jumpBackward: String { return L10n.tr("Localizable", "jumpBackward") }
   /// Jump Backward Length
   internal static var jumpBackwardLength: String { return L10n.tr("Localizable", "jumpBackwardLength") }
+  /// Jump Forward
+  internal static var jumpForward: String { return L10n.tr("Localizable", "jumpForward") }
   /// Jump Forward Length
   internal static var jumpForwardLength: String { return L10n.tr("Localizable", "jumpForwardLength") }
   /// Jump Gestures Enabled
@@ -176,6 +182,8 @@ internal enum L10n {
   internal static var networkTimedOut: String { return L10n.tr("Localizable", "networkTimedOut") }
   /// Next
   internal static var next: String { return L10n.tr("Localizable", "next") }
+  /// Next Item
+  internal static var nextItem: String { return L10n.tr("Localizable", "nextItem") }
   /// Next Up
   internal static var nextUp: String { return L10n.tr("Localizable", "nextUp") }
   /// No Cast devices found..
@@ -226,6 +234,8 @@ internal enum L10n {
   internal static var password: String { return L10n.tr("Localizable", "password") }
   /// Play
   internal static var play: String { return L10n.tr("Localizable", "play") }
+  /// Play / Pause
+  internal static var playAndPause: String { return L10n.tr("Localizable", "playAndPause") }
   /// Playback settings
   internal static var playbackSettings: String { return L10n.tr("Localizable", "playbackSettings") }
   /// Playback Speed
@@ -242,6 +252,8 @@ internal enum L10n {
   internal static var present: String { return L10n.tr("Localizable", "present") }
   /// Press Down for Menu
   internal static var pressDownForMenu: String { return L10n.tr("Localizable", "pressDownForMenu") }
+  /// Previous Item
+  internal static var previousItem: String { return L10n.tr("Localizable", "previousItem") }
   /// Programs
   internal static var programs: String { return L10n.tr("Localizable", "programs") }
   /// Rated

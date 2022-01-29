@@ -19,7 +19,6 @@ import UIKit
 // TODO: Look at making the VLC player layer a view
 
 class VLCPlayerViewController: UIViewController {
-
 	// MARK: variables
 
 	private var viewModel: VideoPlayerViewModel
@@ -50,10 +49,36 @@ class VLCPlayerViewController: UIViewController {
 	private var currentJumpBackwardOverlayView: UIImageView?
 	private var currentJumpForwardOverlayView: UIImageView?
 
+	override var keyCommands: [UIKeyCommand]? {
+		var commands = [
+			UIKeyCommand(title: L10n.playAndPause, action: #selector(didSelectMain), input: " "),
+			UIKeyCommand(title: L10n.jumpForward, action: #selector(didSelectForward), input: UIKeyCommand.inputRightArrow),
+			UIKeyCommand(title: L10n.jumpBackward, action: #selector(didSelectBackward), input: UIKeyCommand.inputLeftArrow),
+			UIKeyCommand(title: L10n.nextItem, action: #selector(didSelectPlayNextItem), input: UIKeyCommand.inputRightArrow,
+			             modifierFlags: .command),
+			UIKeyCommand(title: L10n.previousItem, action: #selector(didSelectPlayPreviousItem), input: UIKeyCommand.inputLeftArrow,
+			             modifierFlags: .command),
+			UIKeyCommand(title: L10n.close, action: #selector(didSelectClose), input: UIKeyCommand.inputEscape),
+		]
+		if let previous = viewModel.playbackSpeed.previous {
+			commands.append(.init(title: "\(L10n.playbackSpeed) \(previous.displayTitle)",
+			                      action: #selector(didSelectPreviousPlaybackSpeed), input: "[", modifierFlags: .command))
+		}
+		if let next = viewModel.playbackSpeed.next {
+			commands.append(.init(title: "\(L10n.playbackSpeed) \(next.displayTitle)", action: #selector(didSelectNextPlaybackSpeed),
+			                      input: "]", modifierFlags: .command))
+		}
+		if viewModel.playbackSpeed != .one {
+			commands.append(.init(title: "\(L10n.playbackSpeed) \(PlaybackSpeed.one.displayTitle)",
+			                      action: #selector(didSelectNormalPlaybackSpeed), input: "\\", modifierFlags: .command))
+		}
+		commands.forEach { $0.wantsPriorityOverSystemBehavior = true }
+		return commands
+	}
+
 	// MARK: init
 
 	init(viewModel: VideoPlayerViewModel) {
-
 		self.viewModel = viewModel
 		self.vlcMediaPlayer = VLCMediaPlayer()
 
@@ -190,17 +215,17 @@ class VLCPlayerViewController: UIViewController {
 
 	@objc
 	private func didTap() {
-		self.didGenerallyTap()
+		didGenerallyTap()
 	}
 
 	@objc
 	private func didRightSwipe() {
-		self.didSelectForward()
+		didSelectForward()
 	}
 
 	@objc
 	private func didLeftSwipe() {
-		self.didSelectBackward()
+		didSelectBackward()
 	}
 
 	@objc
@@ -208,10 +233,10 @@ class VLCPlayerViewController: UIViewController {
 		if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
 			pinchScale = gestureRecognizer.scale
 		} else {
-			if pinchScale > 1 && !isScreenFilled {
+			if pinchScale > 1, !isScreenFilled {
 				isScreenFilled.toggle()
 				fillScreen()
-			} else if pinchScale < 1 && isScreenFilled {
+			} else if pinchScale < 1, isScreenFilled {
 				isScreenFilled.toggle()
 				shrinkScreen()
 			}
@@ -221,7 +246,6 @@ class VLCPlayerViewController: UIViewController {
 	// MARK: setupOverlayHostingController
 
 	private func setupOverlayHostingController(viewModel: VideoPlayerViewModel) {
-
 		// TODO: Look at injecting viewModel into the environment so it updates the current overlay
 		if let currentOverlayHostingController = currentOverlayHostingController {
 			// UX fade-out
@@ -260,7 +284,7 @@ class VLCPlayerViewController: UIViewController {
 			newOverlayHostingController.view.alpha = 1
 		}
 
-		self.currentOverlayHostingController = newOverlayHostingController
+		currentOverlayHostingController = newOverlayHostingController
 
 		if let currentChapterOverlayHostingController = currentChapterOverlayHostingController {
 			UIView.animate(withDuration: 0.5) {
@@ -292,14 +316,13 @@ class VLCPlayerViewController: UIViewController {
 			newChapterOverlayHostingController.view.rightAnchor.constraint(equalTo: videoContentView.rightAnchor),
 		])
 
-		self.currentChapterOverlayHostingController = newChapterOverlayHostingController
+		currentChapterOverlayHostingController = newChapterOverlayHostingController
 
 		// There is a weird behavior when after setting the new overlays that the navigation bar pops up, re-hide it
-		self.navigationController?.isNavigationBarHidden = true
+		navigationController?.isNavigationBarHidden = true
 	}
 
 	private func refreshJumpBackwardOverlayView(with jumpBackwardLength: VideoPlayerJumpLength) {
-
 		if let currentJumpBackwardOverlayView = currentJumpBackwardOverlayView {
 			currentJumpBackwardOverlayView.removeFromSuperview()
 		}
@@ -324,7 +347,6 @@ class VLCPlayerViewController: UIViewController {
 	}
 
 	private func refreshJumpForwardOverlayView(with jumpForwardLength: VideoPlayerJumpLength) {
-
 		if let currentJumpForwardOverlayView = currentJumpForwardOverlayView {
 			currentJumpForwardOverlayView.removeFromSuperview()
 		}
@@ -352,13 +374,11 @@ class VLCPlayerViewController: UIViewController {
 // MARK: setupMediaPlayer
 
 extension VLCPlayerViewController {
-
 	/// Main function that handles setting up the media player with the current VideoPlayerViewModel
 	/// and also takes the role of setting the 'viewModel' property with the given viewModel
 	///
 	/// Use case for this is setting new media within the same VLCPlayerViewController
 	func setupMediaPlayer(newViewModel: VideoPlayerViewModel) {
-
 		// remove old player
 
 		if vlcMediaPlayer.media != nil {
@@ -454,7 +474,6 @@ extension VLCPlayerViewController {
 	// MARK: setupViewModelListeners
 
 	private func setupViewModelListeners(viewModel: VideoPlayerViewModel) {
-
 		viewModel.$playbackSpeed.sink { newSpeed in
 			self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
 		}.store(in: &viewModelListeners)
@@ -508,7 +527,6 @@ extension VLCPlayerViewController {
 // MARK: Show/Hide Overlay
 
 extension VLCPlayerViewController {
-
 	private func showOverlay() {
 		guard let overlayHostingController = currentOverlayHostingController else { return }
 
@@ -545,7 +563,6 @@ extension VLCPlayerViewController {
 // MARK: Show/Hide Jump
 
 extension VLCPlayerViewController {
-
 	private func flashJumpBackwardOverlay() {
 		guard !displayingOverlay, let currentJumpBackwardOverlayView = currentJumpBackwardOverlayView else { return }
 
@@ -590,7 +607,6 @@ extension VLCPlayerViewController {
 // MARK: Hide/Show Chapters
 
 extension VLCPlayerViewController {
-
 	private func showChaptersOverlay() {
 		guard let overlayHostingController = currentChapterOverlayHostingController else { return }
 
@@ -615,40 +631,37 @@ extension VLCPlayerViewController {
 // MARK: OverlayTimer
 
 extension VLCPlayerViewController {
-
 	private func restartOverlayDismissTimer(interval: Double = 3) {
-		self.overlayDismissTimer?.invalidate()
-		self.overlayDismissTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(dismissTimerFired),
-		                                                userInfo: nil, repeats: false)
+		overlayDismissTimer?.invalidate()
+		overlayDismissTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(dismissTimerFired),
+		                                           userInfo: nil, repeats: false)
 	}
 
 	@objc
 	private func dismissTimerFired() {
-		self.hideOverlay()
+		hideOverlay()
 	}
 
 	private func stopOverlayDismissTimer() {
-		self.overlayDismissTimer?.invalidate()
+		overlayDismissTimer?.invalidate()
 	}
 }
 
 // MARK: VLCMediaPlayerDelegate
 
 extension VLCPlayerViewController: VLCMediaPlayerDelegate {
-
 	// MARK: mediaPlayerStateChanged
 
 	func mediaPlayerStateChanged(_ aNotification: Notification!) {
-
 		// Don't show buffering if paused, usually here while scrubbing
-		if vlcMediaPlayer.state == .buffering && viewModel.playerState == .paused {
+		if vlcMediaPlayer.state == .buffering, viewModel.playerState == .paused {
 			return
 		}
 
 		viewModel.playerState = vlcMediaPlayer.state
 
 		if vlcMediaPlayer.state == VLCMediaPlayerState.ended {
-			if viewModel.autoplayEnabled && viewModel.nextItemVideoPlayerViewModel != nil {
+			if viewModel.autoplayEnabled, viewModel.nextItemVideoPlayerViewModel != nil {
 				didSelectPlayNextItem()
 			} else {
 				didSelectClose()
@@ -659,7 +672,6 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
 	// MARK: mediaPlayerTimeChanged
 
 	func mediaPlayerTimeChanged(_ aNotification: Notification!) {
-
 		if !viewModel.sliderIsScrubbing {
 			viewModel.sliderPercentage = Double(vlcMediaPlayer.position)
 		}
@@ -671,8 +683,8 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
 		}
 
 		// If needing to fix subtitle streams during playback
-		if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex &&
-			viewModel.subtitlesEnabled
+		if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex,
+		   viewModel.subtitlesEnabled
 		{
 			didSelectSubtitleStream(index: viewModel.selectedSubtitleStreamIndex)
 		}
@@ -696,7 +708,6 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
 // MARK: PlayerOverlayDelegate and more
 
 extension VLCPlayerViewController: PlayerOverlayDelegate {
-
 	func didSelectAudioStream(index: Int) {
 		vlcMediaPlayer.currentAudioTrackIndex = Int32(index)
 
@@ -715,6 +726,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		lastProgressReportTicks = currentPlayerTicks
 	}
 
+	@objc
 	func didSelectClose() {
 		vlcMediaPlayer.stop()
 
@@ -741,8 +753,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		restartOverlayDismissTimer()
 	}
 
+	@objc
 	func didSelectBackward() {
-
 		flashJumpBackwardOverlay()
 
 		vlcMediaPlayer.jumpBackward(viewModel.jumpBackwardLength.rawValue)
@@ -756,8 +768,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		lastProgressReportTicks = currentPlayerTicks
 	}
 
+	@objc
 	func didSelectForward() {
-
 		flashJumpFowardOverlay()
 
 		vlcMediaPlayer.jumpForward(viewModel.jumpForwardLength.rawValue)
@@ -771,8 +783,8 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		lastProgressReportTicks = currentPlayerTicks
 	}
 
+	@objc
 	func didSelectMain() {
-
 		switch viewModel.playerState {
 		case .buffering:
 			vlcMediaPlayer.play()
@@ -809,6 +821,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		lastProgressReportTicks = currentPlayerTicks
 	}
 
+	@objc
 	func didSelectPlayPreviousItem() {
 		if let previousItemVideoPlayerViewModel = viewModel.previousItemVideoPlayerViewModel {
 			setupMediaPlayer(newViewModel: previousItemVideoPlayerViewModel)
@@ -816,11 +829,31 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		}
 	}
 
+	@objc
 	func didSelectPlayNextItem() {
 		if let nextItemVideoPlayerViewModel = viewModel.nextItemVideoPlayerViewModel {
 			setupMediaPlayer(newViewModel: nextItemVideoPlayerViewModel)
 			startPlayback()
 		}
+	}
+
+	@objc
+	func didSelectPreviousPlaybackSpeed() {
+		if let previousPlaybackSpeed = viewModel.playbackSpeed.previous {
+			viewModel.playbackSpeed = previousPlaybackSpeed
+		}
+	}
+
+	@objc
+	func didSelectNextPlaybackSpeed() {
+		if let nextPlaybackSpeed = viewModel.playbackSpeed.next {
+			viewModel.playbackSpeed = nextPlaybackSpeed
+		}
+	}
+
+	@objc
+	func didSelectNormalPlaybackSpeed() {
+		viewModel.playbackSpeed = .one
 	}
 
 	func didSelectChapters() {
@@ -847,7 +880,6 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 	}
 
 	func didSelectScreenFill() {
-
 		isScreenFilled.toggle()
 
 		if isScreenFilled {
