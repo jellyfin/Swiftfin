@@ -61,8 +61,6 @@ class DownloadTracker: ObservableObject {
         saveMetadata()
         saveBackdrop()
         
-        downloadRequest.request
-        
         downloadRequest
             .downloadProgress { progress in
                 self.progress = progress.fractionCompleted
@@ -129,21 +127,12 @@ class DownloadTracker: ObservableObject {
         let afDownload = AF.download(backdropImageURL, to: destination)
         afDownload
             .responseData { response in
-                if let error = response.error {
+                if let _ = response.error {
                     LogManager.shared.log.error("Error downloading item backdrop")
                 } else {
                     //
                 }
             }
-        
-//        Nuke.loadImage(with: backdropImageURL, into: dudImageView)
-//        
-//        if let image = dudImageView.image {
-//            if let data = image.pngData() {
-//                let filename = itemDirectory.appendingPathComponent("backdrop.png")
-//                try? data.write(to: filename)
-//            }
-//        }
     }
 }
 
