@@ -9,6 +9,8 @@
 import NukeUI
 import SwiftUI
 
+// TODO: update multiple sources so that multiple blurhashes can be taken, clean up
+
 struct ImageView: View {
 
 	@State
@@ -34,24 +36,10 @@ struct ImageView: View {
 
 	// TODO: fix placeholder hash view
 	@ViewBuilder
-	private func placeholderView() -> some View {
-//		Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 8, height: 8)) ??
-//			UIImage(blurHash: "001fC^", size: CGSize(width: 8, height: 8))!)
-//			.resizable()
-
-		#if os(tvOS)
-			ZStack {
-				Color.black.ignoresSafeArea()
-
-				ProgressView()
-			}
-		#else
-			ZStack {
-				Color.gray.ignoresSafeArea()
-
-				ProgressView()
-			}
-		#endif
+    private var placeholderView: some View {
+		Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 12, height: 12)) ??
+			UIImage(blurHash: "001fC^", size: CGSize(width: 12, height: 12))!)
+			.resizable()
 	}
 
 	@ViewBuilder
@@ -73,9 +61,9 @@ struct ImageView: View {
 				if let image = state.image {
 					image
 				} else if state.error != nil {
-					failureImage().onAppear { sources.removeFirst() }
+					placeholderView.onAppear { sources.removeFirst() }
 				} else {
-					placeholderView()
+					placeholderView
 				}
 			}
 			.pipeline(ImagePipeline(configuration: .withDataCache))
