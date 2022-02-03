@@ -23,7 +23,18 @@
 
 **For Apple TV (without an iOS/iPadOS device)**
 
+*Form (Manual invite process)*
+
 If you have an Apple TV and do not own an iOS device, please use this [Google Form](https://forms.gle/U5CczbfQzm8MbpJX9) to get an invitation code.
+
+*Using BrowserStack*
+- Make a [BrowserStack](https://www.browserstack.com/users/sign_up) account with a free trial.
+- Select "Install via TestFlight"
+![test flight](https://i.imgur.com/EBY4jty.png)
+- Then select iPad Pro
+- Once the device is started up, close out of "TestFlight" & follow [this guide](https://www.browserstack.com/question/727) on logging into your apple account.
+- Open Safari & enter the invite link.
+- Now you can join the Swiftfin TestFlight
 
 ## 📚 Translations
 
