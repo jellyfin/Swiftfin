@@ -19,7 +19,7 @@ class DownloadManager {
     
     let downloadsDirectory: URL
     let tmpDirectory: URL
-    private(set) var offlineItems = Set<OfflineItem>()
+    private(set) var downloadingItems = Set<OfflineItem>()
     
     private init() {
         AF.sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -106,13 +106,13 @@ class DownloadManager {
                                          backdropImageURL: item.getBackdropImage(maxWidth: 500),
                                          downloadTracker: newDownloadTracker)
         
-        offlineItems.insert(newOfflineItem)
+        downloadingItems.insert(newOfflineItem)
         
         Notifications[.didAddDownload].post()
     }
     
     func removeDownload(offlineItem: OfflineItem) {
-        self.offlineItems.remove(offlineItem)
+        self.downloadingItems.remove(offlineItem)
     }
     
     func hasLocalFile(for item: BaseItemDto, fileName: String) -> Bool {
@@ -130,8 +130,8 @@ class DownloadManager {
         return FileManager.default.fileExists(atPath: itemDirectory.path, isDirectory: &isDir)
     }
     
-    func offlineItem(for item: BaseItemDto) -> OfflineItem? {
-        return offlineItems.first(where: { $0.item.id == item.id })
+    func downloadingItem(for item: BaseItemDto) -> OfflineItem? {
+        return downloadingItems.first(where: { $0.item.id == item.id })
     }
     
     // MARK: GetOfflineItems
@@ -200,14 +200,30 @@ class DownloadManager {
 
                 print("Removed: \(download)")
             }
+            
+            Notifications[.didDeleteOfflineItem].post()
         }
     }
     
     func deleteItem(_ offlineItem: OfflineItem) {
         try! FileManager.default.removeItem(at: offlineItem.itemDirectory)
         
-        Notifications[.didDeleteOfflineItem].post(object: nil)
+        Notifications[.didDeleteOfflineItem].post()
     }
+    
+    func downloadedItem(for item: BaseItemDto) -> OfflineItem? {
+        guard DownloadManager.main.hasDownloadDirectory(for: item) else { return nil }
+        
+        let itemDirectory = downloadsDirectory.appendingPathComponent("\(item.id ?? "none")", isDirectory: true)
+        
+        do {
+            return try parseOfflineItem(at: itemDirectory)
+        } catch {
+            return nil
+        }
+    }
+    
+    // MARK: ParseOfflineItem
     
     private func parseOfflineItem(at itemDirectory: URL) throws -> OfflineItem {
         let itemContents = try FileManager.default.contentsOfDirectory(atPath: itemDirectory.path)

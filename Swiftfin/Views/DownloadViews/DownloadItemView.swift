@@ -18,105 +18,67 @@ struct DownloadItemView: View {
     var viewModel: DownloadItemViewModel
     
     @ViewBuilder
-    private var queueDownloadView: some View {
-        VStack {
-            ScrollView {
-                VStack {
-                    HStack(alignment: .bottom, spacing: 12) {
-                        ImageView(viewModel.itemViewModel.item.portraitHeaderViewURL(maxWidth: 130))
-                            .portraitPoster(width: 130)
-                            .accessibilityIgnoresInvertColors()
-                        
-                        VStack(alignment: .leading, spacing: 5) {
-                            Spacer()
-                            
-                            Text(viewModel.itemViewModel.getItemDisplayName())
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                            
-                            if let runtime = viewModel.itemViewModel.item.getItemRuntime() {
-                                Text(runtime)
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
-                            }
-                        }
-                        .padding(.vertical)
-                        
-                        Spacer()
+    private var bottomView: some View {
+        if viewModel.itemViewModel.isDownloaded {
+            VStack(spacing: 15) {
+                Button {
+                    if let videoPlayerViewModel = viewModel.offlineVideoPlayerViewModel() {
+                        videoPlayerViewModel.setNetworkType(.offline)
+                        videoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+                        downloadItemRouter.route(to: \.videoPlayer, videoPlayerViewModel)
                     }
-                    .padding(.bottom)
-                    .fixedSize(horizontal: false, vertical: true)
-                    
-                    VStack(spacing: 15) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            
-                            L10n.file.text
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                            Text(viewModel.itemViewModel.selectedVideoPlayerViewModel?.filename ?? "--")
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .font(.subheadline)
-                                .foregroundColor(Color.secondary)
-                            
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            
-                            Text("Download Size")
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                            Text(viewModel.itemViewModel.selectedVideoPlayerViewModel?.friendlyStorage ?? "--")
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .font(.subheadline)
-                                .foregroundColor(Color.secondary)
-                            
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            
-                            Text("Available Storage")
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                            Text(DownloadManager.main.friendlyAvailableStorage ?? "--")
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .font(.subheadline)
-                                .foregroundColor(Color.secondary)
-                            
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                } label: {
+                    ZStack {
+                        Rectangle()
+                            .foregroundColor(Color.jellyfinPurple)
+                            .frame(maxWidth: 400, maxHeight: 50)
+                            .frame(height: 50)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 30)
+
+                        L10n.play.text
+                            .foregroundColor(Color.white)
+                            .bold()
                     }
                 }
-                .padding()
+                
+                Button {
+                    viewModel.deleteItem()
+                    downloadItemRouter.dismissCoordinator()
+                } label: {
+                    ZStack {
+                        Rectangle()
+                            .foregroundColor(Color.red.opacity(0.1))
+                            .frame(maxWidth: 400, maxHeight: 50)
+                            .frame(height: 50)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 30)
+
+                        Text("Delete")
+                            .foregroundColor(Color.red)
+                            .bold()
+                    }
+                }
             }
-            
-            if let downloadTracker = viewModel.itemViewModel.downloadTracker {
+        } else {
+            if let downloadTracker = viewModel.downloadTracker {
                 DownloadItemProgressView(viewModel: viewModel, downloadTracker: downloadTracker)
                     .padding()
             } else {
-                if viewModel.hasSpaceForItem {
-                    PrimaryButtonView(title: "Download") {
-                        viewModel.downloadItem()
-                    }
-                } else {
+                Button {
+                    viewModel.downloadItem()
+                } label: {
                     ZStack {
                         Rectangle()
-                            .foregroundColor(Color(UIColor.secondarySystemFill))
+                            .foregroundColor(Color.jellyfinPurple)
                             .frame(maxWidth: 400, maxHeight: 50)
                             .frame(height: 50)
                             .cornerRadius(10)
                             .padding(.horizontal, 30)
                             .padding([.top, .bottom], 20)
 
-                        Text("Unable to Download")
-                            .foregroundColor(Color(UIColor.secondaryLabel))
+                        Text("Download")
+                            .foregroundColor(Color.white)
                             .bold()
                     }
                 }
@@ -126,10 +88,85 @@ struct DownloadItemView: View {
     
     var body: some View {
         Group {
-            if viewModel.itemViewModel.isDownloaded {
-                Text("Downloaded")
-            } else {
-                queueDownloadView
+            VStack {
+                ScrollView {
+                    VStack {
+                        HStack(alignment: .bottom, spacing: 12) {
+                            ImageView(viewModel.itemViewModel.item.portraitHeaderViewURL(maxWidth: 130))
+                                .portraitPoster(width: 130)
+                                .accessibilityIgnoresInvertColors()
+                            
+                            VStack(alignment: .leading, spacing: 5) {
+                                Spacer()
+                                
+                                Text(viewModel.itemViewModel.getItemDisplayName())
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                
+                                if let runtime = viewModel.itemViewModel.item.getItemRuntime() {
+                                    Text(runtime)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                }
+                            }
+                            .padding(.vertical)
+                            
+                            Spacer()
+                        }
+                        .padding(.bottom)
+                        .fixedSize(horizontal: false, vertical: true)
+                        
+                        VStack(spacing: 15) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                
+                                L10n.file.text
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                Text(viewModel.itemViewModel.selectedVideoPlayerViewModel?.filename ?? "--")
+                                    .lineLimit(nil)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.secondary)
+                                
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                
+                                Text("Download Size")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                Text(viewModel.itemViewModel.selectedVideoPlayerViewModel?.friendlyStorage ?? "--")
+                                    .lineLimit(nil)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.secondary)
+                                
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                
+                                Text("Available Storage")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                Text(DownloadManager.main.friendlyAvailableStorage ?? "--")
+                                    .lineLimit(nil)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.secondary)
+                                
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    .padding()
+                }
+                
+                bottomView
             }
         }
             .navigationTitle("Download")

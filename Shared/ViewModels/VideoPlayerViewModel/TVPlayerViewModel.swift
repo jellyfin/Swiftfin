@@ -218,15 +218,7 @@ final class TVPlayerViewModel: ViewModel {
 
         self.mediaItems = item.createMediaItems()
         
-        var potentialLocalFileURL: URL? = nil
-        
-        if let filename = filename {
-            if DownloadManager.main.hasLocalFile(for: item, fileName: filename) {
-                potentialLocalFileURL = DownloadManager.main.localFileURL(for: item, fileName: filename)
-            }
-        }
-        
-        self.localFileURL = potentialLocalFileURL
+        self.localFileURL = nil
 
         super.init()
 

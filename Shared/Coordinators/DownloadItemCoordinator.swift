@@ -16,11 +16,17 @@ final class DownloadItemCoordinator: NavigationCoordinatable {
     
     @Root
     var start = makeStart
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
     
     let viewModel: ItemViewModel
     
     init(viewModel: ItemViewModel) {
         self.viewModel = viewModel
+    }
+    
+    func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+        NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))
     }
     
     @ViewBuilder

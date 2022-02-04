@@ -31,7 +31,11 @@ class OfflineItem: Equatable, Hashable {
     let downloadDate = Date.now
     
     var storage: String {
-        return try! itemDirectory.sizeOnDisk() ?? "-- MB"
+        do {
+            return try itemDirectory.sizeOnDisk() ?? "-- KB"
+        } catch {
+            return "-- KB"
+        }
     }
     
     init(playbackInfo: PlaybackInfoResponse,
@@ -95,7 +99,7 @@ class DownloadTracker: ObservableObject {
                 
                 if let error = response.error {
                     self.state = .error
-                    print(error.errorDescription ?? "error with download")
+                    LogManager.shared.log.error("Error with download: \(error.errorDescription ?? "--")")
                 } else {
                     self.state = .done
                     
@@ -104,6 +108,8 @@ class DownloadTracker: ObservableObject {
                     } catch {
                         self.state = .error
                     }
+                    
+                    DownloadManager.main.clearTmpDirectory()
                 }
             }
     }

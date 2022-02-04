@@ -34,7 +34,7 @@ struct OfflineHomeView: View {
                 Button {
                     DownloadManager.main.deleteAllDownloads()
                 } label: {
-                    Text("Clear tmp")
+                    Text("Delete All Downloads")
                 }
                 
                 ForEach(viewModel.offlineItems, id: \.self) { offlineItem in

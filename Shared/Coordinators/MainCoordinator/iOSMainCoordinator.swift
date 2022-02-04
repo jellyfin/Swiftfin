@@ -117,7 +117,7 @@ final class MainCoordinator: NavigationCoordinatable {
 		NavigationViewCoordinator(ServerListCoordinator())
 	}
     
-    func makeOfflineList() -> NavigationViewCoordinator<OfflineHomeCoordinator> {
-        NavigationViewCoordinator(OfflineHomeCoordinator())
+    func makeOfflineList() -> NavigationViewCoordinator<DownloadListCoordinator> {
+        NavigationViewCoordinator(DownloadListCoordinator())
     }
 }

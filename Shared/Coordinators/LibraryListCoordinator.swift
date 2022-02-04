@@ -37,8 +37,8 @@ final class LibraryListCoordinator: NavigationCoordinatable {
 		SearchCoordinator(viewModel: viewModel)
 	}
     
-    func makeDownloads() -> OfflineHomeCoordinator {
-        OfflineHomeCoordinator()
+    func makeDownloads() -> DownloadListCoordinator {
+        DownloadListCoordinator()
     }
 
 	@ViewBuilder

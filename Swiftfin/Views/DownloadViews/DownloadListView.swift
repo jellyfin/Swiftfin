@@ -10,23 +10,54 @@ import SwiftUI
 
 struct DownloadListView: View {
     
-    @State
-    var downloads: [OfflineItem] = []
+    @EnvironmentObject
+    var downloadListRouter: DownloadListCoordinator.Router
+    @ObservedObject
+    var viewModel: DownloadListViewModel
+    
+    @ViewBuilder
+    private var downloadingView: some View {
+        Text("Downloading")
+            .font(.title2)
+            .fontWeight(.bold)
+            .accessibility(addTraits: [.isHeader])
+        
+        ForEach(viewModel.downloadingItems, id: \.self) { download in
+            DownloadTrackerRow(offlineItem: download) { offlineItem in
+                downloadListRouter.route(to: \.downloadItem, ItemViewModel(item: offlineItem.item))
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var offlineItemsView: some View {
+        Text("Downloaded")
+            .font(.title2)
+            .fontWeight(.bold)
+            .accessibility(addTraits: [.isHeader])
+        
+        ForEach(viewModel.offlineItems, id: \.self) { download in
+            DownloadTrackerRow(offlineItem: download) { offlineItem in
+                downloadListRouter.route(to: \.downloadItem, ItemViewModel(item: offlineItem.item))
+            }
+        }
+    }
     
     var body: some View {
         ScrollView {
-            
-            VStack {
-                ForEach(downloads, id: \.self) { download in
-                    DownloadTrackerRow(offlineItem: download) { item in
-                        // TODO: Deeplink to online item
-                    }
+            VStack(alignment: .leading) {
+                
+                if !viewModel.downloadingItems.isEmpty {
+                    downloadingView
+                }
+                
+                if !viewModel.offlineItems.isEmpty {
+                    offlineItemsView
                 }
             }
+            .padding()
         }
-        .onAppear {
-            downloads = DownloadManager.main.offlineItems.sorted(by: { $0.downloadDate < $1.downloadDate })
-        }
+        .navigationTitle("Downloads")
     }
 }
 
@@ -72,6 +103,5 @@ struct DownloadTrackerRow<ItemType: OfflineItem>: View {
                 Spacer()
             }
         }
-        .padding()
     }
 }

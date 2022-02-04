@@ -16,7 +16,7 @@ class ItemViewModel: ViewModel {
 	@Published
 	var item: BaseItemDto
     @Published
-    var downloadTracker: DownloadTracker?
+    var offlineItem: OfflineItem?
 	@Published
 	var playButtonItem: BaseItemDto? {
 		didSet {
@@ -84,13 +84,13 @@ class ItemViewModel: ViewModel {
 	}
     
     @objc private func receivedDownloadAdded() {
+        offlineItem = DownloadManager.main.downloadingItem(for: item)
+        
         setupDownloadTracker()
     }
     
     private func setupDownloadTracker() {
-        self.downloadTracker = DownloadManager.main.offlineItem(for: item)?.downloadTracker
-        
-        if let downloadTracker = downloadTracker {
+        if let downloadTracker = offlineItem?.downloadTracker {
             downloadTracker.$state
                 .sink { downloadState in
                     self.isDownloaded = DownloadManager.main.hasDownloadDirectory(for: self.item)

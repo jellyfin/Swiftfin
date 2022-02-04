@@ -160,14 +160,11 @@ struct PortraitHeaderOverlayView: View {
                         itemRouter.route(to: \.downloadItem, viewModel)
                     } label: {
                         Group {
-                            if let downloadTracker = viewModel.downloadTracker {
+                            if let downloadTracker = viewModel.offlineItem?.downloadTracker {
                                 switch downloadTracker.state {
-                                case .downloading, .idle:
+                                case .downloading, .idle, .paused:
                                     Image(systemName: "arrow.down.circle")
                                         .foregroundColor(Color(UIColor.systemBlue))
-                                case .paused:
-                                    Image(systemName: "arrow.down.circle")
-                                        .foregroundColor(.yellow)
                                 case .error:
                                     Image(systemName: "arrow.down.circle")
                                         .foregroundColor(.red)

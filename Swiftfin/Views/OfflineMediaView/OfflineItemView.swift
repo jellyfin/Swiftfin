@@ -18,7 +18,7 @@ struct OfflineItemView: View {
     
     @ViewBuilder
     private var portraitHeaderView: some View {
-        ImageView( offlineItem.backdropImageURL ?? URL(fileURLWithPath: ""))
+        ImageView(offlineItem.backdropImageURL ?? URL(fileURLWithPath: ""))
             .opacity(0.4)
             .blur(radius: 2.0)
             .accessibilityIgnoresInvertColors()

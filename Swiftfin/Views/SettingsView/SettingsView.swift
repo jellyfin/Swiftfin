@@ -186,17 +186,6 @@ struct SettingsView: View {
 					Image(systemName: "chevron.right")
 				}
 			}
-            
-            Button {
-                settingsRouter.route(to: \.downloadList)
-            } label: {
-                HStack {
-                    Text("Downloads")
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                }
-            }
 		}
 		.navigationBarTitle(L10n.settings, displayMode: .inline)
 		.toolbar {

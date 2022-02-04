@@ -14,6 +14,8 @@ final class DownloadItemViewModel: ViewModel {
     
     let itemViewModel: ItemViewModel
     @Published
+    var offlineItem: OfflineItem?
+    @Published
     var downloadTracker: DownloadTracker?
     @Published
     var downloadProgress: Double = 0
@@ -21,7 +23,7 @@ final class DownloadItemViewModel: ViewModel {
     var downloadState: DownloadState = .idle
     
     var hasSpaceForItem: Bool {
-        return DownloadManager.main.hasSpace(for: itemViewModel.selectedVideoPlayerViewModel?.fileSize ?? 0)
+        return DownloadManager.main.hasSpace(for: itemViewModel.videoPlayerViewModels.first?.fileSize ?? 0)
     }
     
     init(itemViewModel: ItemViewModel) {
@@ -29,11 +31,15 @@ final class DownloadItemViewModel: ViewModel {
         
         super.init()
         
-        itemViewModel.$downloadTracker
-            .sink { newTracker in
-                self.downloadTracker = newTracker
+        itemViewModel.$offlineItem
+            .sink { newOfflineItem in
+                self.offlineItem = newOfflineItem
                 
-                self.subscribeTo(tracker: newTracker)
+                if let newOfflineItem = newOfflineItem {
+                    self.downloadTracker = newOfflineItem.downloadTracker
+                    
+                    self.subscribeTo(tracker: newOfflineItem.downloadTracker)
+                }
             }
             .store(in: &cancellables)
     }
@@ -57,16 +63,28 @@ final class DownloadItemViewModel: ViewModel {
     func downloadItem() {
         guard hasSpaceForItem else { return }
         
-        if let selectedVideoPlayerViewModel = itemViewModel.selectedVideoPlayerViewModel {
+        if let firstVideoPlayerViewModel = itemViewModel.videoPlayerViewModels.first {
             do {
-                if DownloadManager.main.hasSpace(for: selectedVideoPlayerViewModel.fileSize ?? 0) {
-                    try DownloadManager.main.addDownload(playbackInfo: selectedVideoPlayerViewModel.response,
-                                                     item: selectedVideoPlayerViewModel.item,
-                                                     fileName: selectedVideoPlayerViewModel.filename ?? "None")
+                if DownloadManager.main.hasSpace(for: firstVideoPlayerViewModel.fileSize ?? 0) {
+                    try DownloadManager.main.addDownload(playbackInfo: firstVideoPlayerViewModel.response,
+                                                     item: firstVideoPlayerViewModel.item,
+                                                     fileName: firstVideoPlayerViewModel.filename ?? "None")
                 }
             } catch {
                 print(error.localizedDescription)
             }
         }
+    }
+    
+    func deleteItem() {
+        guard let downloadedItem = DownloadManager.main.downloadedItem(for: itemViewModel.item) else { return }
+        
+        DownloadManager.main.deleteItem(downloadedItem)
+    }
+    
+    func offlineVideoPlayerViewModel() -> VideoPlayerViewModel? {
+        guard let offlineItem = DownloadManager.main.downloadedItem(for: itemViewModel.item) else { return nil }
+        
+        return offlineItem.item.createVideoPlayerViewModel(from: offlineItem.playbackInfo).first
     }
 }

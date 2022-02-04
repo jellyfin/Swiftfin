@@ -28,8 +28,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	var missingSettings = makeMissingSettings
 	@Route(.push)
 	var about = makeAbout
-    @Route(.push)
-    var downloadList = makeDownloadList
 
 	@ViewBuilder
 	func makeServerDetail() -> some View {
@@ -61,11 +59,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	func makeAbout() -> some View {
 		AboutView()
 	}
-    
-    @ViewBuilder
-    func makeDownloadList() -> some View {
-        DownloadListView()
-    }
 
 	@ViewBuilder
 	func makeStart() -> some View {
