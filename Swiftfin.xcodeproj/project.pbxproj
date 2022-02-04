@@ -321,7 +321,6 @@
 		E13DD3F027178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */; };
 		E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */; };
 		E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F4271793BB009D4DAF /* UserSignInView.swift */; };
-		E13DD3F72717E87D009D4DAF /* SwiftfinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */; };
 		E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F82717E961009D4DAF /* UserListViewModel.swift */; };
 		E13DD3FA2717E961009D4DAF /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F82717E961009D4DAF /* UserListViewModel.swift */; };
 		E13DD3FC2717EAE8009D4DAF /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3FB2717EAE8009D4DAF /* UserListView.swift */; };
@@ -333,6 +332,11 @@
 		E14B4143279354770016CBE5 /* LocalizedLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B4140279354770016CBE5 /* LocalizedLookup.swift */; };
 		E14F7D0726DB36EF007C3AE6 /* ItemPortraitMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14F7D0626DB36EF007C3AE6 /* ItemPortraitMainView.swift */; };
 		E14F7D0926DB36F7007C3AE6 /* ItemLandscapeMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14F7D0826DB36F7007C3AE6 /* ItemLandscapeMainView.swift */; };
+		E15FBA8227A7877300B6EB71 /* DownloadItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15FBA8127A7877300B6EB71 /* DownloadItemView.swift */; };
+		E15FBA8427A788E300B6EB71 /* DownloadItemCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15FBA8327A788E300B6EB71 /* DownloadItemCoordinator.swift */; };
+		E15FBA8527A788E300B6EB71 /* DownloadItemCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15FBA8327A788E300B6EB71 /* DownloadItemCoordinator.swift */; };
+		E15FBA8727A8676300B6EB71 /* LineProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15FBA8627A8676300B6EB71 /* LineProgressBar.swift */; };
+		E15FBA8927A8757800B6EB71 /* DownloadItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15FBA8827A8757800B6EB71 /* DownloadItemViewModel.swift */; };
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
 		E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
@@ -453,6 +457,7 @@
 		E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */; };
 		E1D7E5A827892566009D0EF7 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1D7E5A727892566009D0EF7 /* Nuke */; };
+		E1DBCC1827AC6C0500FEF87C /* SwiftfinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */; };
 		E1E00A35278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A37278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
@@ -740,6 +745,10 @@
 		E14B4140279354770016CBE5 /* LocalizedLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedLookup.swift; sourceTree = "<group>"; };
 		E14F7D0626DB36EF007C3AE6 /* ItemPortraitMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPortraitMainView.swift; sourceTree = "<group>"; };
 		E14F7D0826DB36F7007C3AE6 /* ItemLandscapeMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLandscapeMainView.swift; sourceTree = "<group>"; };
+		E15FBA8127A7877300B6EB71 /* DownloadItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadItemView.swift; sourceTree = "<group>"; };
+		E15FBA8327A788E300B6EB71 /* DownloadItemCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadItemCoordinator.swift; sourceTree = "<group>"; };
+		E15FBA8627A8676300B6EB71 /* LineProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineProgressBar.swift; sourceTree = "<group>"; };
+		E15FBA8827A8757800B6EB71 /* DownloadItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadItemViewModel.swift; sourceTree = "<group>"; };
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
@@ -1289,6 +1298,7 @@
 				E1AD105B26D9ABDD003E4A08 /* PillHStackView.swift */,
 				E1AD105526D981CE003E4A08 /* PortraitHStackView.swift */,
 				53F866432687A45F00DCD1D7 /* PortraitItemButton.swift */,
+				E15FBA8627A8676300B6EB71 /* LineProgressBar.swift */,
 				C4BE076D2720FEA8003F4AD1 /* PortraitItemElement.swift */,
 				E1AA331C2782541500F6439C /* PrimaryButtonView.swift */,
 				E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */,
@@ -1355,6 +1365,7 @@
 				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
 				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
 				6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */,
+				E15FBA8327A788E300B6EB71 /* DownloadItemCoordinator.swift */,
 				E1EBCB43278BD1CE009FE6E9 /* ItemOverviewCoordinator.swift */,
 				6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */,
 				62C29EA726D103D500C1D2E7 /* LibraryListCoordinator.swift */,
@@ -1531,6 +1542,7 @@
 				E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
 				5389276D263C25100035E14B /* ContinueWatchingView.swift */,
+				E15FBA8127A7877300B6EB71 /* DownloadItemView.swift */,
 				E179D41427A20ED800885858 /* DownloadListView.swift */,
 				625CB56E2678C23300530A6E /* HomeView.swift */,
 				E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */,
@@ -1646,6 +1658,7 @@
 		E18CC83D27A49A1300D8A284 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				E15FBA8827A8757800B6EB71 /* DownloadItemViewModel.swift */,
 				E18CC83B27A49A1000D8A284 /* OfflineHomeViewModel.swift */,
 			);
 			path = ViewModels;
@@ -2377,6 +2390,7 @@
 				535870A62669D8AE00D05A09 /* LazyView.swift in Sources */,
 				E193D53A27193F9000900D82 /* ServerListCoordinator.swift in Sources */,
 				6220D0AE26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
+				E15FBA8527A788E300B6EB71 /* DownloadItemCoordinator.swift in Sources */,
 				5321753E2671DE9C005491E6 /* Typings.swift in Sources */,
 				E1C812CA277AE40900918266 /* PlayerOverlayDelegate.swift in Sources */,
 				E1AA33202782639D00F6439C /* OverlayType.swift in Sources */,
@@ -2507,6 +2521,7 @@
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E13DD3FC2717EAE8009D4DAF /* UserListView.swift in Sources */,
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
+				E15FBA8227A7877300B6EB71 /* DownloadItemView.swift in Sources */,
 				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
 				E18CC82E27A47A1000D8A284 /* OfflineHomeView.swift in Sources */,
 				C4AE2C3327498DBE00AE13CF /* LiveTVChannelItemElement.swift in Sources */,
@@ -2550,6 +2565,7 @@
 				E176DE70278E369F001EFD8D /* MissingItemsSettingsView.swift in Sources */,
 				C4BE076F2720FEFF003F4AD1 /* PlainNavigationLinkButton.swift in Sources */,
 				E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */,
+				E15FBA8427A788E300B6EB71 /* DownloadItemCoordinator.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
 				62E632EF267D43320063E547 /* LibraryFilterViewModel.swift in Sources */,
 				E18CC83F27A4A03B00D8A284 /* DownloadTracker.swift in Sources */,
@@ -2572,6 +2588,7 @@
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
 				E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */,
+				E15FBA8927A8757800B6EB71 /* DownloadItemViewModel.swift in Sources */,
 				E126F741278A656C00A522BF /* ServerStreamType.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
@@ -2580,6 +2597,7 @@
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				E13DD3EF27178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */,
+				E15FBA8727A8676300B6EB71 /* LineProgressBar.swift in Sources */,
 				E10D87DE278510E400BD264C /* PosterSize.swift in Sources */,
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
@@ -2611,7 +2629,6 @@
 				E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */,
 				E14B4143279354770016CBE5 /* LocalizedLookup.swift in Sources */,
 				628B95272670CABD0091AF3B /* NextUpWidget.swift in Sources */,
-				E13DD3F72717E87D009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */,
 				6220D0AF26D5EABE00B8E046 /* ViewExtensions.swift in Sources */,
 				E13DD3D7271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
@@ -2625,6 +2642,7 @@
 				5D1603FE278A40DC00D22B99 /* SubtitleSize.swift in Sources */,
 				E1AA332427829B5200F6439C /* OverlayType.swift in Sources */,
 				E1D4BF8C2719F39F00A11E64 /* AppAppearance.swift in Sources */,
+				E1DBCC1827AC6C0500FEF87C /* SwiftfinNotificationCenter.swift in Sources */,
 				E1A2C15D279A7D9F005EC829 /* AppIcon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2975,7 +2993,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -3012,7 +3030,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -3040,7 +3058,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.dev.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
@@ -3067,7 +3085,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.dev.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;

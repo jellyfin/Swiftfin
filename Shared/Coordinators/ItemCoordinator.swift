@@ -23,6 +23,8 @@ final class ItemCoordinator: NavigationCoordinatable {
 	var library = makeLibrary
 	@Route(.modal)
 	var itemOverview = makeItemOverview
+    @Route(.modal)
+    var downloadItem = makeDownloadItem
 	@Route(.fullScreen)
 	var videoPlayer = makeVideoPlayer
 
@@ -43,6 +45,10 @@ final class ItemCoordinator: NavigationCoordinatable {
 	func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
 		NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
 	}
+    
+    func makeDownloadItem(viewModel: ItemViewModel) -> NavigationViewCoordinator<DownloadItemCoordinator> {
+        NavigationViewCoordinator(DownloadItemCoordinator(viewModel: viewModel))
+    }
 
 	func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
 		NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))

@@ -15,6 +15,8 @@ class ItemViewModel: ViewModel {
 
 	@Published
 	var item: BaseItemDto
+    @Published
+    var downloadTracker: DownloadTracker?
 	@Published
 	var playButtonItem: BaseItemDto? {
 		didSet {
@@ -35,6 +37,8 @@ class ItemViewModel: ViewModel {
 	@Published
 	var selectedVideoPlayerViewModel: VideoPlayerViewModel?
 	var videoPlayerViewModels: [VideoPlayerViewModel] = []
+    
+    private(set) var isDownloaded: Bool
 
 	init(item: BaseItemDto) {
 		self.item = item
@@ -51,14 +55,17 @@ class ItemViewModel: ViewModel {
 
 		isFavorited = item.userData?.isFavorite ?? false
 		isWatched = item.userData?.played ?? false
+        
+        isDownloaded = DownloadManager.main.hasDownloadDirectory(for: item)
+        
 		super.init()
+        
+        setupDownloadTracker()
 
 		getSimilarItems()
-
-		SwiftfinNotificationCenter.main.addObserver(self,
-		                                            selector: #selector(receivedStopReport(_:)),
-		                                            name: SwiftfinNotificationCenter.Keys.didSendStopReport,
-		                                            object: nil)
+        
+        Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
+        Notifications[.didAddDownload].subscribe(self, selector: #selector(receivedDownloadAdded))
 
 		refreshItemVideoPlayerViewModel(for: item)
 	}
@@ -72,9 +79,25 @@ class ItemViewModel: ViewModel {
 		} else {
 			// Remove if necessary. Note that this cannot be in deinit as
 			// holding as an observer won't allow the object to be deinit-ed
-			SwiftfinNotificationCenter.main.removeObserver(self)
+            Notifications.unsubscribe(self)
 		}
 	}
+    
+    @objc private func receivedDownloadAdded() {
+        setupDownloadTracker()
+    }
+    
+    private func setupDownloadTracker() {
+        self.downloadTracker = DownloadManager.main.offlineItem(for: item)?.downloadTracker
+        
+        if let downloadTracker = downloadTracker {
+            downloadTracker.$state
+                .sink { downloadState in
+                    self.isDownloaded = DownloadManager.main.hasDownloadDirectory(for: self.item)
+                }
+                .store(in: &cancellables)
+        }
+    }
 
 	func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
 		guard item.itemType == .episode || item.itemType == .movie else { return }

@@ -37,7 +37,7 @@ struct OfflineSettingsView: View {
             
             Button {
                 Defaults[.inOfflineMode] = false
-                SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.toggleOfflineMode, object: false)
+                Notifications[.toggleOfflineMode].post(object: false)
                 settingsRouter.dismissCoordinator()
             } label: {
                 Text("Enter Online Mode")

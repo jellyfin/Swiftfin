@@ -21,10 +21,7 @@ final class OfflineHomeViewModel: ViewModel {
         
         self.offlineItems = DownloadManager.main.getOfflineItems()
         
-        SwiftfinNotificationCenter.main.addObserver(self,
-                                                    selector: #selector(didDeleteItem),
-                                                    name: SwiftfinNotificationCenter.Keys.didDeleteOfflineItem,
-                                                    object: nil)
+        Notifications[.didDeleteOfflineItem].subscribe(self, selector: #selector(didDeleteItem))
     }
     
     @objc private func didDeleteItem() {

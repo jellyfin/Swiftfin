@@ -10,94 +10,68 @@ import SwiftUI
 
 struct DownloadListView: View {
     
-    @State var downloads: [DownloadTracker] = []
+    @State
+    var downloads: [OfflineItem] = []
     
     var body: some View {
         ScrollView {
             
-            Button {
-                let _ = DownloadManager.main.getOfflineItems()
-            } label: {
-                Text("Try get offline items")
-            }
-            
-            Text("Storage Used: \(DownloadManager.main.totalStorageUsed)")
-            
             VStack {
                 ForEach(downloads, id: \.self) { download in
-                    DownloadTrackerRow(tracker: download)
+                    DownloadTrackerRow(offlineItem: download) { item in
+                        // TODO: Deeplink to online item
+                    }
                 }
             }
         }
         .onAppear {
-            downloads = Array(DownloadManager.main.trackers)
+            downloads = DownloadManager.main.offlineItems.sorted(by: { $0.downloadDate < $1.downloadDate })
         }
     }
 }
 
-struct DownloadTrackerRow: View {
+struct DownloadTrackerRow<ItemType: OfflineItem>: View {
     
-    @ObservedObject var tracker: DownloadTracker
+    let offlineItem: ItemType
+    let selectedAction: (ItemType) -> Void
     
     var body: some View {
-        HStack {
-            
-            Color.gray
-                .frame(width: 100, height: 80)
-            
-            VStack(alignment: .leading) {
-                Text(tracker.item.title)
-                    .fontWeight(.medium)
-                
-                if tracker.item.itemType == .episode {
-                    Text(tracker.item.getEpisodeLocator() ?? "--")
-                        .font(.subheadline)
+        Button {
+            selectedAction(offlineItem)
+        } label: {
+            HStack {
+                if let backdropImageURL = offlineItem.backdropImageURL {
+                    ImageView(src: backdropImageURL )
+                        .frame(width: 130, height: 100)
+                        .cornerRadius(5)
+                } else {
+                    Color.gray
+                        .frame(width: 130, height: 100)
+                        .cornerRadius(5)
                 }
+                
+                VStack(alignment: .leading) {
+                    Text(offlineItem.item.title)
+                        .fontWeight(.medium)
+                        .foregroundColor(Color(UIColor.label))
+                    
+                    if offlineItem.item.itemType == .episode {
+                        Text(offlineItem.item.getEpisodeLocator() ?? "--")
+                            .font(.subheadline)
+                            .foregroundColor(Color(UIColor.secondaryLabel))
+                    }
+                    
+                    Spacer()
+                    
+                    Text(offlineItem.storage)
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+                }
+                .padding(.vertical, 2)
                 
                 Spacer()
-                
-                HStack {
-                    switch tracker.state {
-                    case .idle:
-                        Button {
-                            tracker.start()
-                        } label: {
-                            Text("Start")
-                        }
-                    case .downloading:
-                        Button {
-                            tracker.pause()
-                        } label: {
-                            Text("Pause")
-                        }
-                        
-                        Text("\(tracker.progress * 100)")
-                    case .paused:
-                        Button {
-                            tracker.resume()
-                        } label: {
-                            Text("Resume")
-                        }
-                    case .cancelled:
-                        Text("Cancelled")
-                            .foregroundColor(.red)
-                    case .done:
-                        Text("Complete")
-                    case .error:
-                        Text("Error")
-                            .foregroundColor(.red)
-                    }
-                }
-                .font(.subheadline)
             }
-            .padding(.vertical, 2)
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .font(.system(size: 24))
         }
-        .frame(height: 80)
-        .padding(.horizontal)
+        .padding()
     }
 }

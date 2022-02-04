@@ -138,6 +138,7 @@ extension BaseItemDto {
                                                             shouldShowAutoPlay: shouldShowAutoPlay,
                                                             container: currentMediaSource.container ?? "",
                                                             filename: fileName,
+                                                            fileSize: currentMediaSource.size,
                                                             versionName: currentMediaSource.name)
 
             viewModels.append(videoPlayerViewModel)

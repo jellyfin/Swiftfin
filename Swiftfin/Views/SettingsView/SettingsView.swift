@@ -94,7 +94,7 @@ struct SettingsView: View {
             if Defaults[.Experimental.downloadsEnabled] {
                 Button {
                     Defaults[.inOfflineMode] = true
-                    SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.toggleOfflineMode, object: true)
+                    Notifications[.toggleOfflineMode].post(object: true)
                     settingsRouter.dismissCoordinator()
                 } label: {
                     Text("Enter Offline Mode")

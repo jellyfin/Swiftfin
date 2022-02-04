@@ -62,18 +62,6 @@ private struct ItemView: View {
 		Group {
 			if hSizeClass == .compact && vSizeClass == .regular {
 				ItemPortraitMainView()
-                    .toolbar {
-                        ToolbarItemGroup(placement: .navigationBarTrailing) {
-                            Button {
-                                guard let vm = viewModel.videoPlayerViewModels.first else { return }
-                                guard !DownloadManager.main.hasLocalFile(for: vm.item, fileName: vm.filename ?? "none") else { print("File exists"); return }
-                                
-                                DownloadManager.main.addDownload(playbackInfo: vm.response, item: vm.item, fileName: vm.filename ?? "none")
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                            }
-                        }
-                    }
 					.environmentObject(viewModel)
 			} else {
 				ItemLandscapeMainView()

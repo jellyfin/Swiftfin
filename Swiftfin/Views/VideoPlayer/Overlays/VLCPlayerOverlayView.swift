@@ -443,6 +443,7 @@ struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
 	                                                       shouldShowAutoPlay: true,
 	                                                       container: "",
 	                                                       filename: nil,
+                                                           fileSize: nil,
 	                                                       versionName: nil)
 
 	static var previews: some View {

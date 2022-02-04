@@ -33,5 +33,6 @@ final class OfflineItemCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         OfflineItemView(offlineItem: offlineItem)
+            .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -38,7 +38,7 @@ struct ExperimentalSettingsView: View {
             .onChange(of: downloadsEnabled) { enabled in
                 if !enabled {
                     Defaults[.inOfflineMode] = false
-                    SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.toggleOfflineMode, object: false)
+                    Notifications[.toggleOfflineMode].post(object: false)
                 }
             }
 		}

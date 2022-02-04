@@ -8,22 +8,62 @@
 
 import Foundation
 
-enum SwiftfinNotificationCenter {
+class SwiftfinNotification {
+    
+    private let notificationName: Notification.Name
+    
+    fileprivate init(_ notificationName: Notification.Name) {
+        self.notificationName = notificationName
+    }
+    
+    func post(object: Any? = nil) {
+        Notifications.main.post(name: notificationName, object: object)
+    }
+    
+    func subscribe(_ observer: Any, selector: Selector) {
+        Notifications.main.addObserver(observer, selector: selector, name: notificationName, object: nil)
+    }
+}
 
-	static let main: NotificationCenter = {
-		NotificationCenter()
-	}()
+enum Notifications {
+    
+    static let main: NotificationCenter = {
+       NotificationCenter()
+    }()
+    
+    public final class Key {
+        public typealias NotificationKey = Notifications.Key
+        
+        public let key: String
+        public let underlyingNotification: SwiftfinNotification
 
-	enum Keys {
-		static let didSignIn = Notification.Name("didSignIn")
-		static let didSignOut = Notification.Name("didSignOut")
-		static let processDeepLink = Notification.Name("processDeepLink")
-		static let didPurge = Notification.Name("didPurge")
-		static let didChangeServerCurrentURI = Notification.Name("didChangeCurrentLoginURI")
-        static let toggleOfflineMode = Notification.Name("toggleOfflineMode")
-        static let didDeleteOfflineItem = Notification.Name("didDeleteOfflineItem")
+        public init(_ key: String) {
+            self.key = key
+            self.underlyingNotification = SwiftfinNotification(Notification.Name(key))
+        }
+    }
 
-		// Send with an item id to check if current item for item views
-		static let didSendStopReport = Notification.Name("didSendStopReport")
-	}
+    public static subscript(key: Key) -> SwiftfinNotification {
+        return key.underlyingNotification
+    }
+    
+    public static func unsubscribe(_ observer: Any) {
+        main.removeObserver(observer)
+    }
+}
+
+extension Notifications.Key {
+    
+    static let didSignIn = NotificationKey("didSignIn")
+    static let didSignOut = NotificationKey("didSignOut")
+    static let processDeepLink = NotificationKey("processDeepLink")
+    static let didPurge = NotificationKey("didPurge")
+    static let didChangeServerCurrentURI = NotificationKey("didChangeCurrentLoginURI")
+    static let toggleOfflineMode = NotificationKey("toggleOfflineMode")
+    static let didDeleteOfflineItem = NotificationKey("didDeleteOfflineItem")
+    static let didAddDownload = NotificationKey("didAddDownload")
+
+    // Send with an item id to check if current item for item views
+    static let didSendStopReport = NotificationKey("didSendStopReport")
+    
 }

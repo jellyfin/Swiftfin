@@ -21,13 +21,39 @@ enum DownloadState {
     case error
 }
 
-struct OfflineItem: Hashable {
+class OfflineItem: Equatable, Hashable {
     let playbackInfo: PlaybackInfoResponse
     let item: BaseItemDto
     let itemDirectory: URL
+    let primaryImageURL: URL?
     let backdropImageURL: URL?
+    let downloadTracker: DownloadTracker?
+    let downloadDate = Date.now
+    
     var storage: String {
         return try! itemDirectory.sizeOnDisk() ?? "-- MB"
+    }
+    
+    init(playbackInfo: PlaybackInfoResponse,
+         item: BaseItemDto,
+         itemDirectory: URL,
+         primaryImageURL: URL?,
+         backdropImageURL: URL?,
+         downloadTracker: DownloadTracker?) {
+        self.playbackInfo = playbackInfo
+        self.item = item
+        self.itemDirectory = itemDirectory
+        self.primaryImageURL = primaryImageURL
+        self.backdropImageURL = backdropImageURL
+        self.downloadTracker = downloadTracker
+    }
+    
+    static func ==(lhs: OfflineItem, rhs: OfflineItem) -> Bool {
+        return lhs.item == rhs.item
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(item)
     }
 }
 
@@ -40,7 +66,6 @@ class DownloadTracker: ObservableObject {
     let playbackInfo: PlaybackInfoResponse
     let item: BaseItemDto
     let itemDirectory: URL
-    let markDate: Date
     
     init(_ downloadRequest: DownloadRequest,
          playbackInfo: PlaybackInfoResponse,
@@ -50,7 +75,6 @@ class DownloadTracker: ObservableObject {
         self.playbackInfo = playbackInfo
         self.item = item
         self.itemDirectory = itemDirectory
-        self.markDate = Date.now
     }
     
     func start() {
@@ -59,7 +83,8 @@ class DownloadTracker: ObservableObject {
         state = .downloading
         
         saveMetadata()
-        saveBackdrop()
+        saveBackdropImage()
+        savePrimaryImage()
         
         downloadRequest
             .downloadProgress { progress in
@@ -71,9 +96,15 @@ class DownloadTracker: ObservableObject {
                     self.state = .error
                     print(error.errorDescription ?? "error with download")
                 } else {
-                    DownloadManager.main.removeDownload(self)
+//                    DownloadManager.main.removeDownload(self)
                     
                     self.state = .done
+                    
+                    do {
+                        try self.moveToDownloads()
+                    } catch {
+                        self.state = .error
+                    }
                 }
             }
     }
@@ -115,8 +146,8 @@ class DownloadTracker: ObservableObject {
         try! playbackJson?.write(to: playbackFileURL, atomically: true, encoding: .utf8)
     }
     
-    private func saveBackdrop() {
-        let backdropImageURL = item.getBackdropImage(maxWidth: 150)
+    private func saveBackdropImage() {
+        let backdropImageURL = item.getBackdropImage(maxWidth: 500)
 
         let destination: DownloadRequest.Destination = { _, _ in
             let mediaFileURL = self.itemDirectory.appendingPathComponent("backdrop.png")
@@ -128,18 +159,53 @@ class DownloadTracker: ObservableObject {
         afDownload
             .responseData { response in
                 if let _ = response.error {
-                    LogManager.shared.log.error("Error downloading item backdrop")
+                    LogManager.shared.log.error("Error downloading item backdrop image")
                 } else {
                     //
                 }
             }
+    }
+    
+    private func savePrimaryImage() {
+        
+        let backdropImageURL: URL
+        
+        if item.itemType == .episode {
+            backdropImageURL = item.getSeriesPrimaryImage(maxWidth: 300)
+        } else {
+            backdropImageURL = item.getPrimaryImage(maxWidth: 300)
+        }
+
+        let destination: DownloadRequest.Destination = { _, _ in
+            let mediaFileURL = self.itemDirectory.appendingPathComponent("primary.png")
+            
+            return (mediaFileURL, [.removePreviousFile, .createIntermediateDirectories])
+        }
+        
+        let afDownload = AF.download(backdropImageURL, to: destination)
+        afDownload
+            .responseData { response in
+                if let _ = response.error {
+                    LogManager.shared.log.error("Error downloading item primary image")
+                } else {
+                    //
+                }
+            }
+    }
+    
+    private func moveToDownloads() throws {
+        guard let itemID = item.id else { throw JellyfinAPIError("Cannot get item ID") }
+        let itemTmpDirectory = DownloadManager.main.tmpDirectory.appendingPathComponent(itemID, isDirectory: true)
+        let itemDownloadDirectory = DownloadManager.main.downloadsDirectory.appendingPathComponent(itemID, isDirectory: true)
+        
+        try FileManager.default.moveItem(atPath: itemTmpDirectory.path, toPath: itemDownloadDirectory.path)
     }
 }
 
 extension DownloadTracker: Hashable, Equatable {
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(markDate)
+        hasher.combine(item.id ?? "none")
         hasher.combine(downloadRequest.id)
     }
     

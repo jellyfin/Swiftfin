@@ -121,6 +121,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let streamType: ServerStreamType
 	let container: String
 	let filename: String?
+    let fileSize: Int64?
 	let versionName: String?
 
 	// MARK: Experimental
@@ -183,6 +184,14 @@ final class VideoPlayerViewModel: ViewModel {
 
 		return nil
 	}
+    
+    var friendlyStorage: String? {
+        guard let fileSize = fileSize else { return nil }
+
+        let byteCountFormatter = ByteCountFormatter()
+        byteCountFormatter.countStyle = .file
+        return byteCountFormatter.string(fromByteCount: fileSize)
+    }
 
 	// Necessary PassthroughSubject to capture manual scrubbing from sliders
 	let sliderScrubbingSubject = PassthroughSubject<VideoPlayerViewModel, Never>()
@@ -216,6 +225,7 @@ final class VideoPlayerViewModel: ViewModel {
 	     shouldShowAutoPlay: Bool,
 	     container: String,
 	     filename: String?,
+         fileSize: Int64?,
 	     versionName: String?)
 	{
 		self.item = item
@@ -240,6 +250,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.shouldShowAutoPlay = shouldShowAutoPlay
 		self.container = container
 		self.filename = filename
+        self.fileSize = fileSize
 		self.versionName = versionName
 
 		self.jumpBackwardLength = Defaults[.videoPlayerJumpBackward]
@@ -606,8 +617,7 @@ extension VideoPlayerViewModel {
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
 				LogManager.shared.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
-				SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSendStopReport,
-				                                     object: self.item.id)
+                Notifications[.didSendStopReport].post(object: self.item.id)
 			}
 			.store(in: &cancellables)
 	}

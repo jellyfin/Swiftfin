@@ -152,20 +152,59 @@ struct PortraitHeaderOverlayView: View {
 				Spacer()
 
 				if viewModel.item.itemType.showDetails {
+                    
+                    // MARK: Download
+                    
+                    Button {
+                        itemRouter.route(to: \.downloadItem, viewModel)
+                    } label: {
+                        Group {
+                            if let downloadTracker = viewModel.downloadTracker {
+                                switch downloadTracker.state {
+                                case .downloading, .idle:
+                                    Image(systemName: "arrow.down.circle")
+                                        .foregroundColor(Color(UIColor.systemBlue))
+                                case .paused:
+                                    Image(systemName: "arrow.down.circle")
+                                        .foregroundColor(.yellow)
+                                case .error:
+                                    Image(systemName: "arrow.down.circle")
+                                        .foregroundColor(.red)
+                                case .done:
+                                    Image(systemName: "arrow.down.circle.fill")
+                                        .foregroundColor(.green)
+                                case .cancelled:
+                                    Image(systemName: "arrow.down.circle")
+                                        .foregroundColor(.primary)
+                                }
+                            } else {
+                                if viewModel.isDownloaded {
+                                    Image(systemName: "arrow.down.circle.fill")
+                                        .foregroundColor(.green)
+                                } else {
+                                    Image(systemName: "arrow.down.circle")
+                                        .foregroundColor(.primary)
+                                }
+                            }
+                        }
+                        .font(.system(size: 22))
+                    }
+                    
 					// MARK: Favorite
 
 					Button {
 						viewModel.updateFavoriteState()
 					} label: {
-						if viewModel.isFavorited {
-							Image(systemName: "heart.fill")
-								.foregroundColor(Color(UIColor.systemRed))
-								.font(.system(size: 20))
-						} else {
-							Image(systemName: "heart")
-								.foregroundColor(Color.primary)
-								.font(.system(size: 20))
-						}
+                        Group {
+                            if viewModel.isFavorited {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(Color(UIColor.systemRed))
+                            } else {
+                                Image(systemName: "heart")
+                                    .foregroundColor(Color.primary)
+                            }
+                        }
+                        .font(.system(size: 22))
 					}
 					.disabled(viewModel.isLoading)
 
@@ -174,15 +213,16 @@ struct PortraitHeaderOverlayView: View {
 					Button {
 						viewModel.updateWatchState()
 					} label: {
-						if viewModel.isWatched {
-							Image(systemName: "checkmark.circle.fill")
-								.foregroundColor(Color.jellyfinPurple)
-								.font(.system(size: 20))
-						} else {
-							Image(systemName: "checkmark.circle")
-								.foregroundColor(Color.primary)
-								.font(.system(size: 20))
-						}
+                        Group {
+                            if viewModel.isWatched {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(Color.jellyfinPurple)
+                            } else {
+                                Image(systemName: "checkmark.circle")
+                                    .foregroundColor(Color.primary)
+                            }
+                        }
+                        .font(.system(size: 22))
 					}
 					.disabled(viewModel.isLoading)
 				}

@@ -18,7 +18,8 @@ class DownloadManager {
     static let main = DownloadManager()
     
     let downloadsDirectory: URL
-    private(set) var trackers = Set<DownloadTracker>()
+    let tmpDirectory: URL
+    private(set) var offlineItems = Set<OfflineItem>()
     
     private init() {
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -29,6 +30,7 @@ class DownloadManager {
                                                  attributes: nil)
         
         self.downloadsDirectory = downloadsDirectory
+        self.tmpDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
     }
     
     var totalStorageUsed: Int {
@@ -42,28 +44,38 @@ class DownloadManager {
         }
     }
     
-    func addDownload(playbackInfo: PlaybackInfoResponse, item: BaseItemDto, fileName: String) {
-        guard let itemFileURL = item.getDownloadURL() else { return }
+    func addDownload(playbackInfo: PlaybackInfoResponse, item: BaseItemDto, fileName: String) throws {
+        guard let itemID = item.id else { throw JellyfinAPIError("Cannot get item ID") }
+        guard let itemFileURL = item.getDownloadURL() else { throw JellyfinAPIError("Cannot get item download URL") }
         
-        let itemDirectory = downloadsDirectory.appendingPathComponent("\(item.id ?? "error")", isDirectory: true)
+        let itemTmpDirectory = tmpDirectory.appendingPathComponent(itemID, isDirectory: true)
 
         let destination: DownloadRequest.Destination = { _, _ in
-            let mediaFileURL = itemDirectory.appendingPathComponent(fileName)
+            let mediaFileURL = itemTmpDirectory.appendingPathComponent(fileName)
             
             return (mediaFileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
         
         let afDownload = AF.download(itemFileURL, to: destination)
-        let newDownload = DownloadTracker(afDownload,
-                                          playbackInfo: playbackInfo,
-                                          item: item,
-                                          itemDirectory: itemDirectory)
+        let newDownloadTracker = DownloadTracker(afDownload,
+                                                 playbackInfo: playbackInfo,
+                                                 item: item,
+                                                 itemDirectory: itemTmpDirectory)
         
-        trackers.insert(newDownload)
+        let newOfflineItem = OfflineItem(playbackInfo: playbackInfo,
+                                         item: item,
+                                         itemDirectory: itemTmpDirectory,
+                                         primaryImageURL: item.getPrimaryImage(maxWidth: 300),
+                                         backdropImageURL: item.getBackdropImage(maxWidth: 500),
+                                         downloadTracker: newDownloadTracker)
+        
+        offlineItems.insert(newOfflineItem)
+        
+        Notifications[.didAddDownload].post()
     }
     
-    func removeDownload(_ download: DownloadTracker) {
-        self.trackers.remove(download)
+    func removeDownload(offlineItem: OfflineItem) {
+        self.offlineItems.remove(offlineItem)
     }
     
     func hasLocalFile(for item: BaseItemDto, fileName: String) -> Bool {
@@ -75,6 +87,16 @@ class DownloadManager {
         return downloadsDirectory.appendingPathComponent("\(item.id ?? "none")/\(fileName)")
     }
     
+    func hasDownloadDirectory(for item: BaseItemDto) -> Bool {
+        var isDir: ObjCBool = true
+        let itemDirectory = downloadsDirectory.appendingPathComponent("\(item.id ?? "none")", isDirectory: true)
+        return FileManager.default.fileExists(atPath: itemDirectory.path, isDirectory: &isDir)
+    }
+    
+    func offlineItem(for item: BaseItemDto) -> OfflineItem? {
+        return offlineItems.first(where: { $0.item.id == item.id })
+    }
+    
     // MARK: GetOfflineItems
     func getOfflineItems() -> [OfflineItem] {
         do {
@@ -84,40 +106,14 @@ class DownloadManager {
             
             for itemDirectory in downloadDirectoryContents {
                 let itemDirectory = downloadsDirectory.appendingPathComponent(itemDirectory, isDirectory: true)
-                let itemContents = try FileManager.default.contentsOfDirectory(atPath: itemDirectory.path)
-                
-                guard itemContents.count >= 3 else { continue }
-                
-                guard let itemJSONFile = itemContents.first(where: { $0 == "item.json" }),
-                      let playbackJSONFile = itemContents.first(where: { $0 == "playbackInfo.json" }) else { continue }
-                
-                let itemJSONPath = itemDirectory.appendingPathComponent(itemJSONFile)
-                let playbackJSONPath = itemDirectory.appendingPathComponent(playbackJSONFile)
-                
-                guard let itemJSONData = FileManager.default.contents(atPath: itemJSONPath.path),
-                      let playbackJSONData = FileManager.default.contents(atPath: playbackJSONPath.path) else { continue }
-                
-                let decoder = JSONDecoder()
-                
-                let item = try decoder.decode(BaseItemDto.self, from: itemJSONData)
-                let playbackInfo = try decoder.decode(PlaybackInfoResponse.self, from: playbackJSONData)
-                
-                let backdropImageURL: URL?
-                
-                if let backdropFile = itemContents.first(where: { $0 == "backdrop.png" }),
-                   let _ = FileManager.default.contents(atPath: itemDirectory.appendingPathComponent(backdropFile).path) {
+
+                do {
+                    let newOfflineItem = try parseOfflineItem(at: itemDirectory)
                     
-                    backdropImageURL = itemDirectory.appendingPathComponent(backdropFile)
-                } else {
-                    backdropImageURL = nil
+                    offlineItems.append(newOfflineItem)
+                } catch {
+                    //
                 }
-                
-                let newOfflineItem = OfflineItem(playbackInfo: playbackInfo,
-                                                 item: item,
-                                                 itemDirectory: itemDirectory,
-                                                 backdropImageURL: backdropImageURL)
-                
-                offlineItems.append(newOfflineItem)
             }
             
             return offlineItems
@@ -126,9 +122,76 @@ class DownloadManager {
         }
     }
     
+    func getTmpSize() -> String {
+        return (try? tmpDirectory.sizeOnDisk()) ?? "none"
+    }
+    
+    func clearTmpDirectory() {
+        DispatchQueue.global(qos: .background).async {
+            let tmpContents = try! FileManager.default.contentsOfDirectory(atPath: self.tmpDirectory.path)
+
+            for content in tmpContents {
+                let fullContent = self.tmpDirectory.appendingPathComponent(content, isDirectory: true)
+
+                try! FileManager.default.removeItem(atPath: fullContent.path)
+
+                print("Removed: \(content)")
+            }
+        }
+    }
+    
     func deleteItem(_ offlineItem: OfflineItem) {
         try! FileManager.default.removeItem(at: offlineItem.itemDirectory)
         
-        SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didDeleteOfflineItem, object: nil)
+        Notifications[.didDeleteOfflineItem].post(object: nil)
+    }
+    
+    private func parseOfflineItem(at itemDirectory: URL) throws -> OfflineItem {
+        let itemContents = try FileManager.default.contentsOfDirectory(atPath: itemDirectory.path)
+        
+        guard itemContents.count >= 3 else { throw JellyfinAPIError("Wrong number of base items") }
+        
+        guard let itemJSONFile = itemContents.first(where: { $0 == "item.json" }),
+              let playbackJSONFile = itemContents.first(where: { $0 == "playbackInfo.json" }) else { throw JellyfinAPIError("Cannot find item or playback info json files") }
+        
+        let itemJSONPath = itemDirectory.appendingPathComponent(itemJSONFile)
+        let playbackJSONPath = itemDirectory.appendingPathComponent(playbackJSONFile)
+        
+        guard let itemJSONData = FileManager.default.contents(atPath: itemJSONPath.path),
+              let playbackJSONData = FileManager.default.contents(atPath: playbackJSONPath.path) else { throw JellyfinAPIError("Cannot properly open item or playback info json files") }
+        
+        let decoder = JSONDecoder()
+        
+        let item = try decoder.decode(BaseItemDto.self, from: itemJSONData)
+        let playbackInfo = try decoder.decode(PlaybackInfoResponse.self, from: playbackJSONData)
+        
+        let backdropImageURL: URL?
+        
+        if let backdropFile = itemContents.first(where: { $0 == "backdrop.png" }),
+           let _ = FileManager.default.contents(atPath: itemDirectory.appendingPathComponent(backdropFile).path) {
+            
+            backdropImageURL = itemDirectory.appendingPathComponent(backdropFile)
+        } else {
+            backdropImageURL = nil
+        }
+        
+        let primaryImageURL: URL?
+        
+        if let primaryFile = itemContents.first(where: { $0 == "primary.png" }),
+           let _ = FileManager.default.contents(atPath: itemDirectory.appendingPathComponent(primaryFile).path) {
+            
+            primaryImageURL = itemDirectory.appendingPathComponent(primaryFile)
+        } else {
+            primaryImageURL = nil
+        }
+        
+        let newOfflineItem = OfflineItem(playbackInfo: playbackInfo,
+                                         item: item,
+                                         itemDirectory: itemDirectory,
+                                         primaryImageURL: primaryImageURL,
+                                         backdropImageURL: backdropImageURL,
+                                         downloadTracker: nil)
+        
+        return newOfflineItem
     }
 }
