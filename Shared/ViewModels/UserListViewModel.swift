@@ -12,11 +12,11 @@ import SwiftUI
 class UserListViewModel: ViewModel {
 
 	@Published
-	var users: [SwiftfinStore.State.User] = []
+	var users: [UserState] = []
 
-	var server: SwiftfinStore.State.Server
+	var server: ServerState
 
-	init(server: SwiftfinStore.State.Server) {
+	init(server: ServerState) {
 		self.server = server
 
 		super.init()
@@ -26,7 +26,7 @@ class UserListViewModel: ViewModel {
 
 	@objc
 	func didChangeCurrentLoginURI(_ notification: Notification) {
-		guard let newServerState = notification.object as? SwiftfinStore.State.Server else { fatalError("Need to have new state server") }
+		guard let newServerState = notification.object as? ServerState else { fatalError("Need to have new state server") }
 		self.server = newServerState
 	}
 
@@ -34,12 +34,12 @@ class UserListViewModel: ViewModel {
 		self.users = SessionManager.main.fetchUsers(for: server)
 	}
 
-	func login(user: SwiftfinStore.State.User) {
+	func login(user: UserState) {
 		self.isLoading = true
 		SessionManager.main.loginUser(server: server, user: user)
 	}
 
-	func remove(user: SwiftfinStore.State.User) {
+	func remove(user: UserState) {
 		SessionManager.main.delete(user: user)
 		fetchUsers()
 	}

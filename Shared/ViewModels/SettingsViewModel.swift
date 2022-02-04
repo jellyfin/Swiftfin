@@ -15,10 +15,10 @@ final class SettingsViewModel: ObservableObject {
 	var bitrates: [Bitrates] = []
 	var langs: [TrackLanguage] = []
 
-	let server: SwiftfinStore.State.Server
-	let user: SwiftfinStore.State.User
+	let server: ServerState
+	let user: UserState
 
-	init(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
+	init(server: ServerState, user: UserState) {
 
 		self.server = server
 		self.user = user

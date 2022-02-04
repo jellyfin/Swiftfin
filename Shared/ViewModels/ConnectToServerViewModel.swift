@@ -13,7 +13,7 @@ import Stinsen
 
 struct AddServerURIPayload: Identifiable {
 
-	let server: SwiftfinStore.State.Server
+	let server: ServerState
 	let uri: String
 
 	var id: String {

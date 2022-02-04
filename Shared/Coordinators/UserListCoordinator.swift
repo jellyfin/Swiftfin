@@ -27,11 +27,11 @@ final class UserListCoordinator: NavigationCoordinatable {
 		self.viewModel = viewModel
 	}
 
-	func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
+	func makeUserSignIn(server: ServerState) -> UserSignInCoordinator {
 		UserSignInCoordinator(viewModel: .init(server: server))
 	}
 
-	func makeServerDetail(server: SwiftfinStore.State.Server) -> ServerDetailCoordinator {
+	func makeServerDetail(server: ServerState) -> ServerDetailCoordinator {
 		ServerDetailCoordinator(viewModel: .init(server: server))
 	}
 

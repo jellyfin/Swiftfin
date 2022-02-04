@@ -23,6 +23,10 @@ class SwiftfinNotification {
     func subscribe(_ observer: Any, selector: Selector) {
         Notifications.main.addObserver(observer, selector: selector, name: notificationName, object: nil)
     }
+    
+    func unsubscribe(_ observer: Any) {
+        Notifications.main.removeObserver(self, name: notificationName, object: nil)
+    }
 }
 
 enum Notifications {
@@ -31,7 +35,7 @@ enum Notifications {
        NotificationCenter()
     }()
     
-    public final class Key {
+    final class Key {
         public typealias NotificationKey = Notifications.Key
         
         public let key: String
@@ -43,11 +47,11 @@ enum Notifications {
         }
     }
 
-    public static subscript(key: Key) -> SwiftfinNotification {
+    static subscript(key: Key) -> SwiftfinNotification {
         return key.underlyingNotification
     }
     
-    public static func unsubscribe(_ observer: Any) {
+    static func unsubscribe(_ observer: Any) {
         main.removeObserver(observer)
     }
 }
@@ -62,8 +66,5 @@ extension Notifications.Key {
     static let toggleOfflineMode = NotificationKey("toggleOfflineMode")
     static let didDeleteOfflineItem = NotificationKey("didDeleteOfflineItem")
     static let didAddDownload = NotificationKey("didAddDownload")
-
-    // Send with an item id to check if current item for item views
     static let didSendStopReport = NotificationKey("didSendStopReport")
-    
 }

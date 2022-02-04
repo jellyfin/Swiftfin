@@ -12,9 +12,9 @@ import JellyfinAPI
 class ServerDetailViewModel: ViewModel {
 
 	@Published
-	var server: SwiftfinStore.State.Server
+	var server: ServerState
 
-	init(server: SwiftfinStore.State.Server) {
+	init(server: ServerState) {
 		self.server = server
 	}
 

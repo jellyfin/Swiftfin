@@ -90,7 +90,7 @@ final class MainCoordinator: NavigationCoordinatable {
 
 	@objc
 	func didChangeServerCurrentURI(_ notification: Notification) {
-		guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server
+		guard let newCurrentServerState = notification.object as? ServerState
 		else { fatalError("Need to have new current login state server") }
 		guard SessionManager.main.currentLogin != nil else { return }
 		if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {

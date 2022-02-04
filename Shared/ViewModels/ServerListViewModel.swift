@@ -12,7 +12,7 @@ import SwiftUI
 class ServerListViewModel: ObservableObject {
 
 	@Published
-	var servers: [SwiftfinStore.State.Server] = []
+	var servers: [ServerState] = []
 
 	init() {
         
@@ -23,7 +23,7 @@ class ServerListViewModel: ObservableObject {
 		self.servers = SessionManager.main.fetchServers()
 	}
 
-	func userTextFor(server: SwiftfinStore.State.Server) -> String {
+	func userTextFor(server: ServerState) -> String {
 		if server.userIDs.count == 1 {
 			return L10n.oneUser
 		} else {
@@ -31,7 +31,7 @@ class ServerListViewModel: ObservableObject {
 		}
 	}
 
-	func remove(server: SwiftfinStore.State.Server) {
+	func remove(server: ServerState) {
 		SessionManager.main.delete(server: server)
 		fetchServers()
 	}

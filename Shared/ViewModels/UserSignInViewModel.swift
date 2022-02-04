@@ -14,9 +14,9 @@ final class UserSignInViewModel: ViewModel {
 
 	@RouterObject
 	var router: UserSignInCoordinator.Router?
-	let server: SwiftfinStore.State.Server
+	let server: ServerState
 
-	init(server: SwiftfinStore.State.Server) {
+	init(server: ServerState) {
 		self.server = server
 	}
 

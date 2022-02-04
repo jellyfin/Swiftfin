@@ -19,7 +19,7 @@ final class ConnectToServerCoodinator: NavigationCoordinatable {
 	@Route(.push)
 	var userSignIn = makeUserSignIn
 
-	func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
+	func makeUserSignIn(server: ServerState) -> UserSignInCoordinator {
 		UserSignInCoordinator(viewModel: .init(server: server))
 	}
 

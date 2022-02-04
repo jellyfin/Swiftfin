@@ -10,6 +10,13 @@ import CoreStore
 import Defaults
 import Foundation
 
+typealias ServerState = SwiftfinStore.State.Server
+typealias UserState = SwiftfinStore.State.User
+
+typealias ServerModel = SwiftfinStore.Models.StoredServer
+typealias UserModel = SwiftfinStore.Models.StoredUser
+typealias AccessTokenModel = SwiftfinStore.Models.StoredAccessToken
+
 enum SwiftfinStore {
 
 	// MARK: State
@@ -159,9 +166,9 @@ enum SwiftfinStore {
 	static let dataStack: DataStack = {
 		let schema = CoreStoreSchema(modelVersion: "V1",
 		                             entities: [
-		                             	Entity<SwiftfinStore.Models.StoredServer>("Server"),
-		                             	Entity<SwiftfinStore.Models.StoredUser>("User"),
-		                             	Entity<SwiftfinStore.Models.StoredAccessToken>("AccessToken"),
+		                             	Entity<ServerModel>("Server"),
+		                             	Entity<UserModel>("User"),
+		                             	Entity<AccessTokenModel>("AccessToken"),
 		                             ],
 		                             versionLock: [
 		                             	"AccessToken": [
