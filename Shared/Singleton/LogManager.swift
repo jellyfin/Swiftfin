@@ -9,6 +9,8 @@
 import Foundation
 import Puppy
 
+// TODO: Refactor and clean up
+
 class LogManager {
 	static let shared = LogManager()
 	let log = Puppy()

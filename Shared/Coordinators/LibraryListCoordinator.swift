@@ -20,6 +20,8 @@ final class LibraryListCoordinator: NavigationCoordinatable {
 	var search = makeSearch
 	@Route(.push)
 	var library = makeLibrary
+    @Route(.push)
+    var downloads = makeDownloads
 
 	let viewModel: LibraryListViewModel
 
@@ -34,6 +36,10 @@ final class LibraryListCoordinator: NavigationCoordinatable {
 	func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
 		SearchCoordinator(viewModel: viewModel)
 	}
+    
+    func makeDownloads() -> OfflineHomeCoordinator {
+        OfflineHomeCoordinator()
+    }
 
 	@ViewBuilder
 	func makeStart() -> some View {

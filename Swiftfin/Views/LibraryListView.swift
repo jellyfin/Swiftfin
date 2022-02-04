@@ -21,6 +21,28 @@ struct LibraryListView: View {
 	var body: some View {
 		ScrollView {
 			LazyVStack {
+                
+                Button {
+                    libraryListRouter.route(to: \.downloads)
+                } label: {
+                    ZStack {
+                        HStack {
+                            Spacer()
+                            Text("Downloads")
+                                .foregroundColor(.black)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
+                    .padding(16)
+                    .background(Color.white)
+                    .frame(minWidth: 100, maxWidth: .infinity)
+                }
+                .cornerRadius(10)
+                .shadow(radius: 5)
+                .padding(.bottom, 5)
+                
 				Button {
 					libraryListRouter.route(to: \.library,
 					                        (viewModel: LibraryViewModel(filters: viewModel.withFavorites), title: L10n.favorites))
@@ -54,7 +76,7 @@ struct LibraryListView: View {
 							                         title: library.name ?? ""))
 						} label: {
 							ZStack {
-								ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
+								ImageView( library.getPrimaryImage(maxWidth: 500), blurHash: library.getPrimaryImageBlurHash())
 									.opacity(0.4)
 									.accessibilityIgnoresInvertColors()
 								HStack {

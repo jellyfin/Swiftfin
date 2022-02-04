@@ -91,13 +91,12 @@ class DownloadTracker: ObservableObject {
                 self.progress = progress.fractionCompleted
             }
             .responseData { response in
+                guard self.state != .cancelled else { return }
                 
                 if let error = response.error {
                     self.state = .error
                     print(error.errorDescription ?? "error with download")
                 } else {
-//                    DownloadManager.main.removeDownload(self)
-                    
                     self.state = .done
                     
                     do {

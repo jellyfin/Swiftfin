@@ -10,6 +10,8 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+typealias ItemType = BaseItemDto.ItemType
+
 // 001fC^ = dark grey plain blurhash
 
 public extension BaseItemDto {
@@ -64,6 +66,10 @@ public extension BaseItemDto {
 			return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
 		}
 	}
+    
+    func getThumbImageBlurHash() -> String {
+        return ""
+    }
 
 	func getBackdropImage(maxWidth: Int) -> URL {
 		var imageType = ImageType.backdrop
@@ -241,12 +247,27 @@ public extension BaseItemDto {
 
 		var showDetails: Bool {
 			switch self {
-			case .season, .series:
+            case .season, .series, .boxset, .collectionFolder, .folder:
 				return false
 			default:
 				return true
 			}
 		}
+        
+        var localized: String {
+            switch self {
+            case .movie:
+                return L10n.movies
+            case .season:
+                return L10n.season
+            case .episode:
+                return L10n.episodes
+            case .series:
+                return L10n.series
+            default:
+                return "--"
+            }
+        }
 	}
 
 	var itemType: ItemType {

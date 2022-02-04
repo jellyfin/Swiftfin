@@ -69,22 +69,22 @@ extension APISortOrder {
 	}
 }
 
-enum ItemType: String {
-	case episode = "Episode"
-	case movie = "Movie"
-	case series = "Series"
-	case season = "Season"
-
-	var localized: String {
-		switch self {
-		case .episode:
-			return L10n.episodes
-		case .movie:
-			return "Movies"
-		case .series:
-			return "Shows"
-		default:
-			return ""
-		}
-	}
-}
+//enum ItemType: String {
+//	case episode = "Episode"
+//	case movie = "Movie"
+//	case series = "Series"
+//	case season = "Season"
+//
+//	var localized: String {
+//		switch self {
+//		case .episode:
+//			return L10n.episodes
+//		case .movie:
+//			return "Movies"
+//		case .series:
+//			return "Shows"
+//		default:
+//			return ""
+//		}
+//	}
+//}

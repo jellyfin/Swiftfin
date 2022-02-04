@@ -22,6 +22,8 @@ class DownloadManager {
     private(set) var offlineItems = Set<OfflineItem>()
     
     private init() {
+        AF.sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let downloadsDirectory = documentsDirectory.appendingPathComponent("Downloads")
         
@@ -41,6 +43,41 @@ class DownloadManager {
             return capacity
         } else {
             return 0
+        }
+    }
+    
+    var friendlyAvailableStorage: String? {
+        
+        let availableStorage: Int64
+        
+        let fileURL = URL(fileURLWithPath: NSHomeDirectory() as String)
+        do {
+            let values = try fileURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+            if let capacity = values.volumeAvailableCapacityForImportantUsage {
+                availableStorage = capacity
+            } else {
+                availableStorage = 0
+            }
+        } catch {
+            availableStorage = 0
+        }
+        
+        let byteCountFormatter = ByteCountFormatter()
+        byteCountFormatter.countStyle = .file
+        return byteCountFormatter.string(fromByteCount: availableStorage)
+    }
+    
+    func hasSpace(for fileSize: Int64) -> Bool {
+        let fileURL = URL(fileURLWithPath: NSHomeDirectory() as String)
+        do {
+            let values = try fileURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+            if let capacity = values.volumeAvailableCapacityForImportantUsage {
+                return fileSize < capacity
+            } else {
+                return false
+            }
+        } catch {
+            return false
         }
     }
     
@@ -132,10 +169,36 @@ class DownloadManager {
 
             for content in tmpContents {
                 let fullContent = self.tmpDirectory.appendingPathComponent(content, isDirectory: true)
-
-                try! FileManager.default.removeItem(atPath: fullContent.path)
+                
+                do {
+                    try FileManager.default.removeItem(atPath: fullContent.path)
+                } catch {
+                    return
+                }
 
                 print("Removed: \(content)")
+            }
+        }
+    }
+    
+    func getDownloadSize() -> String {
+        return (try? downloadsDirectory.sizeOnDisk()) ?? "none"
+    }
+    
+    func deleteAllDownloads() {
+        DispatchQueue.global(qos: .background).async {
+            let downloadContents = try! FileManager.default.contentsOfDirectory(atPath: self.downloadsDirectory.path)
+            
+            for download in downloadContents {
+                let fullContent = self.downloadsDirectory.appendingPathComponent(download, isDirectory: true)
+                
+                do {
+                    try FileManager.default.removeItem(atPath: fullContent.path)
+                } catch {
+                    return
+                }
+
+                print("Removed: \(download)")
             }
         }
     }

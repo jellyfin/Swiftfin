@@ -79,7 +79,6 @@ extension Defaults.Keys {
 		static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 		static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 		static let nativePlayer = Key<Bool>("nativePlayer", default: false, suite: SwiftfinStore.Defaults.generalSuite)
-        static let downloadsEnabled = Key<Bool>("downloadsEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 	}
 
 	// tvos specific

@@ -20,6 +20,10 @@ final class DownloadItemViewModel: ViewModel {
     @Published
     var downloadState: DownloadState = .idle
     
+    var hasSpaceForItem: Bool {
+        return DownloadManager.main.hasSpace(for: itemViewModel.selectedVideoPlayerViewModel?.fileSize ?? 0)
+    }
+    
     init(itemViewModel: ItemViewModel) {
         self.itemViewModel = itemViewModel
         
@@ -48,5 +52,21 @@ final class DownloadItemViewModel: ViewModel {
                 self.downloadState = newState
             })
             .store(in: &cancellables)
+    }
+    
+    func downloadItem() {
+        guard hasSpaceForItem else { return }
+        
+        if let selectedVideoPlayerViewModel = itemViewModel.selectedVideoPlayerViewModel {
+            do {
+                if DownloadManager.main.hasSpace(for: selectedVideoPlayerViewModel.fileSize ?? 0) {
+                    try DownloadManager.main.addDownload(playbackInfo: selectedVideoPlayerViewModel.response,
+                                                     item: selectedVideoPlayerViewModel.item,
+                                                     fileName: selectedVideoPlayerViewModel.filename ?? "None")
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
 }

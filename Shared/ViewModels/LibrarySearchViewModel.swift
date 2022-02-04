@@ -15,10 +15,10 @@ import SwiftUI
 final class LibrarySearchViewModel: ViewModel {
 
 	@Published
-	var supportedItemTypeList = [ItemType]()
+    var supportedItemTypeList: [ItemType] = []
 
 	@Published
-	var selectedItemType: ItemType = .movie
+    var selectedItemType: ItemType = .movie
 
 	@Published
 	var movieItems = [BaseItemDto]()

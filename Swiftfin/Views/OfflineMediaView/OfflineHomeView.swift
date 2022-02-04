@@ -20,6 +20,23 @@ struct OfflineHomeView: View {
     private var itemList: some View {
         ScrollView {
             VStack {
+                
+                Text(DownloadManager.main.getTmpSize())
+                
+                Button {
+                    DownloadManager.main.clearTmpDirectory()
+                } label: {
+                    Text("Clear tmp")
+                }
+                
+                Text(DownloadManager.main.getDownloadSize())
+                
+                Button {
+                    DownloadManager.main.deleteAllDownloads()
+                } label: {
+                    Text("Clear tmp")
+                }
+                
                 ForEach(viewModel.offlineItems, id: \.self) { offlineItem in
                     DownloadTrackerRow(offlineItem: offlineItem) { item in
                         offlineHomeRouter.route(to: \.item, item)

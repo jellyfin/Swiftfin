@@ -35,7 +35,7 @@ struct CinematicResumeCardView: View {
 							item.getThumbImage(maxWidth: 350),
 							item.getBackdropImage(maxWidth: 350),
 						],
-						bh: item.getBackdropImageBlurHash())
+						blurHash: item.getBackdropImageBlurHash())
 							.frame(width: 350, height: 210)
 					}
 

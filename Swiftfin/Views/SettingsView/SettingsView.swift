@@ -91,14 +91,12 @@ struct SettingsView: View {
 			//                }
 			//            }
             
-            if Defaults[.Experimental.downloadsEnabled] {
-                Button {
-                    Defaults[.inOfflineMode] = true
-                    Notifications[.toggleOfflineMode].post(object: true)
-                    settingsRouter.dismissCoordinator()
-                } label: {
-                    Text("Enter Offline Mode")
-                }
+            Button {
+                Defaults[.inOfflineMode] = true
+                Notifications[.toggleOfflineMode].post(object: true)
+                settingsRouter.dismissCoordinator()
+            } label: {
+                Text("Enter Offline Mode")
             }
 
 			Section(header: L10n.videoPlayer.text) {

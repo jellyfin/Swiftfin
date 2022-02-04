@@ -29,10 +29,8 @@ struct ContinueWatchingView: View {
 							ZStack {
 								Group {
 									if item.itemType == .episode {
-										ImageView(sources: [
-											item.getSeriesThumbImage(maxWidth: 320),
-											item.getSeriesBackdropImage(maxWidth: 320),
-										])
+                                        ImageView([ImageViewSource(url: item.getSeriesThumbImage(maxWidth: 320)),
+                                                    .init(url: item.getSeriesBackdropImage(maxWidth: 320))])
 											.frame(width: 320, height: 180)
 									} else {
 										ImageView(sources: [

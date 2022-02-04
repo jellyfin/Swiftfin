@@ -39,40 +39,10 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
 			ScrollView(.horizontal, showsIndicators: false) {
 				HStack(alignment: .top, spacing: 15) {
 					ForEach(items, id: \.self.portraitImageID) { item in
-						Button {
-							selectedAction(item)
-						} label: {
-							VStack(alignment: horizontalAlignment) {
-								ImageView(src: item.imageURLConstructor(maxWidth: Int(maxWidth)),
-								          bh: item.blurHash,
-								          failureInitials: item.failureInitials)
-									.portraitPoster(width: maxWidth)
-									.shadow(radius: 4, y: 2)
-									.accessibilityIgnoresInvertColors()
-
-								if item.showTitle {
-									Text(item.title)
-										.font(.footnote)
-										.fontWeight(.regular)
-										.foregroundColor(.primary)
-										.multilineTextAlignment(textAlignment)
-										.fixedSize(horizontal: false, vertical: true)
-										.lineLimit(2)
-								}
-
-								if let description = item.subtitle {
-									Text(description)
-										.font(.caption)
-										.fontWeight(.medium)
-										.foregroundColor(.secondary)
-										.multilineTextAlignment(textAlignment)
-										.fixedSize(horizontal: false, vertical: true)
-										.lineLimit(2)
-								}
-							}
-							.frame(width: maxWidth)
-						}
-						.padding(.bottom)
+                        PortraitItemButton(item: item,
+                                           maxWidth: maxWidth) { item in
+                            selectedAction(item)
+                        }
 					}
 				}
 				.padding(.horizontal)

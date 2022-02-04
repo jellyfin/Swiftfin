@@ -41,7 +41,7 @@ struct DownloadTrackerRow<ItemType: OfflineItem>: View {
         } label: {
             HStack {
                 if let backdropImageURL = offlineItem.backdropImageURL {
-                    ImageView(src: backdropImageURL )
+                    ImageView(backdropImageURL)
                         .frame(width: 130, height: 100)
                         .cornerRadius(5)
                 } else {

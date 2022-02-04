@@ -17,8 +17,6 @@ struct ExperimentalSettingsView: View {
 	var syncSubtitleStateWithAdjacent
 	@Default(.Experimental.nativePlayer)
 	var nativePlayer
-    @Default(.Experimental.downloadsEnabled)
-    var downloadsEnabled
 
 	var body: some View {
 		Form {
@@ -29,18 +27,10 @@ struct ExperimentalSettingsView: View {
 				Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
 
 				Toggle("Native Player", isOn: $nativePlayer)
-                
-                Toggle("Enabled Downloads", isOn: $downloadsEnabled)
 
 			} header: {
 				L10n.experimental.text
 			}
-            .onChange(of: downloadsEnabled) { enabled in
-                if !enabled {
-                    Defaults[.inOfflineMode] = false
-                    Notifications[.toggleOfflineMode].post(object: false)
-                }
-            }
 		}
 	}
 }
