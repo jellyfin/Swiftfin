@@ -38,6 +38,8 @@ struct SettingsView: View {
 	var jumpBackwardLength
 	@Default(.jumpGesturesEnabled)
 	var jumpGesturesEnabled
+	@Default(.systemControlGesturesEnabled)
+	var systemControlGesturesEnabled
 	@Default(.resumeOffset)
 	var resumeOffset
 	@Default(.subtitleSize)
@@ -106,6 +108,8 @@ struct SettingsView: View {
 				}
 
 				Toggle(L10n.jumpGesturesEnabled, isOn: $jumpGesturesEnabled)
+
+				Toggle(L10n.systemControlGesturesEnabled, isOn: $systemControlGesturesEnabled)
 
 				Toggle(L10n.resume5SecondOffset, isOn: $resumeOffset)
 
