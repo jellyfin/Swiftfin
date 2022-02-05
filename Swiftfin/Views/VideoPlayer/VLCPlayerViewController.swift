@@ -102,7 +102,7 @@ class VLCPlayerViewController: UIViewController {
 		view.addSubview(videoContentView)
 		view.addSubview(mainGestureView)
 
-		// Setup BrightnessOverlayView
+		// Setup systemControlOverlayLabel
 		systemControlOverlayLabel.alpha = 0
 		systemControlOverlayLabel.translatesAutoresizingMaskIntoConstraints = false
 		systemControlOverlayLabel.font = .systemFont(ofSize: 48)
@@ -284,10 +284,10 @@ class VLCPlayerViewController: UIViewController {
 
 			if panBeganPoint.x < mainGestureViewHalfWidth {
 				UIScreen.main.brightness = panBeganBrightness - changedValue
-				flashBrightnessOverlay()
+				showBrightnessOverlay()
 			} else if let view = volumeView.subviews.first as? UISlider {
 				view.value = panBeganVolumeValue - Float(changedValue)
-				flashVolumeOverlay()
+				showVolumeOverlay()
 			}
 		default:
 			hideSystemControlOverlay()
@@ -614,7 +614,7 @@ extension VLCPlayerViewController {
 // MARK: Show/Hide System Control
 
 extension VLCPlayerViewController {
-	private func flashBrightnessOverlay() {
+	private func showBrightnessOverlay() {
 		guard !displayingOverlay else { return }
 
 		let imageAttachment = NSTextAttachment()
@@ -632,7 +632,7 @@ extension VLCPlayerViewController {
 		}
 	}
 
-	private func flashVolumeOverlay() {
+	private func showVolumeOverlay() {
 		guard !displayingOverlay,
 		      let value = (volumeView.subviews.first as? UISlider)?.value else { return }
 
