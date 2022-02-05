@@ -48,9 +48,9 @@ class VLCPlayerViewController: UIViewController {
 
 	private lazy var videoContentView = makeVideoContentView()
 	private lazy var mainGestureView = makeMainGestureView()
+	private lazy var systemControlOverlayLabel = makeSystemControlOverlayLabel()
 	private var currentOverlayHostingController: UIHostingController<VLCPlayerOverlayView>?
 	private var currentChapterOverlayHostingController: UIHostingController<VLCPlayerChapterOverlayView>?
-	private var systemControlOverlayLabel = UILabel()
 	private var currentJumpBackwardOverlayView: UIImageView?
 	private var currentJumpForwardOverlayView: UIImageView?
 	private var volumeView = MPVolumeView()
@@ -101,11 +101,6 @@ class VLCPlayerViewController: UIViewController {
 	private func setupSubviews() {
 		view.addSubview(videoContentView)
 		view.addSubview(mainGestureView)
-
-		// Setup systemControlOverlayLabel
-		systemControlOverlayLabel.alpha = 0
-		systemControlOverlayLabel.translatesAutoresizingMaskIntoConstraints = false
-		systemControlOverlayLabel.font = .systemFont(ofSize: 48)
 		view.addSubview(systemControlOverlayLabel)
 	}
 
@@ -233,6 +228,16 @@ class VLCPlayerViewController: UIViewController {
 		}
 
 		return view
+	}
+
+	// MARK: SystemControlOverlayLabel
+
+	private func makeSystemControlOverlayLabel() -> UILabel {
+		let label = UILabel()
+		label.alpha = 0
+		label.translatesAutoresizingMaskIntoConstraints = false
+		label.font = .systemFont(ofSize: 48)
+		return label
 	}
 
 	@objc
