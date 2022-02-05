@@ -378,6 +378,8 @@ internal enum L10n {
   internal static var switchUser: String { return L10n.tr("Localizable", "switchUser") }
   /// System
   internal static var system: String { return L10n.tr("Localizable", "system") }
+  /// System Control Gestures Enabled
+  internal static var systemControlGesturesEnabled: String { return L10n.tr("Localizable", "systemControlGesturesEnabled") }
   /// Tags
   internal static var tags: String { return L10n.tr("Localizable", "tags") }
   /// Too Many Redirects

@@ -42,12 +42,18 @@ class VLCPlayerViewController: UIViewController {
 		currentChapterOverlayHostingController?.view.alpha ?? 0 > 0
 	}
 
+	private var panBeganBrightness = CGFloat.zero
+	private var panBeganVolumeValue = Float.zero
+	private var panBeganPoint = CGPoint.zero
+
 	private lazy var videoContentView = makeVideoContentView()
 	private lazy var mainGestureView = makeMainGestureView()
 	private var currentOverlayHostingController: UIHostingController<VLCPlayerOverlayView>?
 	private var currentChapterOverlayHostingController: UIHostingController<VLCPlayerChapterOverlayView>?
+	private var systemControlOverlayLabel = UILabel()
 	private var currentJumpBackwardOverlayView: UIImageView?
 	private var currentJumpForwardOverlayView: UIImageView?
+	private var volumeView = MPVolumeView()
 
 	override var keyCommands: [UIKeyCommand]? {
 		var commands = [
@@ -95,6 +101,12 @@ class VLCPlayerViewController: UIViewController {
 	private func setupSubviews() {
 		view.addSubview(videoContentView)
 		view.addSubview(mainGestureView)
+
+		// Setup BrightnessOverlayView
+		systemControlOverlayLabel.alpha = 0
+		systemControlOverlayLabel.translatesAutoresizingMaskIntoConstraints = false
+		systemControlOverlayLabel.font = .systemFont(ofSize: 48)
+		view.addSubview(systemControlOverlayLabel)
 	}
 
 	private func setupConstraints() {
@@ -109,6 +121,10 @@ class VLCPlayerViewController: UIViewController {
 			mainGestureView.bottomAnchor.constraint(equalTo: videoContentView.bottomAnchor),
 			mainGestureView.leftAnchor.constraint(equalTo: videoContentView.leftAnchor),
 			mainGestureView.rightAnchor.constraint(equalTo: videoContentView.rightAnchor),
+		])
+		NSLayoutConstraint.activate([
+			systemControlOverlayLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			systemControlOverlayLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 		])
 	}
 
@@ -202,12 +218,18 @@ class VLCPlayerViewController: UIViewController {
 
 		let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPinch(_:)))
 
+		let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
+
 		view.addGestureRecognizer(singleTapGesture)
 		view.addGestureRecognizer(pinchGesture)
 
 		if viewModel.jumpGesturesEnabled {
 			view.addGestureRecognizer(rightSwipeGesture)
 			view.addGestureRecognizer(leftSwipeGesture)
+		}
+
+		if viewModel.systemControlGesturesEnabled {
+			view.addGestureRecognizer(panGesture)
 		}
 
 		return view
@@ -240,6 +262,35 @@ class VLCPlayerViewController: UIViewController {
 				isScreenFilled.toggle()
 				shrinkScreen()
 			}
+		}
+	}
+
+	@objc
+	private func didPan(_ gestureRecognizer: UIPanGestureRecognizer) {
+		switch gestureRecognizer.state {
+		case .began:
+			panBeganBrightness = UIScreen.main.brightness
+			if let view = volumeView.subviews.first as? UISlider {
+				panBeganVolumeValue = view.value
+			}
+			panBeganPoint = gestureRecognizer.location(in: mainGestureView)
+		case .changed:
+			let mainGestureViewHalfWidth = mainGestureView.frame.width * 0.5
+			let mainGestureViewHalfHeight = mainGestureView.frame.height * 0.5
+
+			let pos = gestureRecognizer.location(in: mainGestureView)
+			let moveDelta = pos.y - panBeganPoint.y
+			let changedValue = moveDelta / mainGestureViewHalfHeight
+
+			if panBeganPoint.x < mainGestureViewHalfWidth {
+				UIScreen.main.brightness = panBeganBrightness - changedValue
+				flashBrightnessOverlay()
+			} else if let view = volumeView.subviews.first as? UISlider {
+				view.value = panBeganVolumeValue - Float(changedValue)
+				flashVolumeOverlay()
+			}
+		default:
+			hideSystemControlOverlay()
 		}
 	}
 
@@ -556,6 +607,53 @@ extension VLCPlayerViewController {
 			showOverlay()
 		} else {
 			hideOverlay()
+		}
+	}
+}
+
+// MARK: Show/Hide System Control
+
+extension VLCPlayerViewController {
+	private func flashBrightnessOverlay() {
+		guard !displayingOverlay else { return }
+
+		let imageAttachment = NSTextAttachment()
+		imageAttachment.image = UIImage(systemName: "sun.max", withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
+			.withTintColor(.white)
+
+		let attributedString = NSMutableAttributedString()
+		attributedString.append(.init(attachment: imageAttachment))
+		attributedString.append(.init(string: " \(String(format: "%.0f", UIScreen.main.brightness * 100))%"))
+		systemControlOverlayLabel.attributedText = attributedString
+		systemControlOverlayLabel.layer.removeAllAnimations()
+
+		UIView.animate(withDuration: 0.1) {
+			self.systemControlOverlayLabel.alpha = 1
+		}
+	}
+
+	private func flashVolumeOverlay() {
+		guard !displayingOverlay,
+		      let value = (volumeView.subviews.first as? UISlider)?.value else { return }
+
+		let imageAttachment = NSTextAttachment()
+		imageAttachment.image = UIImage(systemName: "speaker.wave.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
+			.withTintColor(.white)
+
+		let attributedString = NSMutableAttributedString()
+		attributedString.append(.init(attachment: imageAttachment))
+		attributedString.append(.init(string: " \(String(format: "%.0f", value * 100))%"))
+		systemControlOverlayLabel.attributedText = attributedString
+		systemControlOverlayLabel.layer.removeAllAnimations()
+
+		UIView.animate(withDuration: 0.1) {
+			self.systemControlOverlayLabel.alpha = 1
+		}
+	}
+
+	private func hideSystemControlOverlay() {
+		UIView.animate(withDuration: 0.75) {
+			self.systemControlOverlayLabel.alpha = 0
 		}
 	}
 }
