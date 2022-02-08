@@ -38,31 +38,6 @@ struct LibraryListView: View {
 									self.mainCoordinator.root(\.liveTV)
 								}
 									label: {
-										ZStack {
-											HStack {
-												Spacer()
-												VStack {
-													Text(library.name ?? "")
-														.foregroundColor(.white)
-														.font(.title2)
-														.fontWeight(.semibold)
-												}
-												Spacer()
-											}.padding(32)
-										}
-										.frame(minWidth: 100, maxWidth: .infinity)
-										.frame(height: 100)
-									}
-										.cornerRadius(10)
-										.shadow(radius: 5)
-										.padding(.bottom, 5)
-							}
-						} else {
-							Button {
-								self.libraryListRouter.route(to: \.library,
-								                             (viewModel: LibraryViewModel(parentID: library.id), title: library.name ?? ""))
-							}
-								label: {
 									ZStack {
 										HStack {
 											Spacer()
@@ -81,6 +56,31 @@ struct LibraryListView: View {
 									.cornerRadius(10)
 									.shadow(radius: 5)
 									.padding(.bottom, 5)
+							}
+						} else {
+							Button {
+								self.libraryListRouter.route(to: \.library,
+								                             (viewModel: LibraryViewModel(parentID: library.id), title: library.name ?? ""))
+							}
+								label: {
+								ZStack {
+									HStack {
+										Spacer()
+										VStack {
+											Text(library.name ?? "")
+												.foregroundColor(.white)
+												.font(.title2)
+												.fontWeight(.semibold)
+										}
+										Spacer()
+									}.padding(32)
+								}
+								.frame(minWidth: 100, maxWidth: .infinity)
+								.frame(height: 100)
+							}
+								.cornerRadius(10)
+								.shadow(radius: 5)
+								.padding(.bottom, 5)
 						}
 					}
 				} else {
