@@ -30,6 +30,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 		getSeriesItem()
 		selectedSeason = item
 		retrieveSeasons()
+		requestEpisodes()
 	}
 
 	override func playButtonText() -> String {
@@ -38,56 +39,51 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 			return L10n.unaired
 		}
 
-		if item.missing {
-			return L10n.missing
-		}
-
 		guard let playButtonItem = playButtonItem, let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
 		return episodeLocator
 	}
 
-//	private func requestEpisodes() {
-//		LogManager.shared.log
-//			.debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
-//		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.main.currentLogin.user.id,
-//		                       fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-//		                       seasonId: item.id ?? "")
-//			.trackActivity(loading)
-//			.sink(receiveCompletion: { [weak self] completion in
-//				self?.handleAPIRequestError(completion: completion)
-//			}, receiveValue: { [weak self] response in
-//				self?.episodes = response.items ?? []
-//				LogManager.shared.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")
-//
-//				self?.setNextUpInSeason()
-//			})
-//			.store(in: &cancellables)
-//	}
+	private func requestEpisodes() {
+		LogManager.shared.log
+			.debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
+		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.main.currentLogin.user.id,
+		                       fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+		                       seasonId: item.id ?? "")
+			.trackActivity(loading)
+			.sink(receiveCompletion: { [weak self] completion in
+				self?.handleAPIRequestError(completion: completion)
+			}, receiveValue: { [weak self] response in
+				self?.episodes = response.items ?? []
+				LogManager.shared.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")
+
+				self?.setNextUpInSeason()
+			})
+			.store(in: &cancellables)
+	}
 
 	// Sets the play button item to the "Next up" in the season based upon
-	//     the watched status of episodes in the season.
+	// the watched status of episodes in the season.
 	// Default to the first episode of the season if all have been watched.
-//	private func setNextUpInSeason() {
-//		guard !item.missing else { return }
-//		guard !episodes.isEmpty else { return }
-//
-//		var firstUnwatchedSearch: BaseItemDto?
-//
-//		for episode in episodes {
-//			guard let played = episode.userData?.played else { continue }
-//			if !played {
-//				firstUnwatchedSearch = episode
-//				break
-//			}
-//		}
-//
-//		if let firstUnwatched = firstUnwatchedSearch {
-//			playButtonItem = firstUnwatched
-//		} else {
-//			guard let firstEpisode = episodes.first else { return }
-//			playButtonItem = firstEpisode
-//		}
-//	}
+	private func setNextUpInSeason() {
+		guard !episodes.isEmpty else { return }
+
+		var firstUnwatchedSearch: BaseItemDto?
+
+		for episode in episodes {
+			guard let played = episode.userData?.played else { continue }
+			if !played {
+				firstUnwatchedSearch = episode
+				break
+			}
+		}
+
+		if let firstUnwatched = firstUnwatchedSearch {
+			playButtonItem = firstUnwatched
+		} else {
+			guard let firstEpisode = episodes.first else { return }
+			playButtonItem = firstEpisode
+		}
+	}
 
 	private func getSeriesItem() {
 		guard let seriesID = item.seriesId else { return }
