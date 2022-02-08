@@ -53,36 +53,58 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
 			}, receiveValue: { [weak self] response in
-				self?.episodes = response.items ?? []
-				LogManager.shared.log.debug("Retrieved \(String(self?.episodes.count ?? 0)) episodes")
+				guard let self = self else { return }
+				self.episodes = response.items ?? []
+				LogManager.shared.log.debug("Retrieved \(String(self.episodes.count)) episodes")
 
-				self?.setNextUpInSeason()
+				self.setNextUpInSeason()
 			})
 			.store(in: &cancellables)
 	}
 
-	// Sets the play button item to the "Next up" in the season based upon
-	// the watched status of episodes in the season.
-	// Default to the first episode of the season if all have been watched.
 	private func setNextUpInSeason() {
-		guard !episodes.isEmpty else { return }
 
-		var firstUnwatchedSearch: BaseItemDto?
+		TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id,
+		                     fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+		                     seriesId: item.seriesId ?? "", enableUserData: true)
+			.trackActivity(loading)
+			.sink(receiveCompletion: { [weak self] completion in
+				self?.handleAPIRequestError(completion: completion)
+			}, receiveValue: { [weak self] response in
+				guard let self = self else { return }
 
-		for episode in episodes {
-			guard let played = episode.userData?.played else { continue }
-			if !played {
-				firstUnwatchedSearch = episode
-				break
-			}
-		}
+				// Find the nextup item that belongs to current season.
+				if let nextUpItem = (response.items ?? []).first(where: { episode in
+					!episode.unaired && !episode.missing && episode.seasonId ?? "" == self.item.id!
+				}) {
+					self.playButtonItem = nextUpItem
+					LogManager.shared.log.debug("Nextup in season \(self.item.id!) (\(self.item.name!)): \(nextUpItem.id!)")
+				}
 
-		if let firstUnwatched = firstUnwatchedSearch {
-			playButtonItem = firstUnwatched
-		} else {
-			guard let firstEpisode = episodes.first else { return }
-			playButtonItem = firstEpisode
-		}
+				if self.playButtonItem == nil && !self.episodes.isEmpty {
+					// Fallback to the old mechanism:
+					// Sets the play button item to the "Next up" in the season based upon
+					// the watched status of episodes in the season.
+					// Default to the first episode of the season if all have been watched.
+					var firstUnwatchedSearch: BaseItemDto?
+
+					for episode in self.episodes {
+						guard let played = episode.userData?.played else { continue }
+						if !played {
+							firstUnwatchedSearch = episode
+							break
+						}
+					}
+
+					if let firstUnwatched = firstUnwatchedSearch {
+						self.playButtonItem = firstUnwatched
+					} else {
+						guard let firstEpisode = self.episodes.first else { return }
+						self.playButtonItem = firstEpisode
+					}
+				}
+			})
+			.store(in: &cancellables)
 	}
 
 	private func getSeriesItem() {
