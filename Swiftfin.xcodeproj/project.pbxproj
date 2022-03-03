@@ -14,6 +14,42 @@
 		09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
 		09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
+		0949788A27B23254008C2009 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
+		0949788D27B23255008C2009 /* ContentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949788C27B23254008C2009 /* ContentProvider.swift */; };
+		0949789127B23255008C2009 /* TopShelfExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0949788927B23254008C2009 /* TopShelfExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0949789727B23293008C2009 /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = 0949789627B23293008C2009 /* CoreStore */; };
+		0949789927B23297008C2009 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 0949789827B23297008C2009 /* Defaults */; };
+		0949789B27B2329B008C2009 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 0949789A27B2329B008C2009 /* JellyfinAPI */; };
+		0949789D27B232A2008C2009 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 0949789C27B232A2008C2009 /* Nuke */; };
+		0949789F27B232A8008C2009 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = 0949789E27B232A8008C2009 /* Puppy */; };
+		094978A027B232E7008C2009 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53649AB0269CFB1900A2D8B7 /* LogManager.swift */; };
+		094978A127B232EA008C2009 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352E267666A5000E9F2D /* SessionManager.swift */; };
+		094978A227B232EC008C2009 /* SwiftfinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */; };
+		094978A327B232EF008C2009 /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
+		094978A427B232F1008C2009 /* SwiftfinStoreDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3D4271693CD009D4DAF /* SwiftfinStoreDefaults.swift */; };
+		094978A527B232FF008C2009 /* HTTPScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19169CD272514760085832A /* HTTPScheme.swift */; };
+		094978A627B23303008C2009 /* OverlayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331E2782639D00F6439C /* OverlayType.swift */; };
+		094978A727B2330A008C2009 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
+		094978A827B23310008C2009 /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
+		094978A927B2334C008C2009 /* BundleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C157279A7D76005EC829 /* BundleExtensions.swift */; };
+		094978AA27B2334F008C2009 /* CGSizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */; };
+		094978AB27B23359008C2009 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
+		094978AC27B2335D008C2009 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
+		094978AD27B2335F008C2009 /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D92671138200A7371D /* ImageExtensions.swift */; };
+		094978AE27B2336F008C2009 /* BaseItemDtoExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */; };
+		094978AF27B23378008C2009 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
+		094978B027B2337E008C2009 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621338922660107500A81A2A /* StringExtensions.swift */; };
+		094978B127B23382008C2009 /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C153279A7D5A005EC829 /* UIApplicationExtensions.swift */; };
+		094978B227B23385008C2009 /* UIDeviceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C727164B1E009D4DAF /* UIDeviceExtensions.swift */; };
+		094978B327B23389008C2009 /* URLExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E1DCC2273CE19800C9AE76 /* URLExtensions.swift */; };
+		094978B427B2338E008C2009 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */; };
+		094978B527B2339D008C2009 /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
+		094978B627B2339D008C2009 /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
+		094978B727B2339D008C2009 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
+		094978B827B233B8008C2009 /* LocalizedLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B4140279354770016CBE5 /* LocalizedLookup.swift */; };
+		094978B927B233B8008C2009 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6264E88B273850380081A12A /* Strings.swift */; };
+		094978BA27B233EA008C2009 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
+		094978BB27B233FA008C2009 /* PosterSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87DD278510E300BD264C /* PosterSize.swift */; };
 		3B8BA25B211CA261017ABA16 /* Pods_Swiftfin_Widget.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C8F278167C58CBF930F720F /* Pods_Swiftfin_Widget.framework */; };
 		53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A16268B919A003024C9 /* SeriesItemView.swift */; };
 		53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A18268B947A003024C9 /* PlainLinkButton.swift */; };
@@ -470,6 +506,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0949788F27B23255008C2009 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0949788827B23254008C2009;
+			remoteInfo = TopShelfExtension;
+		};
 		6264E888273848760081A12A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
@@ -480,6 +523,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0949789227B23255008C2009 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				0949789127B23255008C2009 /* TopShelfExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5302F8322658B74800647A2E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -506,6 +560,11 @@
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UDPBroadCastConnection.swift; sourceTree = "<group>"; };
 		09389CC626819B4500AE350E /* VideoPlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerModel.swift; sourceTree = "<group>"; };
+		0949788927B23254008C2009 /* TopShelfExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelfExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		0949788C27B23254008C2009 /* ContentProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentProvider.swift; sourceTree = "<group>"; };
+		0949788E27B23255008C2009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		094978BC27B23B3B008C2009 /* TopShelfExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TopShelfExtension.entitlements; sourceTree = "<group>"; };
+		094978BD27B23B64008C2009 /* Swiftfin tvOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Swiftfin tvOS.entitlements"; sourceTree = "<group>"; };
 		0D9B2BE5F9AD4A3CDE842523 /* Pods_Swiftfin_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Swiftfin_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		14E199C7BBA98782CAD2F0D4 /* Pods-JellyfinPlayer iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.release.xcconfig"; sourceTree = "<group>"; };
 		1C8F278167C58CBF930F720F /* Pods_Swiftfin_Widget.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Swiftfin_Widget.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -809,6 +868,19 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0949788627B23254008C2009 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0949789927B23297008C2009 /* Defaults in Frameworks */,
+				0949788A27B23254008C2009 /* TVServices.framework in Frameworks */,
+				0949789B27B2329B008C2009 /* JellyfinAPI in Frameworks */,
+				0949789F27B232A8008C2009 /* Puppy in Frameworks */,
+				0949789727B23293008C2009 /* CoreStore in Frameworks */,
+				0949789D27B232A2008C2009 /* Nuke in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5358705D2669D21600D05A09 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -879,6 +951,16 @@
 				091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */,
 			);
 			path = ServerDiscovery;
+			sourceTree = "<group>";
+		};
+		0949788B27B23254008C2009 /* TopShelfExtension */ = {
+			isa = PBXGroup;
+			children = (
+				094978BC27B23B3B008C2009 /* TopShelfExtension.entitlements */,
+				0949788C27B23254008C2009 /* ContentProvider.swift */,
+				0949788E27B23255008C2009 /* Info.plist */,
+			);
+			path = TopShelfExtension;
 			sourceTree = "<group>";
 		};
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
@@ -976,6 +1058,7 @@
 		535870612669D21600D05A09 /* Swiftfin tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				094978BD27B23B64008C2009 /* Swiftfin tvOS.entitlements */,
 				E12186DF2718F2030010884C /* App */,
 				535870662669D21700D05A09 /* Assets.xcassets */,
 				536D3D77267BB9650004248C /* Components */,
@@ -1056,6 +1139,7 @@
 			isa = PBXGroup;
 			children = (
 				534D4FE126A7D7CC000A7A48 /* Translations */,
+				0949788B27B23254008C2009 /* TopShelfExtension */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				5377CBF3263B596A003A4E83 /* Swiftfin */,
 				535870612669D21600D05A09 /* Swiftfin tvOS */,
@@ -1072,6 +1156,7 @@
 				5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */,
 				535870602669D21600D05A09 /* Swiftfin tvOS.app */,
 				628B95202670CABD0091AF3B /* Swiftfin Widget.appex */,
+				0949788927B23254008C2009 /* TopShelfExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1749,6 +1834,30 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0949788827B23254008C2009 /* TopShelfExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0949789527B23255008C2009 /* Build configuration list for PBXNativeTarget "TopShelfExtension" */;
+			buildPhases = (
+				0949788527B23254008C2009 /* Sources */,
+				0949788627B23254008C2009 /* Frameworks */,
+				0949788727B23254008C2009 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TopShelfExtension;
+			packageProductDependencies = (
+				0949789627B23293008C2009 /* CoreStore */,
+				0949789827B23297008C2009 /* Defaults */,
+				0949789A27B2329B008C2009 /* JellyfinAPI */,
+				0949789C27B232A2008C2009 /* Nuke */,
+				0949789E27B232A8008C2009 /* Puppy */,
+			);
+			productName = TopShelfExtension;
+			productReference = 0949788927B23254008C2009 /* TopShelfExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		5358705F2669D21600D05A09 /* Swiftfin tvOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */;
@@ -1759,10 +1868,12 @@
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
 				879C22C1CCC48E68C86E904C /* [CP] Embed Pods Frameworks */,
+				0949789227B23255008C2009 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				0949789027B23255008C2009 /* PBXTargetDependency */,
 			);
 			name = "Swiftfin tvOS";
 			packageProductDependencies = (
@@ -1859,9 +1970,12 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastSwiftUpdateCheck = 1250;
+				LastSwiftUpdateCheck = 1300;
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
+					0949788827B23254008C2009 = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					5358705F2669D21600D05A09 = {
 						CreatedOnToolsVersion = 12.5;
 					};
@@ -1921,11 +2035,19 @@
 				5377CBF0263B596A003A4E83 /* Swiftfin iOS */,
 				628B951F2670CABD0091AF3B /* Swiftfin Widget */,
 				5358705F2669D21600D05A09 /* Swiftfin tvOS */,
+				0949788827B23254008C2009 /* TopShelfExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0949788727B23254008C2009 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5358705E2669D21600D05A09 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2161,6 +2283,42 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0949788527B23254008C2009 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				094978B427B2338E008C2009 /* ViewExtensions.swift in Sources */,
+				094978AD27B2335F008C2009 /* ImageExtensions.swift in Sources */,
+				094978A627B23303008C2009 /* OverlayType.swift in Sources */,
+				094978A027B232E7008C2009 /* LogManager.swift in Sources */,
+				094978A427B232F1008C2009 /* SwiftfinStoreDefaults.swift in Sources */,
+				094978A927B2334C008C2009 /* BundleExtensions.swift in Sources */,
+				094978AC27B2335D008C2009 /* DoubleExtensions.swift in Sources */,
+				0949788D27B23255008C2009 /* ContentProvider.swift in Sources */,
+				094978B327B23389008C2009 /* URLExtensions.swift in Sources */,
+				094978B827B233B8008C2009 /* LocalizedLookup.swift in Sources */,
+				094978B927B233B8008C2009 /* Strings.swift in Sources */,
+				094978AE27B2336F008C2009 /* BaseItemDtoExtensions.swift in Sources */,
+				094978B527B2339D008C2009 /* ErrorMessage.swift in Sources */,
+				094978A527B232FF008C2009 /* HTTPScheme.swift in Sources */,
+				094978B227B23385008C2009 /* UIDeviceExtensions.swift in Sources */,
+				094978AB27B23359008C2009 /* CollectionExtensions.swift in Sources */,
+				094978A327B232EF008C2009 /* SwiftfinStore.swift in Sources */,
+				094978B627B2339D008C2009 /* LogConstructor.swift in Sources */,
+				094978A727B2330A008C2009 /* SubtitleSize.swift in Sources */,
+				094978BA27B233EA008C2009 /* AppAppearance.swift in Sources */,
+				094978B027B2337E008C2009 /* StringExtensions.swift in Sources */,
+				094978B127B23382008C2009 /* UIApplicationExtensions.swift in Sources */,
+				094978B727B2339D008C2009 /* NetworkError.swift in Sources */,
+				094978AF27B23378008C2009 /* JellyfinAPIError.swift in Sources */,
+				094978BB27B233FA008C2009 /* PosterSize.swift in Sources */,
+				094978A227B232EC008C2009 /* SwiftfinNotificationCenter.swift in Sources */,
+				094978A827B23310008C2009 /* VideoPlayerJumpLength.swift in Sources */,
+				094978AA27B2334F008C2009 /* CGSizeExtensions.swift in Sources */,
+				094978A127B232EA008C2009 /* SessionManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5358705C2669D21600D05A09 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2550,6 +2708,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0949789027B23255008C2009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0949788827B23254008C2009 /* TopShelfExtension */;
+			targetProxy = 0949788F27B23255008C2009 /* PBXContainerItemProxy */;
+		};
 		6264E889273848760081A12A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 628B951F2670CABD0091AF3B /* Swiftfin Widget */;
@@ -2689,17 +2852,77 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0949789327B23255008C2009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_ENTITLEMENTS = TopShelfExtension/TopShelfExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 70;
+				DEVELOPMENT_TEAM = U3ZPB6U89W;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TopShelfExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TopShelfExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.TopShelfExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+			};
+			name = Debug;
+		};
+		0949789427B23255008C2009 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_ENTITLEMENTS = TopShelfExtension/TopShelfExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 70;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TopShelfExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TopShelfExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.TopShelfExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+			};
+			name = Release;
+		};
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B76B017043EEA81AC273B805 /* Pods-Swiftfin tvOS.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Dev App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Swiftfin tvOS/Swiftfin tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = U3ZPB6U89W;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Swiftfin tvOS/Info.plist";
@@ -2723,9 +2946,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E8AB8B2582B44B8B19E77781 /* Pods-Swiftfin tvOS.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Swiftfin tvOS/Swiftfin tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
@@ -2997,6 +3222,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0949789527B23255008C2009 /* Build configuration list for PBXNativeTarget "TopShelfExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0949789327B23255008C2009 /* Debug */,
+				0949789427B23255008C2009 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -3159,6 +3393,31 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0949789627B23293008C2009 /* CoreStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */;
+			productName = CoreStore;
+		};
+		0949789827B23297008C2009 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		0949789A27B2329B008C2009 /* JellyfinAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
+			productName = JellyfinAPI;
+		};
+		0949789C27B232A2008C2009 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		0949789E27B232A8008C2009 /* Puppy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 53649AAB269CFAEA00A2D8B7 /* XCRemoteSwiftPackageReference "Puppy" */;
+			productName = Puppy;
+		};
 		53352570265EA0A0006CCA86 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
