@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-class OfflineItem: Equatable, Hashable {
+class OfflineItem {
     
     let playbackInfo: PlaybackInfoResponse
     let item: BaseItemDto
@@ -17,14 +17,9 @@ class OfflineItem: Equatable, Hashable {
     let primaryImageURL: URL?
     let backdropImageURL: URL?
     let downloadTracker: DownloadTracker?
-    let downloadDate = Date.now
     
-    var storage: String {
-        do {
-            return try itemDirectory.sizeOnDisk() ?? "-- KB"
-        } catch {
-            return "-- KB"
-        }
+    var storageLabel: String? {
+        return itemDirectory.sizeOnDiskLabel
     }
     
     init(playbackInfo: PlaybackInfoResponse,
@@ -40,6 +35,9 @@ class OfflineItem: Equatable, Hashable {
         self.backdropImageURL = backdropImageURL
         self.downloadTracker = downloadTracker
     }
+}
+
+extension OfflineItem: Equatable, Hashable {
     
     static func ==(lhs: OfflineItem, rhs: OfflineItem) -> Bool {
         return lhs.item == rhs.item

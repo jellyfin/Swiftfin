@@ -22,19 +22,11 @@ final class DownloadListViewModel: ViewModel {
         
         refresh()
         
-        Notifications[.didAddDownload].subscribe(self, selector: #selector(didAddDownload))
-        Notifications[.didDeleteOfflineItem].subscribe(self, selector: #selector(didDeleteItem))
+        Notifications[.didAddDownload].subscribe(self, selector: #selector(refresh))
+        Notifications[.didDeleteOfflineItem].subscribe(self, selector: #selector(refresh))
     }
     
-    @objc private func didAddDownload() {
-        refresh()
-    }
-    
-    @objc private func didDeleteItem() {
-        refresh()
-    }
-    
-    private func refresh() {
+    @objc private func refresh() {
         downloadingItems = Array(DownloadManager.main.downloadingItems)
         offlineItems = DownloadManager.main.getOfflineItems()
     }

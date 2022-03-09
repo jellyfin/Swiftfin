@@ -20,6 +20,7 @@ class DownloadManager {
     private(set) var downloadingItems = Set<OfflineItem>()
     private let downloadsDirectory: URL
     private let tmpDirectory: URL
+    private let documentsDirectory: URL
     
     var tmpSize: Int {
         return tmpDirectory.sizeOnDisk
@@ -30,65 +31,48 @@ class DownloadManager {
     }
     
     private init() {
-        AF.sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        self.documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        self.downloadsDirectory = documentsDirectory.appendingPathComponent("Downloads")
+        self.tmpDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         
-        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let downloadsDirectory = documentsDirectory.appendingPathComponent("Downloads")
+        AF.sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
         
         try! FileManager.default.createDirectory(at: downloadsDirectory,
                                                  withIntermediateDirectories: true,
                                                  attributes: nil)
-        
-        self.downloadsDirectory = downloadsDirectory
-        self.tmpDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
     }
     
-    var totalStorageUsed: Int {
-        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        
-        let values = try! documents.resourceValues(forKeys: [.volumeAvailableCapacityForOpportunisticUsageKey])
-        if let capacity = values.volumeTotalCapacity {
-            return capacity
-        } else {
-            return 0
-        }
-    }
-    
-    var friendlyAvailableStorage: String? {
-        
-        let availableStorage: Int64
-        
-        let fileURL = URL(fileURLWithPath: NSHomeDirectory() as String)
-        do {
-            let values = try fileURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
-            if let capacity = values.volumeAvailableCapacityForImportantUsage {
-                availableStorage = capacity
-            } else {
-                availableStorage = 0
-            }
-        } catch {
-            availableStorage = 0
-        }
-        
+    var availableStoragLabel: String? {
         let byteCountFormatter = ByteCountFormatter()
         byteCountFormatter.countStyle = .file
         return byteCountFormatter.string(fromByteCount: availableStorage)
     }
     
-    func hasSpace(for fileSize: Int64) -> Bool {
+    var availableStorage: Int64 {
+        let availableStorage: Int64
+        
         let fileURL = URL(fileURLWithPath: NSHomeDirectory() as String)
+        
         do {
             let values = try fileURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+            
             if let capacity = values.volumeAvailableCapacityForImportantUsage {
-                return fileSize < capacity
+                availableStorage = capacity
             } else {
-                return false
+                availableStorage = -1
             }
         } catch {
-            return false
+            availableStorage = -1
         }
+        
+        return availableStorage
     }
     
+    func hasSpace(for fileSize: Int64) -> Bool {
+        return fileSize < availableStorage
+    }
+    
+    // MARK: addDownload
     func addDownload(playbackInfo: PlaybackInfoResponse, item: BaseItemDto, fileName: String) throws {
         guard let itemID = item.id else { throw JellyfinAPIError("Cannot get item ID") }
         guard let itemFileURL = item.getDownloadURL() else { throw JellyfinAPIError("Cannot get item download URL") }
@@ -119,16 +103,16 @@ class DownloadManager {
         Notifications[.didAddDownload].post()
     }
     
-    func removeDownload(offlineItem: OfflineItem) {
+    func removeDownload(for offlineItem: OfflineItem) {
         self.downloadingItems.remove(offlineItem)
     }
     
-    func hasLocalFile(for item: BaseItemDto, fileName: String) -> Bool {
-        let fileURL = localFileURL(for: item, fileName: fileName)
+    func hasDownloadDirectory(for item: BaseItemDto, fileName: String) -> Bool {
+        let fileURL = downloadDirectory(for: item, fileName: fileName)
         return FileManager.default.fileExists(atPath: fileURL.path)
     }
     
-    func localFileURL(for item: BaseItemDto, fileName: String) -> URL {
+    func downloadDirectory(for item: BaseItemDto, fileName: String) -> URL {
         return downloadsDirectory.appendingPathComponent("\(item.id ?? "none")/\(fileName)")
     }
     
@@ -142,76 +126,7 @@ class DownloadManager {
         return downloadingItems.first(where: { $0.item.id == item.id })
     }
     
-    // MARK: GetOfflineItems
-    func getOfflineItems() -> [OfflineItem] {
-        do {
-            let downloadDirectoryContents = try FileManager.default.contentsOfDirectory(atPath: downloadsDirectory.path)
-            
-            var offlineItems: [OfflineItem] = []
-            
-            for itemDirectory in downloadDirectoryContents {
-                let itemDirectory = downloadsDirectory.appendingPathComponent(itemDirectory, isDirectory: true)
-
-                do {
-                    let newOfflineItem = try parseOfflineItem(at: itemDirectory)
-                    
-                    offlineItems.append(newOfflineItem)
-                } catch {
-                    //
-                }
-            }
-            
-            return offlineItems
-        } catch {
-            return []
-        }
-    }
-    
-    func clearTmpDirectory() {
-        DispatchQueue.global(qos: .background).async {
-            let tmpContents = try! FileManager.default.contentsOfDirectory(atPath: self.tmpDirectory.path)
-
-            for content in tmpContents {
-                let fullContent = self.tmpDirectory.appendingPathComponent(content, isDirectory: true)
-                
-                do {
-                    try FileManager.default.removeItem(atPath: fullContent.path)
-                } catch {
-                    return
-                }
-
-                print("Removed: \(content)")
-            }
-        }
-    }
-    
-    func deleteAllDownloads() {
-        DispatchQueue.global(qos: .background).async {
-            let downloadContents = try! FileManager.default.contentsOfDirectory(atPath: self.downloadsDirectory.path)
-            
-            for download in downloadContents {
-                let fullContent = self.downloadsDirectory.appendingPathComponent(download, isDirectory: true)
-                
-                do {
-                    try FileManager.default.removeItem(atPath: fullContent.path)
-                } catch {
-                    return
-                }
-
-                print("Removed: \(download)")
-            }
-            
-            Notifications[.didDeleteOfflineItem].post()
-        }
-    }
-    
-    func deleteItem(_ offlineItem: OfflineItem) {
-        try! FileManager.default.removeItem(at: offlineItem.itemDirectory)
-        
-        Notifications[.didDeleteOfflineItem].post()
-    }
-    
-    func downloadedItem(for item: BaseItemDto) -> OfflineItem? {
+    func offlineItem(for item: BaseItemDto) -> OfflineItem? {
         guard DownloadManager.main.hasDownloadDirectory(for: item) else { return nil }
         
         let itemDirectory = downloadsDirectory.appendingPathComponent("\(item.id ?? "none")", isDirectory: true)
@@ -223,12 +138,86 @@ class DownloadManager {
         }
     }
     
+    // MARK: GetOfflineItems
+    func getOfflineItems() -> [OfflineItem] {
+        do {
+            let downloadDirectoryContents = try FileManager.default.contentsOfDirectory(atPath: downloadsDirectory.path)
+            
+            var offlineItems: [OfflineItem] = []
+            
+            for itemDirectory in downloadDirectoryContents {
+                let itemDirectoryURL = downloadsDirectory.appendingPathComponent(itemDirectory, isDirectory: true)
+
+                do {
+                    let newOfflineItem = try parseOfflineItem(at: itemDirectoryURL)
+                    
+                    offlineItems.append(newOfflineItem)
+                } catch {
+                    LogManager.shared.log.error("Couldn't parse offline item with path: \(itemDirectory)")
+                }
+            }
+            
+            return offlineItems
+        } catch {
+            return []
+        }
+    }
+    
+    // MARK: Delete and clear
+    func deleteItem(_ offlineItem: OfflineItem) {
+        try! FileManager.default.removeItem(at: offlineItem.itemDirectory)
+        
+        Notifications[.didDeleteOfflineItem].post()
+    }
+    
+    func clearTmp() {
+        DispatchQueue.global(qos: .background).async {
+            let tmpContents = try! FileManager.default.contentsOfDirectory(atPath: self.tmpDirectory.path)
+
+            for item in tmpContents {
+                let itemURL = self.tmpDirectory.appendingPathComponent(item, isDirectory: true)
+                
+                do {
+                    try FileManager.default.removeItem(atPath: itemURL.path)
+                } catch {
+                    LogManager.shared.log.error("Couldn't delete path from tmp directory: \(item)")
+                    return
+                }
+            }
+            
+            LogManager.shared.log.debug("Cleared tmp directory")
+            
+            Notifications[.didDeleteOfflineItem].post()
+        }
+    }
+    
+    func clearDownloads() {
+        DispatchQueue.global(qos: .background).async {
+            let downloadContents = try! FileManager.default.contentsOfDirectory(atPath: self.downloadsDirectory.path)
+            
+            for download in downloadContents {
+                let fullContent = self.downloadsDirectory.appendingPathComponent(download, isDirectory: true)
+                
+                do {
+                    try FileManager.default.removeItem(atPath: fullContent.path)
+                } catch {
+                    LogManager.shared.log.error("Couldn't delete path from tmp directory: \(download)")
+                    return
+                }
+            }
+            
+            LogManager.shared.log.debug("Cleared downloads directory")
+            
+            Notifications[.didDeleteOfflineItem].post()
+        }
+    }
+    
     // MARK: ParseOfflineItem
     
     private func parseOfflineItem(at itemDirectory: URL) throws -> OfflineItem {
         let itemContents = try FileManager.default.contentsOfDirectory(atPath: itemDirectory.path)
         
-        guard itemContents.count >= 3 else { throw JellyfinAPIError("Wrong number of base items") }
+        guard itemContents.count >= 3 else { throw JellyfinAPIError("Incorrect number of base items") }
         
         guard let itemJSONFile = itemContents.first(where: { $0 == "item.json" }),
               let playbackJSONFile = itemContents.first(where: { $0 == "playbackInfo.json" }) else { throw JellyfinAPIError("Cannot find item or playback info json files") }

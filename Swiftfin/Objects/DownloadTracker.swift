@@ -46,6 +46,11 @@ class DownloadTracker: ObservableObject {
         
         state = .downloading
         
+        // Create item directory
+        try! FileManager.default.createDirectory(at: itemDirectory,
+                                                 withIntermediateDirectories: true,
+                                                 attributes: nil)
+        
         saveMetadata()
         saveBackdropImage()
         savePrimaryImage()
@@ -55,8 +60,6 @@ class DownloadTracker: ObservableObject {
                 self.progress = progress.fractionCompleted
             }
             .responseData { response in
-                guard self.state != .cancelled else { return }
-                
                 if let error = response.error {
                     self.state = .error
                     LogManager.shared.log.error("Error with download: \(error.errorDescription ?? "--")")
@@ -69,32 +72,30 @@ class DownloadTracker: ObservableObject {
                         self.state = .error
                     }
                     
-                    DownloadManager.main.clearTmpDirectory()
+                    DownloadManager.main.clearTmp()
                 }
             }
     }
     
     func cancel() {
+        guard !downloadRequest.isCancelled else { return }
         downloadRequest.cancel()
         state = .cancelled
     }
     
     func pause() {
+        guard !downloadRequest.isCancelled else { return }
         downloadRequest.suspend()
         state = .paused
     }
     
     func resume() {
+        guard !downloadRequest.isCancelled else { return }
         downloadRequest.resume()
         state = .downloading
     }
     
     private func saveMetadata() {
-        
-        // Create item directory
-        try! FileManager.default.createDirectory(at: itemDirectory,
-                                                 withIntermediateDirectories: true,
-                                                 attributes: nil)
         
         let jsonEncoder = JSONEncoder()
         
@@ -125,8 +126,6 @@ class DownloadTracker: ObservableObject {
             .responseData { response in
                 if let _ = response.error {
                     LogManager.shared.log.error("Error downloading item backdrop image")
-                } else {
-                    //
                 }
             }
     }
@@ -152,30 +151,28 @@ class DownloadTracker: ObservableObject {
             .responseData { response in
                 if let _ = response.error {
                     LogManager.shared.log.error("Error downloading item primary image")
-                } else {
-                    //
                 }
             }
     }
     
     private func moveToDownloads() throws {
-        guard let itemID = item.id else { throw JellyfinAPIError("Cannot get item ID") }
-        let itemTmpDirectory = DownloadManager.main.tmpDirectory.appendingPathComponent(itemID, isDirectory: true)
-        let itemDownloadDirectory = DownloadManager.main.downloadsDirectory.appendingPathComponent(itemID, isDirectory: true)
-        
-        try FileManager.default.moveItem(atPath: itemTmpDirectory.path, toPath: itemDownloadDirectory.path)
-        try FileManager.default.removeItem(atPath: itemTmpDirectory.path)
+//        guard let itemID = item.id else { throw JellyfinAPIError("Cannot get item ID") }
+//        let itemTmpDirectory = DownloadManager.main.tmpDirectory.appendingPathComponent(itemID, isDirectory: true)
+//        let itemDownloadDirectory = DownloadManager.main.downloadsDirectory.appendingPathComponent(itemID, isDirectory: true)
+//
+//        try FileManager.default.moveItem(atPath: itemTmpDirectory.path, toPath: itemDownloadDirectory.path)
+//        try FileManager.default.removeItem(atPath: itemTmpDirectory.path)
     }
 }
 
-extension DownloadTracker: Hashable, Equatable {
+extension DownloadTracker: Equatable, Hashable {
+    
+    static func == (lhs: DownloadTracker, rhs: DownloadTracker) -> Bool {
+        return lhs.downloadRequest.id == rhs.downloadRequest.id
+    }
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(item.id ?? "none")
         hasher.combine(downloadRequest.id)
-    }
-    
-    static func == (lhs: DownloadTracker, rhs: DownloadTracker) -> Bool {
-        return lhs.downloadRequest.id == rhs.downloadRequest.id
     }
 }
