@@ -17,9 +17,17 @@ class DownloadManager {
     
     static let main = DownloadManager()
     
-    let downloadsDirectory: URL
-    let tmpDirectory: URL
     private(set) var downloadingItems = Set<OfflineItem>()
+    private let downloadsDirectory: URL
+    private let tmpDirectory: URL
+    
+    var tmpSize: Int {
+        return tmpDirectory.sizeOnDisk
+    }
+    
+    var downloadsSize: Int {
+        return downloadsDirectory.sizeOnDisk
+    }
     
     private init() {
         AF.sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -159,10 +167,6 @@ class DownloadManager {
         }
     }
     
-    func getTmpSize() -> String {
-        return (try? tmpDirectory.sizeOnDisk()) ?? "none"
-    }
-    
     func clearTmpDirectory() {
         DispatchQueue.global(qos: .background).async {
             let tmpContents = try! FileManager.default.contentsOfDirectory(atPath: self.tmpDirectory.path)
@@ -179,10 +183,6 @@ class DownloadManager {
                 print("Removed: \(content)")
             }
         }
-    }
-    
-    func getDownloadSize() -> String {
-        return (try? downloadsDirectory.sizeOnDisk()) ?? "none"
     }
     
     func deleteAllDownloads() {

@@ -37,6 +37,7 @@ public extension URL {
     /// returns total allocated size of a the directory including its subFolders or not
     func directoryTotalAllocatedSize(includingSubfolders: Bool = false) throws -> Int? {
         guard try isDirectoryAndReachable() else { return nil }
+        
         if includingSubfolders {
             guard
                 let urls = FileManager.default.enumerator(at: self, includingPropertiesForKeys: nil)?.allObjects as? [URL] else { return nil }
@@ -44,6 +45,7 @@ public extension URL {
                     (try $1.resourceValues(forKeys: [.totalFileAllocatedSizeKey]).totalFileAllocatedSize ?? 0) + $0
             }
         }
+        
         return try FileManager.default.contentsOfDirectory(at: self, includingPropertiesForKeys: nil).lazy.reduce(0) {
                  (try $1.resourceValues(forKeys: [.totalFileAllocatedSizeKey])
                     .totalFileAllocatedSize ?? 0) + $0
@@ -51,11 +53,20 @@ public extension URL {
     }
 
     /// returns the directory total size on disk
-    func sizeOnDisk() throws -> String? {
-        guard let size = try directoryTotalAllocatedSize(includingSubfolders: true) else { return nil }
+    var sizeOnDiskLabel: String? {
+        let size = self.sizeOnDisk
         URL.byteCountFormatter.countStyle = .file
         guard let byteCount = URL.byteCountFormatter.string(for: size) else { return nil}
         return byteCount
+    }
+    
+    var sizeOnDisk: Int {
+        do {
+            guard let size = try directoryTotalAllocatedSize(includingSubfolders: true) else { return -1 }
+            return size
+        } catch {
+            return -1
+        }
     }
     
     private static let byteCountFormatter = ByteCountFormatter()
