@@ -117,6 +117,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let chapters: [ChapterInfo]
 	let overlayType: OverlayType
 	let jumpGesturesEnabled: Bool
+	let systemControlGesturesEnabled: Bool
 	let resumeOffset: Bool
 	let streamType: ServerStreamType
 	let container: String
@@ -256,6 +257,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.jumpBackwardLength = Defaults[.videoPlayerJumpBackward]
 		self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
 		self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
+		self.systemControlGesturesEnabled = Defaults[.systemControlGesturesEnabled]
 		self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
 
 		self.resumeOffset = Defaults[.resumeOffset]
