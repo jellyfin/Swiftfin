@@ -30,19 +30,7 @@ class DownloadManager {
         return downloadsDirectory.sizeOnDisk
     }
     
-    private init() {
-        self.documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        self.downloadsDirectory = documentsDirectory.appendingPathComponent("Downloads")
-        self.tmpDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-        
-        AF.sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-        
-        try! FileManager.default.createDirectory(at: downloadsDirectory,
-                                                 withIntermediateDirectories: true,
-                                                 attributes: nil)
-    }
-    
-    var availableStoragLabel: String? {
+    var availableStorageLabel: String? {
         let byteCountFormatter = ByteCountFormatter()
         byteCountFormatter.countStyle = .file
         return byteCountFormatter.string(fromByteCount: availableStorage)
@@ -68,12 +56,25 @@ class DownloadManager {
         return availableStorage
     }
     
+    private init() {
+        self.documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        self.downloadsDirectory = documentsDirectory.appendingPathComponent("Downloads")
+        self.tmpDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        
+        AF.sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        
+        try! FileManager.default.createDirectory(at: downloadsDirectory,
+                                                 withIntermediateDirectories: true,
+                                                 attributes: nil)
+    }
+    
     func hasSpace(for fileSize: Int64) -> Bool {
         return fileSize < availableStorage
     }
     
-    // MARK: addDownload
-    func addDownload(playbackInfo: PlaybackInfoResponse, item: BaseItemDto, fileName: String) throws {
+    // MARK: createDownload
+    
+    func createDownload(playbackInfo: PlaybackInfoResponse, item: BaseItemDto, fileName: String) throws {
         guard let itemID = item.id else { throw JellyfinAPIError("Cannot get item ID") }
         guard let itemFileURL = item.getDownloadURL() else { throw JellyfinAPIError("Cannot get item download URL") }
         
@@ -139,6 +140,7 @@ class DownloadManager {
     }
     
     // MARK: GetOfflineItems
+    
     func getOfflineItems() -> [OfflineItem] {
         do {
             let downloadDirectoryContents = try FileManager.default.contentsOfDirectory(atPath: downloadsDirectory.path)
@@ -164,6 +166,7 @@ class DownloadManager {
     }
     
     // MARK: Delete and clear
+    
     func deleteItem(_ offlineItem: OfflineItem) {
         try! FileManager.default.removeItem(at: offlineItem.itemDirectory)
         
@@ -210,6 +213,13 @@ class DownloadManager {
             
             Notifications[.didDeleteOfflineItem].post()
         }
+    }
+    
+    func moveToDownloads(from url: URL, itemID: String) throws {
+        let itemDownloadDirectory = DownloadManager.main.downloadsDirectory.appendingPathComponent(itemID, isDirectory: true)
+
+        try FileManager.default.moveItem(atPath: url.path, toPath: itemDownloadDirectory.path)
+        try FileManager.default.removeItem(atPath: url.path)
     }
     
     // MARK: ParseOfflineItem

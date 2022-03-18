@@ -13,15 +13,15 @@ import Nuke
 import UIKit
 
 enum DownloadState {
-    case downloading
-    case paused
     case cancelled
-    case idle
     case done
+    case downloading
     case error
+    case idle
+    case paused
 }
 
-class DownloadTracker: ObservableObject {
+class DownloadItem: ObservableObject {
     
     @Published var progress: Double = 0
     @Published var state: DownloadState = .idle
@@ -67,7 +67,7 @@ class DownloadTracker: ObservableObject {
                     self.state = .done
                     
                     do {
-                        try self.moveToDownloads()
+                        try DownloadManager.main.moveToDownloads(from: self.downloadRequest.fileURL!, itemID: self.item.id!)
                     } catch {
                         self.state = .error
                     }
@@ -154,20 +154,11 @@ class DownloadTracker: ObservableObject {
                 }
             }
     }
-    
-    private func moveToDownloads() throws {
-//        guard let itemID = item.id else { throw JellyfinAPIError("Cannot get item ID") }
-//        let itemTmpDirectory = DownloadManager.main.tmpDirectory.appendingPathComponent(itemID, isDirectory: true)
-//        let itemDownloadDirectory = DownloadManager.main.downloadsDirectory.appendingPathComponent(itemID, isDirectory: true)
-//
-//        try FileManager.default.moveItem(atPath: itemTmpDirectory.path, toPath: itemDownloadDirectory.path)
-//        try FileManager.default.removeItem(atPath: itemTmpDirectory.path)
-    }
 }
 
-extension DownloadTracker: Equatable, Hashable {
+extension DownloadItem: Equatable, Hashable {
     
-    static func == (lhs: DownloadTracker, rhs: DownloadTracker) -> Bool {
+    static func == (lhs: DownloadItem, rhs: DownloadItem) -> Bool {
         return lhs.downloadRequest.id == rhs.downloadRequest.id
     }
     

@@ -291,7 +291,6 @@
 		E131691726C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691826C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
 		E131691926C583BC0074BFEE /* LogConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131691626C583BC0074BFEE /* LogConstructor.swift */; };
-		E13540F927B76CFA00E3487D /* OfflineItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13540F827B76CFA00E3487D /* OfflineItem.swift */; };
 		E1361DA7278FA7A300BEC523 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1361DA6278FA7A300BEC523 /* NukeUI */; };
 		E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1384943278036C70024FB48 /* VLCPlayerViewController.swift */; };
 		E13849452780370B0024FB48 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
@@ -364,7 +363,7 @@
 		E18CC83827A48C6E00D8A284 /* OfflineItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CC83727A48C6E00D8A284 /* OfflineItemView.swift */; };
 		E18CC83A27A498F900D8A284 /* OfflineItemCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CC83927A498F900D8A284 /* OfflineItemCoordinator.swift */; };
 		E18CC83C27A49A1000D8A284 /* OfflineHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CC83B27A49A1000D8A284 /* OfflineHomeViewModel.swift */; };
-		E18CC83F27A4A03B00D8A284 /* DownloadTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CC83E27A4A03B00D8A284 /* DownloadTracker.swift */; };
+		E18CC83F27A4A03B00D8A284 /* DownloadItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CC83E27A4A03B00D8A284 /* DownloadItem.swift */; };
 		E19169CE272514760085832A /* HTTPScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19169CD272514760085832A /* HTTPScheme.swift */; };
 		E19169CF272514760085832A /* HTTPScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19169CD272514760085832A /* HTTPScheme.swift */; };
 		E19169D0272514760085832A /* HTTPScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19169CD272514760085832A /* HTTPScheme.swift */; };
@@ -730,7 +729,6 @@
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
 		E126F740278A656C00A522BF /* ServerStreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStreamType.swift; sourceTree = "<group>"; };
 		E131691626C583BC0074BFEE /* LogConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogConstructor.swift; sourceTree = "<group>"; };
-		E13540F827B76CFA00E3487D /* OfflineItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineItem.swift; sourceTree = "<group>"; };
 		E1384943278036C70024FB48 /* VLCPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerViewController.swift; sourceTree = "<group>"; };
 		E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
 		E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
@@ -780,7 +778,7 @@
 		E18CC83727A48C6E00D8A284 /* OfflineItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineItemView.swift; sourceTree = "<group>"; };
 		E18CC83927A498F900D8A284 /* OfflineItemCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineItemCoordinator.swift; sourceTree = "<group>"; };
 		E18CC83B27A49A1000D8A284 /* OfflineHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineHomeViewModel.swift; sourceTree = "<group>"; };
-		E18CC83E27A4A03B00D8A284 /* DownloadTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTracker.swift; sourceTree = "<group>"; };
+		E18CC83E27A4A03B00D8A284 /* DownloadItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadItem.swift; sourceTree = "<group>"; };
 		E19169CD272514760085832A /* HTTPScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPScheme.swift; sourceTree = "<group>"; };
 		E193D4D727193CAC00900D82 /* PortraitImageStackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitImageStackable.swift; sourceTree = "<group>"; };
 		E193D4DA27193CCA00900D82 /* PillStackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillStackable.swift; sourceTree = "<group>"; };
@@ -1787,8 +1785,7 @@
 			isa = PBXGroup;
 			children = (
 				E1C88AB4279BEC0E0063E617 /* DownloadManager.swift */,
-				E18CC83E27A4A03B00D8A284 /* DownloadTracker.swift */,
-				E13540F827B76CFA00E3487D /* OfflineItem.swift */,
+				E18CC83E27A4A03B00D8A284 /* DownloadItem.swift */,
 				E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */,
 			);
 			path = Objects;
@@ -2472,7 +2469,6 @@
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
 				E18CC82827A4715A00D8A284 /* TVPlayerViewModel.swift in Sources */,
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
-				E13540F927B76CFA00E3487D /* OfflineItem.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
 				53FF7F2A263CF3F500585C35 /* LatestMediaView.swift in Sources */,
 				E179D41527A20ED800885858 /* DownloadListView.swift in Sources */,
@@ -2605,7 +2601,7 @@
 				E15FBA8427A788E300B6EB71 /* DownloadItemCoordinator.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
 				62E632EF267D43320063E547 /* LibraryFilterViewModel.swift in Sources */,
-				E18CC83F27A4A03B00D8A284 /* DownloadTracker.swift in Sources */,
+				E18CC83F27A4A03B00D8A284 /* DownloadItem.swift in Sources */,
 				5D64683D277B1649009E09AE /* PreferenceUIHostingSwizzling.swift in Sources */,
 				E18CC83C27A49A1000D8A284 /* OfflineHomeViewModel.swift in Sources */,
 				E13DD3C827164B1E009D4DAF /* UIDeviceExtensions.swift in Sources */,
