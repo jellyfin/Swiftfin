@@ -66,7 +66,7 @@
     {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kean/Nuke.git",
+      "location" : "https://github.com/kean/Nuke",
       "state" : {
         "revision" : "78fa963b8491fc520791d8c2a509f1b8593d8aae",
         "version" : "10.7.1"
