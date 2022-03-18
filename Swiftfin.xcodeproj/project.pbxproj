@@ -14,7 +14,6 @@
 		09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
 		09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
-		3B8BA25B211CA261017ABA16 /* Pods_Swiftfin_Widget.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C8F278167C58CBF930F720F /* Pods_Swiftfin_Widget.framework */; };
 		53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A16268B919A003024C9 /* SeriesItemView.swift */; };
 		53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A18268B947A003024C9 /* PlainLinkButton.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
@@ -168,6 +167,46 @@
 		6264E88C273850380081A12A /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6264E88B273850380081A12A /* Strings.swift */; };
 		6264E88D273850380081A12A /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6264E88B273850380081A12A /* Strings.swift */; };
 		6264E88E273850380081A12A /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6264E88B273850380081A12A /* Strings.swift */; };
+		62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
+		62666DF827E5012C00EC0ECD /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */; };
+		62666DFB27E5013700EC0ECD /* TVVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		62666DFD27E5014F00EC0ECD /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */; };
+		62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4AA267D40AD000E2F71 /* AVFoundation.framework */; };
+		62666DFF27E5016400EC0ECD /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4B0267D40B9000E2F71 /* CFNetwork.framework */; };
+		62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E0027E5016900EC0ECD /* CoreFoundation.framework */; };
+		62666E0227E5016D00EC0ECD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4B6267D40CA000E2F71 /* CoreGraphics.framework */; };
+		62666E0327E5017100EC0ECD /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4B8267D40CE000E2F71 /* CoreMedia.framework */; };
+		62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4BA267D40D2000E2F71 /* CoreText.framework */; };
+		62666E0627E5017A00EC0ECD /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E0527E5017A00EC0ECD /* CoreVideo.framework */; };
+		62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E0B27E501A500EC0ECD /* OpenGLES.framework */; };
+		62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4C2267D40EC000E2F71 /* QuartzCore.framework */; };
+		62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4C4267D40F0000E2F71 /* Security.framework */; };
+		62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E0F27E501B400EC0ECD /* VideoToolbox.framework */; };
+		62666E1127E501B900EC0ECD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4C8267D40F7000E2F71 /* UIKit.framework */; };
+		62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E1227E501C300EC0ECD /* AudioToolbox.framework */; };
+		62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E1427E501C800EC0ECD /* AVFoundation.framework */; };
+		62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E1627E501CC00EC0ECD /* CFNetwork.framework */; };
+		62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E1827E501D000EC0ECD /* CoreFoundation.framework */; };
+		62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E1A27E501D400EC0ECD /* CoreGraphics.framework */; };
+		62666E1D27E501DB00EC0ECD /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E1C27E501DB00EC0ECD /* CoreMedia.framework */; };
+		62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E1E27E501DF00EC0ECD /* CoreText.framework */; };
+		62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2027E501E400EC0ECD /* CoreVideo.framework */; };
+		62666E2327E501EB00EC0ECD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2227E501EB00EC0ECD /* Foundation.framework */; };
+		62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4BC267D40D8000E2F71 /* Foundation.framework */; };
+		62666E2A27E5020A00EC0ECD /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2927E5020A00EC0ECD /* OpenGLES.framework */; };
+		62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2B27E5021000EC0ECD /* QuartzCore.framework */; };
+		62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2D27E5021400EC0ECD /* Security.framework */; };
+		62666E3027E5021800EC0ECD /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2F27E5021800EC0ECD /* VideoToolbox.framework */; };
+		62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E3127E5021E00EC0ECD /* UIKit.framework */; };
+		62666E3427E5027F00EC0ECD /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62666E3327E5027F00EC0ECD /* Defaults+Workaround.swift */; };
+		62666E3527E5027F00EC0ECD /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62666E3327E5027F00EC0ECD /* Defaults+Workaround.swift */; };
+		62666E3627E5027F00EC0ECD /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62666E3327E5027F00EC0ECD /* Defaults+Workaround.swift */; };
+		62666E3927E502CE00EC0ECD /* SwizzleSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 62666E3827E502CE00EC0ECD /* SwizzleSwift */; };
+		62666E3C27E503F200EC0ECD /* GoogleCastSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */; };
+		62666E3D27E503F200EC0ECD /* GoogleCastSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		62666E3E27E503FA00EC0ECD /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */; };
+		62666E3F27E5040300EC0ECD /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */; };
 		6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
 		6267B3D726710B9700A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
 		6267B3D826710B9800A7371D /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6267B3D526710B8900A7371D /* CollectionExtensions.swift */; };
@@ -212,7 +251,6 @@
 		62EC353226766849000E9F2D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352E267666A5000E9F2D /* SessionManager.swift */; };
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
-		9EA03141D129DC2763660E29 /* Pods_Swiftfin_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D9B2BE5F9AD4A3CDE842523 /* Pods_Swiftfin_tvOS.framework */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */; };
 		C40CD926271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */; };
@@ -466,7 +504,6 @@
 		E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
 		E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
 		E1FCD09A26C4F35A007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
-		EEAF6CD6B3433126DEBC7E87 /* Pods_Swiftfin_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D83BE2EA22A2F35B7083A9B /* Pods_Swiftfin_iOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -489,6 +526,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		62666DF927E5012C00EC0ECD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				62666E3D27E503F200EC0ECD /* GoogleCastSDK.xcframework in Embed Frameworks */,
+				62666DF827E5012C00EC0ECD /* MobileVLCKit.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		62666DFC27E5013700EC0ECD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				62666DFB27E5013700EC0ECD /* TVVLCKit.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		628B95312670CABE0091AF3B /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -506,12 +566,6 @@
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UDPBroadCastConnection.swift; sourceTree = "<group>"; };
 		09389CC626819B4500AE350E /* VideoPlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerModel.swift; sourceTree = "<group>"; };
-		0D9B2BE5F9AD4A3CDE842523 /* Pods_Swiftfin_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Swiftfin_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		14E199C7BBA98782CAD2F0D4 /* Pods-JellyfinPlayer iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.release.xcconfig"; sourceTree = "<group>"; };
-		1C8F278167C58CBF930F720F /* Pods_Swiftfin_Widget.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Swiftfin_Widget.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		20CA36DDD247EED8D16438A5 /* Pods-JellyfinPlayer tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.release.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		288C4344EE80919B19CE4ECC /* Pods-Swiftfin iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swiftfin iOS.debug.xcconfig"; path = "Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS.debug.xcconfig"; sourceTree = "<group>"; };
-		4BDCEE3B49CF70A9E9BA3CD8 /* Pods-WidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WidgetExtension.debug.xcconfig"; path = "Target Support Files/Pods-WidgetExtension/Pods-WidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		53116A16268B919A003024C9 /* SeriesItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesItemView.swift; sourceTree = "<group>"; };
 		53116A18268B947A003024C9 /* PlainLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlainLinkButton.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -618,6 +672,34 @@
 		625CB57B2678CE1000530A6E /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = Carthage/Build/TVVLCKit.xcframework; sourceTree = "<group>"; };
 		6264E88B273850380081A12A /* Strings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
+		62666E0027E5016900EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		62666E0527E5017A00EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		62666E0727E5018D00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		62666E0827E5019800EC0ECD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		62666E0927E5019C00EC0ECD /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		62666E0A27E501A100EC0ECD /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		62666E0B27E501A500EC0ECD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		62666E0F27E501B400EC0ECD /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		62666E1227E501C300EC0ECD /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		62666E1427E501C800EC0ECD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		62666E1627E501CC00EC0ECD /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
+		62666E1827E501D000EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		62666E1A27E501D400EC0ECD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		62666E1C27E501DB00EC0ECD /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
+		62666E1E27E501DF00EC0ECD /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
+		62666E2027E501E400EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
+		62666E2227E501EB00EC0ECD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		62666E2527E501FA00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
+		62666E2627E501FE00EC0ECD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		62666E2727E5020200EC0ECD /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
+		62666E2827E5020600EC0ECD /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libxml2.tbd; sourceTree = DEVELOPER_DIR; };
+		62666E2927E5020A00EC0ECD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		62666E2B27E5021000EC0ECD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		62666E2D27E5021400EC0ECD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		62666E2F27E5021800EC0ECD /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		62666E3127E5021E00EC0ECD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		62666E3327E5027F00EC0ECD /* Defaults+Workaround.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Defaults+Workaround.swift"; sourceTree = "<group>"; };
+		62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCastSDK.xcframework; path = Frameworks/GoogleCastSDK.xcframework; sourceTree = "<group>"; };
 		6267B3D526710B8900A7371D /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		6267B3D92671138200A7371D /* ImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtensions.swift; sourceTree = "<group>"; };
 		628B95202670CABD0091AF3B /* Swiftfin Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Swiftfin Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -645,14 +727,7 @@
 		62EC352E267666A5000E9F2D /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRotationViewModifier.swift; sourceTree = "<group>"; };
 		62ECA01726FA685A00E8EBB7 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
-		74C80CD9DC11D69A2BB002DD /* Pods-Swiftfin iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swiftfin iOS.release.xcconfig"; path = "Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS.release.xcconfig"; sourceTree = "<group>"; };
-		772F6DAB8534FD1DB45B7687 /* Pods-JellyfinPlayer iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer iOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer iOS/Pods-JellyfinPlayer iOS.debug.xcconfig"; sourceTree = "<group>"; };
-		7D83BE2EA22A2F35B7083A9B /* Pods_Swiftfin_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Swiftfin_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9C81BB622CBEC0A1CE9EB779 /* Pods-Swiftfin Widget.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swiftfin Widget.release.xcconfig"; path = "Target Support Files/Pods-Swiftfin Widget/Pods-Swiftfin Widget.release.xcconfig"; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
-		B598C62749E5EFD37280FCC3 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JellyfinPlayer tvOS.debug.xcconfig"; path = "Target Support Files/Pods-JellyfinPlayer tvOS/Pods-JellyfinPlayer tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		B76B017043EEA81AC273B805 /* Pods-Swiftfin tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swiftfin tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		BDFD2CD49EB5FC27E45DD871 /* Pods-Swiftfin Widget.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swiftfin Widget.debug.xcconfig"; path = "Target Support Files/Pods-Swiftfin Widget/Pods-Swiftfin Widget.debug.xcconfig"; sourceTree = "<group>"; };
 		C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesLibrariesCoordinator.swift; sourceTree = "<group>"; };
 		C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLibrariesViewModel.swift; sourceTree = "<group>"; };
 		C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLibrariesView.swift; sourceTree = "<group>"; };
@@ -804,8 +879,6 @@
 		E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallMenuOverlay.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
-		E8AB8B2582B44B8B19E77781 /* Pods-Swiftfin tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swiftfin tvOS.release.xcconfig"; path = "Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		FDEDADB92FA8523BC8432E45 /* Pods-WidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WidgetExtension.release.xcconfig"; path = "Target Support Files/Pods-WidgetExtension/Pods-WidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -813,21 +886,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				53649AAF269CFAF600A2D8B7 /* Puppy in Frameworks */,
 				E11D83AF278FA998006E9776 /* NukeUI in Frameworks */,
+				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
+				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
 				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
+				62666E2A27E5020A00EC0ECD /* OpenGLES.framework in Frameworks */,
 				E1002B6B2793E36600E47059 /* Algorithms in Frameworks */,
+				62666E1D27E501DB00EC0ECD /* CoreMedia.framework in Frameworks */,
+				62666E3027E5021800EC0ECD /* VideoToolbox.framework in Frameworks */,
+				62666E2327E501EB00EC0ECD /* Foundation.framework in Frameworks */,
+				62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
+				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
 				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
+				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
+				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
+				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				E1A9999B271A343C008E78C0 /* SwiftUICollection in Frameworks */,
+				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
+				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
+				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E1AE8E7E2789136D00FBDDAA /* Nuke in Frameworks */,
 				E178857D278037FD0094FBCF /* JellyfinAPI in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				53ABFDED26799D7700886593 /* ActivityIndicator in Frameworks */,
-				9EA03141D129DC2763660E29 /* Pods_Swiftfin_tvOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -835,21 +922,39 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62666E3E27E503FA00EC0ECD /* MediaAccessibility.framework in Frameworks */,
+				62666DFF27E5016400EC0ECD /* CFNetwork.framework in Frameworks */,
 				E13DD3D327168E65009D4DAF /* Defaults in Frameworks */,
 				E1361DA7278FA7A300BEC523 /* NukeUI in Frameworks */,
 				53649AAD269CFAEA00A2D8B7 /* Puppy in Frameworks */,
 				E1002B682793CFBA00E47059 /* Algorithms in Frameworks */,
+				62666E1127E501B900EC0ECD /* UIKit.framework in Frameworks */,
+				62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */,
+				62666E0327E5017100EC0ECD /* CoreMedia.framework in Frameworks */,
+				62666E0627E5017A00EC0ECD /* CoreVideo.framework in Frameworks */,
 				E10EAA4D277BB716000269ED /* Sliders in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
+				62666E0227E5016D00EC0ECD /* CoreGraphics.framework in Frameworks */,
+				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
+				62666E3C27E503F200EC0ECD /* GoogleCastSDK.xcframework in Frameworks */,
+				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
 				E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */,
+				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
+				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
+				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
+				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
+				62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */,
+				62666DFD27E5014F00EC0ECD /* AudioToolbox.framework in Frameworks */,
+				62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */,
 				E1AE8E7C2789135A00FBDDAA /* Nuke in Frameworks */,
+				62666E3F27E5040300EC0ECD /* SystemConfiguration.framework in Frameworks */,
 				625CB57A2678C4A400530A6E /* ActivityIndicator in Frameworks */,
+				62666E3927E502CE00EC0ECD /* SwizzleSwift in Frameworks */,
 				E1B6DCE8271A23780015B715 /* CombineExt in Frameworks */,
 				E10EAA45277BB646000269ED /* JellyfinAPI in Frameworks */,
-				EEAF6CD6B3433126DEBC7E87 /* Pods_Swiftfin_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,7 +970,6 @@
 				536D3D7D267BD5F90004248C /* ActivityIndicator in Frameworks */,
 				E13DD3CF27164E1F009D4DAF /* CoreStore in Frameworks */,
 				E10EAA47277BB670000269ED /* JellyfinAPI in Frameworks */,
-				3B8BA25B211CA261017ABA16 /* Pods_Swiftfin_Widget.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1059,7 +1163,6 @@
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				5377CBF3263B596A003A4E83 /* Swiftfin */,
 				535870612669D21600D05A09 /* Swiftfin tvOS */,
-				C78797A232E2B8774099D1E9 /* Pods */,
 				5377CBF2263B596A003A4E83 /* Products */,
 				535870752669D60C00D05A09 /* Shared */,
 				628B95252670CABD0091AF3B /* WidgetExtension */,
@@ -1220,6 +1323,33 @@
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */,
+				62666E3127E5021E00EC0ECD /* UIKit.framework */,
+				62666E2F27E5021800EC0ECD /* VideoToolbox.framework */,
+				62666E2D27E5021400EC0ECD /* Security.framework */,
+				62666E2B27E5021000EC0ECD /* QuartzCore.framework */,
+				62666E2927E5020A00EC0ECD /* OpenGLES.framework */,
+				62666E2827E5020600EC0ECD /* libxml2.tbd */,
+				62666E2727E5020200EC0ECD /* libiconv.tbd */,
+				62666E2627E501FE00EC0ECD /* libc++.tbd */,
+				62666E2527E501FA00EC0ECD /* libbz2.tbd */,
+				62666E2227E501EB00EC0ECD /* Foundation.framework */,
+				62666E2027E501E400EC0ECD /* CoreVideo.framework */,
+				62666E1E27E501DF00EC0ECD /* CoreText.framework */,
+				62666E1C27E501DB00EC0ECD /* CoreMedia.framework */,
+				62666E1A27E501D400EC0ECD /* CoreGraphics.framework */,
+				62666E1827E501D000EC0ECD /* CoreFoundation.framework */,
+				62666E1627E501CC00EC0ECD /* CFNetwork.framework */,
+				62666E1427E501C800EC0ECD /* AVFoundation.framework */,
+				62666E1227E501C300EC0ECD /* AudioToolbox.framework */,
+				62666E0F27E501B400EC0ECD /* VideoToolbox.framework */,
+				62666E0B27E501A500EC0ECD /* OpenGLES.framework */,
+				62666E0A27E501A100EC0ECD /* libxml2.tbd */,
+				62666E0927E5019C00EC0ECD /* libiconv.tbd */,
+				62666E0827E5019800EC0ECD /* libc++.tbd */,
+				62666E0727E5018D00EC0ECD /* libbz2.tbd */,
+				62666E0527E5017A00EC0ECD /* CoreVideo.framework */,
+				62666E0027E5016900EC0ECD /* CoreFoundation.framework */,
 				5362E4C8267D40F7000E2F71 /* UIKit.framework */,
 				5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */,
 				5362E4C4267D40F0000E2F71 /* Security.framework */,
@@ -1242,9 +1372,6 @@
 				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
 				628B95212670CABD0091AF3B /* WidgetKit.framework */,
 				628B95232670CABD0091AF3B /* SwiftUI.framework */,
-				1C8F278167C58CBF930F720F /* Pods_Swiftfin_Widget.framework */,
-				7D83BE2EA22A2F35B7083A9B /* Pods_Swiftfin_iOS.framework */,
-				0D9B2BE5F9AD4A3CDE842523 /* Pods_Swiftfin_tvOS.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1292,6 +1419,7 @@
 				62E1DCC2273CE19800C9AE76 /* URLExtensions.swift */,
 				6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */,
 				5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */,
+				62666E3327E5027F00EC0ECD /* Defaults+Workaround.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1370,25 +1498,6 @@
 				AE8C3158265D6F90008AA076 /* bitrates.json */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		C78797A232E2B8774099D1E9 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				772F6DAB8534FD1DB45B7687 /* Pods-JellyfinPlayer iOS.debug.xcconfig */,
-				14E199C7BBA98782CAD2F0D4 /* Pods-JellyfinPlayer iOS.release.xcconfig */,
-				B598C62749E5EFD37280FCC3 /* Pods-JellyfinPlayer tvOS.debug.xcconfig */,
-				20CA36DDD247EED8D16438A5 /* Pods-JellyfinPlayer tvOS.release.xcconfig */,
-				4BDCEE3B49CF70A9E9BA3CD8 /* Pods-WidgetExtension.debug.xcconfig */,
-				FDEDADB92FA8523BC8432E45 /* Pods-WidgetExtension.release.xcconfig */,
-				BDFD2CD49EB5FC27E45DD871 /* Pods-Swiftfin Widget.debug.xcconfig */,
-				9C81BB622CBEC0A1CE9EB779 /* Pods-Swiftfin Widget.release.xcconfig */,
-				288C4344EE80919B19CE4ECC /* Pods-Swiftfin iOS.debug.xcconfig */,
-				74C80CD9DC11D69A2BB002DD /* Pods-Swiftfin iOS.release.xcconfig */,
-				B76B017043EEA81AC273B805 /* Pods-Swiftfin tvOS.debug.xcconfig */,
-				E8AB8B2582B44B8B19E77781 /* Pods-Swiftfin tvOS.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		E1002B692793E12E00E47059 /* Overlays */ = {
@@ -1753,12 +1862,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */;
 			buildPhases = (
-				3D0F2756C71CDF6B9EEBD4E0 /* [CP] Check Pods Manifest.lock */,
 				6286F0A3271C0ABA00C40ED5 /* R.swift */,
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
-				879C22C1CCC48E68C86E904C /* [CP] Embed Pods Frameworks */,
+				62666DFC27E5013700EC0ECD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1788,15 +1896,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5377CC1B263B596B003A4E83 /* Build configuration list for PBXNativeTarget "Swiftfin iOS" */;
 			buildPhases = (
-				1C7487D3432E90546DA855B5 /* [CP] Check Pods Manifest.lock */,
 				6286F09E271C093000C40ED5 /* R.swift */,
 				5377CBED263B596A003A4E83 /* Sources */,
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
 				5302F8322658B74800647A2E /* CopyFiles */,
 				628B95312670CABE0091AF3B /* Embed App Extensions */,
-				8D1E0C963DCE6C6F328B3EBB /* [CP] Embed Pods Frameworks */,
-				DB8CA7C37DF78BEDCE4E37C1 /* [CP] Copy Pods Resources */,
+				62666DF927E5012C00EC0ECD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1819,6 +1925,7 @@
 				E1AE8E7B2789135A00FBDDAA /* Nuke */,
 				E1361DA6278FA7A300BEC523 /* NukeUI */,
 				E1002B672793CFBA00E47059 /* Algorithms */,
+				62666E3827E502CE00EC0ECD /* SwizzleSwift */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -1828,7 +1935,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 628B952E2670CABE0091AF3B /* Build configuration list for PBXNativeTarget "Swiftfin Widget" */;
 			buildPhases = (
-				D4D3981ADF75BCD341D590C0 /* [CP] Check Pods Manifest.lock */,
 				628B951C2670CABD0091AF3B /* Sources */,
 				628B951D2670CABD0091AF3B /* Frameworks */,
 				628B951E2670CABD0091AF3B /* Resources */,
@@ -1913,6 +2019,7 @@
 				E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */,
 				E1361DA5278FA7A300BEC523 /* XCRemoteSwiftPackageReference "NukeUI" */,
 				E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -2005,50 +2112,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1C7487D3432E90546DA855B5 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Swiftfin iOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3D0F2756C71CDF6B9EEBD4E0 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Swiftfin tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6286F09E271C093000C40ED5 /* R.swift */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2084,79 +2147,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PROJECT_DIR}/bin/swiftgen\"\n";
-		};
-		879C22C1CCC48E68C86E904C /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Swiftfin tvOS/Pods-Swiftfin tvOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8D1E0C963DCE6C6F328B3EBB /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D4D3981ADF75BCD341D590C0 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Swiftfin Widget-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DB8CA7C37DF78BEDCE4E37C1 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Swiftfin iOS/Pods-Swiftfin iOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2304,6 +2294,7 @@
 				E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */,
 				E1FA2F7427818A8800B4C270 /* SmallMenuOverlay.swift in Sources */,
 				E193D53C27193F9500900D82 /* UserListCoordinator.swift in Sources */,
+				62666E3627E5027F00EC0ECD /* Defaults+Workaround.swift in Sources */,
 				E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E13DD3C927164B1E009D4DAF /* UIDeviceExtensions.swift in Sources */,
 				535870A62669D8AE00D05A09 /* LazyView.swift in Sources */,
@@ -2354,6 +2345,7 @@
 				5364F455266CA0DC0026ECBA /* BaseItemPersonExtensions.swift in Sources */,
 				E18845F526DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */,
 				E1D4BF7E2719D1DD00A11E64 /* BasicAppSettingsViewModel.swift in Sources */,
+				62666E3427E5027F00EC0ECD /* Defaults+Workaround.swift in Sources */,
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
@@ -2544,6 +2536,7 @@
 				E1AA332427829B5200F6439C /* OverlayType.swift in Sources */,
 				E1D4BF8C2719F39F00A11E64 /* AppAppearance.swift in Sources */,
 				E1A2C15D279A7D9F005EC829 /* AppIcon.swift in Sources */,
+				62666E3527E5027F00EC0ECD /* Defaults+Workaround.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2691,7 +2684,6 @@
 /* Begin XCBuildConfiguration section */
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B76B017043EEA81AC273B805 /* Pods-Swiftfin tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Dev App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2721,7 +2713,6 @@
 		};
 		535870732669D21700D05A09 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E8AB8B2582B44B8B19E77781 /* Pods-Swiftfin tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2871,7 +2862,6 @@
 		};
 		5377CC1C263B596B003A4E83 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 288C4344EE80919B19CE4ECC /* Pods-Swiftfin iOS.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
@@ -2881,7 +2871,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4BHXT8RHFR;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2907,7 +2897,6 @@
 		};
 		5377CC1D263B596B003A4E83 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 74C80CD9DC11D69A2BB002DD /* Pods-Swiftfin iOS.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -2918,7 +2907,7 @@
 				CURRENT_PROJECT_VERSION = 70;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4BHXT8RHFR;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -2943,13 +2932,12 @@
 		};
 		628B952F2670CABE0091AF3B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BDFD2CD49EB5FC27E45DD871 /* Pods-Swiftfin Widget.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4BHXT8RHFR;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2970,13 +2958,12 @@
 		};
 		628B95302670CABE0091AF3B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C81BB622CBEC0A1CE9EB779 /* Pods-Swiftfin Widget.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4BHXT8RHFR;
 				INFOPLIST_FILE = WidgetExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3066,6 +3053,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.1.0;
+			};
+		};
+		62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MarioIannotta/SwizzleSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */ = {
@@ -3208,6 +3203,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */;
 			productName = ActivityIndicator;
+		};
+		62666E3827E502CE00EC0ECD /* SwizzleSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */;
+			productName = SwizzleSwift;
 		};
 		62C29E9B26D0FE4200C1D2E7 /* Stinsen */ = {
 			isa = XCSwiftPackageProductDependency;
