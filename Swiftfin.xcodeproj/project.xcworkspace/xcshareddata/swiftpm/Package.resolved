@@ -1,106 +1,185 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "ActivityIndicator",
-        "repositoryURL": "https://github.com/duyquang91/ActivityIndicator",
-        "state": {
-          "branch": null,
-          "revision": "0101a02196f6a67cf26f6434b007d3db6bd07fee",
-          "version": "1.1.0"
-        }
-      },
-      {
-        "package": "AnyCodable",
-        "repositoryURL": "https://github.com/Flight-School/AnyCodable",
-        "state": {
-          "branch": null,
-          "revision": "876d162385e9862ae8b3c8d65dc301312b040005",
-          "version": "0.6.0"
-        }
-      },
-      {
-        "package": "Gifu",
-        "repositoryURL": "https://github.com/kaishin/Gifu",
-        "state": {
-          "branch": null,
-          "revision": "0ffe24744cc3d82ab9edece53670d0352c6d5507",
-          "version": "3.3.0"
-        }
-      },
-      {
-        "package": "jellyfin-sdk-swift",
-        "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
-        "state": {
-          "branch": "main",
-          "revision": "5cdc2419f547b3f31dc96f5eccaf3f303f44184b",
-          "version": null
-        }
-      },
-      {
-        "package": "keychain-swift",
-        "repositoryURL": "https://github.com/evgenyneu/keychain-swift",
-        "state": {
-          "branch": null,
-          "revision": "96fb84f45a96630e7583903bd7e08cf095c7a7ef",
-          "version": "19.0.0"
-        }
-      },
-      {
-        "package": "Nuke",
-        "repositoryURL": "https://github.com/kean/Nuke.git",
-        "state": {
-          "branch": null,
-          "revision": "69ae6d5b8c4b898450432f94bd35f863d3830cfc",
-          "version": "10.3.0"
-        }
-      },
-      {
-        "package": "NukeUI",
-        "repositoryURL": "https://github.com/kean/NukeUI",
-        "state": {
-          "branch": null,
-          "revision": "d2580b8d22b29c6244418d8e4b568f3162191460",
-          "version": "0.3.0"
-        }
-      },
-      {
-        "package": "ParallaxView",
-        "repositoryURL": "https://github.com/PGSSoft/ParallaxView",
-        "state": {
-          "branch": null,
-          "revision": "a4165b0edd9c9c923a1d6e3e4c9a807302a1a475",
-          "version": "3.1.2"
-        }
-      },
-      {
-        "package": "swift-protobuf",
-        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
-        "state": {
-          "branch": null,
-          "revision": "1f62db409f2c9b0223a3f68567b4a01333aae778",
-          "version": "1.17.0"
-        }
-      },
-      {
-        "package": "SwiftUI-Introspect",
-        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
-        "state": {
-          "branch": null,
-          "revision": "2e09be8af614401bc9f87d40093ec19ce56ccaf2",
-          "version": "0.1.3"
-        }
-      },
-      {
-        "package": "SwiftyJSON",
-        "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON",
-        "state": {
-          "branch": "master",
-          "revision": "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "activityindicator",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/duyquang91/ActivityIndicator",
+      "state" : {
+        "revision" : "0101a02196f6a67cf26f6434b007d3db6bd07fee",
+        "version" : "1.1.0"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "anycodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Flight-School/AnyCodable",
+      "state" : {
+        "revision" : "22f302d4c048aafcda09a4ab5b8c0b03855316fb",
+        "version" : "0.6.3"
+      }
+    },
+    {
+      "identity" : "combineext",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CombineCommunity/CombineExt",
+      "state" : {
+        "revision" : "0880829102152185190064fd17847a7c681d2127",
+        "version" : "1.5.1"
+      }
+    },
+    {
+      "identity" : "corestore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnEstropia/CoreStore.git",
+      "state" : {
+        "revision" : "496145761ab30e8cf1c44220c0882b95e6b41077",
+        "version" : "8.1.0"
+      }
+    },
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults",
+      "state" : {
+        "revision" : "119f654d44f7b90f00dc11f7dd1c94a36f12576b",
+        "version" : "6.2.1"
+      }
+    },
+    {
+      "identity" : "gifu",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kaishin/Gifu",
+      "state" : {
+        "revision" : "51f2eab32903e336f590c013267cfa4d7f8b06c4",
+        "version" : "3.3.1"
+      }
+    },
+    {
+      "identity" : "jellyfin-sdk-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jellyfin/jellyfin-sdk-swift",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f315671ced976a7ec75ce6a1f37e00b4880cbf4b"
+      }
+    },
+    {
+      "identity" : "nuke",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Nuke",
+      "state" : {
+        "revision" : "78fa963b8491fc520791d8c2a509f1b8593d8aae",
+        "version" : "10.7.1"
+      }
+    },
+    {
+      "identity" : "nukeui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/NukeUI",
+      "state" : {
+        "revision" : "71398392943f2538fd0f2ebc6f282920f6775b0c",
+        "version" : "0.8.0"
+      }
+    },
+    {
+      "identity" : "parallaxview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/PGSSoft/ParallaxView",
+      "state" : {
+        "revision" : "a4165b0edd9c9c923a1d6e3e4c9a807302a1a475",
+        "version" : "3.1.2"
+      }
+    },
+    {
+      "identity" : "puppy",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sushichop/Puppy",
+      "state" : {
+        "revision" : "7cfae42becac2d8916cb1a866dd12d9843199df9",
+        "version" : "0.5.0"
+      }
+    },
+    {
+      "identity" : "stinsen",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rundfunk47/stinsen",
+      "state" : {
+        "revision" : "36d97964075dc770046ddef9346a29bfa8982d6d",
+        "version" : "2.0.7"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms.git",
+      "state" : {
+        "revision" : "b14b7f4c528c942f121c8b860b9410b2bf57825e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
+        "version" : "1.4.2"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics",
+      "state" : {
+        "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swiftui-introspect",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siteline/SwiftUI-Introspect",
+      "state" : {
+        "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
+        "version" : "0.1.4"
+      }
+    },
+    {
+      "identity" : "swiftui-sliders",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/spacenation/swiftui-sliders",
+      "state" : {
+        "branch" : "master",
+        "revision" : "518bed3bfc7bd522f3c49404a0d1efb98fa1bf2c"
+      }
+    },
+    {
+      "identity" : "swiftuicollection",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ABJC/SwiftUICollection",
+      "state" : {
+        "branch" : "master",
+        "revision" : "e27149382ce8ec21995069c8aab7ca83d61a3120"
+      }
+    },
+    {
+      "identity" : "swiftyjson",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftyJSON/SwiftyJSON",
+      "state" : {
+        "revision" : "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
+        "version" : "5.0.1"
+      }
+    },
+    {
+      "identity" : "swizzleswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MarioIannotta/SwizzleSwift",
+      "state" : {
+        "revision" : "337dd5f158182620b2bb53c6847f8874a0117b2f",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 2
 }
