@@ -50,7 +50,7 @@ struct MovieItemView: View {
 
 	var body: some View {
 		ZStack {
-			ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920), bh: viewModel.item.getBackdropImageBlurHash())
+			ImageView(viewModel.item.getBackdropImage(maxWidth: 1920), blurHash: viewModel.item.getBackdropImageBlurHash())
 				.opacity(0.4)
 				.ignoresSafeArea()
 			ScrollView {

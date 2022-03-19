@@ -23,8 +23,8 @@ struct EpisodeRowCard: View {
 			HStack(alignment: .top) {
 				VStack(alignment: .leading) {
 
-					ImageView(src: episode.getBackdropImage(maxWidth: 200),
-					          bh: episode.getBackdropImageBlurHash())
+					ImageView(episode.getBackdropImage(maxWidth: 200),
+					          blurHash: episode.getBackdropImageBlurHash())
 						.mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
 						.frame(width: 200, height: 112)
 						.overlay {

@@ -54,7 +54,7 @@ struct LibraryListView: View {
 							                         title: library.name ?? ""))
 						} label: {
 							ZStack {
-								ImageView(src: library.getPrimaryImage(maxWidth: 500), bh: library.getPrimaryImageBlurHash())
+								ImageView(library.getPrimaryImage(maxWidth: 500), blurHash: library.getPrimaryImageBlurHash())
 									.opacity(0.4)
 									.accessibilityIgnoresInvertColors()
 								HStack {

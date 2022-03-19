@@ -20,7 +20,7 @@ struct PublicUserButton: View {
 	var body: some View {
 		VStack {
 			if publicUser.primaryImageTag != nil {
-				ImageView(src: URL(string: "\(SessionManager.main.currentLogin.server.currentURI)/Users/\(publicUser.id ?? "")/Images/Primary?width=500&quality=80&tag=\(publicUser.primaryImageTag!)")!)
+				ImageView(URL(string: "\(SessionManager.main.currentLogin.server.currentURI)/Users/\(publicUser.id ?? "")/Images/Primary?width=500&quality=80&tag=\(publicUser.primaryImageTag!)")!)
 					.frame(width: 250, height: 250)
 					.cornerRadius(125.0)
 			} else {

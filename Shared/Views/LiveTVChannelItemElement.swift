@@ -29,7 +29,7 @@ struct LiveTVChannelItemElement: View {
 					.font(.footnote)
 					.frame(alignment: .trailing)
 			}.frame(alignment: .top)
-			ImageView(src: channel.getPrimaryImage(maxWidth: 125))
+			ImageView(channel.getPrimaryImage(maxWidth: 125))
 				.frame(width: 125, alignment: .center)
 				.offset(x: 0, y: -32)
 			Text(channel.name ?? "?")
