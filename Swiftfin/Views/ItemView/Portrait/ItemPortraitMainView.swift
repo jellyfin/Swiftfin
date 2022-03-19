@@ -19,8 +19,8 @@ struct ItemPortraitMainView: View {
 	// MARK: portraitHeaderView
 
 	var portraitHeaderView: some View {
-		ImageView(src: viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-		          bh: viewModel.item.getBackdropImageBlurHash())
+		ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
+		          blurHash: viewModel.item.getBackdropImageBlurHash())
 			.opacity(0.4)
 			.blur(radius: 2.0)
 			.accessibilityIgnoresInvertColors()

@@ -20,8 +20,7 @@ class ServerListViewModel: ObservableObject {
 		// This is a workaround since Stinsen doesn't have the ability to rebuild a root at the time of writing.
 		// Feature request issue: https://github.com/rundfunk47/stinsen/issues/33
 		// Go to each MainCoordinator and implement the rebuild of the root when receiving the notification
-		let nc = SwiftfinNotificationCenter.main
-		nc.addObserver(self, selector: #selector(didPurge), name: SwiftfinNotificationCenter.Keys.didPurge, object: nil)
+		Notifications[.didPurge].subscribe(self, selector: #selector(didPurge))
 	}
 
 	func fetchServers() {

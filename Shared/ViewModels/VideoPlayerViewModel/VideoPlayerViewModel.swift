@@ -585,8 +585,7 @@ extension VideoPlayerViewModel {
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
 				LogManager.shared.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
-				SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSendStopReport,
-				                                     object: self.item.id)
+				Notifications[.didSendStopReport].post(object: self.item.id)
 			}
 			.store(in: &cancellables)
 	}

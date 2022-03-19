@@ -35,12 +35,14 @@ struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
 			selectedAction(item)
 		} label: {
 			VStack(alignment: horizontalAlignment) {
-				ImageView(src: item.imageURLConstructor(maxWidth: Int(maxWidth)),
-				          bh: item.blurHash,
-				          failureInitials: item.failureInitials)
-					.portraitPoster(width: maxWidth)
-					.shadow(radius: 4, y: 2)
-					.accessibilityIgnoresInvertColors()
+				ImageView(item.imageURLConstructor(maxWidth: Int(maxWidth)),
+				          blurHash: item.blurHash,
+				          failureView: {
+				          	InitialFailureView(item.failureInitials)
+				          })
+				          	.portraitPoster(width: maxWidth)
+				          	.shadow(radius: 4, y: 2)
+				          	.accessibilityIgnoresInvertColors()
 
 				if item.showTitle {
 					Text(item.title)

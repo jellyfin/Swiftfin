@@ -45,12 +45,10 @@ final class MainCoordinator: NavigationCoordinatable {
 		barAppearance.tintColor = UIColor(Color.jellyfinPurple)
 
 		// Notification setup for state
-		let nc = SwiftfinNotificationCenter.main
-		nc.addObserver(self, selector: #selector(didLogIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
-		nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
-		nc.addObserver(self, selector: #selector(processDeepLink), name: SwiftfinNotificationCenter.Keys.processDeepLink, object: nil)
-		nc.addObserver(self, selector: #selector(didChangeServerCurrentURI),
-		               name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: nil)
+		Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
+		Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
+		Notifications[.processDeepLink].subscribe(self, selector: #selector(processDeepLink(_:)))
+		Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeServerCurrentURI(_:)))
 
 		Defaults.publisher(.appAppearance)
 			.sink { _ in
@@ -60,13 +58,13 @@ final class MainCoordinator: NavigationCoordinatable {
 	}
 
 	@objc
-	func didLogIn() {
+	func didSignIn() {
 		LogManager.shared.log.info("Received `didSignIn` from SwiftfinNotificationCenter.")
 		root(\.mainTab)
 	}
 
 	@objc
-	func didLogOut() {
+	func didSignOut() {
 		LogManager.shared.log.info("Received `didSignOut` from SwiftfinNotificationCenter.")
 		root(\.serverList)
 	}

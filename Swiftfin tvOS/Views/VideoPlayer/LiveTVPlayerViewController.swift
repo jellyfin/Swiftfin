@@ -700,7 +700,7 @@ extension LiveTVPlayerViewController: VLCMediaPlayerDelegate {
 
 	// MARK: mediaPlayerStateChanged
 
-	func mediaPlayerStateChanged(_ aNotification: Notification!) {
+	func mediaPlayerStateChanged(_ aNotification: Notification) {
 
 		// Don't show buffering if paused, usually here while scrubbing
 		if vlcMediaPlayer.state == .buffering && viewModel.playerState == .paused {
@@ -720,7 +720,7 @@ extension LiveTVPlayerViewController: VLCMediaPlayerDelegate {
 
 	// MARK: mediaPlayerTimeChanged
 
-	func mediaPlayerTimeChanged(_ aNotification: Notification!) {
+	func mediaPlayerTimeChanged(_ aNotification: Notification) {
 
 		if !viewModel.sliderIsScrubbing {
 			viewModel.sliderPercentage = Double(vlcMediaPlayer.position)
