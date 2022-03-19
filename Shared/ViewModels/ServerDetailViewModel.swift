@@ -25,8 +25,7 @@ class ServerDetailViewModel: ViewModel {
 			} receiveValue: { newServerState in
 				self.server = newServerState
 
-				let nc = SwiftfinNotificationCenter.main
-				nc.post(name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI, object: newServerState)
+                Notifications[.didChangeServerCurrentURI].post(object: newServerState)
 			}
 			.store(in: &cancellables)
 	}
