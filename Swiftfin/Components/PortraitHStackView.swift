@@ -45,7 +45,9 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
 							VStack(alignment: horizontalAlignment) {
 								ImageView(item.imageURLConstructor(maxWidth: Int(maxWidth)),
 								          blurHash: item.blurHash,
-								          failureInitials: item.failureInitials)
+                                          failureView: {
+                                    InitialFailureView(item.failureInitials)
+                                })
 									.portraitPoster(width: maxWidth)
 									.shadow(radius: 4, y: 2)
 									.accessibilityIgnoresInvertColors()
