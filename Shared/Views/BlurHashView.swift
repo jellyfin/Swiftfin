@@ -31,7 +31,8 @@ class UIBlurHashView: UIView {
 
 		super.init(frame: .zero)
 
-		computeBlurHashImageAsync(blurHash: blurHash) { blurImage in
+		computeBlurHashImageAsync(blurHash: blurHash) { [weak self] blurImage in
+			guard let self = self else { return }
 			DispatchQueue.main.async {
 				self.imageView.image = blurImage
 				self.imageView.setNeedsDisplay()
