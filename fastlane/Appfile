@@ -1,8 +1,0 @@
-app_identifier("me.vigue.jellyfin") # The bundle identifier of your app
-apple_id("acvigue@me.com") # Your Apple email address
-
-itc_team_id("103277821") # App Store Connect Team ID
-team_id("9R8RREG67J") # Developer Portal Team ID
-
-# For more information about the Appfile, see:
-#     https://docs.fastlane.tools/advanced/#appfile
