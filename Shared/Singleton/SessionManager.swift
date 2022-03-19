@@ -240,7 +240,7 @@ final class SessionManager {
 				Defaults[.lastServerUserID] = user.id
 
 				currentLogin = (server: currentServer.state, user: currentUser.state)
-                Notifications[.didSignIn].post()
+				Notifications[.didSignIn].post()
 			})
 			.map { _, user, _ in
 				user.state
@@ -255,7 +255,7 @@ final class SessionManager {
 		Defaults[.lastServerUserID] = user.id
 		setAuthHeader(with: user.accessToken)
 		currentLogin = (server: server, user: user)
-        Notifications[.didSignIn].post()
+		Notifications[.didSignIn].post()
 	}
 
 	// MARK: logout
@@ -265,7 +265,7 @@ final class SessionManager {
 		JellyfinAPI.basePath = ""
 		setAuthHeader(with: "")
 		Defaults[.lastServerUserID] = nil
-        Notifications[.didSignOut].post()
+		Notifications[.didSignOut].post()
 	}
 
 	// MARK: purge
@@ -278,7 +278,7 @@ final class SessionManager {
 			delete(server: server)
 		}
 
-        Notifications[.didPurge].post()
+		Notifications[.didPurge].post()
 	}
 
 	// MARK: delete user

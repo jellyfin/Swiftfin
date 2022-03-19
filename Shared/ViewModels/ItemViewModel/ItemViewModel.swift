@@ -54,8 +54,8 @@ class ItemViewModel: ViewModel {
 		super.init()
 
 		getSimilarItems()
-        
-        Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
+
+		Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
 
 		refreshItemVideoPlayerViewModel(for: item)
 	}
@@ -69,7 +69,7 @@ class ItemViewModel: ViewModel {
 		} else {
 			// Remove if necessary. Note that this cannot be in deinit as
 			// holding as an observer won't allow the object to be deinit-ed
-            Notifications.unsubscribe(self)
+			Notifications.unsubscribe(self)
 		}
 	}
 

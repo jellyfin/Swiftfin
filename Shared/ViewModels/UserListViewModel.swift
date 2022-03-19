@@ -20,8 +20,8 @@ class UserListViewModel: ViewModel {
 		self.server = server
 
 		super.init()
-        
-        Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
+
+		Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
 	}
 
 	@objc

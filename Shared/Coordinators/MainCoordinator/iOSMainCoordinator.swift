@@ -45,10 +45,10 @@ final class MainCoordinator: NavigationCoordinatable {
 		barAppearance.tintColor = UIColor(Color.jellyfinPurple)
 
 		// Notification setup for state
-        Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
-        Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
-        Notifications[.processDeepLink].subscribe(self, selector: #selector(processDeepLink(_:)))
-        Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeServerCurrentURI(_:)))
+		Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
+		Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
+		Notifications[.processDeepLink].subscribe(self, selector: #selector(processDeepLink(_:)))
+		Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeServerCurrentURI(_:)))
 
 		Defaults.publisher(.appAppearance)
 			.sink { _ in

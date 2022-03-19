@@ -9,22 +9,22 @@
 import SwiftUI
 
 struct InitialFailureView: View {
-    
-    let initials: String
-    
-    init(_ initials: String) {
-        self.initials = initials
-    }
-    
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .foregroundColor(Color(UIColor.darkGray))
 
-            Text(initials)
-                .font(.largeTitle)
-                .foregroundColor(.secondary)
-                .accessibilityHidden(true)
-        }
-    }
+	let initials: String
+
+	init(_ initials: String) {
+		self.initials = initials
+	}
+
+	var body: some View {
+		ZStack {
+			Rectangle()
+				.foregroundColor(Color(UIColor.darkGray))
+
+			Text(initials)
+				.font(.largeTitle)
+				.foregroundColor(.secondary)
+				.accessibilityHidden(true)
+		}
+	}
 }

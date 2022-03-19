@@ -25,7 +25,7 @@ class ServerDetailViewModel: ViewModel {
 			} receiveValue: { newServerState in
 				self.server = newServerState
 
-                Notifications[.didChangeServerCurrentURI].post(object: newServerState)
+				Notifications[.didChangeServerCurrentURI].post(object: newServerState)
 			}
 			.store(in: &cancellables)
 	}

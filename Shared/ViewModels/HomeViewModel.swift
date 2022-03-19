@@ -34,8 +34,8 @@ final class HomeViewModel: ViewModel {
 		// Nov. 6, 2021
 		// This is a workaround since Stinsen doesn't have the ability to rebuild a root at the time of writing.
 		// See ServerDetailViewModel.swift for feature request issue
-        Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
-        Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
+		Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
+		Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
 	}
 
 	@objc
