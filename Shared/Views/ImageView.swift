@@ -6,70 +6,100 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Nuke
 import NukeUI
 import SwiftUI
+import UIKit
 
-// TODO: update multiple sources so that multiple blurhashes can be taken, clean up
+// TODO: Fix 100+ inits
 
-struct ImageView: View {
+struct ImageViewSource {
+    let url: URL?
+    let blurHash: String?
+    
+    init(url: URL? = nil, blurHash: String? = nil) {
+        self.url = url
+        self.blurHash = blurHash
+    }
+}
 
-	@State
-	private var sources: [URL]
-	private var currentURL: URL? { sources.first }
+struct DefaultFailureView: View {
+    
+    var body: some View {
+        Color.secondary
+    }
+}
 
-	private let blurhash: String
-	private let failureInitials: String
+struct ImageView<FailureView: View>: View {
 
-	init(src: URL, bh: String = "001fC^", failureInitials: String = "") {
-		self.sources = [src]
-		self.blurhash = bh
-		self.failureInitials = failureInitials
-	}
+    @State
+    private var sources: [ImageViewSource]
+    private var currentURL: URL? { sources.first?.url }
+    private var currentBlurHash: String? { sources.first?.blurHash }
+    private var failureView: FailureView
+    
+    init(_ source: URL?, blurHash: String? = nil, @ViewBuilder failureView: () -> FailureView) {
+        let imageViewSource = ImageViewSource(url: source, blurHash: blurHash)
+        _sources = State(initialValue: [imageViewSource])
+        self.failureView = failureView()
+    }
 
-	init(sources: [URL], bh: String = "001fC^", failureInitials: String = "") {
-		assert(!sources.isEmpty, "Must supply at least one source")
+    init(_ source: ImageViewSource, @ViewBuilder failureView: () -> FailureView) {
+        _sources = State(initialValue: [source])
+        self.failureView = failureView()
+    }
 
-		self.sources = sources
-		self.blurhash = bh
-		self.failureInitials = failureInitials
-	}
+    init(_ sources: [ImageViewSource], @ViewBuilder failureView: () -> FailureView) {
+        _sources = State(initialValue: sources)
+        self.failureView = failureView()
+    }
 
-	// TODO: fix placeholder hash view
-	@ViewBuilder
-	private var placeholderView: some View {
-		Image(uiImage: UIImage(blurHash: blurhash, size: CGSize(width: 12, height: 12)) ??
-			UIImage(blurHash: "001fC^", size: CGSize(width: 12, height: 12))!)
-			.resizable()
-	}
+    @ViewBuilder
+    private var placeholderView: some View {
+        if let currentBlurHash = currentBlurHash {
+            BlurHashView(blurHash: currentBlurHash)
+                .id(currentBlurHash)
+        } else {
+            Color.secondary
+        }
+    }
 
-	@ViewBuilder
-	private func failureImage() -> some View {
-		ZStack {
-			Rectangle()
-				.foregroundColor(Color(UIColor.darkGray))
+    var body: some View {
+        
+        if let currentURL = currentURL {
+            LazyImage(source: currentURL) { state in
+                if let image = state.image {
+                    image
+                } else if state.error != nil {
+                    placeholderView.onAppear { sources.removeFirst() }
+                } else {
+                    placeholderView
+                }
+            }
+            .pipeline(ImagePipeline(configuration: .withDataCache))
+            .id(currentURL)
+        } else {
+            failureView
+        }
+    }
+}
 
-			Text(failureInitials)
-				.font(.largeTitle)
-				.foregroundColor(.secondary)
-				.accessibilityHidden(true)
-		}
-	}
+extension ImageView where FailureView == DefaultFailureView {
+    init(_ source: URL?, blurHash: String? = nil) {
+        let imageViewSource = ImageViewSource(url: source, blurHash: blurHash)
+        self.init(imageViewSource, failureView: { DefaultFailureView() })
+    }
+    
+    init(_ source: ImageViewSource) {
+        self.init(source, failureView: { DefaultFailureView() })
+    }
 
-	var body: some View {
-		if let u = currentURL {
-			LazyImage(source: u) { state in
-				if let image = state.image {
-					image
-				} else if state.error != nil {
-					placeholderView.onAppear { sources.removeFirst() }
-				} else {
-					placeholderView
-				}
-			}
-			.pipeline(ImagePipeline(configuration: .withDataCache))
-			.id(u)
-		} else {
-			failureImage()
-		}
-	}
+    init(_ sources: [ImageViewSource]) {
+        self.init(sources, failureView: { DefaultFailureView() })
+    }
+    
+    init(sources: [URL]) {
+        let imageViewSources = sources.compactMap { ImageViewSource(url: $0, blurHash: nil) }
+        self.init(imageViewSources, failureView: { DefaultFailureView() })
+    }
 }
