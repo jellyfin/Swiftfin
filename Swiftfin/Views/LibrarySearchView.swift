@@ -79,20 +79,16 @@ struct LibrarySearchView: View {
 				}
 			}
 			.pickerStyle(SegmentedPickerStyle())
-			.padding(.horizontal, 16)
 			ScrollView {
 				LazyVStack(alignment: .leading, spacing: 16) {
 					if !items.isEmpty {
 						LazyVGrid(columns: tracks) {
 							ForEach(items, id: \.id) { item in
-								Button {
+								PortraitItemButton(item: item) { item in
 									searchRouter.route(to: \.item, item)
-								} label: {
-									PortraitItemElement(item: item)
 								}
 							}
 						}
-						.padding(.bottom, 16)
 					}
 				}
 			}
