@@ -48,7 +48,7 @@ struct ExperimentalSettingsView: View {
 				Toggle("Live TV Native Player", isOn: $liveTVNativePlayer)
 
 			} header: {
-				L10n.experimental.text
+				Text("Live TV")
 			}
 		}
 	}
