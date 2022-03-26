@@ -54,24 +54,21 @@ struct LiveTVChannelsView: View {
 		let item = cell.item
 		let channel = item.channel
 		if channel.type != "Folder" {
-			Button {
-                self.viewModel.isLoading = true
-				self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-					self.router.route(to: \.videoPlayer, playerViewModel)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        self.viewModel.isLoading = false
-                    }
-				}
-			} label: {
-                let progressPercent = item.program?.getLiveProgressPercentage() ?? 0
-                LiveTVChannelItemElement(channel: channel,
-				                         program: item.program,
-				                         startString: item.program?.getLiveStartTimeString(formatter: viewModel.timeFormatter) ?? " ",
-				                         endString: item.program?.getLiveEndTimeString(formatter: viewModel.timeFormatter) ?? " ",
-                                         progressPercent: progressPercent > 1.0 ? 1.0 : progressPercent
-                )
-			}
-			.buttonStyle(PlainNavigationLinkButtonStyle())
+			let progressPercent = item.program?.getLiveProgressPercentage() ?? 0
+			LiveTVChannelItemElement(channel: channel,
+			                         program: item.program,
+			                         startString: item.program?.getLiveStartTimeString(formatter: viewModel.timeFormatter) ?? " ",
+			                         endString: item.program?.getLiveEndTimeString(formatter: viewModel.timeFormatter) ?? " ",
+			                         progressPercent: progressPercent > 1.0 ? 1.0 : progressPercent,
+			                         onSelect: { loadingAction in
+			                         	loadingAction(true)
+			                         	self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
+			                         		self.router.route(to: \.videoPlayer, playerViewModel)
+			                         		DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+			                         			loadingAction(false)
+			                         		}
+			                         	}
+			                         })
 		}
 	}
 

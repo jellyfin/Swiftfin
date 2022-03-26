@@ -226,14 +226,14 @@ extension BaseItemDto {
 					                                                                     mediaSourceId: mediaSourceID)
 					directStreamURL = URL(string: directStreamBuilder.URLString)!
 
-                    if let transcodeURL = currentMediaSource.transcodingUrl, !Defaults[.Experimental.forceDirectPlay] {
+					if let transcodeURL = currentMediaSource.transcodingUrl, !Defaults[.Experimental.liveTVForceDirectPlay] {
 						streamType = .transcode
 						transcodedStreamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI
 							.appending(transcodeURL))!
 					} else {
 						streamType = .direct
 						transcodedStreamURL = nil
-                    }
+					}
 
 					let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(itemId: id ?? "",
 					                                                                                 mediaSourceId: id ?? "",

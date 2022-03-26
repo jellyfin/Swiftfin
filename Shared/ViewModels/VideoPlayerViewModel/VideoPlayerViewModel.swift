@@ -151,7 +151,7 @@ final class VideoPlayerViewModel: ViewModel {
 	}
 
 	func setSeconds(_ seconds: Int64) {
-        guard let runTimeTicks = item.runTimeTicks else { return }
+		guard let runTimeTicks = item.runTimeTicks else { return }
 		let videoDuration = runTimeTicks
 		let percentage = Double(seconds * 10_000_000) / Double(videoDuration)
 
