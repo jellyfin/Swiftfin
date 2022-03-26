@@ -54,18 +54,21 @@ struct LiveTVChannelsView: View {
 		let item = cell.item
 		let channel = item.channel
 		if channel.type != "Folder" {
-			Button {
-				self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-					self.router.route(to: \.videoPlayer, playerViewModel)
-				}
-			} label: {
-				LiveTVChannelItemElement(channel: channel,
-				                         program: item.program,
-				                         startString: item.program?.getLiveStartTimeString(formatter: viewModel.timeFormatter) ?? " ",
-				                         endString: item.program?.getLiveEndTimeString(formatter: viewModel.timeFormatter) ?? " ",
-				                         progressPercent: item.program?.getLiveProgressPercentage() ?? 0)
-			}
-			.buttonStyle(PlainNavigationLinkButtonStyle())
+			let progressPercent = item.program?.getLiveProgressPercentage() ?? 0
+			LiveTVChannelItemElement(channel: channel,
+			                         program: item.program,
+			                         startString: item.program?.getLiveStartTimeString(formatter: viewModel.timeFormatter) ?? " ",
+			                         endString: item.program?.getLiveEndTimeString(formatter: viewModel.timeFormatter) ?? " ",
+			                         progressPercent: progressPercent > 1.0 ? 1.0 : progressPercent,
+			                         onSelect: { loadingAction in
+			                         	loadingAction(true)
+			                         	self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
+			                         		self.router.route(to: \.videoPlayer, playerViewModel)
+			                         		DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+			                         			loadingAction(false)
+			                         		}
+			                         	}
+			                         })
 		}
 	}
 

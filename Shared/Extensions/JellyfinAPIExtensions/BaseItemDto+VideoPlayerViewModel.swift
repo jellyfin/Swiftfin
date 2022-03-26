@@ -226,7 +226,7 @@ extension BaseItemDto {
 					                                                                     mediaSourceId: mediaSourceID)
 					directStreamURL = URL(string: directStreamBuilder.URLString)!
 
-					if let transcodeURL = currentMediaSource.transcodingUrl {
+					if let transcodeURL = currentMediaSource.transcodingUrl, !Defaults[.Experimental.liveTVForceDirectPlay] {
 						streamType = .transcode
 						transcodedStreamURL = URLComponents(string: SessionManager.main.currentLogin.server.currentURI
 							.appending(transcodeURL))!
