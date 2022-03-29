@@ -21,6 +21,10 @@ protocol EpisodesRowManager: ViewModel {
 
 extension EpisodesRowManager {
 
+	var sortedSeasons: [BaseItemDto] {
+		Array(seasonsEpisodes.keys).sorted(by: { $0.indexNumber ?? 0 < $1.indexNumber ?? 0 })
+	}
+
 	// Also retrieves the current season episodes if available
 	func retrieveSeasons() {
 		TvShowsAPI.getSeasons(seriesId: item.seriesId ?? "",
