@@ -29,7 +29,8 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 					}
 				} else {
 					Menu {
-						ForEach(Array(viewModel.seasonsEpisodes.keys).sorted(by: { $0.name ?? "" < $1.name ?? "" }), id: \.self) { season in
+						ForEach(viewModel.sortedSeasons,
+						        id: \.self) { season in
 							Button {
 								viewModel.select(season: season)
 							} label: {
