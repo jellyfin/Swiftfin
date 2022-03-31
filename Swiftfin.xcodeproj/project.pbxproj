@@ -262,7 +262,6 @@
 		C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		C4AE2C3027498D2300AE13CF /* LiveTVHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AE2C2F27498D2300AE13CF /* LiveTVHomeView.swift */; };
 		C4AE2C3227498D6A00AE13CF /* LiveTVProgramsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AE2C3127498D6A00AE13CF /* LiveTVProgramsView.swift */; };
-		C4AE2C3327498DBE00AE13CF /* LiveTVChannelItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */; };
 		C4B9B91427E1921B0063535C /* LiveTVNativeVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B9B91327E1921B0063535C /* LiveTVNativeVideoPlayerView.swift */; };
 		C4BE0764271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE0762271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift */; };
 		C4BE0767271FC109003F4AD1 /* TVLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE0765271FC109003F4AD1 /* TVLibrariesViewModel.swift */; };
@@ -1566,6 +1565,7 @@
 				C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */,
 				53A83C32268A309300DF3D92 /* LibraryView.swift */,
 				C4BE078A272844AF003F4AD1 /* LiveTVChannelsView.swift */,
+				C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */,
 				C4BE078D27298817003F4AD1 /* LiveTVHomeView.swift */,
 				C4BE07732725EB66003F4AD1 /* LiveTVProgramsView.swift */,
 				C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */,
@@ -1761,7 +1761,6 @@
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				E1047E2227E5880000CB0D4A /* InitialFailureView.swift */,
 				621338B22660A07800A81A2A /* LazyView.swift */,
-				C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */,
 				53E4E648263F725B00F67C6B /* MultiSelectorView.swift */,
 				6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */,
 				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
@@ -2441,7 +2440,6 @@
 				E13DD3FC2717EAE8009D4DAF /* UserListView.swift in Sources */,
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
 				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
-				C4AE2C3327498DBE00AE13CF /* LiveTVChannelItemElement.swift in Sources */,
 				E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */,
 				E1AA33222782648000F6439C /* OverlaySliderColor.swift in Sources */,
 				E1D4BF842719D25A00A11E64 /* TrackLanguage.swift in Sources */,
