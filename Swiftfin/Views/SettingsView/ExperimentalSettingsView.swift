@@ -17,6 +17,8 @@ struct ExperimentalSettingsView: View {
 	var syncSubtitleStateWithAdjacent
 	@Default(.Experimental.nativePlayer)
 	var nativePlayer
+    @Default(.Experimental.liveTVAlphaEnabled)
+    var liveTVAlphaEnabled
 
 	var body: some View {
 		Form {
@@ -31,6 +33,14 @@ struct ExperimentalSettingsView: View {
 			} header: {
 				L10n.experimental.text
 			}
+            
+            Section {
+                
+                Toggle("Live TV (Alpha)", isOn: $liveTVAlphaEnabled)
+                
+            } header: {
+                Text("Live TV")
+            }
 		}
 	}
 }
