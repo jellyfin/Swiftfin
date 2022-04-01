@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import Stinsen
 import SwiftUI
@@ -15,8 +16,17 @@ struct LibraryListView: View {
 	var libraryListRouter: LibraryListCoordinator.Router
 	@StateObject
 	var viewModel = LibraryListViewModel()
-
-	let supportedCollectionTypes = ["movies", "tvshows", "boxsets", "other"]
+    
+    @Default(.Experimental.liveTVAlphaEnabled)
+    var liveTVAlphaEnabled
+    
+    var supportedCollectionTypes: [String] {
+        if liveTVAlphaEnabled {
+            return ["movies", "tvshows", "livetv", "boxsets", "other"]
+        } else {
+            return ["movies", "tvshows", "boxsets", "other"]
+        }
+    }
 
 	var body: some View {
 		ScrollView {
@@ -49,9 +59,13 @@ struct LibraryListView: View {
 						return self.supportedCollectionTypes.contains(collectionType)
 					}, id: \.id) { library in
 						Button {
-							libraryListRouter.route(to: \.library,
+                            if library.collectionType == "livetv" {
+                                libraryListRouter.route(to: \.liveTV)
+                            } else {
+                                libraryListRouter.route(to: \.library,
 							                        (viewModel: LibraryViewModel(parentID: library.id),
 							                         title: library.name ?? ""))
+                            }
 						} label: {
 							ZStack {
 								ImageView(library.getPrimaryImage(maxWidth: 500), blurHash: library.getPrimaryImageBlurHash())
