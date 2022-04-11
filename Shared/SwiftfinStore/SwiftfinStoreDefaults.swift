@@ -74,8 +74,10 @@ extension Defaults.Keys {
 		static let syncSubtitleStateWithAdjacent = Key<Bool>("experimental.syncSubtitleState", default: false,
 		                                                     suite: SwiftfinStore.Defaults.generalSuite)
 		static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: SwiftfinStore.Defaults.generalSuite)
-		static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 		static let nativePlayer = Key<Bool>("nativePlayer", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+		static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+		static let liveTVForceDirectPlay = Key<Bool>("liveTVForceDirectPlay", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+		static let liveTVNativePlayer = Key<Bool>("liveTVNativePlayer", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 	}
 
 	// tvos specific
