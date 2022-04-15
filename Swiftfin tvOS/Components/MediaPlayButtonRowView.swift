@@ -25,7 +25,7 @@ struct MediaPlayButtonRowView: View {
 					MediaViewActionButton(icon: "play.fill", scrollView: $wrappedScrollView)
 				}
 
-				Text(viewModel.item.getItemProgressString() != "" ? "\(viewModel.item.getItemProgressString() ?? "") left" : L10n.play)
+				Text((viewModel.item.getItemProgressString() != nil) ? "\(viewModel.item.getItemProgressString() ?? "") left" : L10n.play)
 					.font(.caption)
 			}
 			VStack {
