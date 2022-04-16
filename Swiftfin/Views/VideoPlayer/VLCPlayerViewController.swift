@@ -60,23 +60,33 @@ class VLCPlayerViewController: UIViewController {
 			UIKeyCommand(title: L10n.playAndPause, action: #selector(didSelectMain), input: " "),
 			UIKeyCommand(title: L10n.jumpForward, action: #selector(didSelectForward), input: UIKeyCommand.inputRightArrow),
 			UIKeyCommand(title: L10n.jumpBackward, action: #selector(didSelectBackward), input: UIKeyCommand.inputLeftArrow),
-			UIKeyCommand(title: L10n.nextItem, action: #selector(didSelectPlayNextItem), input: UIKeyCommand.inputRightArrow,
+			UIKeyCommand(title: L10n.nextItem,
+			             action: #selector(didSelectPlayNextItem),
+			             input: UIKeyCommand.inputRightArrow,
 			             modifierFlags: .command),
-			UIKeyCommand(title: L10n.previousItem, action: #selector(didSelectPlayPreviousItem), input: UIKeyCommand.inputLeftArrow,
+			UIKeyCommand(title: L10n.previousItem,
+			             action: #selector(didSelectPlayPreviousItem),
+			             input: UIKeyCommand.inputLeftArrow,
 			             modifierFlags: .command),
 			UIKeyCommand(title: L10n.close, action: #selector(didSelectClose), input: UIKeyCommand.inputEscape),
 		]
 		if let previous = viewModel.playbackSpeed.previous {
 			commands.append(.init(title: "\(L10n.playbackSpeed) \(previous.displayTitle)",
-			                      action: #selector(didSelectPreviousPlaybackSpeed), input: "[", modifierFlags: .command))
+			                      action: #selector(didSelectPreviousPlaybackSpeed),
+			                      input: "[",
+			                      modifierFlags: .command))
 		}
 		if let next = viewModel.playbackSpeed.next {
-			commands.append(.init(title: "\(L10n.playbackSpeed) \(next.displayTitle)", action: #selector(didSelectNextPlaybackSpeed),
-			                      input: "]", modifierFlags: .command))
+			commands.append(.init(title: "\(L10n.playbackSpeed) \(next.displayTitle)",
+			                      action: #selector(didSelectNextPlaybackSpeed),
+			                      input: "]",
+			                      modifierFlags: .command))
 		}
 		if viewModel.playbackSpeed != .one {
 			commands.append(.init(title: "\(L10n.playbackSpeed) \(PlaybackSpeed.one.displayTitle)",
-			                      action: #selector(didSelectNormalPlaybackSpeed), input: "\\", modifierFlags: .command))
+			                      action: #selector(didSelectNormalPlaybackSpeed),
+			                      input: "\\",
+			                      modifierFlags: .command))
 		}
 		commands.forEach { $0.wantsPriorityOverSystemBehavior = true }
 		return commands
@@ -148,12 +158,18 @@ class VLCPlayerViewController: UIViewController {
 		refreshJumpForwardOverlayView(with: viewModel.jumpForwardLength)
 
 		let defaultNotificationCenter = NotificationCenter.default
-		defaultNotificationCenter.addObserver(self, selector: #selector(appWillTerminate), name: UIApplication.willTerminateNotification,
+		defaultNotificationCenter.addObserver(self,
+		                                      selector: #selector(appWillTerminate),
+		                                      name: UIApplication.willTerminateNotification,
 		                                      object: nil)
-		defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive),
-		                                      name: UIApplication.willResignActiveNotification, object: nil)
-		defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive),
-		                                      name: UIApplication.didEnterBackgroundNotification, object: nil)
+		defaultNotificationCenter.addObserver(self,
+		                                      selector: #selector(appWillResignActive),
+		                                      name: UIApplication.willResignActiveNotification,
+		                                      object: nil)
+		defaultNotificationCenter.addObserver(self,
+		                                      selector: #selector(appWillResignActive),
+		                                      name: UIApplication.didEnterBackgroundNotification,
+		                                      object: nil)
 	}
 
 	@objc
@@ -205,11 +221,8 @@ class VLCPlayerViewController: UIViewController {
 
 		let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
 
-		let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didRightSwipe))
-		rightSwipeGesture.direction = .right
-
-		let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didLeftSwipe))
-		leftSwipeGesture.direction = .left
+		let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didDoubleTap))
+		doubleTapGesture.numberOfTapsRequired = 2
 
 		let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPinch(_:)))
 
@@ -219,8 +232,10 @@ class VLCPlayerViewController: UIViewController {
 		view.addGestureRecognizer(pinchGesture)
 
 		if viewModel.jumpGesturesEnabled {
-			view.addGestureRecognizer(rightSwipeGesture)
-			view.addGestureRecognizer(leftSwipeGesture)
+			view.addGestureRecognizer(doubleTapGesture)
+			singleTapGesture.require(toFail: doubleTapGesture)
+			singleTapGesture.delaysTouchesBegan = true
+			doubleTapGesture.delaysTouchesBegan = true
 		}
 
 		if viewModel.systemControlGesturesEnabled {
@@ -246,13 +261,12 @@ class VLCPlayerViewController: UIViewController {
 	}
 
 	@objc
-	private func didRightSwipe() {
-		didSelectForward()
-	}
-
-	@objc
-	private func didLeftSwipe() {
-		didSelectBackward()
+	private func didDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+		if gestureRecognizer.location(in: mainGestureView).x > (mainGestureView.frame.width / 2) {
+			didSelectForward()
+		} else {
+			didSelectBackward()
+		}
 	}
 
 	@objc
@@ -736,8 +750,11 @@ extension VLCPlayerViewController {
 extension VLCPlayerViewController {
 	private func restartOverlayDismissTimer(interval: Double = 3) {
 		overlayDismissTimer?.invalidate()
-		overlayDismissTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(dismissTimerFired),
-		                                           userInfo: nil, repeats: false)
+		overlayDismissTimer = Timer.scheduledTimer(timeInterval: interval,
+		                                           target: self,
+		                                           selector: #selector(dismissTimerFired),
+		                                           userInfo: nil,
+		                                           repeats: false)
 	}
 
 	@objc

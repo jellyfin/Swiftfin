@@ -33,13 +33,13 @@ struct ContinueWatchingView: View {
 											item.getSeriesThumbImage(maxWidth: 320),
 											item.getSeriesBackdropImage(maxWidth: 320),
 										])
-											.frame(width: 320, height: 180)
+										.frame(width: 320, height: 180)
 									} else {
 										ImageView(sources: [
 											item.getThumbImage(maxWidth: 320),
 											item.getBackdropImage(maxWidth: 320),
 										])
-											.frame(width: 320, height: 180)
+										.frame(width: 320, height: 180)
 									}
 								}
 								.accessibilityIgnoresInvertColors()

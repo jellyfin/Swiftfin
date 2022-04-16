@@ -29,13 +29,13 @@ struct CinematicResumeCardView: View {
 							item.getSeriesThumbImage(maxWidth: 350),
 							item.getSeriesBackdropImage(maxWidth: 350),
 						])
-							.frame(width: 350, height: 210)
+						.frame(width: 350, height: 210)
 					} else {
 						ImageView([
 							.init(url: item.getThumbImage(maxWidth: 350)),
 							.init(url: item.getBackdropImage(maxWidth: 350), blurHash: item.getBackdropImageBlurHash()),
 						])
-							.frame(width: 350, height: 210)
+						.frame(width: 350, height: 210)
 					}
 
 					LinearGradient(colors: [.clear, .black],
