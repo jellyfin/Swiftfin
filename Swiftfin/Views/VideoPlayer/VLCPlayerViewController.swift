@@ -28,6 +28,7 @@ class VLCPlayerViewController: UIViewController {
 	private var viewModelListeners = Set<AnyCancellable>()
 	private var overlayDismissTimer: Timer?
 	private var isScreenFilled: Bool = false
+	private var isGesturesLocked = false
 	private var pinchScale: CGFloat = 1
 
 	private var currentPlayerTicks: Int64 {
@@ -49,6 +50,7 @@ class VLCPlayerViewController: UIViewController {
 	private lazy var videoContentView = makeVideoContentView()
 	private lazy var mainGestureView = makeMainGestureView()
 	private lazy var systemControlOverlayLabel = makeSystemControlOverlayLabel()
+	private lazy var lockedOverlayView = makeGestureLockedOverlayView()
 	private var currentOverlayHostingController: UIHostingController<VLCPlayerOverlayView>?
 	private var currentChapterOverlayHostingController: UIHostingController<VLCPlayerChapterOverlayView>?
 	private var currentJumpBackwardOverlayView: UIImageView?
@@ -112,6 +114,7 @@ class VLCPlayerViewController: UIViewController {
 		view.addSubview(videoContentView)
 		view.addSubview(mainGestureView)
 		view.addSubview(systemControlOverlayLabel)
+		view.addSubview(lockedOverlayView)
 	}
 
 	private func setupConstraints() {
@@ -130,6 +133,12 @@ class VLCPlayerViewController: UIViewController {
 		NSLayoutConstraint.activate([
 			systemControlOverlayLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			systemControlOverlayLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+		])
+		NSLayoutConstraint.activate([
+			lockedOverlayView.topAnchor.constraint(equalTo: view.topAnchor),
+			lockedOverlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+			lockedOverlayView.leftAnchor.constraint(equalTo: view.leftAnchor),
+			lockedOverlayView.rightAnchor.constraint(equalTo: view.rightAnchor),
 		])
 	}
 
@@ -228,8 +237,11 @@ class VLCPlayerViewController: UIViewController {
 
 		let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
 
+		let longPeessGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
+
 		view.addGestureRecognizer(singleTapGesture)
 		view.addGestureRecognizer(pinchGesture)
+		view.addGestureRecognizer(longPeessGesture)
 
 		if viewModel.jumpGesturesEnabled {
 			view.addGestureRecognizer(doubleTapGesture)
@@ -255,6 +267,33 @@ class VLCPlayerViewController: UIViewController {
 		return label
 	}
 
+	// MARK: GestureLockedOverlayView
+
+	private func makeGestureLockedOverlayView() -> UIView {
+		let backgroundView = UIView()
+		backgroundView.alpha = 0
+		backgroundView.translatesAutoresizingMaskIntoConstraints = false
+		let button = UIButton(type: .custom, primaryAction: UIAction(handler: { [weak self] _ in
+			self?.isGesturesLocked = false
+			self?.hideLockedOverlay()
+		}))
+		button.translatesAutoresizingMaskIntoConstraints = false
+		button.setImage(UIImage(systemName: "lock.open", withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
+			.withTintColor(.white),
+			for: .normal)
+		backgroundView.addSubview(button)
+
+		NSLayoutConstraint.activate([
+			button.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
+			button.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
+		])
+
+		let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+		backgroundView.addGestureRecognizer(singleTapGesture)
+
+		return backgroundView
+	}
+
 	@objc
 	private func didTap() {
 		didGenerallyTap()
@@ -267,6 +306,13 @@ class VLCPlayerViewController: UIViewController {
 		} else {
 			didSelectBackward()
 		}
+	}
+
+	@objc
+	private func didLongPress() {
+		guard !isGesturesLocked else { return }
+		isGesturesLocked = true
+		didGenerallyTap()
 	}
 
 	@objc
@@ -630,6 +676,36 @@ extension VLCPlayerViewController {
 	}
 }
 
+// MARK: Show/Hide Locked Overlay
+
+extension VLCPlayerViewController {
+	private func showLockedOverlay() {
+		guard lockedOverlayView.alpha != 1 else { return }
+
+		UIView.animate(withDuration: 0.2) {
+			self.lockedOverlayView.alpha = 1
+		}
+	}
+
+	private func hideLockedOverlay() {
+		guard !UIAccessibility.isVoiceOverRunning else { return }
+
+		guard lockedOverlayView.alpha != 0 else { return }
+
+		UIView.animate(withDuration: 0.2) {
+			self.lockedOverlayView.alpha = 0
+		}
+	}
+
+	private func toggleLockedOverlay() {
+		if lockedOverlayView.alpha < 1 {
+			showLockedOverlay()
+		} else {
+			hideLockedOverlay()
+		}
+	}
+}
+
 // MARK: Show/Hide System Control
 
 extension VLCPlayerViewController {
@@ -760,6 +836,7 @@ extension VLCPlayerViewController {
 	@objc
 	private func dismissTimerFired() {
 		hideOverlay()
+		hideLockedOverlay()
 	}
 
 	private func stopOverlayDismissTimer() {
@@ -922,7 +999,11 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 	}
 
 	func didGenerallyTap() {
-		toggleOverlay()
+		if isGesturesLocked {
+			toggleLockedOverlay()
+		} else {
+			toggleOverlay()
+		}
 
 		restartOverlayDismissTimer(interval: 5)
 	}
