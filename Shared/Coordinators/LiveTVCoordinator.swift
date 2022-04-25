@@ -16,15 +16,15 @@ final class LiveTVCoordinator: NavigationCoordinatable {
     
     @Root
     var start = makeStart
-//    @Route(.push)
-//    var search = makeSearch
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
     
     @ViewBuilder
     func makeStart() -> some View {
         LiveTVChannelsView()
     }
     
-//    func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
-//        SearchCoordinator(viewModel: viewModel)
-//    }
+    func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
+        NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
+    }
 }

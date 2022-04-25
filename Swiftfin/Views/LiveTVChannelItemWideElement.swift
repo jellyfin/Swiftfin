@@ -63,11 +63,11 @@ struct LiveTVChannelItemWideElement: View {
     var body: some View {
         ZStack {
             HStack {
-                ZStack(alignment: .bottomLeading) {
+                ZStack(alignment: .center) {
                     ImageView(channel.getPrimaryImage(maxWidth: 128))
                         .aspectRatio(contentMode: .fit)
                         .padding(.init(top: 0, leading: 0, bottom: 8, trailing: 0))
-                    VStack {
+                    VStack(alignment: .center) {
                         Spacer()
                             .frame(maxHeight: .infinity)
                         GeometryReader { gp in
@@ -81,8 +81,13 @@ struct LiveTVChannelItemWideElement: View {
                                     .frame(width: CGFloat(progressPercent * gp.size.width), height: 6)
                             }
                         }
-                        .frame(height: 6, alignment: .bottomLeading)
-                        .padding(.init(top: 0, leading: 0, bottom: 0, trailing: 8))
+                        .frame(height: 6, alignment: .center)
+                        .padding(.init(top: 0, leading: 4, bottom: 0, trailing: 4))
+                    }
+                    if loading {
+                        
+                        ProgressView()
+                          
                     }
                 }
                 .aspectRatio(1.0, contentMode: .fit)
@@ -139,14 +144,15 @@ struct LiveTVChannelItemWideElement: View {
             .frame(alignment: .leading)
             .padding()
             .opacity(loading ? 0.5 : 1.0)
-            
-            if loading {
-                ProgressView()
-            }
         }
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color("BackgroundColor"))
         )
         .frame(height: 128)
+        .onTapGesture {
+            onSelect { loadingState in
+                loading = loadingState
+            }
+        }
     }
 }

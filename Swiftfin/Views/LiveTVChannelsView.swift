@@ -15,7 +15,7 @@ typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 
 struct LiveTVChannelsView: View {
     @EnvironmentObject
-    var router: LiveTVChannelsCoordinator.Router
+    var router: LiveTVCoordinator.Router
     @StateObject
     var viewModel = LiveTVChannelsViewModel()
     @State private var isPortrait = false
@@ -75,12 +75,12 @@ struct LiveTVChannelsView: View {
                                      currentProgramText: currentProgramDisplayText,
                                      nextProgramsText: nextProgramsDisplayText(nextItems: nextItems, timeFormatter: viewModel.timeFormatter),
                                      onSelect: { loadingAction in
-            loadingAction(true)
-            self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-                //                    self.router.route(to: \.videoPlayer, playerViewModel)
-                //                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                //                        loadingAction(false)
-                //                    }
+                loadingAction(true)
+                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
+                self.router.route(to: \.videoPlayer, playerViewModel)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    loadingAction(false)
+                }
             }
         })
     }
@@ -165,8 +165,7 @@ struct LiveTVChannelsView: View {
         let scenes = UIApplication.shared.connectedScenes
         let windowScene = scenes.first as? UIWindowScene
         guard let scene = windowScene else { return }
-        self.isPortrait = scene.interfaceOrientation.isPortrait
-        print("orientationDidChange: isPortrait? \(self.isPortrait)")
+        self.isPortrait = scene.interfaceOrientation.isPortrait	
     }
     
     private func nextProgramsDisplayText(nextItems: [BaseItemDto], timeFormatter: DateFormatter) -> [LiveTVChannelViewProgram] {
