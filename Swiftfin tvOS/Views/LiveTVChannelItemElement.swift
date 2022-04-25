@@ -120,9 +120,7 @@ struct LiveTVChannelItemElement: View {
 			.stroke(isFocused ? Color.blue : Color.clear, lineWidth: 4))
 		.cornerRadius(20)
 		.scaleEffect(isFocused ? 1.1 : 1)
-#if os(tvOS)
 		.focusable(true)
-#endif
 		.focused($focused)
 		.onChange(of: focused) { foc in
 			withAnimation(.linear(duration: 0.15)) {
