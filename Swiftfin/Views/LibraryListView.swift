@@ -16,17 +16,17 @@ struct LibraryListView: View {
 	var libraryListRouter: LibraryListCoordinator.Router
 	@StateObject
 	var viewModel = LibraryListViewModel()
-    
-    @Default(.Experimental.liveTVAlphaEnabled)
-    var liveTVAlphaEnabled
-    
-    var supportedCollectionTypes: [String] {
-        if liveTVAlphaEnabled {
-            return ["movies", "tvshows", "livetv", "boxsets", "other"]
-        } else {
-            return ["movies", "tvshows", "boxsets", "other"]
-        }
-    }
+
+	@Default(.Experimental.liveTVAlphaEnabled)
+	var liveTVAlphaEnabled
+
+	var supportedCollectionTypes: [String] {
+		if liveTVAlphaEnabled {
+			return ["movies", "tvshows", "livetv", "boxsets", "other"]
+		} else {
+			return ["movies", "tvshows", "boxsets", "other"]
+		}
+	}
 
 	var body: some View {
 		ScrollView {
@@ -59,13 +59,13 @@ struct LibraryListView: View {
 						return self.supportedCollectionTypes.contains(collectionType)
 					}, id: \.id) { library in
 						Button {
-                            if library.collectionType == "livetv" {
-                                libraryListRouter.route(to: \.liveTV)
-                            } else {
-                                libraryListRouter.route(to: \.library,
-							                        (viewModel: LibraryViewModel(parentID: library.id),
-							                         title: library.name ?? ""))
-                            }
+							if library.collectionType == "livetv" {
+								libraryListRouter.route(to: \.liveTV)
+							} else {
+								libraryListRouter.route(to: \.library,
+								                        (viewModel: LibraryViewModel(parentID: library.id),
+								                         title: library.name ?? ""))
+							}
 						} label: {
 							ZStack {
 								ImageView(library.getPrimaryImage(maxWidth: 500), blurHash: library.getPrimaryImageBlurHash())

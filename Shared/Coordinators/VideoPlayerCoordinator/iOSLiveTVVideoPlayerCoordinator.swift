@@ -13,28 +13,28 @@ import Stinsen
 import SwiftUI
 
 final class LiveTVVideoPlayerCoordinator: NavigationCoordinatable {
-    
-    let stack = NavigationStack(initial: \LiveTVVideoPlayerCoordinator.start)
-    
-    @Root
-    var start = makeStart
-    
-    let viewModel: VideoPlayerViewModel
-    
-    init(viewModel: VideoPlayerViewModel) {
-        self.viewModel = viewModel
-    }
-    
-    @ViewBuilder
-    func makeStart() -> some View {
-        if Defaults[.Experimental.liveTVNativePlayer] {
-            LiveTVNativePlayerView(viewModel: viewModel)
-                .navigationBarHidden(true)
-                .ignoresSafeArea()
-        } else {
-            LiveTVPlayerView(viewModel: viewModel)
-                .navigationBarHidden(true)
-                .ignoresSafeArea()
-        }
-    }
+
+	let stack = NavigationStack(initial: \LiveTVVideoPlayerCoordinator.start)
+
+	@Root
+	var start = makeStart
+
+	let viewModel: VideoPlayerViewModel
+
+	init(viewModel: VideoPlayerViewModel) {
+		self.viewModel = viewModel
+	}
+
+	@ViewBuilder
+	func makeStart() -> some View {
+		if Defaults[.Experimental.liveTVNativePlayer] {
+			LiveTVNativePlayerView(viewModel: viewModel)
+				.navigationBarHidden(true)
+				.ignoresSafeArea()
+		} else {
+			LiveTVPlayerView(viewModel: viewModel)
+				.navigationBarHidden(true)
+				.ignoresSafeArea()
+		}
+	}
 }
