@@ -46,13 +46,13 @@ final class MainCoordinator: NavigationCoordinatable {
 
 	@objc
 	func didSignIn() {
-		LogManager.shared.log.info("Received `didSignIn` from NSNotificationCenter.")
+		LogManager.log.info("Received `didSignIn` from NSNotificationCenter.")
 		root(\.mainTab)
 	}
 
 	@objc
 	func didSignOut() {
-		LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
+		LogManager.log.info("Received `didSignOut` from NSNotificationCenter.")
 		root(\.serverList)
 	}
 
