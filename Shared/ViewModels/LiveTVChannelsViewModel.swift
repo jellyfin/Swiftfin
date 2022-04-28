@@ -21,7 +21,7 @@ struct LiveTVChannelProgram: Hashable {
 	let id = UUID()
 	let channel: BaseItemDto
 	let currentProgram: BaseItemDto?
-    let programs: [BaseItemDto]
+	let programs: [BaseItemDto]
 }
 
 final class LiveTVChannelsViewModel: ViewModel {

@@ -24,7 +24,7 @@ final class LiveTVChannelsCoordinator: NavigationCoordinatable {
 	func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
 		NavigationViewCoordinator(ItemCoordinator(item: item))
 	}
-    
+
 	func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
 		NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
 	}
