@@ -19,7 +19,11 @@ struct ExperimentalSettingsView: View {
 	var nativePlayer
     @Default(.Experimental.liveTVAlphaEnabled)
     var liveTVAlphaEnabled
-
+    @Default(.Experimental.liveTVForceDirectPlay)
+    var liveTVForceDirectPlay
+    @Default(.Experimental.liveTVNativePlayer)
+    var liveTVNativePlayer
+    
 	var body: some View {
 		Form {
 			Section {
@@ -37,6 +41,10 @@ struct ExperimentalSettingsView: View {
             Section {
                 
                 Toggle("Live TV (Alpha)", isOn: $liveTVAlphaEnabled)
+                
+                Toggle("Live TV Force Direct Play", isOn: $liveTVForceDirectPlay)
+                
+                Toggle("Live TV Native Player", isOn: $liveTVNativePlayer)
                 
             } header: {
                 Text("Live TV")
