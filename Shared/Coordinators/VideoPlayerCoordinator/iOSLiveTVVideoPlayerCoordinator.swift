@@ -27,14 +27,14 @@ final class LiveTVVideoPlayerCoordinator: NavigationCoordinatable {
     
     @ViewBuilder
     func makeStart() -> some View {
-//        if Defaults[.Experimental.liveTVNativePlayer] {
-//            LiveTVNativeVideoPlayerView(viewModel: viewModel)
-//                .navigationBarHidden(true)
-//                .ignoresSafeArea()
-//        } else {
+        if Defaults[.Experimental.liveTVNativePlayer] {
+            LiveTVNativePlayerView(viewModel: viewModel)
+                .navigationBarHidden(true)
+                .ignoresSafeArea()
+        } else {
             LiveTVPlayerView(viewModel: viewModel)
                 .navigationBarHidden(true)
                 .ignoresSafeArea()
-//        }
+        }
     }
 }

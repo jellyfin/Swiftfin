@@ -103,7 +103,7 @@ struct LiveTVChannelsView: View {
             )
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(132)
+                heightDimension: .absolute(144)
             )
             let group = NSCollectionLayoutGroup.horizontal(
                 layoutSize: groupSize,
@@ -114,7 +114,7 @@ struct LiveTVChannelsView: View {
         } else {
             if isPortrait {
                 let itemSize = NSCollectionLayoutSize(
-                    widthDimension: .absolute(UIScreen.main.bounds.width - 2),
+                    widthDimension: .absolute(UIScreen.main.bounds.width - 32),
                     heightDimension: .fractionalHeight(1)
                 )
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -124,7 +124,7 @@ struct LiveTVChannelsView: View {
                 )
                 let groupSize = NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1.0),
-                    heightDimension: .absolute(132)
+                    heightDimension: .absolute(144)
                 )
                 let group = NSCollectionLayoutGroup.horizontal(
                     layoutSize: groupSize,
@@ -149,7 +149,7 @@ struct LiveTVChannelsView: View {
                 )
                 let groupSize = NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1.0),
-                    heightDimension: .absolute(132)
+                    heightDimension: .absolute(144)
                 )
                 let group = NSCollectionLayoutGroup.horizontal(
                     layoutSize: groupSize,
