@@ -23,7 +23,6 @@ struct ErrorMessage: Identifiable {
 		"\(code)\(title)\(message)"
 	}
 
-	/// If the custom displayMessage is `nil`, it will be set to the given logConstructor's message
 	init(code: Int, title: String, message: String) {
 		self.code = code
 		self.title = title
