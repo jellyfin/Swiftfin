@@ -48,7 +48,7 @@ final class ConnectToServerViewModel: ViewModel {
 
 		#if targetEnvironment(simulator)
 			var uri = uri
-			if uri == "localhost" {
+			if uri == "http://localhost" || uri == "localhost" {
 				uri = "http://localhost:8096"
 			}
 		#endif
@@ -71,10 +71,7 @@ final class ConnectToServerViewModel: ViewModel {
 							// a url in the response is the result if a redirect
 							if let newURL = response?.url {
 								if redirectCount > 2 {
-									self.handleAPIRequestError(displayMessage: L10n.tooManyRedirects,
-									                           logLevel: .critical,
-									                           tag: "connectToServer",
-									                           completion: completion)
+									self.handleAPIRequestError(displayMessage: L10n.tooManyRedirects, completion: completion)
 								} else {
 									self
 										.connectToServer(uri: newURL.absoluteString
@@ -85,21 +82,17 @@ final class ConnectToServerViewModel: ViewModel {
 								self.handleAPIRequestError(completion: completion)
 							}
 						}
-					case is SwiftfinStore.Errors:
-						let swiftfinError = error as! SwiftfinStore.Errors
+					case is SwiftfinStore.Error:
+						let swiftfinError = error as! SwiftfinStore.Error
 						switch swiftfinError {
 						case let .existingServer(server):
 							self.addServerURIPayload = AddServerURIPayload(server: server, uri: uri)
 							self.backAddServerURIPayload = AddServerURIPayload(server: server, uri: uri)
 						default:
-							self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical,
-							                           tag: "connectToServer",
-							                           completion: completion)
+							self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
 						}
 					default:
-						self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical,
-						                           tag: "connectToServer",
-						                           completion: completion)
+						self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
 					}
 				}
 			}, receiveValue: { server in
@@ -128,14 +121,11 @@ final class ConnectToServerViewModel: ViewModel {
 	func addURIToServer(addServerURIPayload: AddServerURIPayload) {
 		SessionManager.main.addURIToServer(server: addServerURIPayload.server, uri: addServerURIPayload.uri)
 			.sink { completion in
-				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical, tag: "connectToServer",
-				                           completion: completion)
+				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
 			} receiveValue: { server in
 				SessionManager.main.setServerCurrentURI(server: server, uri: addServerURIPayload.uri)
 					.sink { completion in
-						self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical,
-						                           tag: "connectToServer",
-						                           completion: completion)
+						self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
 					} receiveValue: { _ in
 						self.router?.dismissCoordinator()
 					}

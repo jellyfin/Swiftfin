@@ -13,22 +13,20 @@ struct ErrorMessage: Identifiable {
 
 	let code: Int
 	let title: String
-	let displayMessage: String
-	let logConstructor: LogConstructor
+	let message: String
 
 	// Chosen value such that if an error has this code, don't show the code to the UI
 	// This was chosen because of its unlikelyhood to ever be used
 	static let noShowErrorCode = -69420
 
 	var id: String {
-		"\(code)\(title)\(logConstructor.message)"
+		"\(code)\(title)\(message)"
 	}
 
 	/// If the custom displayMessage is `nil`, it will be set to the given logConstructor's message
-	init(code: Int, title: String, displayMessage: String?, logConstructor: LogConstructor) {
+	init(code: Int, title: String, message: String) {
 		self.code = code
 		self.title = title
-		self.displayMessage = displayMessage ?? logConstructor.message
-		self.logConstructor = logConstructor
+		self.message = message
 	}
 }

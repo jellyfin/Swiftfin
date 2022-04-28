@@ -25,55 +25,47 @@ class ViewModel: ObservableObject {
 		loading.loading.assign(to: \.isLoading, on: self).store(in: &cancellables)
 	}
 
-	func handleAPIRequestError(displayMessage: String? = nil, logLevel: LogLevel = .error, tag: String = "", function: String = #function,
-	                           file: String = #file, line: UInt = #line, completion: Subscribers.Completion<Error>)
-	{
+	func handleAPIRequestError(displayMessage: String? = nil, completion: Subscribers.Completion<Error>) {
 		switch completion {
 		case .finished:
 			self.errorMessage = nil
 		case let .failure(error):
-			let logConstructor = LogConstructor(message: "__NOTHING__", tag: tag, level: logLevel, function: function, file: file,
-			                                    line: line)
-
 			switch error {
 			case is ErrorResponse:
 				let networkError: NetworkError
 				let errorResponse = error as! ErrorResponse
+
 				switch errorResponse {
 				case .error(-1, _, _, _):
-					networkError = .URLError(response: errorResponse, displayMessage: displayMessage, logConstructor: logConstructor)
+					networkError = .URLError(response: errorResponse, displayMessage: displayMessage)
 					// Use the errorResponse description for debugging, rather than the user-facing friendly description which may not be implemented
 					LogManager.log
 						.error("Request failed: URL request failed with error \(networkError.errorMessage.code): \(errorResponse.localizedDescription)")
 				case .error(-2, _, _, _):
-					networkError = .HTTPURLError(response: errorResponse, displayMessage: displayMessage, logConstructor: logConstructor)
+					networkError = .HTTPURLError(response: errorResponse, displayMessage: displayMessage)
 					LogManager.log
 						.error("Request failed: HTTP URL request failed with description: \(errorResponse.localizedDescription)")
 				default:
-					networkError = .JellyfinError(response: errorResponse, displayMessage: displayMessage, logConstructor: logConstructor)
+					networkError = .JellyfinError(response: errorResponse, displayMessage: displayMessage)
 					// Able to use user-facing friendly description here since just HTTP status codes
 					LogManager.log
-						.error("Request failed: \(networkError.errorMessage.code) - \(networkError.errorMessage.title): \(networkError.errorMessage.logConstructor.message)\n\(error.localizedDescription)")
+						.error("Request failed: \(networkError.errorMessage.code) - \(networkError.errorMessage.title): \(networkError.errorMessage.message)\n\(error.localizedDescription)")
 				}
 
 				self.errorMessage = networkError.errorMessage
 
-				networkError.logMessage()
-
-			case is SwiftfinStore.Errors:
-				let swiftfinError = error as! SwiftfinStore.Errors
+			case is SwiftfinStore.Error:
+				let swiftfinError = error as! SwiftfinStore.Error
 				let errorMessage = ErrorMessage(code: ErrorMessage.noShowErrorCode,
 				                                title: swiftfinError.title,
-				                                displayMessage: swiftfinError.errorDescription ?? "",
-				                                logConstructor: logConstructor)
+				                                message: swiftfinError.errorDescription ?? "")
 				self.errorMessage = errorMessage
 				LogManager.log.error("Request failed: \(swiftfinError.errorDescription ?? "")")
 
 			default:
 				let genericErrorMessage = ErrorMessage(code: ErrorMessage.noShowErrorCode,
 				                                       title: "Generic Error",
-				                                       displayMessage: error.localizedDescription,
-				                                       logConstructor: logConstructor)
+				                                       message: error.localizedDescription)
 				self.errorMessage = genericErrorMessage
 				LogManager.log.error("Request failed: Generic error - \(error.localizedDescription)")
 			}

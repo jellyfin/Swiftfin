@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Flight-School/AnyCodable",
       "state" : {
-        "revision" : "22f302d4c048aafcda09a4ab5b8c0b03855316fb",
-        "version" : "0.6.3"
+        "revision" : "11423ef0c756e8a1f6b4bb576dab9d97bc016c70",
+        "version" : "0.6.4"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kaishin/Gifu",
       "state" : {
-        "revision" : "0ffe24744cc3d82ab9edece53670d0352c6d5507",
-        "version" : "3.3.0"
+        "revision" : "51f2eab32903e336f590c013267cfa4d7f8b06c4",
+        "version" : "3.3.1"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke.git",
       "state" : {
-        "revision" : "78fa963b8491fc520791d8c2a509f1b8593d8aae",
-        "version" : "10.7.1"
+        "revision" : "0ea7545b5c918285aacc044dc75048625c8257cc",
+        "version" : "10.8.0"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/NukeUI",
       "state" : {
-        "revision" : "71398392943f2538fd0f2ebc6f282920f6775b0c",
-        "version" : "0.8.0"
+        "revision" : "17f26c07e6b1d3b9258287f99f528111fcd7b7ad",
+        "version" : "0.8.1"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "2e09be8af614401bc9f87d40093ec19ce56ccaf2",
-        "version" : "0.1.3"
+        "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
+        "version" : "0.1.4"
       }
     },
     {
@@ -150,7 +150,7 @@
       "location" : "https://github.com/spacenation/swiftui-sliders",
       "state" : {
         "branch" : "master",
-        "revision" : "518bed3bfc7bd522f3c49404a0d1efb98fa1bf2c"
+        "revision" : "538e16b35ad7a066a8f5624da9ecee6327886bf7"
       }
     },
     {

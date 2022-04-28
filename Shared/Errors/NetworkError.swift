@@ -9,127 +9,75 @@
 import Foundation
 import JellyfinAPI
 
-/**
- The implementation of the network errors here are a temporary measure.
- It is very repetitive, messy, and doesn't fulfill the entire specification of "error reporting".
-
- Needs to be replaced
- */
-
 enum NetworkError: Error {
 
 	/// For the case that the ErrorResponse object has a code of -1
-	case URLError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
+	case URLError(response: ErrorResponse, displayMessage: String?)
 
 	/// For the case that the ErrorRespones object has a code of -2
-	case HTTPURLError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
+	case HTTPURLError(response: ErrorResponse, displayMessage: String?)
 
 	/// For the case that the ErrorResponse object has a positive code
-	case JellyfinError(response: ErrorResponse, displayMessage: String?, logConstructor: LogConstructor)
+	case JellyfinError(response: ErrorResponse, displayMessage: String?)
 
 	var errorMessage: ErrorMessage {
 		switch self {
-		case let .URLError(response, displayMessage, logConstructor):
-			return NetworkError.parseURLError(from: response, displayMessage: displayMessage, logConstructor: logConstructor)
-		case let .HTTPURLError(response, displayMessage, logConstructor):
-			return NetworkError.parseHTTPURLError(from: response, displayMessage: displayMessage, logConstructor: logConstructor)
-		case let .JellyfinError(response, displayMessage, logConstructor):
-			return NetworkError.parseJellyfinError(from: response, displayMessage: displayMessage, logConstructor: logConstructor)
+		case let .URLError(response, displayMessage):
+			return NetworkError.parseURLError(from: response, displayMessage: displayMessage)
+		case let .HTTPURLError(response, displayMessage):
+			return NetworkError.parseHTTPURLError(from: response, displayMessage: displayMessage)
+		case let .JellyfinError(response, displayMessage):
+			return NetworkError.parseJellyfinError(from: response, displayMessage: displayMessage)
 		}
 	}
 
-	func logMessage() {
-		let logConstructor = errorMessage.logConstructor
-		let logFunction: (@autoclosure () -> String, String, String, String, UInt) -> Void
-
-		switch logConstructor.level {
-		case .trace:
-			logFunction = LogManager.log.trace
-		case .debug:
-			logFunction = LogManager.log.debug
-		case .information:
-			logFunction = LogManager.log.info
-		case .warning:
-			logFunction = LogManager.log.warning
-		case .error:
-			logFunction = LogManager.log.error
-		case .critical:
-			logFunction = LogManager.log.critical
-		case ._none:
-			logFunction = LogManager.log.debug
-		}
-
-		logFunction(logConstructor.message, logConstructor.tag, logConstructor.function, logConstructor.file, logConstructor.line)
-	}
-
-	private static func parseURLError(from response: ErrorResponse, displayMessage: String?,
-	                                  logConstructor: LogConstructor) -> ErrorMessage
-	{
-
+	private static func parseURLError(from response: ErrorResponse, displayMessage: String?) -> ErrorMessage {
 		let errorMessage: ErrorMessage
-		var logMessage = L10n.unknownError
-		var logConstructor = logConstructor
 
 		switch response {
 		case let .error(_, _, _, err):
 
-			// These codes are currently referenced from:
+			// Code references:
 			// https://developer.apple.com/documentation/foundation/1508628-url_loading_system_error_codes
 			switch err._code {
 			case -1001:
-				logMessage = L10n.networkTimedOut
-				logConstructor.message = logMessage
 				errorMessage = ErrorMessage(code: err._code,
 				                            title: L10n.error,
-				                            displayMessage: displayMessage,
-				                            logConstructor: logConstructor)
+				                            message: L10n.networkTimedOut)
+			case -1003:
+				errorMessage = ErrorMessage(code: err._code,
+				                            title: L10n.error,
+				                            message: L10n.unableToFindHost)
 			case -1004:
-				logMessage = L10n.cannotConnectToHost
-				logConstructor.message = logMessage
 				errorMessage = ErrorMessage(code: err._code,
 				                            title: L10n.error,
-				                            displayMessage: displayMessage,
-				                            logConstructor: logConstructor)
+				                            message: L10n.cannotConnectToHost)
 			default:
-				logConstructor.message = logMessage
 				errorMessage = ErrorMessage(code: err._code,
 				                            title: L10n.error,
-				                            displayMessage: displayMessage,
-				                            logConstructor: logConstructor)
+				                            message: L10n.unknownError)
 			}
 		}
 
 		return errorMessage
 	}
 
-	private static func parseHTTPURLError(from response: ErrorResponse, displayMessage: String?,
-	                                      logConstructor: LogConstructor) -> ErrorMessage
-	{
-
+	private static func parseHTTPURLError(from response: ErrorResponse, displayMessage: String?) -> ErrorMessage {
 		let errorMessage: ErrorMessage
-		let logMessage = "An HTTP URL error has occurred"
-		var logConstructor = logConstructor
 
 		// Not implemented as has not run into one of these errors as time of writing
 		switch response {
 		case .error:
-			logConstructor.message = logMessage
 			errorMessage = ErrorMessage(code: 0,
 			                            title: L10n.error,
-			                            displayMessage: displayMessage,
-			                            logConstructor: logConstructor)
+			                            message: "An HTTP URL error has occurred")
 		}
 
 		return errorMessage
 	}
 
-	private static func parseJellyfinError(from response: ErrorResponse, displayMessage: String?,
-	                                       logConstructor: LogConstructor) -> ErrorMessage
-	{
-
+	private static func parseJellyfinError(from response: ErrorResponse, displayMessage: String?) -> ErrorMessage {
 		let errorMessage: ErrorMessage
-		var logMessage = L10n.unknownError
-		var logConstructor = logConstructor
 
 		switch response {
 		case let .error(code, _, _, _):
@@ -137,18 +85,13 @@ enum NetworkError: Error {
 			// Generic HTTP status codes
 			switch code {
 			case 401:
-				logMessage = L10n.unauthorizedUser
-				logConstructor.message = logMessage
 				errorMessage = ErrorMessage(code: code,
 				                            title: L10n.unauthorized,
-				                            displayMessage: displayMessage,
-				                            logConstructor: logConstructor)
+				                            message: L10n.unauthorizedUser)
 			default:
-				logConstructor.message = logMessage
 				errorMessage = ErrorMessage(code: code,
 				                            title: L10n.error,
-				                            displayMessage: displayMessage,
-				                            logConstructor: logConstructor)
+				                            message: L10n.unknownError)
 			}
 		}
 

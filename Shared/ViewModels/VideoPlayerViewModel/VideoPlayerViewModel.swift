@@ -585,7 +585,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
 				Notifications[.didSendStopReport].post(object: self.item.id)
 			}
 			.store(in: &cancellables)
