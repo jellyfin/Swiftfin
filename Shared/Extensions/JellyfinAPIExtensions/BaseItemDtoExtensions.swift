@@ -55,7 +55,11 @@ public extension BaseItemDto {
 		}
 
 		if imgURL.queryParameters?[ImageType.backdrop.rawValue] == nil {
-			return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
+			if itemType == .episode {
+				return imageBlurHashes?.backdrop?.values.first ?? "001fC^"
+			} else {
+				return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
+			}
 		} else {
 			return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
 		}
@@ -120,8 +124,12 @@ public extension BaseItemDto {
 	}
 
 	func getSeriesPrimaryImage(maxWidth: Int) -> URL {
+		guard let seriesId = seriesId else {
+			return getPrimaryImage(maxWidth: maxWidth)
+		}
+
 		let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-		let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: seriesId ?? "",
+		let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: seriesId,
 		                                                        imageType: .primary,
 		                                                        maxWidth: Int(x),
 		                                                        quality: 96,
@@ -227,6 +235,7 @@ public extension BaseItemDto {
 		case series = "Series"
 		case boxset = "BoxSet"
 		case collectionFolder = "CollectionFolder"
+		case folder = "Folder"
 
 		case unknown
 
@@ -249,7 +258,7 @@ public extension BaseItemDto {
 
 	func portraitHeaderViewURL(maxWidth: Int) -> URL {
 		switch itemType {
-		case .movie, .season, .series, .boxset, .collectionFolder:
+		case .movie, .season, .series, .boxset, .collectionFolder, .folder:
 			return getPrimaryImage(maxWidth: maxWidth)
 		case .episode:
 			return getSeriesPrimaryImage(maxWidth: maxWidth)

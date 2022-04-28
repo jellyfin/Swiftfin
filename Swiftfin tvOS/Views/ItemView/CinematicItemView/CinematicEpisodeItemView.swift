@@ -32,8 +32,8 @@ struct CinematicEpisodeItemView: View {
 	var body: some View {
 		ZStack {
 
-			ImageView(src: viewModel.item.getBackdropImage(maxWidth: 1920),
-			          bh: viewModel.item.getBackdropImageBlurHash())
+			ImageView(viewModel.item.getBackdropImage(maxWidth: 1920),
+			          blurHash: viewModel.item.getBackdropImageBlurHash())
 				.frame(height: UIScreen.main.bounds.height - 10)
 				.ignoresSafeArea()
 

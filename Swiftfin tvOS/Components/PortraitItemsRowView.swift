@@ -45,7 +45,7 @@ struct PortraitItemsRowView: View {
 							Button {
 								selectedAction(item)
 							} label: {
-								ImageView(src: item.portraitHeaderViewURL(maxWidth: 257))
+								ImageView(item.portraitHeaderViewURL(maxWidth: 257))
 									.frame(width: 257, height: 380)
 							}
 							.frame(height: 380)

@@ -24,7 +24,8 @@ struct PortraitHeaderOverlayView: View {
 
 				// MARK: Portrait Image
 
-				ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 130))
+				ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 130),
+				          blurHash: viewModel.item.getPrimaryImageBlurHash())
 					.portraitPoster(width: 130)
 					.accessibilityIgnoresInvertColors()
 

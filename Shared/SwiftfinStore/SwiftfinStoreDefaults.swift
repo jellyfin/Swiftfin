@@ -41,10 +41,13 @@ extension Defaults.Keys {
 	// Customize settings
 	static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: SwiftfinStore.Defaults.generalSuite)
 	static let showCastAndCrew = Key<Bool>("showCastAndCrew", default: true, suite: SwiftfinStore.Defaults.generalSuite)
+	static let showFlattenView = Key<Bool>("showFlattenView", default: true, suite: SwiftfinStore.Defaults.generalSuite)
 
 	// Video player / overlay settings
 	static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: SwiftfinStore.Defaults.generalSuite)
 	static let jumpGesturesEnabled = Key<Bool>("gesturesEnabled", default: true, suite: SwiftfinStore.Defaults.generalSuite)
+	static let systemControlGesturesEnabled = Key<Bool>("systemControlGesturesEnabled", default: true,
+	                                                    suite: SwiftfinStore.Defaults.generalSuite)
 	static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>("videoPlayerJumpForward", default: .fifteen,
 	                                                               suite: SwiftfinStore.Defaults.generalSuite)
 	static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>("videoPlayerJumpBackward", default: .fifteen,
@@ -71,8 +74,10 @@ extension Defaults.Keys {
 		static let syncSubtitleStateWithAdjacent = Key<Bool>("experimental.syncSubtitleState", default: false,
 		                                                     suite: SwiftfinStore.Defaults.generalSuite)
 		static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: SwiftfinStore.Defaults.generalSuite)
-		static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 		static let nativePlayer = Key<Bool>("nativePlayer", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+		static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+		static let liveTVForceDirectPlay = Key<Bool>("liveTVForceDirectPlay", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+		static let liveTVNativePlayer = Key<Bool>("liveTVNativePlayer", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 	}
 
 	// tvos specific

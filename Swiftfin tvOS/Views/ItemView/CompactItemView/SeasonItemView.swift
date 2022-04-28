@@ -25,7 +25,7 @@ struct SeasonItemView: View {
 
 	var body: some View {
 		ZStack {
-			ImageView(src: viewModel.item.getSeriesBackdropImage(maxWidth: 1920), bh: viewModel.item.getSeriesBackdropImageBlurHash())
+			ImageView(viewModel.item.getSeriesBackdropImage(maxWidth: 1920), blurHash: viewModel.item.getSeriesBackdropImageBlurHash())
 				.opacity(0.4)
 				.ignoresSafeArea()
 			ScrollView {

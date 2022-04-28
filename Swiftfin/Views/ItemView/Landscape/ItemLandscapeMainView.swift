@@ -24,8 +24,8 @@ struct ItemLandscapeMainView: View {
 			// MARK: Sidebar Image
 
 			VStack {
-				ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 130),
-				          bh: viewModel.item.getPrimaryImageBlurHash())
+				ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 130),
+				          blurHash: viewModel.item.getPrimaryImageBlurHash())
 					.frame(width: 130, height: 195)
 					.cornerRadius(10)
 					.accessibilityIgnoresInvertColors()
@@ -95,8 +95,8 @@ struct ItemLandscapeMainView: View {
 			ZStack {
 				// MARK: Backdrop
 
-				ImageView(src: viewModel.item.getBackdropImage(maxWidth: 200),
-				          bh: viewModel.item.getBackdropImageBlurHash())
+				ImageView(viewModel.item.getBackdropImage(maxWidth: 200),
+				          blurHash: viewModel.item.getBackdropImageBlurHash())
 					.opacity(0.3)
 					.edgesIgnoringSafeArea(.all)
 					.blur(radius: 8)

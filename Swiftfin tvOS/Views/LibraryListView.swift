@@ -21,69 +21,23 @@ struct LibraryListView: View {
 	@Default(.Experimental.liveTVAlphaEnabled)
 	var liveTVAlphaEnabled
 
+	let supportedCollectionTypes = ["movies", "tvshows", "boxsets", "livetv", "other"]
+
 	var body: some View {
 		ScrollView {
 			LazyVStack {
 				if !viewModel.isLoading {
 
-					if let collectionLibraryItem = viewModel.libraries.first(where: { $0.collectionType == "boxsets" }) {
-						Button {
-							self.libraryListRouter.route(to: \.library,
-							                             (viewModel: LibraryViewModel(parentID: collectionLibraryItem.id),
-							                              title: collectionLibraryItem.name ?? ""))
-						}
-							label: {
-								ZStack {
-									HStack {
-										Spacer()
-										VStack {
-											Text(collectionLibraryItem.name ?? "")
-												.foregroundColor(.white)
-												.font(.title2)
-												.fontWeight(.semibold)
-										}
-										Spacer()
-									}.padding(32)
-								}
-								.frame(minWidth: 100, maxWidth: .infinity)
-								.frame(height: 100)
-							}
-								.cornerRadius(10)
-								.shadow(radius: 5)
-								.padding(.bottom, 5)
-					}
-
-					ForEach(viewModel.libraries.filter { $0.collectionType != "boxsets" }, id: \.id) { library in
+					ForEach(viewModel.libraries.filter { [self] library in
+						let collectionType = library.collectionType ?? "other"
+						return self.supportedCollectionTypes.contains(collectionType)
+					}, id: \.id) { library in
 						if library.collectionType == "livetv" {
 							if liveTVAlphaEnabled {
 								Button {
 									self.mainCoordinator.root(\.liveTV)
 								}
 									label: {
-										ZStack {
-											HStack {
-												Spacer()
-												VStack {
-													Text(library.name ?? "")
-														.foregroundColor(.white)
-														.font(.title2)
-														.fontWeight(.semibold)
-												}
-												Spacer()
-											}.padding(32)
-										}
-										.frame(minWidth: 100, maxWidth: .infinity)
-										.frame(height: 100)
-									}
-										.cornerRadius(10)
-										.shadow(radius: 5)
-										.padding(.bottom, 5)
-							}
-						} else {
-							Button {
-								self.libraryListRouter.route(to: \.library, (viewModel: LibraryViewModel(), title: library.name ?? ""))
-							}
-								label: {
 									ZStack {
 										HStack {
 											Spacer()
@@ -102,6 +56,31 @@ struct LibraryListView: View {
 									.cornerRadius(10)
 									.shadow(radius: 5)
 									.padding(.bottom, 5)
+							}
+						} else {
+							Button {
+								self.libraryListRouter.route(to: \.library,
+								                             (viewModel: LibraryViewModel(parentID: library.id), title: library.name ?? ""))
+							}
+								label: {
+								ZStack {
+									HStack {
+										Spacer()
+										VStack {
+											Text(library.name ?? "")
+												.foregroundColor(.white)
+												.font(.title2)
+												.fontWeight(.semibold)
+										}
+										Spacer()
+									}.padding(32)
+								}
+								.frame(minWidth: 100, maxWidth: .infinity)
+								.frame(height: 100)
+							}
+								.cornerRadius(10)
+								.shadow(radius: 5)
+								.padding(.bottom, 5)
 						}
 					}
 				} else {

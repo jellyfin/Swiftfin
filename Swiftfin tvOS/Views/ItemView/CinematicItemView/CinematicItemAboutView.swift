@@ -17,7 +17,7 @@ struct CinematicItemAboutView: View {
 
 	var body: some View {
 		HStack(alignment: .top, spacing: 10) {
-			ImageView(src: viewModel.item.portraitHeaderViewURL(maxWidth: 257))
+			ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 257))
 				.portraitPoster(width: 257)
 
 			ZStack(alignment: .topLeading) {

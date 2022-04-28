@@ -40,20 +40,19 @@ final class MainCoordinator: NavigationCoordinatable {
 		DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
 		// Notification setup for state
-		let nc = SwiftfinNotificationCenter.main
-		nc.addObserver(self, selector: #selector(didLogIn), name: SwiftfinNotificationCenter.Keys.didSignIn, object: nil)
-		nc.addObserver(self, selector: #selector(didLogOut), name: SwiftfinNotificationCenter.Keys.didSignOut, object: nil)
+		Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
+		Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
 	}
 
 	@objc
-	func didLogIn() {
-		LogManager.log.info("Received `didSignIn` from NSNotificationCenter.")
+	func didSignIn() {
+		LogManager.shared.log.info("Received `didSignIn` from NSNotificationCenter.")
 		root(\.mainTab)
 	}
 
 	@objc
-	func didLogOut() {
-		LogManager.log.info("Received `didSignOut` from NSNotificationCenter.")
+	func didSignOut() {
+		LogManager.shared.log.info("Received `didSignOut` from NSNotificationCenter.")
 		root(\.serverList)
 	}
 

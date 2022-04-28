@@ -21,9 +21,7 @@ class UserListViewModel: ViewModel {
 
 		super.init()
 
-		let nc = SwiftfinNotificationCenter.main
-		nc.addObserver(self, selector: #selector(didChangeCurrentLoginURI), name: SwiftfinNotificationCenter.Keys.didChangeServerCurrentURI,
-		               object: nil)
+		Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
 	}
 
 	@objc

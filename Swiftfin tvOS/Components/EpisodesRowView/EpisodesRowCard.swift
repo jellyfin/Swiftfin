@@ -21,8 +21,8 @@ struct EpisodeRowCard: View {
 			Button {
 				itemRouter.route(to: \.item, episode)
 			} label: {
-				ImageView(src: episode.getBackdropImage(maxWidth: 550),
-				          bh: episode.getBackdropImageBlurHash())
+				ImageView(episode.getBackdropImage(maxWidth: 550),
+				          blurHash: episode.getBackdropImageBlurHash())
 					.mask(Rectangle().frame(width: 550, height: 308))
 					.frame(width: 550, height: 308)
 			}

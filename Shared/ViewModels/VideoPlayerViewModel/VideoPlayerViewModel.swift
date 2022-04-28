@@ -115,6 +115,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let chapters: [ChapterInfo]
 	let overlayType: OverlayType
 	let jumpGesturesEnabled: Bool
+	let systemControlGesturesEnabled: Bool
 	let resumeOffset: Bool
 	let streamType: ServerStreamType
 	let container: String
@@ -140,7 +141,8 @@ final class VideoPlayerViewModel: ViewModel {
 	// MARK: Current Time
 
 	var currentSeconds: Double {
-		let videoDuration = Double(item.runTimeTicks! / 10_000_000)
+		let runTimeTicks = item.runTimeTicks ?? 0
+		let videoDuration = Double(runTimeTicks / 10_000_000)
 		return round(sliderPercentage * videoDuration)
 	}
 
@@ -149,7 +151,8 @@ final class VideoPlayerViewModel: ViewModel {
 	}
 
 	func setSeconds(_ seconds: Int64) {
-		let videoDuration = item.runTimeTicks!
+		guard let runTimeTicks = item.runTimeTicks else { return }
+		let videoDuration = runTimeTicks
 		let percentage = Double(seconds * 10_000_000) / Double(videoDuration)
 
 		sliderPercentage = percentage
@@ -240,6 +243,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.jumpBackwardLength = Defaults[.videoPlayerJumpBackward]
 		self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
 		self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
+		self.systemControlGesturesEnabled = Defaults[.systemControlGesturesEnabled]
 		self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
 
 		self.resumeOffset = Defaults[.resumeOffset]
@@ -256,7 +260,8 @@ final class VideoPlayerViewModel: ViewModel {
 	}
 
 	private func sliderPercentageChanged(newValue: Double) {
-		let videoDuration = Double(item.runTimeTicks! / 10_000_000)
+		let runTimeTicks = item.runTimeTicks ?? 0
+		let videoDuration = Double(runTimeTicks / 10_000_000)
 		let secondsScrubbedRemaining = videoDuration - currentSeconds
 
 		leftLabelText = calculateTimeText(from: currentSeconds)
@@ -580,9 +585,8 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
-				SwiftfinNotificationCenter.main.post(name: SwiftfinNotificationCenter.Keys.didSendStopReport,
-				                                     object: self.item.id)
+				LogManager.shared.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
+				Notifications[.didSendStopReport].post(object: self.item.id)
 			}
 			.store(in: &cancellables)
 	}

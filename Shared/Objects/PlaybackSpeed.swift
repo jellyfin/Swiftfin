@@ -38,4 +38,46 @@ enum PlaybackSpeed: Double, CaseIterable {
 			return "2x"
 		}
 	}
+
+	var previous: PlaybackSpeed? {
+		switch self {
+		case .quarter:
+			return nil
+		case .half:
+			return .quarter
+		case .threeQuarter:
+			return .half
+		case .one:
+			return .threeQuarter
+		case .oneQuarter:
+			return .one
+		case .oneHalf:
+			return .oneQuarter
+		case .oneThreeQuarter:
+			return .oneHalf
+		case .two:
+			return .oneThreeQuarter
+		}
+	}
+
+	var next: PlaybackSpeed? {
+		switch self {
+		case .quarter:
+			return .half
+		case .half:
+			return .threeQuarter
+		case .threeQuarter:
+			return .one
+		case .one:
+			return .oneQuarter
+		case .oneQuarter:
+			return .oneHalf
+		case .oneHalf:
+			return .oneThreeQuarter
+		case .oneThreeQuarter:
+			return .two
+		case .two:
+			return nil
+		}
+	}
 }

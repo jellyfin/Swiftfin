@@ -48,7 +48,7 @@ struct VLCPlayerChapterOverlayView: View {
 										Button {
 											viewModel.playerOverlayDelegate?.didSelectChapter(viewModel.chapters[chapterIndex])
 										} label: {
-											ImageView(src: chapterImages[chapterIndex])
+											ImageView(chapterImages[chapterIndex])
 												.cornerRadius(10)
 												.frame(width: 150, height: 100)
 												.overlay {

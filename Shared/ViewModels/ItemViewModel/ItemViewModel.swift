@@ -55,10 +55,7 @@ class ItemViewModel: ViewModel {
 
 		getSimilarItems()
 
-		SwiftfinNotificationCenter.main.addObserver(self,
-		                                            selector: #selector(receivedStopReport(_:)),
-		                                            name: SwiftfinNotificationCenter.Keys.didSendStopReport,
-		                                            object: nil)
+		Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
 
 		refreshItemVideoPlayerViewModel(for: item)
 	}
@@ -72,7 +69,7 @@ class ItemViewModel: ViewModel {
 		} else {
 			// Remove if necessary. Note that this cannot be in deinit as
 			// holding as an observer won't allow the object to be deinit-ed
-			SwiftfinNotificationCenter.main.removeObserver(self)
+			Notifications.unsubscribe(self)
 		}
 	}
 

@@ -450,7 +450,8 @@ extension VLCPlayerViewController {
 
 		if startPercentage > 0 {
 			if viewModel.resumeOffset {
-				let videoDurationSeconds = Double(viewModel.item.runTimeTicks! / 10_000_000)
+				let runTimeTicks = viewModel.item.runTimeTicks ?? 0
+				let videoDurationSeconds = Double(runTimeTicks / 10_000_000)
 				var startSeconds = round((startPercentage / 100) * videoDurationSeconds)
 				startSeconds = startSeconds.subtract(5, floor: 0)
 				let newStartPercentage = startSeconds / videoDurationSeconds
@@ -522,7 +523,8 @@ extension VLCPlayerViewController {
 		// Necessary math as VLCMediaPlayer doesn't work well
 		//     by just setting the position
 		let videoPosition = Double(vlcMediaPlayer.time.intValue / 1000)
-		let videoDuration = Double(viewModel.item.runTimeTicks! / 10_000_000)
+		let runTimeTicks = viewModel.item.runTimeTicks ?? 0
+		let videoDuration = Double(runTimeTicks / 10_000_000)
 		let secondsScrubbedTo = round(viewModel.sliderPercentage * videoDuration)
 		let newPositionOffset = secondsScrubbedTo - videoPosition
 
@@ -698,7 +700,7 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
 
 	// MARK: mediaPlayerStateChanged
 
-	func mediaPlayerStateChanged(_ aNotification: Notification!) {
+	func mediaPlayerStateChanged(_ aNotification: Notification) {
 
 		// Don't show buffering if paused, usually here while scrubbing
 		if vlcMediaPlayer.state == .buffering && viewModel.playerState == .paused {
@@ -718,7 +720,7 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
 
 	// MARK: mediaPlayerTimeChanged
 
-	func mediaPlayerTimeChanged(_ aNotification: Notification!) {
+	func mediaPlayerTimeChanged(_ aNotification: Notification) {
 
 		if !viewModel.sliderIsScrubbing {
 			viewModel.sliderPercentage = Double(vlcMediaPlayer.position)

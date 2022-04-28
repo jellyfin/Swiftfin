@@ -6,17 +6,17 @@
 
 ## Setup
 
-Fork the Swiftfin repo and install the necessary CocoaPods with Xcode 13:
+Fork the Swiftfin repo and install the necessary Carthage with Xcode 13:
 
 ```bash
-# install Cocoapods (if not installed)
-$ sudo gem install cocoapods
+# install Carthage (if not installed)
+$ brew install carthage
 
-# install dependencies
-$ pod install
+# update dependencies
+$ carthage update --use-xcframeworks
 
-# open workspace and build
-$ open Swiftfin.xcworkspace
+# open project and build
+$ open Swiftfin.xcodeproj
 ```
 
 ## Git Flow
