@@ -88,7 +88,7 @@ struct LiveTVChannelsView: View {
     private func createGridLayout() -> NSCollectionLayoutSection {
         if UIDevice.current.userInterfaceIdiom == .pad {
             let itemSize = NSCollectionLayoutSize(
-                widthDimension: .absolute((UIScreen.main.bounds.width / 2) - 2),
+                widthDimension: .absolute((UIScreen.main.bounds.width / 2) - 16),
                 heightDimension: .fractionalHeight(1)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -133,8 +133,16 @@ struct LiveTVChannelsView: View {
                 let section = NSCollectionLayoutSection(group: group)
                 return section
             } else {
+                
+                let scenes = UIApplication.shared.connectedScenes
+                let windowScene = scenes.first as? UIWindowScene
+                var width = (UIScreen.main.bounds.width / 2) - 32
+                if let safeArea = windowScene?.keyWindow?.safeAreaInsets {
+                    width = (UIScreen.main.bounds.width / 2) - safeArea.left - safeArea.right
+                }
+
                 let itemSize = NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(0.49),
+                    widthDimension: .absolute(width),
                     heightDimension: .fractionalHeight(1)
                 )
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
