@@ -10,33 +10,35 @@ import Foundation
 import Puppy
 
 class LogManager {
-	static let shared = LogManager()
-	let log = Puppy()
 
-	init() {
-		let console = ConsoleLogger("com.swiftfin.ConsoleLogger")
-		let fileURL = self.getDocumentsDirectory().appendingPathComponent("logs.txt")
-		let FM = FileManager()
-		_ = try? FM.removeItem(at: fileURL)
+	static let log = Puppy()
+
+	static func setup() {
+
+		let logsDirectory = getDocumentsDirectory().appendingPathComponent("logs", isDirectory: true)
 
 		do {
-			let file = try FileLogger("com.swiftfin", fileURL: fileURL)
-			file.format = LogFormatter()
-			log.add(file, withLevel: .debug)
-		} catch let err {
-			log.error("Couldn't initialize file logger.")
-			print(err)
+			try FileManager.default.createDirectory(atPath: logsDirectory.path,
+			                                        withIntermediateDirectories: true,
+			                                        attributes: nil)
+		} catch {
+			// logs directory already created
 		}
-		console.format = LogFormatter()
-		log.add(console, withLevel: .debug)
-		log.info("Logger initialized.")
+
+		let logFileURL = logsDirectory.appendingPathComponent("swiftfin_log.log")
+
+		let fileRotationLogger = try! FileRotationLogger("org.jellyfin.swiftfin.logger.file-rotation",
+		                                                 fileURL: logFileURL)
+		fileRotationLogger.format = LogFormatter()
+
+		let consoleLogger = ConsoleLogger("org.jellyfin.swiftfin.logger.console")
+		consoleLogger.format = LogFormatter()
+
+		log.add(fileRotationLogger, withLevel: .debug)
+		log.add(consoleLogger, withLevel: .debug)
 	}
 
-	func logFileURL() -> URL {
-		self.getDocumentsDirectory().appendingPathComponent("logs.txt")
-	}
-
-	func getDocumentsDirectory() -> URL {
+	private static func getDocumentsDirectory() -> URL {
 		// find all possible documents directories for this user
 		let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
 

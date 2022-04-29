@@ -14,7 +14,7 @@ import UIKit
 extension BaseItemDto {
 	func createVideoPlayerViewModel() -> AnyPublisher<[VideoPlayerViewModel], Error> {
 
-		LogManager.shared.log.debug("Creating video player view model for item: \(id ?? "")")
+		LogManager.log.debug("Creating video player view model for item: \(id ?? "")")
 
 		let builder = DeviceProfileBuilder()
 		// TODO: fix bitrate settings
@@ -169,7 +169,7 @@ extension BaseItemDto {
 
 	func createLiveTVVideoPlayerViewModel() -> AnyPublisher<[VideoPlayerViewModel], Error> {
 
-		LogManager.shared.log.debug("Creating liveTV video player view model for item: \(id ?? "")")
+		LogManager.log.debug("Creating liveTV video player view model for item: \(id ?? "")")
 
 		let builder = DeviceProfileBuilder()
 		// TODO: fix bitrate settings

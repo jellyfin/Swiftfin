@@ -25,7 +25,7 @@ final class LatestMediaViewModel: ViewModel {
 	}
 
 	func requestLatestMedia() {
-		LogManager.shared.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id)")
+		LogManager.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id)")
 		UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
 		                              parentId: library.id ?? "",
 		                              fields: [
@@ -43,7 +43,7 @@ final class LatestMediaViewModel: ViewModel {
 				self?.handleAPIRequestError(completion: completion)
 			}, receiveValue: { [weak self] response in
 				self?.items = response
-				LogManager.shared.log.debug("Retrieved \(String(self?.items.count ?? 0)) items")
+				LogManager.log.debug("Retrieved \(String(self?.items.count ?? 0)) items")
 			})
 			.store(in: &cancellables)
 	}

@@ -44,7 +44,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 	}
 
 	private func requestEpisodes() {
-		LogManager.shared.log
+		LogManager.log
 			.debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
 		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.main.currentLogin.user.id,
 		                       fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
@@ -55,7 +55,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 			}, receiveValue: { [weak self] response in
 				guard let self = self else { return }
 				self.episodes = response.items ?? []
-				LogManager.shared.log.debug("Retrieved \(String(self.episodes.count)) episodes")
+				LogManager.log.debug("Retrieved \(String(self.episodes.count)) episodes")
 
 				self.setNextUpInSeason()
 			})
@@ -78,7 +78,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 					!episode.unaired && !episode.missing && episode.seasonId ?? "" == self.item.id!
 				}) {
 					self.playButtonItem = nextUpItem
-					LogManager.shared.log.debug("Nextup in season \(self.item.id!) (\(self.item.name!)): \(nextUpItem.id!)")
+					LogManager.log.debug("Nextup in season \(self.item.id!) (\(self.item.name!)): \(nextUpItem.id!)")
 				}
 
 				if self.playButtonItem == nil && !self.episodes.isEmpty {

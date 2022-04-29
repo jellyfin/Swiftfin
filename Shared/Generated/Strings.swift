@@ -390,6 +390,8 @@ internal enum L10n {
   internal static var tvShows: String { return L10n.tr("Localizable", "tvShows") }
   /// Unable to connect to server
   internal static var unableToConnectServer: String { return L10n.tr("Localizable", "unableToConnectServer") }
+  /// Unable to find host
+  internal static var unableToFindHost: String { return L10n.tr("Localizable", "unableToFindHost") }
   /// Unaired
   internal static var unaired: String { return L10n.tr("Localizable", "unaired") }
   /// Unauthorized

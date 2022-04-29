@@ -500,11 +500,11 @@ extension VLCPlayerViewController {
 		viewModel = newViewModel
 
 		if viewModel.streamType == .direct {
-			LogManager.shared.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? "--")")
+			LogManager.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? "--")")
 		} else if viewModel.streamType == .transcode && Defaults[.Experimental.forceDirectPlay] {
-			LogManager.shared.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? "--")")
+			LogManager.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? "--")")
 		} else {
-			LogManager.shared.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? "--")")
+			LogManager.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? "--")")
 		}
 	}
 
