@@ -147,9 +147,9 @@ enum SwiftfinStore {
 		}
 	}
 
-	// MARK: Errors
+	// MARK: Error
 
-	enum Errors {
+	enum Error {
 		case existingServer(State.Server)
 		case existingUser(State.User)
 	}
@@ -193,7 +193,7 @@ enum SwiftfinStore {
 
 // MARK: LocalizedError
 
-extension SwiftfinStore.Errors: LocalizedError {
+extension SwiftfinStore.Error: LocalizedError {
 
 	var title: String {
 		switch self {

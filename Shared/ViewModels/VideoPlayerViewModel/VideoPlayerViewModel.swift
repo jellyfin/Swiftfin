@@ -482,7 +482,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Start report sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Start report sent for item: \(self.item.id ?? "No ID")")
 			}
 			.store(in: &cancellables)
 	}
@@ -518,7 +518,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Pause report sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Pause report sent for item: \(self.item.id ?? "No ID")")
 			}
 			.store(in: &cancellables)
 	}
@@ -563,7 +563,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Playback progress sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Playback progress sent for item: \(self.item.id ?? "No ID")")
 			}
 			.store(in: &cancellables)
 
@@ -590,7 +590,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
 				Notifications[.didSendStopReport].post(object: self.item.id)
 			}
 			.store(in: &cancellables)

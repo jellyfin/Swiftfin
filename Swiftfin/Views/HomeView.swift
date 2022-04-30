@@ -35,7 +35,7 @@ struct HomeView: View {
 				}
 
 				Text("\(errorMessage.code)")
-				Text(errorMessage.displayMessage)
+				Text(errorMessage.message)
 					.frame(minWidth: 50, maxWidth: 240)
 					.multilineTextAlignment(.center)
 

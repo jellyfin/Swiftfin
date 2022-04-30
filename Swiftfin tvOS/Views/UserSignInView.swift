@@ -49,7 +49,7 @@ struct UserSignInView: View {
 		}
 		.alert(item: $viewModel.errorMessage) { _ in
 			Alert(title: Text(viewModel.alertTitle),
-			      message: Text(viewModel.errorMessage?.displayMessage ?? L10n.unknownError),
+			      message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
 			      dismissButton: .cancel())
 		}
 		.navigationTitle(L10n.signIn)

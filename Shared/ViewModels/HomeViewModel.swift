@@ -63,7 +63,7 @@ final class HomeViewModel: ViewModel {
 
 	@objc
 	func refresh() {
-		LogManager.shared.log.debug("Refresh called.")
+		LogManager.log.debug("Refresh called.")
 
 		refreshLibrariesLatest()
 		refreshLatestAddedItems()
@@ -89,7 +89,7 @@ final class HomeViewModel: ViewModel {
 				var newLibraries: [BaseItemDto] = []
 
 				response.items!.forEach { item in
-					LogManager.shared.log
+					LogManager.log
 						.debug("Retrieved user view: \(item.id!) (\(item.name ?? "nil")) with type \(item.collectionType ?? "nil")")
 					if item.collectionType == "movies" || item.collectionType == "tvshows" {
 						newLibraries.append(item)
@@ -147,7 +147,7 @@ final class HomeViewModel: ViewModel {
 					self.handleAPIRequestError(completion: completion)
 				}
 			} receiveValue: { items in
-				LogManager.shared.log.debug("Retrieved \(String(items.count)) resume items")
+				LogManager.log.debug("Retrieved \(String(items.count)) resume items")
 
 				self.latestAddedItems = items
 			}
@@ -178,7 +178,7 @@ final class HomeViewModel: ViewModel {
 					self.handleAPIRequestError(completion: completion)
 				}
 			}, receiveValue: { response in
-				LogManager.shared.log.debug("Retrieved \(String(response.items!.count)) resume items")
+				LogManager.log.debug("Retrieved \(String(response.items!.count)) resume items")
 
 				self.resumeItems = response.items ?? []
 			})
@@ -223,7 +223,7 @@ final class HomeViewModel: ViewModel {
 					self.handleAPIRequestError(completion: completion)
 				}
 			}, receiveValue: { response in
-				LogManager.shared.log.debug("Retrieved \(String(response.items!.count)) nextup items")
+				LogManager.log.debug("Retrieved \(String(response.items!.count)) nextup items")
 
 				self.nextUpItems = response.items ?? []
 			})

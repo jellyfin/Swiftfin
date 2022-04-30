@@ -104,7 +104,7 @@ final class SessionManager {
 				                                                              [Where<SwiftfinStore.Models.StoredServer>("id == %@",
 				                                                                                                        newServer.id)])
 				{
-					throw SwiftfinStore.Errors.existingServer(existingServer.state)
+					throw SwiftfinStore.Error.existingServer(existingServer.state)
 				}
 
 				return (newServer, transaction)
@@ -210,7 +210,7 @@ final class SessionManager {
 				                                                            [Where<SwiftfinStore.Models.StoredUser>("id == %@",
 				                                                                                                    newUser.id)])
 				{
-					throw SwiftfinStore.Errors.existingUser(existingUser.state)
+					throw SwiftfinStore.Error.existingUser(existingUser.state)
 				}
 
 				let newAccessToken = transaction.create(Into<SwiftfinStore.Models.StoredAccessToken>())
