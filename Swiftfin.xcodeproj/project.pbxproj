@@ -191,6 +191,7 @@
 		62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2027E501E400EC0ECD /* CoreVideo.framework */; };
 		62666E2327E501EB00EC0ECD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2227E501EB00EC0ECD /* Foundation.framework */; };
 		62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4BC267D40D8000E2F71 /* Foundation.framework */; };
+		62666E2A27E5020A00EC0ECD /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2927E5020A00EC0ECD /* OpenGLES.framework */; };
 		62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2B27E5021000EC0ECD /* QuartzCore.framework */; };
 		62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2D27E5021400EC0ECD /* Security.framework */; };
 		62666E3027E5021800EC0ECD /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E2F27E5021800EC0ECD /* VideoToolbox.framework */; };
@@ -894,6 +895,7 @@
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
 				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
+				62666E2A27E5020A00EC0ECD /* OpenGLES.framework in Frameworks */,
 				E1002B6B2793E36600E47059 /* Algorithms in Frameworks */,
 				62666E1D27E501DB00EC0ECD /* CoreMedia.framework in Frameworks */,
 				62666E3027E5021800EC0ECD /* VideoToolbox.framework in Frameworks */,
