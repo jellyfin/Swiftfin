@@ -95,6 +95,9 @@ final class VideoPlayerViewModel: ViewModel {
 	@Published
 	var mediaItems: [BaseItemDto.ItemDetail]
 
+	@Published
+	var isHiddenOverlay = false
+
 	// MARK: ShouldShowItems
 
 	let shouldShowPlayPreviousItem: Bool
@@ -116,6 +119,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let overlayType: OverlayType
 	let jumpGesturesEnabled: Bool
 	let systemControlGesturesEnabled: Bool
+	let playerGesturesLockGestureEnabled: Bool
 	let resumeOffset: Bool
 	let streamType: ServerStreamType
 	let container: String
@@ -244,6 +248,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
 		self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
 		self.systemControlGesturesEnabled = Defaults[.systemControlGesturesEnabled]
+		self.playerGesturesLockGestureEnabled = Defaults[.playerGesturesLockGestureEnabled]
 		self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
 
 		self.resumeOffset = Defaults[.resumeOffset]

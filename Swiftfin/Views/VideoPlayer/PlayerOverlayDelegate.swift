@@ -8,6 +8,7 @@
 
 import Foundation
 import JellyfinAPI
+import UIKit
 
 protocol PlayerOverlayDelegate {
 
@@ -19,7 +20,8 @@ protocol PlayerOverlayDelegate {
 	func didSelectForward()
 	func didSelectMain()
 
-	func didGenerallyTap()
+	func didGenerallyTap(point: CGPoint?)
+	func didLongPress()
 
 	func didBeginScrubbing()
 	func didEndScrubbing()

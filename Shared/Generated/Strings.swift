@@ -240,6 +240,8 @@ internal enum L10n {
   internal static var playbackSettings: String { return L10n.tr("Localizable", "playbackSettings") }
   /// Playback Speed
   internal static var playbackSpeed: String { return L10n.tr("Localizable", "playbackSpeed") }
+  /// Player Gestures Lock Gesture Enabled
+  internal static var playerGesturesLockGestureEnabled: String { return L10n.tr("Localizable", "playerGesturesLockGestureEnabled") }
   /// Play From Beginning
   internal static var playFromBeginning: String { return L10n.tr("Localizable", "playFromBeginning") }
   /// Play Next

@@ -46,6 +46,10 @@ class VLCPlayerViewController: UIViewController {
 	private var panBeganBrightness = CGFloat.zero
 	private var panBeganVolumeValue = Float.zero
 	private var panBeganPoint = CGPoint.zero
+	private var tapLocationStack = [CGPoint]()
+	private var isJumping = false
+	private var jumpingCompletionWork: DispatchWorkItem?
+	private var isTapWhenJumping = false
 
 	private lazy var videoContentView = makeVideoContentView()
 	private lazy var mainGestureView = makeMainGestureView()
@@ -230,24 +234,17 @@ class VLCPlayerViewController: UIViewController {
 
 		let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
 
-		let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didDoubleTap))
-		doubleTapGesture.numberOfTapsRequired = 2
-
 		let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPinch(_:)))
 
 		let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
 
-		let longPeessGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
+		let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
 
 		view.addGestureRecognizer(singleTapGesture)
 		view.addGestureRecognizer(pinchGesture)
-		view.addGestureRecognizer(longPeessGesture)
 
-		if viewModel.jumpGesturesEnabled {
-			view.addGestureRecognizer(doubleTapGesture)
-			singleTapGesture.require(toFail: doubleTapGesture)
-			singleTapGesture.delaysTouchesBegan = true
-			doubleTapGesture.delaysTouchesBegan = true
+		if viewModel.playerGesturesLockGestureEnabled {
+			view.addGestureRecognizer(longPressGesture)
 		}
 
 		if viewModel.systemControlGesturesEnabled {
@@ -264,6 +261,7 @@ class VLCPlayerViewController: UIViewController {
 		label.alpha = 0
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.font = .systemFont(ofSize: 48)
+		label.layer.zPosition = 1
 		return label
 	}
 
@@ -271,11 +269,13 @@ class VLCPlayerViewController: UIViewController {
 
 	private func makeGestureLockedOverlayView() -> UIView {
 		let backgroundView = UIView()
+		backgroundView.layer.zPosition = 1
 		backgroundView.alpha = 0
 		backgroundView.translatesAutoresizingMaskIntoConstraints = false
 		let button = UIButton(type: .custom, primaryAction: UIAction(handler: { [weak self] _ in
 			self?.isGesturesLocked = false
 			self?.hideLockedOverlay()
+			self?.didGenerallyTap()
 		}))
 		button.translatesAutoresizingMaskIntoConstraints = false
 		button.setImage(UIImage(systemName: "lock.open", withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
@@ -295,21 +295,12 @@ class VLCPlayerViewController: UIViewController {
 	}
 
 	@objc
-	private func didTap() {
-		didGenerallyTap()
+	private func didTap(_ gestureRecognizer: UITapGestureRecognizer) {
+		didGenerallyTap(point: gestureRecognizer.location(in: mainGestureView))
 	}
 
 	@objc
-	private func didDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-		if gestureRecognizer.location(in: mainGestureView).x > (mainGestureView.frame.width / 2) {
-			didSelectForward()
-		} else {
-			didSelectBackward()
-		}
-	}
-
-	@objc
-	private func didLongPress() {
+	func didLongPress() {
 		guard !isGesturesLocked else { return }
 		isGesturesLocked = true
 		didGenerallyTap()
@@ -647,9 +638,10 @@ extension VLCPlayerViewController {
 		guard let overlayHostingController = currentOverlayHostingController else { return }
 
 		guard overlayHostingController.view.alpha != 1 else { return }
+		overlayHostingController.view.alpha = 1
 
-		UIView.animate(withDuration: 0.2) {
-			overlayHostingController.view.alpha = 1
+		withAnimation(.easeInOut(duration: 0.2)) { [weak self] in
+			self?.viewModel.isHiddenOverlay = false
 		}
 	}
 
@@ -660,8 +652,16 @@ extension VLCPlayerViewController {
 
 		guard overlayHostingController.view.alpha != 0 else { return }
 
-		UIView.animate(withDuration: 0.2) {
+		// for gestures UX
+		view.exchangeSubview(at: view.subviews.firstIndex(of: mainGestureView)!,
+		                     withSubviewAt: view.subviews.firstIndex(of: overlayHostingController.view)!)
+		UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
 			overlayHostingController.view.alpha = 0
+		} completion: { [weak self] _ in
+			guard let self = self else { return }
+			self.view.exchangeSubview(at: self.view.subviews.firstIndex(of: self.mainGestureView)!,
+			                          withSubviewAt: self.view.subviews.firstIndex(of: overlayHostingController.view)!)
+			self.viewModel.isHiddenOverlay = true
 		}
 	}
 
@@ -998,14 +998,63 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		}
 	}
 
-	func didGenerallyTap() {
+	func didGenerallyTap(point: CGPoint? = nil) {
 		if isGesturesLocked {
 			toggleLockedOverlay()
 		} else {
+			if viewModel.jumpGesturesEnabled,
+			   let point = point
+			{
+				let tempStack = tapLocationStack
+				tapLocationStack.append(point)
+
+				if isSameLocationWithLast(point: point, in: tempStack) {
+					isTapWhenJumping = false
+					isJumping = true
+					tapLocationStack.removeAll()
+					jumpingCompletionWork?.cancel()
+					jumpingCompletionWork = DispatchWorkItem(block: { [weak self] in
+						guard let self = self else { return }
+						self.isJumping = false
+						guard self.isTapWhenJumping else { return }
+						self.isTapWhenJumping = false
+						self.toggleOverlay()
+					})
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: jumpingCompletionWork!)
+
+					hideOverlay()
+					if point.x > (mainGestureView.frame.width / 2) {
+						didSelectForward()
+					} else {
+						didSelectBackward()
+					}
+					return
+				} else {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+						guard let self = self else { return }
+						guard !self.tapLocationStack.isEmpty else { return }
+						self.tapLocationStack.removeFirst()
+					}
+				}
+			}
+			guard !isJumping else {
+				isTapWhenJumping = true
+				return
+			}
+
 			toggleOverlay()
 		}
 
 		restartOverlayDismissTimer(interval: 5)
+	}
+
+	private func isSameLocationWithLast(point: CGPoint, in stack: [CGPoint]) -> Bool {
+		guard let last = stack.last else { return false }
+		if last.x > (mainGestureView.frame.width / 2) {
+			return point.x > (mainGestureView.frame.width / 2)
+		} else {
+			return point.x <= (mainGestureView.frame.width / 2)
+		}
 	}
 
 	func didBeginScrubbing() {
