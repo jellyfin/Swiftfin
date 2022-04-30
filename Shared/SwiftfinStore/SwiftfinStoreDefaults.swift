@@ -48,6 +48,8 @@ extension Defaults.Keys {
 	static let jumpGesturesEnabled = Key<Bool>("gesturesEnabled", default: true, suite: SwiftfinStore.Defaults.generalSuite)
 	static let systemControlGesturesEnabled = Key<Bool>("systemControlGesturesEnabled", default: true,
 	                                                    suite: SwiftfinStore.Defaults.generalSuite)
+	static let playerGesturesLockGestureEnabled = Key<Bool>("playerGesturesLockGestureEnabled", default: true,
+	                                                        suite: SwiftfinStore.Defaults.generalSuite)
 	static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>("videoPlayerJumpForward", default: .fifteen,
 	                                                               suite: SwiftfinStore.Defaults.generalSuite)
 	static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>("videoPlayerJumpBackward", default: .fifteen,

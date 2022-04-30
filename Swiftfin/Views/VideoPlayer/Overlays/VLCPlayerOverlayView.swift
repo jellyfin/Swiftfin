@@ -400,13 +400,11 @@ struct VLCPlayerOverlayView: View {
 		.foregroundColor(Color.white)
 	}
 
-	var body: some View {
+	@ViewBuilder
+	var contents: some View {
 		if viewModel.overlayType == .normal {
 			mainBody
 				.contentShape(Rectangle())
-				.onTapGesture {
-					viewModel.playerOverlayDelegate?.didGenerallyTap()
-				}
 				.background {
 					Color(uiColor: .black.withAlphaComponent(0.5))
 						.ignoresSafeArea()
@@ -414,10 +412,21 @@ struct VLCPlayerOverlayView: View {
 		} else {
 			mainBody
 				.contentShape(Rectangle())
-				.onTapGesture {
-					viewModel.playerOverlayDelegate?.didGenerallyTap()
-				}
 		}
+	}
+
+	var body: some View {
+		contents
+			.onLongPressGesture {
+				guard viewModel.playerGesturesLockGestureEnabled else { return }
+				viewModel.playerOverlayDelegate?.didGenerallyTap(point: nil)
+				viewModel.playerOverlayDelegate?.didLongPress()
+			}
+			.gesture(DragGesture(minimumDistance: 0)
+				.onEnded { value in
+					viewModel.playerOverlayDelegate?.didGenerallyTap(point: value.location)
+				})
+			.opacity(viewModel.isHiddenOverlay ? 0 : 1)
 	}
 }
 

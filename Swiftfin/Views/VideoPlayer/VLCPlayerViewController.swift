@@ -28,6 +28,7 @@ class VLCPlayerViewController: UIViewController {
 	private var viewModelListeners = Set<AnyCancellable>()
 	private var overlayDismissTimer: Timer?
 	private var isScreenFilled: Bool = false
+	private var isGesturesLocked = false
 	private var pinchScale: CGFloat = 1
 
 	private var currentPlayerTicks: Int64 {
@@ -45,10 +46,15 @@ class VLCPlayerViewController: UIViewController {
 	private var panBeganBrightness = CGFloat.zero
 	private var panBeganVolumeValue = Float.zero
 	private var panBeganPoint = CGPoint.zero
+	private var tapLocationStack = [CGPoint]()
+	private var isJumping = false
+	private var jumpingCompletionWork: DispatchWorkItem?
+	private var isTapWhenJumping = false
 
 	private lazy var videoContentView = makeVideoContentView()
 	private lazy var mainGestureView = makeMainGestureView()
 	private lazy var systemControlOverlayLabel = makeSystemControlOverlayLabel()
+	private lazy var lockedOverlayView = makeGestureLockedOverlayView()
 	private var currentOverlayHostingController: UIHostingController<VLCPlayerOverlayView>?
 	private var currentChapterOverlayHostingController: UIHostingController<VLCPlayerChapterOverlayView>?
 	private var currentJumpBackwardOverlayView: UIImageView?
@@ -60,23 +66,33 @@ class VLCPlayerViewController: UIViewController {
 			UIKeyCommand(title: L10n.playAndPause, action: #selector(didSelectMain), input: " "),
 			UIKeyCommand(title: L10n.jumpForward, action: #selector(didSelectForward), input: UIKeyCommand.inputRightArrow),
 			UIKeyCommand(title: L10n.jumpBackward, action: #selector(didSelectBackward), input: UIKeyCommand.inputLeftArrow),
-			UIKeyCommand(title: L10n.nextItem, action: #selector(didSelectPlayNextItem), input: UIKeyCommand.inputRightArrow,
+			UIKeyCommand(title: L10n.nextItem,
+			             action: #selector(didSelectPlayNextItem),
+			             input: UIKeyCommand.inputRightArrow,
 			             modifierFlags: .command),
-			UIKeyCommand(title: L10n.previousItem, action: #selector(didSelectPlayPreviousItem), input: UIKeyCommand.inputLeftArrow,
+			UIKeyCommand(title: L10n.previousItem,
+			             action: #selector(didSelectPlayPreviousItem),
+			             input: UIKeyCommand.inputLeftArrow,
 			             modifierFlags: .command),
 			UIKeyCommand(title: L10n.close, action: #selector(didSelectClose), input: UIKeyCommand.inputEscape),
 		]
 		if let previous = viewModel.playbackSpeed.previous {
 			commands.append(.init(title: "\(L10n.playbackSpeed) \(previous.displayTitle)",
-			                      action: #selector(didSelectPreviousPlaybackSpeed), input: "[", modifierFlags: .command))
+			                      action: #selector(didSelectPreviousPlaybackSpeed),
+			                      input: "[",
+			                      modifierFlags: .command))
 		}
 		if let next = viewModel.playbackSpeed.next {
-			commands.append(.init(title: "\(L10n.playbackSpeed) \(next.displayTitle)", action: #selector(didSelectNextPlaybackSpeed),
-			                      input: "]", modifierFlags: .command))
+			commands.append(.init(title: "\(L10n.playbackSpeed) \(next.displayTitle)",
+			                      action: #selector(didSelectNextPlaybackSpeed),
+			                      input: "]",
+			                      modifierFlags: .command))
 		}
 		if viewModel.playbackSpeed != .one {
 			commands.append(.init(title: "\(L10n.playbackSpeed) \(PlaybackSpeed.one.displayTitle)",
-			                      action: #selector(didSelectNormalPlaybackSpeed), input: "\\", modifierFlags: .command))
+			                      action: #selector(didSelectNormalPlaybackSpeed),
+			                      input: "\\",
+			                      modifierFlags: .command))
 		}
 		commands.forEach { $0.wantsPriorityOverSystemBehavior = true }
 		return commands
@@ -102,6 +118,7 @@ class VLCPlayerViewController: UIViewController {
 		view.addSubview(videoContentView)
 		view.addSubview(mainGestureView)
 		view.addSubview(systemControlOverlayLabel)
+		view.addSubview(lockedOverlayView)
 	}
 
 	private func setupConstraints() {
@@ -120,6 +137,12 @@ class VLCPlayerViewController: UIViewController {
 		NSLayoutConstraint.activate([
 			systemControlOverlayLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			systemControlOverlayLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+		])
+		NSLayoutConstraint.activate([
+			lockedOverlayView.topAnchor.constraint(equalTo: view.topAnchor),
+			lockedOverlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+			lockedOverlayView.leftAnchor.constraint(equalTo: view.leftAnchor),
+			lockedOverlayView.rightAnchor.constraint(equalTo: view.rightAnchor),
 		])
 	}
 
@@ -148,12 +171,18 @@ class VLCPlayerViewController: UIViewController {
 		refreshJumpForwardOverlayView(with: viewModel.jumpForwardLength)
 
 		let defaultNotificationCenter = NotificationCenter.default
-		defaultNotificationCenter.addObserver(self, selector: #selector(appWillTerminate), name: UIApplication.willTerminateNotification,
+		defaultNotificationCenter.addObserver(self,
+		                                      selector: #selector(appWillTerminate),
+		                                      name: UIApplication.willTerminateNotification,
 		                                      object: nil)
-		defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive),
-		                                      name: UIApplication.willResignActiveNotification, object: nil)
-		defaultNotificationCenter.addObserver(self, selector: #selector(appWillResignActive),
-		                                      name: UIApplication.didEnterBackgroundNotification, object: nil)
+		defaultNotificationCenter.addObserver(self,
+		                                      selector: #selector(appWillResignActive),
+		                                      name: UIApplication.willResignActiveNotification,
+		                                      object: nil)
+		defaultNotificationCenter.addObserver(self,
+		                                      selector: #selector(appWillResignActive),
+		                                      name: UIApplication.didEnterBackgroundNotification,
+		                                      object: nil)
 	}
 
 	@objc
@@ -205,22 +234,17 @@ class VLCPlayerViewController: UIViewController {
 
 		let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
 
-		let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didRightSwipe))
-		rightSwipeGesture.direction = .right
-
-		let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didLeftSwipe))
-		leftSwipeGesture.direction = .left
-
 		let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPinch(_:)))
 
 		let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
 
+		let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
+
 		view.addGestureRecognizer(singleTapGesture)
 		view.addGestureRecognizer(pinchGesture)
 
-		if viewModel.jumpGesturesEnabled {
-			view.addGestureRecognizer(rightSwipeGesture)
-			view.addGestureRecognizer(leftSwipeGesture)
+		if viewModel.playerGesturesLockGestureEnabled {
+			view.addGestureRecognizer(longPressGesture)
 		}
 
 		if viewModel.systemControlGesturesEnabled {
@@ -237,22 +261,49 @@ class VLCPlayerViewController: UIViewController {
 		label.alpha = 0
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.font = .systemFont(ofSize: 48)
+		label.layer.zPosition = 1
 		return label
 	}
 
+	// MARK: GestureLockedOverlayView
+
+	private func makeGestureLockedOverlayView() -> UIView {
+		let backgroundView = UIView()
+		backgroundView.layer.zPosition = 1
+		backgroundView.alpha = 0
+		backgroundView.translatesAutoresizingMaskIntoConstraints = false
+		let button = UIButton(type: .custom, primaryAction: UIAction(handler: { [weak self] _ in
+			self?.isGesturesLocked = false
+			self?.hideLockedOverlay()
+			self?.didGenerallyTap()
+		}))
+		button.translatesAutoresizingMaskIntoConstraints = false
+		button.setImage(UIImage(systemName: "lock.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
+			.withTintColor(.white),
+			for: .normal)
+		backgroundView.addSubview(button)
+
+		NSLayoutConstraint.activate([
+			button.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
+			button.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
+		])
+
+		let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+		backgroundView.addGestureRecognizer(singleTapGesture)
+
+		return backgroundView
+	}
+
 	@objc
-	private func didTap() {
+	private func didTap(_ gestureRecognizer: UITapGestureRecognizer) {
+		didGenerallyTap(point: gestureRecognizer.location(in: mainGestureView))
+	}
+
+	@objc
+	func didLongPress() {
+		guard !isGesturesLocked else { return }
+		isGesturesLocked = true
 		didGenerallyTap()
-	}
-
-	@objc
-	private func didRightSwipe() {
-		didSelectForward()
-	}
-
-	@objc
-	private func didLeftSwipe() {
-		didSelectBackward()
 	}
 
 	@objc
@@ -587,9 +638,10 @@ extension VLCPlayerViewController {
 		guard let overlayHostingController = currentOverlayHostingController else { return }
 
 		guard overlayHostingController.view.alpha != 1 else { return }
+		overlayHostingController.view.alpha = 1
 
-		UIView.animate(withDuration: 0.2) {
-			overlayHostingController.view.alpha = 1
+		withAnimation(.easeInOut(duration: 0.2)) { [weak self] in
+			self?.viewModel.isHiddenOverlay = false
 		}
 	}
 
@@ -600,8 +652,16 @@ extension VLCPlayerViewController {
 
 		guard overlayHostingController.view.alpha != 0 else { return }
 
-		UIView.animate(withDuration: 0.2) {
+		// for gestures UX
+		view.exchangeSubview(at: view.subviews.firstIndex(of: mainGestureView)!,
+		                     withSubviewAt: view.subviews.firstIndex(of: overlayHostingController.view)!)
+		UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
 			overlayHostingController.view.alpha = 0
+		} completion: { [weak self] _ in
+			guard let self = self else { return }
+			self.view.exchangeSubview(at: self.view.subviews.firstIndex(of: self.mainGestureView)!,
+			                          withSubviewAt: self.view.subviews.firstIndex(of: overlayHostingController.view)!)
+			self.viewModel.isHiddenOverlay = true
 		}
 	}
 
@@ -612,6 +672,36 @@ extension VLCPlayerViewController {
 			showOverlay()
 		} else {
 			hideOverlay()
+		}
+	}
+}
+
+// MARK: Show/Hide Locked Overlay
+
+extension VLCPlayerViewController {
+	private func showLockedOverlay() {
+		guard lockedOverlayView.alpha != 1 else { return }
+
+		UIView.animate(withDuration: 0.2) {
+			self.lockedOverlayView.alpha = 1
+		}
+	}
+
+	private func hideLockedOverlay() {
+		guard !UIAccessibility.isVoiceOverRunning else { return }
+
+		guard lockedOverlayView.alpha != 0 else { return }
+
+		UIView.animate(withDuration: 0.2) {
+			self.lockedOverlayView.alpha = 0
+		}
+	}
+
+	private func toggleLockedOverlay() {
+		if lockedOverlayView.alpha < 1 {
+			showLockedOverlay()
+		} else {
+			hideLockedOverlay()
 		}
 	}
 }
@@ -736,13 +826,17 @@ extension VLCPlayerViewController {
 extension VLCPlayerViewController {
 	private func restartOverlayDismissTimer(interval: Double = 3) {
 		overlayDismissTimer?.invalidate()
-		overlayDismissTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(dismissTimerFired),
-		                                           userInfo: nil, repeats: false)
+		overlayDismissTimer = Timer.scheduledTimer(timeInterval: interval,
+		                                           target: self,
+		                                           selector: #selector(dismissTimerFired),
+		                                           userInfo: nil,
+		                                           repeats: false)
 	}
 
 	@objc
 	private func dismissTimerFired() {
 		hideOverlay()
+		hideLockedOverlay()
 	}
 
 	private func stopOverlayDismissTimer() {
@@ -904,10 +998,63 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 		}
 	}
 
-	func didGenerallyTap() {
-		toggleOverlay()
+	func didGenerallyTap(point: CGPoint? = nil) {
+		if isGesturesLocked {
+			toggleLockedOverlay()
+		} else {
+			if viewModel.jumpGesturesEnabled,
+			   let point = point
+			{
+				let tempStack = tapLocationStack
+				tapLocationStack.append(point)
+
+				if isSameLocationWithLast(point: point, in: tempStack) {
+					isTapWhenJumping = false
+					isJumping = true
+					tapLocationStack.removeAll()
+					jumpingCompletionWork?.cancel()
+					jumpingCompletionWork = DispatchWorkItem(block: { [weak self] in
+						guard let self = self else { return }
+						self.isJumping = false
+						guard self.isTapWhenJumping else { return }
+						self.isTapWhenJumping = false
+						self.toggleOverlay()
+					})
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: jumpingCompletionWork!)
+
+					hideOverlay()
+					if point.x > (mainGestureView.frame.width / 2) {
+						didSelectForward()
+					} else {
+						didSelectBackward()
+					}
+					return
+				} else {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+						guard let self = self else { return }
+						guard !self.tapLocationStack.isEmpty else { return }
+						self.tapLocationStack.removeFirst()
+					}
+				}
+			}
+			guard !isJumping else {
+				isTapWhenJumping = true
+				return
+			}
+
+			toggleOverlay()
+		}
 
 		restartOverlayDismissTimer(interval: 5)
+	}
+
+	private func isSameLocationWithLast(point: CGPoint, in stack: [CGPoint]) -> Bool {
+		guard let last = stack.last else { return false }
+		if last.x > (mainGestureView.frame.width / 2) {
+			return point.x > (mainGestureView.frame.width / 2)
+		} else {
+			return point.x <= (mainGestureView.frame.width / 2)
+		}
 	}
 
 	func didBeginScrubbing() {
