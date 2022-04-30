@@ -131,9 +131,11 @@ open class UDPBroadcastConnection {
 			var socketAddressLength = socklen_t(MemoryLayout<sockaddr_storage>.size)
 			let response = [UInt8](repeating: 0, count: 4096)
 			let UDPSocket = Int32(source.handle)
+            let pointer = UnsafeMutablePointer<[UInt8]>.allocate(capacity: response.capacity)
+            pointer.initialize(to: response)
 
 			let bytesRead = withUnsafeMutablePointer(to: &socketAddress) {
-				recvfrom(UDPSocket, UnsafeMutableRawPointer(mutating: response), response.count, 0,
+				recvfrom(UDPSocket, pointer, response.count, 0,
 				         UnsafeMutableRawPointer($0).bindMemory(to: sockaddr.self, capacity: 1), &socketAddressLength)
 			}
 
