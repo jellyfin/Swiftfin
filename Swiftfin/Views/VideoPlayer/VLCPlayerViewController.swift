@@ -278,7 +278,7 @@ class VLCPlayerViewController: UIViewController {
 			self?.didGenerallyTap()
 		}))
 		button.translatesAutoresizingMaskIntoConstraints = false
-		button.setImage(UIImage(systemName: "lock.open", withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
+		button.setImage(UIImage(systemName: "lock.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
 			.withTintColor(.white),
 			for: .normal)
 		backgroundView.addSubview(button)
