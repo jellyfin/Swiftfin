@@ -16,7 +16,6 @@ let INADDR_BROADCAST = in_addr(s_addr: 0xFFFF_FFFF)
 
 /// An object representing the UDP broadcast connection. Uses a dispatch source to handle the incoming traffic on the UDP socket.
 open class UDPBroadcastConnection {
-
 	// MARK: Properties
 
 	/// The address of the UDP socket.
@@ -80,7 +79,6 @@ open class UDPBroadcastConnection {
 	///
 	/// - Throws: Throws a `ConnectionError` if an error occurs.
 	fileprivate func createSocket() throws {
-
 		// Create new socket
 		let newSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
 		guard newSocket > 0 else { throw ConnectionError.createSocketFailed }
@@ -98,9 +96,9 @@ open class UDPBroadcastConnection {
 		if shouldBeBound {
 			var saddr = sockaddr(sa_len: 0, sa_family: 0,
 			                     sa_data: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
-			self.address.sin_addr = INADDR_ANY
-			memcpy(&saddr, &self.address, MemoryLayout<sockaddr_in>.size)
-			self.address.sin_addr = INADDR_BROADCAST
+			address.sin_addr = INADDR_ANY
+			memcpy(&saddr, &address, MemoryLayout<sockaddr_in>.size)
+			address.sin_addr = INADDR_BROADCAST
 			let isBound = bind(newSocket, &saddr, socklen_t(MemoryLayout<sockaddr_in>.size))
 			if isBound == -1 {
 				debugPrint("Couldn't bind socket")
@@ -131,9 +129,11 @@ open class UDPBroadcastConnection {
 			var socketAddressLength = socklen_t(MemoryLayout<sockaddr_storage>.size)
 			let response = [UInt8](repeating: 0, count: 4096)
 			let UDPSocket = Int32(source.handle)
+			let pointer = UnsafeMutablePointer<[UInt8]>.allocate(capacity: response.capacity)
+			pointer.initialize(to: response)
 
 			let bytesRead = withUnsafeMutablePointer(to: &socketAddress) {
-				recvfrom(UDPSocket, UnsafeMutableRawPointer(mutating: response), response.count, 0,
+				recvfrom(UDPSocket, pointer, response.count, 0,
 				         UnsafeMutableRawPointer($0).bindMemory(to: sockaddr.self, capacity: 1), &socketAddressLength)
 			}
 
@@ -151,11 +151,10 @@ open class UDPBroadcastConnection {
 					}
 				}
 
-				guard let endpoint = withUnsafePointer(to: &socketAddress,
-				                                       {
-				                                       	self
-				                                       		.getEndpointFromSocketAddress(socketAddressPointer: UnsafeRawPointer($0)
-				                                       			.bindMemory(to: sockaddr.self, capacity: 1)) })
+				guard let endpoint = withUnsafePointer(to: &socketAddress, {
+					self
+						.getEndpointFromSocketAddress(socketAddressPointer: UnsafeRawPointer($0)
+							.bindMemory(to: sockaddr.self, capacity: 1)) })
 				else {
 					// debugPrint("Failed to get the address and port from the socket address received from recvfrom")
 					self.closeConnection()
@@ -224,7 +223,7 @@ open class UDPBroadcastConnection {
 			source.cancel()
 			responseSource = nil
 		}
-		if shouldBeBound && reopen {
+		if shouldBeBound, reopen {
 			dispatchQueue.async {
 				do {
 					try self.createSocket()
@@ -290,7 +289,6 @@ open class UDPBroadcastConnection {
 //  Copyright © 2019 Gunter Hager. All rights reserved.
 //
 public extension UDPBroadcastConnection {
-
 	enum ConnectionError: Error {
 		// Creating socket
 		case createSocketFailed
