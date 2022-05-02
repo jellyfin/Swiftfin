@@ -18,14 +18,25 @@ struct LiveTVChannelItemElement: View {
 	private var isFocused: Bool = false
 
 	var channel: BaseItemDto
-	var program: BaseItemDto?
-	var startString = " "
-	var endString = " "
-	var progressPercent = Double(0)
+	var currentProgram: BaseItemDto?
+	var currentProgramText: LiveTVChannelViewProgram
+	var nextProgramsText: [LiveTVChannelViewProgram]
 	var onSelect: (@escaping (Bool) -> Void) -> Void
 
+	var progressPercent: Double {
+		if let currentProgram = currentProgram {
+			let progressPercent = currentProgram.getLiveProgressPercentage()
+			if progressPercent > 1.0 {
+				return 1.0
+			} else {
+				return progressPercent
+			}
+		}
+		return 0
+	}
+
 	private var detailText: String {
-		guard let program = program else {
+		guard let program = currentProgram else {
 			return ""
 		}
 		var text = ""
@@ -60,60 +71,61 @@ struct LiveTVChannelItemElement: View {
 				}.frame(alignment: .top)
 				Spacer()
 			}
-			VStack {
-				ImageView(channel.getPrimaryImage(maxWidth: 128))
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 128, alignment: .center)
-					.padding(.init(top: 8, leading: 0, bottom: 0, trailing: 0))
-				Text(channel.name ?? "?")
-					.font(.footnote)
-					.lineLimit(1)
-					.frame(alignment: .center)
-				Text(program?.name ?? L10n.notAvailableSlash)
-					.font(.body)
-					.lineLimit(1)
-					.foregroundColor(.green)
-				Text(detailText)
-					.font(.body)
-					.lineLimit(1)
-					.foregroundColor(.green)
-				Spacer()
-				HStack(alignment: .bottom) {
-					VStack {
-						Spacer()
-						HStack {
-							Text(startString)
-								.font(.footnote)
-								.lineLimit(1)
-								.frame(alignment: .leading)
 
-							Spacer()
+			GeometryReader { gp in
+				VStack {
+					ImageView(channel.getPrimaryImage(maxWidth: 192))
+						.aspectRatio(contentMode: .fit)
+						.frame(width: 192, alignment: .center)
+				}
+				.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+				.padding(.init(top: 16, leading: 8, bottom: gp.size.height / 2, trailing: 0))
+				VStack {
+					Text(channel.name ?? "?")
+						.font(.footnote)
+						.lineLimit(1)
+						.frame(alignment: .center)
+						.foregroundColor(Color.jellyfinPurple)
+						.padding(.init(top: 0, leading: 0, bottom: 8, trailing: 0))
 
-							Text(endString)
-								.font(.footnote)
-								.lineLimit(1)
-								.frame(alignment: .trailing)
-						}
-						GeometryReader { gp in
-							ZStack(alignment: .leading) {
-								RoundedRectangle(cornerRadius: 6)
-									.fill(Color.gray)
-									.opacity(0.4)
-									.frame(minWidth: 100, maxWidth: .infinity, minHeight: 12, maxHeight: 12)
-								RoundedRectangle(cornerRadius: 6)
-									.fill(Color.jellyfinPurple)
-									.frame(width: CGFloat(progressPercent * gp.size.width), height: 12)
-							}
-							.frame(alignment: .bottom)
-						}
+					programLabel(timeText: currentProgramText.timeDisplay, titleText: currentProgramText.title,
+					             color: Color("TextHighlightColor"), font: Font.system(size: 20, weight: .bold, design: .default))
+					if !nextProgramsText.isEmpty,
+					   let nextItem = nextProgramsText[0]
+					{
+						programLabel(timeText: nextItem.timeDisplay, titleText: nextItem.title, color: Color.gray,
+						             font: Font.system(size: 20, design: .default))
+					}
+					if nextProgramsText.count > 1,
+					   let nextItem2 = nextProgramsText[1]
+					{
+						programLabel(timeText: nextItem2.timeDisplay, titleText: nextItem2.title, color: Color.gray,
+						             font: Font.system(size: 20, design: .default))
 					}
 				}
+				.frame(maxHeight: .infinity, alignment: .top)
+				.padding(.init(top: gp.size.height / 2, leading: 16, bottom: 56, trailing: 16))
+				.opacity(loading ? 0.5 : 1.0)
 			}
-			.padding()
-			.opacity(loading ? 0.5 : 1.0)
 
 			if loading {
 				ProgressView()
+			}
+
+			VStack {
+				GeometryReader { gp in
+					ZStack(alignment: .leading) {
+						RoundedRectangle(cornerRadius: 6)
+							.fill(Color.gray)
+							.opacity(0.4)
+							.frame(minWidth: 100, maxWidth: .infinity, minHeight: 8, maxHeight: 8)
+						RoundedRectangle(cornerRadius: 6)
+							.fill(Color.jellyfinPurple)
+							.frame(width: CGFloat(progressPercent * gp.size.width), height: 8)
+					}
+					.frame(maxHeight: .infinity, alignment: .bottom)
+					.padding(.init(top: 0, leading: 16, bottom: 32, trailing: 16))
+				}
 			}
 		}
 		.overlay(RoundedRectangle(cornerRadius: 20)
@@ -131,6 +143,22 @@ struct LiveTVChannelItemElement: View {
 			onSelect { loadingState in
 				loading = loadingState
 			}
+		}
+	}
+
+	@ViewBuilder
+	func programLabel(timeText: String, titleText: String, color: Color, font: Font) -> some View {
+		HStack(alignment: .top, spacing: 4) {
+			Text(timeText)
+				.font(font)
+				.lineLimit(1)
+				.foregroundColor(color)
+				.frame(width: 54, alignment: .leading)
+			Text(titleText)
+				.font(font)
+				.lineLimit(2)
+				.foregroundColor(color)
+				.frame(maxWidth: .infinity, alignment: .leading)
 		}
 	}
 }
