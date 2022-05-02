@@ -20,8 +20,10 @@ final class LibraryListCoordinator: NavigationCoordinatable {
 	var search = makeSearch
 	@Route(.push)
 	var library = makeLibrary
-	@Route(.push)
-	var liveTV = makeLiveTV
+	#if os(iOS)
+		@Route(.push)
+		var liveTV = makeLiveTV
+	#endif
 
 	let viewModel: LibraryListViewModel
 
@@ -37,9 +39,11 @@ final class LibraryListCoordinator: NavigationCoordinatable {
 		SearchCoordinator(viewModel: viewModel)
 	}
 
-	func makeLiveTV() -> LiveTVCoordinator {
-		LiveTVCoordinator()
-	}
+	#if os(iOS)
+		func makeLiveTV() -> LiveTVCoordinator {
+			LiveTVCoordinator()
+		}
+	#endif
 
 	@ViewBuilder
 	func makeStart() -> some View {
