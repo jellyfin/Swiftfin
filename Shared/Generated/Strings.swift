@@ -310,6 +310,8 @@ internal enum L10n {
   internal static var seasons: String { return L10n.tr("Localizable", "seasons") }
   /// See All
   internal static var seeAll: String { return L10n.tr("Localizable", "seeAll") }
+  /// Seek Slide Gesture Enabled
+  internal static var seekSlideGestureEnabled: String { return L10n.tr("Localizable", "seekSlideGestureEnabled") }
   /// See More
   internal static var seeMore: String { return L10n.tr("Localizable", "seeMore") }
   /// Select Cast Destination
