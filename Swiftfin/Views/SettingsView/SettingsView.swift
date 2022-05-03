@@ -42,6 +42,8 @@ struct SettingsView: View {
 	var systemControlGesturesEnabled
 	@Default(.playerGesturesLockGestureEnabled)
 	var playerGesturesLockGestureEnabled
+	@Default(.seekSlideGestureEnabled)
+	var seekSlideGestureEnabled
 	@Default(.resumeOffset)
 	var resumeOffset
 	@Default(.subtitleSize)
@@ -112,6 +114,8 @@ struct SettingsView: View {
 				Toggle(L10n.jumpGesturesEnabled, isOn: $jumpGesturesEnabled)
 
 				Toggle(L10n.systemControlGesturesEnabled, isOn: $systemControlGesturesEnabled)
+
+				Toggle(L10n.seekSlideGestureEnabled, isOn: $seekSlideGestureEnabled)
 
 				Toggle(L10n.playerGesturesLockGestureEnabled, isOn: $playerGesturesLockGestureEnabled)
 
