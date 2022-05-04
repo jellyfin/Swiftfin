@@ -240,6 +240,8 @@ internal enum L10n {
   internal static var playbackSettings: String { return L10n.tr("Localizable", "playbackSettings") }
   /// Playback Speed
   internal static var playbackSpeed: String { return L10n.tr("Localizable", "playbackSpeed") }
+  /// Player Gestures Lock Gesture Enabled
+  internal static var playerGesturesLockGestureEnabled: String { return L10n.tr("Localizable", "playerGesturesLockGestureEnabled") }
   /// Play From Beginning
   internal static var playFromBeginning: String { return L10n.tr("Localizable", "playFromBeginning") }
   /// Play Next
@@ -390,6 +392,8 @@ internal enum L10n {
   internal static var tvShows: String { return L10n.tr("Localizable", "tvShows") }
   /// Unable to connect to server
   internal static var unableToConnectServer: String { return L10n.tr("Localizable", "unableToConnectServer") }
+  /// Unable to find host
+  internal static var unableToFindHost: String { return L10n.tr("Localizable", "unableToFindHost") }
   /// Unaired
   internal static var unaired: String { return L10n.tr("Localizable", "unaired") }
   /// Unauthorized

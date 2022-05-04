@@ -62,7 +62,7 @@ struct CinematicItemViewTopRow: View {
 								if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
 									itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
 								} else {
-									LogManager.shared.log.error("Attempted to play item but no playback information available")
+									LogManager.log.error("Attempted to play item but no playback information available")
 								}
 							} label: {
 								HStack(spacing: 15) {
@@ -85,7 +85,7 @@ struct CinematicItemViewTopRow: View {
 											selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
 											itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
 										} else {
-											LogManager.shared.log.error("Attempted to play item but no playback information available")
+											LogManager.log.error("Attempted to play item but no playback information available")
 										}
 									} label: {
 										Label(L10n.playFromBeginning, systemImage: "gobackward")

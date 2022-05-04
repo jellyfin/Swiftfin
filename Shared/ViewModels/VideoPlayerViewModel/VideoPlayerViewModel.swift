@@ -95,6 +95,9 @@ final class VideoPlayerViewModel: ViewModel {
 	@Published
 	var mediaItems: [BaseItemDto.ItemDetail]
 
+	@Published
+	var isHiddenOverlay = false
+
 	// MARK: ShouldShowItems
 
 	let shouldShowPlayPreviousItem: Bool
@@ -116,6 +119,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let overlayType: OverlayType
 	let jumpGesturesEnabled: Bool
 	let systemControlGesturesEnabled: Bool
+	let playerGesturesLockGestureEnabled: Bool
 	let resumeOffset: Bool
 	let streamType: ServerStreamType
 	let container: String
@@ -244,6 +248,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.jumpForwardLength = Defaults[.videoPlayerJumpForward]
 		self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
 		self.systemControlGesturesEnabled = Defaults[.systemControlGesturesEnabled]
+		self.playerGesturesLockGestureEnabled = Defaults[.playerGesturesLockGestureEnabled]
 		self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
 
 		self.resumeOffset = Defaults[.resumeOffset]
@@ -477,7 +482,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Start report sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Start report sent for item: \(self.item.id ?? "No ID")")
 			}
 			.store(in: &cancellables)
 	}
@@ -513,7 +518,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Pause report sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Pause report sent for item: \(self.item.id ?? "No ID")")
 			}
 			.store(in: &cancellables)
 	}
@@ -558,7 +563,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Playback progress sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Playback progress sent for item: \(self.item.id ?? "No ID")")
 			}
 			.store(in: &cancellables)
 
@@ -585,7 +590,7 @@ extension VideoPlayerViewModel {
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
-				LogManager.shared.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
+				LogManager.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
 				Notifications[.didSendStopReport].post(object: self.item.id)
 			}
 			.store(in: &cancellables)

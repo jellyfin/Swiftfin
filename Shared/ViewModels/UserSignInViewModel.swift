@@ -30,14 +30,12 @@ final class UserSignInViewModel: ViewModel {
 	}
 
 	func login(username: String, password: String) {
-		LogManager.shared.log.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
-		LogManager.shared.log.debug("username: \(username), password: \(password)", tag: "login")
+		LogManager.log.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
 
 		SessionManager.main.loginUser(server: server, username: username, password: password)
 			.trackActivity(loading)
 			.sink { completion in
-				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, logLevel: .critical, tag: "login",
-				                           completion: completion)
+				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
 			} receiveValue: { _ in
 			}
 			.store(in: &cancellables)

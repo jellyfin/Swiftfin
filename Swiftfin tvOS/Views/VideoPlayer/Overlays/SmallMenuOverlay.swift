@@ -324,7 +324,7 @@ struct SmallMediaStreamSelectionView: View {
 		ScrollView(.horizontal, showsIndicators: false) {
 			ScrollViewReader { reader in
 				HStack {
-					ForEach(0 ..< viewModel.chapters.count) { chapterIndex in
+					ForEach(0 ..< viewModel.chapters.count, id: \.self) { chapterIndex in
 						VStack(alignment: .leading) {
 							Button {
 								viewModel.playerOverlayDelegate?.didSelectChapter(viewModel.chapters[chapterIndex])
