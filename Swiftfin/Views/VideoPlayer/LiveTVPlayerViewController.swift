@@ -242,7 +242,7 @@ class LiveTVPlayerViewController: UIViewController {
 
 	@objc
 	private func didTap() {
-        didGenerallyTap(point: nil)
+		didGenerallyTap(point: nil)
 	}
 
 	@objc
@@ -904,15 +904,13 @@ extension LiveTVPlayerViewController: PlayerOverlayDelegate {
 		}
 	}
 
-    func didGenerallyTap(point: CGPoint?) {
+	func didGenerallyTap(point: CGPoint?) {
 		toggleOverlay()
 
 		restartOverlayDismissTimer(interval: 5)
 	}
-    
-    func didLongPress() {
-        
-    }
+
+	func didLongPress() {}
 
 	func didBeginScrubbing() {
 		stopOverlayDismissTimer()
