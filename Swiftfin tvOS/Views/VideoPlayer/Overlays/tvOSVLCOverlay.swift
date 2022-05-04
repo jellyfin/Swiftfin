@@ -62,18 +62,18 @@ struct tvOSVLCOverlay: View {
 						SFSymbolButton(systemName: "chevron.left.circle", action: {
 							viewModel.playerOverlayDelegate?.didSelectPlayPreviousItem()
 						})
-							.frame(maxWidth: 30, maxHeight: 30)
-							.disabled(viewModel.previousItemVideoPlayerViewModel == nil)
-							.foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+						.frame(maxWidth: 30, maxHeight: 30)
+						.disabled(viewModel.previousItemVideoPlayerViewModel == nil)
+						.foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
 					}
 
 					if viewModel.shouldShowPlayNextItem {
 						SFSymbolButton(systemName: "chevron.right.circle", action: {
 							viewModel.playerOverlayDelegate?.didSelectPlayNextItem()
 						})
-							.frame(maxWidth: 30, maxHeight: 30)
-							.disabled(viewModel.nextItemVideoPlayerViewModel == nil)
-							.foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
+						.frame(maxWidth: 30, maxHeight: 30)
+						.disabled(viewModel.nextItemVideoPlayerViewModel == nil)
+						.foregroundColor(viewModel.nextItemVideoPlayerViewModel == nil ? .gray : .white)
 					}
 
 					if viewModel.shouldShowAutoPlay {
