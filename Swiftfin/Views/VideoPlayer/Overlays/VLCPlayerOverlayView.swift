@@ -375,16 +375,16 @@ struct VLCPlayerOverlayView: View {
 					ValueSlider(value: $viewModel.sliderPercentage, onEditingChanged: { editing in
 						viewModel.sliderIsScrubbing = editing
 					})
-						.valueSliderStyle(HorizontalValueSliderStyle(track:
-							HorizontalValueTrack(view:
-								Capsule().foregroundColor(.purple))
-								.background(Capsule().foregroundColor(Color.gray.opacity(0.25)))
-								.frame(height: 4),
-							thumb: Circle().foregroundColor(.purple),
-							thumbSize: CGSize.Circle(radius: viewModel.sliderIsScrubbing ? 20 : 15),
-							thumbInteractiveSize: CGSize.Circle(radius: 40),
-							options: .defaultOptions))
-						.frame(maxHeight: 50)
+					.valueSliderStyle(HorizontalValueSliderStyle(track:
+						HorizontalValueTrack(view:
+							Capsule().foregroundColor(.purple))
+							.background(Capsule().foregroundColor(Color.gray.opacity(0.25)))
+							.frame(height: 4),
+						thumb: Circle().foregroundColor(.purple),
+						thumbSize: CGSize.Circle(radius: viewModel.sliderIsScrubbing ? 20 : 15),
+						thumbInteractiveSize: CGSize.Circle(radius: 40),
+						options: .defaultOptions))
+					.frame(maxHeight: 50)
 
 					Text(viewModel.rightLabelText)
 						.font(.system(size: 18, weight: .semibold, design: .default))

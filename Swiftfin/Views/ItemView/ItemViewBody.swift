@@ -69,7 +69,7 @@ struct ItemViewBody: View {
 				               selectedAction: { genre in
 				               	itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
 				               })
-				               	.padding(.bottom)
+				               .padding(.bottom)
 			}
 
 			// MARK: Studios
