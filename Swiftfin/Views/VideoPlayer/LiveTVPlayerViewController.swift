@@ -242,7 +242,7 @@ class LiveTVPlayerViewController: UIViewController {
 
 	@objc
 	private func didTap() {
-		didGenerallyTap()
+        didGenerallyTap(point: nil)
 	}
 
 	@objc
@@ -500,11 +500,11 @@ extension LiveTVPlayerViewController {
 		viewModel = newViewModel
 
 		if viewModel.streamType == .direct {
-			LogManager.shared.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? "--")")
+			LogManager.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? "--")")
 		} else if viewModel.streamType == .transcode && Defaults[.Experimental.forceDirectPlay] {
-			LogManager.shared.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? "--")")
+			LogManager.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? "--")")
 		} else {
-			LogManager.shared.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? "--")")
+			LogManager.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? "--")")
 		}
 	}
 
@@ -904,11 +904,15 @@ extension LiveTVPlayerViewController: PlayerOverlayDelegate {
 		}
 	}
 
-	func didGenerallyTap() {
+    func didGenerallyTap(point: CGPoint?) {
 		toggleOverlay()
 
 		restartOverlayDismissTimer(interval: 5)
 	}
+    
+    func didLongPress() {
+        
+    }
 
 	func didBeginScrubbing() {
 		stopOverlayDismissTimer()
