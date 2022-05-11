@@ -12,4 +12,12 @@ extension UIDevice {
 	static var vendorUUIDString: String {
 		current.identifierForVendor!.uuidString
 	}
+
+	static var isIPad: Bool {
+		UIDevice.current.userInterfaceIdiom == .pad
+	}
+
+	static var isPhone: Bool {
+		UIDevice.current.userInterfaceIdiom == .phone
+	}
 }

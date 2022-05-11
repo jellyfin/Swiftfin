@@ -21,10 +21,10 @@ struct ItemNavigationView: View {
 	var body: some View {
 		ItemView(item: item)
 			.navigationBarTitle(item.name ?? "", displayMode: .inline)
-			.introspectNavigationController { navigationController in
-				let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
-				navigationController.navigationBar.titleTextAttributes = textAttributes
-			}
+//			.introspectNavigationController { navigationController in
+//				let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
+//				navigationController.navigationBar.titleTextAttributes = textAttributes
+//			}
 	}
 }
 
@@ -60,13 +60,16 @@ private struct ItemView: View {
 
 	var body: some View {
 		Group {
-			if hSizeClass == .compact && vSizeClass == .regular {
-				ItemPortraitMainView()
-					.environmentObject(viewModel)
-			} else {
-				ItemLandscapeMainView()
-					.environmentObject(viewModel)
-			}
+			SeriesItemView()
+				.environmentObject(viewModel as! SeriesItemViewModel)
+
+//			if hSizeClass == .compact && vSizeClass == .regular {
+//				ItemPortraitMainView()
+//					.environmentObject(viewModel)
+//			} else {
+//				ItemLandscapeMainView()
+//					.environmentObject(viewModel)
+//			}
 		}
 	}
 }

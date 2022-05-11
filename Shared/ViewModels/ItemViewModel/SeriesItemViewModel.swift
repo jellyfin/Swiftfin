@@ -11,16 +11,18 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-final class SeriesItemViewModel: ItemViewModel {
+final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 
 	@Published
-	var seasons: [BaseItemDto] = []
+	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
+	@Published
+	var selectedSeason: BaseItemDto?
 
 	override init(item: BaseItemDto) {
 		super.init(item: item)
 
-		requestSeasons()
 		getNextUp()
+		getSeasons()
 	}
 
 	override func playButtonText() -> String {
@@ -55,40 +57,6 @@ final class SeriesItemViewModel: ItemViewModel {
 				if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
 					self?.playButtonItem = nextUpItem
 				}
-			})
-			.store(in: &cancellables)
-	}
-
-	private func getRunYears() -> String {
-		let dateFormatter = DateFormatter()
-		dateFormatter.dateFormat = "yyyy"
-
-		var startYear: String?
-		var endYear: String?
-
-		if item.premiereDate != nil {
-			startYear = dateFormatter.string(from: item.premiereDate!)
-		}
-
-		if item.endDate != nil {
-			endYear = dateFormatter.string(from: item.endDate!)
-		}
-
-		return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
-	}
-
-	private func requestSeasons() {
-		LogManager.log.debug("Getting seasons of show \(self.item.id!) (\(self.item.name!))")
-		TvShowsAPI.getSeasons(seriesId: item.id ?? "", userId: SessionManager.main.currentLogin.user.id,
-		                      fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                      isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false,
-		                      enableUserData: true)
-			.trackActivity(loading)
-			.sink(receiveCompletion: { [weak self] completion in
-				self?.handleAPIRequestError(completion: completion)
-			}, receiveValue: { [weak self] response in
-				self?.seasons = response.items ?? []
-				LogManager.log.debug("Retrieved \(String(self?.seasons.count ?? 0)) seasons")
 			})
 			.store(in: &cancellables)
 	}

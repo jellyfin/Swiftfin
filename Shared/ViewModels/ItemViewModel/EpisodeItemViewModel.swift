@@ -26,7 +26,7 @@ final class EpisodeItemViewModel: ItemViewModel, EpisodesRowManager {
 		super.init(item: item)
 
 		getEpisodeSeries()
-		retrieveSeasons()
+		getSeasons()
 	}
 
 	override func getItemDisplayName() -> String {

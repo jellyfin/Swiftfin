@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ItemViewBody: View {
+struct SeriesItemView: View {
 
 	@Environment(\.horizontalSizeClass)
 	private var hSizeClass
@@ -19,33 +19,51 @@ struct ItemViewBody: View {
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
 	@EnvironmentObject
-	private var viewModel: ItemViewModel
+	private var viewModel: SeriesItemViewModel
 	@Default(.showCastAndCrew)
 	var showCastAndCrew
 
-	var body: some View {
+	// MARK: portraitHeaderView
+
+	var portraitHeaderView: some View {
+		ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
+		          blurHash: viewModel.item.getBackdropImageBlurHash())
+			.opacity(0.4)
+			.blur(radius: 2.0)
+			.accessibilityIgnoresInvertColors()
+	}
+
+	// MARK: portraitStaticOverlayView
+
+	var portraitStaticOverlayView: some View {
+		PortraitHeaderOverlayView()
+			.environmentObject(viewModel as ItemViewModel)
+	}
+
+	// MARK: innerBody
+
+	var innerBody: some View {
 		VStack(alignment: .leading) {
+
 			// MARK: Overview
 
 			if let itemOverview = viewModel.item.overview {
-				if hSizeClass == .compact && vSizeClass == .regular {
-					TruncatedTextView(itemOverview,
-					                  lineLimit: 5,
-					                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-						itemRouter.route(to: \.itemOverview, viewModel.item)
-					}
-					.padding(.horizontal)
-					.padding(.top)
-				} else {
-					Text(itemOverview)
-						.font(.footnote)
-						.padding()
+				TruncatedTextView(itemOverview,
+				                  lineLimit: 5,
+				                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+					itemRouter.route(to: \.itemOverview, viewModel.item)
 				}
+				.padding(.horizontal)
+				.padding(.top)
 			} else {
 				L10n.noOverviewAvailable.text
 					.font(.footnote)
 					.padding()
 			}
+
+			// MARK: Seasons
+
+			EpisodesRowView(viewModel: viewModel, onlyCurrentSeason: false)
 
 			// MARK: Genres
 
@@ -69,44 +87,6 @@ struct ItemViewBody: View {
 			}
 
 			// MARK: Episodes
-
-			if let episodeViewModel = viewModel as? EpisodeItemViewModel {
-				EpisodesRowView(viewModel: episodeViewModel, onlyCurrentSeason: false)
-			} else if let seasonViewModel = viewModel as? SeasonItemViewModel {
-				EpisodesRowView(viewModel: seasonViewModel, onlyCurrentSeason: true)
-			}
-
-			// MARK: Series
-
-			if let episodeViewModel = viewModel as? EpisodeItemViewModel {
-				if let seriesItem = episodeViewModel.series {
-					let a = [seriesItem]
-					PortraitImageHStackView(items: a) {
-						L10n.series.text
-							.fontWeight(.semibold)
-							.padding(.bottom)
-							.padding(.horizontal)
-					} selectedAction: { seriesItem in
-						itemRouter.route(to: \.item, seriesItem)
-					}
-				}
-			}
-
-			// MARK: Collection Items
-
-			if let collectionViewModel = viewModel as? CollectionItemViewModel {
-				PortraitImageHStackView(items: collectionViewModel.collectionItems) {
-					L10n.items.text
-						.fontWeight(.semibold)
-						.padding(.bottom)
-						.padding(.horizontal)
-						.accessibility(addTraits: [.isHeader])
-				} selectedAction: { collectionItem in
-					itemRouter.route(to: \.item, collectionItem)
-				}
-			}
-
-			// MARK: Cast & Crew
 
 			if showCastAndCrew {
 				if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
@@ -141,15 +121,26 @@ struct ItemViewBody: View {
 			}
 
 			// MARK: Details
+		}
+	}
 
-			switch viewModel.item.itemType {
-			case .movie, .episode:
-				ItemViewDetailsView(viewModel: viewModel)
-					.padding()
-			default:
-				EmptyView()
-					.frame(height: 50)
-			}
+	var body: some View {
+		//        ParallaxHeaderScrollView(header: portraitHeaderView,
+		//                                 staticOverlayView: portraitStaticOverlayView,
+		//                                 overlayAlignment: .bottomLeading,
+		//                                 headerHeight: UIScreen.main.bounds.width * 0.5625) {
+		//            VStack {
+		//                Spacer()
+		//                    .frame(height: 70)
+//
+		//                innerBody
+		//            }
+		//        }
+
+		SwiftfinScrollView(headerHeight: UIScreen.main.bounds.width * 0.5625) {
+			portraitHeaderView
+		} body: {
+			innerBody
 		}
 	}
 }

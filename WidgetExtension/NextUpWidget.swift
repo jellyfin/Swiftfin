@@ -436,8 +436,6 @@ struct NextUpWidget_Previews: PreviewProvider {
 	}
 }
 
-import SwiftUI
-
 private extension View {
 	func innerShadow(color: Color, radius: CGFloat = 0.1) -> some View {
 		modifier(InnerShadow(color: color, radius: min(max(0, radius), 1)))

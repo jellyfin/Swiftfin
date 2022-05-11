@@ -14,8 +14,8 @@ protocol EpisodesRowManager: ViewModel {
 	var item: BaseItemDto { get }
 	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] { get set }
 	var selectedSeason: BaseItemDto? { get set }
-	func retrieveSeasons()
-	func retrieveEpisodesForSeason(_ season: BaseItemDto)
+	func getSeasons()
+	func getEpisodesForSeason(_ season: BaseItemDto)
 	func select(season: BaseItemDto)
 }
 
@@ -26,33 +26,40 @@ extension EpisodesRowManager {
 	}
 
 	// Also retrieves the current season episodes if available
-	func retrieveSeasons() {
-		TvShowsAPI.getSeasons(seriesId: item.seriesId ?? "",
+	func getSeasons() {
+		TvShowsAPI.getSeasons(seriesId: item.id ?? "",
 		                      userId: SessionManager.main.currentLogin.user.id,
 		                      isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false)
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { response in
 				let seasons = response.items ?? []
+
 				seasons.forEach { season in
 					self.seasonsEpisodes[season] = []
-
-					if season.id == self.item.seasonId ?? "" {
-						self.selectedSeason = season
-						self.retrieveEpisodesForSeason(season)
-					} else if season.id == self.item.id ?? "" {
-						self.selectedSeason = season
-						self.retrieveEpisodesForSeason(season)
-					}
 				}
+
+//				seasons.forEach { season in
+//					self.seasonsEpisodes[season] = []
+//
+//					if season.id == self.item.seasonId ?? "" {
+//						self.selectedSeason = season
+//						self.getEpisodesForSeason(season)
+//					} else if season.id == self.item.id ?? "" {
+//						self.selectedSeason = season
+//						self.getEpisodesForSeason(season)
+//					}
+//				}
+
+				self.selectedSeason = seasons.first
 			}
 			.store(in: &cancellables)
 	}
 
-	func retrieveEpisodesForSeason(_ season: BaseItemDto) {
+	func getEpisodesForSeason(_ season: BaseItemDto) {
 		guard let seasonID = season.id else { return }
 
-		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "",
+		TvShowsAPI.getEpisodes(seriesId: item.id ?? "",
 		                       userId: SessionManager.main.currentLogin.user.id,
 		                       fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
 		                       seasonId: seasonID,
@@ -70,7 +77,7 @@ extension EpisodesRowManager {
 		self.selectedSeason = season
 
 		if seasonsEpisodes[season]!.isEmpty {
-			retrieveEpisodesForSeason(season)
+			getEpisodesForSeason(season)
 		}
 	}
 }

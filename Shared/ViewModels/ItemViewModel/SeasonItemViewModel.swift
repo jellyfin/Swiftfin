@@ -29,7 +29,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 
 		getSeriesItem()
 		selectedSeason = item
-		retrieveSeasons()
+		getSeasons()
 		requestEpisodes()
 	}
 
