@@ -75,8 +75,12 @@ final class VideoPlayerViewModel: ViewModel {
 	}
 
 	@Published
+	var isHiddenCenterViews = false
+
+	@Published
 	var sliderIsScrubbing: Bool = false {
 		didSet {
+			isHiddenCenterViews = sliderIsScrubbing
 			beganScrubbingCurrentSeconds = currentSeconds
 		}
 	}
@@ -280,10 +284,10 @@ final class VideoPlayerViewModel: ViewModel {
 
 		leftLabelText = calculateTimeText(from: currentSeconds)
 		rightLabelText = calculateTimeText(from: secondsScrubbedRemaining)
-		scrubbingTimeLabelText = calculateTimeText(from: currentSeconds - beganScrubbingCurrentSeconds)
+		scrubbingTimeLabelText = calculateTimeText(from: currentSeconds - beganScrubbingCurrentSeconds, isScrubbing: true)
 	}
 
-	private func calculateTimeText(from duration: Double) -> String {
+	private func calculateTimeText(from duration: Double, isScrubbing: Bool = false) -> String {
 		let isNegative = duration < 0
 		let duration = abs(duration)
 		let hours = floor(duration / 3600)
@@ -300,7 +304,11 @@ final class VideoPlayerViewModel: ViewModel {
 				"\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))"
 		}
 
-		return "\(isNegative ? "-" : "") \(timeText)"
+		if isScrubbing {
+			return "\(isNegative ? "-" : "+") \(timeText)"
+		} else {
+			return "\(isNegative ? "-" : "") \(timeText)"
+		}
 	}
 }
 
