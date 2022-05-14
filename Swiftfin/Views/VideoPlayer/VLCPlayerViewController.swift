@@ -360,6 +360,7 @@ class VLCPlayerViewController: UIViewController {
 	private func didHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer) {
 		switch gestureRecognizer.state {
 		case .began:
+			exchangeOverlayView(isBringToFrontThanGestureView: false)
 			panBeganPoint = gestureRecognizer.location(in: mainGestureView)
 			panBeganSliderPercentage = viewModel.sliderPercentage
 			viewModel.sliderIsScrubbing = true
@@ -370,8 +371,10 @@ class VLCPlayerViewController: UIViewController {
 
 			viewModel.sliderPercentage = min(max(0, panBeganSliderPercentage - changedValue), 1)
 			showSliderOverlay()
+			showOverlay()
 		default:
 			viewModel.sliderIsScrubbing = false
+			hideOverlay()
 			hideSystemControlOverlay()
 		}
 	}
@@ -501,6 +504,17 @@ class VLCPlayerViewController: UIViewController {
 		])
 
 		currentJumpForwardOverlayView = newJumpForwardImageView
+	}
+
+	private var isOverlayViewBringToFrontThanGestureView = true
+	private func exchangeOverlayView(isBringToFrontThanGestureView: Bool) {
+		guard isBringToFrontThanGestureView != isOverlayViewBringToFrontThanGestureView,
+		      let currentOverlayView = currentOverlayHostingController?.view,
+		      let mainGestureViewIndex = view.subviews.firstIndex(of: mainGestureView),
+		      let currentOVerlayViewIndex = view.subviews.firstIndex(of: currentOverlayView) else { return }
+		isOverlayViewBringToFrontThanGestureView = isBringToFrontThanGestureView
+		view.exchangeSubview(at: mainGestureViewIndex,
+		                     withSubviewAt: currentOVerlayViewIndex)
 	}
 }
 
@@ -679,14 +693,12 @@ extension VLCPlayerViewController {
 		guard overlayHostingController.view.alpha != 0 else { return }
 
 		// for gestures UX
-		view.exchangeSubview(at: view.subviews.firstIndex(of: mainGestureView)!,
-		                     withSubviewAt: view.subviews.firstIndex(of: overlayHostingController.view)!)
+		exchangeOverlayView(isBringToFrontThanGestureView: false)
 		UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
 			overlayHostingController.view.alpha = 0
 		} completion: { [weak self] _ in
 			guard let self = self else { return }
-			self.view.exchangeSubview(at: self.view.subviews.firstIndex(of: self.mainGestureView)!,
-			                          withSubviewAt: self.view.subviews.firstIndex(of: overlayHostingController.view)!)
+			self.exchangeOverlayView(isBringToFrontThanGestureView: true)
 			self.viewModel.isHiddenOverlay = true
 		}
 	}
@@ -773,8 +785,6 @@ extension VLCPlayerViewController {
 	}
 
 	private func showSliderOverlay() {
-		guard !displayingOverlay else { return }
-
 		let imageAttachment = NSTextAttachment()
 		imageAttachment.image = UIImage(systemName: "clock.arrow.circlepath",
 		                                withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
