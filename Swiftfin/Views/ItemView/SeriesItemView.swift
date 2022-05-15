@@ -63,7 +63,7 @@ struct SeriesItemView: View {
 
 			// MARK: Seasons
 
-			EpisodesRowView(viewModel: viewModel, onlyCurrentSeason: false)
+			EpisodesRowView(viewModel: viewModel)
 
 			// MARK: Genres
 
@@ -121,26 +121,26 @@ struct SeriesItemView: View {
 			}
 
 			// MARK: Details
+            
+            ListDetailsView(title: "Information", items: [
+                .init(title: "Runtime", content: viewModel.getRunYears()),
+                .init(title: "Rated", content: viewModel.item.officialRating ?? "--")
+            ])
+            .padding()
 		}
 	}
 
 	var body: some View {
-		//        ParallaxHeaderScrollView(header: portraitHeaderView,
-		//                                 staticOverlayView: portraitStaticOverlayView,
-		//                                 overlayAlignment: .bottomLeading,
-		//                                 headerHeight: UIScreen.main.bounds.width * 0.5625) {
-		//            VStack {
-		//                Spacer()
-		//                    .frame(height: 70)
-//
-		//                innerBody
-		//            }
-		//        }
+		        ParallaxHeaderScrollView(header: portraitHeaderView,
+		                                 staticOverlayView: portraitStaticOverlayView,
+		                                 overlayAlignment: .bottomLeading,
+                                         headerHeight: UIScreen.main.bounds.height * 0.33) {
+		            VStack {
+		                Spacer()
+		                    .frame(height: 70)
 
-		SwiftfinScrollView(headerHeight: UIScreen.main.bounds.width * 0.5625) {
-			portraitHeaderView
-		} body: {
-			innerBody
-		}
+		                innerBody
+		            }
+		        }
 	}
 }

@@ -49,7 +49,8 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 		TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id,
 		                     fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
 		                     seriesId: self.item.id!,
-		                     enableUserData: true)
+		                     enableUserData: true,
+        enableTotalRecordCount: false)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
@@ -60,4 +61,22 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 			})
 			.store(in: &cancellables)
 	}
+    
+    func getRunYears() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy"
+
+        var startYear: String?
+        var endYear: String?
+
+        if item.premiereDate != nil {
+            startYear = dateFormatter.string(from: item.premiereDate!)
+        }
+
+        if item.endDate != nil {
+            endYear = dateFormatter.string(from: item.endDate!)
+        }
+
+        return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
+    }
 }

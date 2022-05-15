@@ -9,6 +9,36 @@
 import JellyfinAPI
 import SwiftUI
 
+struct ListDetailsView: View {
+    
+    let title: String
+    let items: [BaseItemDto.ItemDetail]
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+
+            VStack(alignment: .leading, spacing: 20) {
+                Text(title)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .accessibility(addTraits: [.isHeader])
+
+                ForEach(items, id: \.self.title) { item in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(item.title)
+                            .font(.subheadline)
+                        Text(item.content)
+                            .font(.subheadline)
+                            .foregroundColor(Color.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+            }
+            .padding(.bottom, 20)
+        }
+    }
+}
+
 struct ItemViewDetailsView: View {
 
 	@ObservedObject

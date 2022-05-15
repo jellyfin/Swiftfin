@@ -70,27 +70,27 @@ struct ItemViewBody: View {
 
 			// MARK: Episodes
 
-			if let episodeViewModel = viewModel as? EpisodeItemViewModel {
-				EpisodesRowView(viewModel: episodeViewModel, onlyCurrentSeason: false)
-			} else if let seasonViewModel = viewModel as? SeasonItemViewModel {
-				EpisodesRowView(viewModel: seasonViewModel, onlyCurrentSeason: true)
-			}
+//			if let episodeViewModel = viewModel as? EpisodeItemViewModel {
+//				EpisodesRowView(viewModel: episodeViewModel, onlyCurrentSeason: false)
+//			} else if let seasonViewModel = viewModel as? SeasonItemViewModel {
+//				EpisodesRowView(viewModel: seasonViewModel, onlyCurrentSeason: true)
+//			}
 
 			// MARK: Series
 
-			if let episodeViewModel = viewModel as? EpisodeItemViewModel {
-				if let seriesItem = episodeViewModel.series {
-					let a = [seriesItem]
-					PortraitImageHStackView(items: a) {
-						L10n.series.text
-							.fontWeight(.semibold)
-							.padding(.bottom)
-							.padding(.horizontal)
-					} selectedAction: { seriesItem in
-						itemRouter.route(to: \.item, seriesItem)
-					}
-				}
-			}
+//			if let episodeViewModel = viewModel as? EpisodeItemViewModel {
+//				if let seriesItem = episodeViewModel.series {
+//					let a = [seriesItem]
+//					PortraitImageHStackView(items: a) {
+//						L10n.series.text
+//							.fontWeight(.semibold)
+//							.padding(.bottom)
+//							.padding(.horizontal)
+//					} selectedAction: { seriesItem in
+//						itemRouter.route(to: \.item, seriesItem)
+//					}
+//				}
+//			}
 
 			// MARK: Collection Items
 

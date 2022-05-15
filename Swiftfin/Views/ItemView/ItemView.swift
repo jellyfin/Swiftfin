@@ -21,10 +21,6 @@ struct ItemNavigationView: View {
 	var body: some View {
 		ItemView(item: item)
 			.navigationBarTitle(item.name ?? "", displayMode: .inline)
-//			.introspectNavigationController { navigationController in
-//				let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
-//				navigationController.navigationBar.titleTextAttributes = textAttributes
-//			}
 	}
 }
 
@@ -38,38 +34,27 @@ private struct ItemView: View {
 	private var hSizeClass
 	@Environment(\.verticalSizeClass)
 	private var vSizeClass
-
-	private let viewModel: ItemViewModel
-
-	init(item: BaseItemDto) {
-		switch item.itemType {
-		case .movie:
-			self.viewModel = MovieItemViewModel(item: item)
-		case .season:
-			self.viewModel = SeasonItemViewModel(item: item)
-		case .episode:
-			self.viewModel = EpisodeItemViewModel(item: item)
-		case .series:
-			self.viewModel = SeriesItemViewModel(item: item)
-		case .boxset, .folder:
-			self.viewModel = CollectionItemViewModel(item: item)
-		default:
-			self.viewModel = ItemViewModel(item: item)
-		}
-	}
+    
+    let item: BaseItemDto
 
 	var body: some View {
 		Group {
-			SeriesItemView()
-				.environmentObject(viewModel as! SeriesItemViewModel)
-
-//			if hSizeClass == .compact && vSizeClass == .regular {
-//				ItemPortraitMainView()
-//					.environmentObject(viewModel)
-//			} else {
-//				ItemLandscapeMainView()
-//					.environmentObject(viewModel)
-//			}
+            switch item.itemType {
+            case .episode:
+                EpisodeItemView()
+                    .environmentObject(EpisodeItemViewModel(item: item))
+            case .series:
+                if UIDevice.isIPad {
+                    iPadOSSeriesItemView()
+                        .environmentObject(SeriesItemViewModel(item: item))
+                } else {
+                    SeriesItemView()
+                        .environmentObject(SeriesItemViewModel(item: item))
+                }
+            default:
+                ItemPortraitMainView()
+                    .environmentObject(ItemViewModel(item: item))
+            }
 		}
 	}
 }

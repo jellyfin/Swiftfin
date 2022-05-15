@@ -11,8 +11,6 @@ import NukeUI
 import SwiftUI
 import UIKit
 
-// TODO: Fix 100+ inits
-
 struct ImageViewSource {
 	let url: URL?
 	let blurHash: String?
@@ -65,7 +63,6 @@ struct ImageView<FailureView: View>: View {
 	}
 
 	var body: some View {
-
 		if let currentURL = currentURL {
 			LazyImage(source: currentURL) { state in
 				if let image = state.image {

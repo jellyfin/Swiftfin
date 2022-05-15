@@ -19,8 +19,9 @@ struct PillHStackView<ItemType: PillStackable>: View {
 			Text(title)
 				.font(.callout)
 				.fontWeight(.semibold)
-				.padding(.top, 3)
-				.padding(.leading, 16)
+				.padding(.top)
+//				.padding(.leading, 16)
+                .padding(.leading)
 				.accessibility(addTraits: [.isHeader])
 
 			ScrollView(.horizontal, showsIndicators: false) {
@@ -39,17 +40,15 @@ struct PillHStackView<ItemType: PillStackable>: View {
 									.fontWeight(.semibold)
 									.foregroundColor(.primary)
 									.fixedSize()
-									.padding(.leading, 10)
-									.padding(.trailing, 10)
-									.padding(.top, 10)
-									.padding(.bottom, 10)
+                                    .padding(10)
 							}
 							.fixedSize()
 						}
 					}
 				}
-				.padding(.leading, 16)
-				.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+                .padding(.horizontal)
+//				.padding(.leading, 16)
+//				.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
 			}
 		}
 	}

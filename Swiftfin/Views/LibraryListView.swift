@@ -83,14 +83,5 @@ struct LibraryListView: View {
 				.padding(.top, 8)
 		}
 		.navigationTitle(L10n.allMedia)
-		.toolbar {
-			ToolbarItemGroup(placement: .navigationBarTrailing) {
-				Button {
-					libraryListRouter.route(to: \.search, LibrarySearchViewModel(parentID: nil))
-				} label: {
-					Image(systemName: "magnifyingglass")
-				}
-			}
-		}
 	}
 }

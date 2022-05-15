@@ -15,43 +15,43 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 	var itemRouter: ItemCoordinator.Router
 	@ObservedObject
 	var viewModel: RowManager
-	let onlyCurrentSeason: Bool
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 0) {
-
 			HStack {
-
-				if onlyCurrentSeason {
-					if let currentSeason = Array(viewModel.seasonsEpisodes.keys).first(where: { $0.id == viewModel.item.id }) {
-						Text(currentSeason.name ?? L10n.noTitle)
-							.accessibility(addTraits: [.isHeader])
-					}
-				} else {
-					Menu {
-						ForEach(viewModel.sortedSeasons,
-						        id: \.self) { season in
-							Button {
-								viewModel.select(season: season)
-							} label: {
-								if season.id == viewModel.selectedSeason?.id {
-									Label(season.name ?? L10n.season, systemImage: "checkmark")
-								} else {
-									Text(season.name ?? L10n.season)
-								}
-							}
-						}
-					} label: {
-						HStack(spacing: 5) {
-							Text(viewModel.selectedSeason?.name ?? L10n.unknown)
-								.fontWeight(.semibold)
-								.fixedSize()
-							Image(systemName: "chevron.down")
-						}
-					}
-				}
+                Menu {
+                    ForEach(viewModel.sortedSeasons,
+                            id: \.self) { season in
+                        Button {
+                            viewModel.select(season: season)
+                        } label: {
+                            if season.id == viewModel.selectedSeason?.id {
+                                Label(season.name ?? L10n.season, systemImage: "checkmark")
+                            } else {
+                                Text(season.name ?? L10n.season)
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 5) {
+                        Text(viewModel.selectedSeason?.name ?? L10n.unknown)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .fixedSize()
+                        Image(systemName: "chevron.down")
+                    }
+                }
 
 				Spacer()
+                
+                if let selectedSeason = viewModel.selectedSeason {
+                    Button {
+                        itemRouter.route(to: \.item, selectedSeason)
+                    } label: {
+                        Image(systemName: "info.circle.fill")
+                            .font(.headline)
+                    }
+                }
 			}
 			.padding()
 
@@ -117,16 +117,6 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 						}
 					}
 					.padding(.horizontal)
-					.onChange(of: viewModel.selectedSeason) { _ in
-						if viewModel.selectedSeason?.id == viewModel.item.seasonId {
-							reader.scrollTo(viewModel.item.id)
-						}
-					}
-					.onChange(of: viewModel.seasonsEpisodes) { _ in
-						if viewModel.selectedSeason?.id == viewModel.item.seasonId {
-							reader.scrollTo(viewModel.item.id)
-						}
-					}
 				}
 				.edgesIgnoringSafeArea(.horizontal)
 			}

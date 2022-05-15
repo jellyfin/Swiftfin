@@ -21,8 +21,8 @@ final class iPadOSMainCoordinator: SideBarCoordinatable {
 	@SideBarRoute(sideBarItem: makeSecondTab)
 	var second = makeSecond
 
-	func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
-		NavigationViewCoordinator(HomeCoordinator())
+	func makeHome() -> HomeCoordinator {
+		HomeCoordinator()
 	}
 
 	@ViewBuilder
