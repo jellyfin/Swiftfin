@@ -20,7 +20,6 @@ import UIKit
 #endif
 
 final class VideoPlayerViewModel: ViewModel {
-
 	// MARK: Published
 
 	// Manually kept state because VLCKit doesn't properly set "played"
@@ -31,6 +30,8 @@ final class VideoPlayerViewModel: ViewModel {
 	var leftLabelText: String = "--:--"
 	@Published
 	var rightLabelText: String = "--:--"
+	@Published
+	var scrubbingTimeLabelText: String = "--:--"
 	@Published
 	var playbackSpeed: PlaybackSpeed = .one
 	@Published
@@ -74,7 +75,16 @@ final class VideoPlayerViewModel: ViewModel {
 	}
 
 	@Published
-	var sliderIsScrubbing: Bool = false
+	var isHiddenCenterViews = false
+
+	@Published
+	var sliderIsScrubbing: Bool = false {
+		didSet {
+			isHiddenCenterViews = sliderIsScrubbing
+			beganScrubbingCurrentSeconds = currentSeconds
+		}
+	}
+
 	@Published
 	var sliderPercentage: Double = 0 {
 		willSet {
@@ -119,6 +129,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let overlayType: OverlayType
 	let jumpGesturesEnabled: Bool
 	let systemControlGesturesEnabled: Bool
+	let seekSlideGestureEnabled: Bool
 	let playerGesturesLockGestureEnabled: Bool
 	let resumeOffset: Bool
 	let streamType: ServerStreamType
@@ -143,6 +154,8 @@ final class VideoPlayerViewModel: ViewModel {
 	private var startTimeTicks: Int64 = 0
 
 	// MARK: Current Time
+
+	private var beganScrubbingCurrentSeconds: Double = 0
 
 	var currentSeconds: Double {
 		let runTimeTicks = item.runTimeTicks ?? 0
@@ -173,13 +186,12 @@ final class VideoPlayerViewModel: ViewModel {
 	}
 
 	var currentChapter: ChapterInfo? {
-
 		let chapterPairs = chapters.adjacentPairs().map { ($0, $1) }
 		let chapterRanges = chapterPairs.map { ($0.startPositionTicks ?? 0, ($1.startPositionTicks ?? 1) - 1) }
 
 		for chapterRangeIndex in 0 ..< chapterRanges.count {
-			if chapterRanges[chapterRangeIndex].0 <= currentSecondTicks &&
-				currentSecondTicks < chapterRanges[chapterRangeIndex].1
+			if chapterRanges[chapterRangeIndex].0 <= currentSecondTicks,
+			   currentSecondTicks < chapterRanges[chapterRangeIndex].1
 			{
 				return chapterPairs[chapterRangeIndex].0
 			}
@@ -249,6 +261,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.jumpGesturesEnabled = Defaults[.jumpGesturesEnabled]
 		self.systemControlGesturesEnabled = Defaults[.systemControlGesturesEnabled]
 		self.playerGesturesLockGestureEnabled = Defaults[.playerGesturesLockGestureEnabled]
+		self.seekSlideGestureEnabled = Defaults[.seekSlideGestureEnabled]
 		self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
 
 		self.resumeOffset = Defaults[.resumeOffset]
@@ -271,9 +284,12 @@ final class VideoPlayerViewModel: ViewModel {
 
 		leftLabelText = calculateTimeText(from: currentSeconds)
 		rightLabelText = calculateTimeText(from: secondsScrubbedRemaining)
+		scrubbingTimeLabelText = calculateTimeText(from: currentSeconds - beganScrubbingCurrentSeconds, isScrubbing: true)
 	}
 
-	private func calculateTimeText(from duration: Double) -> String {
+	private func calculateTimeText(from duration: Double, isScrubbing: Bool = false) -> String {
+		let isNegative = duration < 0
+		let duration = abs(duration)
 		let hours = floor(duration / 3600)
 		let minutes = duration.truncatingRemainder(dividingBy: 3600) / 60
 		let seconds = duration.truncatingRemainder(dividingBy: 3600).truncatingRemainder(dividingBy: 60)
@@ -288,17 +304,19 @@ final class VideoPlayerViewModel: ViewModel {
 				"\(String(Int(floor(minutes))).leftPad(toWidth: 2, withString: "0")):\(String(Int(floor(seconds))).leftPad(toWidth: 2, withString: "0"))"
 		}
 
-		return timeText
+		if isScrubbing {
+			return "\(isNegative ? "-" : "+") \(timeText)"
+		} else {
+			return "\(isNegative ? "-" : "") \(timeText)"
+		}
 	}
 }
 
 // MARK: Injected Values
 
 extension VideoPlayerViewModel {
-
 	// Injects custom values that override certain settings
 	func injectCustomValues(startFromBeginning: Bool = false) {
-
 		if startFromBeginning {
 			item.userData?.playbackPositionTicks = 0
 			item.userData?.playedPercentage = 0
@@ -311,7 +329,6 @@ extension VideoPlayerViewModel {
 // MARK: Adjacent Items
 
 extension VideoPlayerViewModel {
-
 	func getAdjacentEpisodes() {
 		guard let seriesID = item.seriesId, item.itemType == .episode else { return }
 
@@ -412,21 +429,21 @@ extension VideoPlayerViewModel {
 
 		guard let masterSubtitleStream = masterViewModel.subtitleStreams
 			.first(where: { $0.index == masterViewModel.selectedSubtitleStreamIndex }),
-			let matchingSubtitleStream = self.subtitleStreams.first(where: { mediaStreamAboutEqual($0, masterSubtitleStream) }),
+			let matchingSubtitleStream = subtitleStreams.first(where: { mediaStreamAboutEqual($0, masterSubtitleStream) }),
 			let matchingSubtitleStreamIndex = matchingSubtitleStream.index else { return }
 
-		self.selectedSubtitleStreamIndex = matchingSubtitleStreamIndex
+		selectedSubtitleStreamIndex = matchingSubtitleStreamIndex
 	}
 
 	private func matchAudioStream(with masterViewModel: VideoPlayerViewModel) {
 		guard let currentAudioStream = masterViewModel.audioStreams.first(where: { $0.index == masterViewModel.selectedAudioStreamIndex }),
-		      let matchingAudioStream = self.audioStreams.first(where: { mediaStreamAboutEqual($0, currentAudioStream) }) else { return }
+		      let matchingAudioStream = audioStreams.first(where: { mediaStreamAboutEqual($0, currentAudioStream) }) else { return }
 
-		self.selectedAudioStreamIndex = matchingAudioStream.index ?? -1
+		selectedAudioStreamIndex = matchingAudioStream.index ?? -1
 	}
 
 	private func matchSubtitlesEnabled(with masterViewModel: VideoPlayerViewModel) {
-		self.subtitlesEnabled = masterViewModel.subtitlesEnabled
+		subtitlesEnabled = masterViewModel.subtitlesEnabled
 	}
 
 	private func mediaStreamAboutEqual(_ lhs: MediaStream, _ rhs: MediaStream) -> Bool {
@@ -437,23 +454,23 @@ extension VideoPlayerViewModel {
 // MARK: Progress Report Timer
 
 extension VideoPlayerViewModel {
-
 	private func sendNewProgressReportWithTimer() {
-		self.progressReportTimer?.invalidate()
-		self.progressReportTimer = Timer.scheduledTimer(timeInterval: 0.7, target: self, selector: #selector(_sendProgressReport),
-		                                                userInfo: nil, repeats: false)
+		progressReportTimer?.invalidate()
+		progressReportTimer = Timer.scheduledTimer(timeInterval: 0.7,
+		                                           target: self,
+		                                           selector: #selector(_sendProgressReport),
+		                                           userInfo: nil,
+		                                           repeats: false)
 	}
 }
 
 // MARK: Updates
 
 extension VideoPlayerViewModel {
-
 	// MARK: sendPlayReport
 
 	func sendPlayReport() {
-
-		self.startTimeTicks = Int64(Date().timeIntervalSince1970) * 10_000_000
+		startTimeTicks = Int64(Date().timeIntervalSince1970) * 10_000_000
 
 		let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
 
@@ -490,7 +507,6 @@ extension VideoPlayerViewModel {
 	// MARK: sendPauseReport
 
 	func sendPauseReport(paused: Bool) {
-
 		let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
 
 		let pauseInfo = PlaybackStartInfo(canSeek: true,
@@ -526,7 +542,6 @@ extension VideoPlayerViewModel {
 	// MARK: sendProgressReport
 
 	func sendProgressReport() {
-
 		let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
 
 		let progressInfo = PlaybackProgressInfo(canSeek: true,
@@ -550,9 +565,9 @@ extension VideoPlayerViewModel {
 		                                        nowPlayingQueue: nil,
 		                                        playlistItemId: "playlistItem0")
 
-		self.lastProgressReport = progressInfo
+		lastProgressReport = progressInfo
 
-		self.sendNewProgressReportWithTimer()
+		sendNewProgressReportWithTimer()
 	}
 
 	@objc
@@ -573,7 +588,6 @@ extension VideoPlayerViewModel {
 	// MARK: sendStopReport
 
 	func sendStopReport() {
-
 		let stopInfo = PlaybackStopInfo(item: item,
 		                                itemId: item.id,
 		                                sessionId: response.playSessionId,
@@ -600,9 +614,7 @@ extension VideoPlayerViewModel {
 // MARK: Embedded/Normal Subtitle Streams
 
 extension VideoPlayerViewModel {
-
 	func createEmbeddedSubtitleStream(with subtitleStream: MediaStream) -> URL {
-
 		guard let baseURL = URLComponents(url: directStreamURL, resolvingAgainstBaseURL: false) else { fatalError() }
 		guard let queryItems = baseURL.queryItems else { fatalError() }
 
@@ -622,7 +634,6 @@ extension VideoPlayerViewModel {
 // MARK: Equatable
 
 extension VideoPlayerViewModel: Equatable {
-
 	static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
 		lhs.item.id == rhs.item.id &&
 			lhs.item.userData?.playbackPositionTicks == rhs.item.userData?.playbackPositionTicks
@@ -632,7 +643,6 @@ extension VideoPlayerViewModel: Equatable {
 // MARK: Hashable
 
 extension VideoPlayerViewModel: Hashable {
-
 	func hash(into hasher: inout Hasher) {
 		hasher.combine(item)
 		hasher.combine(directStreamURL)

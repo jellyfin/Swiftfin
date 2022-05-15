@@ -45,6 +45,7 @@ class VLCPlayerViewController: UIViewController {
 
 	private var panBeganBrightness = CGFloat.zero
 	private var panBeganVolumeValue = Float.zero
+	private var panBeganSliderPercentage: Double = 0
 	private var panBeganPoint = CGPoint.zero
 	private var tapLocationStack = [CGPoint]()
 	private var isJumping = false
@@ -236,7 +237,8 @@ class VLCPlayerViewController: UIViewController {
 
 		let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPinch(_:)))
 
-		let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
+		let verticalGesture = PanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(didVerticalPan(_:)))
+		let horizontalGesture = PanDirectionGestureRecognizer(direction: .horizontal, target: self, action: #selector(didHorizontalPan(_:)))
 
 		let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
 
@@ -248,7 +250,11 @@ class VLCPlayerViewController: UIViewController {
 		}
 
 		if viewModel.systemControlGesturesEnabled {
-			view.addGestureRecognizer(panGesture)
+			view.addGestureRecognizer(verticalGesture)
+		}
+
+		if viewModel.seekSlideGestureEnabled {
+			view.addGestureRecognizer(horizontalGesture)
 		}
 
 		return view
@@ -322,7 +328,7 @@ class VLCPlayerViewController: UIViewController {
 	}
 
 	@objc
-	private func didPan(_ gestureRecognizer: UIPanGestureRecognizer) {
+	private func didVerticalPan(_ gestureRecognizer: UIPanGestureRecognizer) {
 		switch gestureRecognizer.state {
 		case .began:
 			panBeganBrightness = UIScreen.main.brightness
@@ -346,6 +352,29 @@ class VLCPlayerViewController: UIViewController {
 				showVolumeOverlay()
 			}
 		default:
+			hideSystemControlOverlay()
+		}
+	}
+
+	@objc
+	private func didHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer) {
+		switch gestureRecognizer.state {
+		case .began:
+			exchangeOverlayView(isBringToFrontThanGestureView: false)
+			panBeganPoint = gestureRecognizer.location(in: mainGestureView)
+			panBeganSliderPercentage = viewModel.sliderPercentage
+			viewModel.sliderIsScrubbing = true
+		case .changed:
+			let pos = gestureRecognizer.location(in: mainGestureView)
+			let moveDelta = panBeganPoint.x - pos.x
+			let changedValue = (moveDelta / mainGestureView.frame.width)
+
+			viewModel.sliderPercentage = min(max(0, panBeganSliderPercentage - changedValue), 1)
+			showSliderOverlay()
+			showOverlay()
+		default:
+			viewModel.sliderIsScrubbing = false
+			hideOverlay()
 			hideSystemControlOverlay()
 		}
 	}
@@ -475,6 +504,17 @@ class VLCPlayerViewController: UIViewController {
 		])
 
 		currentJumpForwardOverlayView = newJumpForwardImageView
+	}
+
+	private var isOverlayViewBringToFrontThanGestureView = true
+	private func exchangeOverlayView(isBringToFrontThanGestureView: Bool) {
+		guard isBringToFrontThanGestureView != isOverlayViewBringToFrontThanGestureView,
+		      let currentOverlayView = currentOverlayHostingController?.view,
+		      let mainGestureViewIndex = view.subviews.firstIndex(of: mainGestureView),
+		      let currentOVerlayViewIndex = view.subviews.firstIndex(of: currentOverlayView) else { return }
+		isOverlayViewBringToFrontThanGestureView = isBringToFrontThanGestureView
+		view.exchangeSubview(at: mainGestureViewIndex,
+		                     withSubviewAt: currentOVerlayViewIndex)
 	}
 }
 
@@ -653,14 +693,12 @@ extension VLCPlayerViewController {
 		guard overlayHostingController.view.alpha != 0 else { return }
 
 		// for gestures UX
-		view.exchangeSubview(at: view.subviews.firstIndex(of: mainGestureView)!,
-		                     withSubviewAt: view.subviews.firstIndex(of: overlayHostingController.view)!)
+		exchangeOverlayView(isBringToFrontThanGestureView: false)
 		UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
 			overlayHostingController.view.alpha = 0
 		} completion: { [weak self] _ in
 			guard let self = self else { return }
-			self.view.exchangeSubview(at: self.view.subviews.firstIndex(of: self.mainGestureView)!,
-			                          withSubviewAt: self.view.subviews.firstIndex(of: overlayHostingController.view)!)
+			self.exchangeOverlayView(isBringToFrontThanGestureView: true)
 			self.viewModel.isHiddenOverlay = true
 		}
 	}
@@ -738,6 +776,23 @@ extension VLCPlayerViewController {
 		let attributedString = NSMutableAttributedString()
 		attributedString.append(.init(attachment: imageAttachment))
 		attributedString.append(.init(string: " \(String(format: "%.0f", value * 100))%"))
+		systemControlOverlayLabel.attributedText = attributedString
+		systemControlOverlayLabel.layer.removeAllAnimations()
+
+		UIView.animate(withDuration: 0.1) {
+			self.systemControlOverlayLabel.alpha = 1
+		}
+	}
+
+	private func showSliderOverlay() {
+		let imageAttachment = NSTextAttachment()
+		imageAttachment.image = UIImage(systemName: "clock.arrow.circlepath",
+		                                withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
+			.withTintColor(.white)
+
+		let attributedString = NSMutableAttributedString()
+		attributedString.append(.init(attachment: imageAttachment))
+		attributedString.append(.init(string: " \(viewModel.scrubbingTimeLabelText) (\(viewModel.leftLabelText))"))
 		systemControlOverlayLabel.attributedText = attributedString
 		systemControlOverlayLabel.layer.removeAllAnimations()
 
@@ -1030,7 +1085,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 					}
 					return
 				} else {
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) { [weak self] in
 						guard let self = self else { return }
 						guard !self.tapLocationStack.isEmpty else { return }
 						self.tapLocationStack.removeFirst()

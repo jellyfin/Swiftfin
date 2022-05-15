@@ -323,6 +323,7 @@ struct VLCPlayerOverlayView: View {
 					}
 				}
 				.font(.system(size: 48))
+				.opacity(viewModel.isHiddenCenterViews ? 0 : 1)
 			}
 
 			Spacer()
