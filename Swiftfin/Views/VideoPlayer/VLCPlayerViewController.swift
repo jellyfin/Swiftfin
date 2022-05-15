@@ -314,6 +314,7 @@ class VLCPlayerViewController: UIViewController {
 
 	@objc
 	private func didPinch(_ gestureRecognizer: UIPinchGestureRecognizer) {
+		guard !isGesturesLocked else { return }
 		if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
 			pinchScale = gestureRecognizer.scale
 		} else {
@@ -329,6 +330,7 @@ class VLCPlayerViewController: UIViewController {
 
 	@objc
 	private func didVerticalPan(_ gestureRecognizer: UIPanGestureRecognizer) {
+		guard !isGesturesLocked else { return }
 		switch gestureRecognizer.state {
 		case .began:
 			panBeganBrightness = UIScreen.main.brightness
@@ -358,6 +360,7 @@ class VLCPlayerViewController: UIViewController {
 
 	@objc
 	private func didHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer) {
+		guard !isGesturesLocked else { return }
 		switch gestureRecognizer.state {
 		case .began:
 			exchangeOverlayView(isBringToFrontThanGestureView: false)
