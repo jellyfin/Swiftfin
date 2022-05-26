@@ -21,188 +21,116 @@ struct LiveTVProgramsView: View {
 				if !viewModel.recommendedItems.isEmpty,
 				   let items = viewModel.recommendedItems
 				{
-					Text("On Now")
-						.font(.headline)
-						.fontWeight(.semibold)
-						.padding(.leading, 90)
-					ScrollView(.horizontal, showsIndicators: false) {
-						LazyHStack {
-							Spacer().frame(width: 45)
-							ForEach(items, id: \.id) { item in
-								Button {
-									if let chanId = item.channelId,
-									   let chan = viewModel.findChannel(id: chanId)
-									{
-										self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-											self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-										}
-									}
-								} label: {
-									#if os(iOS)
-									#elseif os(tvOS)
-										LandscapeItemElement(item: item)
-									#endif
-								}
-								.buttonStyle(PlainNavigationLinkButtonStyle())
-							}
-							Spacer().frame(width: 45)
-						}
-					}.frame(height: 350)
+                    PortraitImageHStackView(items: items,
+                                            horizontalAlignment: .leading) {
+                        Text("On Now")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 90)
+                    } selectedAction: { item in
+                        if let chanId = item.channelId,
+                           let chan = viewModel.findChannel(id: chanId)
+                        {
+                            self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                                self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                            }
+                        }
+                    }
 				}
 				if !viewModel.seriesItems.isEmpty,
 				   let items = viewModel.seriesItems
 				{
-					Text("Shows")
-						.font(.headline)
-						.fontWeight(.semibold)
-						.padding(.leading, 90)
-					ScrollView(.horizontal, showsIndicators: false) {
-						LazyHStack {
-							Spacer().frame(width: 45)
-							ForEach(items, id: \.id) { item in
-								Button {
-									if let chanId = item.channelId,
-									   let chan = viewModel.findChannel(id: chanId)
-									{
-										self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-											self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-										}
-									}
-								} label: {
-									#if os(iOS)
-									#elseif os(tvOS)
-										LandscapeItemElement(item: item)
-									#endif
-								}
-								.buttonStyle(PlainNavigationLinkButtonStyle())
-							}
-							Spacer().frame(width: 45)
-						}
-					}.frame(height: 350)
+                    PortraitImageHStackView(items: items,
+                                            horizontalAlignment: .leading) {
+                        Text("Shows")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 90)
+                    } selectedAction: { item in
+                        if let chanId = item.channelId,
+                           let chan = viewModel.findChannel(id: chanId)
+                        {
+                            self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                                self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                            }
+                        }
+                    }
 				}
 				if !viewModel.movieItems.isEmpty,
 				   let items = viewModel.movieItems
 				{
-					Text("Movies")
-						.font(.headline)
-						.fontWeight(.semibold)
-						.padding(.leading, 90)
-					ScrollView(.horizontal, showsIndicators: false) {
-						LazyHStack {
-							Spacer().frame(width: 45)
-							ForEach(items, id: \.id) { item in
-								Button {
-									if let chanId = item.channelId,
-									   let chan = viewModel.findChannel(id: chanId)
-									{
-										self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-											self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-										}
-									}
-								} label: {
-									#if os(iOS)
-									#elseif os(tvOS)
-										LandscapeItemElement(item: item)
-									#endif
-								}
-								.buttonStyle(PlainNavigationLinkButtonStyle())
-							}
-							Spacer().frame(width: 45)
-						}
-					}.frame(height: 350)
+                    PortraitImageHStackView(items: items,
+                                            horizontalAlignment: .leading) {
+                        Text("Movies")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 90)
+                    } selectedAction: { item in
+                        if let chanId = item.channelId,
+                           let chan = viewModel.findChannel(id: chanId)
+                        {
+                            self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                                self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                            }
+                        }
+                    }
 				}
 				if !viewModel.sportsItems.isEmpty,
 				   let items = viewModel.sportsItems
 				{
-					Text("Sports")
-						.font(.headline)
-						.fontWeight(.semibold)
-						.padding(.leading, 90)
-					ScrollView(.horizontal, showsIndicators: false) {
-						LazyHStack {
-							Spacer().frame(width: 45)
-							ForEach(items, id: \.id) { item in
-								Button {
-									if let chanId = item.channelId,
-									   let chan = viewModel.findChannel(id: chanId)
-									{
-										self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-											self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-										}
-									}
-								} label: {
-									#if os(iOS)
-									#elseif os(tvOS)
-										LandscapeItemElement(item: item)
-									#endif
-								}
-								.buttonStyle(PlainNavigationLinkButtonStyle())
-							}
-							Spacer().frame(width: 45)
-						}
-					}.frame(height: 350)
+                    PortraitImageHStackView(items: items,
+                                            horizontalAlignment: .leading) {
+                        Text("Sports")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 90)
+                    } selectedAction: { item in
+                        if let chanId = item.channelId,
+                           let chan = viewModel.findChannel(id: chanId)
+                        {
+                            self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                                self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                            }
+                        }
+                    }
 				}
 				if !viewModel.kidsItems.isEmpty,
 				   let items = viewModel.kidsItems
 				{
-					Text("Kids")
-						.font(.headline)
-						.fontWeight(.semibold)
-						.padding(.leading, 90)
-					ScrollView(.horizontal, showsIndicators: false) {
-						LazyHStack {
-							Spacer().frame(width: 45)
-							ForEach(items, id: \.id) { item in
-								Button {
-									if let chanId = item.channelId,
-									   let chan = viewModel.findChannel(id: chanId)
-									{
-										self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-											self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-										}
-									}
-								} label: {
-									#if os(iOS)
-									#elseif os(tvOS)
-										LandscapeItemElement(item: item)
-									#endif
-								}
-								.buttonStyle(PlainNavigationLinkButtonStyle())
-							}
-							Spacer().frame(width: 45)
-						}
-					}.frame(height: 350)
+                    PortraitImageHStackView(items: items,
+                                            horizontalAlignment: .leading) {
+                        Text("Kids")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 90)
+                    } selectedAction: { item in
+                        if let chanId = item.channelId,
+                           let chan = viewModel.findChannel(id: chanId)
+                        {
+                            self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                                self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                            }
+                        }
+                    }
 				}
 				if !viewModel.newsItems.isEmpty,
 				   let items = viewModel.newsItems
 				{
-					Text("News")
-						.font(.headline)
-						.fontWeight(.semibold)
-						.padding(.leading, 90)
-					ScrollView(.horizontal, showsIndicators: false) {
-						LazyHStack {
-							Spacer().frame(width: 45)
-							ForEach(items, id: \.id) { item in
-								Button {
-									if let chanId = item.channelId,
-									   let chan = viewModel.findChannel(id: chanId)
-									{
-										self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-											self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-										}
-									}
-								} label: {
-									#if os(iOS)
-									#elseif os(tvOS)
-										LandscapeItemElement(item: item)
-									#endif
-								}
-								.buttonStyle(PlainNavigationLinkButtonStyle())
-							}
-							Spacer().frame(width: 45)
-						}
-					}.frame(height: 350)
+                    PortraitImageHStackView(items: items,
+                                            horizontalAlignment: .leading) {
+                        Text("News")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 90)
+                    } selectedAction: { item in
+                        if let chanId = item.channelId,
+                           let chan = viewModel.findChannel(id: chanId)
+                        {
+                            self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                                self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                            }
+                        }
+                    }
 				}
 			}
 		}
