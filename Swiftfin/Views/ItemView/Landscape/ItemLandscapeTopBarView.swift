@@ -72,7 +72,7 @@ struct ItemLandscapeTopBarView: View {
 						// MARK: Favorite
 
 						Button {
-							viewModel.updateFavoriteState()
+							viewModel.toggleFavoriteState()
 						} label: {
 							if viewModel.isFavorited {
 								Image(systemName: "heart.fill").foregroundColor(Color(UIColor.systemRed))
@@ -87,7 +87,7 @@ struct ItemLandscapeTopBarView: View {
 						// MARK: Watched
 
 						Button {
-							viewModel.updateWatchState()
+							viewModel.toggleWatchState()
 						} label: {
 							if viewModel.isWatched {
 								Image(systemName: "checkmark.circle.fill").foregroundColor(Color.primary)

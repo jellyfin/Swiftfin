@@ -13,225 +13,177 @@ struct PortraitHeaderOverlayView: View {
 
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
-	@EnvironmentObject
+	@ObservedObject
 	private var viewModel: ItemViewModel
-	@State
-	private var playButtonText: String = ""
+    
+    init(viewModel: ItemViewModel) {
+        self.viewModel = viewModel
+    }
 
-	var body: some View {
-		VStack(alignment: .leading) {
-			HStack(alignment: .bottom, spacing: 12) {
-
-				// MARK: Portrait Image
-
-				ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 130),
-				          blurHash: viewModel.item.getPrimaryImageBlurHash())
-					.portraitPoster(width: 130)
-					.accessibilityIgnoresInvertColors()
-
-				VStack(alignment: .leading, spacing: 1) {
-					Spacer()
-
-					// MARK: Name
-
-					Text(viewModel.getItemDisplayName())
-						.font(.title2)
-						.fontWeight(.semibold)
-						.foregroundColor(.primary)
-						.fixedSize(horizontal: false, vertical: true)
-						.padding(.bottom, 10)
-
-					// MARK: Details
-
-					HStack {
-						if viewModel.item.unaired {
-							if let premiereDateLabel = viewModel.item.airDateLabel {
-								Text(premiereDateLabel)
-									.font(.subheadline)
-									.fontWeight(.medium)
-									.foregroundColor(.secondary)
-									.lineLimit(1)
-							}
-						}
-
-						if viewModel.shouldDisplayRuntime() {
-							if let runtime = viewModel.item.getItemRuntime() {
-								Text(runtime)
-									.font(.subheadline)
-									.fontWeight(.medium)
-									.foregroundColor(.secondary)
-									.lineLimit(1)
-							}
-						}
-
-						if let productionYear = viewModel.item.productionYear {
-							Text(String(productionYear))
-								.font(.subheadline)
-								.fontWeight(.medium)
-								.foregroundColor(.secondary)
-								.lineLimit(1)
-						}
-
-						if let officialRating = viewModel.item.officialRating {
-							Text(officialRating)
-								.font(.subheadline)
-								.fontWeight(.semibold)
-								.foregroundColor(.secondary)
-								.lineLimit(1)
-								.padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-								.overlay(RoundedRectangle(cornerRadius: 2)
-									.stroke(Color.secondary, lineWidth: 1))
-						}
-					}
-
-					if viewModel.videoPlayerViewModels.count > 1 {
-						Menu {
-							ForEach(viewModel.videoPlayerViewModels, id: \.versionName) { viewModelOption in
-								Button {
-									viewModel.selectedVideoPlayerViewModel = viewModelOption
-								} label: {
-									if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
-										Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
-									} else {
-										Text(viewModelOption.versionName ?? L10n.noTitle)
-									}
-								}
-							}
-						} label: {
-							HStack(spacing: 5) {
-								Text(viewModel.selectedVideoPlayerViewModel?.versionName ?? L10n.noTitle)
-									.fontWeight(.semibold)
-									.fixedSize()
-								Image(systemName: "chevron.down")
-							}
-						}
-					}
-				}
-				.padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 98 : 30)
-			}
-
-			HStack {
-
-				// MARK: Play
-
-//				Button {
-//					if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-//						itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-//					} else {
-//						LogManager.log.error("Attempted to play item but no playback information available")
-//					}
-//				} label: {
-//					HStack {
-//						Image(systemName: "play.fill")
-//							.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
-//							.font(.system(size: 20))
-//						Text(playButtonText)
-//							.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
-//							.font(.callout)
-//							.fontWeight(.semibold)
-//					}
-//					.frame(width: 130, height: 40)
-//					.background(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
-//					.cornerRadius(10)
-//				}
-//				.disabled(viewModel.playButtonItem == nil || viewModel.selectedVideoPlayerViewModel == nil)
-//				.contextMenu {
-//					if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-//						Button {
-//							if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-//								selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-//								itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-//							} else {
-//								LogManager.log.error("Attempted to play item but no playback information available")
-//							}
-//						} label: {
-//							Label(L10n.playFromBeginning, systemImage: "gobackward")
-//						}
-//					}
-//				}
+    var body: some View {
+        VStack(alignment: .center) {
+            
+            Spacer()
+            
+            ImageView(viewModel.item.getLogoImage(maxWidth: Int(UIScreen.main.bounds.width)),
+                      resizingMode: .aspectFit,
+                      failureView: {
+                Text(viewModel.getItemDisplayName())
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.white)
+                    .frame(alignment: .bottom)
+            })
+            .frame(height: 100, alignment: .bottom)
+            
+            HStack {
                 
-                Button {
-                    if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                        itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                    } else {
-                        LogManager.log.error("Attempted to play item but no playback information available")
+                if let firstGenre = viewModel.item.genres?.first {
+                    Text(firstGenre)
+                    
+                    Circle()
+                        .frame(width: 2, height: 2)
+                        .padding(.horizontal, 1)
+                }
+                
+                if let productionYear = viewModel.item.premiereDateFormatted {
+                    Text(String(productionYear))
+                    
+                    Circle()
+                        .frame(width: 2, height: 2)
+                        .padding(.horizontal, 1)
+                }
+                
+                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                    Text(runtime)
+                }
+            }
+            .font(.caption)
+            .foregroundColor(Color(UIColor.lightGray))
+            .padding(.horizontal)
+            
+            Button {
+                if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+                    itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+                } else {
+                    LogManager.log.error("Attempted to play item but no playback information available")
+                }
+            } label: {
+                ZStack {
+                    Rectangle()
+                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
+                        .frame(maxWidth: 300, maxHeight: 50)
+                        .frame(height: 50)
+                        .cornerRadius(10)
+                    
+                    HStack {
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 20))
+                        Text(viewModel.playButtonText())
+                            .font(.callout)
+                            .fontWeight(.semibold)
                     }
-                } label: {
-                    ZStack {
-                        Rectangle()
-                            .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
-                            .frame(maxWidth: 300, maxHeight: 50)
-                            .frame(height: 50)
-                            .cornerRadius(10)
-                        
-                        HStack {
-                            Image(systemName: "play.fill")
-                                .font(.system(size: 20))
-                            Text(viewModel.playButtonText())
-                                .font(.callout)
-                                .fontWeight(.semibold)
+                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
+                }
+            }
+            .contextMenu {
+                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+                    Button {
+                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+                            itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+                        } else {
+                            LogManager.log.error("Attempted to play item but no playback information available")
                         }
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
+                    } label: {
+                        Label(L10n.playFromBeginning, systemImage: "gobackward")
                     }
                 }
-                .contextMenu {
-                    if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-                        Button {
-                            if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                                selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-                                itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                            } else {
-                                LogManager.log.error("Attempted to play item but no playback information available")
-                            }
-                        } label: {
-                            Label(L10n.playFromBeginning, systemImage: "gobackward")
-                        }
+            }
+            .padding(.bottom)
+            
+            if let playButtonOverview = viewModel.playButtonItem?.overview {
+                TruncatedTextView(playButtonOverview,
+                                  lineLimit: 3,
+                                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                                  .foregroundColor(.white)
+            } else if let seriesOverview = viewModel.item.overview {
+                TruncatedTextView(seriesOverview,
+                                  lineLimit: 3,
+                                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                                  .foregroundColor(.white)
+            }
+            
+            HStack {
+                if let officialRating = viewModel.item.officialRating {
+                    Text(officialRating)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                        .overlay(RoundedRectangle(cornerRadius: 2)
+                            .stroke(Color(UIColor.lightGray), lineWidth: 1))
+                }
+                
+                if let selectedPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+                    if !selectedPlayerViewModel.subtitleStreams.isEmpty {
+                        Text("CC")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                            .overlay(RoundedRectangle(cornerRadius: 2)
+                                .stroke(Color(UIColor.lightGray), lineWidth: 1))
                     }
                 }
+                
+                Spacer()
+            }
+            .foregroundColor(Color(UIColor.lightGray))
+        }
+        .padding()
+        .background {
+            BlurView(style: .systemThinMaterialDark)
+                .mask {
+                    LinearGradient(gradient: Gradient(stops: [
+                        .init(color: .white, location: 0),
+                        .init(color: .white, location: 0.2),
+                        .init(color: .white.opacity(0), location: 1)
+                    ]), startPoint: .bottom, endPoint: .top)
+                }
+        }
+    }
+}
 
-				Spacer()
+extension View {
+    // view.inverseMask(_:)
+    public func inverseMask<M: View>(_ mask: M) -> some View {
+        // exchange foreground and background
+        let inversed = mask
+            .foregroundColor(.black)  // hide foreground
+            .background(Color.white)  // let the background stand out
+            .compositingGroup()
+            .luminanceToAlpha()
+        return self.mask(inversed)
+    }
+}
 
-				if viewModel.item.itemType.showDetails {
-					// MARK: Favorite
-
-					Button {
-						viewModel.updateFavoriteState()
-					} label: {
-						if viewModel.isFavorited {
-							Image(systemName: "heart.fill")
-								.foregroundColor(Color(UIColor.systemRed))
-								.font(.system(size: 20))
-						} else {
-							Image(systemName: "heart")
-								.foregroundColor(Color.primary)
-								.font(.system(size: 20))
-						}
-					}
-					.disabled(viewModel.isLoading)
-
-					// MARK: Watched
-
-					Button {
-						viewModel.updateWatchState()
-					} label: {
-						if viewModel.isWatched {
-							Image(systemName: "checkmark.circle.fill")
-								.foregroundColor(Color.jellyfinPurple)
-								.font(.system(size: 20))
-						} else {
-							Image(systemName: "checkmark.circle")
-								.foregroundColor(Color.primary)
-								.font(.system(size: 20))
-						}
-					}
-					.disabled(viewModel.isLoading)
-				}
-			}.padding(.top, 8)
-		}
-		.onAppear {
-			playButtonText = viewModel.playButtonText()
-		}
-		.padding(.horizontal)
-		.padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? -189 : -64)
-	}
+extension View {
+    /// Applies the given transform if the given condition evaluates to `true`.
+    /// - Parameters:
+    ///   - condition: The condition to evaluate.
+    ///   - transform: The transform to apply to the source `View`.
+    /// - Returns: Either the original `View` or the modified `View` if the condition is `true`.
+    @ViewBuilder
+    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
 }

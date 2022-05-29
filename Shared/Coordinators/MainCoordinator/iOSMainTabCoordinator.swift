@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Introspect
 import Stinsen
 import SwiftUI
 
@@ -50,7 +51,7 @@ final class MainTabCoordinator: TabCoordinatable {
 
 	@ViewBuilder
 	func makeAllMediaTab(isActive: Bool) -> some View {
-		Image(systemName: "square.stack.fill")
+		Image(systemName: "rectangle.stack.fill")
 		L10n.allMedia.text
 	}
     

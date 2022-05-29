@@ -21,8 +21,15 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 	override init(item: BaseItemDto) {
 		super.init(item: item)
 
+        // The server won't have both a next up item
+        // and a resume item at the same time, so they
+        // control the buttonfirst . Also fetch first available
+        // item, which may be overwritten by next up or resume.
 		getNextUp()
-		getSeasons()
+        getResumeItem()
+        getFirstAvailableItem()
+        
+        getSeasons()
 	}
 
 	override func playButtonText() -> String {
@@ -39,28 +46,59 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 		return episodeLocator
 	}
 
-	override func shouldDisplayRuntime() -> Bool {
-		false
-	}
-
 	private func getNextUp() {
-
 		LogManager.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
 		TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id,
-		                     fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
 		                     seriesId: self.item.id!,
-		                     enableUserData: true,
-        enableTotalRecordCount: false)
+		                     enableUserData: true)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
 			}, receiveValue: { [weak self] response in
 				if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
 					self?.playButtonItem = nextUpItem
+                    
+//                    self?.select(season: <#T##BaseItemDto#>)
 				}
 			})
 			.store(in: &cancellables)
 	}
+    
+    private func getResumeItem() {
+        ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id,
+                                limit: 1,
+                                parentId: item.id)
+        .trackActivity(loading)
+        .sink { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        } receiveValue: { [weak self] response in
+            if let firstItem = response.items?.first {
+                self?.playButtonItem = firstItem
+            }
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func getFirstAvailableItem() {
+        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id,
+                                  limit: 2,
+                                  recursive: true,
+                                  sortOrder: [.ascending],
+                                  parentId: item.id,
+                                  includeItemTypes: ["Episode"])
+        .trackActivity(loading)
+        .sink { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        } receiveValue: { [weak self] response in
+            if let firstItem = response.items?.first {
+                if self?.playButtonItem == nil {
+                    // If other calls finish after this, it will be overwritten
+                    self?.playButtonItem = firstItem
+                }
+            }
+        }
+        .store(in: &cancellables)
+    }
     
     func getRunYears() -> String {
         let dateFormatter = DateFormatter()

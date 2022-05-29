@@ -31,7 +31,7 @@ struct ItemViewBody: View {
 				if hSizeClass == .compact && vSizeClass == .regular {
 					TruncatedTextView(itemOverview,
 					                  lineLimit: 5,
-					                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                                      font: UIFont.preferredFont(forTextStyle: .footnote)) {
 						itemRouter.route(to: \.itemOverview, viewModel.item)
 					}
 					.padding(.horizontal)

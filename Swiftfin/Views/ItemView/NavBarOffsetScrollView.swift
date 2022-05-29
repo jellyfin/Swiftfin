@@ -119,9 +119,8 @@ class NavBarOffsetScrollViewController<Body: View>: UIViewController, UIScrollVi
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let maxHeight: CGFloat = headerHeight + 2
-        let currentProgress = (scrollView.contentOffset.y - headerHeight) * 1.8 / maxHeight
-
+        let maxHeight: CGFloat = headerHeight + 10
+        let currentProgress = (scrollView.contentOffset.y - headerHeight) * 8 / maxHeight
         let offset = min(max(currentProgress, 0), 1)
         self.navigationController?.navigationBar
             .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(offset)]

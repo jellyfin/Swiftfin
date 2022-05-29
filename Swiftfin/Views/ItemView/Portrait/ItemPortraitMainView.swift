@@ -29,8 +29,9 @@ struct ItemPortraitMainView: View {
 	// MARK: portraitStaticOverlayView
 
 	var portraitStaticOverlayView: some View {
-		PortraitHeaderOverlayView()
-			.environmentObject(viewModel)
+        Text("Hello there")
+//		PortraitHeaderOverlayView()
+//			.environmentObject(viewModel)
 	}
 
 	// MARK: body

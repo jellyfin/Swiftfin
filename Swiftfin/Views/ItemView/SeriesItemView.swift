@@ -12,54 +12,29 @@ import SwiftUI
 
 struct SeriesItemView: View {
 
-	@Environment(\.horizontalSizeClass)
-	private var hSizeClass
-	@Environment(\.verticalSizeClass)
-	private var vSizeClass
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
 	@EnvironmentObject
 	private var viewModel: SeriesItemViewModel
-	@Default(.showCastAndCrew)
-	var showCastAndCrew
 
 	// MARK: portraitHeaderView
 
 	var portraitHeaderView: some View {
 		ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
 		          blurHash: viewModel.item.getBackdropImageBlurHash())
-			.opacity(0.4)
-			.blur(radius: 2.0)
 			.accessibilityIgnoresInvertColors()
 	}
 
 	// MARK: portraitStaticOverlayView
 
 	var portraitStaticOverlayView: some View {
-		PortraitHeaderOverlayView()
-			.environmentObject(viewModel as ItemViewModel)
+        PortraitHeaderOverlayView(viewModel: viewModel)
 	}
 
 	// MARK: innerBody
 
 	var innerBody: some View {
 		VStack(alignment: .leading) {
-
-			// MARK: Overview
-
-			if let itemOverview = viewModel.item.overview {
-				TruncatedTextView(itemOverview,
-				                  lineLimit: 5,
-				                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-					itemRouter.route(to: \.itemOverview, viewModel.item)
-				}
-				.padding(.horizontal)
-				.padding(.top)
-			} else {
-				L10n.noOverviewAvailable.text
-					.font(.footnote)
-					.padding()
-			}
 
 			// MARK: Seasons
 
@@ -87,22 +62,20 @@ struct SeriesItemView: View {
 			}
 
 			// MARK: Episodes
-
-			if showCastAndCrew {
-				if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
-					PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-					                        topBarView: {
-					                        	L10n.castAndCrew.text
-					                        		.fontWeight(.semibold)
-					                        		.padding(.bottom)
-					                        		.padding(.horizontal)
-					                        		.accessibility(addTraits: [.isHeader])
-					                        },
-					                        selectedAction: { person in
-					                        	itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-					                        })
-				}
-			}
+            
+            if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
+                PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                                        topBarView: {
+                                            L10n.castAndCrew.text
+                                                .fontWeight(.semibold)
+                                                .padding(.bottom)
+                                                .padding(.horizontal)
+                                                .accessibility(addTraits: [.isHeader])
+                                        },
+                                        selectedAction: { person in
+                                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                                        })
+            }
 
 			// MARK: Recommended
 
@@ -119,8 +92,11 @@ struct SeriesItemView: View {
 				                        	itemRouter.route(to: \.item, item)
 				                        })
 			}
+            
+            ItemAboutView()
+                .environmentObject(viewModel as ItemViewModel)
 
-			// MARK: Details
+            // MARK: Details
             
             ListDetailsView(title: "Information", items: [
                 .init(title: "Runtime", content: viewModel.getRunYears()),
@@ -134,13 +110,8 @@ struct SeriesItemView: View {
 		        ParallaxHeaderScrollView(header: portraitHeaderView,
 		                                 staticOverlayView: portraitStaticOverlayView,
 		                                 overlayAlignment: .bottomLeading,
-                                         headerHeight: UIScreen.main.bounds.height * 0.33) {
-		            VStack {
-		                Spacer()
-		                    .frame(height: 70)
-
-		                innerBody
-		            }
+                                         headerHeight: UIScreen.main.bounds.height * 0.6) {
+                    innerBody
 		        }
 	}
 }

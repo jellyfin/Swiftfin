@@ -442,6 +442,9 @@
 		E1AD106226D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD106126D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift */; };
 		E1AE8E7C2789135A00FBDDAA /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1AE8E7B2789135A00FBDDAA /* Nuke */; };
 		E1AE8E7E2789136D00FBDDAA /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1AE8E7D2789136D00FBDDAA /* Nuke */; };
+		E1AF3E6828408DD60078BC20 /* BlurSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AF3E6728408DD60078BC20 /* BlurSymbolButton.swift */; };
+		E1AF3E6A28408E020078BC20 /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AF3E6928408E020078BC20 /* BlurView.swift */; };
+		E1AF3E6C284094150078BC20 /* ItemAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AF3E6B284094150078BC20 /* ItemAboutView.swift */; };
 		E1B59FD52786ADE500A5287E /* ContinueWatchingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B59FD42786ADE500A5287E /* ContinueWatchingCard.swift */; };
 		E1B59FD92786AE4600A5287E /* NextUpCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B59FD82786AE4600A5287E /* NextUpCard.swift */; };
 		E1B6DCE8271A23780015B715 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = E1B6DCE7271A23780015B715 /* CombineExt */; };
@@ -464,6 +467,7 @@
 		E1C020E0282ABADD00EDA240 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C020DF282ABADD00EDA240 /* SeriesItemView.swift */; };
 		E1C020E2282ABAE300EDA240 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C020E1282ABAE300EDA240 /* EpisodeItemView.swift */; };
 		E1C0210F282B07B600EDA240 /* NavBarOffsetScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C0210E282B07B600EDA240 /* NavBarOffsetScrollView.swift */; };
+		E1C5F02B283F2F6100CFAD44 /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C5F02A283F2F6100CFAD44 /* MovieItemView.swift */; };
 		E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
 		E1C812BD277A8E5D00918266 /* PlayerOverlayDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B5277A8E5D00918266 /* PlayerOverlayDelegate.swift */; };
 		E1C812BE277A8E5D00918266 /* VLCPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B6277A8E5D00918266 /* VLCPlayerViewController.swift */; };
@@ -855,6 +859,9 @@
 		E1AD105B26D9ABDD003E4A08 /* PillHStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillHStackView.swift; sourceTree = "<group>"; };
 		E1AD105E26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameGUIDPairExtensions.swift; sourceTree = "<group>"; };
 		E1AD106126D9B7CD003E4A08 /* ItemPortraitHeaderOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPortraitHeaderOverlayView.swift; sourceTree = "<group>"; };
+		E1AF3E6728408DD60078BC20 /* BlurSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurSymbolButton.swift; sourceTree = "<group>"; };
+		E1AF3E6928408E020078BC20 /* BlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
+		E1AF3E6B284094150078BC20 /* ItemAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemAboutView.swift; sourceTree = "<group>"; };
 		E1B59FD42786ADE500A5287E /* ContinueWatchingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueWatchingCard.swift; sourceTree = "<group>"; };
 		E1B59FD82786AE4600A5287E /* NextUpCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpCard.swift; sourceTree = "<group>"; };
 		E1BDE358278E9ED2004E4022 /* MissingItemsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingItemsSettingsView.swift; sourceTree = "<group>"; };
@@ -869,6 +876,7 @@
 		E1C020DF282ABADD00EDA240 /* SeriesItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesItemView.swift; sourceTree = "<group>"; };
 		E1C020E1282ABAE300EDA240 /* EpisodeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeItemView.swift; sourceTree = "<group>"; };
 		E1C0210E282B07B600EDA240 /* NavBarOffsetScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarOffsetScrollView.swift; sourceTree = "<group>"; };
+		E1C5F02A283F2F6100CFAD44 /* MovieItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieItemView.swift; sourceTree = "<group>"; };
 		E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackSpeed.swift; sourceTree = "<group>"; };
 		E1C812B5277A8E5D00918266 /* PlayerOverlayDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerOverlayDelegate.swift; sourceTree = "<group>"; };
 		E1C812B6277A8E5D00918266 /* VLCPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VLCPlayerViewController.swift; sourceTree = "<group>"; };
@@ -1417,12 +1425,15 @@
 				E1A2C15B279A7D9F005EC829 /* AppIcon.swift */,
 				E111DE212790BB46008118A3 /* DetectBottomScrollView.swift */,
 				E176DE6E278E3522001EFD8D /* EpisodesRowView */,
+				E1AF3E6B284094150078BC20 /* ItemAboutView.swift */,
 				E1AD105B26D9ABDD003E4A08 /* PillHStackView.swift */,
 				E1AD105526D981CE003E4A08 /* PortraitHStackView.swift */,
 				53F866432687A45F00DCD1D7 /* PortraitItemButton.swift */,
 				C4BE076D2720FEA8003F4AD1 /* PortraitItemElement.swift */,
 				E1AA331C2782541500F6439C /* PrimaryButtonView.swift */,
 				E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */,
+				E1AF3E6728408DD60078BC20 /* BlurSymbolButton.swift */,
+				E1AF3E6928408E020078BC20 /* BlurView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1680,6 +1691,7 @@
 				E1C0210E282B07B600EDA240 /* NavBarOffsetScrollView.swift */,
 				535BAE9E2649E569005FA86D /* ItemView.swift */,
 				E1C020DF282ABADD00EDA240 /* SeriesItemView.swift */,
+				E1C5F02A283F2F6100CFAD44 /* MovieItemView.swift */,
 				E1F8F442283077C8006DA7C0 /* iPadOSSeriesItemView.swift */,
 				E1C020E1282ABAE300EDA240 /* EpisodeItemView.swift */,
 				E18845F726DEA9C900B0C5B7 /* ItemViewBody.swift */,
@@ -2426,6 +2438,7 @@
 				53F866442687A45F00DCD1D7 /* PortraitItemButton.swift in Sources */,
 				E1C020D4282A2C7000EDA240 /* SideBarCoordinatableView.swift in Sources */,
 				E1AD105626D981CE003E4A08 /* PortraitHStackView.swift in Sources */,
+				E1AF3E6828408DD60078BC20 /* BlurSymbolButton.swift in Sources */,
 				62C29EA126D102A500C1D2E7 /* iOSMainTabCoordinator.swift in Sources */,
 				E1C020DA282A2C7000EDA240 /* SideBarRoute.swift in Sources */,
 				C4BE076E2720FEA8003F4AD1 /* PortraitItemElement.swift in Sources */,
@@ -2440,6 +2453,7 @@
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				E1C020D8282A2C7000EDA240 /* WeakRef.swift in Sources */,
 				C4BE07852728446F003F4AD1 /* LiveTVChannelsViewModel.swift in Sources */,
+				E1C5F02B283F2F6100CFAD44 /* MovieItemView.swift in Sources */,
 				E14B4141279354770016CBE5 /* LocalizedLookup.swift in Sources */,
 				E111DE222790BB46008118A3 /* DetectBottomScrollView.swift in Sources */,
 				5D160403278A41FD00D22B99 /* VLCPlayer+subtitles.swift in Sources */,
@@ -2491,6 +2505,7 @@
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				E1C020E0282ABADD00EDA240 /* SeriesItemView.swift in Sources */,
+				E1AF3E6C284094150078BC20 /* ItemAboutView.swift in Sources */,
 				62E632E9267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E13DD3FC2717EAE8009D4DAF /* UserListView.swift in Sources */,
@@ -2515,6 +2530,7 @@
 				E10D87DC2784EC5200BD264C /* EpisodesRowView.swift in Sources */,
 				E1C812BE277A8E5D00918266 /* VLCPlayerViewController.swift in Sources */,
 				E1AA331D2782541500F6439C /* PrimaryButtonView.swift in Sources */,
+				E1AF3E6A28408E020078BC20 /* BlurView.swift in Sources */,
 				E10C0941278B8DAB009DBF93 /* PortraitItemSize.swift in Sources */,
 				62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */,
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,

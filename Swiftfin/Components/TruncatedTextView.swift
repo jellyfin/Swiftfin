@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// Modification of: https://prafullkumar77.medium.com/swiftui-how-to-make-see-more-see-less-style-button-at-the-end-of-text-675f859c2c4f
+
 struct TruncatedTextView: View {
 
 	@State
@@ -44,21 +46,11 @@ struct TruncatedTextView: View {
             Text(shrinkText)
                 .lineLimit(lineLimit)
                 .font(Font(font))
-                .overlay {
-                    if truncated {
-                        LinearGradient(stops: [
-                            .init(color: .systemBackground.opacity(0), location: 0.5),
-                            .init(color: .systemBackground.opacity(0.8), location: 0.7),
-                            .init(color: .systemBackground, location: 1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom)
-                    }
-                }
                 .background {
                     // Render the limited text and measure its size
                     Text(text)
                         .lineLimit(lineLimit + 2)
+                        .font(Font(font))
                         .background {
                             GeometryReader { visibleTextGeometry in
                                 Color.clear
@@ -98,12 +90,22 @@ struct TruncatedTextView: View {
                         }
                         .hidden()
                 }
+                .if(truncated, transform: { view in
+                    view.mask {
+                        LinearGradient(gradient: Gradient(stops: [
+                            .init(color: .white, location: 0),
+                            .init(color: .white, location: 0.2),
+                            .init(color: .white.opacity(0), location: 1)
+                        ]), startPoint: .top, endPoint: .bottom)
+                    }
+                })
 
 			if truncated {
 				Button {
 					seeMoreAction()
 				} label: {
 					Text(moreLessText)
+                        .foregroundColor(.jellyfinPurple)
 				}
 			}
 		}

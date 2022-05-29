@@ -14,9 +14,11 @@ protocol EpisodesRowManager: ViewModel {
 	var item: BaseItemDto { get }
 	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] { get set }
 	var selectedSeason: BaseItemDto? { get set }
+    
 	func getSeasons()
 	func getEpisodesForSeason(_ season: BaseItemDto)
 	func select(season: BaseItemDto)
+    func select(seasonID: String)
 }
 
 extension EpisodesRowManager {
@@ -38,18 +40,6 @@ extension EpisodesRowManager {
 				seasons.forEach { season in
 					self.seasonsEpisodes[season] = []
 				}
-
-//				seasons.forEach { season in
-//					self.seasonsEpisodes[season] = []
-//
-//					if season.id == self.item.seasonId ?? "" {
-//						self.selectedSeason = season
-//						self.getEpisodesForSeason(season)
-//					} else if season.id == self.item.id ?? "" {
-//						self.selectedSeason = season
-//						self.getEpisodesForSeason(season)
-//					}
-//				}
 
 				self.selectedSeason = seasons.first
 			}
@@ -74,10 +64,16 @@ extension EpisodesRowManager {
 	}
 
 	func select(season: BaseItemDto) {
+        guard season != selectedSeason else { return }
 		self.selectedSeason = season
 
 		if seasonsEpisodes[season]!.isEmpty {
 			getEpisodesForSeason(season)
 		}
 	}
+    
+    func select(seasonID: String) {
+        guard let selectedSeason = Array(seasonsEpisodes.keys).first(where: { $0.id == seasonID }) else { return }
+        select(season: selectedSeason)
+    }
 }

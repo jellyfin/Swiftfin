@@ -17,10 +17,9 @@ struct PillHStackView<ItemType: PillStackable>: View {
 	var body: some View {
 		VStack(alignment: .leading) {
 			Text(title)
-				.font(.callout)
+                .font(.title3)
 				.fontWeight(.semibold)
 				.padding(.top)
-//				.padding(.leading, 16)
                 .padding(.leading)
 				.accessibility(addTraits: [.isHeader])
 

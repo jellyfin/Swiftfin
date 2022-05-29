@@ -49,7 +49,6 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
 								          	InitialFailureView(item.failureInitials)
 								          })
 								          .portraitPoster(width: maxWidth)
-								          .shadow(radius: 4, y: 2)
 								          .accessibilityIgnoresInvertColors()
 
 								if item.showTitle {

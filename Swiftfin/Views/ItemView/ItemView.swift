@@ -51,6 +51,9 @@ private struct ItemView: View {
                     SeriesItemView()
                         .environmentObject(SeriesItemViewModel(item: item))
                 }
+            case .movie:
+                MovieItemView()
+                    .environmentObject(MovieItemViewModel(item: item))
             default:
                 ItemPortraitMainView()
                     .environmentObject(ItemViewModel(item: item))

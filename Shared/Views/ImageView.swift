@@ -34,22 +34,33 @@ struct ImageView<FailureView: View>: View {
 	private var sources: [ImageViewSource]
 	private var currentURL: URL? { sources.first?.url }
 	private var currentBlurHash: String? { sources.first?.blurHash }
-	private var failureView: FailureView
+	private var failureView: () -> FailureView
+    private var resizingMode: ImageResizingMode
 
-	init(_ source: URL?, blurHash: String? = nil, @ViewBuilder failureView: () -> FailureView) {
+    init(_ source: URL?,
+         blurHash: String? = nil,
+         resizingMode: ImageResizingMode = .aspectFill,
+         @ViewBuilder failureView: @escaping () -> FailureView) {
 		let imageViewSource = ImageViewSource(url: source, blurHash: blurHash)
 		_sources = State(initialValue: [imageViewSource])
-		self.failureView = failureView()
+        self.resizingMode = resizingMode
+		self.failureView = failureView
 	}
 
-	init(_ source: ImageViewSource, @ViewBuilder failureView: () -> FailureView) {
+	init(_ source: ImageViewSource,
+         resizingMode: ImageResizingMode = .aspectFill,
+         @ViewBuilder failureView: @escaping () -> FailureView) {
 		_sources = State(initialValue: [source])
-		self.failureView = failureView()
+        self.resizingMode = resizingMode
+		self.failureView = failureView
 	}
 
-	init(_ sources: [ImageViewSource], @ViewBuilder failureView: () -> FailureView) {
+	init(_ sources: [ImageViewSource],
+         resizingMode: ImageResizingMode = .aspectFill,
+         @ViewBuilder failureView: @escaping () -> FailureView) {
 		_sources = State(initialValue: sources)
-		self.failureView = failureView()
+        self.resizingMode = resizingMode
+		self.failureView = failureView
 	}
 
 	@ViewBuilder
@@ -58,15 +69,16 @@ struct ImageView<FailureView: View>: View {
 			BlurHashView(blurHash: currentBlurHash)
 				.id(currentBlurHash)
 		} else {
-			Color.secondary
+            Color.clear
 		}
 	}
 
 	var body: some View {
 		if let currentURL = currentURL {
-			LazyImage(source: currentURL) { state in
+            LazyImage(source: currentURL) { state in
 				if let image = state.image {
 					image
+                        .resizingMode(resizingMode)
 				} else if state.error != nil {
 					placeholderView.onAppear { sources.removeFirst() }
 				} else {
@@ -76,27 +88,27 @@ struct ImageView<FailureView: View>: View {
 			.pipeline(ImagePipeline(configuration: .withDataCache))
 			.id(currentURL)
 		} else {
-			failureView
+			failureView()
 		}
 	}
 }
 
 extension ImageView where FailureView == DefaultFailureView {
-	init(_ source: URL?, blurHash: String? = nil) {
+	init(_ source: URL?, blurHash: String? = nil, resizingMode: ImageResizingMode = .aspectFill) {
 		let imageViewSource = ImageViewSource(url: source, blurHash: blurHash)
-		self.init(imageViewSource, failureView: { DefaultFailureView() })
+		self.init(imageViewSource, resizingMode: resizingMode, failureView: { DefaultFailureView() })
 	}
 
-	init(_ source: ImageViewSource) {
-		self.init(source, failureView: { DefaultFailureView() })
+	init(_ source: ImageViewSource, resizingMode: ImageResizingMode = .aspectFill) {
+		self.init(source, resizingMode: resizingMode, failureView: { DefaultFailureView() })
 	}
 
-	init(_ sources: [ImageViewSource]) {
-		self.init(sources, failureView: { DefaultFailureView() })
+	init(_ sources: [ImageViewSource], resizingMode: ImageResizingMode = .aspectFill) {
+		self.init(sources, resizingMode: resizingMode, failureView: { DefaultFailureView() })
 	}
 
-	init(sources: [URL]) {
+	init(sources: [URL], resizingMode: ImageResizingMode = .aspectFill) {
 		let imageViewSources = sources.compactMap { ImageViewSource(url: $0, blurHash: nil) }
-		self.init(imageViewSources, failureView: { DefaultFailureView() })
+		self.init(imageViewSources, resizingMode: resizingMode, failureView: { DefaultFailureView() })
 	}
 }

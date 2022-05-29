@@ -106,6 +106,16 @@ public extension BaseItemDto {
 		return URL(string: urlString)!
 	}
 
+    func getLogoImage(maxWidth: Int) -> URL {
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+        
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
+                                                                imageType: .logo,
+                                                                maxWidth: Int(x),
+                                                                quality: 96).URLString
+        return URL(string: urlString)!
+    }
+    
 	func getEpisodeLocator() -> String? {
 		if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
 			return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))

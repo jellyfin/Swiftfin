@@ -34,11 +34,12 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
                     }
                 } label: {
                     HStack(spacing: 5) {
-                        Text(viewModel.selectedSeason?.name ?? L10n.unknown)
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .fixedSize()
-                        Image(systemName: "chevron.down")
+                        Group {
+                            Text(viewModel.selectedSeason?.name ?? L10n.unknown)
+                                .fixedSize()
+                            Image(systemName: "chevron.down")
+                        }
+                        .font(.title3.weight(.semibold))
                     }
                 }
 

@@ -109,10 +109,6 @@ class ItemViewModel: ViewModel {
 		item.name ?? ""
 	}
 
-	func shouldDisplayRuntime() -> Bool {
-		true
-	}
-
 	func getSimilarItems() {
 		LibraryAPI.getSimilarItems(itemId: item.id!,
 		                           userId: SessionManager.main.currentLogin.user.id,
@@ -127,7 +123,7 @@ class ItemViewModel: ViewModel {
 			.store(in: &cancellables)
 	}
 
-	func updateWatchState() {
+	func toggleWatchState() {
 		if isWatched {
 			PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id,
 			                              itemId: item.id!)
@@ -151,7 +147,7 @@ class ItemViewModel: ViewModel {
 		}
 	}
 
-	func updateFavoriteState() {
+	func toggleFavoriteState() {
 		if isFavorited {
 			UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
 				.trackActivity(loading)
