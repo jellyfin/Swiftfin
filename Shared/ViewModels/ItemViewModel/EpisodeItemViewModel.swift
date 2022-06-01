@@ -15,22 +15,22 @@ final class EpisodeItemViewModel: ItemViewModel {
 
 	@RouterObject
 	var itemRouter: ItemCoordinator.Router?
-    @Published
-    var playButtonText: String = ""
-    @Published
-    var mediaDetailItems: [[BaseItemDto.ItemDetail]] = []
+	@Published
+	var playButtonText: String = ""
+	@Published
+	var mediaDetailItems: [[BaseItemDto.ItemDetail]] = []
 
 	override init(item: BaseItemDto) {
 		super.init(item: item)
-        
-        $videoPlayerViewModels.sink(receiveValue: { newValue in
-            self.mediaDetailItems = self.createMediaDetailItems(viewModels: newValue)
-        })
-        .store(in: &cancellables)
+
+		$videoPlayerViewModels.sink(receiveValue: { newValue in
+			self.mediaDetailItems = self.createMediaDetailItems(viewModels: newValue)
+		})
+		.store(in: &cancellables)
 	}
 
 	override func getItemDisplayName() -> String {
-		return item.name ?? "--"
+		item.name ?? "--"
 	}
 
 	override func updateItem() {
@@ -57,29 +57,30 @@ final class EpisodeItemViewModel: ItemViewModel {
 			}
 			.store(in: &cancellables)
 	}
-    
-    private func createMediaDetailItems(viewModels: [VideoPlayerViewModel]) -> [[BaseItemDto.ItemDetail]] {
-        var fileMediaItems: [[BaseItemDto.ItemDetail]] = []
-        
-        for viewModel in viewModels {
-            
-            let audioStreams = viewModel.audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                .joined(separator: ", ")
-            
-            let subtitleStreams = viewModel.subtitleStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                .joined(separator: ", ")
-            
-            let currentMediaItems: [BaseItemDto.ItemDetail] = [
-                .init(title: "File", content: viewModel.filename ?? "--"),
-                .init(title: "Audio", content: audioStreams),
-                .init(title: "Subtitles", content: subtitleStreams),
-            ]
-            
-            fileMediaItems.append(currentMediaItems)
-        }
-        
-//        print(fileMediaItems)
-        
-        return fileMediaItems
-    }
+
+	private func createMediaDetailItems(viewModels: [VideoPlayerViewModel]) -> [[BaseItemDto.ItemDetail]] {
+		var fileMediaItems: [[BaseItemDto.ItemDetail]] = []
+
+		for viewModel in viewModels {
+
+			let audioStreams = viewModel.audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
+				.joined(separator: ", ")
+
+			let subtitleStreams = viewModel.subtitleStreams
+				.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
+				.joined(separator: ", ")
+
+			let currentMediaItems: [BaseItemDto.ItemDetail] = [
+				.init(title: "File", content: viewModel.filename ?? "--"),
+				.init(title: "Audio", content: audioStreams),
+				.init(title: "Subtitles", content: subtitleStreams),
+			]
+
+			fileMediaItems.append(currentMediaItems)
+		}
+
+		//        print(fileMediaItems)
+
+		return fileMediaItems
+	}
 }

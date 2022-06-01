@@ -106,17 +106,24 @@ public extension BaseItemDto {
 		return URL(string: urlString)!
 	}
 
-    func getLogoImage(maxWidth: Int) -> URL {
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
-                                                                imageType: .logo,
-                                                                maxWidth: Int(x),
-                                                                quality: 96).URLString
-        return URL(string: urlString)!
-    }
-    
+	func getLogoImage(maxWidth: Int) -> URL {
+		let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+
+		let urlString = ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
+		                                                        imageType: .logo,
+		                                                        maxWidth: Int(x),
+		                                                        quality: 96).URLString
+		return URL(string: urlString)!
+	}
+
 	func getEpisodeLocator() -> String? {
+		if let episodeNo = indexNumber {
+			return L10n.episode(String(episodeNo))
+		}
+		return nil
+	}
+
+	func getSeasonEpisodeLocator() -> String? {
 		if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
 			return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
 		}
@@ -311,13 +318,13 @@ public extension BaseItemDto {
 
 			if !audioStreams.isEmpty {
 				let audioList = audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-					.joined(separator: ", ")
+					.joined(separator: "\n")
 				mediaItems.append(ItemDetail(title: L10n.audio, content: audioList))
 			}
 
 			if !subtitleStreams.isEmpty {
 				let subtitleList = subtitleStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-					.joined(separator: ", ")
+					.joined(separator: "\n")
 				mediaItems.append(ItemDetail(title: L10n.subtitles, content: subtitleList))
 			}
 		}

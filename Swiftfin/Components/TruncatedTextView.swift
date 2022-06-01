@@ -43,69 +43,69 @@ struct TruncatedTextView: View {
 
 	var body: some View {
 		VStack(alignment: .center) {
-            Text(shrinkText)
-                .lineLimit(lineLimit)
-                .font(Font(font))
-                .background {
-                    // Render the limited text and measure its size
-                    Text(text)
-                        .lineLimit(lineLimit + 2)
-                        .font(Font(font))
-                        .background {
-                            GeometryReader { visibleTextGeometry in
-                                Color.clear
-                                    .onAppear {
-                                        let size = CGSize(width: visibleTextGeometry.size.width, height: .greatestFiniteMagnitude)
-                                        let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
-                                        var low = 0
-                                        var heigh = shrinkText.count
-                                        var mid = heigh
-                                        while (heigh - low) > 1 {
-                                            let attributedText = NSAttributedString(string: shrinkText, attributes: attributes)
-                                            let boundingRect = attributedText.boundingRect(with: size,
-                                                                                           options: NSStringDrawingOptions
-                                                                                            .usesLineFragmentOrigin,
-                                                                                           context: nil)
-                                            if boundingRect.size.height > visibleTextGeometry.size.height {
-                                                truncated = true
-                                                heigh = mid
-                                                mid = (heigh + low) / 2
+			Text(shrinkText)
+				.lineLimit(lineLimit)
+				.font(Font(font))
+				.background {
+					// Render the limited text and measure its size
+					Text(text)
+						.lineLimit(lineLimit + 2)
+						.font(Font(font))
+						.background {
+							GeometryReader { visibleTextGeometry in
+								Color.clear
+									.onAppear {
+										let size = CGSize(width: visibleTextGeometry.size.width, height: .greatestFiniteMagnitude)
+										let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
+										var low = 0
+										var heigh = shrinkText.count
+										var mid = heigh
+										while (heigh - low) > 1 {
+											let attributedText = NSAttributedString(string: shrinkText, attributes: attributes)
+											let boundingRect = attributedText.boundingRect(with: size,
+											                                               options: NSStringDrawingOptions
+											                                               	.usesLineFragmentOrigin,
+											                                               context: nil)
+											if boundingRect.size.height > visibleTextGeometry.size.height {
+												truncated = true
+												heigh = mid
+												mid = (heigh + low) / 2
 
-                                            } else {
-                                                if mid == text.count {
-                                                    break
-                                                } else {
-                                                    low = mid
-                                                    mid = (low + heigh) / 2
-                                                }
-                                            }
-                                            shrinkText = String(text.prefix(mid))
-                                        }
+											} else {
+												if mid == text.count {
+													break
+												} else {
+													low = mid
+													mid = (low + heigh) / 2
+												}
+											}
+											shrinkText = String(text.prefix(mid))
+										}
 
-                                        if truncated {
-                                            shrinkText = String(shrinkText.prefix(shrinkText.count - 2))
-                                        }
-                                    }
-                            }
-                        }
-                        .hidden()
-                }
-                .if(truncated, transform: { view in
-                    view.mask {
-                        LinearGradient(gradient: Gradient(stops: [
-                            .init(color: .white, location: 0),
-                            .init(color: .white, location: 0.2),
-                            .init(color: .white.opacity(0), location: 1)
-                        ]), startPoint: .top, endPoint: .bottom)
-                    }
-                })
+										if truncated {
+											shrinkText = String(shrinkText.prefix(shrinkText.count - 2))
+										}
+									}
+							}
+						}
+						.hidden()
+				}
+				.if(truncated, transform: { view in
+					view.mask {
+						LinearGradient(gradient: Gradient(stops: [
+							.init(color: .white, location: 0),
+							.init(color: .white, location: 0.2),
+							.init(color: .white.opacity(0), location: 1),
+						]), startPoint: .top, endPoint: .bottom)
+					}
+				})
 
 			if truncated {
 				Button {
 					seeMoreAction()
 				} label: {
 					Text(moreLessText)
-                        .foregroundColor(.jellyfinPurple)
+						.foregroundColor(.jellyfinPurple)
 				}
 			}
 		}

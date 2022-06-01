@@ -22,22 +22,15 @@ struct EpisodeRowCard: View {
 		} label: {
 			HStack(alignment: .top) {
 				VStack(alignment: .leading) {
-
 					ImageView(episode.getBackdropImage(maxWidth: 200),
 					          blurHash: episode.getBackdropImageBlurHash())
-						.mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
 						.frame(width: 200, height: 112)
-						.overlay {
-							if episode.id == viewModel.item.id {
-								RoundedRectangle(cornerRadius: 6)
-									.stroke(Color.jellyfinPurple, lineWidth: 4)
-							}
-						}
+						.cornerRadius(10)
 						.padding(.top)
 						.accessibilityIgnoresInvertColors()
 
 					VStack(alignment: .leading) {
-						Text(episode.getEpisodeLocator() ?? "S-:E-")
+						Text(episode.getEpisodeLocator() ?? L10n.unknown)
 							.font(.footnote)
 							.foregroundColor(.secondary)
 						Text(episode.name ?? L10n.noTitle)
@@ -57,13 +50,13 @@ struct EpisodeRowCard: View {
 								.foregroundColor(.secondary)
 								.fontWeight(.light)
 								.lineLimit(3)
+								.fixedSize(horizontal: false, vertical: true)
 						}
 					}
 
 					Spacer()
 				}
 				.frame(width: 200)
-				.shadow(radius: 4, y: 2)
 			}
 		}
 		.buttonStyle(PlainButtonStyle())

@@ -6,39 +6,69 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct SeriesItemView: View {
+struct SeasonItemView: View {
 
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
 	@EnvironmentObject
-	private var viewModel: SeriesItemViewModel
+	private var viewModel: SeasonItemViewModel
 
-	// MARK: portraitHeaderView
+	// MARK: portraitShelfItem
 
-	var portraitHeaderView: some View {
-		ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-		          blurHash: viewModel.item.getBackdropImageBlurHash())
-			.accessibilityIgnoresInvertColors()
+	@ViewBuilder
+	private var portraitShelfView: some View {
+		HStack(alignment: .bottom) {
+			ImageView(viewModel.item.getPrimaryImage(maxWidth: 150),
+			          blurHash: viewModel.item.getPrimaryImageBlurHash())
+				.portraitPoster(width: 150)
+
+			VStack(alignment: .leading) {
+				Text(viewModel.item.seriesName ?? "--")
+					.font(.headline)
+					.fontWeight(.semibold)
+					.padding(.horizontal)
+					.foregroundColor(.secondary)
+
+				Text(viewModel.getItemDisplayName())
+					.font(.title2)
+					.fontWeight(.bold)
+					.multilineTextAlignment(.center)
+					.fixedSize(horizontal: false, vertical: true)
+					.padding(.horizontal)
+			}
+
+			Spacer()
+		}
+		.padding(.horizontal)
 	}
 
-	// MARK: portraitStaticOverlayView
+	@ViewBuilder
+	private var innerBody: some View {
+		VStack(spacing: 10) {
 
-	var portraitStaticOverlayView: some View {
-		PortraitCinematicHeaderView(viewModel: viewModel)
-	}
+			portraitShelfView
 
-	// MARK: innerBody
+			// MARK: Overview
 
-	var innerBody: some View {
-		VStack(alignment: .leading) {
+			if let itemOverview = viewModel.item.overview {
+				HStack {
+					TruncatedTextView(itemOverview,
+					                  lineLimit: 5,
+					                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+						itemRouter.route(to: \.itemOverview, viewModel.item)
+					}
+					.fixedSize(horizontal: false, vertical: true)
+					.padding(.top)
+					.padding(.horizontal)
 
-			// MARK: Seasons
+					Spacer(minLength: 0)
+				}
+			}
 
-			EpisodesRowView(viewModel: viewModel)
+			EpisodesRowView(viewModel: viewModel, singleSeason: true)
 
 			// MARK: Genres
 
@@ -51,8 +81,6 @@ struct SeriesItemView: View {
 				               .padding(.bottom)
 			}
 
-			// MARK: Studios
-
 			if let studios = viewModel.item.studios {
 				PillHStackView(title: L10n.studios,
 				               items: studios) { studio in
@@ -60,8 +88,6 @@ struct SeriesItemView: View {
 				}
 				.padding(.bottom)
 			}
-
-			// MARK: Episodes
 
 			if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
 				PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
@@ -77,40 +103,19 @@ struct SeriesItemView: View {
 				                        })
 			}
 
-			// MARK: Recommended
-
-			if !viewModel.similarItems.isEmpty {
-				PortraitImageHStackView(items: viewModel.similarItems,
-				                        topBarView: {
-				                        	L10n.recommended.text
-				                        		.fontWeight(.semibold)
-				                        		.padding(.bottom)
-				                        		.padding(.horizontal)
-				                        		.accessibility(addTraits: [.isHeader])
-				                        },
-				                        selectedAction: { item in
-				                        	itemRouter.route(to: \.item, item)
-				                        })
-			}
-
-			ItemAboutView()
-				.environmentObject(viewModel as ItemViewModel)
-				.padding(.bottom)
-
 			// MARK: Details
 
-			if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-				ListDetailsView(title: L10n.information, items: informationItems)
-					.padding(.horizontal)
+			HStack {
+				ListDetailsView(title: L10n.information, items: viewModel.item.createInformationItems())
+
+				Spacer(minLength: 0)
 			}
+			.padding(.horizontal)
 		}
 	}
 
 	var body: some View {
-		ParallaxHeaderScrollView(header: portraitHeaderView,
-		                         staticOverlayView: portraitStaticOverlayView,
-		                         overlayAlignment: .bottomLeading,
-		                         headerHeight: UIScreen.main.bounds.height * 0.6) {
+		NavBarOffsetScrollView(headerHeight: 10) {
 			innerBody
 		}
 		.toolbar {
@@ -124,8 +129,7 @@ struct SeriesItemView: View {
 							.foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
 					} else {
 						Image(systemName: "checkmark.circle.fill")
-							.foregroundStyle(.white, Color(UIColor.lightGray),
-							                 Color(UIColor.lightGray))
+							.foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
 					}
 				}
 
@@ -138,8 +142,7 @@ struct SeriesItemView: View {
 							.foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
 					} else {
 						Image(systemName: "heart.circle.fill")
-							.foregroundStyle(.white, Color(UIColor.lightGray),
-							                 Color(UIColor.lightGray))
+							.foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
 					}
 				}
 			}

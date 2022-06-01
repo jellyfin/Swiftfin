@@ -16,10 +16,6 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 	@RouterObject
 	var itemRouter: ItemCoordinator.Router?
 	@Published
-	var episodes: [BaseItemDto] = []
-	@Published
-	var seriesItem: BaseItemDto?
-	@Published
 	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
 	@Published
 	var selectedSeason: BaseItemDto?
@@ -27,7 +23,6 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 	override init(item: BaseItemDto) {
 		super.init(item: item)
 
-		getSeriesItem()
 		selectedSeason = item
 		getSeasons()
 		requestEpisodes()
@@ -46,7 +41,8 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 	private func requestEpisodes() {
 		LogManager.log
 			.debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
-		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "", userId: SessionManager.main.currentLogin.user.id,
+		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "",
+		                       userId: SessionManager.main.currentLogin.user.id,
 		                       fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
 		                       seasonId: item.id ?? "")
 			.trackActivity(loading)
@@ -54,8 +50,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 				self?.handleAPIRequestError(completion: completion)
 			}, receiveValue: { [weak self] response in
 				guard let self = self else { return }
-				self.episodes = response.items ?? []
-				LogManager.log.debug("Retrieved \(String(self.episodes.count)) episodes")
+				self.seasonsEpisodes[self.item] = response.items ?? []
 
 				self.setNextUpInSeason()
 			})
@@ -81,42 +76,29 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 					LogManager.log.debug("Nextup in season \(self.item.id!) (\(self.item.name!)): \(nextUpItem.id!)")
 				}
 
-				if self.playButtonItem == nil && !self.episodes.isEmpty {
-					// Fallback to the old mechanism:
-					// Sets the play button item to the "Next up" in the season based upon
-					// the watched status of episodes in the season.
-					// Default to the first episode of the season if all have been watched.
-					var firstUnwatchedSearch: BaseItemDto?
-
-					for episode in self.episodes {
-						guard let played = episode.userData?.played else { continue }
-						if !played {
-							firstUnwatchedSearch = episode
-							break
-						}
-					}
-
-					if let firstUnwatched = firstUnwatchedSearch {
-						self.playButtonItem = firstUnwatched
-					} else {
-						guard let firstEpisode = self.episodes.first else { return }
-						self.playButtonItem = firstEpisode
-					}
-				}
+//				if self.playButtonItem == nil && !self.episodes.isEmpty {
+//					// Fallback to the old mechanism:
+//					// Sets the play button item to the "Next up" in the season based upon
+//					// the watched status of episodes in the season.
+//					// Default to the first episode of the season if all have been watched.
+//					var firstUnwatchedSearch: BaseItemDto?
+//
+//					for episode in self.episodes {
+//						guard let played = episode.userData?.played else { continue }
+//						if !played {
+//							firstUnwatchedSearch = episode
+//							break
+//						}
+//					}
+//
+//					if let firstUnwatched = firstUnwatchedSearch {
+//						self.playButtonItem = firstUnwatched
+//					} else {
+//						guard let firstEpisode = self.episodes.first else { return }
+//						self.playButtonItem = firstEpisode
+//					}
+//				}
 			})
-			.store(in: &cancellables)
-	}
-
-	private func getSeriesItem() {
-		guard let seriesID = item.seriesId else { return }
-		UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id,
-		                       itemId: seriesID)
-			.trackActivity(loading)
-			.sink { [weak self] completion in
-				self?.handleAPIRequestError(completion: completion)
-			} receiveValue: { [weak self] seriesItem in
-				self?.seriesItem = seriesItem
-			}
 			.store(in: &cancellables)
 	}
 }

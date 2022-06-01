@@ -21,15 +21,15 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 	override init(item: BaseItemDto) {
 		super.init(item: item)
 
-        // The server won't have both a next up item
-        // and a resume item at the same time, so they
-        // control the buttonfirst . Also fetch first available
-        // item, which may be overwritten by next up or resume.
+		getSeasons()
+
+		// The server won't have both a next up item
+		// and a resume item at the same time, so they
+		// control the button first. Also fetch first available
+		// item, which may be overwritten by next up or resume.
 		getNextUp()
-        getResumeItem()
-        getFirstAvailableItem()
-        
-        getSeasons()
+		getResumeItem()
+		getFirstAvailableItem()
 	}
 
 	override func playButtonText() -> String {
@@ -42,7 +42,9 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 			return L10n.missing
 		}
 
-		guard let playButtonItem = playButtonItem, let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
+		guard let playButtonItem = playButtonItem,
+		      let episodeLocator = playButtonItem.getSeasonEpisodeLocator() else { return L10n.play }
+
 		return episodeLocator
 	}
 
@@ -57,64 +59,74 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 			}, receiveValue: { [weak self] response in
 				if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
 					self?.playButtonItem = nextUpItem
-                    
-//                    self?.select(season: <#T##BaseItemDto#>)
+
+					if let seasonID = nextUpItem.seasonId {
+						self?.select(seasonID: seasonID)
+					}
 				}
 			})
 			.store(in: &cancellables)
 	}
-    
-    private func getResumeItem() {
-        ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id,
-                                limit: 1,
-                                parentId: item.id)
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            if let firstItem = response.items?.first {
-                self?.playButtonItem = firstItem
-            }
-        }
-        .store(in: &cancellables)
-    }
-    
-    private func getFirstAvailableItem() {
-        ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id,
-                                  limit: 2,
-                                  recursive: true,
-                                  sortOrder: [.ascending],
-                                  parentId: item.id,
-                                  includeItemTypes: ["Episode"])
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            if let firstItem = response.items?.first {
-                if self?.playButtonItem == nil {
-                    // If other calls finish after this, it will be overwritten
-                    self?.playButtonItem = firstItem
-                }
-            }
-        }
-        .store(in: &cancellables)
-    }
-    
-    func getRunYears() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
 
-        var startYear: String?
-        var endYear: String?
+	private func getResumeItem() {
+		ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id,
+		                        limit: 1,
+		                        parentId: item.id)
+			.trackActivity(loading)
+			.sink { [weak self] completion in
+				self?.handleAPIRequestError(completion: completion)
+			} receiveValue: { [weak self] response in
+				if let firstItem = response.items?.first {
+					self?.playButtonItem = firstItem
 
-        if item.premiereDate != nil {
-            startYear = dateFormatter.string(from: item.premiereDate!)
-        }
+					if let seasonID = firstItem.seasonId {
+						self?.select(seasonID: seasonID)
+					}
+				}
+			}
+			.store(in: &cancellables)
+	}
 
-        if item.endDate != nil {
-            endYear = dateFormatter.string(from: item.endDate!)
-        }
+	private func getFirstAvailableItem() {
+		ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id,
+		                          limit: 2,
+		                          recursive: true,
+		                          sortOrder: [.ascending],
+		                          parentId: item.id,
+		                          includeItemTypes: ["Episode"])
+			.trackActivity(loading)
+			.sink { [weak self] completion in
+				self?.handleAPIRequestError(completion: completion)
+			} receiveValue: { [weak self] response in
+				if let firstItem = response.items?.first {
+					if self?.playButtonItem == nil {
+						// If other calls finish after this, it will be overwritten
+						self?.playButtonItem = firstItem
 
-        return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
-    }
+						if let seasonID = firstItem.seasonId {
+							self?.select(seasonID: seasonID)
+						}
+					}
+				}
+			}
+			.store(in: &cancellables)
+	}
+
+	func getRunYears() -> String {
+		let dateFormatter = DateFormatter()
+		dateFormatter.dateFormat = "yyyy"
+
+		var startYear: String?
+		var endYear: String?
+
+		if item.premiereDate != nil {
+			startYear = dateFormatter.string(from: item.premiereDate!)
+		}
+
+		if item.endDate != nil {
+			endYear = dateFormatter.string(from: item.endDate!)
+		}
+
+		return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
+	}
 }

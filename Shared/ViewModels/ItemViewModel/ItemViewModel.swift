@@ -34,7 +34,7 @@ class ItemViewModel: ViewModel {
 	var informationItems: [BaseItemDto.ItemDetail]
 	@Published
 	var selectedVideoPlayerViewModel: VideoPlayerViewModel?
-    @Published
+	@Published
 	var videoPlayerViewModels: [VideoPlayerViewModel] = []
 
 	init(item: BaseItemDto) {

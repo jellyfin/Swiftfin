@@ -30,18 +30,18 @@ struct ContinueWatchingView: View {
 								Group {
 									if item.itemType == .episode {
 										ImageView([
-                                            ImageViewSource(url: item.getSeriesThumbImage(maxWidth: 320),
-                                                  blurHash: item.getBackdropImageBlurHash()),
-                                            ImageViewSource(url: item.getSeriesBackdropImage(maxWidth: 320),
-                                                  blurHash: item.getBackdropImageBlurHash()),
+											ImageViewSource(url: item.getSeriesThumbImage(maxWidth: 320),
+											                blurHash: item.getBackdropImageBlurHash()),
+											ImageViewSource(url: item.getSeriesBackdropImage(maxWidth: 320),
+											                blurHash: item.getBackdropImageBlurHash()),
 										])
 										.frame(width: 320, height: 180)
 									} else {
 										ImageView([
-                                            ImageViewSource(url: item.getThumbImage(maxWidth: 320),
-                                                  blurHash: item.getBackdropImageBlurHash()),
-                                            ImageViewSource(url: item.getBackdropImage(maxWidth: 320),
-                                                  blurHash: item.getBackdropImageBlurHash()),
+											ImageViewSource(url: item.getThumbImage(maxWidth: 320),
+											                blurHash: item.getBackdropImageBlurHash()),
+											ImageViewSource(url: item.getBackdropImage(maxWidth: 320),
+											                blurHash: item.getBackdropImageBlurHash()),
 										])
 										.frame(width: 320, height: 180)
 									}

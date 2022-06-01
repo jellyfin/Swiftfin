@@ -6,20 +6,10 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
-import UIKit
+import Defaults
+import Foundation
 
-struct BlurSymbolButton: View {
-
-	let style: UIBlurEffect.Style
-	let systemName: String
-
-	var body: some View {
-		ZStack {
-			BlurView(style: style)
-
-			Image(systemName: systemName)
-				.padding()
-		}
-	}
+enum ItemViewType: String, CaseIterable, Defaults.Serializable {
+    case compact
+    case cinematic
 }

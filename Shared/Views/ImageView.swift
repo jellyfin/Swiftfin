@@ -35,31 +35,34 @@ struct ImageView<FailureView: View>: View {
 	private var currentURL: URL? { sources.first?.url }
 	private var currentBlurHash: String? { sources.first?.blurHash }
 	private var failureView: () -> FailureView
-    private var resizingMode: ImageResizingMode
+	private var resizingMode: ImageResizingMode
 
-    init(_ source: URL?,
-         blurHash: String? = nil,
-         resizingMode: ImageResizingMode = .aspectFill,
-         @ViewBuilder failureView: @escaping () -> FailureView) {
+	init(_ source: URL?,
+	     blurHash: String? = nil,
+	     resizingMode: ImageResizingMode = .aspectFill,
+	     @ViewBuilder failureView: @escaping () -> FailureView)
+	{
 		let imageViewSource = ImageViewSource(url: source, blurHash: blurHash)
 		_sources = State(initialValue: [imageViewSource])
-        self.resizingMode = resizingMode
+		self.resizingMode = resizingMode
 		self.failureView = failureView
 	}
 
 	init(_ source: ImageViewSource,
-         resizingMode: ImageResizingMode = .aspectFill,
-         @ViewBuilder failureView: @escaping () -> FailureView) {
+	     resizingMode: ImageResizingMode = .aspectFill,
+	     @ViewBuilder failureView: @escaping () -> FailureView)
+	{
 		_sources = State(initialValue: [source])
-        self.resizingMode = resizingMode
+		self.resizingMode = resizingMode
 		self.failureView = failureView
 	}
 
 	init(_ sources: [ImageViewSource],
-         resizingMode: ImageResizingMode = .aspectFill,
-         @ViewBuilder failureView: @escaping () -> FailureView) {
+	     resizingMode: ImageResizingMode = .aspectFill,
+	     @ViewBuilder failureView: @escaping () -> FailureView)
+	{
 		_sources = State(initialValue: sources)
-        self.resizingMode = resizingMode
+		self.resizingMode = resizingMode
 		self.failureView = failureView
 	}
 
@@ -69,16 +72,16 @@ struct ImageView<FailureView: View>: View {
 			BlurHashView(blurHash: currentBlurHash)
 				.id(currentBlurHash)
 		} else {
-            Color.clear
+			Color.clear
 		}
 	}
 
 	var body: some View {
 		if let currentURL = currentURL {
-            LazyImage(source: currentURL) { state in
+			LazyImage(source: currentURL) { state in
 				if let image = state.image {
 					image
-                        .resizingMode(resizingMode)
+						.resizingMode(resizingMode)
 				} else if state.error != nil {
 					placeholderView.onAppear { sources.removeFirst() }
 				} else {

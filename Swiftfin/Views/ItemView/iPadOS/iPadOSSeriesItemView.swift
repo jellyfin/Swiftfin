@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct SeriesItemView: View {
+struct iPadOSSeriesItemView: View {
 
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
@@ -19,16 +19,17 @@ struct SeriesItemView: View {
 
 	// MARK: portraitHeaderView
 
+	@ViewBuilder
 	var portraitHeaderView: some View {
 		ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
 		          blurHash: viewModel.item.getBackdropImageBlurHash())
-			.accessibilityIgnoresInvertColors()
 	}
 
 	// MARK: portraitStaticOverlayView
 
+	@ViewBuilder
 	var portraitStaticOverlayView: some View {
-		PortraitCinematicHeaderView(viewModel: viewModel)
+		iPadOSLandscapeOverlayView(viewModel: viewModel)
 	}
 
 	// MARK: innerBody
@@ -61,7 +62,7 @@ struct SeriesItemView: View {
 				.padding(.bottom)
 			}
 
-			// MARK: Episodes
+			// MARK: Cast
 
 			if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
 				PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
@@ -93,6 +94,8 @@ struct SeriesItemView: View {
 				                        })
 			}
 
+			// MARK: About
+
 			ItemAboutView()
 				.environmentObject(viewModel as ItemViewModel)
 				.padding(.bottom)
@@ -110,39 +113,8 @@ struct SeriesItemView: View {
 		ParallaxHeaderScrollView(header: portraitHeaderView,
 		                         staticOverlayView: portraitStaticOverlayView,
 		                         overlayAlignment: .bottomLeading,
-		                         headerHeight: UIScreen.main.bounds.height * 0.6) {
+		                         headerHeight: UIScreen.main.bounds.height * 0.8) {
 			innerBody
-		}
-		.toolbar {
-			ToolbarItemGroup(placement: .navigationBarTrailing) {
-				Button {
-					viewModel.toggleWatchState()
-				} label: {
-					if viewModel.isWatched {
-						Image(systemName: "checkmark.circle.fill")
-							.symbolRenderingMode(.palette)
-							.foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-					} else {
-						Image(systemName: "checkmark.circle.fill")
-							.foregroundStyle(.white, Color(UIColor.lightGray),
-							                 Color(UIColor.lightGray))
-					}
-				}
-
-				Button {
-					viewModel.toggleFavoriteState()
-				} label: {
-					if viewModel.isFavorited {
-						Image(systemName: "heart.circle.fill")
-							.symbolRenderingMode(.palette)
-							.foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-					} else {
-						Image(systemName: "heart.circle.fill")
-							.foregroundStyle(.white, Color(UIColor.lightGray),
-							                 Color(UIColor.lightGray))
-					}
-				}
-			}
 		}
 	}
 }

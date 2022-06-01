@@ -10,31 +10,26 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct MovieItemView: View {
-
+struct MovieItemBodyView: View {
+    
     @EnvironmentObject
     var itemRouter: ItemCoordinator.Router
     @EnvironmentObject
     private var viewModel: MovieItemViewModel
-
-    // MARK: portraitHeaderView
-
-    var portraitHeaderView: some View {
-        ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-                  blurHash: viewModel.item.getBackdropImageBlurHash())
-            .accessibilityIgnoresInvertColors()
-    }
-
-    // MARK: portraitStaticOverlayView
-
-    var portraitStaticOverlayView: some View {
-        PortraitHeaderOverlayView(viewModel: viewModel)
-    }
-
-    // MARK: innerBody
-
-    var innerBody: some View {
+    @Default(.itemViewType)
+    private var itemViewType
+    
+    var body: some View {
         VStack(alignment: .leading) {
+            
+            if case ItemViewType.compact = itemViewType, let itemOverView = viewModel.item.overview {
+                TruncatedTextView(itemOverView,
+                                  lineLimit: 4,
+                                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                .padding()
+            }
 
             // MARK: Genres
 
@@ -58,7 +53,7 @@ struct MovieItemView: View {
             }
 
             // MARK: Episodes
-            
+
             if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
                 PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                                         topBarView: {
@@ -72,6 +67,7 @@ struct MovieItemView: View {
                                         selectedAction: { person in
                                             itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                                         })
+                                        .fixedSize(horizontal: false, vertical: true)
             }
 
             // MARK: Recommended
@@ -89,40 +85,24 @@ struct MovieItemView: View {
                                         selectedAction: { item in
                                             itemRouter.route(to: \.item, item)
                                         })
+                                        .fixedSize(horizontal: false, vertical: true)
             }
-            
+
             ItemAboutView()
                 .environmentObject(viewModel as ItemViewModel)
+                .padding(.bottom)
 
             // MARK: Details
-            
-            ListDetailsView(title: "Information", items: [
-//                .init(title: "Runtime", content: viewModel.premi),
-                .init(title: "Rated", content: viewModel.item.officialRating ?? "--")
-            ])
-            .padding()
-        }
-    }
 
-    var body: some View {
-                ParallaxHeaderScrollView(header: portraitHeaderView,
-                                         staticOverlayView: portraitStaticOverlayView,
-                                         overlayAlignment: .bottomLeading,
-                                         headerHeight: UIScreen.main.bounds.height * 0.6) {
-                    innerBody
-                }
-                                         .toolbar {
-                                             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                                 Button {
-                                                     viewModel.toggleWatchState()
-                                                 } label: {
-                                                     if viewModel.isWatched {
-                                                         
-                                                     } else {
-                                                         
-                                                     }
-                                                 }
-                                             }
-                                         }
+            if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
+                ListDetailsView(title: L10n.information, items: informationItems)
+                    .padding(.horizontal)
+            }
+
+            if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
+                ListDetailsView(title: L10n.media, items: mediaItems)
+                    .padding(.horizontal)
+            }
+        }
     }
 }

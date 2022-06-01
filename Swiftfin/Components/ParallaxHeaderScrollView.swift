@@ -29,21 +29,21 @@ struct ParallaxHeaderScrollView<Header: View, StaticOverlayView: View, Content: 
 		self.content = content
 	}
 
-	var body: some View {        
-        NavBarOffsetScrollView(headerHeight: headerHeight) {
-            GeometryReader { proxy in
-                let yOffset = proxy.frame(in: .global).minY > 0 ? -proxy.frame(in: .global).minY : 0
-                header
-                    .frame(width: proxy.size.width, height: proxy.size.height - yOffset)
-                    .overlay(staticOverlayView, alignment: overlayAlignment)
-                    .offset(y: yOffset)
-            }
-            .frame(height: headerHeight)
-            
-            HStack {
-                content()
-                Spacer(minLength: 0)
-            }
-        }
+	var body: some View {
+		NavBarOffsetScrollView(headerHeight: headerHeight) {
+			GeometryReader { proxy in
+				let yOffset = proxy.frame(in: .global).minY > 0 ? -proxy.frame(in: .global).minY : 0
+				header
+					.frame(width: proxy.size.width, height: proxy.size.height - yOffset)
+					.overlay(staticOverlayView, alignment: overlayAlignment)
+					.offset(y: yOffset)
+			}
+			.frame(height: headerHeight)
+
+			HStack {
+				content()
+				Spacer(minLength: 0)
+			}
+		}
 	}
 }

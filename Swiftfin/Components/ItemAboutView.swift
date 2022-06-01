@@ -9,62 +9,61 @@
 import SwiftUI
 
 struct ItemAboutView: View {
-    
-    @EnvironmentObject
-    var itemRouter: ItemCoordinator.Router
-    @EnvironmentObject
-    private var viewModel: ItemViewModel
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            L10n.about.text
-                .font(.title3)
-                .fontWeight(.bold)
-                .accessibility(addTraits: [.isHeader])
-                .padding(.horizontal)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 110),
-                              blurHash: viewModel.item.getPrimaryImageBlurHash())
-                        .portraitPoster(width: 110)
-                        .accessibilityIgnoresInvertColors()
-                    
-                    Button {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
-                    } label: {
-                        ZStack {
-                            
-                            Color.secondarySystemFill
-                                .cornerRadius(10)
-                            
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text(viewModel.getItemDisplayName())
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                
-                                Spacer()
-                                
-                                if let overview = viewModel.item.overview {
-                                    Text(overview)
-                                        .lineLimit(4)
-                                        .font(.footnote)
-                                        .foregroundColor(.secondary)
-                                } else {
-                                    L10n.noOverviewAvailable.text
-                                        .font(.footnote)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .padding()
-                            
-                        }
-                        .frame(width: 330)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-                .padding(.horizontal)
-            }
-        }
-    }
+
+	@EnvironmentObject
+	var itemRouter: ItemCoordinator.Router
+	@EnvironmentObject
+	private var viewModel: ItemViewModel
+
+	var body: some View {
+		VStack(alignment: .leading) {
+			L10n.about.text
+				.font(.title3)
+				.fontWeight(.bold)
+				.accessibility(addTraits: [.isHeader])
+				.padding(.horizontal)
+
+			ScrollView(.horizontal, showsIndicators: false) {
+				HStack {
+					ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 110),
+					          blurHash: viewModel.item.getPrimaryImageBlurHash())
+						.portraitPoster(width: 110)
+						.accessibilityIgnoresInvertColors()
+
+					Button {
+						itemRouter.route(to: \.itemOverview, viewModel.item)
+					} label: {
+						ZStack {
+
+							Color.secondarySystemFill
+								.cornerRadius(10)
+
+							VStack(alignment: .leading, spacing: 10) {
+								Text(viewModel.getItemDisplayName())
+									.font(.title3)
+									.fontWeight(.semibold)
+
+								Spacer()
+
+								if let overview = viewModel.item.overview {
+									Text(overview)
+										.lineLimit(4)
+										.font(.footnote)
+										.foregroundColor(.secondary)
+								} else {
+									L10n.noOverviewAvailable.text
+										.font(.footnote)
+										.foregroundColor(.secondary)
+								}
+							}
+							.padding()
+						}
+						.frame(width: 330)
+					}
+					.buttonStyle(PlainButtonStyle())
+				}
+				.padding(.horizontal)
+			}
+		}
+	}
 }

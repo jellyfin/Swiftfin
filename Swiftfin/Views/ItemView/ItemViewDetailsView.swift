@@ -10,95 +10,24 @@ import JellyfinAPI
 import SwiftUI
 
 struct ListDetailsView: View {
-    
-    let title: String
-    let items: [BaseItemDto.ItemDetail]
-    
-    var body: some View {
-        VStack(alignment: .leading) {
 
-            VStack(alignment: .leading, spacing: 20) {
-                Text(title)
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .accessibility(addTraits: [.isHeader])
-
-                ForEach(items, id: \.self.title) { item in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(item.title)
-                            .font(.subheadline)
-                        Text(item.content)
-                            .font(.subheadline)
-                            .foregroundColor(Color.secondary)
-                    }
-                    .accessibilityElement(children: .combine)
-                }
-            }
-            .padding(.bottom, 20)
-        }
-    }
-}
-
-struct ItemViewDetailsView: View {
-
-	@ObservedObject
-	var viewModel: ItemViewModel
+	let title: String
+	let items: [BaseItemDto.ItemDetail]
 
 	var body: some View {
 		VStack(alignment: .leading) {
 
-			if !viewModel.informationItems.isEmpty {
-				VStack(alignment: .leading, spacing: 20) {
-					L10n.information.text
-						.font(.title3)
-						.fontWeight(.bold)
-						.accessibility(addTraits: [.isHeader])
-
-					ForEach(viewModel.informationItems, id: \.self.title) { informationItem in
-						VStack(alignment: .leading, spacing: 2) {
-							Text(informationItem.title)
-								.font(.subheadline)
-							Text(informationItem.content)
-								.font(.subheadline)
-								.foregroundColor(Color.secondary)
-						}
-						.accessibilityElement(children: .combine)
-					}
-				}
-				.padding(.bottom, 20)
-			}
-
 			VStack(alignment: .leading, spacing: 20) {
-				L10n.media.text
+				Text(title)
 					.font(.title3)
 					.fontWeight(.bold)
 					.accessibility(addTraits: [.isHeader])
 
-				VStack(alignment: .leading, spacing: 2) {
-					L10n.file.text
-						.font(.subheadline)
-					Text(viewModel.selectedVideoPlayerViewModel?.filename ?? "--")
-						.lineLimit(nil)
-						.fixedSize(horizontal: false, vertical: true)
-						.font(.subheadline)
-						.foregroundColor(Color.secondary)
-				}
-				.accessibilityElement(children: .combine)
-
-				VStack(alignment: .leading, spacing: 2) {
-					L10n.containers.text
-						.font(.subheadline)
-					Text(viewModel.selectedVideoPlayerViewModel?.container ?? "--")
-						.font(.subheadline)
-						.foregroundColor(Color.secondary)
-				}
-				.accessibilityElement(children: .combine)
-
-				ForEach(viewModel.selectedVideoPlayerViewModel?.mediaItems ?? [], id: \.self.title) { mediaItem in
+				ForEach(items, id: \.self.title) { item in
 					VStack(alignment: .leading, spacing: 2) {
-						Text(mediaItem.title)
+						Text(item.title)
 							.font(.subheadline)
-						Text(mediaItem.content)
+						Text(item.content)
 							.lineLimit(nil)
 							.fixedSize(horizontal: false, vertical: true)
 							.font(.subheadline)
@@ -107,6 +36,7 @@ struct ItemViewDetailsView: View {
 					.accessibilityElement(children: .combine)
 				}
 			}
+			.padding(.bottom, 20)
 		}
 	}
 }

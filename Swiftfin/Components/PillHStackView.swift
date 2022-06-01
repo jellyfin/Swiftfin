@@ -17,10 +17,10 @@ struct PillHStackView<ItemType: PillStackable>: View {
 	var body: some View {
 		VStack(alignment: .leading) {
 			Text(title)
-                .font(.title3)
+				.font(.title3)
 				.fontWeight(.semibold)
 				.padding(.top)
-                .padding(.leading)
+				.padding(.leading)
 				.accessibility(addTraits: [.isHeader])
 
 			ScrollView(.horizontal, showsIndicators: false) {
@@ -39,15 +39,13 @@ struct PillHStackView<ItemType: PillStackable>: View {
 									.fontWeight(.semibold)
 									.foregroundColor(.primary)
 									.fixedSize()
-                                    .padding(10)
+									.padding(10)
 							}
 							.fixedSize()
 						}
 					}
 				}
-                .padding(.horizontal)
-//				.padding(.leading, 16)
-//				.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+				.padding(.horizontal)
 			}
 		}
 	}

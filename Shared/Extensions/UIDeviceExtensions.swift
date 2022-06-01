@@ -20,12 +20,12 @@ extension UIDevice {
 	static var isPhone: Bool {
 		UIDevice.current.userInterfaceIdiom == .phone
 	}
-    
-    static var isPortrait: Bool {
-        UIDevice.current.orientation.isPortrait
-    }
-    
-    static var isLandscape: Bool {
-        isIPad || UIDevice.current.orientation.isLandscape
-    }
+
+	static var isPortrait: Bool {
+		UIDevice.current.orientation.isPortrait
+	}
+
+	static var isLandscape: Bool {
+		isIPad || UIDevice.current.orientation.isLandscape
+	}
 }

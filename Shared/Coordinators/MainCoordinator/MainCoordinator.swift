@@ -38,7 +38,7 @@ final class MainCoordinator: NavigationCoordinatable {
 		UIScrollView.appearance().keyboardDismissMode = .onDrag
 
 		// Back bar button item setup
-        let config = UIImage.SymbolConfiguration(paletteColors: [.white, .jellyfinPurple])
+		let config = UIImage.SymbolConfiguration(paletteColors: [.white, .jellyfinPurple])
 		let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill", withConfiguration: config)
 		let barAppearance = UINavigationBar.appearance()
 		barAppearance.backIndicatorImage = backButtonBackgroundImage

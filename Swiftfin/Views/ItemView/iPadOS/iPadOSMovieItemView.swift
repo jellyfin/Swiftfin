@@ -10,35 +10,32 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct SeriesItemView: View {
+struct iPadOSMovieItemView: View {
 
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
 	@EnvironmentObject
-	private var viewModel: SeriesItemViewModel
+	private var viewModel: MovieItemViewModel
 
 	// MARK: portraitHeaderView
 
+	@ViewBuilder
 	var portraitHeaderView: some View {
 		ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
 		          blurHash: viewModel.item.getBackdropImageBlurHash())
-			.accessibilityIgnoresInvertColors()
 	}
 
 	// MARK: portraitStaticOverlayView
 
+	@ViewBuilder
 	var portraitStaticOverlayView: some View {
-		PortraitCinematicHeaderView(viewModel: viewModel)
+		iPadOSLandscapeOverlayView(viewModel: viewModel)
 	}
 
 	// MARK: innerBody
 
 	var innerBody: some View {
 		VStack(alignment: .leading) {
-
-			// MARK: Seasons
-
-			EpisodesRowView(viewModel: viewModel)
 
 			// MARK: Genres
 
@@ -61,7 +58,7 @@ struct SeriesItemView: View {
 				.padding(.bottom)
 			}
 
-			// MARK: Episodes
+			// MARK: Cast
 
 			if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
 				PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
@@ -75,6 +72,7 @@ struct SeriesItemView: View {
 				                        selectedAction: { person in
 				                        	itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
 				                        })
+				                        .fixedSize(horizontal: false, vertical: true)
 			}
 
 			// MARK: Recommended
@@ -91,7 +89,10 @@ struct SeriesItemView: View {
 				                        selectedAction: { item in
 				                        	itemRouter.route(to: \.item, item)
 				                        })
+				                        .fixedSize(horizontal: false, vertical: true)
 			}
+
+			// MARK: About
 
 			ItemAboutView()
 				.environmentObject(viewModel as ItemViewModel)
@@ -99,10 +100,18 @@ struct SeriesItemView: View {
 
 			// MARK: Details
 
-			if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-				ListDetailsView(title: L10n.information, items: informationItems)
-					.padding(.horizontal)
+			HStack(alignment: .top, spacing: 0) {
+				if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
+					ListDetailsView(title: L10n.information, items: informationItems)
+						.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+				}
+
+				if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
+					ListDetailsView(title: L10n.media, items: mediaItems)
+						.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+				}
 			}
+			.padding()
 		}
 	}
 
@@ -110,39 +119,8 @@ struct SeriesItemView: View {
 		ParallaxHeaderScrollView(header: portraitHeaderView,
 		                         staticOverlayView: portraitStaticOverlayView,
 		                         overlayAlignment: .bottomLeading,
-		                         headerHeight: UIScreen.main.bounds.height * 0.6) {
+		                         headerHeight: UIScreen.main.bounds.height * 0.8) {
 			innerBody
-		}
-		.toolbar {
-			ToolbarItemGroup(placement: .navigationBarTrailing) {
-				Button {
-					viewModel.toggleWatchState()
-				} label: {
-					if viewModel.isWatched {
-						Image(systemName: "checkmark.circle.fill")
-							.symbolRenderingMode(.palette)
-							.foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-					} else {
-						Image(systemName: "checkmark.circle.fill")
-							.foregroundStyle(.white, Color(UIColor.lightGray),
-							                 Color(UIColor.lightGray))
-					}
-				}
-
-				Button {
-					viewModel.toggleFavoriteState()
-				} label: {
-					if viewModel.isFavorited {
-						Image(systemName: "heart.circle.fill")
-							.symbolRenderingMode(.palette)
-							.foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-					} else {
-						Image(systemName: "heart.circle.fill")
-							.foregroundStyle(.white, Color(UIColor.lightGray),
-							                 Color(UIColor.lightGray))
-					}
-				}
-			}
 		}
 	}
 }
