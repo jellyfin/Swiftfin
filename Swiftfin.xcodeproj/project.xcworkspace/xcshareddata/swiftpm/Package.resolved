@@ -174,10 +174,10 @@
     {
       "identity" : "swiftuicollection",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ABJC/SwiftUICollection",
+      "location" : "https://github.com/defagos/SwiftUICollection",
       "state" : {
         "branch" : "master",
-        "revision" : "e27149382ce8ec21995069c8aab7ca83d61a3120"
+        "revision" : "5b9f14eb3ec5d48cec8b3e4462dcc554d4bff2a8"
       }
     },
     {

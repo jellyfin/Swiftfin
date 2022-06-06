@@ -252,6 +252,7 @@
 		C400DB6A27FE894F007B65FE /* LiveTVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */; };
 		C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */; };
 		C400DB6D27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6C27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift */; };
+		C409CE9C284EA6EA00CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9B284EA6EA00CABC12 /* SwiftUICollection */; };
 		C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */; };
 		C40CD926271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */; };
 		C40CD929271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */; };
@@ -436,8 +437,6 @@
 		E1A2C15D279A7D9F005EC829 /* AppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C15B279A7D9F005EC829 /* AppIcon.swift */; };
 		E1A2C15E279A7D9F005EC829 /* AppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C15B279A7D9F005EC829 /* AppIcon.swift */; };
 		E1A2C160279A7DCA005EC829 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C15F279A7DCA005EC829 /* AboutView.swift */; };
-		E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = E1A99998271A3429008E78C0 /* SwiftUICollection */; };
-		E1A9999B271A343C008E78C0 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = E1A9999A271A343C008E78C0 /* SwiftUICollection */; };
 		E1AA331D2782541500F6439C /* PrimaryButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331C2782541500F6439C /* PrimaryButtonView.swift */; };
 		E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331E2782639D00F6439C /* OverlayType.swift */; };
 		E1AA33202782639D00F6439C /* OverlayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331E2782639D00F6439C /* OverlayType.swift */; };
@@ -912,6 +911,7 @@
 			files = (
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				E11D83AF278FA998006E9776 /* NukeUI in Frameworks */,
+				C409CE9C284EA6EA00CABC12 /* SwiftUICollection in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
 				E1218C9E271A2CD600EA0737 /* CombineExt in Frameworks */,
@@ -929,7 +929,6 @@
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
-				E1A9999B271A343C008E78C0 /* SwiftUICollection in Frameworks */,
 				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
@@ -963,7 +962,6 @@
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
 				62666E3C27E503F200EC0ECD /* GoogleCastSDK.xcframework in Frameworks */,
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
-				E1A99999271A3429008E78C0 /* SwiftUICollection in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
@@ -1917,12 +1915,12 @@
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
 				E1218C9D271A2CD600EA0737 /* CombineExt */,
-				E1A9999A271A343C008E78C0 /* SwiftUICollection */,
 				E178857C278037FD0094FBCF /* JellyfinAPI */,
 				E1AE8E7D2789136D00FBDDAA /* Nuke */,
 				E11D83AE278FA998006E9776 /* NukeUI */,
 				E1002B6A2793E36600E47059 /* Algorithms */,
 				E1347DB5279E3CA500BC6161 /* Puppy */,
+				C409CE9B284EA6EA00CABC12 /* SwiftUICollection */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -1954,7 +1952,6 @@
 				E13DD3D227168E65009D4DAF /* Defaults */,
 				E1B6DCE7271A23780015B715 /* CombineExt */,
 				E1B6DCE9271A23880015B715 /* SwiftyJSON */,
-				E1A99998271A3429008E78C0 /* SwiftUICollection */,
 				E10EAA44277BB646000269ED /* JellyfinAPI */,
 				E10EAA4C277BB716000269ED /* Sliders */,
 				E1AE8E7B2789135A00FBDDAA /* Nuke */,
@@ -2049,7 +2046,6 @@
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
 				E1267D42271A212C003C492E /* XCRemoteSwiftPackageReference "CombineExt" */,
 				E1C16B89271A2180009A5D25 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
-				C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */,
 				E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */,
 				E1AE8E7A2789135A00FBDDAA /* XCRemoteSwiftPackageReference "Nuke" */,
@@ -2058,6 +2054,7 @@
 				62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */,
 				E1101175281B1E8A006A3584 /* XCRemoteSwiftPackageReference "Puppy" */,
 				C4D0CE492848570700345D11 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
+				C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3113,9 +3110,9 @@
 				minimumVersion = 2.0.2;
 			};
 		};
-		C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */ = {
+		C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ABJC/SwiftUICollection";
+			repositoryURL = "https://github.com/defagos/SwiftUICollection";
 			requirement = {
 				branch = master;
 				kind = branch;
@@ -3265,6 +3262,11 @@
 			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
 			productName = Stinsen;
 		};
+		C409CE9B284EA6EA00CABC12 /* SwiftUICollection */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
+			productName = SwiftUICollection;
+		};
 		C4D0CE4A2848570700345D11 /* ASCollectionView */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C4D0CE492848570700345D11 /* XCRemoteSwiftPackageReference "ASCollectionView" */;
@@ -3364,16 +3366,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
 			productName = JellyfinAPI;
-		};
-		E1A99998271A3429008E78C0 /* SwiftUICollection */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
-			productName = SwiftUICollection;
-		};
-		E1A9999A271A343C008E78C0 /* SwiftUICollection */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C4BFD4E327167B63007739E3 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
-			productName = SwiftUICollection;
 		};
 		E1AE8E7B2789135A00FBDDAA /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
