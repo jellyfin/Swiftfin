@@ -8,9 +8,9 @@
 
 import Defaults
 import Foundation
+import JellyfinAPI
 import Stinsen
 import SwiftUI
-import JellyfinAPI
 
 struct LibraryListView: View {
 	@EnvironmentObject
@@ -21,9 +21,9 @@ struct LibraryListView: View {
 	@Default(.Experimental.liveTVAlphaEnabled)
 	var liveTVAlphaEnabled
 
-    var supportedCollectionTypes: [BaseItemDto.ItemType] {
+	var supportedCollectionTypes: [BaseItemDto.ItemType] {
 		if liveTVAlphaEnabled {
-            return [.movie, .season, .series, .liveTV, .boxset, .unknown]
+			return [.movie, .season, .series, .liveTV, .boxset, .unknown]
 		} else {
 			return [.movie, .season, .series, .boxset, .unknown]
 		}
@@ -57,12 +57,12 @@ struct LibraryListView: View {
 				if !viewModel.isLoading {
 					ForEach(viewModel.libraries.filter { [self] library in
 						let collectionType = library.collectionType ?? "other"
-                        let itemType = BaseItemDto.ItemType(rawValue: collectionType) ?? .unknown
-                        return self.supportedCollectionTypes.contains(itemType)
+						let itemType = BaseItemDto.ItemType(rawValue: collectionType) ?? .unknown
+						return self.supportedCollectionTypes.contains(itemType)
 					}, id: \.id) { library in
 						Button {
-                            let itemType = BaseItemDto.ItemType(rawValue: library.collectionType ?? "other") ?? .unknown
-                            if itemType == .liveTV {
+							let itemType = BaseItemDto.ItemType(rawValue: library.collectionType ?? "other") ?? .unknown
+							if itemType == .liveTV {
 								libraryListRouter.route(to: \.liveTV)
 							} else {
 								libraryListRouter.route(to: \.library,

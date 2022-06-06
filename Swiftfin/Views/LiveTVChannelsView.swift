@@ -21,34 +21,31 @@ struct LiveTVChannelsView: View {
 	var viewModel = LiveTVChannelsViewModel()
 	@State
 	private var isPortrait = false
-    private var columns: Int {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return 2
-        } else {
-            if isPortrait {
-                return 1
-            } else {
-                return 2
-            }
-        }
-    }
-    
+	private var columns: Int {
+		if UIDevice.current.userInterfaceIdiom == .pad {
+			return 2
+		} else {
+			if isPortrait {
+				return 1
+			} else {
+				return 2
+			}
+		}
+	}
+
 	var body: some View {
 		if viewModel.isLoading == true {
 			ProgressView()
 		} else if !viewModel.channelPrograms.isEmpty {
-            ASCollectionView(data: viewModel.channelPrograms, dataID: \.self)
-            { channelProgram, _ in
-                makeCellView(channelProgram)
-            }
-            .layout
-            {
-                .grid(
-                    layoutMode: .fixedNumberOfColumns(columns),
-                    itemSpacing: 16,
-                    lineSpacing: 4,
-                    itemSize: .absolute(144))
-            }
+			ASCollectionView(data: viewModel.channelPrograms, dataID: \.self) { channelProgram, _ in
+				makeCellView(channelProgram)
+			}
+			.layout {
+				.grid(layoutMode: .fixedNumberOfColumns(columns),
+				      itemSpacing: 16,
+				      lineSpacing: 4,
+				      itemSize: .absolute(144))
+			}
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
 			.ignoresSafeArea()
 			.onAppear {
@@ -75,7 +72,7 @@ struct LiveTVChannelsView: View {
 
 	@ViewBuilder
 	func makeCellView(_ channelProgram: LiveTVChannelProgram) -> some View {
-        let channel = channelProgram.channel
+		let channel = channelProgram.channel
 		let currentProgramDisplayText = channelProgram.currentProgram?
 			.programDisplayText(timeFormatter: viewModel.timeFormatter) ?? LiveTVChannelViewProgram(timeDisplay: "", title: "")
 		let nextItems = channelProgram.programs.filter { program in
