@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import ASCollectionView
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -20,19 +21,34 @@ struct LiveTVChannelsView: View {
 	var viewModel = LiveTVChannelsViewModel()
 	@State
 	private var isPortrait = false
-
+    private var columns: Int {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return 2
+        } else {
+            if isPortrait {
+                return 1
+            } else {
+                return 2
+            }
+        }
+    }
+    
 	var body: some View {
 		if viewModel.isLoading == true {
 			ProgressView()
-		} else if !viewModel.rows.isEmpty {
-			CollectionView(rows: viewModel.rows) { _, _ in
-				createGridLayout()
-			} cell: { indexPath, cell in
-				makeCellView(indexPath: indexPath, cell: cell)
-			} supplementaryView: { _, indexPath in
-				EmptyView()
-					.accessibilityIdentifier("\(indexPath.section).\(indexPath.row)")
-			}
+		} else if !viewModel.channelPrograms.isEmpty {
+            ASCollectionView(data: viewModel.channelPrograms, dataID: \.self)
+            { channelProgram, _ in
+                makeCellView(channelProgram)
+            }
+            .layout
+            {
+                .grid(
+                    layoutMode: .fixedNumberOfColumns(columns),
+                    itemSpacing: 16,
+                    lineSpacing: 4,
+                    itemSize: .absolute(144))
+            }
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
 			.ignoresSafeArea()
 			.onAppear {
@@ -58,22 +74,21 @@ struct LiveTVChannelsView: View {
 	}
 
 	@ViewBuilder
-	func makeCellView(indexPath: IndexPath, cell: LiveTVChannelRowCell) -> some View {
-		let item = cell.item
-		let channel = item.channel
-		let currentProgramDisplayText = item.currentProgram?
+	func makeCellView(_ channelProgram: LiveTVChannelProgram) -> some View {
+        let channel = channelProgram.channel
+		let currentProgramDisplayText = channelProgram.currentProgram?
 			.programDisplayText(timeFormatter: viewModel.timeFormatter) ?? LiveTVChannelViewProgram(timeDisplay: "", title: "")
-		let nextItems = item.programs.filter { program in
+		let nextItems = channelProgram.programs.filter { program in
 			guard let start = program.startDate else {
 				return false
 			}
-			guard let currentStart = item.currentProgram?.startDate else {
+			guard let currentStart = channelProgram.currentProgram?.startDate else {
 				return false
 			}
 			return start > currentStart
 		}
 		LiveTVChannelItemWideElement(channel: channel,
-		                             currentProgram: item.currentProgram,
+		                             currentProgram: channelProgram.currentProgram,
 		                             currentProgramText: currentProgramDisplayText,
 		                             nextProgramsText: nextProgramsDisplayText(nextItems: nextItems,
 		                                                                       timeFormatter: viewModel.timeFormatter),
@@ -86,62 +101,6 @@ struct LiveTVChannelsView: View {
 		                             		}
 		                             	}
 		                             })
-	}
-
-	private func createGridLayout() -> NSCollectionLayoutSection {
-		if UIDevice.current.userInterfaceIdiom == .pad {
-			let itemSize = NSCollectionLayoutSize(widthDimension: .absolute((UIScreen.main.bounds.width / 2) - 16),
-			                                      heightDimension: .fractionalHeight(1))
-			let item = NSCollectionLayoutItem(layoutSize: itemSize)
-			item.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: .flexible(0), top: nil,
-			                                                 trailing: .flexible(2), bottom: .flexible(2))
-			let item2 = NSCollectionLayoutItem(layoutSize: itemSize)
-			item2.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: nil, top: nil,
-			                                                  trailing: .flexible(0), bottom: .flexible(2))
-			let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-			                                       heightDimension: .absolute(144))
-			let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
-			                                               subitems: [item, item2])
-			let section = NSCollectionLayoutSection(group: group)
-			return section
-		} else {
-			if isPortrait {
-				let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(UIScreen.main.bounds.width - 32),
-				                                      heightDimension: .fractionalHeight(1))
-				let item = NSCollectionLayoutItem(layoutSize: itemSize)
-				item.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: .flexible(0), top: nil,
-				                                                 trailing: .flexible(2), bottom: .flexible(2))
-				let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-				                                       heightDimension: .absolute(144))
-				let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
-				                                               subitems: [item])
-				let section = NSCollectionLayoutSection(group: group)
-				return section
-			} else {
-
-				let scenes = UIApplication.shared.connectedScenes
-				let windowScene = scenes.first as? UIWindowScene
-				var width = (UIScreen.main.bounds.width / 2) - 32
-				if let safeArea = windowScene?.keyWindow?.safeAreaInsets {
-					width = (UIScreen.main.bounds.width / 2) - safeArea.left - safeArea.right
-				}
-
-				let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(width),
-				                                      heightDimension: .fractionalHeight(1))
-				let item = NSCollectionLayoutItem(layoutSize: itemSize)
-				item.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: .flexible(0), top: nil,
-				                                                 trailing: .flexible(2), bottom: .flexible(2))
-				let item2 = NSCollectionLayoutItem(layoutSize: itemSize)
-				item2.edgeSpacing = NSCollectionLayoutEdgeSpacing(leading: nil, top: nil,
-				                                                  trailing: .flexible(0), bottom: .flexible(2))
-				let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-				                                       heightDimension: .absolute(144))
-				let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
-				                                               subitems: [item, item2])
-				let section = NSCollectionLayoutSection(group: group)
-				return section
-			}
-		}
 	}
 
 	private func checkOrientation() {
