@@ -253,7 +253,7 @@ public extension BaseItemDto {
 		case boxset = "BoxSet"
 		case collectionFolder = "CollectionFolder"
 		case folder = "Folder"
-        case liveTV = "LiveTV"
+		case liveTV = "LiveTV"
 
 		case unknown
 
@@ -265,21 +265,21 @@ public extension BaseItemDto {
 				return true
 			}
 		}
-        
-        public init?(rawValue: String) {
-            let lowerCase = rawValue.lowercased()
-            switch lowerCase {
-                case "movie":   self = .movie
-                case "season":  self = .season
-                case "episode": self = .episode
-                case "series":  self = .series
-                case "boxset":  self = .boxset
-                case "collectionfolder": self = .collectionFolder
-                case "folder": self = .folder
-                case "livetv": self = .liveTV
-                default: self = .unknown
-            }
-        }
+
+		public init?(rawValue: String) {
+			let lowerCase = rawValue.lowercased()
+			switch lowerCase {
+			case "movie": self = .movie
+			case "season": self = .season
+			case "episode": self = .episode
+			case "series": self = .series
+			case "boxset": self = .boxset
+			case "collectionfolder": self = .collectionFolder
+			case "folder": self = .folder
+			case "livetv": self = .liveTV
+			default: self = .unknown
+			}
+		}
 	}
 
 	var itemType: ItemType {
@@ -291,7 +291,7 @@ public extension BaseItemDto {
 
 	func portraitHeaderViewURL(maxWidth: Int) -> URL {
 		switch itemType {
-            case .movie, .season, .series, .boxset, .collectionFolder, .folder, .liveTV:
+		case .movie, .season, .series, .boxset, .collectionFolder, .folder, .liveTV:
 			return getPrimaryImage(maxWidth: maxWidth)
 		case .episode:
 			return getSeriesPrimaryImage(maxWidth: maxWidth)
