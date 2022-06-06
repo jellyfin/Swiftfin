@@ -286,6 +286,7 @@
 		C4BE07892728448B003F4AD1 /* LiveTVChannelsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE07872728448B003F4AD1 /* LiveTVChannelsCoordinator.swift */; };
 		C4BE078C272844AF003F4AD1 /* LiveTVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE078A272844AF003F4AD1 /* LiveTVChannelsView.swift */; };
 		C4BE078E27298818003F4AD1 /* LiveTVHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE078D27298817003F4AD1 /* LiveTVHomeView.swift */; };
+		C4D0CE4B2848570700345D11 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = C4D0CE4A2848570700345D11 /* ASCollectionView */; };
 		C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E508172703E8190045C9AB /* LibraryListView.swift */; };
 		C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5081C2703F8370045C9AB /* LibrarySearchView.swift */; };
 		C4E5598928124C10003DECA5 /* LiveTVChannelItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E5598828124C10003DECA5 /* LiveTVChannelItemElement.swift */; };
@@ -945,6 +946,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4D0CE4B2848570700345D11 /* ASCollectionView in Frameworks */,
 				62666E3E27E503FA00EC0ECD /* MediaAccessibility.framework in Frameworks */,
 				62666DFF27E5016400EC0ECD /* CFNetwork.framework in Frameworks */,
 				E13DD3D327168E65009D4DAF /* Defaults in Frameworks */,
@@ -1960,6 +1962,7 @@
 				E1002B672793CFBA00E47059 /* Algorithms */,
 				62666E3827E502CE00EC0ECD /* SwizzleSwift */,
 				E1101176281B1E8A006A3584 /* Puppy */,
+				C4D0CE4A2848570700345D11 /* ASCollectionView */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -2054,6 +2057,7 @@
 				E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */,
 				E1101175281B1E8A006A3584 /* XCRemoteSwiftPackageReference "Puppy" */,
+				C4D0CE492848570700345D11 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3117,6 +3121,14 @@
 				kind = branch;
 			};
 		};
+		C4D0CE492848570700345D11 /* XCRemoteSwiftPackageReference "ASCollectionView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apptekstudios/ASCollectionView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-algorithms.git";
@@ -3252,6 +3264,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
 			productName = Stinsen;
+		};
+		C4D0CE4A2848570700345D11 /* ASCollectionView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4D0CE492848570700345D11 /* XCRemoteSwiftPackageReference "ASCollectionView" */;
+			productName = ASCollectionView;
 		};
 		E1002B672793CFBA00E47059 /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
