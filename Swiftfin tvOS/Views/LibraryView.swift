@@ -27,7 +27,7 @@ struct LibraryView: View {
 	var isShowingFilterView = false
 
 	var body: some View {
-		if viewModel.isLoading == true {
+		if viewModel.rows.isEmpty && viewModel.isLoading == true {
 			ProgressView()
 		} else if !viewModel.rows.isEmpty {
 			CollectionView(rows: viewModel.rows) { _, _ in
