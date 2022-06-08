@@ -54,8 +54,8 @@ final class TVLibrariesViewModel: ViewModel {
 					}
 					self.rows = self.calculateRows()
 					if self.libraries.count == 1, let library = self.libraries.first {
-						// show library
-						self.router?.route(to: \.library, library)
+						// make this library the root of this stack
+						self.router?.coordinator.root(\.rootLibrary, library)
 					}
 				}
 			})
