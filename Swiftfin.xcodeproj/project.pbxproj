@@ -253,6 +253,7 @@
 		C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */; };
 		C400DB6D27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6C27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift */; };
 		C409CE9C284EA6EA00CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9B284EA6EA00CABC12 /* SwiftUICollection */; };
+		C409CE9E285044C800CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9D285044C800CABC12 /* SwiftUICollection */; };
 		C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */; };
 		C40CD926271F8D1E000FB198 /* MovieLibrariesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* MovieLibrariesViewModel.swift */; };
 		C40CD929271F8DAB000FB198 /* MovieLibrariesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD927271F8DAB000FB198 /* MovieLibrariesView.swift */; };
@@ -962,6 +963,7 @@
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
 				62666E3C27E503F200EC0ECD /* GoogleCastSDK.xcframework in Frameworks */,
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
+				C409CE9E285044C800CABC12 /* SwiftUICollection in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
@@ -1960,6 +1962,7 @@
 				62666E3827E502CE00EC0ECD /* SwizzleSwift */,
 				E1101176281B1E8A006A3584 /* Puppy */,
 				C4D0CE4A2848570700345D11 /* ASCollectionView */,
+				C409CE9D285044C800CABC12 /* SwiftUICollection */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3263,6 +3266,11 @@
 			productName = Stinsen;
 		};
 		C409CE9B284EA6EA00CABC12 /* SwiftUICollection */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
+			productName = SwiftUICollection;
+		};
+		C409CE9D285044C800CABC12 /* SwiftUICollection */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
 			productName = SwiftUICollection;
