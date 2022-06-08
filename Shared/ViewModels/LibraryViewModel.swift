@@ -188,6 +188,10 @@ extension UIScreen {
 		let screenSize = UIScreen.main.bounds.height * UIScreen.main.bounds.width
 		let itemSize = width * height
 
-		return Int(screenSize / itemSize)
+		#if os(tvOS)
+			return Int(screenSize / itemSize) * 2
+		#else
+			return Int(screenSize / itemSize)
+		#endif
 	}
 }
