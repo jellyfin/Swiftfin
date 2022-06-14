@@ -479,7 +479,9 @@ extension LiveTVPlayerViewController {
 
 		// Setup external subtitles
 		for externalSubtitle in viewModel.subtitleStreams.filter({ $0.deliveryMethod == .external }) {
-			if let deliveryURL = externalSubtitle.externalURL(base: SessionManager.main.currentLogin.server.currentURI) {
+			if let deliveryURL = externalSubtitle.externalSubtitleURL(base: SessionManager.main.currentLogin.server.currentURI,
+			                                                          item: viewModel.item)
+			{
 				vlcMediaPlayer.addPlaybackSlave(deliveryURL, type: .subtitle, enforce: false)
 			}
 		}

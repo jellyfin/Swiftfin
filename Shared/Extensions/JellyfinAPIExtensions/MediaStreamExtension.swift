@@ -10,12 +10,12 @@ import Foundation
 import JellyfinAPI
 
 extension MediaStream {
-
-	func externalURL(base: String) -> URL? {
-		guard let deliveryURL = deliveryUrl else { return nil }
-		var baseComponents = URLComponents(string: base)
-		baseComponents?.path += deliveryURL
-
-		return baseComponents?.url
+	func externalSubtitleURL(base: String, item: BaseItemDto) -> URL? {
+		guard let id = item.id,
+		      let index = index,
+		      let format = codec else { return nil }
+		let startPositionTicks = item.userData?.playbackPositionTicks ?? 0
+		let mediaSourceID = id
+		return URL(string: "\(base)/Videos/\(id)/\(mediaSourceID)/Subtitles/\(index)/\(startPositionTicks)/Stream.\(format)")
 	}
 }
