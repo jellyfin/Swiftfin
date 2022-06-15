@@ -17,6 +17,8 @@ final class TVLibrariesCoordinator: NavigationCoordinatable {
 
 	@Root
 	var start = makeStart
+	@Root
+	var rootLibrary = makeRootLibrary
 	@Route(.push)
 	var library = makeLibrary
 
@@ -34,6 +36,10 @@ final class TVLibrariesCoordinator: NavigationCoordinatable {
 	}
 
 	func makeLibrary(library: BaseItemDto) -> LibraryCoordinator {
+		LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
+	}
+
+	func makeRootLibrary(library: BaseItemDto) -> LibraryCoordinator {
 		LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
 	}
 }

@@ -17,6 +17,12 @@ struct ExperimentalSettingsView: View {
 	var syncSubtitleStateWithAdjacent
 	@Default(.Experimental.nativePlayer)
 	var nativePlayer
+	@Default(.Experimental.liveTVAlphaEnabled)
+	var liveTVAlphaEnabled
+	@Default(.Experimental.liveTVForceDirectPlay)
+	var liveTVForceDirectPlay
+	@Default(.Experimental.liveTVNativePlayer)
+	var liveTVNativePlayer
 
 	var body: some View {
 		Form {
@@ -30,6 +36,18 @@ struct ExperimentalSettingsView: View {
 
 			} header: {
 				L10n.experimental.text
+			}
+
+			Section {
+
+				Toggle("Live TV (Alpha)", isOn: $liveTVAlphaEnabled)
+
+				Toggle("Live TV Force Direct Play", isOn: $liveTVForceDirectPlay)
+
+				Toggle("Live TV Native Player", isOn: $liveTVNativePlayer)
+
+			} header: {
+				Text("Live TV")
 			}
 		}
 	}

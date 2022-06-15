@@ -19,6 +19,15 @@
       }
     },
     {
+      "identity" : "ascollectionview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apptekstudios/ASCollectionView",
+      "state" : {
+        "revision" : "4288744ba484c1062c109c0f28d72b629d321d55",
+        "version" : "2.1.1"
+      }
+    },
+    {
       "identity" : "combineext",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CombineCommunity/CombineExt",
@@ -43,6 +52,15 @@
       "state" : {
         "revision" : "119f654d44f7b90f00dc11f7dd1c94a36f12576b",
         "version" : "6.2.1"
+      }
+    },
+    {
+      "identity" : "differencekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ra1028/DifferenceKit",
+      "state" : {
+        "revision" : "62745d7780deef4a023a792a1f8f763ec7bf9705",
+        "version" : "1.2.0"
       }
     },
     {
@@ -156,10 +174,10 @@
     {
       "identity" : "swiftuicollection",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ABJC/SwiftUICollection",
+      "location" : "https://github.com/defagos/SwiftUICollection",
       "state" : {
         "branch" : "master",
-        "revision" : "e27149382ce8ec21995069c8aab7ca83d61a3120"
+        "revision" : "5b9f14eb3ec5d48cec8b3e4462dcc554d4bff2a8"
       }
     },
     {

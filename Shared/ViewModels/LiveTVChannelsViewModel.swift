@@ -20,7 +20,8 @@ struct LiveTVChannelRowCell: Hashable {
 struct LiveTVChannelProgram: Hashable {
 	let id = UUID()
 	let channel: BaseItemDto
-	let program: BaseItemDto?
+	let currentProgram: BaseItemDto?
+	let programs: [BaseItemDto]
 }
 
 final class LiveTVChannelsViewModel: ViewModel {
@@ -151,7 +152,7 @@ final class LiveTVChannelsViewModel: ViewModel {
 				}
 			}
 
-			channelPrograms.append(LiveTVChannelProgram(channel: channel, program: currentPrg))
+			channelPrograms.append(LiveTVChannelProgram(channel: channel, currentProgram: currentPrg, programs: prgs))
 		}
 		return channelPrograms
 	}

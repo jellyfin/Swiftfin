@@ -11,6 +11,8 @@ import JellyfinAPI
 import SwiftUI
 import SwiftUICollection
 
+typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
+
 struct LiveTVChannelsView: View {
 	@EnvironmentObject
 	var router: LiveTVChannelsCoordinator.Router
@@ -53,23 +55,30 @@ struct LiveTVChannelsView: View {
 	func makeCellView(indexPath: IndexPath, cell: LiveTVChannelRowCell) -> some View {
 		let item = cell.item
 		let channel = item.channel
-		if channel.type != "Folder" {
-			let progressPercent = item.program?.getLiveProgressPercentage() ?? 0
-			LiveTVChannelItemElement(channel: channel,
-			                         program: item.program,
-			                         startString: item.program?.getLiveStartTimeString(formatter: viewModel.timeFormatter) ?? " ",
-			                         endString: item.program?.getLiveEndTimeString(formatter: viewModel.timeFormatter) ?? " ",
-			                         progressPercent: progressPercent > 1.0 ? 1.0 : progressPercent,
-			                         onSelect: { loadingAction in
-			                         	loadingAction(true)
-			                         	self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-			                         		self.router.route(to: \.videoPlayer, playerViewModel)
-			                         		DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-			                         			loadingAction(false)
-			                         		}
-			                         	}
-			                         })
+		let currentProgramDisplayText = item.currentProgram?
+			.programDisplayText(timeFormatter: viewModel.timeFormatter) ?? LiveTVChannelViewProgram(timeDisplay: "", title: "")
+		let nextItems = item.programs.filter { program in
+			guard let start = program.startDate else {
+				return false
+			}
+			guard let currentStart = item.currentProgram?.startDate else {
+				return false
+			}
+			return start > currentStart
 		}
+		LiveTVChannelItemElement(channel: channel,
+		                         currentProgram: item.currentProgram,
+		                         currentProgramText: currentProgramDisplayText,
+		                         nextProgramsText: nextProgramsDisplayText(nextItems: nextItems, timeFormatter: viewModel.timeFormatter),
+		                         onSelect: { loadingAction in
+		                         	loadingAction(true)
+		                         	self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
+		                         		self.router.route(to: \.videoPlayer, playerViewModel)
+		                         		DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+		                         			loadingAction(false)
+		                         		}
+		                         	}
+		                         })
 	}
 
 	private func createGridLayout() -> NSCollectionLayoutSection {
@@ -99,5 +108,44 @@ struct LiveTVChannelsView: View {
 		section.contentInsets = .zero
 
 		return section
+	}
+
+	private func nextProgramsDisplayText(nextItems: [BaseItemDto], timeFormatter: DateFormatter) -> [LiveTVChannelViewProgram] {
+		var programsDisplayText: [LiveTVChannelViewProgram] = []
+		for item in nextItems {
+			programsDisplayText.append(item.programDisplayText(timeFormatter: timeFormatter))
+		}
+		return programsDisplayText
+	}
+}
+
+private extension BaseItemDto {
+	func programDisplayText(timeFormatter: DateFormatter) -> LiveTVChannelViewProgram {
+		var timeText = ""
+		if let start = self.startDate {
+			timeText.append(timeFormatter.string(from: start) + " ")
+		}
+		var displayText = ""
+		if let season = self.parentIndexNumber,
+		   let episode = self.indexNumber
+		{
+			displayText.append("\(season)x\(episode) ")
+		} else if let episode = self.indexNumber {
+			displayText.append("\(episode) ")
+		}
+		if let name = self.name {
+			displayText.append("\(name) ")
+		}
+		if let title = self.episodeTitle {
+			displayText.append("\(title) ")
+		}
+		if let year = self.productionYear {
+			displayText.append("\(year) ")
+		}
+		if let rating = self.officialRating {
+			displayText.append("\(rating)")
+		}
+
+		return LiveTVChannelViewProgram(timeDisplay: timeText, title: displayText)
 	}
 }
