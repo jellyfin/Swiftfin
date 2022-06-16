@@ -52,8 +52,10 @@ class NavBarOffsetScrollViewController<Body: View>: UIViewController, UIScrollVi
 	func update(_ newBody: () -> Body, _ headerHeight: CGFloat) {
 		self.bodyHostingController.rootView = newBody()
 		self.headerHeight = headerHeight
+        self.scrollView.layoutSubviews()
 		self.scrollView.updateConstraintsIfNeeded()
 		self.scrollView.layoutIfNeeded()
+        self.view.layoutSubviews()
 		self.view.updateConstraintsIfNeeded()
 		self.view.layoutIfNeeded()
 	}
@@ -108,6 +110,8 @@ class NavBarOffsetScrollViewController<Body: View>: UIViewController, UIScrollVi
 			.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(0)]
 		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
 		self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        scrollViewDidScroll(scrollView)
 	}
 
 	override func viewWillDisappear(_ animated: Bool) {

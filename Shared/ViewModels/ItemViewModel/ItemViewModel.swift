@@ -31,14 +31,13 @@ class ItemViewModel: ViewModel {
 	@Published
 	var isFavorited = false
 	@Published
-	var informationItems: [BaseItemDto.ItemDetail]
-	@Published
 	var selectedVideoPlayerViewModel: VideoPlayerViewModel?
 	@Published
 	var videoPlayerViewModels: [VideoPlayerViewModel] = []
 
 	init(item: BaseItemDto) {
 		self.item = item
+        super.init()
 
 		switch item.itemType {
 		case .episode, .movie:
@@ -47,18 +46,18 @@ class ItemViewModel: ViewModel {
 			}
 		default: ()
 		}
-
-		informationItems = item.createInformationItems()
+        
+        if item.isHD ?? false {
+            print("item isHD")
+        }
 
 		isFavorited = item.userData?.isFavorite ?? false
 		isWatched = item.userData?.played ?? false
-		super.init()
 
 		getSimilarItems()
-
-		Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
-
 		refreshItemVideoPlayerViewModel(for: item)
+        
+        Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
 	}
 
 	@objc
@@ -172,3 +171,4 @@ class ItemViewModel: ViewModel {
 	// Overridden by subclasses
 	func updateItem() {}
 }
+

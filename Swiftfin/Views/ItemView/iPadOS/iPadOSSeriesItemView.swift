@@ -96,8 +96,7 @@ struct iPadOSSeriesItemView: View {
 
 			// MARK: About
 
-			ItemAboutView()
-				.environmentObject(viewModel as ItemViewModel)
+            ItemView.AboutView(viewModel: viewModel)
 				.padding(.bottom)
 
 			// MARK: Details

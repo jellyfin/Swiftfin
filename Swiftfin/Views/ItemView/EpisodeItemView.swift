@@ -64,38 +64,47 @@ struct EpisodeItemView: View {
 
 	@ViewBuilder
 	private var portraitShelfView: some View {
-		Text(viewModel.item.seriesName ?? "--")
-			.font(.headline)
-			.fontWeight(.semibold)
-			.padding(.horizontal)
-			.foregroundColor(.secondary)
+        VStack(alignment: .center) {
+            Text(viewModel.item.seriesName ?? "--")
+                .font(.headline)
+                .fontWeight(.semibold)
+                .padding(.horizontal)
+                .foregroundColor(.secondary)
 
-		Text(viewModel.getItemDisplayName())
-			.font(.title2)
-			.fontWeight(.bold)
-			.multilineTextAlignment(.center)
-			.fixedSize(horizontal: false, vertical: true)
-			.padding(.horizontal)
+            Text(viewModel.getItemDisplayName())
+                .font(.title2)
+                .fontWeight(.bold)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal)
 
-		HStack(spacing: 10) {
-			if let episodeLocation = viewModel.item.getEpisodeLocator() {
-				Text(episodeLocation)
-			}
+            HStack(spacing: 10) {
+                if let episodeLocation = viewModel.item.getEpisodeLocator() {
+                    Text(episodeLocation)
+                    
+                    Circle()
+                        .frame(width: 2, height: 2)
+                        .padding(.horizontal, 1)
+                }
 
-			if let runtime = viewModel.item.getItemRuntime() {
-				Text(runtime)
-			}
+                if let productionYear = viewModel.item.premiereDateYear {
+                    Text(productionYear)
+                    
+                    Circle()
+                        .frame(width: 2, height: 2)
+                        .padding(.horizontal, 1)
+                }
+                
+                if let runtime = viewModel.item.getItemRuntime() {
+                    Text(runtime)
+                }
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .padding(.horizontal)
 
-			// TODO: Change to premiere date
-			if let productionYear = viewModel.item.productionYear {
-				Text(String(productionYear))
-			}
-		}
-		.font(.subheadline)
-		.foregroundColor(.secondary)
-		.padding(.horizontal)
-
-		playButton
+            playButton
+        }
 	}
 
 	// MARK: landscapeShelfItem
@@ -146,86 +155,119 @@ struct EpisodeItemView: View {
 	var body: some View {
 		GeometryReader { geometry in
 			NavBarOffsetScrollView(headerHeight: 10) {
-				VStack {
+				VStack(alignment: .leading) {
 
-					ImageView(viewModel.item.getPrimaryImage(maxWidth: 500),
-					          blurHash: viewModel.item.getPrimaryImageBlurHash())
-						.cornerRadius(10)
-						.aspectRatio(1.77, contentMode: .fit)
-						.frame(maxWidth: UIDevice.isIPad ? geometry.size.width / 2 : 600)
-						.padding(.horizontal)
+                    VStack(alignment: .center) {
+                        ImageView(viewModel.item.getPrimaryImage(maxWidth: 600),
+                                  blurHash: viewModel.item.getPrimaryImageBlurHash())
+                            .cornerRadius(10)
+                            .aspectRatio(1.77, contentMode: .fit)
+                            .frame(maxWidth: UIDevice.isIPad ? geometry.size.width / 2 : 600)
+                            .padding(.horizontal)
 
-					VStack(spacing: 10) {
+                        if UIDevice.isLandscape {
+                            landscapeShelfView
+                        } else {
+                            portraitShelfView
+                        }
+                    }
 
-						if UIDevice.isLandscape {
-							landscapeShelfView
-						} else {
-							portraitShelfView
-						}
+                    // MARK: Overview
 
-						// MARK: Overview
+                    if let itemOverview = viewModel.item.overview {
+                        HStack {
+                            TruncatedTextView(itemOverview,
+                                              lineLimit: 5,
+                                              font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                                itemRouter.route(to: \.itemOverview, viewModel.item)
+                            }
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top)
+                            .padding(.horizontal)
 
-						if let itemOverview = viewModel.item.overview {
-							HStack {
-								TruncatedTextView(itemOverview,
-								                  lineLimit: 5,
-								                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-									itemRouter.route(to: \.itemOverview, viewModel.item)
-								}
-								.fixedSize(horizontal: false, vertical: true)
-								.padding(.top)
-								.padding(.horizontal)
+                            Spacer(minLength: 0)
+                        }
+                    }
 
-								Spacer(minLength: 0)
-							}
-						}
+                    // MARK: Genres
 
-						// MARK: Genres
+                    if let genres = viewModel.item.genreItems, !genres.isEmpty {
+                        PillHStackView(title: L10n.genres,
+                                       items: genres,
+                                       selectedAction: { genre in
+                                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+                                       })
+                                       .padding(.bottom)
+                    }
 
-						if let genres = viewModel.item.genreItems, !genres.isEmpty {
-							PillHStackView(title: L10n.genres,
-							               items: genres,
-							               selectedAction: { genre in
-							               	itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-							               })
-							               .padding(.bottom)
-						}
+                    if let studios = viewModel.item.studios {
+                        PillHStackView(title: L10n.studios,
+                                       items: studios) { studio in
+                            itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
+                        }
+                        .padding(.bottom)
+                    }
 
-						if let studios = viewModel.item.studios {
-							PillHStackView(title: L10n.studios,
-							               items: studios) { studio in
-								itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-							}
-							.padding(.bottom)
-						}
+                    if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
+                        PortraitImageHStackView(items: castAndCrew
+                            .filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                            topBarView: {
+                                L10n.castAndCrew.text
+                                    .fontWeight(.semibold)
+                                    .padding(.bottom)
+                                    .padding(.horizontal)
+                                    .accessibility(addTraits: [.isHeader])
+                            },
+                            selectedAction: { person in
+                                itemRouter.route(to: \.library,
+                                                 (viewModel: .init(person: person), title: person.title))
+                            })
+                    }
 
-						if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
-							PortraitImageHStackView(items: castAndCrew
-								.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-								topBarView: {
-									L10n.castAndCrew.text
-										.fontWeight(.semibold)
-										.padding(.bottom)
-										.padding(.horizontal)
-										.accessibility(addTraits: [.isHeader])
-								},
-								selectedAction: { person in
-									itemRouter.route(to: \.library,
-									                 (viewModel: .init(person: person), title: person.title))
-								})
-						}
-
-						// MARK: Details
-
-						HStack {
-							ListDetailsView(title: L10n.information, items: viewModel.item.createInformationItems())
-
-							Spacer(minLength: 0)
-						}
-						.padding(.horizontal)
-					}
-				}
+                    // MARK: Details
+                    
+                    if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
+                        ListDetailsView(title: L10n.information, items: informationItems)
+                            .padding(.horizontal)
+                    }
+                    
+                    if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
+                        ListDetailsView(title: L10n.media, items: mediaItems)
+                            .padding(.horizontal)
+                    }
+                }
 			}
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack(spacing: 0) {
+                            Button {
+                                viewModel.toggleWatchState()
+                            } label: {
+                                if viewModel.isWatched {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
+                                } else {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
+                                }
+                            }
+            
+                            Button {
+                                viewModel.toggleFavoriteState()
+                            } label: {
+                                if viewModel.isFavorited {
+                                    Image(systemName: "heart.circle.fill")
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
+                                } else {
+                                    Image(systemName: "heart.circle.fill")
+                                        .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
+                                }
+                            }
+                    }
+                }
+            }
 		}
 	}
 }

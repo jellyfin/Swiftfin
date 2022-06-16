@@ -118,34 +118,6 @@ struct SeasonItemView: View {
 		NavBarOffsetScrollView(headerHeight: 10) {
 			innerBody
 		}
-		.toolbar {
-			ToolbarItemGroup(placement: .navigationBarTrailing) {
-				Button {
-					viewModel.toggleWatchState()
-				} label: {
-					if viewModel.isWatched {
-						Image(systemName: "checkmark.circle.fill")
-							.symbolRenderingMode(.palette)
-							.foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-					} else {
-						Image(systemName: "checkmark.circle.fill")
-							.foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
-					}
-				}
-
-				Button {
-					viewModel.toggleFavoriteState()
-				} label: {
-					if viewModel.isFavorited {
-						Image(systemName: "heart.circle.fill")
-							.symbolRenderingMode(.palette)
-							.foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-					} else {
-						Image(systemName: "heart.circle.fill")
-							.foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
-					}
-				}
-			}
-		}
+        .applyItemViewToolbar(with: viewModel)
 	}
 }

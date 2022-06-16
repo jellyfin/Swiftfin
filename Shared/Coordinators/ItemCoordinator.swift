@@ -30,6 +30,10 @@ final class ItemCoordinator: NavigationCoordinatable {
 
 	init(item: BaseItemDto) {
 		self.itemDto = item
+        
+        if item.isHD ?? false {
+            print("item isHD")
+        }
 	}
 
 	func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {

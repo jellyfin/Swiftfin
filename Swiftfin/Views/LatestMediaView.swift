@@ -18,8 +18,7 @@ struct LatestMediaView<TopBarView: View>: View {
 	var topBarView: () -> TopBarView
 
 	var body: some View {
-		PortraitImageHStackView(items: viewModel.items,
-		                        horizontalAlignment: .leading) {
+		PortraitImageHStackView(items: viewModel.items) {
 			topBarView()
 		} selectedAction: { item in
 			homeRouter.route(to: \.item, item)

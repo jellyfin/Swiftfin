@@ -83,7 +83,11 @@ struct ImageView<FailureView: View>: View {
 					image
 						.resizingMode(resizingMode)
 				} else if state.error != nil {
-					placeholderView.onAppear { sources.removeFirst() }
+					placeholderView.onAppear {
+                        LogManager.log.error(state.error?.localizedDescription ?? "--")
+                        LogManager.log.error("Could not get image at url: \(sources.first?.url?.absoluteString ?? "--")")
+                        sources.removeFirst()
+                    }
 				} else {
 					placeholderView
 				}

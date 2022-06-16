@@ -10,18 +10,32 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct MovieItemBodyView: View {
-    
+struct SeriesItemBodyView: View {
+
     @EnvironmentObject
     var itemRouter: ItemCoordinator.Router
     @EnvironmentObject
-    private var viewModel: MovieItemViewModel
+    private var viewModel: SeriesItemViewModel
     @Default(.itemViewType)
     private var itemViewType
     
     var body: some View {
         VStack(alignment: .leading) {
             
+            if case ItemViewType.compactPoster = itemViewType, let itemOverView = viewModel.item.overview {
+                TruncatedTextView(itemOverView,
+                                  lineLimit: 4,
+                                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                                  .padding(.horizontal)
+                                  .padding(.top)
+            }
+
+            // MARK: Seasons
+
+            EpisodesRowView(viewModel: viewModel)
+
             // MARK: Genres
 
             if let genres = viewModel.item.genreItems, !genres.isEmpty {
@@ -49,7 +63,6 @@ struct MovieItemBodyView: View {
                 PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                                         topBarView: {
                                             L10n.castAndCrew.text
-                                                .font(.title3)
                                                 .fontWeight(.semibold)
                                                 .padding(.bottom)
                                                 .padding(.horizontal)
@@ -58,7 +71,6 @@ struct MovieItemBodyView: View {
                                         selectedAction: { person in
                                             itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                                         })
-                                        .fixedSize(horizontal: false, vertical: true)
             }
 
             // MARK: Recommended
@@ -67,7 +79,6 @@ struct MovieItemBodyView: View {
                 PortraitImageHStackView(items: viewModel.similarItems,
                                         topBarView: {
                                             L10n.recommended.text
-                                                .font(.title3)
                                                 .fontWeight(.semibold)
                                                 .padding(.bottom)
                                                 .padding(.horizontal)
@@ -76,7 +87,6 @@ struct MovieItemBodyView: View {
                                         selectedAction: { item in
                                             itemRouter.route(to: \.item, item)
                                         })
-                                        .fixedSize(horizontal: false, vertical: true)
             }
 
             ItemView.AboutView(viewModel: viewModel)
@@ -86,11 +96,6 @@ struct MovieItemBodyView: View {
 
             if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
                 ListDetailsView(title: L10n.information, items: informationItems)
-                    .padding(.horizontal)
-            }
-
-            if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                ListDetailsView(title: L10n.media, items: mediaItems)
                     .padding(.horizontal)
             }
         }

@@ -358,6 +358,13 @@ public extension BaseItemDto {
 		dateFormatter.dateStyle = .medium
 		return dateFormatter.string(from: premiereDate)
 	}
+    
+    var premiereDateYear: String? {
+        guard let premiereDate = premiereDate else { return nil }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY"
+        return dateFormatter.string(from: premiereDate)
+    }
 
 	// MARK: Chapter Images
 

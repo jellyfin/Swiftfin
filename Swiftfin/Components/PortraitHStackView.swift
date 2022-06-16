@@ -11,22 +11,16 @@ import SwiftUI
 struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackable>: View {
 
 	let items: [ItemType]
-	let maxWidth: CGFloat
-	let horizontalAlignment: HorizontalAlignment
 	let textAlignment: TextAlignment
 	let topBarView: () -> TopBarView
 	let selectedAction: (ItemType) -> Void
 
 	init(items: [ItemType],
-	     maxWidth: CGFloat = 110,
-	     horizontalAlignment: HorizontalAlignment = .leading,
 	     textAlignment: TextAlignment = .leading,
 	     topBarView: @escaping () -> TopBarView,
 	     selectedAction: @escaping (ItemType) -> Void)
 	{
 		self.items = items
-		self.maxWidth = maxWidth
-		self.horizontalAlignment = horizontalAlignment
 		self.textAlignment = textAlignment
 		self.topBarView = topBarView
 		self.selectedAction = selectedAction
@@ -42,13 +36,13 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
 						Button {
 							selectedAction(item)
 						} label: {
-							VStack(alignment: horizontalAlignment) {
-								ImageView(item.imageURLConstructor(maxWidth: Int(maxWidth)),
+                            VStack(alignment: .leading) {
+								ImageView(item.imageURLConstructor(maxWidth: 110),
 								          blurHash: item.blurHash,
 								          failureView: {
 								          	InitialFailureView(item.failureInitials)
 								          })
-								          .portraitPoster(width: maxWidth)
+								          .portraitPoster(width: 110)
 								          .accessibilityIgnoresInvertColors()
 
 								if item.showTitle {
@@ -71,7 +65,7 @@ struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackabl
 										.lineLimit(2)
 								}
 							}
-							.frame(width: maxWidth)
+							.frame(width: 110)
 						}
 						.padding(.bottom)
 					}

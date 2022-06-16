@@ -28,4 +28,14 @@ extension UIDevice {
 	static var isLandscape: Bool {
 		isIPad || UIDevice.current.orientation.isLandscape
 	}
+    
+    static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(type)
+    }
+    
+    static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
+        let generator = UIImpactFeedbackGenerator(style: type)
+        generator.impactOccurred()
+    }
 }

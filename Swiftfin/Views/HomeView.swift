@@ -56,8 +56,7 @@ struct HomeView: View {
 					}
 
 					if !viewModel.nextUpItems.isEmpty {
-						PortraitImageHStackView(items: viewModel.nextUpItems,
-						                        horizontalAlignment: .leading) {
+						PortraitImageHStackView(items: viewModel.nextUpItems) {
 							L10n.nextUp.text
 								.font(.title2)
 								.fontWeight(.bold)

@@ -7,10 +7,17 @@
 //
 
 import Defaults
-import Foundation
+import JellyfinAPI
+import SwiftUI
 
-enum ItemViewType: String, CaseIterable, Defaults.Serializable {
-    case compactPoster
-    case compactLogo
-    case cinematic
+struct SeasonItemViewBody: View {
+    
+    @EnvironmentObject
+    var itemRouter: ItemCoordinator.Router
+    @EnvironmentObject
+    private var viewModel: SeasonItemViewModel
+    
+    var body: some View {
+        Text("")
+    }
 }

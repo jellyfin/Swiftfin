@@ -47,8 +47,8 @@ struct PortraitCinematicHeaderView: View {
 						.padding(.horizontal, 1)
 				}
 
-				if let productionYear = viewModel.item.premiereDateFormatted {
-					Text(String(productionYear))
+                if let premiereYear = viewModel.item.premiereDateYear {
+					Text(String(premiereYear))
 
 					Circle()
 						.frame(width: 2, height: 2)
@@ -60,48 +60,11 @@ struct PortraitCinematicHeaderView: View {
 				}
 			}
 			.font(.caption)
-			.foregroundColor(Color(UIColor.lightGray))
+            .foregroundColor(.secondary)
 			.padding(.horizontal)
 
-			Button {
-				if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-					itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-				} else {
-					LogManager.log.error("Attempted to play item but no playback information available")
-				}
-			} label: {
-				ZStack {
-					Rectangle()
-						.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
-						.frame(maxWidth: 300, maxHeight: 50)
-						.frame(height: 50)
-						.cornerRadius(10)
-
-					HStack {
-						Image(systemName: "play.fill")
-							.font(.system(size: 20))
-						Text(viewModel.playButtonText())
-							.font(.callout)
-							.fontWeight(.semibold)
-					}
-					.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
-				}
-			}
-			.contextMenu {
-				if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-					Button {
-						if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-							selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-							itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-						} else {
-							LogManager.log.error("Attempted to play item but no playback information available")
-						}
-					} label: {
-						Label(L10n.playFromBeginning, systemImage: "gobackward")
-					}
-				}
-			}
-			.padding(.bottom)
+            ItemView.PlayButton(viewModel: viewModel)
+                .padding(.bottom)
 
 			if viewModel.videoPlayerViewModels.count > 1 {
 				Menu {
@@ -155,6 +118,51 @@ struct PortraitCinematicHeaderView: View {
 				}
 
 				if let selectedPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+                    if selectedPlayerViewModel.item.isHD ?? false {
+                        Text("HD")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                            .hidden()
+                            .background {
+                                Color(UIColor.lightGray)
+                                    .cornerRadius(2)
+                                    .inverseMask(
+                                        Group {
+                                            Text("HD")
+                                                .font(.caption)
+                                                .fontWeight(.semibold)
+                                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                        }
+                                    )
+                            }
+                    }
+                    
+//                    if selectedPlayerViewModel.item.audio == ProgramAudio.atmos {
+                        Image("dolby.atmos")
+//                            .font(.body)
+//                    }
+                    
+                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "5.1" }) {
+                        Text("5.1")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                            .hidden()
+                            .background {
+                                Color(UIColor.lightGray)
+                                    .cornerRadius(2)
+                                    .inverseMask(
+                                        Group {
+                                            Text("5.1")
+                                                .font(.caption)
+                                                .fontWeight(.semibold)
+                                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                        }
+                                    )
+                            }
+                    }
+                    
 					if !selectedPlayerViewModel.subtitleStreams.isEmpty {
 						Text("CC")
 							.font(.caption)
