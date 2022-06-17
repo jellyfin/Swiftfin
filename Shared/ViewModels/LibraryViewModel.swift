@@ -99,18 +99,18 @@ final class LibraryViewModel: ViewModel {
 			self.person != nil ||
 			self.genre != nil ||
 			self.studio != nil
-		let includeItemTypes: [String]
+		let includeItemTypes: [BaseItemKind]
 		if filters.filters.contains(.isFavorite) {
-			includeItemTypes = ["Movie", "Series", "Season", "Episode", "BoxSet"]
+			includeItemTypes = [.movie, .series, .season, .episode, .boxSet]
 		} else {
-			includeItemTypes = ["Movie", "Series", "BoxSet"] + (Defaults[.showFlattenView] ? [] : ["Folder"])
+			includeItemTypes = [.movie, .series, .boxSet] + (Defaults[.showFlattenView] ? [] : [.folder])
 		}
 
 		ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * pageItemSize,
 		                          limit: pageItemSize,
 		                          recursive: queryRecursive,
 		                          searchTerm: nil,
-		                          sortOrder: filters.sortOrder,
+		                          sortOrder: filters.sortOrder.compactMap { SortOrder(rawValue: $0.rawValue) },
 		                          parentId: parentID,
 		                          fields: [
 		                          	.primaryImageAspectRatio,

@@ -40,7 +40,7 @@ final class SessionManager {
 			      let accessToken = user.accessToken else { fatalError("No associated server or access token for last user?") }
 			guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { return }
 
-			JellyfinAPI.basePath = server.currentURI
+			JellyfinAPIAPI.basePath = server.currentURI
 			setAuthHeader(with: accessToken.value)
 			currentLogin = (server: existingServer.state, user: user.state)
 		}
@@ -78,7 +78,7 @@ final class SessionManager {
 			uri = String(uri.dropLast())
 		}
 
-		JellyfinAPI.basePath = uri
+		JellyfinAPIAPI.basePath = uri
 
 		return SystemAPI.getPublicSystemInfo()
 			.tryMap { response -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
@@ -188,9 +188,9 @@ final class SessionManager {
 	{
 		setAuthHeader(with: "")
 
-		JellyfinAPI.basePath = server.currentURI
+		JellyfinAPIAPI.basePath = server.currentURI
 
-		return UserAPI.authenticateUserByName(authenticateUserByName: AuthenticateUserByName(username: username, pw: password))
+		return UserAPI.authenticateUserByName(authenticateUserByNameRequest: .init(username: username, pw: password))
 			.tryMap { response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
 
 				guard let accessToken = response.accessToken else { throw JellyfinAPIError("Access token missing from network call") }
@@ -251,7 +251,7 @@ final class SessionManager {
 	// MARK: loginUser
 
 	func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
-		JellyfinAPI.basePath = server.currentURI
+		JellyfinAPIAPI.basePath = server.currentURI
 		Defaults[.lastServerUserID] = user.id
 		setAuthHeader(with: user.accessToken)
 		currentLogin = (server: server, user: user)
@@ -262,7 +262,7 @@ final class SessionManager {
 
 	func logout() {
 		currentLogin = nil
-		JellyfinAPI.basePath = ""
+		JellyfinAPIAPI.basePath = ""
 		setAuthHeader(with: "")
 		Defaults[.lastServerUserID] = nil
 		Notifications[.didSignOut].post()
@@ -339,6 +339,6 @@ final class SessionManager {
 		header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
 		header.append("Token=\"\(accessToken)\"")
 
-		JellyfinAPI.customHeaders["X-Emby-Authorization"] = header
+		JellyfinAPIAPI.customHeaders["X-Emby-Authorization"] = header
 	}
 }

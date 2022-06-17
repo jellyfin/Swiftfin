@@ -126,8 +126,16 @@ final class HomeViewModel: ViewModel {
 
 	private func refreshLatestAddedItems() {
 		UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
-                                      fields: ItemFields.allCases,
-		                              includeItemTypes: ["Movie", "Series"],
+		                              fields: [
+		                              	.primaryImageAspectRatio,
+		                              	.seriesPrimaryImage,
+		                              	.seasonUserData,
+		                              	.overview,
+		                              	.genres,
+		                              	.people,
+		                              	.chapters,
+		                              ],
+		                              includeItemTypes: [.movie, .series],
 		                              enableImageTypes: [.primary, .backdrop, .thumb],
 		                              enableUserData: true,
 		                              limit: 8)

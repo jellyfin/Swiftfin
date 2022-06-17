@@ -42,7 +42,7 @@ class DeviceProfileBuilder {
 		self.bitrate = bitrate
 	}
 
-	public func buildProfile() -> DeviceProfile {
+	public func buildProfile() -> ClientCapabilitiesDeviceProfile {
 		let maxStreamingBitrate = bitrate
 		let maxStaticBitrate = bitrate
 		let musicStreamingTranscodingBitrate = bitrate
@@ -147,10 +147,12 @@ class DeviceProfileBuilder {
 
 		let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", type: .video, mimeType: "video/mp4")]
 
-		let profile = DeviceProfile(maxStreamingBitrate: maxStreamingBitrate, maxStaticBitrate: maxStaticBitrate,
-		                            musicStreamingTranscodingBitrate: musicStreamingTranscodingBitrate,
-		                            directPlayProfiles: directPlayProfiles, transcodingProfiles: transcodingProfiles, containerProfiles: [],
-		                            codecProfiles: codecProfiles, responseProfiles: responseProfiles, subtitleProfiles: subtitleProfiles)
+		let profile = ClientCapabilitiesDeviceProfile(maxStreamingBitrate: maxStreamingBitrate, maxStaticBitrate: maxStaticBitrate,
+		                                              musicStreamingTranscodingBitrate: musicStreamingTranscodingBitrate,
+		                                              directPlayProfiles: directPlayProfiles, transcodingProfiles: transcodingProfiles,
+		                                              containerProfiles: [],
+		                                              codecProfiles: codecProfiles, responseProfiles: responseProfiles,
+		                                              subtitleProfiles: subtitleProfiles)
 
 		return profile
 	}

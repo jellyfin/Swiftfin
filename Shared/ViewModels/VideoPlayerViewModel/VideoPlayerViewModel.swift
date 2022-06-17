@@ -207,7 +207,7 @@ final class VideoPlayerViewModel: ViewModel {
 	// During scrubbing, many progress reports were spammed
 	// Send only the current report after a delay
 	private var progressReportTimer: Timer?
-	private var lastProgressReport: PlaybackProgressInfo?
+	private var lastProgressReport: ReportPlaybackProgressRequest?
 
 	// MARK: init
 
@@ -477,28 +477,27 @@ extension VideoPlayerViewModel {
 
 		let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
 
-		let startInfo = PlaybackStartInfo(canSeek: true,
-		                                  item: item,
-		                                  itemId: item.id,
-		                                  sessionId: response.playSessionId,
-		                                  mediaSourceId: item.id,
-		                                  audioStreamIndex: selectedAudioStreamIndex,
-		                                  subtitleStreamIndex: subtitleStreamIndex,
-		                                  isPaused: false,
-		                                  isMuted: false,
-		                                  positionTicks: item.userData?.playbackPositionTicks,
-		                                  playbackStartTimeTicks: startTimeTicks,
-		                                  volumeLevel: 100,
-		                                  brightness: 100,
-		                                  aspectRatio: nil,
-		                                  playMethod: .directPlay,
-		                                  liveStreamId: nil,
-		                                  playSessionId: response.playSessionId,
-		                                  repeatMode: .repeatNone,
-		                                  nowPlayingQueue: nil,
-		                                  playlistItemId: "playlistItem0")
+		let reportPlaybackStartRequest = ReportPlaybackStartRequest(canSeek: true,
+		                                                            itemId: item.id,
+		                                                            sessionId: response.playSessionId,
+		                                                            mediaSourceId: item.id,
+		                                                            audioStreamIndex: selectedAudioStreamIndex,
+		                                                            subtitleStreamIndex: subtitleStreamIndex,
+		                                                            isPaused: false,
+		                                                            isMuted: false,
+		                                                            positionTicks: item.userData?.playbackPositionTicks,
+		                                                            playbackStartTimeTicks: startTimeTicks,
+		                                                            volumeLevel: 100,
+		                                                            brightness: 100,
+		                                                            aspectRatio: nil,
+		                                                            playMethod: .directPlay,
+		                                                            liveStreamId: nil,
+		                                                            playSessionId: response.playSessionId,
+		                                                            repeatMode: .repeatNone,
+		                                                            nowPlayingQueue: nil,
+		                                                            playlistItemId: "playlistItem0")
 
-		PlaystateAPI.reportPlaybackStart(playbackStartInfo: startInfo)
+		PlaystateAPI.reportPlaybackStart(reportPlaybackStartRequest: reportPlaybackStartRequest)
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
@@ -512,28 +511,27 @@ extension VideoPlayerViewModel {
 	func sendPauseReport(paused: Bool) {
 		let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
 
-		let pauseInfo = PlaybackStartInfo(canSeek: true,
-		                                  item: item,
-		                                  itemId: item.id,
-		                                  sessionId: response.playSessionId,
-		                                  mediaSourceId: item.id,
-		                                  audioStreamIndex: selectedAudioStreamIndex,
-		                                  subtitleStreamIndex: subtitleStreamIndex,
-		                                  isPaused: paused,
-		                                  isMuted: false,
-		                                  positionTicks: currentSecondTicks,
-		                                  playbackStartTimeTicks: startTimeTicks,
-		                                  volumeLevel: 100,
-		                                  brightness: 100,
-		                                  aspectRatio: nil,
-		                                  playMethod: .directPlay,
-		                                  liveStreamId: nil,
-		                                  playSessionId: response.playSessionId,
-		                                  repeatMode: .repeatNone,
-		                                  nowPlayingQueue: nil,
-		                                  playlistItemId: "playlistItem0")
+		let reportPlaybackStartRequest = ReportPlaybackStartRequest(canSeek: true,
+		                                                            itemId: item.id,
+		                                                            sessionId: response.playSessionId,
+		                                                            mediaSourceId: item.id,
+		                                                            audioStreamIndex: selectedAudioStreamIndex,
+		                                                            subtitleStreamIndex: subtitleStreamIndex,
+		                                                            isPaused: paused,
+		                                                            isMuted: false,
+		                                                            positionTicks: currentSecondTicks,
+		                                                            playbackStartTimeTicks: startTimeTicks,
+		                                                            volumeLevel: 100,
+		                                                            brightness: 100,
+		                                                            aspectRatio: nil,
+		                                                            playMethod: .directPlay,
+		                                                            liveStreamId: nil,
+		                                                            playSessionId: response.playSessionId,
+		                                                            repeatMode: .repeatNone,
+		                                                            nowPlayingQueue: nil,
+		                                                            playlistItemId: "playlistItem0")
 
-		PlaystateAPI.reportPlaybackStart(playbackStartInfo: pauseInfo)
+		PlaystateAPI.reportPlaybackStart(reportPlaybackStartRequest: reportPlaybackStartRequest)
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
@@ -547,26 +545,25 @@ extension VideoPlayerViewModel {
 	func sendProgressReport() {
 		let subtitleStreamIndex = subtitlesEnabled ? selectedSubtitleStreamIndex : nil
 
-		let progressInfo = PlaybackProgressInfo(canSeek: true,
-		                                        item: item,
-		                                        itemId: item.id,
-		                                        sessionId: response.playSessionId,
-		                                        mediaSourceId: item.id,
-		                                        audioStreamIndex: selectedAudioStreamIndex,
-		                                        subtitleStreamIndex: subtitleStreamIndex,
-		                                        isPaused: false,
-		                                        isMuted: false,
-		                                        positionTicks: currentSecondTicks,
-		                                        playbackStartTimeTicks: startTimeTicks,
-		                                        volumeLevel: nil,
-		                                        brightness: nil,
-		                                        aspectRatio: nil,
-		                                        playMethod: .directPlay,
-		                                        liveStreamId: nil,
-		                                        playSessionId: response.playSessionId,
-		                                        repeatMode: .repeatNone,
-		                                        nowPlayingQueue: nil,
-		                                        playlistItemId: "playlistItem0")
+		let progressInfo = ReportPlaybackProgressRequest(canSeek: true,
+		                                                 itemId: item.id,
+		                                                 sessionId: response.playSessionId,
+		                                                 mediaSourceId: item.id,
+		                                                 audioStreamIndex: selectedAudioStreamIndex,
+		                                                 subtitleStreamIndex: subtitleStreamIndex,
+		                                                 isPaused: false,
+		                                                 isMuted: false,
+		                                                 positionTicks: currentSecondTicks,
+		                                                 playbackStartTimeTicks: startTimeTicks,
+		                                                 volumeLevel: nil,
+		                                                 brightness: nil,
+		                                                 aspectRatio: nil,
+		                                                 playMethod: .directPlay,
+		                                                 liveStreamId: nil,
+		                                                 playSessionId: response.playSessionId,
+		                                                 repeatMode: .repeatNone,
+		                                                 nowPlayingQueue: nil,
+		                                                 playlistItemId: "playlistItem0")
 
 		lastProgressReport = progressInfo
 
@@ -577,7 +574,7 @@ extension VideoPlayerViewModel {
 	private func _sendProgressReport() {
 		guard let lastProgressReport = lastProgressReport else { return }
 
-		PlaystateAPI.reportPlaybackProgress(playbackProgressInfo: lastProgressReport)
+		PlaystateAPI.reportPlaybackProgress(reportPlaybackProgressRequest: lastProgressReport)
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
@@ -591,19 +588,18 @@ extension VideoPlayerViewModel {
 	// MARK: sendStopReport
 
 	func sendStopReport() {
-		let stopInfo = PlaybackStopInfo(item: item,
-		                                itemId: item.id,
-		                                sessionId: response.playSessionId,
-		                                mediaSourceId: item.id,
-		                                positionTicks: currentSecondTicks,
-		                                liveStreamId: nil,
-		                                playSessionId: response.playSessionId,
-		                                failed: nil,
-		                                nextMediaType: nil,
-		                                playlistItemId: "playlistItem0",
-		                                nowPlayingQueue: nil)
+		let reportPlaybackStoppedRequest = ReportPlaybackStoppedRequest(itemId: item.id,
+		                                                                sessionId: response.playSessionId,
+		                                                                mediaSourceId: item.id,
+		                                                                positionTicks: currentSecondTicks,
+		                                                                liveStreamId: nil,
+		                                                                playSessionId: response.playSessionId,
+		                                                                failed: nil,
+		                                                                nextMediaType: nil,
+		                                                                playlistItemId: "playlistItem0",
+		                                                                nowPlayingQueue: nil)
 
-		PlaystateAPI.reportPlaybackStopped(playbackStopInfo: stopInfo)
+		PlaystateAPI.reportPlaybackStopped(reportPlaybackStoppedRequest: reportPlaybackStoppedRequest)
 			.sink { completion in
 				self.handleAPIRequestError(completion: completion)
 			} receiveValue: { _ in
