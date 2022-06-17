@@ -371,6 +371,9 @@
 		E14B4143279354770016CBE5 /* LocalizedLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B4140279354770016CBE5 /* LocalizedLookup.swift */; };
 		E1569371284477A9000B5AF2 /* iPadOSMovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1569370284477A9000B5AF2 /* iPadOSMovieItemView.swift */; };
 		E1569374284479CA000B5AF2 /* iPadOSLandscapeOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1569373284479CA000B5AF2 /* iPadOSLandscapeOverlayView.swift */; };
+		E15E1EC3285CEF7C00F696A5 /* CompactPosterScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15E1EC2285CEF7C00F696A5 /* CompactPosterScrollView.swift */; };
+		E15E1EC5285CEF9C00F696A5 /* CompactLogoScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15E1EC4285CEF9C00F696A5 /* CompactLogoScrollView.swift */; };
+		E15E1EC7285CEFB600F696A5 /* CinematicScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15E1EC6285CEFB600F696A5 /* CinematicScrollView.swift */; };
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
 		E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
@@ -517,7 +520,7 @@
 		E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1F0204F26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1F8ECC52846A23A0034BA94 /* PortraitCompactHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F8ECC42846A23A0034BA94 /* PortraitCompactHeaderView.swift */; };
-		E1F8ECC82846B2550034BA94 /* MovieItemBodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F8ECC72846B2550034BA94 /* MovieItemBodyView.swift */; };
+		E1F8ECC82846B2550034BA94 /* BodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F8ECC72846B2550034BA94 /* BodyView.swift */; };
 		E1F8ECCA2846B3250034BA94 /* ItemViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F8ECC92846B3250034BA94 /* ItemViewType.swift */; };
 		E1F8ECCB2846B4EE0034BA94 /* ItemViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F8ECC92846B3250034BA94 /* ItemViewType.swift */; };
 		E1F8ECCC2846B4EE0034BA94 /* ItemViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F8ECC92846B3250034BA94 /* ItemViewType.swift */; };
@@ -828,6 +831,9 @@
 		E14B4140279354770016CBE5 /* LocalizedLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedLookup.swift; sourceTree = "<group>"; };
 		E1569370284477A9000B5AF2 /* iPadOSMovieItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSMovieItemView.swift; sourceTree = "<group>"; };
 		E1569373284479CA000B5AF2 /* iPadOSLandscapeOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSLandscapeOverlayView.swift; sourceTree = "<group>"; };
+		E15E1EC2285CEF7C00F696A5 /* CompactPosterScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactPosterScrollView.swift; sourceTree = "<group>"; };
+		E15E1EC4285CEF9C00F696A5 /* CompactLogoScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactLogoScrollView.swift; sourceTree = "<group>"; };
+		E15E1EC6285CEFB600F696A5 /* CinematicScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicScrollView.swift; sourceTree = "<group>"; };
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
@@ -918,7 +924,7 @@
 		E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOverviewView.swift; sourceTree = "<group>"; };
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1F8ECC42846A23A0034BA94 /* PortraitCompactHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitCompactHeaderView.swift; sourceTree = "<group>"; };
-		E1F8ECC72846B2550034BA94 /* MovieItemBodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieItemBodyView.swift; sourceTree = "<group>"; };
+		E1F8ECC72846B2550034BA94 /* BodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyView.swift; sourceTree = "<group>"; };
 		E1F8ECC92846B3250034BA94 /* ItemViewType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewType.swift; sourceTree = "<group>"; };
 		E1F8ECCE284864F30034BA94 /* SeasonItemViewBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonItemViewBody.swift; sourceTree = "<group>"; };
 		E1F8ECD12848654C0034BA94 /* SeriesItemBodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesItemBodyView.swift; sourceTree = "<group>"; };
@@ -1931,8 +1937,11 @@
 		E1F8ECC62846B2430034BA94 /* MovieItemView */ = {
 			isa = PBXGroup;
 			children = (
+				E1F8ECC72846B2550034BA94 /* BodyView.swift */,
+				E15E1EC6285CEFB600F696A5 /* CinematicScrollView.swift */,
+				E15E1EC4285CEF9C00F696A5 /* CompactLogoScrollView.swift */,
+				E15E1EC2285CEF7C00F696A5 /* CompactPosterScrollView.swift */,
 				E1C5F02A283F2F6100CFAD44 /* MovieItemView.swift */,
-				E1F8ECC72846B2550034BA94 /* MovieItemBodyView.swift */,
 			);
 			path = MovieItemView;
 			sourceTree = "<group>";
@@ -2500,6 +2509,7 @@
 				E14B4141279354770016CBE5 /* LocalizedLookup.swift in Sources */,
 				E111DE222790BB46008118A3 /* DetectBottomScrollView.swift in Sources */,
 				5D160403278A41FD00D22B99 /* VLCPlayer+subtitles.swift in Sources */,
+				E15E1EC3285CEF7C00F696A5 /* CompactPosterScrollView.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				E1A2C158279A7D76005EC829 /* BundleExtensions.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
@@ -2533,7 +2543,8 @@
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
-				E1F8ECC82846B2550034BA94 /* MovieItemBodyView.swift in Sources */,
+				E1F8ECC82846B2550034BA94 /* BodyView.swift in Sources */,
+				E15E1EC5285CEF9C00F696A5 /* CompactLogoScrollView.swift in Sources */,
 				532175402671EE4F005491E6 /* LibraryFilterView.swift in Sources */,
 				53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */,
 				E1C812CE277AE43100918266 /* VideoPlayerViewModel.swift in Sources */,
@@ -2627,6 +2638,7 @@
 				E10D87DE278510E400BD264C /* PosterSize.swift in Sources */,
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
+				E15E1EC7285CEFB600F696A5 /* CinematicScrollView.swift in Sources */,
 				E1F8ECCF284864F30034BA94 /* SeasonItemViewBody.swift in Sources */,
 				53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */,
 				E1C020D2282A2C7000EDA240 /* SideBarChild.swift in Sources */,
