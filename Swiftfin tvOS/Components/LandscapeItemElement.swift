@@ -46,9 +46,9 @@ struct LandscapeItemElement: View {
 
 	var body: some View {
 		VStack {
-			ImageView(item.type == "Episode" && !(inSeasonView ?? false) ? item.getSeriesBackdropImage(maxWidth: 445) : item
+			ImageView(item.type == .episode && !(inSeasonView ?? false) ? item.getSeriesBackdropImage(maxWidth: 445) : item
 				.getBackdropImage(maxWidth: 445),
-				blurHash: item.type == "Episode" ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
+				blurHash: item.type == .episode ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash())
 				.frame(width: 445, height: 250)
 				.cornerRadius(10)
 				.ignoresSafeArea()
@@ -97,7 +97,7 @@ struct LandscapeItemElement: View {
 					.lineLimit(1)
 					.frame(width: 445)
 			} else {
-				Text(item.type == "Episode" ? "\(item.seriesName ?? "") • \(item.getEpisodeLocator() ?? "")" : item.name ?? "")
+				Text(item.type == .episode ? "\(item.seriesName ?? "") • \(item.getEpisodeLocator() ?? "")" : item.name ?? "")
 					.font(.callout)
 					.fontWeight(.semibold)
 					.lineLimit(1)

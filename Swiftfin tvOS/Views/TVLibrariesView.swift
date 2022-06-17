@@ -47,7 +47,7 @@ struct TVLibrariesView: View {
 			} cell: { _, cell in
 				GeometryReader { _ in
 					if let item = cell.item {
-						if item.type != "Folder" {
+						if item.type != .folder {
 							Button {
 								self.tvLibrariesRouter.route(to: \.library, item)
 							} label: {

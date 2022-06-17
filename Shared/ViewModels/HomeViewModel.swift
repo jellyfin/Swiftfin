@@ -135,7 +135,7 @@ final class HomeViewModel: ViewModel {
 		                              	.people,
 		                              	.chapters,
 		                              ],
-		                              includeItemTypes: ["Movie", "Series"],
+		                              includeItemTypes: [.movie, .series],
 		                              enableImageTypes: [.primary, .backdrop, .thumb],
 		                              enableUserData: true,
 		                              limit: 8)

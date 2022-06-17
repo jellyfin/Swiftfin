@@ -22,18 +22,18 @@ extension BaseItemDto {
 		builder.setMaxBitrate(bitrate: tempOverkillBitrate)
 		let profile = builder.buildProfile()
 
-		let playbackInfo = PlaybackInfoDto(userId: SessionManager.main.currentLogin.user.id,
-		                                   maxStreamingBitrate: tempOverkillBitrate,
-		                                   startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
-		                                   deviceProfile: profile,
-		                                   autoOpenLiveStream: true)
+		let getPostedPlaybackInfoRequest = GetPostedPlaybackInfoRequest(userId: SessionManager.main.currentLogin.user.id,
+		                                                                maxStreamingBitrate: tempOverkillBitrate,
+		                                                                startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
+		                                                                deviceProfile: profile,
+		                                                                autoOpenLiveStream: true)
 
 		return MediaInfoAPI.getPostedPlaybackInfo(itemId: self.id!,
 		                                          userId: SessionManager.main.currentLogin.user.id,
 		                                          maxStreamingBitrate: tempOverkillBitrate,
 		                                          startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
 		                                          autoOpenLiveStream: true,
-		                                          playbackInfoDto: playbackInfo)
+		                                          getPostedPlaybackInfoRequest: getPostedPlaybackInfoRequest)
 			.map { response -> [VideoPlayerViewModel] in
 				let mediaSources = response.mediaSources!
 
@@ -177,18 +177,18 @@ extension BaseItemDto {
 		builder.setMaxBitrate(bitrate: tempOverkillBitrate)
 		let profile = builder.buildProfile()
 
-		let playbackInfo = PlaybackInfoDto(userId: SessionManager.main.currentLogin.user.id,
-		                                   maxStreamingBitrate: tempOverkillBitrate,
-		                                   startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
-		                                   deviceProfile: profile,
-		                                   autoOpenLiveStream: true)
+		let getPostedPlaybackInfoRequest = GetPostedPlaybackInfoRequest(userId: SessionManager.main.currentLogin.user.id,
+		                                                                maxStreamingBitrate: tempOverkillBitrate,
+		                                                                startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
+		                                                                deviceProfile: profile,
+		                                                                autoOpenLiveStream: true)
 
 		return MediaInfoAPI.getPostedPlaybackInfo(itemId: self.id!,
 		                                          userId: SessionManager.main.currentLogin.user.id,
 		                                          maxStreamingBitrate: tempOverkillBitrate,
 		                                          startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
 		                                          autoOpenLiveStream: true,
-		                                          playbackInfoDto: playbackInfo)
+		                                          getPostedPlaybackInfoRequest: getPostedPlaybackInfoRequest)
 			.map { response -> [VideoPlayerViewModel] in
 				let mediaSources = response.mediaSources!
 

@@ -106,18 +106,18 @@ final class LiveTVChannelsViewModel: ViewModel {
 		let minEndDate = Date.now.addComponentsToDate(hours: -1)
 		let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
 
-		let getProgramsDto = GetProgramsDto(channelIds: channelIds,
-		                                    userId: SessionManager.main.currentLogin.user.id,
-		                                    maxStartDate: maxStartDate,
-		                                    minEndDate: minEndDate,
-		                                    sortBy: ["StartDate"],
-		                                    enableImages: true,
-		                                    enableTotalRecordCount: false,
-		                                    imageTypeLimit: 1,
-		                                    enableImageTypes: [.primary],
-		                                    enableUserData: false)
+		let getProgramsRequest = GetProgramsRequest(channelIds: channelIds,
+		                                            userId: SessionManager.main.currentLogin.user.id,
+		                                            maxStartDate: maxStartDate,
+		                                            minEndDate: minEndDate,
+		                                            sortBy: ["StartDate"],
+		                                            enableImages: true,
+		                                            enableTotalRecordCount: false,
+		                                            imageTypeLimit: 1,
+		                                            enableImageTypes: [.primary],
+		                                            enableUserData: false)
 
-		LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
+		LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)

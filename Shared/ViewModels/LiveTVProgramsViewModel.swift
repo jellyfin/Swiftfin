@@ -86,19 +86,19 @@ final class LiveTVProgramsViewModel: ViewModel {
 	}
 
 	private func getSeries() {
-		let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
-		                                    hasAired: false,
-		                                    isMovie: false,
-		                                    isSeries: true,
-		                                    isNews: false,
-		                                    isKids: false,
-		                                    isSports: false,
-		                                    limit: 9,
-		                                    enableTotalRecordCount: false,
-		                                    enableImageTypes: [.primary, .thumb],
-		                                    fields: [.channelInfo, .primaryImageAspectRatio])
+		let getProgramsRequest = GetProgramsRequest(userId: SessionManager.main.currentLogin.user.id,
+		                                            hasAired: false,
+		                                            isMovie: false,
+		                                            isSeries: true,
+		                                            isNews: false,
+		                                            isKids: false,
+		                                            isSports: false,
+		                                            limit: 9,
+		                                            enableTotalRecordCount: false,
+		                                            enableImageTypes: [.primary, .thumb],
+		                                            fields: [.channelInfo, .primaryImageAspectRatio])
 
-		LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
+		LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
@@ -111,19 +111,19 @@ final class LiveTVProgramsViewModel: ViewModel {
 	}
 
 	private func getMovies() {
-		let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
-		                                    hasAired: false,
-		                                    isMovie: true,
-		                                    isSeries: false,
-		                                    isNews: false,
-		                                    isKids: false,
-		                                    isSports: false,
-		                                    limit: 9,
-		                                    enableTotalRecordCount: false,
-		                                    enableImageTypes: [.primary, .thumb],
-		                                    fields: [.channelInfo, .primaryImageAspectRatio])
+		let getProgramsRequest = GetProgramsRequest(userId: SessionManager.main.currentLogin.user.id,
+		                                            hasAired: false,
+		                                            isMovie: true,
+		                                            isSeries: false,
+		                                            isNews: false,
+		                                            isKids: false,
+		                                            isSports: false,
+		                                            limit: 9,
+		                                            enableTotalRecordCount: false,
+		                                            enableImageTypes: [.primary, .thumb],
+		                                            fields: [.channelInfo, .primaryImageAspectRatio])
 
-		LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
+		LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
@@ -136,15 +136,15 @@ final class LiveTVProgramsViewModel: ViewModel {
 	}
 
 	private func getSports() {
-		let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
-		                                    hasAired: false,
-		                                    isSports: true,
-		                                    limit: 9,
-		                                    enableTotalRecordCount: false,
-		                                    enableImageTypes: [.primary, .thumb],
-		                                    fields: [.channelInfo, .primaryImageAspectRatio])
+		let getProgramsRequest = GetProgramsRequest(userId: SessionManager.main.currentLogin.user.id,
+		                                            hasAired: false,
+		                                            isSports: true,
+		                                            limit: 9,
+		                                            enableTotalRecordCount: false,
+		                                            enableImageTypes: [.primary, .thumb],
+		                                            fields: [.channelInfo, .primaryImageAspectRatio])
 
-		LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
+		LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
@@ -157,15 +157,15 @@ final class LiveTVProgramsViewModel: ViewModel {
 	}
 
 	private func getKids() {
-		let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
-		                                    hasAired: false,
-		                                    isKids: true,
-		                                    limit: 9,
-		                                    enableTotalRecordCount: false,
-		                                    enableImageTypes: [.primary, .thumb],
-		                                    fields: [.channelInfo, .primaryImageAspectRatio])
+		let getProgramsRequest = GetProgramsRequest(userId: SessionManager.main.currentLogin.user.id,
+		                                            hasAired: false,
+		                                            isKids: true,
+		                                            limit: 9,
+		                                            enableTotalRecordCount: false,
+		                                            enableImageTypes: [.primary, .thumb],
+		                                            fields: [.channelInfo, .primaryImageAspectRatio])
 
-		LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
+		LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
@@ -178,15 +178,15 @@ final class LiveTVProgramsViewModel: ViewModel {
 	}
 
 	private func getNews() {
-		let getProgramsDto = GetProgramsDto(userId: SessionManager.main.currentLogin.user.id,
-		                                    hasAired: false,
-		                                    isNews: true,
-		                                    limit: 9,
-		                                    enableTotalRecordCount: false,
-		                                    enableImageTypes: [.primary, .thumb],
-		                                    fields: [.channelInfo, .primaryImageAspectRatio])
+		let getProgramsRequest = GetProgramsRequest(userId: SessionManager.main.currentLogin.user.id,
+		                                            hasAired: false,
+		                                            isNews: true,
+		                                            limit: 9,
+		                                            enableTotalRecordCount: false,
+		                                            enableImageTypes: [.primary, .thumb],
+		                                            fields: [.channelInfo, .primaryImageAspectRatio])
 
-		LiveTvAPI.getPrograms(getProgramsDto: getProgramsDto)
+		LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)

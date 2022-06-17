@@ -21,8 +21,8 @@ struct PortraitItemElement: View {
 
 	var body: some View {
 		VStack {
-			ImageView(item.type == "Episode" ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200),
-			          blurHash: item.type == "Episode" ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())
+			ImageView(item.type == .episode ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200),
+			          blurHash: item.type == .episode ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash())
 				.frame(width: 200, height: 300)
 				.cornerRadius(10)
 				.shadow(radius: focused ? 10.0 : 0)
@@ -58,12 +58,12 @@ struct PortraitItemElement: View {
 					.opacity(1), alignment: .topTrailing).opacity(1)
 			Text(item.title)
 				.frame(width: 200, height: 30, alignment: .center)
-			if item.type == "Movie" || item.type == "Series" {
+			if item.type == .movie || item.type == .series {
 				Text("\(String(item.productionYear ?? 0)) • \(item.officialRating ?? "N/A")")
 					.foregroundColor(.secondary)
 					.font(.caption)
 					.fontWeight(.medium)
-			} else if item.type == "Season" {
+			} else if item.type == .season {
 				Text("\(item.name ?? "") • \(String(item.productionYear ?? 0))")
 					.foregroundColor(.secondary)
 					.font(.caption)
