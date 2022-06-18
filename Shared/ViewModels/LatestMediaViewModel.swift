@@ -36,7 +36,7 @@ final class LatestMediaViewModel: ViewModel {
 		                              	.genres,
 		                              	.people,
 		                              ],
-		                              includeItemTypes: ["Series", "Movie"],
+		                              includeItemTypes: [.series, .movie],
 		                              enableUserData: true, limit: 12)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in

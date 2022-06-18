@@ -94,7 +94,7 @@ final class LibrarySearchViewModel: ViewModel {
 		                          limit: 20,
 		                          recursive: true,
 		                          parentId: parentID,
-		                          includeItemTypes: ["Movie", "Series"],
+		                          includeItemTypes: [.movie, .series],
 		                          sortBy: ["IsFavoriteOrLiked", "Random"],
 		                          imageTypeLimit: 0,
 		                          enableTotalRecordCount: false,
@@ -113,7 +113,7 @@ final class LibrarySearchViewModel: ViewModel {
 		ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
 		                          sortOrder: [.ascending], parentId: parentID,
 		                          fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                          includeItemTypes: [ItemType.movie.rawValue], sortBy: ["SortName"], enableUserData: true,
+		                          includeItemTypes: [.movie], sortBy: ["SortName"], enableUserData: true,
 		                          enableImages: true)
 			.trackActivity(loading)
 			.receive(on: DispatchQueue.main)
@@ -126,7 +126,7 @@ final class LibrarySearchViewModel: ViewModel {
 		ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
 		                          sortOrder: [.ascending], parentId: parentID,
 		                          fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                          includeItemTypes: [ItemType.series.rawValue], sortBy: ["SortName"], enableUserData: true,
+		                          includeItemTypes: [.series], sortBy: ["SortName"], enableUserData: true,
 		                          enableImages: true)
 			.trackActivity(loading)
 			.receive(on: DispatchQueue.main)
@@ -139,7 +139,7 @@ final class LibrarySearchViewModel: ViewModel {
 		ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, limit: 50, recursive: true, searchTerm: query,
 		                          sortOrder: [.ascending], parentId: parentID,
 		                          fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                          includeItemTypes: [ItemType.episode.rawValue], sortBy: ["SortName"], enableUserData: true,
+		                          includeItemTypes: [.episode], sortBy: ["SortName"], enableUserData: true,
 		                          enableImages: true)
 			.trackActivity(loading)
 			.receive(on: DispatchQueue.main)

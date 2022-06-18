@@ -266,7 +266,7 @@ public extension BaseItemDto {
 	}
 
 	var itemType: ItemType {
-		guard let originalType = type, let knownType = ItemType(rawValue: originalType) else { return .unknown }
+		guard let originalType = type, let knownType = ItemType(rawValue: originalType.rawValue) else { return .unknown }
 		return knownType
 	}
 

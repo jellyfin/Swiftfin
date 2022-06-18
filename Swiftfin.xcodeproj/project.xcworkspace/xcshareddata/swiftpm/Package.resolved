@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Flight-School/AnyCodable",
       "state" : {
-        "revision" : "11423ef0c756e8a1f6b4bb576dab9d97bc016c70",
-        "version" : "0.6.4"
+        "revision" : "f9fda69a7b704d46fb5123005f2f7e43dbb8a0fa",
+        "version" : "0.6.5"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CombineCommunity/CombineExt",
       "state" : {
-        "revision" : "0880829102152185190064fd17847a7c681d2127",
-        "version" : "1.5.1"
+        "revision" : "38a4d4cb01f8c7750671c786d33dfbea00cbd131",
+        "version" : "1.6.1"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults",
       "state" : {
-        "revision" : "119f654d44f7b90f00dc11f7dd1c94a36f12576b",
-        "version" : "6.2.1"
+        "revision" : "981ccb0a01c54abbe3c12ccb8226108527bbf115",
+        "version" : "6.3.0"
       }
     },
     {
@@ -78,16 +78,16 @@
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift",
       "state" : {
         "branch" : "main",
-        "revision" : "f315671ced976a7ec75ce6a1f37e00b4880cbf4b"
+        "revision" : "9d6e46b94d2178116ee3546b03dfb67e19e3a93a"
       }
     },
     {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kean/Nuke.git",
+      "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "0ea7545b5c918285aacc044dc75048625c8257cc",
-        "version" : "10.8.0"
+        "revision" : "a002b7fd786f2df2ed4333fe73a9727499fd9d97",
+        "version" : "10.11.2"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/NukeUI",
       "state" : {
-        "revision" : "17f26c07e6b1d3b9258287f99f528111fcd7b7ad",
-        "version" : "0.8.1"
+        "revision" : "ebfed3c9a4e97e310b0ff8ee0fffe5579887a825",
+        "version" : "0.8.2"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rundfunk47/stinsen",
       "state" : {
-        "revision" : "36d97964075dc770046ddef9346a29bfa8982d6d",
-        "version" : "2.0.7"
+        "revision" : "add05384b65ae3e39474f51ab5b9281abd238c60",
+        "version" : "2.0.9"
       }
     },
     {
@@ -168,7 +168,7 @@
       "location" : "https://github.com/spacenation/swiftui-sliders",
       "state" : {
         "branch" : "master",
-        "revision" : "538e16b35ad7a066a8f5624da9ecee6327886bf7"
+        "revision" : "5ba8614462a7ed4bd47a93fbca6c281599f74337"
       }
     },
     {
