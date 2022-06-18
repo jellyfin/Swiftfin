@@ -250,7 +250,6 @@
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		C400DB6A27FE894F007B65FE /* LiveTVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */; };
 		C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */; };
-		C400DB6D27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6C27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift */; };
 		C409CE9C284EA6EA00CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9B284EA6EA00CABC12 /* SwiftUICollection */; };
 		C409CE9E285044C800CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9D285044C800CABC12 /* SwiftUICollection */; };
 		C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD921271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift */; };
@@ -264,9 +263,6 @@
 		C45640D0281A43EF007096DE /* LiveTVNativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45640CF281A43EF007096DE /* LiveTVNativePlayerViewController.swift */; };
 		C45942C527F67DA400C54FE7 /* LiveTVCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942C427F67DA400C54FE7 /* LiveTVCoordinator.swift */; };
 		C45942C627F695FB00C54FE7 /* LiveTVProgramsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE07702725EB06003F4AD1 /* LiveTVProgramsCoordinator.swift */; };
-		C45942C927F697CA00C54FE7 /* iOSLiveTVVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942C827F697CA00C54FE7 /* iOSLiveTVVideoPlayerCoordinator.swift */; };
-		C45942CB27F6984100C54FE7 /* LiveTVPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942CA27F6984100C54FE7 /* LiveTVPlayerViewController.swift */; };
-		C45942CD27F6994A00C54FE7 /* LiveTVPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942CC27F6994A00C54FE7 /* LiveTVPlayerView.swift */; };
 		C45942D027F69C2400C54FE7 /* LiveTVChannelsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE07872728448B003F4AD1 /* LiveTVChannelsCoordinator.swift */; };
 		C45B29BB26FAC5B600CEF5E0 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		C4AE2C3027498D2300AE13CF /* LiveTVHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AE2C2F27498D2300AE13CF /* LiveTVHomeView.swift */; };
@@ -508,6 +504,10 @@
 		E1D4BF8D2719F3A300A11E64 /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */; };
 		E1D7E5A827892566009D0EF7 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E1D7E5A727892566009D0EF7 /* Nuke */; };
+		E1DAC3E4285E993F0064060F /* iOSLiveTVVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942C827F697CA00C54FE7 /* iOSLiveTVVideoPlayerCoordinator.swift */; };
+		E1DAC3E5285E99650064060F /* LiveTVChannelItemWideElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6C27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift */; };
+		E1DAC3E6285E99B30064060F /* LiveTVPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942CC27F6994A00C54FE7 /* LiveTVPlayerView.swift */; };
+		E1DAC3E7285E99F90064060F /* LiveTVPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942CA27F6984100C54FE7 /* LiveTVPlayerViewController.swift */; };
 		E1E00A35278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A37278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
@@ -2620,11 +2620,13 @@
 				E10D87DC2784EC5200BD264C /* EpisodesRowView.swift in Sources */,
 				E1C812BE277A8E5D00918266 /* VLCPlayerViewController.swift in Sources */,
 				E1F8ECC52846A23A0034BA94 /* PortraitCompactHeaderView.swift in Sources */,
+				E1DAC3E6285E99B30064060F /* LiveTVPlayerView.swift in Sources */,
 				E1AA331D2782541500F6439C /* PrimaryButtonView.swift in Sources */,
 				E1AF3E6A28408E020078BC20 /* BlurView.swift in Sources */,
 				62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */,
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				C4BE07762725EBEA003F4AD1 /* LiveTVProgramsViewModel.swift in Sources */,
+				E1DAC3E4285E993F0064060F /* iOSLiveTVVideoPlayerCoordinator.swift in Sources */,
 				E13DD3E927177ED6009D4DAF /* ServerListCoordinator.swift in Sources */,
 				E1F8ECCA2846B3250034BA94 /* ItemViewType.swift in Sources */,
 				E1C812BD277A8E5D00918266 /* PlayerOverlayDelegate.swift in Sources */,
@@ -2646,6 +2648,7 @@
 				E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
 				62E632EF267D43320063E547 /* LibraryFilterViewModel.swift in Sources */,
+				E1DAC3E5285E99650064060F /* LiveTVChannelItemWideElement.swift in Sources */,
 				5D64683D277B1649009E09AE /* PreferenceUIHostingSwizzling.swift in Sources */,
 				E1F8ECD22848654C0034BA94 /* SeriesItemBodyView.swift in Sources */,
 				E13DD3C827164B1E009D4DAF /* UIDeviceExtensions.swift in Sources */,
@@ -2668,6 +2671,7 @@
 				E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */,
 				E126F741278A656C00A522BF /* ServerStreamType.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
+				E1DAC3E7285E99F90064060F /* LiveTVPlayerViewController.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */,
 				E1D4BF872719D27100A11E64 /* Bitrates.swift in Sources */,

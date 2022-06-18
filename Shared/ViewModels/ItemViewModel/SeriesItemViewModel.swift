@@ -93,7 +93,7 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 		                          recursive: true,
 		                          sortOrder: [.ascending],
 		                          parentId: item.id,
-		                          includeItemTypes: ["Episode"])
+                                  includeItemTypes: [.episode])
 			.trackActivity(loading)
 			.sink { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
