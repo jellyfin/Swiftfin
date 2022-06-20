@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct AboutView: View {
+struct AboutAppView: View {
 
 	var body: some View {
 		List {

@@ -47,10 +47,6 @@ class ItemViewModel: ViewModel {
 		default: ()
 		}
         
-        if item.isHD ?? false {
-            print("item isHD")
-        }
-
 		isFavorited = item.userData?.isFavorite ?? false
 		isWatched = item.userData?.played ?? false
 
@@ -105,14 +101,14 @@ class ItemViewModel: ViewModel {
 	}
 
 	func getItemDisplayName() -> String {
-		item.name ?? ""
+		item.name ?? "--"
 	}
 
 	func getSimilarItems() {
 		LibraryAPI.getSimilarItems(itemId: item.id!,
 		                           userId: SessionManager.main.currentLogin.user.id,
 		                           limit: 10,
-		                           fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
+                                   fields: ItemFields.allCases)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)

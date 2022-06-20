@@ -12,22 +12,26 @@ import SwiftUI
 
 struct MovieItemView: View {
 
-	@EnvironmentObject
-	private var viewModel: MovieItemViewModel
+    @EnvironmentObject
+    private var viewModel: ItemViewModel
     @Default(.itemViewType)
     private var itemViewType
 
 	var body: some View {
-        Group {
-            switch itemViewType {
-            case .compactPoster:
-                CompactPosterScrollView()
+        switch itemViewType {
+        case .compactPoster:
+            ItemView.CompactPosterScrollView {
+                ContentView()
                     .environmentObject(viewModel)
-            case .compactLogo:
-                CompactLogoScrollView()
+            }
+        case .compactLogo:
+            ItemView.CompactLogoScrollView {
+                ContentView()
                     .environmentObject(viewModel)
-            case .cinematic:
-                CinematicScrollView()
+            }
+        case .cinematic:
+            ItemView.CinematicScrollView {
+                ContentView()
                     .environmentObject(viewModel)
             }
         }
