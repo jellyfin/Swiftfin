@@ -9,6 +9,7 @@
 import Introspect
 import JellyfinAPI
 import SwiftUI
+import WidgetKit
 
 struct ItemView: View {
 
@@ -76,8 +77,6 @@ extension ItemView {
                 ZStack {
                     Rectangle()
                         .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
-                        .frame(maxWidth: 300, maxHeight: 50)
-                        .frame(height: 50)
                         .cornerRadius(10)
 
                     HStack {
@@ -172,5 +171,180 @@ extension ItemView {
                 }
             }
         }
+    }
+}
+
+extension ItemView {
+
+    struct AttributesHStackView: View {
+        
+        @EnvironmentObject
+        private var viewModel: ItemViewModel
+        
+        var body: some View {
+            HStack {
+                if let officialRating = viewModel.item.officialRating {
+                    AttributeOutlineView(text: officialRating)
+                }
+
+                if let selectedPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+                    if selectedPlayerViewModel.item.isHD ?? false {
+                        AttributeFillView(text: "HD")
+                    }
+                    
+                    if (selectedPlayerViewModel.videoStream.width ?? 0) > 3800 {
+                        AttributeFillView(text: "4K")
+                    }
+                    
+                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "5.1" }) {
+                        AttributeFillView(text: "5.1")
+                    }
+                    
+                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "7.1" }) {
+                        AttributeFillView(text: "7.1")
+                    }
+                    
+                    if !selectedPlayerViewModel.subtitleStreams.isEmpty {
+                        AttributeOutlineView(text: "CC")
+                    }
+                }
+            }
+            .foregroundColor(.secondary)
+        }
+    }
+    
+    struct DotHStackView: View {
+        
+        @EnvironmentObject
+        private var viewModel: ItemViewModel
+        
+        var body: some View {
+            HStack {
+
+                if let firstGenre = viewModel.item.genres?.first {
+                    Text(firstGenre)
+
+                    Circle()
+                        .frame(width: 2, height: 2)
+                        .padding(.horizontal, 1)
+                }
+
+                if let premiereYear = viewModel.item.premiereDateYear {
+                    Text(String(premiereYear))
+
+                    Circle()
+                        .frame(width: 2, height: 2)
+                        .padding(.horizontal, 1)
+                }
+
+                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                    Text(runtime)
+                }
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .padding(.horizontal)
+        }
+    }
+    
+    struct ItemActionHStackView: View {
+        
+        @EnvironmentObject
+        private var viewModel: ItemViewModel
+        
+        var body: some View {
+            HStack(alignment: .center, spacing: 15) {
+                Button {
+                    UIDevice.impact(.light)
+                    viewModel.toggleWatchState()
+                } label: {
+                    if viewModel.isWatched {
+                        Image(systemName: "checkmark.circle.fill")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
+                    } else {
+                        Image(systemName: "checkmark.circle")
+                            .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                
+                Button {
+                    UIDevice.impact(.light)
+                    viewModel.toggleFavoriteState()
+                } label: {
+                    if viewModel.isFavorited {
+                        Image(systemName: "heart.fill")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, Color.red, Color.red)
+                    } else {
+                        Image(systemName: "heart")
+                            .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                
+                if viewModel.videoPlayerViewModels.count > 1 {
+                    Menu {
+                        ForEach(viewModel.videoPlayerViewModels, id: \.versionName) { viewModelOption in
+                            Button {
+                                viewModel.selectedVideoPlayerViewModel = viewModelOption
+                            } label: {
+                                if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
+                                    Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
+                                } else {
+                                    Text(viewModelOption.versionName ?? L10n.noTitle)
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "list.dash")
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .font(.title)
+        }
+    }
+}
+
+struct AttributeOutlineView: View {
+    
+    let text: String
+    
+    var body: some View {
+        Text(text)
+            .font(.caption)
+            .fontWeight(.semibold)
+            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+            .overlay(RoundedRectangle(cornerRadius: 2)
+                .stroke(Color(UIColor.lightGray), lineWidth: 1))
+    }
+}
+
+struct AttributeFillView: View {
+    
+    let text: String
+    
+    var body: some View {
+        Text(text)
+            .font(.caption)
+            .fontWeight(.semibold)
+            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+            .hidden()
+            .background {
+                Color(UIColor.lightGray)
+                    .cornerRadius(2)
+                    .inverseMask(
+                        Group {
+                            Text(text)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                        }
+                    )
+            }
     }
 }

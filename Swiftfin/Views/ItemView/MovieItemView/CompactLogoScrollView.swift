@@ -55,8 +55,9 @@ extension MovieItemView {
                                       .foregroundColor(.primary)
                                       .frame(alignment: .bottom)
                               })
-                              .frame(height: 100, alignment: .bottom)
+                              .frame(maxHeight: 100, alignment: .bottom)
                 }
+                .padding(.horizontal)
             }
         }
         

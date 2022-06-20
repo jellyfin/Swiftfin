@@ -16,50 +16,6 @@ struct EpisodeItemView: View {
 	@EnvironmentObject
 	private var viewModel: EpisodeItemViewModel
 
-	// MARK: Play Button
-
-	@ViewBuilder
-	private var playButton: some View {
-		Button {
-			if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-				itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-			} else {
-				LogManager.log.error("Attempted to play item but no playback information available")
-			}
-		} label: {
-			ZStack {
-				Rectangle()
-					.foregroundColor(Color(UIColor.systemPurple))
-					.frame(maxWidth: 300, maxHeight: 50)
-					.frame(height: 50)
-					.cornerRadius(10)
-
-				HStack {
-					Image(systemName: "play.fill")
-						.font(.system(size: 20))
-					Text(viewModel.playButtonText())
-						.font(.callout)
-						.fontWeight(.semibold)
-				}
-				.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
-			}
-		}
-		.contextMenu {
-			if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-				Button {
-					if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-						selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-						itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-					} else {
-						LogManager.log.error("Attempted to play item but no playback information available")
-					}
-				} label: {
-					Label(L10n.playFromBeginning, systemImage: "gobackward")
-				}
-			}
-		}
-	}
-
 	// MARK: portraitShelfItem
 
 	@ViewBuilder
@@ -103,7 +59,13 @@ struct EpisodeItemView: View {
             .foregroundColor(.secondary)
             .padding(.horizontal)
 
-            playButton
+            ItemView.PlayButton(viewModel: viewModel)
+                .frame(maxWidth: 300)
+                .frame(height: 50)
+            
+            ItemView.ItemActionHStackView()
+                .environmentObject(viewModel as ItemViewModel)
+                .frame(maxWidth: 300)
         }
 	}
 
@@ -147,7 +109,7 @@ struct EpisodeItemView: View {
 
 			Spacer(minLength: 0)
 
-			playButton
+            ItemView.PlayButton(viewModel: viewModel)
 				.padding(.horizontal)
 		}
 	}
@@ -200,7 +162,7 @@ struct EpisodeItemView: View {
                                        .padding(.bottom)
                     }
 
-                    if let studios = viewModel.item.studios {
+                    if let studios = viewModel.item.studios, !studios.isEmpty {
                         PillHStackView(title: L10n.studios,
                                        items: studios) { studio in
                             itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
@@ -237,37 +199,6 @@ struct EpisodeItemView: View {
                     }
                 }
 			}
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 0) {
-                            Button {
-                                viewModel.toggleWatchState()
-                            } label: {
-                                if viewModel.isWatched {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-                                } else {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
-                                }
-                            }
-            
-                            Button {
-                                viewModel.toggleFavoriteState()
-                            } label: {
-                                if viewModel.isFavorited {
-                                    Image(systemName: "heart.circle.fill")
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-                                } else {
-                                    Image(systemName: "heart.circle.fill")
-                                        .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
-                                }
-                            }
-                    }
-                }
-            }
 		}
 	}
 }

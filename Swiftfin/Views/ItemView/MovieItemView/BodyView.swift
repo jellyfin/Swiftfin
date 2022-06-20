@@ -32,17 +32,15 @@ extension MovieItemView {
                                    selectedAction: { genre in
                                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                                    })
-                                   .padding(.bottom)
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios {
+                if let studios = viewModel.item.studios, !studios.isEmpty {
                     PillHStackView(title: L10n.studios,
                                    items: studios) { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
-                    .padding(.bottom)
                 }
 
                 if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {

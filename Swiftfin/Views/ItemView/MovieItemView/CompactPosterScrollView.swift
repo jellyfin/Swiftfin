@@ -13,6 +13,8 @@ extension MovieItemView {
     struct CompactPosterScrollView: View {
         
         @EnvironmentObject
+        var itemRouter: ItemCoordinator.Router
+        @EnvironmentObject
         private var viewModel: MovieItemViewModel
         
         @ViewBuilder
@@ -36,8 +38,20 @@ extension MovieItemView {
             ParallaxHeaderScrollView(header: headerView,
                                      staticOverlayView: staticOverlayView,
                                      headerHeight: UIScreen.main.bounds.height * 0.35) {
-                BodyView()
-                    .environmentObject(viewModel)
+                VStack {
+                    if let itemOverview = viewModel.item.overview {
+                        TruncatedTextView(itemOverview,
+                                          lineLimit: 4,
+                                          font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                            itemRouter.route(to: \.itemOverview, viewModel.item)
+                        }
+                                          .padding(.horizontal)
+                                          .padding(.top)
+                    }
+                    
+                    BodyView()
+                        .environmentObject(viewModel)
+                }
             }
         }
     }

@@ -67,53 +67,8 @@ struct PortraitCompactOverlayView: View {
                 }
             }
             
-            HStack {
-                if let officialRating = viewModel.item.officialRating {
-                    Text(officialRating)
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                        .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                        .overlay(RoundedRectangle(cornerRadius: 2)
-                            .stroke(Color(UIColor.lightGray), lineWidth: 1))
-                }
-
-                if let selectedPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                    if !selectedPlayerViewModel.subtitleStreams.isEmpty {
-                        Text("CC")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.secondary)
-                            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                            .overlay(RoundedRectangle(cornerRadius: 2)
-                                .stroke(Color(UIColor.lightGray), lineWidth: 1))
-                    }
-                }
-            }
-            
-            if viewModel.videoPlayerViewModels.count > 1 {
-                Menu {
-                    ForEach(viewModel.videoPlayerViewModels, id: \.self) { viewModelOption in
-                        Button {
-                            viewModel.selectedVideoPlayerViewModel = viewModelOption
-                        } label: {
-                            if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
-                                Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
-                            } else {
-                                Text(viewModelOption.versionName ?? L10n.noTitle)
-                            }
-                        }
-                    }
-                } label: {
-                    HStack(spacing: 5) {
-                        Text(viewModel.selectedVideoPlayerViewModel?.versionName ?? L10n.noTitle)
-                            .fontWeight(.semibold)
-                            .fixedSize()
-                        Image(systemName: "chevron.down")
-                    }
-                }
-            }
+            ItemView.AttributesHStackView()
+                .environmentObject(viewModel)
         }
     }
 
@@ -136,43 +91,8 @@ struct PortraitCompactOverlayView: View {
             
             HStack(alignment: .center) {
                 
-                Button {
-                    if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                        itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                    } else {
-                        LogManager.log.error("Attempted to play item but no playback information available")
-                    }
-                } label: {
-                    ZStack {
-                        Rectangle()
-                            .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
-                            .frame(width: 130, height: 40)
-                            .cornerRadius(10)
-
-                        HStack {
-                            Image(systemName: "play.fill")
-                                .font(.system(size: 20))
-                            Text(viewModel.playButtonText())
-                                .font(.callout)
-                                .fontWeight(.semibold)
-                        }
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
-                    }
-                }
-                .contextMenu {
-                    if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-                        Button {
-                            if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                                selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-                                itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                            } else {
-                                LogManager.log.error("Attempted to play item but no playback information available")
-                            }
-                        } label: {
-                            Label(L10n.playFromBeginning, systemImage: "gobackward")
-                        }
-                    }
-                }
+                ItemView.PlayButton(viewModel: viewModel)
+                    .frame(width: 130, height: 40)
                 
                 Spacer()
 
