@@ -73,7 +73,7 @@ class NavBarOffsetScrollViewController<Body: View>: UIViewController, UIScrollVi
 
 		NSLayoutConstraint.activate([
 			scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: -statusBarHeight - navbarHeight),
-			scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 			scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
 			scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 		])

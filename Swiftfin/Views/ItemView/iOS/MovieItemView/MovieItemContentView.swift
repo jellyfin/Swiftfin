@@ -18,9 +18,34 @@ extension MovieItemView {
         var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: MovieItemViewModel
+        @Default(.itemViewType)
+        private var itemViewType
         
         var body: some View {
             VStack(alignment: .leading) {
+                
+                if case ItemViewType.compactPoster = itemViewType {
+                    if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+                        Text(firstTagline)
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .lineLimit(2)
+                    }
+                    
+                    if let itemOverview = viewModel.item.overview {
+                        TruncatedTextView(itemOverview,
+                                          lineLimit: 4,
+                                          font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                            itemRouter.route(to: \.itemOverview, viewModel.item)
+                        }
+                                          .fixedSize()
+                                          .padding(.horizontal)
+                                          .padding(.bottom)
+                    }
+                }
                 
                 // MARK: Genres
 
@@ -30,6 +55,7 @@ extension MovieItemView {
                                    selectedAction: { genre in
                                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                                    })
+                    .padding(.bottom)
                 }
 
                 // MARK: Studios
@@ -39,6 +65,7 @@ extension MovieItemView {
                                    items: studios) { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
+                                   .padding(.bottom)
                 }
 
                 if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
@@ -55,6 +82,7 @@ extension MovieItemView {
                                                 itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                                             })
                                             .fixedSize(horizontal: false, vertical: true)
+                                            .padding(.bottom)
                 }
 
                 // MARK: Recommended
@@ -73,20 +101,27 @@ extension MovieItemView {
                                                 itemRouter.route(to: \.item, item)
                                             })
                                             .fixedSize(horizontal: false, vertical: true)
+                                            .padding(.bottom)
                 }
+                
+                ZStack {
+                    Color.secondarySystemFill
+                    
+                    VStack(alignment: .leading) {
+                        ItemView.AboutView(viewModel: viewModel)
 
-                ItemView.AboutView(viewModel: viewModel)
+                        // MARK: Details
 
-                // MARK: Details
+                        if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
+                            ListDetailsView(title: L10n.information, items: informationItems)
+                                .padding(.horizontal)
+                        }
 
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
-
-                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                    ListDetailsView(title: L10n.media, items: mediaItems)
-                        .padding(.horizontal)
+                        if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
+                            ListDetailsView(title: L10n.media, items: mediaItems)
+                                .padding(.horizontal)
+                        }
+                    }
                 }
             }
         }

@@ -43,6 +43,15 @@ extension ItemView {
 
                     SubOverlayView(viewModel: viewModel)
                     
+                    if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+                        Text(firstTagline)
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.white)
+                    }
+                    
                     if let itemOverview = viewModel.item.overview {
                         TruncatedTextView(itemOverview,
                                           lineLimit: 4,
@@ -56,6 +65,7 @@ extension ItemView {
                     content()
                 }
             }
+                                     .edgesIgnoringSafeArea(.bottom)
         }
     }
 }
@@ -73,9 +83,9 @@ extension ItemView.CompactLogoScrollView {
                     Spacer()
                     
                     LinearGradient(gradient: Gradient(stops: [
-                        .init(color: .systemBackground, location: 0),
-                        .init(color: .systemBackground, location: 0.2),
-                        .init(color: .systemBackground.opacity(0), location: 1),
+                        .init(color: .init(UIColor.lightGray), location: 0),
+                        .init(color: .init(UIColor.lightGray), location: 0.2),
+                        .init(color: .init(UIColor.lightGray).opacity(0), location: 1),
                     ]), startPoint: .bottom, endPoint: .top)
                     .frame(height: 100)
                 }
@@ -111,19 +121,23 @@ extension ItemView.CompactLogoScrollView {
         var viewModel: ItemViewModel
         
         var body: some View {
-            VStack(alignment: .center, spacing: 10) {
-                ItemView.DotHStack(viewModel: viewModel)
+            ZStack {
+                Color(UIColor.lightGray)
                 
-                ItemView.AttributesHStack(viewModel: viewModel)
-                
-                ItemView.PlayButton(viewModel: viewModel)
-                    .frame(maxWidth: 300)
-                    .frame(height: 50)
-                
-                ItemView.ActionButtonHStack(viewModel: viewModel)
-                    .frame(maxWidth: 300)
+                VStack(alignment: .center, spacing: 10) {
+                    ItemView.DotHStack(viewModel: viewModel)
+                    
+                    ItemView.AttributesHStack(viewModel: viewModel)
+                    
+                    ItemView.PlayButton(viewModel: viewModel)
+                        .frame(maxWidth: 300)
+                        .frame(height: 50)
+                    
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .frame(maxWidth: 300)
+                }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
         }
     }
 }

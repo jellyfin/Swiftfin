@@ -19,7 +19,6 @@ struct PillHStackView<ItemType: PillStackable>: View {
 			Text(title)
 				.font(.title3)
 				.fontWeight(.semibold)
-				.padding(.top)
 				.padding(.leading)
 				.accessibility(addTraits: [.isHeader])
 

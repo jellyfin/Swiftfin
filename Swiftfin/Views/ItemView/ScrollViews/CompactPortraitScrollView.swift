@@ -42,6 +42,7 @@ extension ItemView {
                                      headerHeight: UIScreen.main.bounds.height * 0.35) {
                 content()
             }
+                                     .edgesIgnoringSafeArea(.bottom)
         }
     }
 }

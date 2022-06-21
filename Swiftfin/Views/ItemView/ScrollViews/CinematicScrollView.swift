@@ -34,6 +34,7 @@ extension ItemView {
                                      headerHeight: UIScreen.main.bounds.height * 0.7) {
                 content()
             }
+                                     .edgesIgnoringSafeArea(.bottom)
         }
     }
 }
@@ -48,7 +49,7 @@ extension ItemView.CinematicScrollView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            VStack(alignment: .center) {
+            VStack(alignment: .center, spacing: 10) {
 
                 Spacer()
 
@@ -69,12 +70,18 @@ extension ItemView.CinematicScrollView {
                 ItemView.PlayButton(viewModel: viewModel)
                     .frame(maxWidth: 300)
                     .frame(height: 50)
-                    .padding(.bottom)
                 
                 ItemView.ActionButtonHStack(viewModel: viewModel)
                     .frame(maxWidth: 300)
-                    .environmentObject(viewModel)
-                    .padding(.bottom)
+                
+                if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+                    Text(firstTagline)
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .lineLimit(2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundColor(.white)
+                }
 
                 if let playButtonOverview = viewModel.playButtonItem?.overview {
                     TruncatedTextView(playButtonOverview,

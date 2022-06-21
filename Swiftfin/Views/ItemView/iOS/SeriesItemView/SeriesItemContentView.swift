@@ -22,16 +22,27 @@ extension SeriesItemView {
         private var itemViewType
         
         var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 20) {
                 
-                if case ItemViewType.compactPoster = itemViewType, let itemOverView = viewModel.item.overview {
-                    TruncatedTextView(itemOverView,
-                                      lineLimit: 4,
-                                      font: UIFont.preferredFont(forTextStyle: .footnote)) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
+                if case ItemViewType.compactPoster = itemViewType {
+                    if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+                        Text(firstTagline)
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.white)
+                            .padding(.horizontal)
                     }
-                                      .padding(.horizontal)
-                                      .padding(.top)
+                    
+                    if let itemOverview = viewModel.item.overview {
+                        TruncatedTextView(itemOverview,
+                                          lineLimit: 4,
+                                          font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                            itemRouter.route(to: \.itemOverview, viewModel.item)
+                        }
+                                          .padding(.horizontal)
+                    }
                 }
 
                 // MARK: Seasons
