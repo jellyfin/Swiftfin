@@ -28,7 +28,7 @@ struct iPadOSLandscapeOverlayView: View {
 				ImageView(viewModel.item.getLogoImage(maxWidth: 400),
 				          resizingMode: .aspectFit,
 				          failureView: {
-				          	Text(viewModel.getItemDisplayName())
+				          	Text(viewModel.item.displayName)
 				          		.font(.largeTitle)
 				          		.fontWeight(.semibold)
 				          		.multilineTextAlignment(.center)

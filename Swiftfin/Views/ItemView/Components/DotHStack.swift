@@ -12,8 +12,8 @@ extension ItemView {
     
     struct DotHStack: View {
         
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
         
         var body: some View {
             HStack {

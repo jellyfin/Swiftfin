@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import JellyfinAPI
 
 extension ItemView {
     
@@ -14,8 +15,8 @@ extension ItemView {
 
         @EnvironmentObject
         var itemRouter: ItemCoordinator.Router
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
 
         var body: some View {
             VStack(alignment: .leading) {
@@ -41,7 +42,7 @@ extension ItemView {
                                     .cornerRadius(10)
 
                                 VStack(alignment: .leading, spacing: 10) {
-                                    Text(viewModel.getItemDisplayName())
+                                    Text(viewModel.item.displayName)
                                         .font(.title3)
                                         .fontWeight(.semibold)
 

@@ -10,58 +10,42 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension SeriesItemView {
+extension MovieItemView {
     
     struct ContentView: View {
         
         @EnvironmentObject
         var itemRouter: ItemCoordinator.Router
-        @EnvironmentObject
-        private var viewModel: SeriesItemViewModel
-        @Default(.itemViewType)
-        private var itemViewType
+        @ObservedObject
+        var viewModel: MovieItemViewModel
         
         var body: some View {
             VStack(alignment: .leading) {
                 
-                if case ItemViewType.compactPoster = itemViewType, let itemOverView = viewModel.item.overview {
-                    TruncatedTextView(itemOverView,
-                                      lineLimit: 4,
-                                      font: UIFont.preferredFont(forTextStyle: .footnote)) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
-                    }
-                                      .padding(.horizontal)
-                                      .padding(.top)
-                }
-
-                // MARK: Seasons
-
-                EpisodesRowView(viewModel: viewModel)
-
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
                     PillHStackView(title: L10n.genres,
-                                   items: genres) { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
+                                   items: genres,
+                                   selectedAction: { genre in
+                                       itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+                                   })
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios {
+                if let studios = viewModel.item.studios, !studios.isEmpty {
                     PillHStackView(title: L10n.studios,
                                    items: studios) { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
                 }
 
-                // MARK: Episodes
-
                 if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
                     PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                                             topBarView: {
                                                 L10n.castAndCrew.text
+                                                    .font(.title3)
                                                     .fontWeight(.semibold)
                                                     .padding(.bottom)
                                                     .padding(.horizontal)
@@ -70,6 +54,7 @@ extension SeriesItemView {
                                             selectedAction: { person in
                                                 itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                                             })
+                                            .fixedSize(horizontal: false, vertical: true)
                 }
 
                 // MARK: Recommended
@@ -78,6 +63,7 @@ extension SeriesItemView {
                     PortraitImageHStackView(items: viewModel.similarItems,
                                             topBarView: {
                                                 L10n.recommended.text
+                                                    .font(.title3)
                                                     .fontWeight(.semibold)
                                                     .padding(.bottom)
                                                     .padding(.horizontal)
@@ -86,14 +72,20 @@ extension SeriesItemView {
                                             selectedAction: { item in
                                                 itemRouter.route(to: \.item, item)
                                             })
+                                            .fixedSize(horizontal: false, vertical: true)
                 }
 
-                ItemView.AboutView()
+                ItemView.AboutView(viewModel: viewModel)
 
                 // MARK: Details
 
                 if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
                     ListDetailsView(title: L10n.information, items: informationItems)
+                        .padding(.horizontal)
+                }
+
+                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
+                    ListDetailsView(title: L10n.media, items: mediaItems)
                         .padding(.horizontal)
                 }
             }

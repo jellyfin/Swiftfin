@@ -6,18 +6,19 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct SeasonItemViewBody: View {
-    
-    @EnvironmentObject
-    var itemRouter: ItemCoordinator.Router
-    @EnvironmentObject
-    private var viewModel: SeasonItemViewModel
-    
-    var body: some View {
-        Text("")
-    }
+struct SeasonItemView: View {
+
+	@EnvironmentObject
+	var itemRouter: ItemCoordinator.Router
+	@ObservedObject
+    var viewModel: SeasonItemViewModel
+
+	var body: some View {
+		NavBarOffsetScrollView(headerHeight: 10) {
+			ContentView(viewModel: viewModel)
+		}
+	}
 }

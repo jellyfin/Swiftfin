@@ -14,8 +14,8 @@ extension ItemView {
         
         @EnvironmentObject
         var itemRouter: ItemCoordinator.Router
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
         
         let content: () -> ContentView
         
@@ -33,8 +33,7 @@ extension ItemView {
         
         @ViewBuilder
         private var staticOverlayView: some View {
-            StaticOverlayView()
-                .environmentObject(viewModel)
+            StaticOverlayView(viewModel: viewModel)
         }
         
         var body: some View {
@@ -42,7 +41,6 @@ extension ItemView {
                                      staticOverlayView: staticOverlayView,
                                      headerHeight: UIScreen.main.bounds.height * 0.35) {
                 content()
-                    .environmentObject(viewModel)
             }
         }
     }
@@ -54,8 +52,8 @@ extension ItemView.CompactPosterScrollView {
         
         @EnvironmentObject
         var itemRouter: ItemCoordinator.Router
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
         
         @ViewBuilder
         private var rightShelfView: some View {
@@ -64,7 +62,7 @@ extension ItemView.CompactPosterScrollView {
 
                 // MARK: Name
 
-                Text(viewModel.getItemDisplayName())
+                Text(viewModel.item.displayName)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
@@ -104,8 +102,7 @@ extension ItemView.CompactPosterScrollView {
                     }
                 }
                 
-                ItemView.AttributesHStack()
-                    .environmentObject(viewModel)
+                ItemView.AttributesHStack(viewModel: viewModel)
             }
         }
 
@@ -133,8 +130,7 @@ extension ItemView.CompactPosterScrollView {
                     
                     Spacer()
 
-                    ItemView.ItemActionHStackView()
-                        .environmentObject(viewModel)
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
                 }
             }
             .padding(.horizontal)

@@ -10,30 +10,27 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct MovieItemView: View {
+struct SeriesItemView: View {
 
-    @EnvironmentObject
-    private var viewModel: ItemViewModel
+    @ObservedObject
+    var viewModel: SeriesItemViewModel
     @Default(.itemViewType)
     private var itemViewType
 
-	var body: some View {
+    var body: some View {
         switch itemViewType {
         case .compactPoster:
-            ItemView.CompactPosterScrollView {
-                ContentView()
-                    .environmentObject(viewModel)
+            ItemView.CompactPosterScrollView(viewModel: viewModel) {
+                ContentView(viewModel: viewModel)
             }
         case .compactLogo:
-            ItemView.CompactLogoScrollView {
-                ContentView()
-                    .environmentObject(viewModel)
+            ItemView.CompactLogoScrollView(viewModel: viewModel) {
+                ContentView(viewModel: viewModel)
             }
         case .cinematic:
-            ItemView.CinematicScrollView {
-                ContentView()
-                    .environmentObject(viewModel)
+            ItemView.CinematicScrollView(viewModel: viewModel) {
+                ContentView(viewModel: viewModel)
             }
         }
-	}
+    }
 }

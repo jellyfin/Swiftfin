@@ -29,10 +29,6 @@ final class EpisodeItemViewModel: ItemViewModel {
 		.store(in: &cancellables)
 	}
 
-	override func getItemDisplayName() -> String {
-		item.name ?? "--"
-	}
-
 	override func updateItem() {
 		ItemsAPI.getItems(userId: SessionManager.main.currentLogin.user.id,
 		                  limit: 1,

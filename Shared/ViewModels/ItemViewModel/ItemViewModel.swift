@@ -100,10 +100,6 @@ class ItemViewModel: ViewModel {
 		return L10n.play
 	}
 
-	func getItemDisplayName() -> String {
-		item.name ?? "--"
-	}
-
 	func getSimilarItems() {
 		LibraryAPI.getSimilarItems(itemId: item.id!,
 		                           userId: SessionManager.main.currentLogin.user.id,

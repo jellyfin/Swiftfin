@@ -10,10 +10,10 @@ import SwiftUI
 
 extension ItemView {
     
-    struct ItemActionHStackView: View {
+    struct ActionButtonHStack: View {
         
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
         
         var body: some View {
             HStack(alignment: .center, spacing: 15) {

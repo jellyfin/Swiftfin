@@ -13,8 +13,8 @@ struct EpisodeItemView: View {
 
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
-	@EnvironmentObject
-	private var viewModel: EpisodeItemViewModel
+	@ObservedObject
+	var viewModel: EpisodeItemViewModel
 
 	// MARK: portraitShelfItem
 
@@ -27,7 +27,7 @@ struct EpisodeItemView: View {
                 .padding(.horizontal)
                 .foregroundColor(.secondary)
 
-            Text(viewModel.getItemDisplayName())
+            Text(viewModel.item.displayName)
                 .font(.title2)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
@@ -63,7 +63,7 @@ struct EpisodeItemView: View {
                 .frame(maxWidth: 300)
                 .frame(height: 50)
             
-            ItemView.ItemActionHStackView()
+            ItemView.ActionButtonHStack(viewModel: viewModel)
                 .environmentObject(viewModel as ItemViewModel)
                 .frame(maxWidth: 300)
         }
@@ -81,7 +81,7 @@ struct EpisodeItemView: View {
 					.padding(.horizontal)
 					.foregroundColor(.secondary)
 
-				Text(viewModel.getItemDisplayName())
+				Text(viewModel.item.displayName)
 					.font(.title2)
 					.fontWeight(.bold)
 					.multilineTextAlignment(.center)

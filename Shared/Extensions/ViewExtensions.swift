@@ -39,41 +39,4 @@ extension View {
 		self.frame(width: width, height: width * 1.5)
 			.cornerRadius((width * 1.5) / 40)
 	}
-    
-    @ViewBuilder
-    func applyItemViewToolbar(with itemViewModel: ItemViewModel) -> some View {
-        self.toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 0) {
-                        Button {
-                            UIDevice.impact(.light)
-                            itemViewModel.toggleWatchState()
-                        } label: {
-                            if itemViewModel.isWatched {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-                            } else {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
-                            }
-                        }
-        
-                        Button {
-                            UIDevice.impact(.light)
-                            itemViewModel.toggleFavoriteState()
-                        } label: {
-                            if itemViewModel.isFavorited {
-                                Image(systemName: "heart.circle.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-                            } else {
-                                Image(systemName: "heart.circle.fill")
-                                    .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
-                            }
-                        }
-                }
-            }
-        }
-    }
 }

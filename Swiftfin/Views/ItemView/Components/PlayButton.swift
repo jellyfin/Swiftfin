@@ -15,11 +15,7 @@ extension ItemView {
         @EnvironmentObject
         var itemRouter: ItemCoordinator.Router
         @ObservedObject
-        private var viewModel: ItemViewModel
-        
-        init(viewModel: ItemViewModel) {
-            self.viewModel = viewModel
-        }
+        var viewModel: ItemViewModel
         
         var body: some View {
             Button {

@@ -14,8 +14,8 @@ extension ItemView {
 
         @EnvironmentObject
         var itemRouter: ItemCoordinator.Router
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
         
         let content: () -> ContentView
         
@@ -32,8 +32,7 @@ extension ItemView {
         
         @ViewBuilder
         private var staticOverlayView: some View {
-            StaticOverlayView()
-                .environmentObject(viewModel)
+            StaticOverlayView(viewModel: viewModel)
         }
         
         var body: some View {
@@ -42,7 +41,7 @@ extension ItemView {
                                      headerHeight: UIScreen.main.bounds.height * 0.3) {
                 VStack(alignment: .center) {
 
-                    SubOverlayView()
+                    SubOverlayView(viewModel: viewModel)
                     
                     if let itemOverview = viewModel.item.overview {
                         TruncatedTextView(itemOverview,
@@ -55,7 +54,6 @@ extension ItemView {
                     }
                     
                     content()
-                        .environmentObject(viewModel)
                 }
             }
         }
@@ -66,8 +64,8 @@ extension ItemView.CompactLogoScrollView {
     
     struct StaticOverlayView: View {
         
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
         
         var body: some View {
             ZStack {
@@ -88,7 +86,7 @@ extension ItemView.CompactLogoScrollView {
                     ImageView(viewModel.item.getLogoImage(maxWidth: Int(UIScreen.main.bounds.width)),
                               resizingMode: .aspectFit,
                               failureView: {
-                                  Text(viewModel.getItemDisplayName())
+                                  Text(viewModel.item.displayName)
                                       .font(.largeTitle)
                                       .fontWeight(.semibold)
                                       .multilineTextAlignment(.center)
@@ -109,23 +107,20 @@ extension ItemView.CompactLogoScrollView {
         
         @EnvironmentObject
         var itemRouter: ItemCoordinator.Router
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
         
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                ItemView.DotHStack()
-//                    .environmentObject(viewModel)
+                ItemView.DotHStack(viewModel: viewModel)
                 
-                ItemView.AttributesHStack()
-//                    .environmentObject(viewModel)
+                ItemView.AttributesHStack(viewModel: viewModel)
                 
                 ItemView.PlayButton(viewModel: viewModel)
                     .frame(maxWidth: 300)
                     .frame(height: 50)
                 
-                ItemView.ItemActionHStackView()
-//                    .environmentObject(viewModel)
+                ItemView.ActionButtonHStack(viewModel: viewModel)
                     .frame(maxWidth: 300)
             }
             .padding(.horizontal)

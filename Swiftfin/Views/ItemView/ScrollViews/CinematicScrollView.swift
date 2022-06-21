@@ -12,8 +12,8 @@ extension ItemView {
     
     struct CinematicScrollView<ContentView: View>: View {
         
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
         
         let content: () -> ContentView
         
@@ -25,8 +25,7 @@ extension ItemView {
         
         @ViewBuilder
         private var staticOverlayView: some View {
-            StaticOverlayView()
-                .environmentObject(viewModel)
+            StaticOverlayView(viewModel: viewModel)
         }
         
         var body: some View {
@@ -34,7 +33,6 @@ extension ItemView {
                                      staticOverlayView: staticOverlayView,
                                      headerHeight: UIScreen.main.bounds.height * 0.7) {
                 content()
-                    .environmentObject(viewModel)
             }
         }
     }
@@ -46,8 +44,8 @@ extension ItemView.CinematicScrollView {
         
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
-        @EnvironmentObject
-        private var viewModel: ItemViewModel
+        @ObservedObject
+        var viewModel: ItemViewModel
 
         var body: some View {
             VStack(alignment: .center) {
@@ -57,7 +55,7 @@ extension ItemView.CinematicScrollView {
                 ImageView(viewModel.item.getLogoImage(maxWidth: Int(UIScreen.main.bounds.width)),
                           resizingMode: .aspectFit,
                           failureView: {
-                              Text(viewModel.getItemDisplayName())
+                    Text(viewModel.item.displayName)
                                   .font(.largeTitle)
                                   .fontWeight(.semibold)
                                   .multilineTextAlignment(.center)
@@ -66,15 +64,14 @@ extension ItemView.CinematicScrollView {
                           })
                           .frame(height: 100, alignment: .bottom)
 
-                ItemView.DotHStack()
-                    .environmentObject(viewModel)
+                ItemView.DotHStack(viewModel: viewModel)
 
                 ItemView.PlayButton(viewModel: viewModel)
                     .frame(maxWidth: 300)
                     .frame(height: 50)
                     .padding(.bottom)
                 
-                ItemView.ItemActionHStackView()
+                ItemView.ActionButtonHStack(viewModel: viewModel)
                     .frame(maxWidth: 300)
                     .environmentObject(viewModel)
                     .padding(.bottom)
@@ -96,8 +93,7 @@ extension ItemView.CinematicScrollView {
                 }
                 
                 HStack {
-                    ItemView.AttributesHStack()
-                        .environmentObject(viewModel)
+                    ItemView.AttributesHStack(viewModel: viewModel)
                     
                     Spacer()
                 }

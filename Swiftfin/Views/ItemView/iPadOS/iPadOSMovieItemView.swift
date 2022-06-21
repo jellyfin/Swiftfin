@@ -14,8 +14,8 @@ struct iPadOSMovieItemView: View {
 
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
-	@EnvironmentObject
-	private var viewModel: MovieItemViewModel
+	@ObservedObject
+	var viewModel: MovieItemViewModel
 
 	// MARK: portraitHeaderView
 
@@ -94,7 +94,7 @@ struct iPadOSMovieItemView: View {
 
 			// MARK: About
 
-            ItemView.AboutView()
+            ItemView.AboutView(viewModel: viewModel)
 				.padding(.bottom)
 
 			// MARK: Details

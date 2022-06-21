@@ -14,8 +14,8 @@ struct iPadOSSeriesItemView: View {
 
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
-	@EnvironmentObject
-	private var viewModel: SeriesItemViewModel
+	@ObservedObject
+	var viewModel: SeriesItemViewModel
 
 	// MARK: portraitHeaderView
 
@@ -96,7 +96,7 @@ struct iPadOSSeriesItemView: View {
 
 			// MARK: About
 
-            ItemView.AboutView()
+            ItemView.AboutView(viewModel: viewModel)
 				.padding(.bottom)
 
 			// MARK: Details

@@ -13,49 +13,28 @@ import WidgetKit
 
 struct ItemView: View {
 
-	private let item: BaseItemDto
-    private let viewModel: ItemViewModel
-    
-    init(item: BaseItemDto) {
-        self.item = item
-        
-        switch item.type ?? .none {
-        case .movie:
-            viewModel = MovieItemViewModel(item: item)
-        case .series:
-            viewModel = SeriesItemViewModel(item: item)
-        case .season:
-            viewModel = SeasonItemViewModel(item: item)
-        case .episode:
-            viewModel = EpisodeItemViewModel(item: item)
-        default:
-            fatalError()
-        }
-    }
+	let item: BaseItemDto
 
 	var body: some View {
-        Group {
-            switch item.type {
-            case .movie:
-                if UIDevice.isIPad {
-                    iPadOSMovieItemView()
-                } else {
-                    MovieItemView()
-                }
-            case .series:
-                if UIDevice.isIPad {
-                    iPadOSSeriesItemView()
-                } else {
-                    SeriesItemView()
-                }
-            case .season:
-                SeasonItemView()
-            case .episode:
-                EpisodeItemView()
-            default:
-                Text("N/A")
+        switch item.type {
+        case .movie:
+            if UIDevice.isIPad {
+                iPadOSMovieItemView(viewModel: .init(item: item))
+            } else {
+                MovieItemView(viewModel: .init(item: item))
             }
+        case .series:
+            if UIDevice.isIPad {
+                iPadOSSeriesItemView(viewModel: .init(item: item))
+            } else {
+                SeriesItemView(viewModel: .init(item: item))
+            }
+        case .season:
+            SeasonItemView(viewModel: .init(item: item))
+        case .episode:
+            EpisodeItemView(viewModel: .init(item: item))
+        default:
+            Text("N/A")
         }
-        .environmentObject(viewModel)
 	}
 }

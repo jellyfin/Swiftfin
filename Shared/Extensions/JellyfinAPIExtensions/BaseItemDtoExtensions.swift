@@ -286,6 +286,10 @@ public extension BaseItemDto {
 		guard let originalType = type, let knownType = ItemType(rawValue: originalType.rawValue) else { return .unknown }
 		return knownType
 	}
+    
+    var displayName: String {
+        name ?? "--"
+    }
 
 	// MARK: PortraitHeaderViewURL
 
