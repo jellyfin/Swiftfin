@@ -37,7 +37,7 @@ class ItemViewModel: ViewModel {
 
 	init(item: BaseItemDto) {
 		self.item = item
-        super.init()
+		super.init()
 
 		switch item.itemType {
 		case .episode, .movie:
@@ -46,14 +46,14 @@ class ItemViewModel: ViewModel {
 			}
 		default: ()
 		}
-        
+
 		isFavorited = item.userData?.isFavorite ?? false
 		isWatched = item.userData?.played ?? false
 
 		getSimilarItems()
 		refreshItemVideoPlayerViewModel(for: item)
-        
-        Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
+
+		Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
 	}
 
 	@objc
@@ -104,7 +104,7 @@ class ItemViewModel: ViewModel {
 		LibraryAPI.getSimilarItems(itemId: item.id!,
 		                           userId: SessionManager.main.currentLogin.user.id,
 		                           limit: 10,
-                                   fields: ItemFields.allCases)
+		                           fields: ItemFields.allCases)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in
 				self?.handleAPIRequestError(completion: completion)
@@ -115,52 +115,40 @@ class ItemViewModel: ViewModel {
 	}
 
 	func toggleWatchState() {
-		if isWatched {
-			PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id,
-			                              itemId: item.id!)
-				.trackActivity(loading)
-				.sink(receiveCompletion: { [weak self] completion in
-					self?.handleAPIRequestError(completion: completion)
-				}, receiveValue: { [weak self] _ in
-					self?.isWatched = false
-				})
-				.store(in: &cancellables)
-		} else {
-			PlaystateAPI.markPlayedItem(userId: SessionManager.main.currentLogin.user.id,
-			                            itemId: item.id!)
-				.trackActivity(loading)
-				.sink(receiveCompletion: { [weak self] completion in
-					self?.handleAPIRequestError(completion: completion)
-				}, receiveValue: { [weak self] _ in
-					self?.isWatched = true
-				})
-				.store(in: &cancellables)
-		}
+        let current = isWatched
+        isWatched.toggle()
+        
+        PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id,
+                                      itemId: item.id!)
+            .trackActivity(loading)
+            .sink(receiveCompletion: { [weak self] completion in
+                switch completion {
+                case .failure(_):
+                    self?.isWatched = !current
+                case .finished: ()
+                }
+                self?.handleAPIRequestError(completion: completion)
+            }, receiveValue: { _ in })
+            .store(in: &cancellables)
 	}
 
 	func toggleFavoriteState() {
-		if isFavorited {
-			UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
-				.trackActivity(loading)
-				.sink(receiveCompletion: { [weak self] completion in
-					self?.handleAPIRequestError(completion: completion)
-				}, receiveValue: { [weak self] _ in
-					self?.isFavorited = false
-				})
-				.store(in: &cancellables)
-		} else {
-			UserLibraryAPI.markFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
-				.trackActivity(loading)
-				.sink(receiveCompletion: { [weak self] completion in
-					self?.handleAPIRequestError(completion: completion)
-				}, receiveValue: { [weak self] _ in
-					self?.isFavorited = true
-				})
-				.store(in: &cancellables)
-		}
-	}
+        let current = isFavorited
+        isFavorited.toggle()
+        
+        UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+            .trackActivity(loading)
+            .sink(receiveCompletion: { [weak self] completion in
+                switch completion {
+                case .failure(_):
+                    self?.isFavorited = !current
+                case .finished: ()
+                }
+                self?.handleAPIRequestError(completion: completion)
+            }, receiveValue: { _ in })
+            .store(in: &cancellables)
+    }
 
 	// Overridden by subclasses
 	func updateItem() {}
 }
-

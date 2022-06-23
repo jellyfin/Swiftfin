@@ -56,14 +56,16 @@ struct EpisodeItemView: View {
 
 			Spacer(minLength: 0)
 
-            ItemView.PlayButton(viewModel: viewModel)
+			ItemView.PlayButton(viewModel: viewModel)
+				.frame(maxWidth: 300)
+				.frame(height: 50)
 				.padding(.horizontal)
 		}
 	}
 
 	var body: some View {
-        NavBarOffsetScrollView(headerHeight: 10) {
-            ContentView(viewModel: viewModel)
-        }
+		NavBarOffsetScrollView(headerHeight: 10) {
+			ContentView(viewModel: viewModel)
+		}
 	}
 }

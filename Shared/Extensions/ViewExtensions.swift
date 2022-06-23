@@ -33,6 +33,15 @@ extension View {
 			self
 		}
 	}
+    
+    @ViewBuilder
+    func `if`<Content: View>(_ condition: Bool, transformIf: (Self) -> Content, transformElse: (Self) -> Content) -> some View {
+        if condition {
+            transformIf(self)
+        } else {
+            transformElse(self)
+        }
+    }
 
 	/// Applies Portrait Poster frame with proper corner radius ratio against the width
 	func portraitPoster(width: CGFloat) -> some View {

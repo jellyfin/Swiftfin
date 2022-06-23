@@ -35,7 +35,7 @@ extension RefreshHelper {
 	}
 
 	private var isStale: Bool {
-        return false
+		false
 //		lastAutomaticRefresh.addingTimeInterval(Self.timeUntilStale) < .now
 	}
 }

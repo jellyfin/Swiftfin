@@ -9,15 +9,15 @@
 import SwiftUI
 
 struct AttributeOutlineView: View {
-    
-    let text: String
-    
-    var body: some View {
-        Text(text)
-            .font(.caption)
-            .fontWeight(.semibold)
-            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-            .overlay(RoundedRectangle(cornerRadius: 2)
-                .stroke(Color(UIColor.lightGray), lineWidth: 1))
-    }
+
+	let text: String
+
+	var body: some View {
+		Text(text)
+			.font(.caption)
+			.fontWeight(.semibold)
+			.padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+			.overlay(RoundedRectangle(cornerRadius: 2)
+				.stroke(Color(UIColor.lightGray), lineWidth: 1))
+	}
 }

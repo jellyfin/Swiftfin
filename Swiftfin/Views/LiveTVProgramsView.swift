@@ -21,7 +21,7 @@ struct LiveTVProgramsView: View {
 				if !viewModel.recommendedItems.isEmpty,
 				   let items = viewModel.recommendedItems
 				{
-					PortraitImageHStackView(items: items) {
+					PortraitImageHStack(items: items) {
 						Text("On Now")
 							.font(.headline)
 							.fontWeight(.semibold)
@@ -39,7 +39,7 @@ struct LiveTVProgramsView: View {
 				if !viewModel.seriesItems.isEmpty,
 				   let items = viewModel.seriesItems
 				{
-					PortraitImageHStackView(items: items) {
+					PortraitImageHStack(items: items) {
 						Text("Shows")
 							.font(.headline)
 							.fontWeight(.semibold)
@@ -57,7 +57,7 @@ struct LiveTVProgramsView: View {
 				if !viewModel.movieItems.isEmpty,
 				   let items = viewModel.movieItems
 				{
-					PortraitImageHStackView(items: items) {
+					PortraitImageHStack(items: items) {
 						Text("Movies")
 							.font(.headline)
 							.fontWeight(.semibold)
@@ -75,7 +75,7 @@ struct LiveTVProgramsView: View {
 				if !viewModel.sportsItems.isEmpty,
 				   let items = viewModel.sportsItems
 				{
-					PortraitImageHStackView(items: items) {
+					PortraitImageHStack(items: items) {
 						Text("Sports")
 							.font(.headline)
 							.fontWeight(.semibold)
@@ -93,7 +93,7 @@ struct LiveTVProgramsView: View {
 				if !viewModel.kidsItems.isEmpty,
 				   let items = viewModel.kidsItems
 				{
-					PortraitImageHStackView(items: items) {
+					PortraitImageHStack(items: items) {
 						Text("Kids")
 							.font(.headline)
 							.fontWeight(.semibold)
@@ -111,7 +111,7 @@ struct LiveTVProgramsView: View {
 				if !viewModel.newsItems.isEmpty,
 				   let items = viewModel.newsItems
 				{
-					PortraitImageHStackView(items: items) {
+					PortraitImageHStack(items: items) {
 						Text("News")
 							.font(.headline)
 							.fontWeight(.semibold)

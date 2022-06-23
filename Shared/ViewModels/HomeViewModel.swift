@@ -126,15 +126,7 @@ final class HomeViewModel: ViewModel {
 
 	private func refreshLatestAddedItems() {
 		UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
-		                              fields: [
-		                              	.primaryImageAspectRatio,
-		                              	.seriesPrimaryImage,
-		                              	.seasonUserData,
-		                              	.overview,
-		                              	.genres,
-		                              	.people,
-		                              	.chapters,
-		                              ],
+		                              fields: ItemFields.allCases,
 		                              includeItemTypes: [.movie, .series],
 		                              enableImageTypes: [.primary, .backdrop, .thumb],
 		                              enableUserData: true,
@@ -159,7 +151,7 @@ final class HomeViewModel: ViewModel {
 	private func refreshResumeItems() {
 		ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id,
 		                        limit: 6,
-                                fields: ItemFields.allCases,
+		                        fields: ItemFields.allCases,
 		                        enableUserData: true)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { completion in
@@ -196,7 +188,7 @@ final class HomeViewModel: ViewModel {
 	private func refreshNextUpItems() {
 		TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id,
 		                     limit: 6,
-                             fields: ItemFields.allCases,
+		                     fields: ItemFields.allCases,
 		                     enableUserData: true)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { completion in

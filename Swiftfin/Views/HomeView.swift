@@ -56,7 +56,7 @@ struct HomeView: View {
 					}
 
 					if !viewModel.nextUpItems.isEmpty {
-						PortraitImageHStackView(items: viewModel.nextUpItems) {
+						PortraitImageHStack(items: viewModel.nextUpItems) {
 							L10n.nextUp.text
 								.font(.title2)
 								.fontWeight(.bold)
@@ -68,7 +68,7 @@ struct HomeView: View {
 					}
 
 					if !viewModel.latestAddedItems.isEmpty {
-						PortraitImageHStackView(items: viewModel.latestAddedItems) {
+						PortraitImageHStack(items: viewModel.latestAddedItems) {
 							L10n.recentlyAdded.text
 								.font(.title2)
 								.fontWeight(.bold)

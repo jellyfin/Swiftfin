@@ -9,51 +9,51 @@
 import SwiftUI
 
 extension ItemView {
-    
-    struct PlayButton: View {
-        
-        @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: ItemViewModel
-        
-        var body: some View {
-            Button {
-                if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                    itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                } else {
-                    LogManager.log.error("Attempted to play item but no playback information available")
-                }
-            } label: {
-                ZStack {
-                    Rectangle()
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
-                        .cornerRadius(10)
 
-                    HStack {
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 20))
-                        Text(viewModel.playButtonText())
-                            .font(.callout)
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
-                }
-            }
-            .contextMenu {
-                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-                    Button {
-                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-                            itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                        } else {
-                            LogManager.log.error("Attempted to play item but no playback information available")
-                        }
-                    } label: {
-                        Label(L10n.playFromBeginning, systemImage: "gobackward")
-                    }
-                }
-            }
-        }
-    }
+	struct PlayButton: View {
+
+		@EnvironmentObject
+		var itemRouter: ItemCoordinator.Router
+		@ObservedObject
+		var viewModel: ItemViewModel
+
+		var body: some View {
+			Button {
+				if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+					itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+				} else {
+					LogManager.log.error("Attempted to play item but no playback information available")
+				}
+			} label: {
+				ZStack {
+					Rectangle()
+						.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
+						.cornerRadius(10)
+
+					HStack {
+						Image(systemName: "play.fill")
+							.font(.system(size: 20))
+						Text(viewModel.playButtonText())
+							.font(.callout)
+							.fontWeight(.semibold)
+					}
+					.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
+				}
+			}
+			.contextMenu {
+				if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+					Button {
+						if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+							selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+							itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+						} else {
+							LogManager.log.error("Attempted to play item but no playback information available")
+						}
+					} label: {
+						Label(L10n.playFromBeginning, systemImage: "gobackward")
+					}
+				}
+			}
+		}
+	}
 }

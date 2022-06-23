@@ -9,26 +9,24 @@
 import SwiftUI
 
 struct AttributeFillView: View {
-    
-    let text: String
-    
-    var body: some View {
-        Text(text)
-            .font(.caption)
-            .fontWeight(.semibold)
-            .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-            .hidden()
-            .background {
-                Color(UIColor.lightGray)
-                    .cornerRadius(2)
-                    .inverseMask(
-                        Group {
-                            Text(text)
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                        }
-                    )
-            }
-    }
+
+	let text: String
+
+	var body: some View {
+		Text(text)
+			.font(.caption)
+			.fontWeight(.semibold)
+			.padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+			.hidden()
+			.background {
+				Color(UIColor.lightGray)
+					.cornerRadius(2)
+					.inverseMask(
+						Text(text)
+							.font(.caption)
+							.fontWeight(.semibold)
+							.padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+					)
+			}
+	}
 }

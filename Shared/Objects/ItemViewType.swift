@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 
 enum ItemViewType: String, CaseIterable, Defaults.Serializable {
-    case compactPoster
-    case compactLogo
-    case cinematic
+	case compactPoster
+	case compactLogo
+	case cinematic
 }

@@ -11,119 +11,106 @@ import JellyfinAPI
 import SwiftUI
 
 extension MovieItemView {
-    
-    struct ContentView: View {
-        
-        @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: MovieItemViewModel
-        @Default(.itemViewType)
-        private var itemViewType
-        
-        var body: some View {
-            VStack(alignment: .leading) {
+
+	struct ContentView: View {
+
+		@EnvironmentObject
+		var itemRouter: ItemCoordinator.Router
+		@ObservedObject
+		var viewModel: MovieItemViewModel
+		@Default(.itemViewType)
+		private var itemViewType
+
+		var body: some View {
+            VStack(alignment: .leading, spacing: 20) {
+
+				if case ItemViewType.compactPoster = itemViewType {
+					if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+						Text(firstTagline)
+							.font(.body)
+							.fontWeight(.semibold)
+							.lineLimit(2)
+							.frame(maxWidth: .infinity, alignment: .leading)
+							.padding(.horizontal)
+					}
+
+					if let itemOverview = viewModel.item.overview {
+						TruncatedTextView(itemOverview,
+						                  lineLimit: 4,
+						                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+							itemRouter.route(to: \.itemOverview, viewModel.item)
+						}
+						.fixedSize(horizontal: false, vertical: true)
+						.padding(.horizontal)
+					}
+				}
+
+				// MARK: Genres
+
+				if let genres = viewModel.item.genreItems, !genres.isEmpty {
+					PillHStack(title: L10n.genres,
+					           items: genres) { genre in
+                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+                    }
+				}
+
+				// MARK: Studios
+
+				if let studios = viewModel.item.studios, !studios.isEmpty {
+					PillHStack(title: L10n.studios,
+					           items: studios) { studio in
+						itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
+					}
+				}
                 
-                if case ItemViewType.compactPoster = itemViewType {
-                    if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-                        Text(firstTagline)
-                            .font(.body)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .lineLimit(2)
-                    }
-                    
-                    if let itemOverview = viewModel.item.overview {
-                        TruncatedTextView(itemOverview,
-                                          lineLimit: 4,
-                                          font: UIFont.preferredFont(forTextStyle: .footnote)) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
-                                          .fixedSize()
-                                          .padding(.horizontal)
-                                          .padding(.bottom)
-                    }
-                }
-                
-                // MARK: Genres
+                // MARK: Cast and Crew
 
-                if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStackView(title: L10n.genres,
-                                   items: genres,
-                                   selectedAction: { genre in
-                                       itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                                   })
-                    .padding(.bottom)
-                }
+				if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
+					PortraitImageHStack(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+					                    topBarView: {
+					                    	L10n.castAndCrew.text
+					                    		.font(.title3)
+					                    		.fontWeight(.semibold)
+					                    		.padding(.bottom)
+					                    		.padding(.horizontal)
+					                    		.accessibility(addTraits: [.isHeader])
+					                    },
+					                    selectedAction: { person in
+					                    	itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+					                    })
+				}
 
-                // MARK: Studios
+				// MARK: Recommended
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
-                    PillHStackView(title: L10n.studios,
-                                   items: studios) { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
-                                   .padding(.bottom)
-                }
+				if !viewModel.similarItems.isEmpty {
+					PortraitImageHStack(items: viewModel.similarItems,
+					                    topBarView: {
+					                    	L10n.recommended.text
+					                    		.font(.title3)
+					                    		.fontWeight(.semibold)
+					                    		.padding(.bottom)
+					                    		.padding(.horizontal)
+					                    		.accessibility(addTraits: [.isHeader])
+					                    },
+					                    selectedAction: { item in
+					                    	itemRouter.route(to: \.item, item)
+					                    })
+				}
 
-                if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
-                    PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                                            topBarView: {
-                                                L10n.castAndCrew.text
-                                                    .font(.title3)
-                                                    .fontWeight(.semibold)
-                                                    .padding(.bottom)
-                                                    .padding(.horizontal)
-                                                    .accessibility(addTraits: [.isHeader])
-                                            },
-                                            selectedAction: { person in
-                                                itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                                            })
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .padding(.bottom)
+                ItemView.AboutView(viewModel: viewModel)
+
+                // MARK: Details
+
+                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
+                    ListDetailsView(title: L10n.information, items: informationItems)
+                        .padding(.horizontal)
                 }
 
-                // MARK: Recommended
-
-                if !viewModel.similarItems.isEmpty {
-                    PortraitImageHStackView(items: viewModel.similarItems,
-                                            topBarView: {
-                                                L10n.recommended.text
-                                                    .font(.title3)
-                                                    .fontWeight(.semibold)
-                                                    .padding(.bottom)
-                                                    .padding(.horizontal)
-                                                    .accessibility(addTraits: [.isHeader])
-                                            },
-                                            selectedAction: { item in
-                                                itemRouter.route(to: \.item, item)
-                                            })
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .padding(.bottom)
+                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
+                    ListDetailsView(title: L10n.media, items: mediaItems)
+                        .padding(.horizontal)
                 }
-                
-                ZStack {
-                    Color.secondarySystemFill
-                    
-                    VStack(alignment: .leading) {
-                        ItemView.AboutView(viewModel: viewModel)
-
-                        // MARK: Details
-
-                        if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                            ListDetailsView(title: L10n.information, items: informationItems)
-                                .padding(.horizontal)
-                        }
-
-                        if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                            ListDetailsView(title: L10n.media, items: mediaItems)
-                                .padding(.horizontal)
-                        }
-                    }
-                }
-            }
-        }
-    }
+			}
+		}
+	}
 }

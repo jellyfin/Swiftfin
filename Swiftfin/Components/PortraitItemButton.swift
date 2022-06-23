@@ -41,7 +41,6 @@ struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
 				          	InitialFailureView(item.failureInitials)
 				          })
 				          .portraitPoster(width: maxWidth)
-				          .shadow(radius: 4, y: 2)
 				          .accessibilityIgnoresInvertColors()
 
 				if item.showTitle {
@@ -50,7 +49,7 @@ struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
 						.fontWeight(.regular)
 						.foregroundColor(.primary)
 						.multilineTextAlignment(textAlignment)
-						.fixedSize(horizontal: false, vertical: true)
+//						.fixedSize(horizontal: false, vertical: true)
 						.lineLimit(2)
 				}
 
@@ -60,13 +59,12 @@ struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
 						.fontWeight(.medium)
 						.foregroundColor(.secondary)
 						.multilineTextAlignment(textAlignment)
-						.fixedSize(horizontal: false, vertical: true)
+//						.fixedSize(horizontal: false, vertical: true)
 						.lineLimit(2)
 				}
 			}
 			.frame(width: maxWidth)
 		}
 		.frame(alignment: .top)
-		.padding(.bottom)
 	}
 }

@@ -9,66 +9,86 @@
 import SwiftUI
 
 extension ItemView {
-    
-    struct ActionButtonHStack: View {
+
+	struct ActionButtonHStack: View {
+
+		@ObservedObject
+		private var viewModel: ItemViewModel
+        private let equalSpacing: Bool
+        @Environment(\.colorScheme)
+        private var colorScheme
         
-        @ObservedObject
-        var viewModel: ItemViewModel
-        
-        var body: some View {
-            HStack(alignment: .center, spacing: 15) {
-                Button {
-                    UIDevice.impact(.light)
-                    viewModel.toggleWatchState()
-                } label: {
-                    if viewModel.isWatched {
-                        Image(systemName: "checkmark.circle.fill")
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, Color.jellyfinPurple, Color.jellyfinPurple)
-                    } else {
-                        Image(systemName: "checkmark.circle")
-                            .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                
-                Button {
-                    UIDevice.impact(.light)
-                    viewModel.toggleFavoriteState()
-                } label: {
-                    if viewModel.isFavorited {
-                        Image(systemName: "heart.fill")
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, Color.red, Color.red)
-                    } else {
-                        Image(systemName: "heart")
-                            .foregroundStyle(.white, Color(UIColor.lightGray), Color(UIColor.lightGray))
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                
-                if viewModel.videoPlayerViewModels.count > 1 {
-                    Menu {
-                        ForEach(viewModel.videoPlayerViewModels, id: \.versionName) { viewModelOption in
-                            Button {
-                                viewModel.selectedVideoPlayerViewModel = viewModelOption
-                            } label: {
-                                if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
-                                    Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
-                                } else {
-                                    Text(viewModelOption.versionName ?? L10n.noTitle)
-                                }
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 5) {
-                            Image(systemName: "list.dash")
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-            }
-            .font(.title)
+        private var isDarkMode: Bool {
+            colorScheme == .dark
         }
-    }
+        
+        init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
+            self.viewModel = viewModel
+            self.equalSpacing = equalSpacing
+        }
+
+		var body: some View {
+			HStack(alignment: .center, spacing: 15) {
+				Button {
+					UIDevice.impact(.light)
+					viewModel.toggleWatchState()
+				} label: {
+					if viewModel.isWatched {
+						Image(systemName: "checkmark.circle.fill")
+							.symbolRenderingMode(.palette)
+                            .foregroundStyle(
+                                .primary,
+                                Color.jellyfinPurple
+                            )
+					} else {
+						Image(systemName: "checkmark.circle")
+                            .foregroundStyle(.primary)
+					}
+				}
+                .if(equalSpacing) { view in
+                    view.frame(maxWidth: .infinity)
+                }
+
+				Button {
+					UIDevice.impact(.light)
+					viewModel.toggleFavoriteState()
+				} label: {
+					if viewModel.isFavorited {
+						Image(systemName: "heart.fill")
+							.symbolRenderingMode(.palette)
+							.foregroundStyle(.primary,
+                                             Color.red)
+					} else {
+						Image(systemName: "heart")
+							.foregroundStyle(.primary)
+					}
+				}
+                .if(equalSpacing) { view in
+                    view.frame(maxWidth: .infinity)
+                }
+
+				if viewModel.videoPlayerViewModels.count > 1 {
+					Menu {
+						ForEach(viewModel.videoPlayerViewModels, id: \.versionName) { viewModelOption in
+							Button {
+								viewModel.selectedVideoPlayerViewModel = viewModelOption
+							} label: {
+								if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
+									Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
+								} else {
+									Text(viewModelOption.versionName ?? L10n.noTitle)
+								}
+							}
+						}
+					} label: {
+						HStack(spacing: 5) {
+							Image(systemName: "list.dash")
+						}
+					}
+					.frame(maxWidth: .infinity)
+				}
+			}
+			.font(.title)
+		}
+	}
 }

@@ -26,9 +26,9 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 	private var loadingCard: some View {
 		VStack(alignment: .leading) {
 
-            Color.gray
-                .frame(width: 200, height: 112)
-                .cornerRadius(10)
+			Color.gray
+				.frame(width: 200, height: 112)
+				.cornerRadius(10)
 
 			VStack(alignment: .leading) {
 				Text("S-:E-")
@@ -38,20 +38,20 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 					.font(.body)
 					.padding(.bottom, 1)
 					.lineLimit(2)
-                
-                Text(String(repeating: "Placeholder", count: 20))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .fontWeight(.light)
-                    .lineLimit(3)
-                    .fixedSize(horizontal: false, vertical: true)
+
+				Text(String(repeating: "Placeholder", count: 20))
+					.font(.caption)
+					.foregroundColor(.secondary)
+					.fontWeight(.light)
+					.lineLimit(3)
+					.fixedSize(horizontal: false, vertical: true)
 			}
 
 			Spacer()
 		}
 		.redacted(reason: .placeholder)
 		.frame(width: 200)
-        .animation(Animation.easeInOut(duration: 1).repeatForever(autoreverses: true), value: 1)
+		.animation(Animation.easeInOut(duration: 1).repeatForever(autoreverses: true), value: 1)
 	}
 
 	@ViewBuilder
@@ -136,24 +136,24 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 			headerView
 
 			ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 15) {
-                    if viewModel.isLoading {
-                        loadingCard
-                    } else if let selectedSeason = viewModel.selectedSeason {
-                        if let seasonEpisodes = viewModel.seasonsEpisodes[selectedSeason] {
-                            if seasonEpisodes.isEmpty {
-                                noEpisodesCard
-                            } else {
-                                ForEach(seasonEpisodes, id: \.self) { episode in
-                                    EpisodeRowCard(viewModel: viewModel, episode: episode)
-                                        .id(episode.id)
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal)
-                .fixedSize(horizontal: false, vertical: true)
+				HStack(alignment: .top, spacing: 15) {
+					if viewModel.isLoading {
+						loadingCard
+					} else if let selectedSeason = viewModel.selectedSeason {
+						if let seasonEpisodes = viewModel.seasonsEpisodes[selectedSeason] {
+							if seasonEpisodes.isEmpty {
+								noEpisodesCard
+							} else {
+								ForEach(seasonEpisodes, id: \.self) { episode in
+									EpisodeRowCard(viewModel: viewModel, episode: episode)
+										.id(episode.id)
+								}
+							}
+						}
+					}
+				}
+				.padding(.horizontal)
+				.fixedSize(horizontal: false, vertical: true)
 			}
 		}
 	}

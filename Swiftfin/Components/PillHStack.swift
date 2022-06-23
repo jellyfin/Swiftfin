@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct PillHStackView<ItemType: PillStackable>: View {
+struct PillHStack<ItemType: PillStackable>: View {
 
 	let title: String
 	let items: [ItemType]

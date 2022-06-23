@@ -6,68 +6,68 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 extension ItemView {
-    
-    struct AboutView: View {
 
-        @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: ItemViewModel
+	struct AboutView: View {
 
-        var body: some View {
-            VStack(alignment: .leading) {
-                L10n.about.text
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .accessibility(addTraits: [.isHeader])
-                    .padding(.horizontal)
+		@EnvironmentObject
+		var itemRouter: ItemCoordinator.Router
+		@ObservedObject
+		var viewModel: ItemViewModel
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 110),
-                                  blurHash: viewModel.item.getPrimaryImageBlurHash())
-                            .portraitPoster(width: 110)
-                            .accessibilityIgnoresInvertColors()
+		var body: some View {
+			VStack(alignment: .leading) {
+				L10n.about.text
+					.font(.title3)
+					.fontWeight(.bold)
+					.accessibility(addTraits: [.isHeader])
+					.padding(.horizontal)
 
-                        Button {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        } label: {
-                            ZStack {
+				ScrollView(.horizontal, showsIndicators: false) {
+					HStack {
+						ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 110),
+						          blurHash: viewModel.item.getPrimaryImageBlurHash())
+							.portraitPoster(width: 110)
+							.accessibilityIgnoresInvertColors()
 
-                                Color.secondarySystemFill
-                                    .cornerRadius(10)
+						Button {
+							itemRouter.route(to: \.itemOverview, viewModel.item)
+						} label: {
+							ZStack {
 
-                                VStack(alignment: .leading, spacing: 10) {
-                                    Text(viewModel.item.displayName)
-                                        .font(.title3)
-                                        .fontWeight(.semibold)
+								Color.secondarySystemFill
+									.cornerRadius(10)
 
-                                    Spacer()
+								VStack(alignment: .leading, spacing: 10) {
+									Text(viewModel.item.displayName)
+										.font(.title3)
+										.fontWeight(.semibold)
 
-                                    if let overview = viewModel.item.overview {
-                                        Text(overview)
-                                            .lineLimit(4)
-                                            .font(.footnote)
-                                            .foregroundColor(.secondary)
-                                    } else {
-                                        L10n.noOverviewAvailable.text
-                                            .font(.footnote)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                .padding()
-                            }
-                            .frame(width: 330)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                    .padding(.horizontal)
-                }
-            }
-        }
-    }
+									Spacer()
+
+									if let overview = viewModel.item.overview {
+										Text(overview)
+											.lineLimit(4)
+											.font(.footnote)
+											.foregroundColor(.secondary)
+									} else {
+										L10n.noOverviewAvailable.text
+											.font(.footnote)
+											.foregroundColor(.secondary)
+									}
+								}
+								.padding()
+							}
+							.frame(width: 330)
+						}
+						.buttonStyle(PlainButtonStyle())
+					}
+					.padding(.horizontal)
+				}
+			}
+		}
+	}
 }

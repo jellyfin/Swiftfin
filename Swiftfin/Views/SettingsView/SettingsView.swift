@@ -48,8 +48,8 @@ struct SettingsView: View {
 	var resumeOffset
 	@Default(.subtitleSize)
 	var subtitleSize
-    @Default(.itemViewType)
-    var itemViewType
+	@Default(.itemViewType)
+	var itemViewType
 
 	var body: some View {
 		Form {
@@ -159,12 +159,12 @@ struct SettingsView: View {
 						Image(systemName: "chevron.right")
 					}
 				}
-                
-                Picker("Item View", selection: $itemViewType) {
-                    ForEach(ItemViewType.allCases, id: \.self) { itemViewType in
-                        Text(itemViewType.rawValue).tag(itemViewType.rawValue)
-                    }
-                }
+
+				Picker("Item View", selection: $itemViewType) {
+					ForEach(ItemViewType.allCases, id: \.self) { itemViewType in
+						Text(itemViewType.rawValue).tag(itemViewType.rawValue)
+					}
+				}
 
 				Button {
 					settingsRouter.route(to: \.missingSettings)

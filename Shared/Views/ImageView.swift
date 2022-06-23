@@ -84,8 +84,8 @@ struct ImageView<FailureView: View>: View {
 						.resizingMode(resizingMode)
 				} else if state.error != nil {
 					placeholderView.onAppear {
-                        sources.removeFirst()
-                    }
+						sources.removeFirst()
+					}
 				} else {
 					placeholderView
 				}

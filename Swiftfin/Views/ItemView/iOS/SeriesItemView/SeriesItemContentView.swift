@@ -11,103 +11,107 @@ import JellyfinAPI
 import SwiftUI
 
 extension SeriesItemView {
-    
-    struct ContentView: View {
-        
-        @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: SeriesItemViewModel
-        @Default(.itemViewType)
-        private var itemViewType
-        
-        var body: some View {
-            VStack(alignment: .leading, spacing: 20) {
-                
-                if case ItemViewType.compactPoster = itemViewType {
-                    if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-                        Text(firstTagline)
-                            .font(.body)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.white)
-                            .padding(.horizontal)
-                    }
-                    
-                    if let itemOverview = viewModel.item.overview {
-                        TruncatedTextView(itemOverview,
-                                          lineLimit: 4,
-                                          font: UIFont.preferredFont(forTextStyle: .footnote)) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
-                                          .padding(.horizontal)
-                    }
-                }
 
-                // MARK: Seasons
+	struct ContentView: View {
 
-                EpisodesRowView(viewModel: viewModel)
+		@EnvironmentObject
+		var itemRouter: ItemCoordinator.Router
+		@ObservedObject
+		var viewModel: SeriesItemViewModel
+		@Default(.itemViewType)
+		private var itemViewType
 
-                // MARK: Genres
+		var body: some View {
+			VStack(alignment: .leading, spacing: 20) {
+
+				if case ItemViewType.compactPoster = itemViewType {
+					if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+						Text(firstTagline)
+							.font(.body)
+							.fontWeight(.semibold)
+							.lineLimit(2)
+							.frame(maxWidth: .infinity, alignment: .leading)
+							.foregroundColor(.white)
+							.padding(.horizontal)
+					}
+
+					if let itemOverview = viewModel.item.overview {
+						TruncatedTextView(itemOverview,
+						                  lineLimit: 4,
+						                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+							itemRouter.route(to: \.itemOverview, viewModel.item)
+						}
+						.fixedSize(horizontal: false, vertical: true)
+						.padding(.horizontal)
+						.padding(.bottom)
+					}
+				}
+
+				// MARK: Episodes
+
+				EpisodesRowView(viewModel: viewModel)
+
+				// MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStackView(title: L10n.genres,
-                                   items: genres) { genre in
+                    PillHStack(title: L10n.genres,
+                               items: genres) { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios {
-                    PillHStackView(title: L10n.studios,
-                                   items: studios) { studio in
+                if let studios = viewModel.item.studios, !studios.isEmpty {
+                    PillHStack(title: L10n.studios,
+                               items: studios) { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
                 }
-
-                // MARK: Episodes
+                
+                // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
-                    PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                                            topBarView: {
-                                                L10n.castAndCrew.text
-                                                    .fontWeight(.semibold)
-                                                    .padding(.bottom)
-                                                    .padding(.horizontal)
-                                                    .accessibility(addTraits: [.isHeader])
-                                            },
-                                            selectedAction: { person in
-                                                itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                                            })
+                    PortraitImageHStack(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                                        topBarView: {
+                                            L10n.castAndCrew.text
+                                                .font(.title3)
+                                                .fontWeight(.semibold)
+                                                .padding(.bottom)
+                                                .padding(.horizontal)
+                                                .accessibility(addTraits: [.isHeader])
+                                        },
+                                        selectedAction: { person in
+                                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                                        })
                 }
 
                 // MARK: Recommended
 
                 if !viewModel.similarItems.isEmpty {
-                    PortraitImageHStackView(items: viewModel.similarItems,
-                                            topBarView: {
-                                                L10n.recommended.text
-                                                    .fontWeight(.semibold)
-                                                    .padding(.bottom)
-                                                    .padding(.horizontal)
-                                                    .accessibility(addTraits: [.isHeader])
-                                            },
-                                            selectedAction: { item in
-                                                itemRouter.route(to: \.item, item)
-                                            })
+                    PortraitImageHStack(items: viewModel.similarItems,
+                                        topBarView: {
+                                            L10n.recommended.text
+                                                .font(.title3)
+                                                .fontWeight(.semibold)
+                                                .padding(.bottom)
+                                                .padding(.horizontal)
+                                                .accessibility(addTraits: [.isHeader])
+                                        },
+                                        selectedAction: { item in
+                                            itemRouter.route(to: \.item, item)
+                                        })
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
 
-                // MARK: Details
+				// MARK: Details
 
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
-            }
-        }
-    }
+				if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
+					ListDetailsView(title: L10n.information, items: informationItems)
+						.padding(.horizontal)
+				}
+			}
+		}
+	}
 }

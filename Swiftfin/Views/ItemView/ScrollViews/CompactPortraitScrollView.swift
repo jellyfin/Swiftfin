@@ -9,142 +9,128 @@
 import SwiftUI
 
 extension ItemView {
-    
-    struct CompactPosterScrollView<ContentView: View>: View {
-        
-        @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: ItemViewModel
-        
-        let content: () -> ContentView
-        
-        @ViewBuilder
-        private var headerView: some View {
-            VStack {
-                ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-                          blurHash: viewModel.item.getBackdropImageBlurHash())
-                .blur(radius: 2)
 
-                Spacer()
-                    .frame(height: 50)
-            }
-        }
-        
-        @ViewBuilder
-        private var staticOverlayView: some View {
-            StaticOverlayView(viewModel: viewModel)
-        }
-        
-        var body: some View {
-            ParallaxHeaderScrollView(header: headerView,
-                                     staticOverlayView: staticOverlayView,
-                                     headerHeight: UIScreen.main.bounds.height * 0.35) {
-                content()
-            }
-                                     .edgesIgnoringSafeArea(.bottom)
-        }
-    }
+	struct CompactPosterScrollView<ContentView: View>: View {
+
+		@EnvironmentObject
+		var itemRouter: ItemCoordinator.Router
+		@ObservedObject
+		var viewModel: ItemViewModel
+
+		let content: () -> ContentView
+
+		@ViewBuilder
+		private var headerView: some View {
+			VStack {
+				ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
+				          blurHash: viewModel.item.getBackdropImageBlurHash())
+
+				Spacer()
+					.frame(height: 50)
+			}
+		}
+
+		@ViewBuilder
+		private var staticOverlayView: some View {
+			StaticOverlayView(viewModel: viewModel)
+		}
+
+		var body: some View {
+			ParallaxHeaderScrollView(header: headerView,
+			                         staticOverlayView: staticOverlayView,
+			                         headerHeight: UIScreen.main.bounds.height * 0.35) {
+				content()
+                    .padding(.top)
+			}
+		}
+	}
 }
 
 extension ItemView.CompactPosterScrollView {
-    
-    struct StaticOverlayView: View {
-        
-        @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: ItemViewModel
-        
-        @ViewBuilder
-        private var rightShelfView: some View {
-            VStack(alignment: .leading) {
-                Spacer()
 
-                // MARK: Name
+	struct StaticOverlayView: View {
 
-                Text(viewModel.item.displayName)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
-                    .fixedSize(horizontal: false, vertical: true)
+		@EnvironmentObject
+		var itemRouter: ItemCoordinator.Router
+		@ObservedObject
+		var viewModel: ItemViewModel
 
-                // MARK: Details
+		@ViewBuilder
+		private var rightShelfView: some View {
+			VStack(alignment: .leading) {
+				Spacer()
 
-                HStack {
+				// MARK: Name
+
+				Text(viewModel.item.displayName)
+					.font(.title2)
+					.fontWeight(.semibold)
+					.foregroundColor(.primary)
+					.fixedSize(horizontal: false, vertical: true)
+
+				// MARK: Details
+                
+                DotHStack {
                     if viewModel.item.unaired {
                         if let premiereDateLabel = viewModel.item.airDateLabel {
                             Text(premiereDateLabel)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
                         }
                     } else {
                         if let productionYear = viewModel.item.productionYear {
                             Text(String(productionYear))
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
                         }
                     }
-                    
+
                     if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                        Circle()
-                            .foregroundColor(.secondary)
-                            .frame(width: 2, height: 2)
-                            .padding(.horizontal, 1)
-                        
                         Text(runtime)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.secondary)
                     }
                 }
-                
-                ItemView.AttributesHStack(viewModel: viewModel)
-            }
-        }
+                .lineLimit(1)
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(.secondary)
 
-        var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .bottom, spacing: 12) {
+				ItemView.AttributesHStack(viewModel: viewModel)
+			}
+		}
 
-                    // MARK: Portrait Image
+		var body: some View {
+			VStack(alignment: .leading, spacing: 10) {
+				HStack(alignment: .bottom, spacing: 12) {
 
-                    ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 130),
-                              blurHash: viewModel.item.getPrimaryImageBlurHash())
-                        .portraitPoster(width: 130)
-                        .accessibilityIgnoresInvertColors()
+					// MARK: Portrait Image
 
-                    rightShelfView
-                        .padding(.bottom)
-                }
+					ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 130),
+					          blurHash: viewModel.item.getPrimaryImageBlurHash())
+						.portraitPoster(width: 130)
+						.accessibilityIgnoresInvertColors()
 
-                // MARK: Play
-                
-                HStack(alignment: .center) {
-                    
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(width: 130, height: 40)
-                    
-                    Spacer()
+					rightShelfView
+						.padding(.bottom)
+				}
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                }
-            }
-            .padding(.horizontal)
-            .background {
-                Color.systemBackground
-                    .mask {
-                        LinearGradient(gradient: Gradient(stops: [
-                            .init(color: .white, location: 0),
-                            .init(color: .white, location: 0.2),
-                            .init(color: .white.opacity(0), location: 1),
-                        ]), startPoint: .bottom, endPoint: .top)
-                    }
-            }
-        }
-    }
+				// MARK: Play
+
+				HStack(alignment: .center) {
+
+					ItemView.PlayButton(viewModel: viewModel)
+						.frame(width: 130, height: 40)
+
+					Spacer()
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
+				}
+			}
+			.padding(.horizontal)
+			.background {
+				Color.systemBackground
+					.mask {
+						LinearGradient(gradient: Gradient(stops: [
+							.init(color: .white, location: 0),
+							.init(color: .white, location: 0.2),
+							.init(color: .white.opacity(0), location: 1),
+						]), startPoint: .bottom, endPoint: .top)
+					}
+			}
+		}
+	}
 }

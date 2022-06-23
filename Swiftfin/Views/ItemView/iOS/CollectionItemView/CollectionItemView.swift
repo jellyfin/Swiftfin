@@ -7,13 +7,12 @@
 //
 
 import Defaults
-import JellyfinAPI
 import SwiftUI
 
-struct MovieItemView: View {
+struct CollectionItemView: View {
 
 	@ObservedObject
-	var viewModel: MovieItemViewModel
+	var viewModel: CollectionItemViewModel
 	@Default(.itemViewType)
 	private var itemViewType
 

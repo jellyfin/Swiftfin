@@ -12,25 +12,25 @@ import SwiftUI
 
 struct SeriesItemView: View {
 
-    @ObservedObject
-    var viewModel: SeriesItemViewModel
-    @Default(.itemViewType)
-    private var itemViewType
+	@ObservedObject
+	var viewModel: SeriesItemViewModel
+	@Default(.itemViewType)
+	private var itemViewType
 
-    var body: some View {
-        switch itemViewType {
-        case .compactPoster:
-            ItemView.CompactPosterScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
-        case .compactLogo:
-            ItemView.CompactLogoScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
-        case .cinematic:
-            ItemView.CinematicScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
-        }
-    }
+	var body: some View {
+		switch itemViewType {
+		case .compactPoster:
+			ItemView.CompactPosterScrollView(viewModel: viewModel) {
+				ContentView(viewModel: viewModel)
+			}
+		case .compactLogo:
+			ItemView.CompactLogoScrollView(viewModel: viewModel) {
+				ContentView(viewModel: viewModel)
+			}
+		case .cinematic:
+			ItemView.CinematicScrollView(viewModel: viewModel) {
+				ContentView(viewModel: viewModel)
+			}
+		}
+	}
 }

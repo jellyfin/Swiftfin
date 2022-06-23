@@ -8,65 +8,48 @@
 
 import SwiftUI
 
-struct PortraitImageHStackView<TopBarView: View, ItemType: PortraitImageStackable>: View {
+struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: View>: View {
 
-	let items: [ItemType]
-	let textAlignment: TextAlignment
-	let topBarView: () -> TopBarView
-	let selectedAction: (ItemType) -> Void
-
-	init(items: [ItemType],
-	     textAlignment: TextAlignment = .leading,
-	     topBarView: @escaping () -> TopBarView,
-	     selectedAction: @escaping (ItemType) -> Void)
-	{
-		self.items = items
-		self.textAlignment = textAlignment
-		self.topBarView = topBarView
-		self.selectedAction = selectedAction
-	}
+    private let title: String
+	private let items: [ItemType]
+    private let itemWidth: CGFloat
+    private let rightBarButton: (() -> RightBarButton)?
+    private let selectedAction: (ItemType) -> Void
+    
+    init(title: String,
+         items: [ItemType],
+         itemWidth: CGFloat = 110,
+         rightBarButton: (() -> RightBarButton)? = nil,
+         selectedAction: @escaping (ItemType) -> Void) {
+        self.title = title
+        self.items = items
+        self.itemWidth = itemWidth
+        self.rightBarButton = rightBarButton
+        self.selectedAction = selectedAction
+    }
 
 	var body: some View {
-		VStack(alignment: .leading, spacing: 0) {
-			topBarView()
+		VStack(alignment: .leading) {
+            HStack {
+                Text(title)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .padding(.leading)
+                    .accessibility(addTraits: [.isHeader])
+                
+                if let rightBarButton = rightBarButton {
+                    rightBarButton()
+                }
+            }
 
 			ScrollView(.horizontal, showsIndicators: false) {
 				HStack(alignment: .top, spacing: 15) {
 					ForEach(items, id: \.self.portraitImageID) { item in
-						Button {
-							selectedAction(item)
-						} label: {
-                            VStack(alignment: .leading) {
-								ImageView(item.imageURLConstructor(maxWidth: 110),
-								          blurHash: item.blurHash,
-								          failureView: {
-								          	InitialFailureView(item.failureInitials)
-								          })
-								          .portraitPoster(width: 110)
-								          .accessibilityIgnoresInvertColors()
-
-								if item.showTitle {
-									Text(item.title)
-										.font(.footnote)
-										.fontWeight(.regular)
-										.foregroundColor(.primary)
-										.multilineTextAlignment(textAlignment)
-										.fixedSize(horizontal: false, vertical: true)
-										.lineLimit(2)
-								}
-
-								if let description = item.subtitle {
-									Text(description)
-										.font(.caption)
-										.fontWeight(.medium)
-										.foregroundColor(.secondary)
-										.multilineTextAlignment(textAlignment)
-										.fixedSize(horizontal: false, vertical: true)
-										.lineLimit(2)
-								}
-							}
-							.frame(width: 110)
-						}
+                        PortraitItemButton(item: item,
+                                           maxWidth: itemWidth,
+                                           horizontalAlignment: .leading) { item in
+                            selectedAction(item)
+                        }
 					}
 				}
 				.padding(.horizontal)

@@ -90,7 +90,7 @@ struct TruncatedTextView: View {
 						}
 						.hidden()
 				}
-				.if(truncated, transform: { view in
+				.if(truncated) { view in
 					view.mask {
 						LinearGradient(gradient: Gradient(stops: [
 							.init(color: .white, location: 0),
@@ -98,7 +98,7 @@ struct TruncatedTextView: View {
 							.init(color: .white.opacity(0), location: 1),
 						]), startPoint: .top, endPoint: .bottom)
 					}
-				})
+				}
 
 			if truncated {
 				Button {

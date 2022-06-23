@@ -28,8 +28,8 @@ final class LatestMediaViewModel: ViewModel {
 		LogManager.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id)")
 		UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
 		                              parentId: library.id ?? "",
-                                      fields: ItemFields.allCases,
-		                              includeItemTypes: ["Series", "Movie"],
+		                              fields: ItemFields.allCases,
+		                              includeItemTypes: [.series, .movie],
 		                              enableUserData: true, limit: 12)
 			.trackActivity(loading)
 			.sink(receiveCompletion: { [weak self] completion in

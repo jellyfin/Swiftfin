@@ -44,19 +44,19 @@ struct iPadOSSeriesItemView: View {
 			// MARK: Genres
 
 			if let genres = viewModel.item.genreItems, !genres.isEmpty {
-				PillHStackView(title: L10n.genres,
-				               items: genres,
-				               selectedAction: { genre in
-				               	itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-				               })
-				               .padding(.bottom)
+				PillHStack(title: L10n.genres,
+				           items: genres,
+				           selectedAction: { genre in
+				           	itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+				           })
+				           .padding(.bottom)
 			}
 
 			// MARK: Studios
 
 			if let studios = viewModel.item.studios {
-				PillHStackView(title: L10n.studios,
-				               items: studios) { studio in
+				PillHStack(title: L10n.studios,
+				           items: studios) { studio in
 					itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
 				}
 				.padding(.bottom)
@@ -65,38 +65,38 @@ struct iPadOSSeriesItemView: View {
 			// MARK: Cast
 
 			if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
-				PortraitImageHStackView(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-				                        topBarView: {
-				                        	L10n.castAndCrew.text
-				                        		.fontWeight(.semibold)
-				                        		.padding(.bottom)
-				                        		.padding(.horizontal)
-				                        		.accessibility(addTraits: [.isHeader])
-				                        },
-				                        selectedAction: { person in
-				                        	itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-				                        })
+				PortraitImageHStack(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+				                    topBarView: {
+				                    	L10n.castAndCrew.text
+				                    		.fontWeight(.semibold)
+				                    		.padding(.bottom)
+				                    		.padding(.horizontal)
+				                    		.accessibility(addTraits: [.isHeader])
+				                    },
+				                    selectedAction: { person in
+				                    	itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+				                    })
 			}
 
 			// MARK: Recommended
 
 			if !viewModel.similarItems.isEmpty {
-				PortraitImageHStackView(items: viewModel.similarItems,
-				                        topBarView: {
-				                        	L10n.recommended.text
-				                        		.fontWeight(.semibold)
-				                        		.padding(.bottom)
-				                        		.padding(.horizontal)
-				                        		.accessibility(addTraits: [.isHeader])
-				                        },
-				                        selectedAction: { item in
-				                        	itemRouter.route(to: \.item, item)
-				                        })
+				PortraitImageHStack(items: viewModel.similarItems,
+				                    topBarView: {
+				                    	L10n.recommended.text
+				                    		.fontWeight(.semibold)
+				                    		.padding(.bottom)
+				                    		.padding(.horizontal)
+				                    		.accessibility(addTraits: [.isHeader])
+				                    },
+				                    selectedAction: { item in
+				                    	itemRouter.route(to: \.item, item)
+				                    })
 			}
 
 			// MARK: About
 
-            ItemView.AboutView(viewModel: viewModel)
+			ItemView.AboutView(viewModel: viewModel)
 				.padding(.bottom)
 
 			// MARK: Details

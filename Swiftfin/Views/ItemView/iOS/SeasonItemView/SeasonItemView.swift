@@ -14,7 +14,7 @@ struct SeasonItemView: View {
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
 	@ObservedObject
-    var viewModel: SeasonItemViewModel
+	var viewModel: SeasonItemViewModel
 
 	var body: some View {
 		NavBarOffsetScrollView(headerHeight: 10) {
