@@ -20,28 +20,33 @@ extension CollectionItemView {
 		var viewModel: CollectionItemViewModel
 		@Default(.itemViewType)
 		private var itemViewType
+        
+        @ViewBuilder
+        private var compactPosterOverview: some View {
+            if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+                Text(firstTagline)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .foregroundColor(.white)
+                    .padding(.horizontal)
+            }
+
+            if let itemOverview = viewModel.item.overview {
+                TruncatedTextView(itemOverview,
+                                  lineLimit: 4,
+                                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal)
+            }
+        }
 
 		var body: some View {
 			VStack(alignment: .leading, spacing: 20) {
 				if case ItemViewType.compactPoster = itemViewType {
-					if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-						Text(firstTagline)
-							.font(.body)
-							.fontWeight(.semibold)
-							.lineLimit(2)
-							.foregroundColor(.white)
-							.padding(.horizontal)
-					}
-
-					if let itemOverview = viewModel.item.overview {
-						TruncatedTextView(itemOverview,
-						                  lineLimit: 4,
-						                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-							itemRouter.route(to: \.itemOverview, viewModel.item)
-						}
-						.fixedSize(horizontal: false, vertical: true)
-						.padding(.horizontal)
-					}
+                    compactPosterOverview
 				}
 
 				// MARK: Genres
@@ -51,6 +56,8 @@ extension CollectionItemView {
 					           items: genres) { genre in
 						itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
 					}
+                    
+                    Divider()
 				}
 
 				// MARK: Studios
@@ -60,17 +67,18 @@ extension CollectionItemView {
 					           items: studios) { studio in
 						itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
 					}
+                    
+                    Divider()
 				}
 
-				PortraitImageHStack(items: viewModel.similarItems) {
-					L10n.items.text
-						.fontWeight(.semibold)
-						.padding(.bottom)
-						.padding(.horizontal)
-						.accessibility(addTraits: [.isHeader])
-				} selectedAction: { item in
-					itemRouter.route(to: \.item, item)
-				}
+                // MARK: Items
+
+                if !viewModel.collectionItems.isEmpty {
+                    PortraitImageHStack(title: L10n.items,
+                                        items: viewModel.collectionItems) { item in
+                        itemRouter.route(to: \.item, item)
+                    }
+                }
 			}
 		}
 	}

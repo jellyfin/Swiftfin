@@ -15,14 +15,13 @@ struct DotHStack: View {
 	private let restItems: [AnyView]
 
 	var body: some View {
-		HStack {
+        HStack {
 			items.first
 
 			ForEach(0 ..< restItems.count, id: \.self) { i in
 
 				Circle()
 					.frame(width: 2, height: 2)
-					.padding(.horizontal, 1)
 
 				restItems[i]
 			}

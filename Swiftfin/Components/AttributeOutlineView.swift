@@ -16,6 +16,7 @@ struct AttributeOutlineView: View {
 		Text(text)
 			.font(.caption)
 			.fontWeight(.semibold)
+            .foregroundColor(Color(UIColor.lightGray))
 			.padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
 			.overlay(RoundedRectangle(cornerRadius: 2)
 				.stroke(Color(UIColor.lightGray), lineWidth: 1))

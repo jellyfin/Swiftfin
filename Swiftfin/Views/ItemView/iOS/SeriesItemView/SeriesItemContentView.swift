@@ -20,31 +20,38 @@ extension SeriesItemView {
 		var viewModel: SeriesItemViewModel
 		@Default(.itemViewType)
 		private var itemViewType
+        
+        // MARK: Compact Poster Overview
+        
+        @ViewBuilder
+        private var compactPosterOverview: some View {
+            if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+                Text(firstTagline)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundColor(.white)
+                    .padding(.horizontal)
+            }
+
+            if let itemOverview = viewModel.item.overview {
+                TruncatedTextView(itemOverview,
+                                  lineLimit: 4,
+                                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
+        }
 
 		var body: some View {
 			VStack(alignment: .leading, spacing: 20) {
 
 				if case ItemViewType.compactPoster = itemViewType {
-					if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-						Text(firstTagline)
-							.font(.body)
-							.fontWeight(.semibold)
-							.lineLimit(2)
-							.frame(maxWidth: .infinity, alignment: .leading)
-							.foregroundColor(.white)
-							.padding(.horizontal)
-					}
-
-					if let itemOverview = viewModel.item.overview {
-						TruncatedTextView(itemOverview,
-						                  lineLimit: 4,
-						                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-							itemRouter.route(to: \.itemOverview, viewModel.item)
-						}
-						.fixedSize(horizontal: false, vertical: true)
-						.padding(.horizontal)
-						.padding(.bottom)
-					}
+                    compactPosterOverview
 				}
 
 				// MARK: Episodes
@@ -58,6 +65,8 @@ extension SeriesItemView {
                                items: genres) { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
+                    
+                    Divider()
                 }
 
                 // MARK: Studios
@@ -67,40 +76,31 @@ extension SeriesItemView {
                                items: studios) { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
+                    
+                    Divider()
                 }
                 
                 // MARK: Cast and Crew
 
-                if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
-                    PortraitImageHStack(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                                        topBarView: {
-                                            L10n.castAndCrew.text
-                                                .font(.title3)
-                                                .fontWeight(.semibold)
-                                                .padding(.bottom)
-                                                .padding(.horizontal)
-                                                .accessibility(addTraits: [.isHeader])
-                                        },
-                                        selectedAction: { person in
-                                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                                        })
+                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                !castAndCrew.isEmpty {
+                    PortraitImageHStack(title: L10n.castAndCrew,
+                                        items: castAndCrew) { person in
+                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                    }
+                    
+                    Divider()
                 }
 
-                // MARK: Recommended
+                // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
-                    PortraitImageHStack(items: viewModel.similarItems,
-                                        topBarView: {
-                                            L10n.recommended.text
-                                                .font(.title3)
-                                                .fontWeight(.semibold)
-                                                .padding(.bottom)
-                                                .padding(.horizontal)
-                                                .accessibility(addTraits: [.isHeader])
-                                        },
-                                        selectedAction: { item in
-                                            itemRouter.route(to: \.item, item)
-                                        })
+                    PortraitImageHStack(title: L10n.recommended,
+                                        items: viewModel.similarItems) { item in
+                        itemRouter.route(to: \.item, item)
+                    }
+                    
+                    Divider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

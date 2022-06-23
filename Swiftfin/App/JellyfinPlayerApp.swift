@@ -24,7 +24,10 @@ struct JellyfinPlayerApp: App {
 			EmptyView()
 				.ignoresSafeArea()
 				.withHostingWindow { window in
-					window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
+                    window?.rootViewController = PreferenceUIHostingController {
+                        MainCoordinator()
+                            .view()
+                    }
 				}
 				.onAppear {
 					JellyfinPlayerApp.setupAppearance()

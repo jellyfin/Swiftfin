@@ -118,6 +118,7 @@ extension ItemView.CompactPosterScrollView {
 					Spacer()
 
                     ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
+                        .font(.title2)
 				}
 			}
 			.padding(.horizontal)

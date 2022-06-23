@@ -34,7 +34,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 			return L10n.unaired
 		}
 
-		guard let playButtonItem = playButtonItem, let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
+		guard let playButtonItem = playButtonItem, let episodeLocator = playButtonItem.episodeLocator else { return L10n.play }
 		return episodeLocator
 	}
 

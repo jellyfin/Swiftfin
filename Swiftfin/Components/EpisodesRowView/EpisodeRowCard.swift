@@ -30,7 +30,7 @@ struct EpisodeRowCard: View {
 						.accessibilityIgnoresInvertColors()
 
 					VStack(alignment: .leading) {
-						Text(episode.getEpisodeLocator() ?? L10n.unknown)
+                        Text(episode.seasonEpisodeLocator ?? L10n.unknown)
 							.font(.footnote)
 							.foregroundColor(.secondary)
 						Text(episode.name ?? L10n.noTitle)

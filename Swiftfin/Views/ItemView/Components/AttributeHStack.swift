@@ -43,7 +43,7 @@ extension ItemView {
 					}
 				}
 			}
-			.foregroundColor(.secondary)
+            .foregroundColor(Color(UIColor.darkGray))
 		}
 	}
 }

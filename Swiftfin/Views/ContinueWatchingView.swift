@@ -90,7 +90,7 @@ struct ContinueWatchingView: View {
 									.lineLimit(1)
 
 								if item.itemType == .episode {
-									Text(item.getEpisodeLocator() ?? "")
+                                    Text(item.seasonEpisodeLocator ?? "")
 										.font(.callout)
 										.fontWeight(.medium)
 										.foregroundColor(.secondary)

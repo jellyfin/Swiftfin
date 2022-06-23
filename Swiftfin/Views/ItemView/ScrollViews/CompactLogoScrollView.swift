@@ -39,7 +39,7 @@ extension ItemView {
 			ParallaxHeaderScrollView(header: headerView,
 			                         staticOverlayView: staticOverlayView,
 			                         headerHeight: UIScreen.main.bounds.height * 0.3) {
-				VStack(alignment: .center) {
+                VStack(alignment: .center, spacing: 0) {
 
 					SubOverlayView(viewModel: viewModel)
 
@@ -148,6 +148,7 @@ extension ItemView.CompactLogoScrollView {
 						.frame(height: 50)
 
 					ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .font(.title)
 						.frame(maxWidth: 300)
 				}
 				.padding(.horizontal)

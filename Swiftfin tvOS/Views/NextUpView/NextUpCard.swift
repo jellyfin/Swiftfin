@@ -39,7 +39,7 @@ struct NextUpCard: View {
 					.lineLimit(1)
 
 				if item.itemType == .episode {
-					Text(item.getEpisodeLocator() ?? "")
+                    Text(item.episodeLocator ?? "")
 						.font(.callout)
 						.fontWeight(.medium)
 						.foregroundColor(.secondary)

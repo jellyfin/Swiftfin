@@ -31,7 +31,7 @@ struct EpisodeRowCard: View {
 			VStack(alignment: .leading) {
 
 				VStack(alignment: .leading) {
-					Text(episode.getEpisodeLocator() ?? "")
+                    Text(episode.episodeLocator ?? "")
 						.font(.caption)
 						.foregroundColor(.secondary)
 					Text(episode.name ?? "")

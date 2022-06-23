@@ -36,7 +36,7 @@ struct EpisodeItemView: View {
 					.padding(.horizontal)
 
 				HStack(spacing: 10) {
-					if let episodeLocation = viewModel.item.getSeasonEpisodeLocator() {
+					if let episodeLocation = viewModel.item.seasonEpisodeLocator {
 						Text(episodeLocation)
 					}
 

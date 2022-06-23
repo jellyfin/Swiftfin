@@ -116,7 +116,7 @@ extension BaseItemDto {
 
 					// TODO: other forms of media subtitle
 					if self.itemType == .episode {
-						if let seriesName = self.seriesName, let episodeLocator = self.getEpisodeLocator() {
+						if let seriesName = self.seriesName, let episodeLocator = self.episodeLocator {
 							subtitle = "\(seriesName) - \(episodeLocator)"
 						}
 					}
@@ -272,7 +272,7 @@ extension BaseItemDto {
 
 					// TODO: other forms of media subtitle
 					if self.itemType == .episode {
-						if let seriesName = self.seriesName, let episodeLocator = self.getEpisodeLocator() {
+						if let seriesName = self.seriesName, let episodeLocator = self.episodeLocator {
 							subtitle = "\(seriesName) - \(episodeLocator)"
 						}
 					}

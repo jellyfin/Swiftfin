@@ -13,13 +13,13 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
     private let title: String
 	private let items: [ItemType]
     private let itemWidth: CGFloat
-    private let rightBarButton: (() -> RightBarButton)?
+    private let rightBarButton: () -> RightBarButton
     private let selectedAction: (ItemType) -> Void
     
     init(title: String,
          items: [ItemType],
          itemWidth: CGFloat = 110,
-         rightBarButton: (() -> RightBarButton)? = nil,
+         @ViewBuilder rightBarButton: @escaping () -> RightBarButton,
          selectedAction: @escaping (ItemType) -> Void) {
         self.title = title
         self.items = items
@@ -32,10 +32,12 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
 		VStack(alignment: .leading) {
             HStack {
                 Text(title)
-                    .font(.title3)
+                    .font(.title2)
                     .fontWeight(.semibold)
                     .padding(.leading)
                     .accessibility(addTraits: [.isHeader])
+                
+                Spacer()
                 
                 if let rightBarButton = rightBarButton {
                     rightBarButton()
@@ -56,4 +58,17 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
 			}
 		}
 	}
+}
+
+extension PortraitImageHStack where RightBarButton == Spacer {
+    init(title: String,
+         items: [ItemType],
+         itemWidth: CGFloat = 110,
+         selectedAction: @escaping (ItemType) -> Void) {
+        self.title = title
+        self.items = items
+        self.itemWidth = itemWidth
+        self.rightBarButton = { Spacer() }
+        self.selectedAction = selectedAction
+    }
 }

@@ -60,37 +60,37 @@ struct iPadOSMovieItemView: View {
 
 			// MARK: Cast
 
-			if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
-				PortraitImageHStack(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-				                    topBarView: {
-				                    	L10n.castAndCrew.text
-				                    		.fontWeight(.semibold)
-				                    		.padding(.bottom)
-				                    		.padding(.horizontal)
-				                    		.accessibility(addTraits: [.isHeader])
-				                    },
-				                    selectedAction: { person in
-				                    	itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-				                    })
-				                    .fixedSize(horizontal: false, vertical: true)
-			}
+//			if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
+//				PortraitImageHStack(items: castAndCrew.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+//				                    topBarView: {
+//				                    	L10n.castAndCrew.text
+//				                    		.fontWeight(.semibold)
+//				                    		.padding(.bottom)
+//				                    		.padding(.horizontal)
+//				                    		.accessibility(addTraits: [.isHeader])
+//				                    },
+//				                    selectedAction: { person in
+//				                    	itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+//				                    })
+//				                    .fixedSize(horizontal: false, vertical: true)
+//			}
 
 			// MARK: Recommended
 
-			if !viewModel.similarItems.isEmpty {
-				PortraitImageHStack(items: viewModel.similarItems,
-				                    topBarView: {
-				                    	L10n.recommended.text
-				                    		.fontWeight(.semibold)
-				                    		.padding(.bottom)
-				                    		.padding(.horizontal)
-				                    		.accessibility(addTraits: [.isHeader])
-				                    },
-				                    selectedAction: { item in
-				                    	itemRouter.route(to: \.item, item)
-				                    })
-				                    .fixedSize(horizontal: false, vertical: true)
-			}
+//			if !viewModel.similarItems.isEmpty {
+//				PortraitImageHStack(items: viewModel.similarItems,
+//				                    topBarView: {
+//				                    	L10n.recommended.text
+//				                    		.fontWeight(.semibold)
+//				                    		.padding(.bottom)
+//				                    		.padding(.horizontal)
+//				                    		.accessibility(addTraits: [.isHeader])
+//				                    },
+//				                    selectedAction: { item in
+//				                    	itemRouter.route(to: \.item, item)
+//				                    })
+//				                    .fixedSize(horizontal: false, vertical: true)
+//			}
 
 			// MARK: About
 

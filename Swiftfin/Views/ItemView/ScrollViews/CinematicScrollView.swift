@@ -78,7 +78,7 @@ extension ItemView.CinematicScrollView {
 					}
 				}
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(Color(UIColor.lightGray))
                 .padding(.horizontal)
 
 				ItemView.PlayButton(viewModel: viewModel)
@@ -86,7 +86,9 @@ extension ItemView.CinematicScrollView {
 					.frame(height: 50)
 
 				ItemView.ActionButtonHStack(viewModel: viewModel)
+                    .font(.title)
 					.frame(maxWidth: 300)
+                    .colorScheme(.dark)
 
 				if let firstTagline = viewModel.playButtonItem?.taglines?.first {
 					Text(firstTagline)

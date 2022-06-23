@@ -38,7 +38,7 @@ extension BaseItemDto: PortraitImageStackable {
 	public var subtitle: String? {
 		switch self.itemType {
 		case .episode:
-			return getEpisodeLocator()
+			return seasonEpisodeLocator
 		default:
 			return nil
 		}

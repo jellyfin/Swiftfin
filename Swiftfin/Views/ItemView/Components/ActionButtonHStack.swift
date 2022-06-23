@@ -15,12 +15,6 @@ extension ItemView {
 		@ObservedObject
 		private var viewModel: ItemViewModel
         private let equalSpacing: Bool
-        @Environment(\.colorScheme)
-        private var colorScheme
-        
-        private var isDarkMode: Bool {
-            colorScheme == .dark
-        }
         
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
             self.viewModel = viewModel
@@ -45,6 +39,7 @@ extension ItemView {
                             .foregroundStyle(.primary)
 					}
 				}
+                .buttonStyle(PlainButtonStyle())
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -56,13 +51,13 @@ extension ItemView {
 					if viewModel.isFavorited {
 						Image(systemName: "heart.fill")
 							.symbolRenderingMode(.palette)
-							.foregroundStyle(.primary,
-                                             Color.red)
+							.foregroundStyle(Color.red)
 					} else {
 						Image(systemName: "heart")
 							.foregroundStyle(.primary)
 					}
 				}
+                .buttonStyle(PlainButtonStyle())
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -88,7 +83,6 @@ extension ItemView {
 					.frame(maxWidth: .infinity)
 				}
 			}
-			.font(.title)
 		}
 	}
 }

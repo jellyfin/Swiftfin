@@ -19,7 +19,7 @@ extension EpisodeItemView {
 		var viewModel: EpisodeItemViewModel
 
 		var body: some View {
-			VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
 
 				VStack(alignment: .center) {
 					ImageView(viewModel.item.getPrimaryImage(maxWidth: 600),
@@ -35,18 +35,13 @@ extension EpisodeItemView {
 				// MARK: Overview
 
 				if let itemOverview = viewModel.item.overview {
-					HStack {
-						TruncatedTextView(itemOverview,
-						                  lineLimit: 5,
-						                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-							itemRouter.route(to: \.itemOverview, viewModel.item)
-						}
-						.fixedSize(horizontal: false, vertical: true)
-						.padding(.top)
-						.padding(.horizontal)
-
-						Spacer(minLength: 0)
-					}
+                    TruncatedTextView(itemOverview,
+                                      lineLimit: 5,
+                                      font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                        itemRouter.route(to: \.itemOverview, viewModel.item)
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal)
 				}
 
 				// MARK: Genres
@@ -57,7 +52,8 @@ extension EpisodeItemView {
 					           selectedAction: { genre in
 					           	itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
 					           })
-					           .padding(.bottom)
+                    
+                    Divider()
 				}
 
 				if let studios = viewModel.item.studios, !studios.isEmpty {
@@ -65,23 +61,18 @@ extension EpisodeItemView {
 					           items: studios) { studio in
 						itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
 					}
-					.padding(.bottom)
+                    
+                    Divider()
 				}
 
-				if let castAndCrew = viewModel.item.people, !castAndCrew.isEmpty {
-					PortraitImageHStack(items: castAndCrew
-						.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-						topBarView: {
-							L10n.castAndCrew.text
-								.fontWeight(.semibold)
-								.padding(.bottom)
-								.padding(.horizontal)
-								.accessibility(addTraits: [.isHeader])
-						},
-						selectedAction: { person in
-							itemRouter.route(to: \.library,
-							                 (viewModel: .init(person: person), title: person.title))
-						})
+                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                !castAndCrew.isEmpty {
+                    PortraitImageHStack(title: L10n.castAndCrew,
+                                        items: castAndCrew) { person in
+                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                    }
+                    
+                    Divider()
 				}
 
 				// MARK: Details
@@ -110,10 +101,12 @@ extension EpisodeItemView.ContentView {
 		var viewModel: EpisodeItemViewModel
 
 		var body: some View {
-			VStack(alignment: .center) {
+            VStack(alignment: .center, spacing: 10) {
 				Text(viewModel.item.seriesName ?? "--")
 					.font(.headline)
 					.fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
 					.padding(.horizontal)
 					.foregroundColor(.secondary)
 
@@ -121,11 +114,11 @@ extension EpisodeItemView.ContentView {
 					.font(.title2)
 					.fontWeight(.bold)
 					.multilineTextAlignment(.center)
-					.fixedSize(horizontal: false, vertical: true)
-					.padding(.horizontal)
+                    .lineLimit(2)
+                    .padding(.horizontal)
                 
                 DotHStack {
-                    if let episodeLocation = viewModel.item.getEpisodeLocator() {
+                    if let episodeLocation = viewModel.item.episodeLocator {
                         Text(episodeLocation)
                     }
 
@@ -140,12 +133,15 @@ extension EpisodeItemView.ContentView {
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
+                
+                ItemView.AttributesHStack(viewModel: viewModel)
 
 				ItemView.PlayButton(viewModel: viewModel)
 					.frame(maxWidth: 300)
 					.frame(height: 50)
 
 				ItemView.ActionButtonHStack(viewModel: viewModel)
+                    .font(.title)
 					.frame(maxWidth: 300)
 			}
 		}

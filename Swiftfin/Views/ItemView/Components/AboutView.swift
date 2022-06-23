@@ -61,7 +61,7 @@ extension ItemView {
 								}
 								.padding()
 							}
-							.frame(width: 330)
+                            .frame(width: 330, height: 165)
 						}
 						.buttonStyle(PlainButtonStyle())
 					}
