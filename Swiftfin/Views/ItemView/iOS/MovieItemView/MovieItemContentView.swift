@@ -51,6 +51,10 @@ extension MovieItemView {
 				if case ItemViewType.compactPoster = itemViewType {
                     compactPosterOverview
 				}
+                
+                if case ItemViewType.compactLogo = itemViewType {
+                    compactPosterOverview
+                }
 
 				// MARK: Genres
 

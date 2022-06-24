@@ -43,26 +43,8 @@ extension ItemView {
 
 					SubOverlayView(viewModel: viewModel)
 
-					if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-						Text(firstTagline)
-							.font(.body)
-							.fontWeight(.semibold)
-							.lineLimit(2)
-							.frame(maxWidth: .infinity, alignment: .leading)
-							.foregroundColor(.white)
-					}
-
-					if let itemOverview = viewModel.item.overview {
-						TruncatedTextView(itemOverview,
-						                  lineLimit: 4,
-						                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-							itemRouter.route(to: \.itemOverview, viewModel.item)
-						}
-						.padding(.horizontal)
-						.padding(.top)
-					}
-
 					content()
+                        .padding(.top)
 				}
 			}
 		}
@@ -82,9 +64,9 @@ extension ItemView.CompactLogoScrollView {
 					Spacer()
 
 					LinearGradient(gradient: Gradient(stops: [
-						.init(color: .init(UIColor.lightGray), location: 0),
-						.init(color: .init(UIColor.lightGray), location: 0.2),
-						.init(color: .init(UIColor.lightGray).opacity(0), location: 1),
+						.init(color: .init(UIColor.black), location: 0),
+						.init(color: .init(UIColor.black), location: 0.2),
+						.init(color: .init(UIColor.black).opacity(0), location: 1),
 					]), startPoint: .bottom, endPoint: .top)
 						.frame(height: 100)
 				}
@@ -121,7 +103,7 @@ extension ItemView.CompactLogoScrollView {
 
 		var body: some View {
 			ZStack {
-				Color(UIColor.lightGray)
+//				Color(UIColor.lightGray)
 
 				VStack(alignment: .center, spacing: 10) {
                     DotHStack {
