@@ -18,7 +18,8 @@ struct LatestInLibraryView: View {
 
     var body: some View {
         PortraitImageHStack(title: L10n.latestWithString(viewModel.library.displayName),
-                            items: viewModel.items) {
+                            items: viewModel.items,
+                            itemWidth: UIDevice.isIPad ? 130 : 110) {
             Button {
                 let libraryViewModel = LibraryViewModel(parentID: viewModel.library.id, filters: HomeViewModel.recentFilterSet)
                 homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))

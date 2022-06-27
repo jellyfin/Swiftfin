@@ -72,16 +72,16 @@ final class MainCoordinator: NavigationCoordinatable {
 
 	@objc
 	func processDeepLink(_ notification: Notification) {
-//		guard let deepLink = notification.object as? DeepLink else { return }
-//		if let coordinator = hasRoot(\.mainTab) {
-//			switch deepLink {
-//			case let .item(item):
-//				coordinator.focusFirst(\.home)
-//					.child
-//					.popToRoot()
-//					.route(to: \.item, item)
-//			}
-//		}
+		guard let deepLink = notification.object as? DeepLink else { return }
+		if let coordinator = hasRoot(\.mainTab) {
+			switch deepLink {
+			case let .item(item):
+				coordinator.focusFirst(\.home)
+					.child
+					.popToRoot()
+					.route(to: \.item, item)
+			}
+		}
 	}
 
 	@objc
@@ -94,12 +94,8 @@ final class MainCoordinator: NavigationCoordinatable {
 		}
 	}
 
-	func makeMainTab() -> AnyCoordinator {
-		if UIDevice.isIPad {
-			return AnyCoordinator(iPadOSMainCoordinator())
-		} else {
-			return AnyCoordinator(MainTabCoordinator())
-		}
+	func makeMainTab() -> MainTabCoordinator {
+		MainTabCoordinator()
 	}
 
 	func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {

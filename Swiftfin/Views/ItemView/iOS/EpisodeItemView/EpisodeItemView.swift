@@ -16,53 +16,6 @@ struct EpisodeItemView: View {
 	@ObservedObject
 	var viewModel: EpisodeItemViewModel
 
-	// MARK: landscapeShelfItem
-
-	@ViewBuilder
-	private var landscapeShelfView: some View {
-		HStack {
-			VStack(alignment: .leading) {
-				Text(viewModel.item.seriesName ?? "--")
-					.font(.headline)
-					.fontWeight(.semibold)
-					.padding(.horizontal)
-					.foregroundColor(.secondary)
-
-				Text(viewModel.item.displayName)
-					.font(.title2)
-					.fontWeight(.bold)
-					.multilineTextAlignment(.center)
-					.fixedSize(horizontal: false, vertical: true)
-					.padding(.horizontal)
-
-				HStack(spacing: 10) {
-					if let episodeLocation = viewModel.item.seasonEpisodeLocator {
-						Text(episodeLocation)
-					}
-
-					if let runtime = viewModel.item.getItemRuntime() {
-						Text(runtime)
-					}
-
-					// TODO: Change to premiere date
-					if let productionYear = viewModel.item.productionYear {
-						Text(String(productionYear))
-					}
-				}
-				.font(.subheadline)
-				.foregroundColor(.secondary)
-				.padding(.horizontal)
-			}
-
-			Spacer(minLength: 0)
-
-			ItemView.PlayButton(viewModel: viewModel)
-				.frame(maxWidth: 300)
-				.frame(height: 50)
-				.padding(.horizontal)
-		}
-	}
-
 	var body: some View {
 		NavBarOffsetScrollView(headerHeight: 10) {
 			ContentView(viewModel: viewModel)

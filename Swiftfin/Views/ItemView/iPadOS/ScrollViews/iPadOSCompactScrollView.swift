@@ -6,12 +6,17 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import SwiftUI
 
-final class WeakRef<T: AnyObject> {
-	weak var value: T?
-
-	init(value: T) {
-		self.value = value
-	}
+extension ItemView {
+    
+    struct iPadOSCompactScrollView: View {
+        
+        
+        
+        var body: some View {
+            Text("")
+        }
+    }
+    
 }

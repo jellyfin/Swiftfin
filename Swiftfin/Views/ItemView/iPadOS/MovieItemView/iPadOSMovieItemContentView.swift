@@ -48,7 +48,8 @@ extension iPadOSMovieItemView {
                 if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                 !castAndCrew.isEmpty {
                     PortraitImageHStack(title: L10n.castAndCrew,
-                                        items: castAndCrew) { person in
+                                        items: castAndCrew,
+                                        itemWidth: UIDevice.isIPad ? 130 : 110) { person in
                         itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                     }
                     
@@ -59,7 +60,8 @@ extension iPadOSMovieItemView {
 
                 if !viewModel.similarItems.isEmpty {
                     PortraitImageHStack(title: L10n.recommended,
-                                        items: viewModel.similarItems) { item in
+                                        items: viewModel.similarItems,
+                                        itemWidth: UIDevice.isIPad ? 130 : 110) { item in
                         itemRouter.route(to: \.item, item)
                     }
                     

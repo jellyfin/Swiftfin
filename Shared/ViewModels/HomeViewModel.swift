@@ -130,7 +130,7 @@ final class HomeViewModel: ViewModel {
 		                              includeItemTypes: [.movie, .series],
 		                              enableImageTypes: [.primary, .backdrop, .thumb],
 		                              enableUserData: true,
-		                              limit: 8)
+		                              limit: 20)
 			.sink { completion in
 				switch completion {
 				case .finished: ()
@@ -150,7 +150,7 @@ final class HomeViewModel: ViewModel {
 
 	private func refreshResumeItems() {
 		ItemsAPI.getResumeItems(userId: SessionManager.main.currentLogin.user.id,
-		                        limit: 6,
+		                        limit: 20,
 		                        fields: ItemFields.allCases,
 		                        enableUserData: true)
 			.trackActivity(loading)
@@ -187,7 +187,7 @@ final class HomeViewModel: ViewModel {
 
 	private func refreshNextUpItems() {
 		TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id,
-		                     limit: 6,
+		                     limit: 20,
 		                     fields: ItemFields.allCases,
 		                     enableUserData: true)
 			.trackActivity(loading)

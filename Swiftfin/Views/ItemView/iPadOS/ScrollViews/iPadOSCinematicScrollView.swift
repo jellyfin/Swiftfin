@@ -31,7 +31,7 @@ extension ItemView {
         var body: some View {
             ParallaxHeaderScrollView(header: headerView,
                                      staticOverlayView: staticOverlayView,
-                                     headerHeight: UIScreen.main.bounds.height * 0.8) {
+                                     headerHeight: UIScreen.main.bounds.height * 0.7) {
                 content()
             }
         }
@@ -61,9 +61,9 @@ extension ItemView.iPadOSCinematicScrollView {
                                       Text(viewModel.item.displayName)
                                           .font(.largeTitle)
                                           .fontWeight(.semibold)
-                                          .multilineTextAlignment(.center)
+                                          .lineLimit(2)
+                                          .multilineTextAlignment(.leading)
                                           .foregroundColor(.white)
-                                          .frame(alignment: .bottom)
                                   })
                                   .frame(maxWidth: 400, maxHeight: 100)
                         
@@ -118,7 +118,7 @@ extension ItemView.iPadOSCinematicScrollView {
                 .padding()
                 .padding(.top, 150)
                 .background {
-                    BlurView()
+                    BlurView(style: .systemThinMaterialDark)
                         .mask {
                             LinearGradient(gradient: Gradient(stops: [
                                 .init(color: .white, location: 0),
