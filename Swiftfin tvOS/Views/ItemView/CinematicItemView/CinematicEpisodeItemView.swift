@@ -56,15 +56,15 @@ struct CinematicEpisodeItemView: View {
 
 							CinematicItemAboutView(viewModel: viewModel)
 
-							EpisodesRowView(viewModel: viewModel, onlyCurrentSeason: true)
-								.focusSection()
+//							EpisodesRowView(viewModel: viewModel, onlyCurrentSeason: true)
+//								.focusSection()
 
-							if let seriesItem = viewModel.series {
-								PortraitItemsRowView(rowTitle: L10n.series,
-								                     items: [seriesItem]) { seriesItem in
-									itemRouter.route(to: \.item, seriesItem)
-								}
-							}
+//							if let seriesItem = viewModel.series {
+//								PortraitItemsRowView(rowTitle: L10n.series,
+//								                     items: [seriesItem]) { seriesItem in
+//									itemRouter.route(to: \.item, seriesItem)
+//								}
+//							}
 
 							if !viewModel.similarItems.isEmpty {
 								PortraitItemsRowView(rowTitle: L10n.recommended,

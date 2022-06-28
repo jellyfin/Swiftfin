@@ -53,6 +53,18 @@ extension ItemView.iPadOSCinematicScrollView {
                 
                 HStack(alignment: .bottom) {
 
+                    VStack(spacing: 10) {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(height: 50)
+                        
+                        ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .font(.title)
+                    }
+                    .frame(width: 300)
+//                    .padding(.trailing, 150)
+                    
+                    Spacer()
+                    
                     VStack(alignment: .leading) {
 
                         ImageView(viewModel.item.getLogoImage(maxWidth: 400),
@@ -101,18 +113,6 @@ extension ItemView.iPadOSCinematicScrollView {
 
                         ItemView.AttributesHStack(viewModel: viewModel)
                     }
-
-                    Spacer()
-
-                    VStack(spacing: 10) {
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .frame(height: 50)
-                        
-                        ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .font(.title)
-                    }
-                    .frame(width: 300)
-                    .padding(.leading, 150)
                 }
                 .padding()
                 .padding()

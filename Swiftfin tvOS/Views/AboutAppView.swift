@@ -8,14 +8,9 @@
 
 import SwiftUI
 
-extension ItemView {
-    
-    struct iPadOSCompactScrollView: View {
-        
-        
-        
-        var body: some View {
-            Text("")
-        }
-    }
+struct AboutAppView: View {
+
+	var body: some View {
+		Text("dud")
+	}
 }

@@ -21,6 +21,7 @@ extension UIDevice {
 		UIDevice.current.userInterfaceIdiom == .phone
 	}
 
+    #if os(iOS)
 	static var isPortrait: Bool {
 		UIDevice.current.orientation.isPortrait
 	}
@@ -38,4 +39,5 @@ extension UIDevice {
 		let generator = UIImpactFeedbackGenerator(style: type)
 		generator.impactOccurred()
 	}
+    #endif
 }

@@ -6,11 +6,11 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
+import UIKit
 
-struct AboutView: View {
-
-	var body: some View {
-		Text("dud")
-	}
+extension UIScrollView {
+    func scrollToTop() {
+        let desiredOffset = CGPoint(x: 0, y: 0)
+        setContentOffset(desiredOffset, animated: true)
+    }
 }

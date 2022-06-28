@@ -29,20 +29,20 @@ struct CinematicSeasonItemView: View {
 			ScrollView {
 				VStack(spacing: 0) {
 
-					if let seriesItem = viewModel.seriesItem {
-						CinematicItemViewTopRow(viewModel: viewModel,
-						                        wrappedScrollView: wrappedScrollView,
-						                        title: viewModel.item.name ?? "",
-						                        subtitle: seriesItem.name)
-							.focusSection()
-							.frame(height: UIScreen.main.bounds.height - 10)
-					} else {
-						CinematicItemViewTopRow(viewModel: viewModel,
-						                        wrappedScrollView: wrappedScrollView,
-						                        title: viewModel.item.name ?? "")
-							.focusSection()
-							.frame(height: UIScreen.main.bounds.height - 10)
-					}
+//					if let seriesItem = viewModel.seriesItem {
+//						CinematicItemViewTopRow(viewModel: viewModel,
+//						                        wrappedScrollView: wrappedScrollView,
+//						                        title: viewModel.item.name ?? "",
+//						                        subtitle: seriesItem.name)
+//							.focusSection()
+//							.frame(height: UIScreen.main.bounds.height - 10)
+//					} else {
+//						CinematicItemViewTopRow(viewModel: viewModel,
+//						                        wrappedScrollView: wrappedScrollView,
+//						                        title: viewModel.item.name ?? "")
+//							.focusSection()
+//							.frame(height: UIScreen.main.bounds.height - 10)
+//					}
 
 					ZStack(alignment: .topLeading) {
 
@@ -56,12 +56,12 @@ struct CinematicSeasonItemView: View {
 							EpisodesRowView(viewModel: viewModel, onlyCurrentSeason: true)
 								.focusSection()
 
-							if let seriesItem = viewModel.seriesItem {
-								PortraitItemsRowView(rowTitle: L10n.series,
-								                     items: [seriesItem]) { seriesItem in
-									itemRouter.route(to: \.item, seriesItem)
-								}
-							}
+//							if let seriesItem = viewModel.seriesItem {
+//								PortraitItemsRowView(rowTitle: L10n.series,
+//								                     items: [seriesItem]) { seriesItem in
+//									itemRouter.route(to: \.item, seriesItem)
+//								}
+//							}
 
 							if !viewModel.similarItems.isEmpty {
 								PortraitItemsRowView(rowTitle: L10n.recommended,

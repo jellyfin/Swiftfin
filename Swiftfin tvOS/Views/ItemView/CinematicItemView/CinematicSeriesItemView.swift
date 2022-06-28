@@ -45,11 +45,11 @@ struct CinematicSeriesItemView: View {
 
 							CinematicItemAboutView(viewModel: viewModel)
 
-							PortraitItemsRowView(rowTitle: L10n.seasons,
-							                     items: viewModel.seasons,
-							                     showItemTitles: showPosterLabels) { season in
-								itemRouter.route(to: \.item, season)
-							}
+//							PortraitItemsRowView(rowTitle: L10n.seasons,
+//							                     items: viewModel.seasons,
+//							                     showItemTitles: showPosterLabels) { season in
+//								itemRouter.route(to: \.item, season)
+//							}
 
 							if !viewModel.similarItems.isEmpty {
 								PortraitItemsRowView(rowTitle: L10n.recommended,

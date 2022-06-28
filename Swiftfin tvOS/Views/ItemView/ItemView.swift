@@ -39,29 +39,13 @@ struct ItemView: View {
 		Group {
 			switch item.itemType {
 			case .movie:
-				if tvOSCinematicViews {
-					CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
-				} else {
-					MovieItemView(viewModel: MovieItemViewModel(item: item))
-				}
+                CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
 			case .episode:
-				if tvOSCinematicViews {
-					CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
-				} else {
-					EpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
-				}
+                CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
 			case .season:
-				if tvOSCinematicViews {
-					CinematicSeasonItemView(viewModel: SeasonItemViewModel(item: item))
-				} else {
-					SeasonItemView(viewModel: .init(item: item))
-				}
+                CinematicSeasonItemView(viewModel: SeasonItemViewModel(item: item))
 			case .series:
-				if tvOSCinematicViews {
-					CinematicSeriesItemView(viewModel: SeriesItemViewModel(item: item))
-				} else {
-					SeriesItemView(viewModel: SeriesItemViewModel(item: item))
-				}
+                CinematicSeriesItemView(viewModel: SeriesItemViewModel(item: item))
 			case .boxset, .folder:
 				CinematicCollectionItemView(viewModel: CollectionItemViewModel(item: item))
 			default:

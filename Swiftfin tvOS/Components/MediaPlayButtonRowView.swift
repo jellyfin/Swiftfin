@@ -30,7 +30,7 @@ struct MediaPlayButtonRowView: View {
 			}
 			VStack {
 				Button {
-					viewModel.updateWatchState()
+					
 				} label: {
 					MediaViewActionButton(icon: "eye.fill", scrollView: $wrappedScrollView, iconColor: viewModel.isWatched ? .red : .white)
 				}
@@ -39,7 +39,7 @@ struct MediaPlayButtonRowView: View {
 			}
 			VStack {
 				Button {
-					viewModel.updateFavoriteState()
+                    
 				} label: {
 					MediaViewActionButton(icon: "heart.fill", scrollView: $wrappedScrollView,
 					                      iconColor: viewModel.isFavorited ? .red : .white)

@@ -14,7 +14,6 @@
 		09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		09389CC726819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
 		09389CC826819B4600AE350E /* VideoPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09389CC626819B4500AE350E /* VideoPlayerModel.swift */; };
-		53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A16268B919A003024C9 /* SeriesItemView.swift */; };
 		53116A19268B947A003024C9 /* PlainLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53116A18268B947A003024C9 /* PlainLinkButton.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */; };
@@ -28,8 +27,6 @@
 		5321753E2671DE9C005491E6 /* Typings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* Typings.swift */; };
 		532175402671EE4F005491E6 /* LibraryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */; };
 		53272532268BF09D0035FBF1 /* MediaViewActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272531268BF09D0035FBF1 /* MediaViewActionButton.swift */; };
-		53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272536268C1DBB0035FBF1 /* SeasonItemView.swift */; };
-		53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53272538268C20100035FBF1 /* EpisodeItemView.swift */; };
 		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
 		534D4FF026A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
@@ -125,7 +122,6 @@
 		53ABFDED26799D7700886593 /* ActivityIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 53ABFDEC26799D7700886593 /* ActivityIndicator */; };
 		53ABFDEE26799DCD00886593 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531AC8BE26750DE20091C7EB /* ImageView.swift */; };
 		53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CD2A3F268A49C2002ABD4E /* ItemView.swift */; };
-		53CD2A42268A4B38002ABD4E /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CD2A41268A4B38002ABD4E /* MovieItemView.swift */; };
 		53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DE4BD1267098F300739748 /* SearchBarView.swift */; };
 		53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF641D263D9C0600A7CD1A /* LibraryView.swift */; };
 		53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelectorView.swift */; };
@@ -334,6 +330,8 @@
 		E1347DB2279E3C6200BC6161 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = E1347DB1279E3C6200BC6161 /* Puppy */; };
 		E1347DB4279E3C9E00BC6161 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = E1347DB3279E3C9E00BC6161 /* Puppy */; };
 		E1347DB6279E3CA500BC6161 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = E1347DB5279E3CA500BC6161 /* Puppy */; };
+		E13563FA286AA28500067800 /* UIScrollViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13563F9286AA28500067800 /* UIScrollViewExtensions.swift */; };
+		E13563FB286AA28C00067800 /* UIScrollViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13563F9286AA28500067800 /* UIScrollViewExtensions.swift */; };
 		E1361DA7278FA7A300BEC523 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1361DA6278FA7A300BEC523 /* NukeUI */; };
 		E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1384943278036C70024FB48 /* VLCPlayerViewController.swift */; };
 		E13849452780370B0024FB48 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
@@ -438,7 +436,7 @@
 		E1A2C15C279A7D9F005EC829 /* AppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C15B279A7D9F005EC829 /* AppIcon.swift */; };
 		E1A2C15D279A7D9F005EC829 /* AppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C15B279A7D9F005EC829 /* AppIcon.swift */; };
 		E1A2C15E279A7D9F005EC829 /* AppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C15B279A7D9F005EC829 /* AppIcon.swift */; };
-		E1A2C160279A7DCA005EC829 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C15F279A7DCA005EC829 /* AboutView.swift */; };
+		E1A2C160279A7DCA005EC829 /* AboutAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C15F279A7DCA005EC829 /* AboutAppView.swift */; };
 		E1AA331D2782541500F6439C /* PrimaryButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331C2782541500F6439C /* PrimaryButtonView.swift */; };
 		E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331E2782639D00F6439C /* OverlayType.swift */; };
 		E1AA33202782639D00F6439C /* OverlayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331E2782639D00F6439C /* OverlayType.swift */; };
@@ -604,7 +602,6 @@
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		091B5A882683142E00D78B61 /* UDPBroadCastConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UDPBroadCastConnection.swift; sourceTree = "<group>"; };
 		09389CC626819B4500AE350E /* VideoPlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerModel.swift; sourceTree = "<group>"; };
-		53116A16268B919A003024C9 /* SeriesItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesItemView.swift; sourceTree = "<group>"; };
 		53116A18268B947A003024C9 /* PlainLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlainLinkButton.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
@@ -615,8 +612,6 @@
 		531AC8BE26750DE20091C7EB /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		5321753A2671BCFC005491E6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		53272531268BF09D0035FBF1 /* MediaViewActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaViewActionButton.swift; sourceTree = "<group>"; };
-		53272536268C1DBB0035FBF1 /* SeasonItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonItemView.swift; sourceTree = "<group>"; };
-		53272538268C20100035FBF1 /* EpisodeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeItemView.swift; sourceTree = "<group>"; };
 		5338F74D263B61370014BF09 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		534D4FE826A7D7CC000A7A48 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		534D4FEC26A7D7CC000A7A48 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = Localizable.strings; sourceTree = "<group>"; };
@@ -678,7 +673,6 @@
 		53ABFDDB267972BF00886593 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
 		53ABFDEA2679753200886593 /* ConnectToServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerView.swift; sourceTree = "<group>"; };
 		53CD2A3F268A49C2002ABD4E /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
-		53CD2A41268A4B38002ABD4E /* MovieItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieItemView.swift; sourceTree = "<group>"; };
 		53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = Carthage/Build/MobileVLCKit.xcframework; sourceTree = "<group>"; };
 		53DE4BD1267098F300739748 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		53DF641D263D9C0600A7CD1A /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
@@ -822,6 +816,7 @@
 		E123AC362845CF0C0084CC2D /* SeasonItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonItemView.swift; sourceTree = "<group>"; };
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
 		E126F740278A656C00A522BF /* ServerStreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStreamType.swift; sourceTree = "<group>"; };
+		E13563F9286AA28500067800 /* UIScrollViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollViewExtensions.swift; sourceTree = "<group>"; };
 		E1384943278036C70024FB48 /* VLCPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerViewController.swift; sourceTree = "<group>"; };
 		E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
 		E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
@@ -883,7 +878,7 @@
 		E1A2C153279A7D5A005EC829 /* UIApplicationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtensions.swift; sourceTree = "<group>"; };
 		E1A2C157279A7D76005EC829 /* BundleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
 		E1A2C15B279A7D9F005EC829 /* AppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIcon.swift; sourceTree = "<group>"; };
-		E1A2C15F279A7DCA005EC829 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		E1A2C15F279A7DCA005EC829 /* AboutAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutAppView.swift; sourceTree = "<group>"; };
 		E1AA331C2782541500F6439C /* PrimaryButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonView.swift; sourceTree = "<group>"; };
 		E1AA331E2782639D00F6439C /* OverlayType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayType.swift; sourceTree = "<group>"; };
 		E1AD104C26D96CE3003E4A08 /* BaseItemDtoExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseItemDtoExtensions.swift; sourceTree = "<group>"; };
@@ -1496,17 +1491,18 @@
 				E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */,
 				6267B3D526710B8900A7371D /* CollectionExtensions.swift */,
 				E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */,
+				62666E3327E5027F00EC0ECD /* Defaults+Workaround.swift */,
 				E1E00A34278628A40022235B /* DoubleExtensions.swift */,
 				6267B3D92671138200A7371D /* ImageExtensions.swift */,
 				E1AD105226D96D5F003E4A08 /* JellyfinAPIExtensions */,
 				621338922660107500A81A2A /* StringExtensions.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplicationExtensions.swift */,
 				E13DD3C727164B1E009D4DAF /* UIDeviceExtensions.swift */,
+				E13563F9286AA28500067800 /* UIScrollViewExtensions.swift */,
 				E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */,
 				62E1DCC2273CE19800C9AE76 /* URLExtensions.swift */,
 				6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */,
 				5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */,
-				62666E3327E5027F00EC0ECD /* Defaults+Workaround.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1633,7 +1629,7 @@
 		E12186E02718F23B0010884C /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				E1A2C15F279A7DCA005EC829 /* AboutView.swift */,
+				E1A2C15F279A7DCA005EC829 /* AboutAppView.swift */,
 				E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */,
 				53ABFDEA2679753200886593 /* ConnectToServerView.swift */,
 				E1B59FD62786AE2C00A5287E /* ContinueWatchingView */,
@@ -1716,17 +1712,6 @@
 				E193D5452719418B00900D82 /* VideoPlayer */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		E13F26AD27874ECC00DF4761 /* CompactItemView */ = {
-			isa = PBXGroup;
-			children = (
-				53272538268C20100035FBF1 /* EpisodeItemView.swift */,
-				53CD2A41268A4B38002ABD4E /* MovieItemView.swift */,
-				53272536268C1DBB0035FBF1 /* SeasonItemView.swift */,
-				53116A16268B919A003024C9 /* SeriesItemView.swift */,
-			);
-			path = CompactItemView;
 			sourceTree = "<group>";
 		};
 		E14F7D0A26DB3714007C3AE6 /* ItemView */ = {
@@ -1872,7 +1857,6 @@
 			isa = PBXGroup;
 			children = (
 				E1E5D53C2783A85F00692DFE /* CinematicItemView */,
-				E13F26AD27874ECC00DF4761 /* CompactItemView */,
 				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
 			);
 			path = ItemView;
@@ -2394,7 +2378,6 @@
 				C4E5081D2703F8370045C9AB /* LibrarySearchView.swift in Sources */,
 				53ABFDE9267974EF00886593 /* HomeViewModel.swift in Sources */,
 				E107BB972788104100354E07 /* CinematicCollectionItemView.swift in Sources */,
-				53116A17268B919A003024C9 /* SeriesItemView.swift in Sources */,
 				E13DD3F027178F87009D4DAF /* SwiftfinNotificationCenter.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				E11D224327378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */,
@@ -2414,7 +2397,6 @@
 				62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				E1C812CC277AE40A00918266 /* VideoPlayerView.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
-				53CD2A42268A4B38002ABD4E /* MovieItemView.swift in Sources */,
 				E122A9142788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */,
 				E103A6A3278A7EC400820EC7 /* CinematicBackgroundView.swift in Sources */,
 				E178859E2780F53B0094FBCF /* SliderView.swift in Sources */,
@@ -2427,6 +2409,7 @@
 				E126F742278A656C00A522BF /* ServerStreamType.swift in Sources */,
 				E1E5D5422783B33900692DFE /* PortraitItemsRowView.swift in Sources */,
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
+				E13563FB286AA28C00067800 /* UIScrollViewExtensions.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
 				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
 				E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
@@ -2437,7 +2420,6 @@
 				C453497F279A2DA50045F1E2 /* LiveTVPlayerViewController.swift in Sources */,
 				C4BE078E27298818003F4AD1 /* LiveTVHomeView.swift in Sources */,
 				E13DD3E227176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
-				53272539268C20100035FBF1 /* EpisodeItemView.swift in Sources */,
 				E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */,
 				531690F7267ACC00005D8AB9 /* LandscapeItemElement.swift in Sources */,
 				62E632E1267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
@@ -2511,7 +2493,6 @@
 				C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */,
 				E13AD7302798C60F00FDCEE8 /* NativePlayerViewController.swift in Sources */,
 				E1E5D54F2783E67100692DFE /* OverlaySettingsView.swift in Sources */,
-				53272537268C1DBB0035FBF1 /* SeasonItemView.swift in Sources */,
 				09389CC526814E4500AE350E /* DeviceProfileBuilder.swift in Sources */,
 				E1B59FD52786ADE500A5287E /* ContinueWatchingCard.swift in Sources */,
 				E1C812D2277AE50A00918266 /* URLComponentsExtensions.swift in Sources */,
@@ -2551,7 +2532,7 @@
 				531690FA267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift in Sources */,
 				C4BE0764271FC0BB003F4AD1 /* TVLibrariesCoordinator.swift in Sources */,
 				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
-				E1A2C160279A7DCA005EC829 /* AboutView.swift in Sources */,
+				E1A2C160279A7DCA005EC829 /* AboutAppView.swift in Sources */,
 				C4BE076A271FC164003F4AD1 /* TVLibrariesView.swift in Sources */,
 				C4BE077A2726EE82003F4AD1 /* LiveTVTabCoordinator.swift in Sources */,
 				E13DD3C327164941009D4DAF /* SwiftfinStore.swift in Sources */,
@@ -2637,6 +2618,7 @@
 				E1E5D5492783CDD700692DFE /* OverlaySettingsView.swift in Sources */,
 				E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */,
 				C45942D027F69C2400C54FE7 /* LiveTVChannelsCoordinator.swift in Sources */,
+				E13563FA286AA28500067800 /* UIScrollViewExtensions.swift in Sources */,
 				E155AD3C2867919A00FFA7F2 /* iPadOSCompactScrollView.swift in Sources */,
 				E11D224227378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */,
 				6264E88C273850380081A12A /* Strings.swift in Sources */,
