@@ -7,19 +7,13 @@
 //
 
 import SwiftUI
-import UIKit
 
-struct BlurSymbolButton: View {
-
-	let style: UIBlurEffect.Style
-	let systemName: String
-
-	var body: some View {
-		ZStack {
-			BlurView(style: style)
-
-			Image(systemName: systemName)
-				.padding()
-		}
-	}
+extension ItemView {
+    
+    struct ActionButtonHStack: View {
+        
+        var body: some View {
+            Text("")
+        }
+    }
 }

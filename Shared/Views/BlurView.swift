@@ -11,7 +11,11 @@ import UIKit
 
 struct BlurView: UIViewRepresentable {
 
-	var style: UIBlurEffect.Style = .systemUltraThinMaterial
+    #if os(tvOS)
+    var style: UIBlurEffect.Style = .regular
+    #else
+    var style: UIBlurEffect.Style = .systemUltraThinMaterial
+    #endif
 
 	func makeUIView(context: Context) -> UIVisualEffectView {
 		let view = UIVisualEffectView(effect: UIBlurEffect(style: style))

@@ -56,46 +56,6 @@ struct CinematicItemViewTopRow: View {
 					VStack(alignment: .leading) {
 						HStack(alignment: .PlayInformationAlignmentGuide) {
 
-							// MARK: Play
-
-							Button {
-								if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-									itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-								} else {
-									LogManager.log.error("Attempted to play item but no playback information available")
-								}
-							} label: {
-								HStack(spacing: 15) {
-									Image(systemName: "play.fill")
-										.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-										.font(.title3)
-									Text(playButtonText)
-										.foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-										.fontWeight(.semibold)
-								}
-								.frame(width: 230, height: 100)
-								.background(viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white)
-								.cornerRadius(10)
-							}
-							.buttonStyle(CardButtonStyle())
-							.contextMenu {
-								if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-									Button {
-										if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-											selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-											itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-										} else {
-											LogManager.log.error("Attempted to play item but no playback information available")
-										}
-									} label: {
-										Label(L10n.playFromBeginning, systemImage: "gobackward")
-									}
-
-									Button(role: .cancel) {} label: {
-										L10n.cancel.text
-									}
-								}
-							}
 						}
 					}
 
@@ -185,15 +145,4 @@ struct CinematicItemViewTopRow: View {
 			}
 		}
 	}
-}
-
-extension VerticalAlignment {
-
-	private struct PlayInformationAlignment: AlignmentID {
-		static func defaultValue(in context: ViewDimensions) -> CGFloat {
-			context[VerticalAlignment.bottom]
-		}
-	}
-
-	static let PlayInformationAlignmentGuide = VerticalAlignment(PlayInformationAlignment.self)
 }

@@ -15,7 +15,7 @@ struct CinematicItemViewTopRowButton<Content: View>: View {
 	var focused: Bool = false
 	@State
 	var wrappedScrollView: UIScrollView?
-	var content: () -> Content
+	let content: () -> Content
 
 	@FocusState
 	private var buttonFocused: Bool

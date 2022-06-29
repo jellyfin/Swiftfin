@@ -15,13 +15,14 @@ struct DotHStack: View {
 	private let restItems: [AnyView]
 
 	var body: some View {
-        HStack {
+        HStack(spacing: 0) {
 			items.first
 
 			ForEach(0 ..< restItems.count, id: \.self) { i in
 
 				Circle()
 					.frame(width: 2, height: 2)
+                    .padding(.horizontal)
 
 				restItems[i]
 			}
@@ -30,10 +31,6 @@ struct DotHStack: View {
 }
 
 extension DotHStack {
-    
-    private static func filterViews(_ views: [AnyView]) {
-
-    }
     
 	init<Data: RandomAccessCollection, Content: View>(_ data: Data,
 	                                                  id: KeyPath<Data.Element, Data.Element> = \.self,

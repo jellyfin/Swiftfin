@@ -11,23 +11,7 @@ import Introspect
 import JellyfinAPI
 import SwiftUI
 
-// Useless view necessary in tvOS because of iOS's implementation
-struct ItemNavigationView: View {
-	private let item: BaseItemDto
-
-	init(item: BaseItemDto) {
-		self.item = item
-	}
-
-	var body: some View {
-		ItemView(item: item)
-	}
-}
-
 struct ItemView: View {
-
-	@Default(.tvOSCinematicViews)
-	var tvOSCinematicViews
 
 	private var item: BaseItemDto
 
@@ -39,7 +23,10 @@ struct ItemView: View {
 		Group {
 			switch item.itemType {
 			case .movie:
-                CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
+//                CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
+                CinematicScrollView(viewModel: .init(item: item)) {
+                    Text("Hello There")
+                }
 			case .episode:
                 CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
 			case .season:
