@@ -10,9 +10,9 @@ import SwiftUI
 
 struct DotHStack: View {
 
-	private var items: [AnyView] = []
+    private let items: [AnyView]
+    private let restItems: [AnyView]
 	private let alignment: HorizontalAlignment
-	private let restItems: [AnyView]
 
 	var body: some View {
         HStack(spacing: 0) {

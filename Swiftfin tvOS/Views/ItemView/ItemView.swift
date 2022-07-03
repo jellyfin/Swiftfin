@@ -13,7 +13,7 @@ import SwiftUI
 
 struct ItemView: View {
 
-	private var item: BaseItemDto
+	private let item: BaseItemDto
 
 	init(item: BaseItemDto) {
 		self.item = item
@@ -23,10 +23,7 @@ struct ItemView: View {
 		Group {
 			switch item.itemType {
 			case .movie:
-//                CinematicMovieItemView(viewModel: MovieItemViewModel(item: item))
-                CinematicScrollView(viewModel: .init(item: item)) {
-                    Text("Hello There")
-                }
+                MovieItemView(viewModel: .init(item: item))
 			case .episode:
                 CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
 			case .season:

@@ -8,6 +8,7 @@
 
 import Defaults
 import Foundation
+import Introspect
 import JellyfinAPI
 import SwiftUI
 
@@ -19,9 +20,6 @@ struct HomeView: View {
 	var viewModel = HomeViewModel()
 	@Default(.showPosterLabels)
 	var showPosterLabels
-
-	@State
-	var showingSettings = false
 
 	var body: some View {
 		if viewModel.isLoading {

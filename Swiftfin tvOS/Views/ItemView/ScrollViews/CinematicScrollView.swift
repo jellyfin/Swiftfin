@@ -35,10 +35,15 @@ extension ItemView {
                         StaticOverlayView(viewModel: viewModel,
                                           wrappedScrollView: wrappedScrollView)
                         .focusSection()
-                        .frame(height: UIScreen.main.bounds.height - 10)
+                        .frame(height: UIScreen.main.bounds.height - 50)
                         
-                        Color.red
-                            .frame(height: UIScreen.main.bounds.height)
+                        ZStack {
+                            BlurView()
+                            
+                            content()
+                                .focusSection()
+                        }
+                        .frame(minHeight: UIScreen.main.bounds.height)
                     }
                 }
                 .introspectScrollView { scrollView in
@@ -60,6 +65,8 @@ extension ItemView.CinematicScrollView {
         var viewModel: ItemViewModel
         @State
         var wrappedScrollView: UIScrollView?
+        @FocusState
+        private var actionButtonHStackFocused: Bool
         
         var body: some View {
             VStack {
@@ -69,13 +76,15 @@ extension ItemView.CinematicScrollView {
                     
                     VStack {
                         ItemView.PlayButton(viewModel: viewModel)
+                        
+                        ItemView.ActionButtonHStack(viewModel: viewModel, wrappedScrollView: wrappedScrollView)
                     }
                     
                     VStack(alignment: .leading) {
                         Text(viewModel.item.displayName)
                             .font(.largeTitle)
                             .fontWeight(.semibold)
-//                            .lineLimit(2)
+                            .lineLimit(2)
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.white)
                         
@@ -97,12 +106,12 @@ extension ItemView.CinematicScrollView {
                         
                         ItemView.AttributesHStack(viewModel: viewModel)
                     }
-                    .padding(.bottom)
                     
                     Spacer(minLength: 0)
                 }
                 .padding(.horizontal, 50)
                 .padding(.top, 70)
+                .padding(.bottom, 50)
                 .background {
                     BlurView()
                         .mask {

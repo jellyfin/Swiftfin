@@ -12,8 +12,31 @@ extension ItemView {
     
     struct ActionButtonHStack: View {
         
+        @ObservedObject
+        var viewModel: ItemViewModel
+        @State
+        var wrappedScrollView: UIScrollView?
+        
         var body: some View {
-            Text("")
+            HStack {
+                Button {
+                    viewModel.toggleWatchState()
+                } label: {
+                    Image(systemName: "checkmark.circle")
+                        .font(.title3)
+                        .frame(width: 100, height: 100)
+                }
+                .buttonStyle(CardButtonStyle())
+                
+                Button {
+                    viewModel.toggleFavoriteState()
+                } label: {
+                    Image(systemName: "heart")
+                        .font(.title3)
+                        .frame(width: 100, height: 100)
+                }
+                .buttonStyle(CardButtonStyle())
+            }
         }
     }
 }

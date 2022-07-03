@@ -61,7 +61,6 @@
 		536D3D7D267BD5F90004248C /* ActivityIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 536D3D7C267BD5F90004248C /* ActivityIndicator */; };
 		536D3D7F267BDF100004248C /* LatestMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536D3D7E267BDF100004248C /* LatestMediaView.swift */; };
 		536D3D81267BDFC60004248C /* PortraitItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536D3D80267BDFC60004248C /* PortraitItemElement.swift */; };
-		536D3D84267BEA550004248C /* ParallaxView in Frameworks */ = {isa = PBXBuildFile; productRef = 536D3D83267BEA550004248C /* ParallaxView */; };
 		536D3D88267C17350004248C /* PublicUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536D3D87267C17350004248C /* PublicUserButton.swift */; };
 		5377CBF5263B596A003A4E83 /* JellyfinPlayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBF4263B596A003A4E83 /* JellyfinPlayerApp.swift */; };
 		5377CBF9263B596B003A4E83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
@@ -426,6 +425,8 @@
 		E193D5502719430400900D82 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D54F2719430400900D82 /* ServerDetailView.swift */; };
 		E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
 		E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */; };
+		E19F8707286CB37E008AD396 /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F8706286CB37E008AD396 /* MovieItemView.swift */; };
+		E19F870A286CB3EC008AD396 /* MovieItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F8709286CB3EC008AD396 /* MovieItemContentView.swift */; };
 		E1A2C151279A7008005EC829 /* AboutAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C150279A7008005EC829 /* AboutAppView.swift */; };
 		E1A2C154279A7D5A005EC829 /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C153279A7D5A005EC829 /* UIApplicationExtensions.swift */; };
 		E1A2C155279A7D5A005EC829 /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C153279A7D5A005EC829 /* UIApplicationExtensions.swift */; };
@@ -881,6 +882,8 @@
 		E193D54C2719426600900D82 /* LibraryFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilterView.swift; sourceTree = "<group>"; };
 		E193D54F2719430400900D82 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainTabCoordinator.swift; sourceTree = "<group>"; };
+		E19F8706286CB37E008AD396 /* MovieItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieItemView.swift; sourceTree = "<group>"; };
+		E19F8709286CB3EC008AD396 /* MovieItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieItemContentView.swift; sourceTree = "<group>"; };
 		E1A2C150279A7008005EC829 /* AboutAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutAppView.swift; sourceTree = "<group>"; };
 		E1A2C153279A7D5A005EC829 /* UIApplicationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtensions.swift; sourceTree = "<group>"; };
 		E1A2C157279A7D76005EC829 /* BundleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
@@ -980,7 +983,6 @@
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
-				536D3D84267BEA550004248C /* ParallaxView in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
@@ -1183,7 +1185,6 @@
 		535870752669D60C00D05A09 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				6286F09F271C0AA500C40ED5 /* Strings */,
 				62C29E9D26D0FE5900C1D2E7 /* Coordinators */,
 				E1FCD08E26C466F3007C8DCF /* Errors */,
 				621338912660106C00A81A2A /* Extensions */,
@@ -1191,6 +1192,7 @@
 				AE8C3157265D6F5E008AA076 /* Resources */,
 				091B5A852683142E00D78B61 /* ServerDiscovery */,
 				62EC352A26766657000E9F2D /* Singleton */,
+				6286F09F271C0AA500C40ED5 /* Strings */,
 				E13DD3C0271648EC009D4DAF /* SwiftfinStore */,
 				532175392671BCED005491E6 /* ViewModels */,
 				E1AD105326D96F5A003E4A08 /* Views */,
@@ -1860,6 +1862,7 @@
 				E107BB952788104100354E07 /* CinematicCollectionItemView.swift */,
 				E1D35B3D286B7518002FB91A /* Components */,
 				E1E5D5362783A52C00692DFE /* CinematicEpisodeItemView.swift */,
+				E19F8708286CB3DF008AD396 /* MovieItemView */,
 				E1E5D5452783C28100692DFE /* CinematicItemAboutView.swift */,
 				E1E5D53A2783A80900692DFE /* CinematicItemViewTopRow.swift */,
 				E13F26B02787589300DF4761 /* CinematicSeasonItemView.swift */,
@@ -1868,6 +1871,15 @@
 				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
 			);
 			path = ItemView;
+			sourceTree = "<group>";
+		};
+		E19F8708286CB3DF008AD396 /* MovieItemView */ = {
+			isa = PBXGroup;
+			children = (
+				E19F8709286CB3EC008AD396 /* MovieItemContentView.swift */,
+				E19F8706286CB37E008AD396 /* MovieItemView.swift */,
+			);
+			path = MovieItemView;
 			sourceTree = "<group>";
 		};
 		E1AD105226D96D5F003E4A08 /* JellyfinAPIExtensions */ = {
@@ -2097,7 +2109,6 @@
 			packageProductDependencies = (
 				535870902669D7A800D05A09 /* Introspect */,
 				53ABFDEC26799D7700886593 /* ActivityIndicator */,
-				536D3D83267BEA550004248C /* ParallaxView */,
 				6220D0C826D63F3700B8E046 /* Stinsen */,
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
@@ -2228,7 +2239,6 @@
 			packageReferences = (
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */,
-				536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */,
 				62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */,
 				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */,
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
@@ -2447,6 +2457,7 @@
 				62E632ED267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				5398514526B64DA100101B49 /* SettingsView.swift in Sources */,
 				62E632F0267D43320063E547 /* LibraryFilterViewModel.swift in Sources */,
+				E19F8707286CB37E008AD396 /* MovieItemView.swift in Sources */,
 				E193D54B271941D300900D82 /* ServerListView.swift in Sources */,
 				53ABFDE6267974EF00886593 /* SettingsViewModel.swift in Sources */,
 				C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */,
@@ -2540,6 +2551,7 @@
 				536D3D76267BA9BB0004248C /* MainTabViewModel.swift in Sources */,
 				E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */,
 				C4E5081B2703F82A0045C9AB /* LibraryListView.swift in Sources */,
+				E19F870A286CB3EC008AD396 /* MovieItemContentView.swift in Sources */,
 				E193D53B27193F9200900D82 /* SettingsCoordinator.swift in Sources */,
 				E1E5D5392783A56B00692DFE /* EpisodesRowView.swift in Sources */,
 				E13F26B12787589300DF4761 /* CinematicSeasonItemView.swift in Sources */,
@@ -3299,14 +3311,6 @@
 				minimumVersion = 0.1.3;
 			};
 		};
-		536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/PGSSoft/ParallaxView";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
-			};
-		};
 		625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/duyquang91/ActivityIndicator";
@@ -3452,11 +3456,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 625CB5782678C4A400530A6E /* XCRemoteSwiftPackageReference "ActivityIndicator" */;
 			productName = ActivityIndicator;
-		};
-		536D3D83267BEA550004248C /* ParallaxView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 536D3D82267BEA550004248C /* XCRemoteSwiftPackageReference "ParallaxView" */;
-			productName = ParallaxView;
 		};
 		53ABFDEC26799D7700886593 /* ActivityIndicator */ = {
 			isa = XCSwiftPackageProductDependency;

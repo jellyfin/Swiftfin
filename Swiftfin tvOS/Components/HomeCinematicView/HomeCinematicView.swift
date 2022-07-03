@@ -54,7 +54,7 @@ struct HomeCinematicView: View {
 		ZStack(alignment: .bottom) {
 
 			CinematicBackgroundView(viewModel: backgroundViewModel)
-				.frame(height: UIScreen.main.bounds.height - 10)
+				.frame(height: UIScreen.main.bounds.height - 50)
 
 			LinearGradient(stops: [
 				.init(color: .clear, location: 0.5),
