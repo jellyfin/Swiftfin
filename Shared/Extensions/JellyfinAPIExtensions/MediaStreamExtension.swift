@@ -10,12 +10,12 @@ import Foundation
 import JellyfinAPI
 
 extension MediaStream {
-
 	func externalURL(base: String) -> URL? {
+		var base = base
+		while base.last == Character("/") {
+			base.removeLast()
+		}
 		guard let deliveryURL = deliveryUrl else { return nil }
-		var baseComponents = URLComponents(string: base)
-		baseComponents?.path += deliveryURL
-
-		return baseComponents?.url
+		return URL(string: base + deliveryURL)
 	}
 }
