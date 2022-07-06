@@ -34,14 +34,17 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
                 Text(title)
                     .font(.title2)
                     .fontWeight(.semibold)
-                    .padding(.leading)
                     .accessibility(addTraits: [.isHeader])
+                    .padding(.leading)
+                    .if(UIDevice.isIPad) { view in
+                        view.padding(.leading)
+                    }
                 
                 Spacer()
                 
-                if let rightBarButton = rightBarButton {
+//                if let rightBarButton = rightBarButton {
                     rightBarButton()
-                }
+//                }
             }
 
 			ScrollView(.horizontal, showsIndicators: false) {
@@ -55,12 +58,15 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
 					}
 				}
 				.padding(.horizontal)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.horizontal)
+                }
 			}
 		}
 	}
 }
 
-extension PortraitImageHStack where RightBarButton == Spacer {
+extension PortraitImageHStack where RightBarButton == EmptyView {
     init(title: String,
          items: [ItemType],
          itemWidth: CGFloat = 110,
@@ -68,7 +74,7 @@ extension PortraitImageHStack where RightBarButton == Spacer {
         self.title = title
         self.items = items
         self.itemWidth = itemWidth
-        self.rightBarButton = { Spacer() }
+        self.rightBarButton = { EmptyView() }
         self.selectedAction = selectedAction
     }
 }

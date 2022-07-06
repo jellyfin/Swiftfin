@@ -52,11 +52,11 @@ class NavBarOffsetScrollViewController<Body: View>: UIViewController, UIScrollVi
 	func update(_ newBody: () -> Body, _ headerHeight: CGFloat) {
 		self.bodyHostingController.rootView = newBody()
 		self.headerHeight = headerHeight
-		self.scrollView.layoutSubviews()
 		self.scrollView.updateConstraintsIfNeeded()
+        self.scrollView.layoutSubviews()
 		self.scrollView.layoutIfNeeded()
-		self.view.layoutSubviews()
 		self.view.updateConstraintsIfNeeded()
+        self.view.layoutSubviews()
 		self.view.layoutIfNeeded()
 	}
 
@@ -141,6 +141,7 @@ class NavBarOffsetScrollViewController<Body: View>: UIViewController, UIScrollVi
 	private func makeBodyHostingController() -> UIHostingController<Body> {
 		let hostingController = UIHostingController(rootView: body())
 		hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.view.backgroundColor = .clear
 		return hostingController
 	}
 

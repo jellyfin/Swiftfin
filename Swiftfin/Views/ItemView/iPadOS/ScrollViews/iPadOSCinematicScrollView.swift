@@ -10,12 +10,12 @@ import SwiftUI
 
 extension ItemView {
     
-    struct iPadOSCinematicScrollView<ContentView: View>: View {
+    struct iPadOSCinematicScrollView<Content: View>: View {
         
         @ObservedObject
         var viewModel: ItemViewModel
         
-        let content: () -> ContentView
+        let content: () -> Content
         
         @ViewBuilder
         private var headerView: some View {
@@ -31,7 +31,7 @@ extension ItemView {
         var body: some View {
             ParallaxHeaderScrollView(header: headerView,
                                      staticOverlayView: staticOverlayView,
-                                     headerHeight: UIScreen.main.bounds.height * 0.7) {
+                                     headerHeight: UIScreen.main.bounds.height * 0.8) {
                 content()
             }
         }
@@ -51,7 +51,25 @@ extension ItemView.iPadOSCinematicScrollView {
             VStack {
                 Spacer()
                 
-                HStack(alignment: .bottom) {
+                HStack {
+                    ImageView(viewModel.item.getLogoImage(maxWidth: 500),
+                              resizingMode: .aspectFit,
+                              failureView: {
+                                  Text(viewModel.item.displayName)
+                                      .font(.largeTitle)
+                                      .fontWeight(.semibold)
+                                      .lineLimit(2)
+                                      .multilineTextAlignment(.leading)
+                                      .foregroundColor(.white)
+                              })
+                            .frame(maxWidth: UIScreen.main.bounds.width * 0.5, maxHeight: 150)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.horizontal)
+                
+                HStack(alignment: .top) {
 
                     VStack(spacing: 10) {
                         ItemView.PlayButton(viewModel: viewModel)
@@ -60,24 +78,10 @@ extension ItemView.iPadOSCinematicScrollView {
                         ItemView.ActionButtonHStack(viewModel: viewModel)
                             .font(.title)
                     }
-                    .frame(width: 300)
-//                    .padding(.trailing, 150)
-                    
-                    Spacer()
+                    .frame(width: 250)
+                    .padding(.trailing)
                     
                     VStack(alignment: .leading) {
-
-                        ImageView(viewModel.item.getLogoImage(maxWidth: 400),
-                                  resizingMode: .aspectFit,
-                                  failureView: {
-                                      Text(viewModel.item.displayName)
-                                          .font(.largeTitle)
-                                          .fontWeight(.semibold)
-                                          .lineLimit(2)
-                                          .multilineTextAlignment(.leading)
-                                          .foregroundColor(.white)
-                                  })
-                                  .frame(maxWidth: 400, maxHeight: 100)
                         
                         DotHStack {
                             if let firstGenre = viewModel.item.genres?.first {
@@ -97,15 +101,15 @@ extension ItemView.iPadOSCinematicScrollView {
                         
                         if let playButtonOverview = viewModel.playButtonItem?.overview {
                             TruncatedTextView(playButtonOverview,
-                                              lineLimit: 3,
-                                              font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                                              lineLimit: 2,
+                                              font: UIFont.preferredFont(forTextStyle: .subheadline)) {
                                 itemRouter.route(to: \.itemOverview, viewModel.item)
                             }
                             .foregroundColor(.white)
                         } else if let seriesOverview = viewModel.item.overview {
                             TruncatedTextView(seriesOverview,
-                                              lineLimit: 3,
-                                              font: UIFont.preferredFont(forTextStyle: .footnote)) {
+                                              lineLimit: 2,
+                                              font: UIFont.preferredFont(forTextStyle: .subheadline)) {
                                 itemRouter.route(to: \.itemOverview, viewModel.item)
                             }
                             .foregroundColor(.white)
@@ -113,20 +117,22 @@ extension ItemView.iPadOSCinematicScrollView {
 
                         ItemView.AttributesHStack(viewModel: viewModel)
                     }
+                    .padding(.trailing, 200)
+                    
+                    Spacer()
                 }
                 .padding()
                 .padding()
-                .padding(.top, 150)
-                .background {
-                    BlurView(style: .systemThinMaterialDark)
-                        .mask {
-                            LinearGradient(gradient: Gradient(stops: [
-                                .init(color: .white, location: 0),
-                                .init(color: .white, location: 0.2),
-                                .init(color: .white.opacity(0), location: 1),
-                            ]), startPoint: .bottom, endPoint: .top)
-                        }
-                }
+            }
+            .background {
+                BlurView(style: .systemThinMaterialDark)
+                    .mask {
+                        LinearGradient(gradient: Gradient(stops: [
+                            .init(color: .white, location: 0),
+                            .init(color: .white, location: 0.3),
+                            .init(color: .white.opacity(0), location: 0.5),
+                        ]), startPoint: .bottom, endPoint: .top)
+                    }
             }
         }
     }

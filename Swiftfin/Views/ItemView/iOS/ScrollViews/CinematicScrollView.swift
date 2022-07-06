@@ -10,12 +10,12 @@ import SwiftUI
 
 extension ItemView {
 
-	struct CinematicScrollView<ContentView: View>: View {
+	struct CinematicScrollView<Content: View>: View {
 
 		@ObservedObject
 		var viewModel: ItemViewModel
 
-		let content: () -> ContentView
+		let content: () -> Content
 
 		@ViewBuilder
 		private var headerView: some View {

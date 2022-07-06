@@ -12,14 +12,14 @@ import SwiftUI
 
 extension ItemView {
     
-    struct CinematicScrollView<ContentView: View>: View {
+    struct CinematicScrollView<Content: View>: View {
         
         @ObservedObject
         var viewModel: ItemViewModel
         @State
         var wrappedScrollView: UIScrollView?
         
-        let content: () -> ContentView
+        let content: () -> Content
         
         var body: some View {
             

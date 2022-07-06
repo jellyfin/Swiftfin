@@ -14,20 +14,19 @@ struct DotHStack: View {
     private let restItems: [AnyView]
 	private let alignment: HorizontalAlignment
 
-	var body: some View {
-        HStack(spacing: 0) {
-			items.first
+    var body: some View {
+        HStack() {
+            items.first
 
-			ForEach(0 ..< restItems.count, id: \.self) { i in
+            ForEach(0 ..< restItems.count, id: \.self) { i in
 
-				Circle()
-					.frame(width: 2, height: 2)
-                    .padding(.horizontal)
+                Circle()
+                    .frame(width: 2, height: 2)
 
-				restItems[i]
-			}
-		}
-	}
+                restItems[i]
+            }
+        }
+    }
 }
 
 extension DotHStack {

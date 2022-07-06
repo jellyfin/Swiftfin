@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -14,19 +13,10 @@ struct iPadOSSeriesItemView: View {
 
 	@ObservedObject
 	var viewModel: SeriesItemViewModel
-    @Default(.itemViewType)
-    var itemViewType
 
     var body: some View {
-        switch itemViewType {
-        case .compactPoster, .compactLogo:
-            ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
-        case .cinematic:
-            ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
+        ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
+            ContentView(viewModel: viewModel)
         }
     }
 }

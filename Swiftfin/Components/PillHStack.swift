@@ -17,10 +17,13 @@ struct PillHStack<ItemType: PillStackable>: View {
 	var body: some View {
 		VStack(alignment: .leading) {
 			Text(title)
-				.font(.title3)
+				.font(.title2)
 				.fontWeight(.semibold)
-				.padding(.leading)
 				.accessibility(addTraits: [.isHeader])
+                .padding(.leading)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.leading)
+                }
 
 			ScrollView(.horizontal, showsIndicators: false) {
 				HStack {
@@ -45,6 +48,9 @@ struct PillHStack<ItemType: PillStackable>: View {
 					}
 				}
 				.padding(.horizontal)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.horizontal)
+                }
 			}
 		}
 	}

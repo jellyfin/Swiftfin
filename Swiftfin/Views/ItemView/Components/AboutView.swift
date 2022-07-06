@@ -21,16 +21,19 @@ extension ItemView {
 		var body: some View {
 			VStack(alignment: .leading) {
 				L10n.about.text
-					.font(.title3)
+					.font(.title2)
 					.fontWeight(.bold)
 					.accessibility(addTraits: [.isHeader])
 					.padding(.horizontal)
+                    .if(UIDevice.isIPad) { view in
+                        view.padding(.horizontal)
+                    }
 
 				ScrollView(.horizontal, showsIndicators: false) {
 					HStack {
-						ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 110),
+						ImageView(viewModel.item.portraitHeaderViewURL(maxWidth: 130),
 						          blurHash: viewModel.item.getPrimaryImageBlurHash())
-							.portraitPoster(width: 110)
+							.portraitPoster(width: 130)
 							.accessibilityIgnoresInvertColors()
 
 						Button {
@@ -43,7 +46,7 @@ extension ItemView {
 
 								VStack(alignment: .leading, spacing: 10) {
 									Text(viewModel.item.displayName)
-										.font(.title3)
+										.font(.title2)
 										.fontWeight(.semibold)
 
 									Spacer()
