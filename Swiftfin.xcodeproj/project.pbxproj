@@ -249,6 +249,8 @@
 		62EC353226766849000E9F2D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352E267666A5000E9F2D /* SessionManager.swift */; };
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
+		631759CF2879DB6A00A621AD /* UserLoginCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* UserLoginCellView.swift */; };
+		631759D02879DB6A00A621AD /* UserLoginCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* UserLoginCellView.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		C400DB6A27FE894F007B65FE /* LiveTVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */; };
 		C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */; };
@@ -743,6 +745,7 @@
 		62EC352E267666A5000E9F2D /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRotationViewModifier.swift; sourceTree = "<group>"; };
 		62ECA01726FA685A00E8EBB7 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
+		631759CE2879DB6A00A621AD /* UserLoginCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLoginCellView.swift; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVChannelsView.swift; sourceTree = "<group>"; };
 		C400DB6C27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVChannelItemWideElement.swift; sourceTree = "<group>"; };
@@ -1804,6 +1807,7 @@
 				E10C0940278B8DAB009DBF93 /* PortraitItemSize.swift */,
 				624C21742685CF60007F1390 /* SearchablePickerView.swift */,
 				53DE4BD1267098F300739748 /* SearchBarView.swift */,
+				631759CE2879DB6A00A621AD /* UserLoginCellView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2256,6 +2260,7 @@
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
 				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
+				631759D02879DB6A00A621AD /* UserLoginCellView.swift in Sources */,
 				E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				E14B4142279354770016CBE5 /* LocalizedLookup.swift in Sources */,
 				E1B59FD92786AE4600A5287E /* NextUpCard.swift in Sources */,
@@ -2485,6 +2490,7 @@
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
 				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
 				E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */,
+				631759CF2879DB6A00A621AD /* UserLoginCellView.swift in Sources */,
 				E1AA33222782648000F6439C /* OverlaySliderColor.swift in Sources */,
 				E1D4BF842719D25A00A11E64 /* TrackLanguage.swift in Sources */,
 				E14F7D0726DB36EF007C3AE6 /* ItemPortraitMainView.swift in Sources */,
