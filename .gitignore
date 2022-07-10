@@ -12,6 +12,7 @@ dynatraceSymbols.zip
 Cartfile.resolved
 Gemfile.lock
 dynatrace/
+Carthage
 
 ## Various settings
 *.pbxuser
