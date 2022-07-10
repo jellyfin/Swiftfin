@@ -15,7 +15,7 @@ struct DotHStack: View {
 	private let alignment: HorizontalAlignment
 
     var body: some View {
-        HStack() {
+        HStack {
             items.first
 
             ForEach(0 ..< restItems.count, id: \.self) { i in

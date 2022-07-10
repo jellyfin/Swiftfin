@@ -1062,15 +1062,15 @@
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				E1C812C6277AE40900918266 /* PlayerOverlayDelegate.swift */,
-				E178859C2780F5300094FBCF /* tvOSSLider */,
-				E17885A7278130690094FBCF /* Overlays */,
-				E1C812C8277AE40900918266 /* VideoPlayerView.swift */,
-				C4534984279A40C50045F1E2 /* LiveTVVideoPlayerView.swift */,
 				C4B9B91327E1921B0063535C /* LiveTVNativeVideoPlayerView.swift */,
 				C453497E279A2DA50045F1E2 /* LiveTVPlayerViewController.swift */,
-				E1384943278036C70024FB48 /* VLCPlayerViewController.swift */,
+				C4534984279A40C50045F1E2 /* LiveTVVideoPlayerView.swift */,
 				E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */,
+				E17885A7278130690094FBCF /* Overlays */,
+				E1C812C6277AE40900918266 /* PlayerOverlayDelegate.swift */,
+				E178859C2780F5300094FBCF /* tvOSSLider */,
+				E1C812C8277AE40900918266 /* VideoPlayerView.swift */,
+				E1384943278036C70024FB48 /* VLCPlayerViewController.swift */,
 			);
 			path = VideoPlayer;
 			sourceTree = "<group>";
