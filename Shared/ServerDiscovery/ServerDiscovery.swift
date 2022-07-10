@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UDPBroadcast
 
 public class ServerDiscovery {
 	public struct ServerLookupResponse: Codable, Hashable, Identifiable {
@@ -46,16 +47,12 @@ public class ServerDiscovery {
 		}
 	}
 
-	private let broadcastConn: UDPBroadcastConnection
+	private var connection: UDPBroadcastConnection?
 
-	public init() {
-		func receiveHandler(_ ipAddress: String, _ port: Int, _ response: Data) {}
-
-		func errorHandler(error: UDPBroadcastConnection.ConnectionError) {}
-		self.broadcastConn = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
-	}
+	init() {}
 
 	public func locateServer(completion: @escaping (ServerLookupResponse?) -> Void) {
+
 		func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
 			do {
 				let response = try JSONDecoder().decode(ServerLookupResponse.self, from: data)
@@ -65,12 +62,17 @@ public class ServerDiscovery {
 				completion(nil)
 			}
 		}
-		self.broadcastConn.handler = receiveHandler
+
+		func errorHandler(error: UDPBroadcastConnection.ConnectionError) {
+			LogManager.log.error("Error handling response: \(error.localizedDescription)", tag: "ServerDiscovery")
+		}
+
 		do {
-			try broadcastConn.sendBroadcast("Who is JellyfinServer?")
+			self.connection = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
+			try self.connection?.sendBroadcast("Who is JellyfinServer?")
 			LogManager.log.debug("Discovery broadcast sent", tag: "ServerDiscovery")
 		} catch {
-			print(error)
+			LogManager.log.error("Error sending discovery broadcast", tag: "ServerDiscovery")
 		}
 	}
 }
