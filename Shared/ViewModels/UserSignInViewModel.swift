@@ -8,17 +8,17 @@
 
 import CoreStore
 import Foundation
-import Stinsen
 import JellyfinAPI
+import Stinsen
 
 final class UserSignInViewModel: ViewModel {
 
 	@RouterObject
 	var router: UserSignInCoordinator.Router?
 	let server: SwiftfinStore.State.Server
-    
-    @Published
-    var users: [UserDto] = []
+
+	@Published
+	var users: [UserDto] = []
 
 	init(server: SwiftfinStore.State.Server) {
 		self.server = server
@@ -52,20 +52,20 @@ final class UserSignInViewModel: ViewModel {
 
 		self.isLoading = false
 	}
-    
-    func loadUsers() {
-        // TODO: this is a hack
-        JellyfinAPIAPI.basePath = server.currentURI
-        UserAPI.getPublicUsers()
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished: ()
-                case .failure:
-                    self.users = []
-                }
-            }, receiveValue: { response in
-                self.users = response
-            })
-            .store(in: &cancellables)
-    }
+
+	func loadUsers() {
+		// TODO: this is a hack
+		JellyfinAPIAPI.basePath = server.currentURI
+		UserAPI.getPublicUsers()
+			.sink(receiveCompletion: { completion in
+				switch completion {
+				case .finished: ()
+				case .failure:
+					self.users = []
+				}
+			}, receiveValue: { response in
+				self.users = response
+			})
+			.store(in: &cancellables)
+	}
 }

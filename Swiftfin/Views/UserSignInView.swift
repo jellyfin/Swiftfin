@@ -19,19 +19,19 @@ struct UserSignInView: View {
 	private var password: String = ""
 
 	var body: some View {
-        List {
-            #if !os(tvOS)
-            // DisclosureGroup not available on tvOS
-            if (viewModel.users.count > 0) {
-                Section(header: L10n.knownUsers.text) {
-                    ForEach(viewModel.users, id: \.id) { user in
-                        UserLoginCellView(user: user, baseURL: viewModel.server.currentURI, loginTapped: viewModel.login, cancelTapped: viewModel.cancelSignIn)
-                            .disabled(viewModel.isLoading)
-                    }
-                }
-            }
-            #endif
-            
+		List {
+			#if !os(tvOS)
+				// DisclosureGroup not available on tvOS
+				if !viewModel.users.isEmpty {
+					Section(header: L10n.knownUsers.text) {
+						ForEach(viewModel.users, id: \.id) { user in
+							UserLoginCellView(user: user, baseURL: viewModel.server.currentURI, loginTapped: viewModel.login,
+							                  cancelTapped: viewModel.cancelSignIn)
+								.disabled(viewModel.isLoading)
+						}
+					}
+				}
+			#endif
 
 			Section {
 				TextField(L10n.username, text: $username)
@@ -67,6 +67,6 @@ struct UserSignInView: View {
 		}
 		.navigationTitle(L10n.signIn)
 		.navigationBarBackButtonHidden(viewModel.isLoading)
-        .onAppear(perform: viewModel.loadUsers)
+		.onAppear(perform: viewModel.loadUsers)
 	}
 }
