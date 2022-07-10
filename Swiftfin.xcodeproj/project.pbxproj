@@ -250,7 +250,6 @@
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		631759CF2879DB6A00A621AD /* UserLoginCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* UserLoginCellView.swift */; };
-		631759D02879DB6A00A621AD /* UserLoginCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* UserLoginCellView.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		C400DB6A27FE894F007B65FE /* LiveTVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */; };
 		C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */; };
@@ -2260,7 +2259,6 @@
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
 				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
-				631759D02879DB6A00A621AD /* UserLoginCellView.swift in Sources */,
 				E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				E14B4142279354770016CBE5 /* LocalizedLookup.swift in Sources */,
 				E1B59FD92786AE4600A5287E /* NextUpCard.swift in Sources */,
