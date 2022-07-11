@@ -247,6 +247,7 @@
 		62EC353226766849000E9F2D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352E267666A5000E9F2D /* SessionManager.swift */; };
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
+		631759CF2879DB6A00A621AD /* PublicUserSignInCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* PublicUserSignInCellView.swift */; };
 		637FCAF4287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
 		637FCAF5287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
@@ -742,6 +743,7 @@
 		62EC352E267666A5000E9F2D /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRotationViewModifier.swift; sourceTree = "<group>"; };
 		62ECA01726FA685A00E8EBB7 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
+		631759CE2879DB6A00A621AD /* PublicUserSignInCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicUserSignInCellView.swift; sourceTree = "<group>"; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVChannelsView.swift; sourceTree = "<group>"; };
@@ -1667,6 +1669,7 @@
 				E1E5D54A2783E26100692DFE /* SettingsView */,
 				E13DD3FB2717EAE8009D4DAF /* UserListView.swift */,
 				E13DD3F4271793BB009D4DAF /* UserSignInView.swift */,
+				631759CE2879DB6A00A621AD /* PublicUserSignInCellView.swift */,
 				E193D5452719418B00900D82 /* VideoPlayer */,
 			);
 			path = Views;
@@ -2485,6 +2488,7 @@
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
 				53DE4BD2267098F300739748 /* SearchBarView.swift in Sources */,
 				E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */,
+				631759CF2879DB6A00A621AD /* PublicUserSignInCellView.swift in Sources */,
 				E1AA33222782648000F6439C /* OverlaySliderColor.swift in Sources */,
 				E1D4BF842719D25A00A11E64 /* TrackLanguage.swift in Sources */,
 				E14F7D0726DB36EF007C3AE6 /* ItemPortraitMainView.swift in Sources */,

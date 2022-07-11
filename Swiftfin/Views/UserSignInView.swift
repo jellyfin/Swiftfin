@@ -19,8 +19,7 @@ struct UserSignInView: View {
 	private var password: String = ""
 
 	var body: some View {
-		Form {
-
+		List {
 			Section {
 				TextField(L10n.username, text: $username)
 					.disableAutocorrection(true)
@@ -47,6 +46,35 @@ struct UserSignInView: View {
 			} header: {
 				L10n.signInToServer(viewModel.server.name).text
 			}
+
+			Section {
+				if !viewModel.publicUsers.isEmpty {
+					ForEach(viewModel.publicUsers, id: \.id) { user in
+						UserLoginCellView(viewModel: viewModel, user: user)
+							.disabled(viewModel.isLoading)
+					}
+				} else {
+					HStack(alignment: .center) {
+						Spacer()
+						L10n.noPublicUsers.text
+							.font(.callout)
+							.foregroundColor(.secondary)
+						Spacer()
+					}
+				}
+			} header: {
+				HStack {
+					L10n.publicUsers.text
+					Spacer()
+					Button {
+						viewModel.loadUsers()
+					} label: {
+						Image(systemName: "arrow.clockwise.circle.fill")
+					}
+					.disabled(viewModel.isLoadingUsers || viewModel.isLoading)
+				}
+			}
+			.headerProminence(.increased)
 		}
 		.alert(item: $viewModel.errorMessage) { _ in
 			Alert(title: Text(viewModel.alertTitle),
@@ -55,5 +83,6 @@ struct UserSignInView: View {
 		}
 		.navigationTitle(L10n.signIn)
 		.navigationBarBackButtonHidden(viewModel.isLoading)
+		.onAppear(perform: viewModel.loadUsers)
 	}
 }

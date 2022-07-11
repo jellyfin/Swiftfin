@@ -8,6 +8,7 @@
 
 import CoreStore
 import Foundation
+import JellyfinAPI
 import Stinsen
 
 final class UserSignInViewModel: ViewModel {
@@ -15,6 +16,12 @@ final class UserSignInViewModel: ViewModel {
 	@RouterObject
 	var router: UserSignInCoordinator.Router?
 	let server: SwiftfinStore.State.Server
+
+	@Published
+	var isLoadingUsers = false
+
+	@Published
+	var publicUsers: [UserDto] = []
 
 	init(server: SwiftfinStore.State.Server) {
 		self.server = server
@@ -47,5 +54,26 @@ final class UserSignInViewModel: ViewModel {
 		}
 
 		self.isLoading = false
+	}
+
+	func loadUsers() {
+		self.isLoadingUsers = true
+		JellyfinAPIAPI.basePath = server.currentURI
+		UserAPI.getPublicUsers()
+			.sink(receiveCompletion: { completion in
+				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
+			}, receiveValue: { response in
+				self.publicUsers = response
+				self.isLoadingUsers = false
+			})
+			.store(in: &cancellables)
+	}
+
+	func getProfileImageUrl(user: UserDto) -> URL? {
+		let urlString = ImageAPI.getUserImageWithRequestBuilder(userId: user.id ?? "--",
+		                                                        imageType: .primary,
+		                                                        width: 200,
+		                                                        quality: 90).URLString
+		return URL(string: urlString)
 	}
 }

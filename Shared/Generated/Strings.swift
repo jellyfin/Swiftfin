@@ -198,6 +198,8 @@ internal enum L10n {
   internal static var `none`: String { return L10n.tr("Localizable", "none") }
   /// No overview available
   internal static var noOverviewAvailable: String { return L10n.tr("Localizable", "noOverviewAvailable") }
+  /// No public Users
+  internal static var noPublicUsers: String { return L10n.tr("Localizable", "noPublicUsers") }
   /// No results.
   internal static var noResults: String { return L10n.tr("Localizable", "noResults") }
   /// Normal
@@ -258,6 +260,8 @@ internal enum L10n {
   internal static var previousItem: String { return L10n.tr("Localizable", "previousItem") }
   /// Programs
   internal static var programs: String { return L10n.tr("Localizable", "programs") }
+  /// Public Users
+  internal static var publicUsers: String { return L10n.tr("Localizable", "publicUsers") }
   /// Rated
   internal static var rated: String { return L10n.tr("Localizable", "rated") }
   /// Recently Added
