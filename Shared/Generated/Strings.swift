@@ -198,6 +198,8 @@ internal enum L10n {
   internal static var `none`: String { return L10n.tr("Localizable", "none") }
   /// No overview available
   internal static var noOverviewAvailable: String { return L10n.tr("Localizable", "noOverviewAvailable") }
+  /// No public users
+  internal static var noPublicUsers: String { return L10n.tr("Localizable", "noPublicUsers") }
   /// No results.
   internal static var noResults: String { return L10n.tr("Localizable", "noResults") }
   /// Normal

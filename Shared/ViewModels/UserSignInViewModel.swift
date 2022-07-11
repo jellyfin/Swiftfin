@@ -18,6 +18,9 @@ final class UserSignInViewModel: ViewModel {
 	let server: SwiftfinStore.State.Server
 
 	@Published
+	var isLoadingUsers = false
+
+	@Published
 	var publicUsers: [UserDto] = []
 
 	init(server: SwiftfinStore.State.Server) {
@@ -54,12 +57,14 @@ final class UserSignInViewModel: ViewModel {
 	}
 
 	func loadUsers() {
+		self.isLoadingUsers = true
 		JellyfinAPIAPI.basePath = server.currentURI
 		UserAPI.getPublicUsers()
 			.sink(receiveCompletion: { completion in
 				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
 			}, receiveValue: { response in
 				self.publicUsers = response
+				self.isLoadingUsers = false
 			})
 			.store(in: &cancellables)
 	}

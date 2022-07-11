@@ -47,12 +47,31 @@ struct UserSignInView: View {
 				L10n.signInToServer(viewModel.server.name).text
 			}
 
-			if !viewModel.publicUsers.isEmpty {
-                Section(header: L10n.publicUsers.text) {
+			Section {
+				if !viewModel.publicUsers.isEmpty {
 					ForEach(viewModel.publicUsers, id: \.id) { user in
 						UserLoginCellView(viewModel: viewModel, user: user)
 							.disabled(viewModel.isLoading)
 					}
+				} else {
+					HStack(alignment: .center) {
+						Spacer()
+						L10n.noPublicUsers.text
+							.font(.callout)
+							.foregroundColor(.secondary)
+						Spacer()
+					}
+				}
+			} header: {
+				HStack {
+					L10n.publicUsers.text
+					Spacer()
+					Button {
+						viewModel.loadUsers()
+					} label: {
+						Image(systemName: "arrow.clockwise.circle.fill")
+					}
+					.disabled(viewModel.isLoadingUsers || viewModel.isLoading)
 				}
 			}
 		}
