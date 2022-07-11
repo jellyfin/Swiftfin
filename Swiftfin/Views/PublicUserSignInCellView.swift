@@ -31,7 +31,7 @@ struct UserLoginCellView: View {
 			HStack {
 				ImageView(viewModel.getProfileImageUrl(user: user)) {
 					Image(systemName: "person.circle")
-                        .resizable()
+						.resizable()
 						.frame(width: 50, height: 50)
 				}
 				.frame(width: 50, height: 50)

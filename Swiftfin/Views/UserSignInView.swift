@@ -74,7 +74,7 @@ struct UserSignInView: View {
 					.disabled(viewModel.isLoadingUsers || viewModel.isLoading)
 				}
 			}
-            .headerProminence(.increased)
+			.headerProminence(.increased)
 		}
 		.alert(item: $viewModel.errorMessage) { _ in
 			Alert(title: Text(viewModel.alertTitle),
