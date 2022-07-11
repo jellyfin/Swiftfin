@@ -20,19 +20,6 @@ struct UserSignInView: View {
 
 	var body: some View {
 		List {
-			#if !os(tvOS)
-				// DisclosureGroup not available on tvOS
-				if !viewModel.users.isEmpty {
-					Section(header: L10n.knownUsers.text) {
-						ForEach(viewModel.users, id: \.id) { user in
-							UserLoginCellView(user: user, baseURL: viewModel.server.currentURI, loginTapped: viewModel.login,
-							                  cancelTapped: viewModel.cancelSignIn)
-								.disabled(viewModel.isLoading)
-						}
-					}
-				}
-			#endif
-
 			Section {
 				TextField(L10n.username, text: $username)
 					.disableAutocorrection(true)
@@ -58,6 +45,15 @@ struct UserSignInView: View {
 				}
 			} header: {
 				L10n.signInToServer(viewModel.server.name).text
+			}
+
+			if !viewModel.publicUsers.isEmpty {
+                Section(header: L10n.publicUsers.text) {
+					ForEach(viewModel.publicUsers, id: \.id) { user in
+						UserLoginCellView(viewModel: viewModel, user: user)
+							.disabled(viewModel.isLoading)
+					}
+				}
 			}
 		}
 		.alert(item: $viewModel.errorMessage) { _ in

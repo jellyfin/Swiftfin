@@ -138,8 +138,6 @@ internal enum L10n {
   internal static func jumpLengthSeconds(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "jumpLengthSeconds", p1)
   }
-  /// Known users
-  internal static var knownUsers: String { return L10n.tr("Localizable", "knownUsers") }
   /// Larger
   internal static var larger: String { return L10n.tr("Localizable", "larger") }
   /// Largest
@@ -260,6 +258,8 @@ internal enum L10n {
   internal static var previousItem: String { return L10n.tr("Localizable", "previousItem") }
   /// Programs
   internal static var programs: String { return L10n.tr("Localizable", "programs") }
+  /// Public users
+  internal static var publicUsers: String { return L10n.tr("Localizable", "publicUsers") }
   /// Rated
   internal static var rated: String { return L10n.tr("Localizable", "rated") }
   /// Recently Added

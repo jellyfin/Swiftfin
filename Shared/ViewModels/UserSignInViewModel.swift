@@ -18,7 +18,7 @@ final class UserSignInViewModel: ViewModel {
 	let server: SwiftfinStore.State.Server
 
 	@Published
-	var users: [UserDto] = []
+	var publicUsers: [UserDto] = []
 
 	init(server: SwiftfinStore.State.Server) {
 		self.server = server
@@ -54,18 +54,21 @@ final class UserSignInViewModel: ViewModel {
 	}
 
 	func loadUsers() {
-		// TODO: this is a hack
 		JellyfinAPIAPI.basePath = server.currentURI
 		UserAPI.getPublicUsers()
 			.sink(receiveCompletion: { completion in
-				switch completion {
-				case .finished: ()
-				case .failure:
-					self.users = []
-				}
+				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
 			}, receiveValue: { response in
-				self.users = response
+				self.publicUsers = response
 			})
 			.store(in: &cancellables)
+	}
+
+	func getProfileImageUrl(user: UserDto) -> URL? {
+		let urlString = ImageAPI.getUserImageWithRequestBuilder(userId: user.id ?? "--",
+		                                                        imageType: .primary,
+		                                                        width: 200,
+		                                                        quality: 90).URLString
+		return URL(string: urlString)
 	}
 }
