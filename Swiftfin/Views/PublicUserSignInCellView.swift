@@ -31,12 +31,13 @@ struct UserLoginCellView: View {
 			HStack {
 				ImageView(viewModel.getProfileImageUrl(user: user)) {
 					Image(systemName: "person.circle")
+                        .resizable()
 						.frame(width: 50, height: 50)
 				}
 				.frame(width: 50, height: 50)
 				.clipShape(Circle())
 
-				Text(user.name ?? "")
+				Text(user.name ?? "--")
 				Spacer()
 			}
 		}
