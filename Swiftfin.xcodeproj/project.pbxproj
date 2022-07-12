@@ -247,7 +247,6 @@
 		62EC353226766849000E9F2D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC352E267666A5000E9F2D /* SessionManager.swift */; };
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
-		631759CF2879DB6A00A621AD /* PublicUserSignInCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* PublicUserSignInCellView.swift */; };
 		637FCAF4287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
 		637FCAF5287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
@@ -352,6 +351,7 @@
 		E13849452780370B0024FB48 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
 		E13AD72E2798BC8D00FDCEE8 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */; };
 		E13AD7302798C60F00FDCEE8 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */; };
+		E13D9532287DE2F50094C67B /* PublicUserSignInCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* PublicUserSignInCellView.swift */; };
 		E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */; };
 		E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
 		E13DD3C327164941009D4DAF /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
@@ -2475,7 +2475,6 @@
 				E10D87DA2784E4F100BD264C /* ItemViewDetailsView.swift in Sources */,
 				E1C812C3277A8E5D00918266 /* VLCPlayerOverlayView.swift in Sources */,
 				E1002B642793CEE800E47059 /* ChapterInfoExtensions.swift in Sources */,
-				E188460026DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift in Sources */,
 				6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				5D1603FC278A3D5800D22B99 /* SubtitleSize.swift in Sources */,
@@ -2546,6 +2545,7 @@
 				6267B3DA2671138200A7371D /* ImageExtensions.swift in Sources */,
 				E1E00A35278628A40022235B /* DoubleExtensions.swift in Sources */,
 				62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */,
+				E13D9532287DE2F50094C67B /* PublicUserSignInCellView.swift in Sources */,
 				5389277C263CC3DB0035E14B /* BlurHashDecode.swift in Sources */,
 				E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */,
