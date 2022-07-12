@@ -14,20 +14,11 @@ import SwiftUI
 
 final class SettingsViewModel: ViewModel {
 
-	@RouterObject
-	var router: SettingsCoordinator.Router?
-
 	var bitrates: [Bitrates] = []
 	var langs: [TrackLanguage] = []
 
 	let server: SwiftfinStore.State.Server
 	let user: SwiftfinStore.State.User
-
-	@Published
-	var quickConnectCode = ""
-
-	@Published
-	var validQuickConnect = true
 
 	init(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
 
@@ -54,27 +45,5 @@ final class SettingsViewModel: ViewModel {
 			return TrackLanguage(name: name, isoCode: $0)
 		}.sorted(by: { $0.name < $1.name })
 		self.langs.insert(.auto, at: 0)
-	}
-
-	func sendQuickConnect() {
-		QuickConnectAPI.authorize(code: self.quickConnectCode)
-			.sink(receiveCompletion: { completion in
-				switch completion {
-				case .failure:
-					LogManager.log.debug("Invalid Quick Connect code entered")
-					self.validQuickConnect = false
-				default:
-					self.handleAPIRequestError(displayMessage: "Error", completion: completion)
-				}
-			}, receiveValue: { value in
-				if !value {
-					LogManager.log.debug("Invalid Quick Connect code entered")
-					self.validQuickConnect = false
-				} else {
-					LogManager.log.debug("Valid Quick connect code entered")
-					self.router?.dismissCoordinator()
-				}
-			})
-			.store(in: &cancellables)
 	}
 }

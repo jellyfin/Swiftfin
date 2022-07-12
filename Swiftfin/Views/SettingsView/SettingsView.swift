@@ -81,22 +81,16 @@ struct SettingsView: View {
 					L10n.switchUser.text
 						.font(.callout)
 				}
-			}
-
-			Section(header: L10n.quickConnect.text) {
-				TextField(L10n.quickConnectCode, text: $viewModel.quickConnectCode)
-					.keyboardType(.numberPad)
-					.onChange(of: viewModel.quickConnectCode, perform: { _ in
-						viewModel.validQuickConnect = true
-					})
-					.foregroundColor(viewModel.validQuickConnect ? .none : Color.red)
 
 				Button {
-					viewModel.sendQuickConnect()
+					settingsRouter.route(to: \.quickConnect)
 				} label: {
-					L10n.quickConnectAuthorize.text
-						.font(.callout)
-						.disabled(viewModel.quickConnectCode.isEmpty)
+					HStack {
+						L10n.quickConnect.text
+							.foregroundColor(.primary)
+						Spacer()
+						Image(systemName: "chevron.right")
+					}
 				}
 			}
 
