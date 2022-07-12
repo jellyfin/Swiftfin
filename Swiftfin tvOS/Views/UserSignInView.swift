@@ -22,8 +22,11 @@ struct UserSignInView: View {
 		ZStack {
 			ImageView(viewModel.getSplashscreenUrl())
 				.ignoresSafeArea()
-			Color.black.opacity(0.9)
+
+			Color.black
+				.opacity(0.9)
 				.ignoresSafeArea()
+
 			Form {
 				Section {
 					TextField(L10n.username, text: $username)
