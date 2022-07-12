@@ -22,6 +22,7 @@ final class UserSignInViewModel: ViewModel {
 
 	init(server: SwiftfinStore.State.Server) {
 		self.server = server
+		JellyfinAPIAPI.basePath = server.currentURI
 	}
 
 	var alertTitle: String {
@@ -54,7 +55,6 @@ final class UserSignInViewModel: ViewModel {
 	}
 
 	func loadUsers() {
-		JellyfinAPIAPI.basePath = server.currentURI
 		UserAPI.getPublicUsers()
 			.trackActivity(loading)
 			.sink(receiveCompletion: { completion in
@@ -70,6 +70,11 @@ final class UserSignInViewModel: ViewModel {
 		                                                        imageType: .primary,
 		                                                        width: 200,
 		                                                        quality: 90).URLString
+		return URL(string: urlString)
+	}
+
+	func getSplashscreenUrl() -> URL? {
+		let urlString = ImageAPI.getSplashscreenWithRequestBuilder().URLString
 		return URL(string: urlString)
 	}
 }
