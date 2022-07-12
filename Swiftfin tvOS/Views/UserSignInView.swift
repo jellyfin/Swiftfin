@@ -19,39 +19,47 @@ struct UserSignInView: View {
 	private var password: String = ""
 
 	var body: some View {
-		Form {
+		ZStack {
+			ImageView(viewModel.getSplashscreenUrl())
+				.ignoresSafeArea()
 
-			Section {
-				TextField(L10n.username, text: $username)
-					.disableAutocorrection(true)
-					.autocapitalization(.none)
+			Color.black
+				.opacity(0.9)
+				.ignoresSafeArea()
 
-				SecureField(L10n.password, text: $password)
-					.disableAutocorrection(true)
-					.autocapitalization(.none)
+			Form {
+				Section {
+					TextField(L10n.username, text: $username)
+						.disableAutocorrection(true)
+						.autocapitalization(.none)
 
-				Button {
-					viewModel.login(username: username, password: password)
-				} label: {
-					HStack {
-						L10n.connect.text
-						Spacer()
-						if viewModel.isLoading {
-							ProgressView()
+					SecureField(L10n.password, text: $password)
+						.disableAutocorrection(true)
+						.autocapitalization(.none)
+
+					Button {
+						viewModel.login(username: username, password: password)
+					} label: {
+						HStack {
+							L10n.connect.text
+							Spacer()
+							if viewModel.isLoading {
+								ProgressView()
+							}
 						}
 					}
-				}
-				.disabled(viewModel.isLoading || username.isEmpty)
+					.disabled(viewModel.isLoading || username.isEmpty)
 
-			} header: {
-				L10n.signInToServer(viewModel.server.name).text
+				} header: {
+					L10n.signInToServer(viewModel.server.name).text
+				}
 			}
+			.alert(item: $viewModel.errorMessage) { _ in
+				Alert(title: Text(viewModel.alertTitle),
+				      message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
+				      dismissButton: .cancel())
+			}
+			.navigationTitle(L10n.signIn)
 		}
-		.alert(item: $viewModel.errorMessage) { _ in
-			Alert(title: Text(viewModel.alertTitle),
-			      message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-			      dismissButton: .cancel())
-		}
-		.navigationTitle(L10n.signIn)
 	}
 }
