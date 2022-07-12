@@ -83,6 +83,22 @@ struct SettingsView: View {
 				}
 			}
 
+			Section(header: Text("Quick Connect")) {
+				TextField("Quick Connect code", text: $viewModel.quickConnectCode)
+					.keyboardType(.numberPad)
+					.onChange(of: viewModel.quickConnectCode, perform: { _ in
+						viewModel.validQuickConnect = true
+					})
+					.foregroundColor(viewModel.validQuickConnect ? .none : Color.red)
+
+				Button {
+					viewModel.sendQuickConnect()
+				} label: {
+					Text("Submit Quick Connect code")
+						.font(.callout)
+				}
+			}
+
 			// TODO: Implement these for playback
 			//            Section(header: Text("Networking")) {
 			//                Picker("Default local quality", selection: $inNetworkStreamBitrate) {
