@@ -28,8 +28,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	var missingSettings = makeMissingSettings
 	@Route(.push)
 	var about = makeAbout
-	@Route(.push)
-	var quickConnect = makeQuickConnectSettings
+
+	#if !os(tvOS)
+		@Route(.push)
+		var quickConnect = makeQuickConnectSettings
+	#endif
 
 	@ViewBuilder
 	func makeServerDetail() -> some View {
@@ -62,11 +65,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
 		AboutView()
 	}
 
-	@ViewBuilder
-	func makeQuickConnectSettings() -> some View {
-		let viewModel = QuickConnectSettingsViewModel()
-		QuickConnectSettingsView(viewModel: viewModel)
-	}
+	#if !os(tvOS)
+		@ViewBuilder
+		func makeQuickConnectSettings() -> some View {
+			let viewModel = QuickConnectSettingsViewModel()
+			QuickConnectSettingsView(viewModel: viewModel)
+		}
+	#endif
 
 	@ViewBuilder
 	func makeStart() -> some View {
