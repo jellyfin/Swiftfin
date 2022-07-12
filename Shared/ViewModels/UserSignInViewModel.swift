@@ -18,14 +18,10 @@ final class UserSignInViewModel: ViewModel {
 	let server: SwiftfinStore.State.Server
 
 	@Published
-	var isLoadingUsers = false
-
-	@Published
 	var publicUsers: [UserDto] = []
 
 	init(server: SwiftfinStore.State.Server) {
 		self.server = server
-		JellyfinAPIAPI.basePath = server.currentURI
 	}
 
 	var alertTitle: String {
@@ -33,7 +29,7 @@ final class UserSignInViewModel: ViewModel {
 		if errorMessage?.code != ErrorMessage.noShowErrorCode {
 			message.append(contentsOf: "\(errorMessage?.code ?? ErrorMessage.noShowErrorCode)\n")
 		}
-		message.append(contentsOf: "\(errorMessage?.title ?? "Unkown Error")")
+		message.append(contentsOf: "\(errorMessage?.title ?? L10n.unknownError)")
 		return message
 	}
 
@@ -58,13 +54,13 @@ final class UserSignInViewModel: ViewModel {
 	}
 
 	func loadUsers() {
-		self.isLoadingUsers = true
+		JellyfinAPIAPI.basePath = server.currentURI
 		UserAPI.getPublicUsers()
+			.trackActivity(loading)
 			.sink(receiveCompletion: { completion in
 				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
 			}, receiveValue: { response in
 				self.publicUsers = response
-				self.isLoadingUsers = false
 			})
 			.store(in: &cancellables)
 	}
@@ -74,11 +70,6 @@ final class UserSignInViewModel: ViewModel {
 		                                                        imageType: .primary,
 		                                                        width: 200,
 		                                                        quality: 90).URLString
-		return URL(string: urlString)
-	}
-
-	func getSplashscreenUrl() -> URL? {
-		let urlString = ImageAPI.getSplashscreenWithRequestBuilder().URLString
 		return URL(string: urlString)
 	}
 }

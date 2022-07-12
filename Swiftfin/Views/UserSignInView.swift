@@ -71,7 +71,7 @@ struct UserSignInView: View {
 					} label: {
 						Image(systemName: "arrow.clockwise.circle.fill")
 					}
-					.disabled(viewModel.isLoadingUsers || viewModel.isLoading)
+					.disabled(viewModel.isLoading)
 				}
 			}
 			.headerProminence(.increased)
