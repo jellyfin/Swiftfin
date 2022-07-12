@@ -26,6 +26,11 @@ extension EpisodesRowManager {
 	var sortedSeasons: [BaseItemDto] {
 		Array(seasonsEpisodes.keys).sorted(by: { $0.indexNumber ?? 0 < $1.indexNumber ?? 0 })
 	}
+    
+    var currentEpisodes: [BaseItemDto]? {
+        guard let selectedSeason = selectedSeason else { return nil }
+        return seasonsEpisodes[selectedSeason]
+    }
 
 	// Also retrieves the current season episodes if available
 	func getSeasons() {

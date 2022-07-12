@@ -77,7 +77,8 @@ extension ItemView.CinematicScrollView {
                     VStack {
                         ItemView.PlayButton(viewModel: viewModel)
                         
-                        ItemView.ActionButtonHStack(viewModel: viewModel, wrappedScrollView: wrappedScrollView)
+                        ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .focusSection()
                     }
                     
                     VStack(alignment: .leading) {
@@ -113,7 +114,7 @@ extension ItemView.CinematicScrollView {
                 .padding(.top, 70)
                 .padding(.bottom, 50)
                 .background {
-                    BlurView()
+                    Color.black
                         .mask {
                             LinearGradient(gradient: Gradient(stops: [
                                 .init(color: .white, location: 0),

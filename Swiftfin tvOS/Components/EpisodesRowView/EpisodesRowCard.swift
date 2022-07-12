@@ -13,7 +13,6 @@ struct EpisodeRowCard: View {
 
 	@EnvironmentObject
 	var itemRouter: ItemCoordinator.Router
-	let viewModel: EpisodesRowManager
 	let episode: BaseItemDto
 
 	var body: some View {
@@ -53,7 +52,7 @@ struct EpisodeRowCard: View {
 					}
 				}
 
-				Spacer()
+//				Spacer()
 			}
 			.padding()
 			.frame(width: 550)

@@ -6,18 +6,18 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-struct MovieItemView: View {
-
+struct SeriesItemView: View {
+    
     @ObservedObject
-    var viewModel: MovieItemViewModel
+    var viewModel: SeriesItemViewModel
 
     var body: some View {
         ItemView.CinematicScrollView(viewModel: viewModel) {
             ContentView(viewModel: viewModel)
                 .padding(.top)
+                .ignoresSafeArea()
         }
     }
 }

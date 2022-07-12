@@ -29,7 +29,7 @@ struct ItemView: View {
 			case .season:
                 CinematicSeasonItemView(viewModel: SeasonItemViewModel(item: item))
 			case .series:
-                CinematicSeriesItemView(viewModel: SeriesItemViewModel(item: item))
+                SeriesItemView(viewModel: .init(item: item))
 			case .boxset, .folder:
 				CinematicCollectionItemView(viewModel: CollectionItemViewModel(item: item))
 			default:

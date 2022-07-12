@@ -81,7 +81,7 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
 									.focusable()
 								} else {
 									ForEach(viewModel.seasonsEpisodes[selectedSeason]!, id: \.self) { episode in
-										EpisodeRowCard(viewModel: viewModel, episode: episode)
+										EpisodeRowCard(episode: episode)
 											.id(episode.id)
 									}
 								}

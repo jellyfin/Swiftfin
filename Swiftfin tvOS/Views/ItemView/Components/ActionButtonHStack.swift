@@ -14,8 +14,6 @@ extension ItemView {
         
         @ObservedObject
         var viewModel: ItemViewModel
-        @State
-        var wrappedScrollView: UIScrollView?
         
         var body: some View {
             HStack {
