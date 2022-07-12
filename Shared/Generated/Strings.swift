@@ -262,6 +262,12 @@ internal enum L10n {
   internal static var programs: String { return L10n.tr("Localizable", "programs") }
   /// Public Users
   internal static var publicUsers: String { return L10n.tr("Localizable", "publicUsers") }
+  /// Quick Connect
+  internal static var quickConnect: String { return L10n.tr("Localizable", "quickConnect") }
+  /// Authorize
+  internal static var quickConnectAuthorize: String { return L10n.tr("Localizable", "quickConnectAuthorize") }
+  /// Quick Connect code
+  internal static var quickConnectCode: String { return L10n.tr("Localizable", "quickConnectCode") }
   /// Rated
   internal static var rated: String { return L10n.tr("Localizable", "rated") }
   /// Recently Added

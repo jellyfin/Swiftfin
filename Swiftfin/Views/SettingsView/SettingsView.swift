@@ -83,8 +83,8 @@ struct SettingsView: View {
 				}
 			}
 
-			Section(header: Text("Quick Connect")) {
-				TextField("Quick Connect code", text: $viewModel.quickConnectCode)
+			Section(header: L10n.quickConnect.text) {
+				TextField(L10n.quickConnectCode, text: $viewModel.quickConnectCode)
 					.keyboardType(.numberPad)
 					.onChange(of: viewModel.quickConnectCode, perform: { _ in
 						viewModel.validQuickConnect = true
@@ -94,8 +94,9 @@ struct SettingsView: View {
 				Button {
 					viewModel.sendQuickConnect()
 				} label: {
-					Text("Submit Quick Connect code")
+					L10n.quickConnectAuthorize.text
 						.font(.callout)
+						.disabled(viewModel.quickConnectCode.isEmpty)
 				}
 			}
 
