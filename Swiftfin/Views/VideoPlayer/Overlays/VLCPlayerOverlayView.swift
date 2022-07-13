@@ -339,59 +339,96 @@ struct VLCPlayerOverlayView: View {
 						.frame(height: 70)
 				}
 
-				HStack {
-					if viewModel.overlayType == .compact {
-						HStack {
-							Button {
-								viewModel.playerOverlayDelegate?.didSelectBackward()
-							} label: {
-								Image(systemName: viewModel.jumpBackwardLength.backwardImageLabel)
-									.padding(.horizontal, 5)
+				VStack(alignment: .leading, spacing: 0) {
+					if viewModel.overlayType == .normal,
+					   let currentChapter = viewModel.currentChapter
+					{
+						Button {
+							viewModel.playerOverlayDelegate?.didSelectChapters()
+						} label: {
+							HStack {
+								Text(currentChapter.name ?? "--")
+								Image(systemName: "chevron.right")
 							}
-
-							Button {
-								viewModel.playerOverlayDelegate?.didSelectMain()
-							} label: {
-								mainButtonView
-									.frame(minWidth: 30, maxWidth: 30)
-									.padding(.horizontal, 10)
-							}
-
-							Button {
-								viewModel.playerOverlayDelegate?.didSelectForward()
-							} label: {
-								Image(systemName: viewModel.jumpForwardLength.forwardImageLabel)
-									.padding(.horizontal, 5)
-							}
+							.font(.system(size: 16, weight: .semibold, design: .default))
 						}
-						.font(.system(size: 24, weight: .semibold, design: .default))
+						.padding(.leading, 16)
 					}
 
-					Text(viewModel.leftLabelText)
-						.font(.system(size: 18, weight: .semibold, design: .default))
-						.frame(minWidth: 70, maxWidth: 70)
-						.accessibilityLabel(L10n.currentPosition)
-						.accessibilityValue(viewModel.leftLabelText)
+					HStack {
+						if viewModel.overlayType == .compact {
+							HStack {
+								Button {
+									viewModel.playerOverlayDelegate?.didSelectBackward()
+								} label: {
+									Image(systemName: viewModel.jumpBackwardLength.backwardImageLabel)
+										.padding(.horizontal, 5)
+								}
 
-					ValueSlider(value: $viewModel.sliderPercentage, onEditingChanged: { editing in
-						viewModel.sliderIsScrubbing = editing
-					})
-					.valueSliderStyle(HorizontalValueSliderStyle(track:
-						HorizontalValueTrack(view:
-							Capsule().foregroundColor(.purple))
-							.background(Capsule().foregroundColor(Color.gray.opacity(0.25)))
+								Button {
+									viewModel.playerOverlayDelegate?.didSelectMain()
+								} label: {
+									mainButtonView
+										.frame(minWidth: 30, maxWidth: 30)
+										.padding(.horizontal, 10)
+								}
+
+								Button {
+									viewModel.playerOverlayDelegate?.didSelectForward()
+								} label: {
+									Image(systemName: viewModel.jumpForwardLength.forwardImageLabel)
+										.padding(.horizontal, 5)
+								}
+							}
+							.font(.system(size: 24, weight: .semibold, design: .default))
+						}
+
+						Text(viewModel.leftLabelText)
+							.font(.system(size: 18, weight: .semibold, design: .default))
+							.frame(minWidth: 70, maxWidth: 70)
+							.accessibilityLabel(L10n.currentPosition)
+							.accessibilityValue(viewModel.leftLabelText)
+
+						ValueSlider(value: $viewModel.sliderPercentage, onEditingChanged: { editing in
+							viewModel.sliderIsScrubbing = editing
+						})
+						.valueSliderStyle(HorizontalValueSliderStyle(track:
+							GeometryReader { proxy in
+								ZStack(alignment: .leading) {
+									HorizontalValueTrack(view:
+										Capsule().foregroundColor(.purple))
+										.background(Capsule().foregroundColor(Color.gray.opacity(0.75)))
+
+									if viewModel.overlayType == .normal {
+										// Chapters seek masks
+										ForEach(viewModel.chapters, id: \.startPositionTicks) { chapter in
+											let ticksRatio = CGFloat(chapter.startPositionTicks ?? 0) /
+												CGFloat(viewModel.item.runTimeTicks ?? 0)
+											let x = proxy.size.width * ticksRatio
+											if x != 0 {
+												Rectangle()
+													.blendMode(.destinationOut)
+													.offset(x: x - 1.5)
+													.frame(width: 3)
+											}
+										}
+									}
+								}
+								.compositingGroup()
+							}
 							.frame(height: 4),
-						thumb: Circle().foregroundColor(.purple),
-						thumbSize: CGSize.Circle(radius: viewModel.sliderIsScrubbing ? 20 : 15),
-						thumbInteractiveSize: CGSize.Circle(radius: 40),
-						options: .defaultOptions))
-					.frame(maxHeight: 50)
+							thumb: Circle().foregroundColor(.purple),
+							thumbSize: CGSize.Circle(radius: viewModel.sliderIsScrubbing ? 20 : 15),
+							thumbInteractiveSize: CGSize.Circle(radius: 40),
+							options: .defaultOptions))
+						.frame(maxHeight: 50)
 
-					Text(viewModel.rightLabelText)
-						.font(.system(size: 18, weight: .semibold, design: .default))
-						.frame(minWidth: 70, maxWidth: 70)
-						.accessibilityLabel(L10n.remainingTime)
-						.accessibilityValue(viewModel.rightLabelText)
+						Text(viewModel.rightLabelText)
+							.font(.system(size: 18, weight: .semibold, design: .default))
+							.frame(minWidth: 70, maxWidth: 70)
+							.accessibilityLabel(L10n.remainingTime)
+							.accessibilityValue(viewModel.rightLabelText)
+					}
 				}
 				.padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 30 : 0)
 				.padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 10 : 0)
