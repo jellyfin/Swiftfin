@@ -81,6 +81,17 @@ struct SettingsView: View {
 					L10n.switchUser.text
 						.font(.callout)
 				}
+
+				Button {
+					settingsRouter.route(to: \.quickConnect)
+				} label: {
+					HStack {
+						L10n.quickConnect.text
+							.foregroundColor(.primary)
+						Spacer()
+						Image(systemName: "chevron.right")
+					}
+				}
 			}
 
 			// TODO: Implement these for playback

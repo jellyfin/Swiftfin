@@ -248,6 +248,8 @@
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		631759CF2879DB6A00A621AD /* PublicUserSignInCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* PublicUserSignInCellView.swift */; };
+		6334175B287DDFB9000603CE /* QuickConnectSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334175A287DDFB9000603CE /* QuickConnectSettingsView.swift */; };
+		6334175D287DE0D0000603CE /* QuickConnectSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334175C287DE0D0000603CE /* QuickConnectSettingsViewModel.swift */; };
 		637FCAF4287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
 		637FCAF5287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
@@ -744,6 +746,8 @@
 		62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRotationViewModifier.swift; sourceTree = "<group>"; };
 		62ECA01726FA685A00E8EBB7 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		631759CE2879DB6A00A621AD /* PublicUserSignInCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicUserSignInCellView.swift; sourceTree = "<group>"; };
+		6334175A287DDFB9000603CE /* QuickConnectSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectSettingsView.swift; sourceTree = "<group>"; };
+		6334175C287DE0D0000603CE /* QuickConnectSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectSettingsViewModel.swift; sourceTree = "<group>"; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVChannelsView.swift; sourceTree = "<group>"; };
@@ -1058,6 +1062,7 @@
 				09389CC626819B4500AE350E /* VideoPlayerModel.swift */,
 				E126F73F278A655300A522BF /* VideoPlayerViewModel */,
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
+				6334175C287DE0D0000603CE /* QuickConnectSettingsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1882,6 +1887,7 @@
 				E176DE6F278E369F001EFD8D /* MissingItemsSettingsView.swift */,
 				E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */,
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+				6334175A287DDFB9000603CE /* QuickConnectSettingsView.swift */,
 			);
 			path = SettingsView;
 			sourceTree = "<group>";
@@ -2474,12 +2480,14 @@
 				E1C812CE277AE43100918266 /* VideoPlayerViewModel.swift in Sources */,
 				E10D87DA2784E4F100BD264C /* ItemViewDetailsView.swift in Sources */,
 				E1C812C3277A8E5D00918266 /* VLCPlayerOverlayView.swift in Sources */,
+				6334175B287DDFB9000603CE /* QuickConnectSettingsView.swift in Sources */,
 				E1002B642793CEE800E47059 /* ChapterInfoExtensions.swift in Sources */,
 				E188460026DECB9E00B0C5B7 /* ItemLandscapeTopBarView.swift in Sources */,
 				6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				5D1603FC278A3D5800D22B99 /* SubtitleSize.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
+				6334175D287DE0D0000603CE /* QuickConnectSettingsViewModel.swift in Sources */,
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				62E632E9267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
