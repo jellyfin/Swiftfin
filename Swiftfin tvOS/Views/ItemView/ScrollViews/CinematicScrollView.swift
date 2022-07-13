@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Introspect
 import SwiftUI
 
 extension ItemView {
@@ -16,10 +15,8 @@ extension ItemView {
         
         @ObservedObject
         var viewModel: ItemViewModel
-        @State
-        var wrappedScrollView: UIScrollView?
         
-        let content: () -> Content
+        let content: (ScrollViewProxy) -> Content
         
         var body: some View {
             
@@ -29,25 +26,10 @@ extension ItemView {
                           blurHash: viewModel.item.getBackdropImageBlurHash())
                     .ignoresSafeArea()
                 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        
-                        StaticOverlayView(viewModel: viewModel,
-                                          wrappedScrollView: wrappedScrollView)
-                        .focusSection()
-                        .frame(height: UIScreen.main.bounds.height - 50)
-                        
-                        ZStack {
-                            BlurView()
-                            
-                            content()
-                                .focusSection()
-                        }
-                        .frame(minHeight: UIScreen.main.bounds.height)
+                ScrollView(.vertical, showsIndicators: false) {
+                    ScrollViewReader { scrollViewProxy in
+                        content(scrollViewProxy)
                     }
-                }
-                .introspectScrollView { scrollView in
-                    wrappedScrollView = scrollView
                 }
                 .ignoresSafeArea()
             }
@@ -55,18 +37,29 @@ extension ItemView {
     }
 }
 
-extension ItemView.CinematicScrollView {
+extension ItemView {
     
     struct StaticOverlayView: View {
+        
+        enum StaticOverlayFocusLayer: Hashable {
+            case playButton
+            case actionButton
+            case bottomDivider
+        }
         
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
+        
         @State
-        var wrappedScrollView: UIScrollView?
+        var scrollViewProxy: ScrollViewProxy
+        
         @FocusState
-        private var actionButtonHStackFocused: Bool
+        private var focusedLayer: StaticOverlayFocusLayer?
+        
+        @Binding
+        var seriesItemTransitionBinding: SeriesItemView.FocusTransition?
         
         var body: some View {
             VStack {
@@ -74,12 +67,22 @@ extension ItemView.CinematicScrollView {
                 
                 HStack {
                     
-                    VStack {
+                    VStack(spacing: 0) {
                         ItemView.PlayButton(viewModel: viewModel)
+                            .padding(.bottom)
+                            .focused($focusedLayer, equals: .playButton)
                         
                         ItemView.ActionButtonHStack(viewModel: viewModel)
                             .focusSection()
+                            .frame(width: 300)
+                            .focused($focusedLayer, equals: .actionButton)
+                        
+                        Color.red
+                            .frame(height: 1)
+                            .focusable()
+                            .focused($focusedLayer, equals: .bottomDivider)
                     }
+                    .frame(width: 350)
                     
                     VStack(alignment: .leading) {
                         Text(viewModel.item.displayName)
@@ -111,30 +114,17 @@ extension ItemView.CinematicScrollView {
                     Spacer(minLength: 0)
                 }
                 .padding(.horizontal, 50)
-                .padding(.top, 70)
-                .padding(.bottom, 50)
-                .background {
-                    Color.black
-                        .mask {
-                            LinearGradient(gradient: Gradient(stops: [
-                                .init(color: .white, location: 0),
-                                .init(color: .white, location: 0.5),
-                                .init(color: .white.opacity(0), location: 1),
-                            ]), startPoint: .bottom, endPoint: .top)
-                        }
+            }
+            .onChange(of: focusedLayer) { newValue in
+                if newValue == .bottomDivider {
+                    seriesItemTransitionBinding = .leavingActionBottom
+                }
+            }
+            .onChange(of: seriesItemTransitionBinding) { newValue in
+                if newValue == .leavingSeasonsTop {
+                    focusedLayer = .actionButton
                 }
             }
         }
     }
-}
-
-extension VerticalAlignment {
-
-    private struct PlayInformationAlignment: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            context[VerticalAlignment.bottom]
-        }
-    }
-
-    static let PlayInformationAlignmentGuide = VerticalAlignment(PlayInformationAlignment.self)
 }

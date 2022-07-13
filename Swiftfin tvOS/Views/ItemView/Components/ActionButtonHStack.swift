@@ -22,18 +22,23 @@ extension ItemView {
                 } label: {
                     Image(systemName: "checkmark.circle")
                         .font(.title3)
-                        .frame(width: 100, height: 100)
+                        .frame(height: 100)
+                        .frame(maxWidth: .infinity)
+//                        .frame(width: 100, height: 100)
                 }
-                .buttonStyle(CardButtonStyle())
+                .buttonStyle(PlainButtonStyle())
+//                .buttonStyle(CardButtonStyle())
                 
                 Button {
                     viewModel.toggleFavoriteState()
                 } label: {
                     Image(systemName: "heart")
                         .font(.title3)
-                        .frame(width: 100, height: 100)
+                        .frame(height: 100)
+                        .frame(maxWidth: .infinity)
+//                        .frame(width: 100, height: 100)
                 }
-                .buttonStyle(CardButtonStyle())
+                .buttonStyle(PlainButtonStyle())
             }
         }
     }

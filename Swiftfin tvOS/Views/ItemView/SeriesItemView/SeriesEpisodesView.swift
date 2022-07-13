@@ -22,6 +22,9 @@ struct SeriesEpisodeView: View {
     @FocusState
     var focusedLayer: FocusedLayer?
     
+    @Binding
+    var seriesItemTransitionBinding: SeriesItemView.FocusTransition?
+    
     var body: some View {
         VStack(spacing: 0) {
             Color.clear
@@ -46,6 +49,7 @@ struct SeriesEpisodeView: View {
                 .frame(height: 1)
                 .focusable()
                 .focused($focusedLayer, equals: .bottomDivider)
+                .id("body")
         }
         .focused($isFocused)
         .onChange(of: focusedLayer) { [focusedLayer] newLayer in
@@ -57,12 +61,18 @@ struct SeriesEpisodeView: View {
                 currentLayerTransition = .enteringSectionSeasons
             } else if newLayer == .bottomDivider && focusedLayer == nil {
                 currentLayerTransition = .enteringSectionEpisodes
-            } else if newLayer == nil && focusedLayer == .topDivider {
-//                currentLayerTransition = .exitingSectionTop
-                isFocused = false
-            } else if newLayer == nil && focusedLayer == .bottomDivider {
-//                currentLayerTransition = .exitingSectionBottom
-                isFocused = false
+            } else if newLayer == .topDivider && focusedLayer == .seasons {
+                currentLayerTransition = .exitingSectionTop
+                seriesItemTransitionBinding = .leavingSeasonsTop
+            } else if newLayer == .bottomDivider && focusedLayer == .episodes {
+                currentLayerTransition = .exitingSectionBottom
+                seriesItemTransitionBinding = .leavingSeasonsBottom
+            }
+        }
+        .onChange(of: seriesItemTransitionBinding) { newValue in
+            if newValue == .leavingActionBottom {
+                currentLayerTransition = .enteringSectionSeasons
+                print("SeriesEpisodeView grabbed leavingActionBottom")
             }
         }
     }
@@ -121,7 +131,6 @@ extension SeriesEpisodeView {
             .onChange(of: transitionBinding) { transition in
                 if transition == .leavingEpisodesToSeasons || transition == .enteringSectionSeasons {
                     focusedSeason = viewModel.selectedSeason
-                    print("seasons got proper transition")
                 }
             }
         }

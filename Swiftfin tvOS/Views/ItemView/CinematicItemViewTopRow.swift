@@ -54,9 +54,9 @@ struct CinematicItemViewTopRow: View {
 
 				HStack(alignment: .bottom) {
 					VStack(alignment: .leading) {
-						HStack(alignment: .PlayInformationAlignmentGuide) {
-
-						}
+//						HStack(alignment: .PlayInformationAlignmentGuide) {
+//
+//						}
 					}
 
 					VStack(alignment: .leading, spacing: 5) {
@@ -68,7 +68,7 @@ struct CinematicItemViewTopRow: View {
 							Text(subtitle)
 						}
 
-						HStack(alignment: .PlayInformationAlignmentGuide, spacing: 20) {
+						HStack(spacing: 20) {
 
 							if showDetails {
 								if viewModel.item.itemType == .series {

@@ -27,35 +27,35 @@ struct EpisodeRowCard: View {
 			}
 			.buttonStyle(CardButtonStyle())
 
-			VStack(alignment: .leading) {
-
-				VStack(alignment: .leading) {
-                    Text(episode.episodeLocator ?? "")
-						.font(.caption)
-						.foregroundColor(.secondary)
-					Text(episode.name ?? "")
-						.font(.footnote)
-						.padding(.bottom, 1)
-
-					if episode.unaired {
-						Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
-							.font(.caption)
-							.foregroundColor(.secondary)
-							.fontWeight(.light)
-							.lineLimit(3)
-					} else {
-						Text(episode.overview ?? "")
-							.font(.caption)
-							.fontWeight(.light)
-							.lineLimit(4)
-							.fixedSize(horizontal: false, vertical: true)
-					}
-				}
-
+//			VStack(alignment: .leading) {
+//
+//				VStack(alignment: .leading) {
+//                    Text(episode.episodeLocator ?? "")
+//						.font(.caption)
+//						.foregroundColor(.secondary)
+//					Text(episode.name ?? "")
+//						.font(.footnote)
+//						.padding(.bottom, 1)
+//
+//					if episode.unaired {
+//						Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
+//							.font(.caption)
+//							.foregroundColor(.secondary)
+//							.fontWeight(.light)
+//							.lineLimit(3)
+//					} else {
+//						Text(episode.overview ?? "")
+//							.font(.caption)
+//							.fontWeight(.light)
+//							.lineLimit(4)
+//							.fixedSize(horizontal: false, vertical: true)
+//					}
+//				}
+//
 //				Spacer()
-			}
-			.padding()
-			.frame(width: 550)
+//			}
+//			.padding()
+//			.frame(width: 550)
 		}
 		.focusSection()
 	}
