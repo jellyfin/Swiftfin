@@ -91,7 +91,7 @@ enum NetworkError: Error {
 			default:
 				errorMessage = ErrorMessage(code: code,
 				                            title: L10n.error,
-				                            message: L10n.unknownError)
+				                            message: displayMessage ?? L10n.unknownError)
 			}
 		}
 

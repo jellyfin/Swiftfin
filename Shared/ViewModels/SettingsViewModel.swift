@@ -8,9 +8,11 @@
 
 import Defaults
 import Foundation
+import JellyfinAPI
+import Stinsen
 import SwiftUI
 
-final class SettingsViewModel: ObservableObject {
+final class SettingsViewModel: ViewModel {
 
 	var bitrates: [Bitrates] = []
 	var langs: [TrackLanguage] = []

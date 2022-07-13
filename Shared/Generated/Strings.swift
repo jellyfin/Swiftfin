@@ -34,6 +34,8 @@ internal enum L10n {
   internal static var audioAndCaptions: String { return L10n.tr("Localizable", "audioAndCaptions") }
   /// Audio Track
   internal static var audioTrack: String { return L10n.tr("Localizable", "audioTrack") }
+  /// Authorize
+  internal static var authorize: String { return L10n.tr("Localizable", "authorize") }
   /// Auto Play
   internal static var autoPlay: String { return L10n.tr("Localizable", "autoPlay") }
   /// Back
@@ -262,6 +264,14 @@ internal enum L10n {
   internal static var programs: String { return L10n.tr("Localizable", "programs") }
   /// Public Users
   internal static var publicUsers: String { return L10n.tr("Localizable", "publicUsers") }
+  /// Quick Connect
+  internal static var quickConnect: String { return L10n.tr("Localizable", "quickConnect") }
+  /// Quick Connect code
+  internal static var quickConnectCode: String { return L10n.tr("Localizable", "quickConnectCode") }
+  /// Invalid Quick Connect code
+  internal static var quickConnectInvalidError: String { return L10n.tr("Localizable", "quickConnectInvalidError") }
+  /// Authorizing Quick Connect successful. Please continue on your other device.
+  internal static var quickConnectSuccessMessage: String { return L10n.tr("Localizable", "quickConnectSuccessMessage") }
   /// Rated
   internal static var rated: String { return L10n.tr("Localizable", "rated") }
   /// Recently Added

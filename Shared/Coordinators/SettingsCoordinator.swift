@@ -29,6 +29,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	@Route(.push)
 	var about = makeAbout
 
+	#if !os(tvOS)
+		@Route(.push)
+		var quickConnect = makeQuickConnectSettings
+	#endif
+
 	@ViewBuilder
 	func makeServerDetail() -> some View {
 		let viewModel = ServerDetailViewModel(server: SessionManager.main.currentLogin.server)
@@ -59,6 +64,14 @@ final class SettingsCoordinator: NavigationCoordinatable {
 	func makeAbout() -> some View {
 		AboutView()
 	}
+
+	#if !os(tvOS)
+		@ViewBuilder
+		func makeQuickConnectSettings() -> some View {
+			let viewModel = QuickConnectSettingsViewModel()
+			QuickConnectSettingsView(viewModel: viewModel)
+		}
+	#endif
 
 	@ViewBuilder
 	func makeStart() -> some View {
