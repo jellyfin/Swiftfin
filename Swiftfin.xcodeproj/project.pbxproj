@@ -152,6 +152,8 @@
 		6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 6220D0C826D63F3700B8E046 /* Stinsen */; };
 		6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0CB26D640C400B8E046 /* AppURLHandler.swift */; };
 		6225FCCB2663841E00E067F6 /* ParallaxHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6225FCCA2663841E00E067F6 /* ParallaxHeader.swift */; };
+		62400C4B287ED19600F6AD3D /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
+		62400C4C287ED19600F6AD3D /* UDPBroadcast.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624C21742685CF60007F1390 /* SearchablePickerView.swift */; };
 		62553429282190A00087FE20 /* PanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62553428282190A00087FE20 /* PanDirectionGestureRecognizer.swift */; };
 		625CB56F2678C23300530A6E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB56E2678C23300530A6E /* HomeView.swift */; };
@@ -248,7 +250,6 @@
 		62EC353426766B03000E9F2D /* DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC353326766B03000E9F2D /* DeviceRotationViewModifier.swift */; };
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		631759CF2879DB6A00A621AD /* PublicUserSignInCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631759CE2879DB6A00A621AD /* PublicUserSignInCellView.swift */; };
-		637FCAF4287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
 		637FCAF5287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		C400DB6A27FE894F007B65FE /* LiveTVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */; };
@@ -549,6 +550,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				62666E3D27E503F200EC0ECD /* GoogleCastSDK.xcframework in Embed Frameworks */,
+				62400C4C287ED19600F6AD3D /* UDPBroadcast.xcframework in Embed Frameworks */,
 				62666DF827E5012C00EC0ECD /* MobileVLCKit.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -970,7 +972,7 @@
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
 				C409CE9E285044C800CABC12 /* SwiftUICollection in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
-				637FCAF4287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */,
+				62400C4B287ED19600F6AD3D /* UDPBroadcast.xcframework in Frameworks */,
 				E1B6DCEA271A23880015B715 /* SwiftyJSON in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
