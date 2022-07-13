@@ -132,6 +132,7 @@ final class VideoPlayerViewModel: ViewModel {
 	let systemControlGesturesEnabled: Bool
 	let seekSlideGestureEnabled: Bool
 	let playerGesturesLockGestureEnabled: Bool
+	let shouldShowChaptersInfoInBottomOverlay: Bool
 	let resumeOffset: Bool
 	let streamType: ServerStreamType
 	let container: String
@@ -266,6 +267,7 @@ final class VideoPlayerViewModel: ViewModel {
 		self.playerGesturesLockGestureEnabled = Defaults[.playerGesturesLockGestureEnabled]
 		self.seekSlideGestureEnabled = Defaults[.seekSlideGestureEnabled]
 		self.shouldShowJumpButtonsInOverlayMenu = Defaults[.shouldShowJumpButtonsInOverlayMenu]
+		self.shouldShowChaptersInfoInBottomOverlay = Defaults[.shouldShowChaptersInfoInBottomOverlay]
 
 		self.resumeOffset = Defaults[.resumeOffset]
 
