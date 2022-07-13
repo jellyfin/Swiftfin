@@ -340,7 +340,7 @@ struct VLCPlayerOverlayView: View {
 				}
 
 				VStack(alignment: .leading, spacing: 0) {
-					if viewModel.overlayType == .normal,
+					if viewModel.shouldShowChaptersInfoInBottomOverlay,
 					   let currentChapter = viewModel.currentChapter
 					{
 						Button {
@@ -352,7 +352,6 @@ struct VLCPlayerOverlayView: View {
 							}
 							.font(.system(size: 16, weight: .semibold, design: .default))
 						}
-						.padding(.leading, 16)
 					}
 
 					HStack {
@@ -399,7 +398,7 @@ struct VLCPlayerOverlayView: View {
 										Capsule().foregroundColor(.purple))
 										.background(Capsule().foregroundColor(Color.gray.opacity(0.75)))
 
-									if viewModel.overlayType == .normal {
+									if viewModel.shouldShowChaptersInfoInBottomOverlay {
 										// Chapters seek masks
 										ForEach(viewModel.chapters, id: \.startPositionTicks) { chapter in
 											let ticksRatio = CGFloat(chapter.startPositionTicks ?? 0) /

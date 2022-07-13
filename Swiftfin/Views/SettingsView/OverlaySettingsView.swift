@@ -21,6 +21,8 @@ struct OverlaySettingsView: View {
 	var shouldShowAutoPlay
 	@Default(.shouldShowJumpButtonsInOverlayMenu)
 	var shouldShowJumpButtonsInOverlayMenu
+	@Default(.shouldShowChaptersInfoInBottomOverlay)
+	var shouldShowChaptersInfoInBottomOverlay
 
 	var body: some View {
 		Form {
@@ -49,6 +51,13 @@ struct OverlaySettingsView: View {
 					HStack {
 						Image(systemName: "play.circle.fill")
 						L10n.autoPlay.text
+					}
+				}
+
+				Toggle(isOn: $shouldShowChaptersInfoInBottomOverlay) {
+					HStack {
+						Image(systemName: "photo.on.rectangle")
+						L10n.showChaptersInfoInBottomOverlay.text
 					}
 				}
 

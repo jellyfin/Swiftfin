@@ -73,6 +73,10 @@ extension Defaults.Keys {
 	                                                          default: true,
 	                                                          suite: SwiftfinStore.Defaults.generalSuite)
 
+	static let shouldShowChaptersInfoInBottomOverlay = Key<Bool>("shouldShowChaptersInfoInBottomOverlay",
+	                                                             default: true,
+	                                                             suite: SwiftfinStore.Defaults.generalSuite)
+
 	// Experimental settings
 	enum Experimental {
 		static let syncSubtitleStateWithAdjacent = Key<Bool>("experimental.syncSubtitleState",
