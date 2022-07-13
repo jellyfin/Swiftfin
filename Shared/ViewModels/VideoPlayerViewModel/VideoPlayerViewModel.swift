@@ -334,6 +334,7 @@ extension VideoPlayerViewModel {
 
 		TvShowsAPI.getEpisodes(seriesId: seriesID,
 		                       userId: SessionManager.main.currentLogin.user.id,
+		                       fields: [.chapters],
 		                       adjacentTo: item.id,
 		                       limit: 3)
 			.sink(receiveCompletion: { completion in
