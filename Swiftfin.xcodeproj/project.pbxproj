@@ -3135,8 +3135,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rundfunk47/stinsen";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.2;
+				branch = master;
+				kind = branch;
 			};
 		};
 		C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */ = {

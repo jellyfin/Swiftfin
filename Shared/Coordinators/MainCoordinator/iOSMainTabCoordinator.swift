@@ -16,13 +16,19 @@ final class MainTabCoordinator: TabCoordinatable {
 		\MainTabCoordinator.allMedia,
 	])
 
-	@Route(tabItem: makeHomeTab)
+	@Route(tabItem: makeHomeTab, onTapped: onHomeTapped)
 	var home = makeHome
-	@Route(tabItem: makeAllMediaTab)
+	@Route(tabItem: makeAllMediaTab, onTapped: onMediaTapped)
 	var allMedia = makeAllMedia
 
 	func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
 		NavigationViewCoordinator(HomeCoordinator())
+	}
+
+	func onHomeTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<HomeCoordinator>) {
+		if isRepeat {
+			coordinator.child.popToRoot()
+		}
 	}
 
 	@ViewBuilder
@@ -33,6 +39,12 @@ final class MainTabCoordinator: TabCoordinatable {
 
 	func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
 		NavigationViewCoordinator(LibraryListCoordinator(viewModel: LibraryListViewModel()))
+	}
+
+	func onMediaTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<LibraryListCoordinator>) {
+		if isRepeat {
+			coordinator.child.popToRoot()
+		}
 	}
 
 	@ViewBuilder
