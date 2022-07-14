@@ -42,24 +42,24 @@ struct CinematicCollectionItemView: View {
 
 						Color.black.ignoresSafeArea()
 
-						VStack(alignment: .leading, spacing: 20) {
-
-							CinematicItemAboutView(viewModel: viewModel)
-
-							PortraitItemsRowView(rowTitle: L10n.items,
-							                     items: viewModel.collectionItems) { item in
-								itemRouter.route(to: \.item, item)
-							}
-
-							if !viewModel.similarItems.isEmpty {
-								PortraitItemsRowView(rowTitle: L10n.recommended,
-								                     items: viewModel.similarItems,
-								                     showItemTitles: showPosterLabels) { item in
-									itemRouter.route(to: \.item, item)
-								}
-							}
-						}
-						.padding(.vertical, 50)
+//						VStack(alignment: .leading, spacing: 20) {
+//
+//							CinematicItemAboutView(viewModel: viewModel)
+//
+//							PortraitImageHStack(rowTitle: L10n.items,
+//							                     items: viewModel.collectionItems) { item in
+//								itemRouter.route(to: \.item, item)
+//							}
+//
+//							if !viewModel.similarItems.isEmpty {
+//								PortraitImageHStack(rowTitle: L10n.recommended,
+//								                     items: viewModel.similarItems,
+//								                     showItemTitles: showPosterLabels) { item in
+//									itemRouter.route(to: \.item, item)
+//								}
+//							}
+//						}
+//						.padding(.vertical, 50)
 					}
 				}
 			}

@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import SwiftUI
 
@@ -19,6 +20,8 @@ extension SeriesItemView {
     
     struct ContentView: View {
         
+        @Default(.showPosterLabels)
+        var showPosterLabels
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
@@ -45,6 +48,10 @@ extension SeriesItemView {
                 
                 VStack(spacing: 0) {
                     
+                    Color.clear
+                        .frame(height: 0.5)
+                        .id("topContentDivider")
+                    
                     if showLogo {
                         ImageView(viewModel.item.getLogoImage(maxWidth: 500),
                                   resizingMode: .aspectFit,
@@ -56,19 +63,31 @@ extension SeriesItemView {
                                           .multilineTextAlignment(.leading)
                                           .foregroundColor(.white)
                                   })
-                                .frame(maxWidth: 500, maxHeight: 150)
+                                .frame(width: 500, height: 150)
                                 .id("logo")
+                                .padding(.top, 50)
                     }
                     
                     SeriesEpisodeView(viewModel: viewModel,
                                       seriesItemTransitionBinding: $transitionBinding)
                         .id("seasonsAndEpisodes")
                     
-                    ItemView.PlayButton(viewModel: viewModel)
+                    PortraitImageHStack(title: L10n.recommended,
+                                        items: viewModel.similarItems) { item in
+                        print("here")
+                    }
+                    
+//                    if !viewModel.similarItems.isEmpty {
+//                        PortraitImageHStack(rowTitle: L10n.recommended,
+//                                             items: viewModel.similarItems,
+//                                             showItemTitles: showPosterLabels) { item in
+//                            itemRouter.route(to: \.item, item)
+//                        }
+//                    }
                     
                     Spacer()
                 }
-                .frame(height: UIScreen.main.bounds.height)
+                .frame(minHeight: UIScreen.main.bounds.height)
 //                    .focusSection()
             }
             .background {
@@ -88,16 +107,22 @@ extension SeriesItemView {
             }
             .onChange(of: transitionBinding) { newValue in
                 if newValue == .leavingActionBottom {
-//                        DispatchQueue.main.async {
+                    withAnimation {
+                        self.showLogo = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
                         withAnimation {
-//                            self.showLogo = true
-                            scrollViewProxy.scrollTo("seasonsAndEpisodes")
+                            scrollViewProxy.scrollTo("topContentDivider", anchor: .top)
                         }
-//                        }
+                    }
                 } else if newValue == .leavingSeasonsTop {
                     withAnimation {
-//                        self.showLogo = false
-                        scrollViewProxy.scrollTo("staticOverlayView")
+                        self.showLogo = false
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        withAnimation {
+                            scrollViewProxy.scrollTo("staticOverlayView")
+                        }
                     }
                 }
             }

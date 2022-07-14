@@ -108,16 +108,6 @@ struct LandscapeItemElement: View {
 			withAnimation(.linear(duration: 0.15)) {
 				self.focused = envFocus
 			}
-
-			if envFocus == true {
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-					// your code here
-					if focused == true {
-						backgroundURL = item.getBackdropImage(maxWidth: 1080)
-						BackgroundManager.current.setBackground(to: backgroundURL!, hash: item.getBackdropImageBlurHash())
-					}
-				}
-			}
 		}
 		.scaleEffect(focused ? 1.1 : 1)
 	}

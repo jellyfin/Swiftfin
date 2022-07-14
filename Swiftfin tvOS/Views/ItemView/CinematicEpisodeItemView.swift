@@ -66,13 +66,13 @@ struct CinematicEpisodeItemView: View {
 //								}
 //							}
 
-							if !viewModel.similarItems.isEmpty {
-								PortraitItemsRowView(rowTitle: L10n.recommended,
-								                     items: viewModel.similarItems,
-								                     showItemTitles: showPosterLabels) { item in
-									itemRouter.route(to: \.item, item)
-								}
-							}
+//							if !viewModel.similarItems.isEmpty {
+//								PortraitImageHStack(rowTitle: L10n.recommended,
+//								                     items: viewModel.similarItems,
+//								                     showItemTitles: showPosterLabels) { item in
+//									itemRouter.route(to: \.item, item)
+//								}
+//							}
 
 							ItemDetailsView(viewModel: viewModel)
 						}
