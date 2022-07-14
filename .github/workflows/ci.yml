@@ -30,7 +30,7 @@ jobs:
           path: Carthage
           key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-carthage-
+            ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
             
       - name: Update Carthage
         run: carthage update --use-xcframeworks --cache-builds
@@ -41,7 +41,7 @@ jobs:
           path: .build
           key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.scheme }}-spm-
+            ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
       
       - name: xcodebuild!
         run: |
