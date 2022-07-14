@@ -402,6 +402,10 @@ internal enum L10n {
   internal static var systemControlGesturesEnabled: String { return L10n.tr("Localizable", "systemControlGesturesEnabled") }
   /// Tags
   internal static var tags: String { return L10n.tr("Localizable", "tags") }
+  /// Test %s
+  internal static func test(_ p1: UnsafePointer<CChar>) -> String {
+    return L10n.tr("Localizable", "test", p1)
+  }
   /// Too Many Redirects
   internal static var tooManyRedirects: String { return L10n.tr("Localizable", "tooManyRedirects") }
   /// Try again
