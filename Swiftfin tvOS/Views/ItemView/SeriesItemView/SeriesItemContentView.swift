@@ -76,6 +76,7 @@ extension SeriesItemView {
                                         items: viewModel.similarItems) { item in
                         print("here")
                     }
+                                        .id("recommendedItems")
                     
 //                    if !viewModel.similarItems.isEmpty {
 //                        PortraitImageHStack(rowTitle: L10n.recommended,

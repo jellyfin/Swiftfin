@@ -7,36 +7,38 @@
 //
 
 import SwiftUI
+import SwiftUICollection
 
 struct PortraitButton<ItemType: PortraitImageStackable>: View {
-    
-    @FocusState
-    var isFocused: Bool
     
     let item: ItemType
     let selectedAction: (ItemType) -> Void
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 15) {
             Button {
                 selectedAction(item)
             } label: {
                 ImageView(item.imageURLConstructor(maxWidth: 300),
-                          blurHash: item.blurHash)
-                    .frame(width: 300, height: 450)
+                          blurHash: item.blurHash,
+                          failureView: {
+                    InitialFailureView(item.failureInitials)
+                })
+                    .frame(width: 270, height: 405)
             }
+            .buttonStyle(CardButtonStyle())
 
             VStack(alignment: .leading) {
                 if item.showTitle {
-                    HStack {
+//                    HStack {
                         Text(item.title)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                             .multilineTextAlignment(.leading)
                             .lineLimit(2)
+                            .frame(width: 250)
                         
-                        Spacer()
-                    }
-                    .frame(width: 270)
+//                        Spacer()
+//                    }
                 }
                 
                 if let subtitle = item.subtitle {
@@ -44,16 +46,10 @@ struct PortraitButton<ItemType: PortraitImageStackable>: View {
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
-                        .multilineTextAlignment(.leading)
                         .lineLimit(1)
                 }
             }
-            .padding(.top, isFocused ? 10 : 0)
-            .scaleEffect(isFocused ? 1.2 : 1)
-            .padding(.horizontal)
+            .zIndex(-1)
         }
-        .focused($isFocused)
-        .buttonStyle(CardButtonStyle())
-        .animation(.easeOut(duration: isFocused ? 0.12 : 0.35), value: isFocused)
     }
 }

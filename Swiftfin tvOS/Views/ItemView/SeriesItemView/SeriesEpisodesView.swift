@@ -72,7 +72,6 @@ struct SeriesEpisodeView: View {
         .onChange(of: seriesItemTransitionBinding) { newValue in
             if newValue == .leavingActionBottom {
                 currentLayerTransition = .enteringSectionSeasons
-                print("SeriesEpisodeView grabbed leavingActionBottom")
             }
         }
     }

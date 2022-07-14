@@ -8,19 +8,26 @@
 
 import JellyfinAPI
 import SwiftUI
+import TVUIKit
+import SwiftUICollection
 
-struct PortraitImageHStack<ItemType: PortraitImageStackable>: View {
+//typealias LiveTVChannelRow = CollectionRow<Int, LiveTVChannelRowCell>
+
+struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: View {
     
     private let title: String
     private let items: [ItemType]
     private let selectedAction: (ItemType) -> Void
+    private let lastView: () -> LastView
 
 	init(title: String,
 	     items: [ItemType],
-	     selectedAction: @escaping (ItemType) -> Void)
+         @ViewBuilder lastView: @escaping () -> LastView,
+         selectedAction: @escaping (ItemType) -> Void)
 	{
 		self.title = title
 		self.items = items
+        self.lastView = lastView
 		self.selectedAction = selectedAction
 	}
 
@@ -31,7 +38,7 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable>: View {
 				.font(.title3)
                 .fontWeight(.semibold)
 				.padding(.leading, 50)
-
+            
 			ScrollView(.horizontal) {
 				HStack(alignment: .top) {
                     ForEach(items, id: \.portraitImageID) { item in
@@ -39,13 +46,27 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable>: View {
                             selectedAction(item)
                         }
 					}
+
+                    lastView()
 				}
 				.padding(.horizontal, 50)
 				.padding(.vertical)
-                .padding(.top)
+                .padding(.vertical)
 			}
 			.edgesIgnoringSafeArea(.horizontal)
 		}
 		.focusSection()
 	}
+}
+
+extension PortraitImageHStack where LastView == EmptyView {
+    init(title: String,
+         items: [ItemType],
+         selectedAction: @escaping (ItemType) -> Void)
+    {
+        self.title = title
+        self.items = items
+        self.lastView = { EmptyView() }
+        self.selectedAction = selectedAction
+    }
 }
