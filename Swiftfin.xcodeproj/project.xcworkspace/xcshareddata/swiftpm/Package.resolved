@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CombineCommunity/CombineExt",
       "state" : {
-        "revision" : "38a4d4cb01f8c7750671c786d33dfbea00cbd131",
-        "version" : "1.6.1"
+        "revision" : "581849239060948b626d1173eb0e5926818e7f8c",
+        "version" : "1.7.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ra1028/DifferenceKit",
       "state" : {
-        "revision" : "62745d7780deef4a023a792a1f8f763ec7bf9705",
-        "version" : "1.2.0"
+        "revision" : "073b9671ce2b9b5b96398611427a1f929927e428",
+        "version" : "1.3.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/NukeUI",
       "state" : {
-        "revision" : "ebfed3c9a4e97e310b0ff8ee0fffe5579887a825",
-        "version" : "0.8.2"
+        "revision" : "db55022a8e483774ebbf3568727071477546d9ea",
+        "version" : "0.8.3"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rundfunk47/stinsen",
       "state" : {
-        "revision" : "add05384b65ae3e39474f51ab5b9281abd238c60",
-        "version" : "2.0.9"
+        "branch" : "master",
+        "revision" : "17afde3c4763e014c7505da15258a5d44821c91a"
       }
     },
     {
