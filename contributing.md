@@ -56,7 +56,7 @@ If you would like to develop a new feature or `Developer` issue, create an issue
 
 ## Other Code Work
 
-Other code work like bug fixes, issues with `Developer` tags, localization, and accessibility efforts are welcome to be picked up at any time. Just leave a comment when you start work on a bug fix or `Developer` issue.
+Other code work like bug fixes, issues with `Developer` tags, localizations, and accessibility efforts are welcome to be picked up at any time. Just leave a comment when you start work on a bug fix or `Developer` issue.
 
 If you notice undesirable behavior or would like to make a UI/UX tweak, create an issue or ask in the iOS Matrix/Discord channel and a discussion will be made.
 
