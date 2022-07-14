@@ -12,9 +12,10 @@ extension HomeView {
     
     struct ErrorView: View {
         
-        let errorMessage: ErrorMessage
         @ObservedObject
         var viewModel: HomeViewModel
+        
+        let errorMessage: ErrorMessage
         
         var body: some View {
             VStack(spacing: 5) {
@@ -30,6 +31,7 @@ extension HomeView {
                 }
 
                 Text("\(errorMessage.code)")
+                
                 Text(errorMessage.message)
                     .frame(minWidth: 50, maxWidth: 240)
                     .multilineTextAlignment(.center)

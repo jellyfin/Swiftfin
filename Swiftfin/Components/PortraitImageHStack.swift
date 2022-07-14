@@ -42,9 +42,7 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
                 
                 Spacer()
                 
-//                if let rightBarButton = rightBarButton {
-                    rightBarButton()
-//                }
+                rightBarButton()
             }
 
 			ScrollView(.horizontal, showsIndicators: false) {

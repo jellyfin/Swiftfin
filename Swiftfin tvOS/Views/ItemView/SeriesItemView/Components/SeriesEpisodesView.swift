@@ -10,7 +10,7 @@ import Introspect
 import JellyfinAPI
 import SwiftUI
 
-struct SeriesEpisodeView: View {
+struct SeriesEpisodesView: View {
     
     @ObservedObject
     var viewModel: SeriesItemViewModel
@@ -77,7 +77,7 @@ struct SeriesEpisodeView: View {
     }
 }
 
-extension SeriesEpisodeView {
+extension SeriesEpisodesView {
     
     struct SeasonsHStack: View {
         
@@ -136,7 +136,7 @@ extension SeriesEpisodeView {
     }
 }
 
-extension SeriesEpisodeView {
+extension SeriesEpisodesView {
     
     struct EpisodesHStack: View {
         
@@ -162,12 +162,12 @@ extension SeriesEpisodeView {
                 HStack(alignment: .top) {
                     if let currentEpisodes = viewModel.currentEpisodes, !currentEpisodes.isEmpty {
                         ForEach(currentEpisodes, id: \.self) { episode in
-                            EpisodeRowCard(episode: episode)
+                            EpisodeCard(episode: episode)
                                 .focused($focusedEpisode, equals: episode)
                         }
                     } else {
                         ForEach(0..<10) { _ in
-                            EpisodeRowCard(episode: .init(name: "Test",
+                            EpisodeCard(episode: .init(name: "Test",
                                                           overview: String(repeating: "a", count: Int.random(in: 0..<50)),
                                                           indexNumber: 20))
                             .redacted(reason: .placeholder)
@@ -202,7 +202,7 @@ extension SeriesEpisodeView {
     }
 }
 
-extension SeriesEpisodeView {
+extension SeriesEpisodesView {
     enum FocusedLayerTransition: Hashable {
         case leavingSeasonsToEpisodes
         case leavingEpisodesToSeasons

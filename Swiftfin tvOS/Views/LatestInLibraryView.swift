@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct LatestMediaView: View {
+struct LatestInLibraryView: View {
 
 	@EnvironmentObject
 	var homeRouter: HomeCoordinator.Router

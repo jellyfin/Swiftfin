@@ -30,15 +30,15 @@ struct PortraitButton<ItemType: PortraitImageStackable>: View {
 
             VStack(alignment: .leading) {
                 if item.showTitle {
-//                    HStack {
+                    HStack {
                         Text(item.title)
                             .foregroundColor(.primary)
                             .multilineTextAlignment(.leading)
                             .lineLimit(2)
                             .frame(width: 250)
                         
-//                        Spacer()
-//                    }
+                        Spacer()
+                    }
                 }
                 
                 if let subtitle = item.subtitle {
@@ -50,6 +50,7 @@ struct PortraitButton<ItemType: PortraitImageStackable>: View {
                 }
             }
             .zIndex(-1)
+            .frame(maxWidth: .infinity)
         }
     }
 }

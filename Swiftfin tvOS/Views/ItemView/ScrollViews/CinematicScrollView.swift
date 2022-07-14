@@ -71,6 +71,7 @@ extension ItemView {
                         ItemView.PlayButton(viewModel: viewModel)
                             .padding(.bottom)
                             .focused($focusedLayer, equals: .playButton)
+                            .id("playButton")
                         
                         ItemView.ActionButtonHStack(viewModel: viewModel)
                             .focusSection()

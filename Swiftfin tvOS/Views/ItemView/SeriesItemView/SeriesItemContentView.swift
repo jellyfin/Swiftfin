@@ -48,10 +48,10 @@ extension SeriesItemView {
                 
                 VStack(spacing: 0) {
                     
-                    Color.clear
+                    Color.red
                         .frame(height: 0.5)
                         .id("topContentDivider")
-                    
+
                     if showLogo {
                         ImageView(viewModel.item.getLogoImage(maxWidth: 500),
                                   resizingMode: .aspectFit,
@@ -64,12 +64,12 @@ extension SeriesItemView {
                                           .foregroundColor(.white)
                                   })
                                 .frame(width: 500, height: 150)
-                                .id("logo")
-                                .padding(.top, 50)
+                                .padding(.top, 5)
                     }
                     
-                    SeriesEpisodeView(viewModel: viewModel,
+                    SeriesEpisodesView(viewModel: viewModel,
                                       seriesItemTransitionBinding: $transitionBinding)
+                        .focusSection()
                         .id("seasonsAndEpisodes")
                     
                     PortraitImageHStack(title: L10n.recommended,
@@ -111,9 +111,9 @@ extension SeriesItemView {
                     withAnimation {
                         self.showLogo = true
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         withAnimation {
-                            scrollViewProxy.scrollTo("topContentDivider", anchor: .top)
+                            scrollViewProxy.scrollTo("topContentDivider")
                         }
                     }
                 } else if newValue == .leavingSeasonsTop {

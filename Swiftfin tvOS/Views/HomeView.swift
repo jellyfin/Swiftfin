@@ -28,41 +28,32 @@ struct HomeView: View {
 		} else {
 			ScrollView {
 				LazyVStack(alignment: .leading) {
-                    
-                    PortraitImageHStack(title: L10n.recentlyAdded,
-                                        items: viewModel.latestAddedItems) { item in
-                        homeRouter.route(to: \.modalItem, item)
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
 
-//					if viewModel.resumeItems.isEmpty {
-//						HomeCinematicView(viewModel: viewModel,
-//						                  items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
-//						                  forcedItemSubtitle: L10n.recentlyAdded)
-//
-//						if !viewModel.nextUpItems.isEmpty {
-//							NextUpView(items: viewModel.nextUpItems)
-//								.focusSection()
-//						}
-//					} else {
-//						HomeCinematicView(viewModel: viewModel,
-//						                  items: viewModel.resumeItems.map { .init(item: $0, type: .resume) })
-//
-//						if !viewModel.nextUpItems.isEmpty {
-//							NextUpView(items: viewModel.nextUpItems)
-//								.focusSection()
-//						}
-//
-////						PortraitImageHStack(rowTitle: L10n.recentlyAdded,
-////						                     items: viewModel.latestAddedItems,
-////						                     showItemTitles: showPosterLabels) { item in
-////							homeRouter.route(to: \.modalItem, item)
-////						}
-//					}
+					if viewModel.resumeItems.isEmpty {
+						HomeCinematicView(viewModel: viewModel,
+						                  items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
+						                  forcedItemSubtitle: L10n.recentlyAdded)
+
+						if !viewModel.nextUpItems.isEmpty {
+							NextUpView(items: viewModel.nextUpItems)
+						}
+					} else {
+						HomeCinematicView(viewModel: viewModel,
+						                  items: viewModel.resumeItems.map { .init(item: $0, type: .resume) })
+
+						if !viewModel.nextUpItems.isEmpty {
+							NextUpView(items: viewModel.nextUpItems)
+						}
+                        
+                        PortraitImageHStack(title: L10n.recentlyAdded,
+                                            items: viewModel.latestAddedItems) { item in
+                            homeRouter.route(to: \.modalItem, item)
+                        }
+                        .fixedSize(horizontal: false, vertical: true)
+					}
 
 					ForEach(viewModel.libraries, id: \.self) { library in
-						LatestMediaView(viewModel: LatestMediaViewModel(library: library))
-							.focusSection()
+						LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
 					}
 
 					Spacer(minLength: 100)
@@ -78,7 +69,6 @@ struct HomeView: View {
 
 						Spacer()
 					}
-					.focusSection()
 				}
 			}
 			.edgesIgnoringSafeArea(.top)

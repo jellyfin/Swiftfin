@@ -40,7 +40,7 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: Vi
 				.padding(.leading, 50)
             
 			ScrollView(.horizontal) {
-				HStack(alignment: .top) {
+                HStack(alignment: .top, spacing: 0) {
                     ForEach(items, id: \.portraitImageID) { item in
                         PortraitButton(item: item) { item in
                             selectedAction(item)
@@ -55,7 +55,6 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: Vi
 			}
 			.edgesIgnoringSafeArea(.horizontal)
 		}
-		.focusSection()
 	}
 }
 
