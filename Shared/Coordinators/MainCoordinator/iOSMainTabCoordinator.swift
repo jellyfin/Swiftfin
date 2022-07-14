@@ -20,10 +20,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
 	@Route(tabItem: makeHomeTab, onTapped: onHomeTapped)
 	var home = makeHome
+    @Route(tabItem: makeSearchTab, onTapped: onSearchTapped)
+    var search = makeSearch
 	@Route(tabItem: makeAllMediaTab, onTapped: onMediaTapped)
 	var allMedia = makeAllMedia
-	@Route(tabItem: makeSearchTab)
-	var search = makeSearch
 
 	func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
 		NavigationViewCoordinator(HomeCoordinator())
@@ -44,6 +44,13 @@ final class MainTabCoordinator: TabCoordinatable {
 	func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
 		NavigationViewCoordinator(SearchCoordinator(viewModel: LibrarySearchViewModel(parentID: nil)))
 	}
+    
+    func onSearchTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<SearchCoordinator>) {
+        if isRepeat {
+            let a = coordinator.child.popToRoot()
+            print(a.stack.currentRoute)
+        }
+    }
 
 	@ViewBuilder
 	func makeSearchTab(isActive: Bool) -> some View {
