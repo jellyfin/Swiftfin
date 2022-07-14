@@ -436,13 +436,13 @@ public final class TvOSSlider: UIControl {
         micro.dpad.valueChangedHandler = {
             [weak self] _, x, _ in
 
-                if x < -threshold {
-                    self?.dPadState = .left
-                } else if x > threshold {
-                    self?.dPadState = .right
-                } else {
-                    self?.dPadState = .select
-                }
+            if x < -threshold {
+                self?.dPadState = .left
+            } else if x > threshold {
+                self?.dPadState = .right
+            } else {
+                self?.dPadState = .select
+            }
         }
     }
 
