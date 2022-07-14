@@ -24,13 +24,13 @@ jobs:
       - name: Install SwiftGen
         run: brew install swiftgen
       
-      - uses: actions/cache@v3
+      - name: Cache Carthage
+        uses: actions/cache@v3
         id: carthage-cache
         with:
           path: Carthage
           key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+          restore-keys: ${{ runner.os }}-carthage-
             
       - name: Update Carthage
         run: carthage update --use-xcframeworks --cache-builds
@@ -40,8 +40,7 @@ jobs:
         with:
           path: .build
           key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
       
       - name: xcodebuild!
         run: |
