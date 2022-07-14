@@ -10,14 +10,14 @@ import Foundation
 import SwiftUI
 
 struct LiveTVHomeView: View {
-	@EnvironmentObject
-	var mainCoordinator: MainCoordinator.Router
+    @EnvironmentObject
+    var mainCoordinator: MainCoordinator.Router
 
-	var body: some View {
-		Button {} label: {
-			Text("Return Home")
-		}.onAppear {
-			self.mainCoordinator.root(\.mainTab)
-		}
-	}
+    var body: some View {
+        Button {} label: {
+            Text("Return Home")
+        }.onAppear {
+            self.mainCoordinator.root(\.mainTab)
+        }
+    }
 }

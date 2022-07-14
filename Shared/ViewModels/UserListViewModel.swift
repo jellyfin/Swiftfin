@@ -11,36 +11,36 @@ import SwiftUI
 
 class UserListViewModel: ViewModel {
 
-	@Published
-	var users: [SwiftfinStore.State.User] = []
+    @Published
+    var users: [SwiftfinStore.State.User] = []
 
-	var server: SwiftfinStore.State.Server
+    var server: SwiftfinStore.State.Server
 
-	init(server: SwiftfinStore.State.Server) {
-		self.server = server
+    init(server: SwiftfinStore.State.Server) {
+        self.server = server
 
-		super.init()
+        super.init()
 
-		Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
-	}
+        Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
+    }
 
-	@objc
-	func didChangeCurrentLoginURI(_ notification: Notification) {
-		guard let newServerState = notification.object as? SwiftfinStore.State.Server else { fatalError("Need to have new state server") }
-		self.server = newServerState
-	}
+    @objc
+    func didChangeCurrentLoginURI(_ notification: Notification) {
+        guard let newServerState = notification.object as? SwiftfinStore.State.Server else { fatalError("Need to have new state server") }
+        self.server = newServerState
+    }
 
-	func fetchUsers() {
-		self.users = SessionManager.main.fetchUsers(for: server)
-	}
+    func fetchUsers() {
+        self.users = SessionManager.main.fetchUsers(for: server)
+    }
 
-	func login(user: SwiftfinStore.State.User) {
-		self.isLoading = true
-		SessionManager.main.loginUser(server: server, user: user)
-	}
+    func login(user: SwiftfinStore.State.User) {
+        self.isLoading = true
+        SessionManager.main.loginUser(server: server, user: user)
+    }
 
-	func remove(user: SwiftfinStore.State.User) {
-		SessionManager.main.delete(user: user)
-		fetchUsers()
-	}
+    func remove(user: SwiftfinStore.State.User) {
+        SessionManager.main.delete(user: user)
+        fetchUsers()
+    }
 }

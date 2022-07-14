@@ -12,41 +12,41 @@ import SwiftUI
 
 final class LibraryListCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \LibraryListCoordinator.start)
+    let stack = NavigationStack(initial: \LibraryListCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.push)
-	var search = makeSearch
-	@Route(.push)
-	var library = makeLibrary
-	#if os(iOS)
-		@Route(.push)
-		var liveTV = makeLiveTV
-	#endif
+    @Root
+    var start = makeStart
+    @Route(.push)
+    var search = makeSearch
+    @Route(.push)
+    var library = makeLibrary
+    #if os(iOS)
+        @Route(.push)
+        var liveTV = makeLiveTV
+    #endif
 
-	let viewModel: LibraryListViewModel
+    let viewModel: LibraryListViewModel
 
-	init(viewModel: LibraryListViewModel) {
-		self.viewModel = viewModel
-	}
+    init(viewModel: LibraryListViewModel) {
+        self.viewModel = viewModel
+    }
 
-	func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
-		LibraryCoordinator(viewModel: params.viewModel, title: params.title)
-	}
+    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
+        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
+    }
 
-	func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
-		SearchCoordinator(viewModel: viewModel)
-	}
+    func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
+        SearchCoordinator(viewModel: viewModel)
+    }
 
-	#if os(iOS)
-		func makeLiveTV() -> LiveTVCoordinator {
-			LiveTVCoordinator()
-		}
-	#endif
+    #if os(iOS)
+        func makeLiveTV() -> LiveTVCoordinator {
+            LiveTVCoordinator()
+        }
+    #endif
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		LibraryListView(viewModel: self.viewModel)
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        LibraryListView(viewModel: self.viewModel)
+    }
 }

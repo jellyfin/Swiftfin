@@ -9,31 +9,31 @@
 import SwiftUI
 
 struct ConfirmCloseOverlay: View {
-	var body: some View {
-		VStack {
-			HStack {
-				Image(systemName: "chevron.left.circle.fill")
-					.font(.system(size: 96))
-					.padding(3)
-					.background(Color.black.opacity(0.4).mask(Circle()))
+    var body: some View {
+        VStack {
+            HStack {
+                Image(systemName: "chevron.left.circle.fill")
+                    .font(.system(size: 96))
+                    .padding(3)
+                    .background(Color.black.opacity(0.4).mask(Circle()))
 
-				Spacer()
-			}
-			.padding()
+                Spacer()
+            }
+            .padding()
 
-			Spacer()
-		}
-		.padding()
-	}
+            Spacer()
+        }
+        .padding()
+    }
 }
 
 struct ConfirmCloseOverlay_Previews: PreviewProvider {
-	static var previews: some View {
-		ZStack {
-			Color.red.ignoresSafeArea()
+    static var previews: some View {
+        ZStack {
+            Color.red.ignoresSafeArea()
 
-			ConfirmCloseOverlay()
-				.ignoresSafeArea()
-		}
-	}
+            ConfirmCloseOverlay()
+                .ignoresSafeArea()
+        }
+    }
 }

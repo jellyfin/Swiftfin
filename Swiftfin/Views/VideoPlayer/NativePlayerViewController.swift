@@ -13,102 +13,106 @@ import UIKit
 
 class NativePlayerViewController: AVPlayerViewController {
 
-	let viewModel: VideoPlayerViewModel
+    let viewModel: VideoPlayerViewModel
 
-	var timeObserverToken: Any?
+    var timeObserverToken: Any?
 
-	var lastProgressTicks: Int64 = 0
+    var lastProgressTicks: Int64 = 0
 
-	private var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
 
-	init(viewModel: VideoPlayerViewModel) {
+    init(viewModel: VideoPlayerViewModel) {
 
-		self.viewModel = viewModel
+        self.viewModel = viewModel
 
-		super.init(nibName: nil, bundle: nil)
+        super.init(nibName: nil, bundle: nil)
 
-		let player: AVPlayer
+        let player: AVPlayer
 
-		if let transcodedStreamURL = viewModel.transcodedStreamURL {
-			player = AVPlayer(url: transcodedStreamURL)
-		} else {
-			player = AVPlayer(url: viewModel.hlsStreamURL)
-		}
+        if let transcodedStreamURL = viewModel.transcodedStreamURL {
+            player = AVPlayer(url: transcodedStreamURL)
+        } else {
+            player = AVPlayer(url: viewModel.hlsStreamURL)
+        }
 
-		player.appliesMediaSelectionCriteriaAutomatically = false
+        player.appliesMediaSelectionCriteriaAutomatically = false
 
-		let timeScale = CMTimeScale(NSEC_PER_SEC)
-		let time = CMTime(seconds: 5, preferredTimescale: timeScale)
+        let timeScale = CMTimeScale(NSEC_PER_SEC)
+        let time = CMTime(seconds: 5, preferredTimescale: timeScale)
 
-		timeObserverToken = player.addPeriodicTimeObserver(forInterval: time, queue: .main) { [weak self] time in
-			if time.seconds != 0 {
-				self?.sendProgressReport(seconds: time.seconds)
-			}
-		}
+        timeObserverToken = player.addPeriodicTimeObserver(forInterval: time, queue: .main) { [weak self] time in
+            if time.seconds != 0 {
+                self?.sendProgressReport(seconds: time.seconds)
+            }
+        }
 
-		self.player = player
+        self.player = player
 
-		self.allowsPictureInPicturePlayback = true
-		self.player?.allowsExternalPlayback = true
-	}
+        self.allowsPictureInPicturePlayback = true
+        self.player?.allowsExternalPlayback = true
+    }
 
-	private func createMetadataItem(for identifier: AVMetadataIdentifier,
-	                                value: Any) -> AVMetadataItem
-	{
-		let item = AVMutableMetadataItem()
-		item.identifier = identifier
-		item.value = value as? NSCopying & NSObjectProtocol
-		// Specify "und" to indicate an undefined language.
-		item.extendedLanguageTag = "und"
-		return item.copy() as! AVMetadataItem
-	}
+    private func createMetadataItem(
+        for identifier: AVMetadataIdentifier,
+        value: Any
+    ) -> AVMetadataItem {
+        let item = AVMutableMetadataItem()
+        item.identifier = identifier
+        item.value = value as? NSCopying & NSObjectProtocol
+        // Specify "und" to indicate an undefined language.
+        item.extendedLanguageTag = "und"
+        return item.copy() as! AVMetadataItem
+    }
 
-	@available(*, unavailable)
-	required init?(coder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
-	override func viewDidLoad() {
-		super.viewDidLoad()
-	}
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
 
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
 
-		stop()
-		removePeriodicTimeObserver()
-	}
+        stop()
+        removePeriodicTimeObserver()
+    }
 
-	func removePeriodicTimeObserver() {
-		if let timeObserverToken = timeObserverToken {
-			player?.removeTimeObserver(timeObserverToken)
-			self.timeObserverToken = nil
-		}
-	}
+    func removePeriodicTimeObserver() {
+        if let timeObserverToken = timeObserverToken {
+            player?.removeTimeObserver(timeObserverToken)
+            self.timeObserverToken = nil
+        }
+    }
 
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
-		player?.seek(to: CMTimeMake(value: viewModel.currentSecondTicks, timescale: 10_000_000),
-		             toleranceBefore: CMTimeMake(value: 1, timescale: 1), toleranceAfter: CMTimeMake(value: 1, timescale: 1),
-		             completionHandler: { _ in
-		             	self.play()
-		             })
-	}
+        player?.seek(
+            to: CMTimeMake(value: viewModel.currentSecondTicks, timescale: 10_000_000),
+            toleranceBefore: CMTimeMake(value: 1, timescale: 1),
+            toleranceAfter: CMTimeMake(value: 1, timescale: 1),
+            completionHandler: { _ in
+                self.play()
+            }
+        )
+    }
 
-	private func play() {
-		player?.play()
+    private func play() {
+        player?.play()
 
-		viewModel.sendPlayReport()
-	}
+        viewModel.sendPlayReport()
+    }
 
-	private func sendProgressReport(seconds: Double) {
-		viewModel.setSeconds(Int64(seconds))
-		viewModel.sendProgressReport()
-	}
+    private func sendProgressReport(seconds: Double) {
+        viewModel.setSeconds(Int64(seconds))
+        viewModel.sendProgressReport()
+    }
 
-	private func stop() {
-		self.player?.pause()
-		viewModel.sendStopReport()
-	}
+    private func stop() {
+        self.player?.pause()
+        viewModel.sendStopReport()
+    }
 }

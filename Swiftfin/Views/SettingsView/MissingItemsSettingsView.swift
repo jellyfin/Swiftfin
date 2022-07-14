@@ -11,20 +11,20 @@ import SwiftUI
 
 struct MissingItemsSettingsView: View {
 
-	@Default(.shouldShowMissingSeasons)
-	var shouldShowMissingSeasons
+    @Default(.shouldShowMissingSeasons)
+    var shouldShowMissingSeasons
 
-	@Default(.shouldShowMissingEpisodes)
-	var shouldShowMissingEpisodes
+    @Default(.shouldShowMissingEpisodes)
+    var shouldShowMissingEpisodes
 
-	var body: some View {
-		Form {
-			Section {
-				Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
-				Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
-			} header: {
-				L10n.missingItems.text
-			}
-		}
-	}
+    var body: some View {
+        Form {
+            Section {
+                Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
+                Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
+            } header: {
+                L10n.missingItems.text
+            }
+        }
+    }
 }

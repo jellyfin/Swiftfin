@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIDevice {
-	static var vendorUUIDString: String {
-		current.identifierForVendor!.uuidString
-	}
+    static var vendorUUIDString: String {
+        current.identifierForVendor!.uuidString
+    }
 }

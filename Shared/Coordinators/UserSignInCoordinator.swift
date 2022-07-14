@@ -12,19 +12,19 @@ import SwiftUI
 
 final class UserSignInCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \UserSignInCoordinator.start)
+    let stack = NavigationStack(initial: \UserSignInCoordinator.start)
 
-	@Root
-	var start = makeStart
+    @Root
+    var start = makeStart
 
-	let viewModel: UserSignInViewModel
+    let viewModel: UserSignInViewModel
 
-	init(viewModel: UserSignInViewModel) {
-		self.viewModel = viewModel
-	}
+    init(viewModel: UserSignInViewModel) {
+        self.viewModel = viewModel
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		UserSignInView(viewModel: viewModel)
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        UserSignInView(viewModel: viewModel)
+    }
 }

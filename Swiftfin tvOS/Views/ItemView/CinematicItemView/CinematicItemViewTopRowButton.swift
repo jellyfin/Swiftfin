@@ -9,43 +9,43 @@
 import SwiftUI
 
 struct CinematicItemViewTopRowButton<Content: View>: View {
-	@Environment(\.isFocused)
-	var envFocused: Bool
-	@State
-	var focused: Bool = false
-	@State
-	var wrappedScrollView: UIScrollView?
-	var content: () -> Content
+    @Environment(\.isFocused)
+    var envFocused: Bool
+    @State
+    var focused: Bool = false
+    @State
+    var wrappedScrollView: UIScrollView?
+    var content: () -> Content
 
-	@FocusState
-	private var buttonFocused: Bool
+    @FocusState
+    private var buttonFocused: Bool
 
-	var body: some View {
-		content()
-			.focused($buttonFocused)
-			.onChange(of: envFocused) { envFocus in
-				if envFocus == true {
-					wrappedScrollView?.scrollToTop()
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-						wrappedScrollView?.scrollToTop()
-					}
-				}
+    var body: some View {
+        content()
+            .focused($buttonFocused)
+            .onChange(of: envFocused) { envFocus in
+                if envFocus == true {
+                    wrappedScrollView?.scrollToTop()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                        wrappedScrollView?.scrollToTop()
+                    }
+                }
 
-				withAnimation(.linear(duration: 0.15)) {
-					self.focused = envFocus
-				}
-			}
-			.onChange(of: buttonFocused) { newValue in
-				if newValue {
-					wrappedScrollView?.scrollToTop()
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-						wrappedScrollView?.scrollToTop()
-					}
+                withAnimation(.linear(duration: 0.15)) {
+                    self.focused = envFocus
+                }
+            }
+            .onChange(of: buttonFocused) { newValue in
+                if newValue {
+                    wrappedScrollView?.scrollToTop()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                        wrappedScrollView?.scrollToTop()
+                    }
 
-					withAnimation(.linear(duration: 0.15)) {
-						self.focused = newValue
-					}
-				}
-			}
-	}
+                    withAnimation(.linear(duration: 0.15)) {
+                        self.focused = newValue
+                    }
+                }
+            }
+    }
 }

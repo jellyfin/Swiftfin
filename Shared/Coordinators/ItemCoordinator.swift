@@ -13,43 +13,43 @@ import SwiftUI
 
 final class ItemCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \ItemCoordinator.start)
+    let stack = NavigationStack(initial: \ItemCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.push)
-	var item = makeItem
-	@Route(.push)
-	var library = makeLibrary
-	@Route(.modal)
-	var itemOverview = makeItemOverview
-	@Route(.fullScreen)
-	var videoPlayer = makeVideoPlayer
+    @Root
+    var start = makeStart
+    @Route(.push)
+    var item = makeItem
+    @Route(.push)
+    var library = makeLibrary
+    @Route(.modal)
+    var itemOverview = makeItemOverview
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
 
-	let itemDto: BaseItemDto
+    let itemDto: BaseItemDto
 
-	init(item: BaseItemDto) {
-		self.itemDto = item
-	}
+    init(item: BaseItemDto) {
+        self.itemDto = item
+    }
 
-	func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
-		LibraryCoordinator(viewModel: params.viewModel, title: params.title)
-	}
+    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
+        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
+    }
 
-	func makeItem(item: BaseItemDto) -> ItemCoordinator {
-		ItemCoordinator(item: item)
-	}
+    func makeItem(item: BaseItemDto) -> ItemCoordinator {
+        ItemCoordinator(item: item)
+    }
 
-	func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
-		NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
-	}
+    func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
+        NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
+    }
 
-	func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-		NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))
-	}
+    func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+        NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		ItemNavigationView(item: itemDto)
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        ItemNavigationView(item: itemDto)
+    }
 }

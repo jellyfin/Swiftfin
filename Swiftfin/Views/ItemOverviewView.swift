@@ -11,25 +11,25 @@ import SwiftUI
 
 struct ItemOverviewView: View {
 
-	@EnvironmentObject
-	var itemOverviewRouter: ItemOverviewCoordinator.Router
-	let item: BaseItemDto
+    @EnvironmentObject
+    var itemOverviewRouter: ItemOverviewCoordinator.Router
+    let item: BaseItemDto
 
-	var body: some View {
-		ScrollView(showsIndicators: false) {
-			Text(item.overview ?? "")
-				.font(.footnote)
-				.padding()
-		}
-		.navigationBarTitle(L10n.overview, displayMode: .inline)
-		.toolbar {
-			ToolbarItemGroup(placement: .navigationBarLeading) {
-				Button {
-					itemOverviewRouter.dismissCoordinator()
-				} label: {
-					Image(systemName: "xmark.circle.fill")
-				}
-			}
-		}
-	}
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            Text(item.overview ?? "")
+                .font(.footnote)
+                .padding()
+        }
+        .navigationBarTitle(L10n.overview, displayMode: .inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
+                Button {
+                    itemOverviewRouter.dismissCoordinator()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                }
+            }
+        }
+    }
 }

@@ -12,23 +12,23 @@ import SwiftUI
 
 final class ItemOverviewCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \ItemOverviewCoordinator.start)
+    let stack = NavigationStack(initial: \ItemOverviewCoordinator.start)
 
-	@Root
-	var start = makeStart
+    @Root
+    var start = makeStart
 
-	let item: BaseItemDto
+    let item: BaseItemDto
 
-	init(item: BaseItemDto) {
-		self.item = item
-	}
+    init(item: BaseItemDto) {
+        self.item = item
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		#if os(tvOS)
-			EmptyView()
-		#else
-			ItemOverviewView(item: item)
-		#endif
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        #if os(tvOS)
+            EmptyView()
+        #else
+            ItemOverviewView(item: item)
+        #endif
+    }
 }

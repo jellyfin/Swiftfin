@@ -11,26 +11,26 @@ import SwiftUI
 
 struct CustomizeViewsSettings: View {
 
-	@Default(.showPosterLabels)
-	var showPosterLabels
-	@Default(.showCastAndCrew)
-	var showCastAndCrew
-	@Default(.showFlattenView)
-	var showFlattenView
+    @Default(.showPosterLabels)
+    var showPosterLabels
+    @Default(.showCastAndCrew)
+    var showCastAndCrew
+    @Default(.showFlattenView)
+    var showFlattenView
 
-	var body: some View {
-		Form {
-			Section {
+    var body: some View {
+        Form {
+            Section {
 
-				Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
+                Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-				// TODO: Uncomment when cast and crew implemented in item views
-				//                Toggle(L10n.showCastAndCrew, isOn: $showCastAndCrew)
-				Toggle(L10n.showFlattenView, isOn: $showFlattenView)
+                // TODO: Uncomment when cast and crew implemented in item views
+                //                Toggle(L10n.showCastAndCrew, isOn: $showCastAndCrew)
+                Toggle(L10n.showFlattenView, isOn: $showFlattenView)
 
-			} header: {
-				L10n.customize.text
-			}
-		}
-	}
+            } header: {
+                L10n.customize.text
+            }
+        }
+    }
 }

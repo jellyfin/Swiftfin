@@ -11,9 +11,9 @@ import SwiftUI
 
 // Not implemented on iOS, but used by a shared Coordinator.
 struct PortraitItemElement: View {
-	var item: BaseItemDto
+    var item: BaseItemDto
 
-	var body: some View {
-		EmptyView()
-	}
+    var body: some View {
+        EmptyView()
+    }
 }

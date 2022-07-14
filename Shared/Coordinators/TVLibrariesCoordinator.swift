@@ -13,33 +13,33 @@ import SwiftUI
 
 final class TVLibrariesCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \TVLibrariesCoordinator.start)
+    let stack = NavigationStack(initial: \TVLibrariesCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Root
-	var rootLibrary = makeRootLibrary
-	@Route(.push)
-	var library = makeLibrary
+    @Root
+    var start = makeStart
+    @Root
+    var rootLibrary = makeRootLibrary
+    @Route(.push)
+    var library = makeLibrary
 
-	let viewModel: TVLibrariesViewModel
-	let title: String
+    let viewModel: TVLibrariesViewModel
+    let title: String
 
-	init(viewModel: TVLibrariesViewModel, title: String) {
-		self.viewModel = viewModel
-		self.title = title
-	}
+    init(viewModel: TVLibrariesViewModel, title: String) {
+        self.viewModel = viewModel
+        self.title = title
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		TVLibrariesView(viewModel: self.viewModel, title: title)
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        TVLibrariesView(viewModel: self.viewModel, title: title)
+    }
 
-	func makeLibrary(library: BaseItemDto) -> LibraryCoordinator {
-		LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
-	}
+    func makeLibrary(library: BaseItemDto) -> LibraryCoordinator {
+        LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
+    }
 
-	func makeRootLibrary(library: BaseItemDto) -> LibraryCoordinator {
-		LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
-	}
+    func makeRootLibrary(library: BaseItemDto) -> LibraryCoordinator {
+        LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
+    }
 }

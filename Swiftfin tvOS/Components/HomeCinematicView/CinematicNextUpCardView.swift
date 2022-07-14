@@ -11,58 +11,60 @@ import SwiftUI
 
 struct CinematicNextUpCardView: View {
 
-	@EnvironmentObject
-	var homeRouter: HomeCoordinator.Router
-	let item: BaseItemDto
-	let showOverlay: Bool
+    @EnvironmentObject
+    var homeRouter: HomeCoordinator.Router
+    let item: BaseItemDto
+    let showOverlay: Bool
 
-	var body: some View {
-		VStack(alignment: .leading) {
-			Button {
-				homeRouter.route(to: \.modalItem, item)
-			} label: {
-				ZStack(alignment: .bottomLeading) {
+    var body: some View {
+        VStack(alignment: .leading) {
+            Button {
+                homeRouter.route(to: \.modalItem, item)
+            } label: {
+                ZStack(alignment: .bottomLeading) {
 
-					if item.itemType == .episode {
-						ImageView(sources: [
-							item.getSeriesThumbImage(maxWidth: 350),
-							item.getSeriesBackdropImage(maxWidth: 350),
-						])
-						.frame(width: 350, height: 210)
-					} else {
-						ImageView([
-							.init(url: item.getThumbImage(maxWidth: 350)),
-							.init(url: item.getBackdropImage(maxWidth: 350), blurHash: item.getBackdropImageBlurHash()),
-						])
-						.frame(width: 350, height: 210)
-					}
+                    if item.itemType == .episode {
+                        ImageView(sources: [
+                            item.getSeriesThumbImage(maxWidth: 350),
+                            item.getSeriesBackdropImage(maxWidth: 350),
+                        ])
+                        .frame(width: 350, height: 210)
+                    } else {
+                        ImageView([
+                            .init(url: item.getThumbImage(maxWidth: 350)),
+                            .init(url: item.getBackdropImage(maxWidth: 350), blurHash: item.getBackdropImageBlurHash()),
+                        ])
+                        .frame(width: 350, height: 210)
+                    }
 
-					LinearGradient(colors: [.clear, .black],
-					               startPoint: .top,
-					               endPoint: .bottom)
-						.frame(height: 105)
-						.ignoresSafeArea()
+                    LinearGradient(
+                        colors: [.clear, .black],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 105)
+                    .ignoresSafeArea()
 
-					if showOverlay {
-						VStack(alignment: .leading, spacing: 0) {
-							L10n.next.text
-								.font(.subheadline)
-								.padding(.vertical, 5)
-								.padding(.leading, 10)
-								.foregroundColor(.white)
+                    if showOverlay {
+                        VStack(alignment: .leading, spacing: 0) {
+                            L10n.next.text
+                                .font(.subheadline)
+                                .padding(.vertical, 5)
+                                .padding(.leading, 10)
+                                .foregroundColor(.white)
 
-							HStack {
-								Color.clear
-									.frame(width: 1, height: 7)
-							}
-						}
-					}
-				}
-				.frame(width: 350, height: 210)
-			}
-			.buttonStyle(CardButtonStyle())
-			.padding(.top)
-		}
-		.padding(.vertical)
-	}
+                            HStack {
+                                Color.clear
+                                    .frame(width: 1, height: 7)
+                            }
+                        }
+                    }
+                }
+                .frame(width: 350, height: 210)
+            }
+            .buttonStyle(CardButtonStyle())
+            .padding(.top)
+        }
+        .padding(.vertical)
+    }
 }

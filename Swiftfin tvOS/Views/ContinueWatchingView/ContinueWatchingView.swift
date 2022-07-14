@@ -13,26 +13,26 @@ import SwiftUI
 
 struct ContinueWatchingView: View {
 
-	@EnvironmentObject
-	var homeRouter: HomeCoordinator.Router
-	let items: [BaseItemDto]
+    @EnvironmentObject
+    var homeRouter: HomeCoordinator.Router
+    let items: [BaseItemDto]
 
-	var body: some View {
-		VStack(alignment: .leading) {
+    var body: some View {
+        VStack(alignment: .leading) {
 
-			L10n.continueWatching.text
-				.font(.title3)
-				.fontWeight(.semibold)
-				.padding(.leading, 50)
+            L10n.continueWatching.text
+                .font(.title3)
+                .fontWeight(.semibold)
+                .padding(.leading, 50)
 
-			ScrollView(.horizontal, showsIndicators: false) {
-				LazyHStack(alignment: .top) {
-					ForEach(items, id: \.self) { item in
-						ContinueWatchingCard(item: item)
-					}
-				}
-				.padding(.horizontal, 50)
-			}
-		}
-	}
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(alignment: .top) {
+                    ForEach(items, id: \.self) { item in
+                        ContinueWatchingCard(item: item)
+                    }
+                }
+                .padding(.horizontal, 50)
+            }
+        }
+    }
 }

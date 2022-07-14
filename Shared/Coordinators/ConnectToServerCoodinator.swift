@@ -12,19 +12,19 @@ import SwiftUI
 
 final class ConnectToServerCoodinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \ConnectToServerCoodinator.start)
+    let stack = NavigationStack(initial: \ConnectToServerCoodinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.push)
-	var userSignIn = makeUserSignIn
+    @Root
+    var start = makeStart
+    @Route(.push)
+    var userSignIn = makeUserSignIn
 
-	func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
-		UserSignInCoordinator(viewModel: .init(server: server))
-	}
+    func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
+        UserSignInCoordinator(viewModel: .init(server: server))
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		ConnectToServerView(viewModel: ConnectToServerViewModel())
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        ConnectToServerView(viewModel: ConnectToServerViewModel())
+    }
 }

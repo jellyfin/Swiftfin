@@ -11,18 +11,20 @@ import SwiftUI
 
 struct LatestMediaView<TopBarView: View>: View {
 
-	@EnvironmentObject
-	var homeRouter: HomeCoordinator.Router
-	@StateObject
-	var viewModel: LatestMediaViewModel
-	var topBarView: () -> TopBarView
+    @EnvironmentObject
+    var homeRouter: HomeCoordinator.Router
+    @StateObject
+    var viewModel: LatestMediaViewModel
+    var topBarView: () -> TopBarView
 
-	var body: some View {
-		PortraitImageHStackView(items: viewModel.items,
-		                        horizontalAlignment: .leading) {
-			topBarView()
-		} selectedAction: { item in
-			homeRouter.route(to: \.item, item)
-		}
-	}
+    var body: some View {
+        PortraitImageHStackView(
+            items: viewModel.items,
+            horizontalAlignment: .leading
+        ) {
+            topBarView()
+        } selectedAction: { item in
+            homeRouter.route(to: \.item, item)
+        }
+    }
 }

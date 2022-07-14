@@ -11,61 +11,63 @@ import SwiftUI
 
 struct EpisodeRowCard: View {
 
-	@EnvironmentObject
-	var itemRouter: ItemCoordinator.Router
-	let viewModel: EpisodesRowManager
-	let episode: BaseItemDto
+    @EnvironmentObject
+    var itemRouter: ItemCoordinator.Router
+    let viewModel: EpisodesRowManager
+    let episode: BaseItemDto
 
-	var body: some View {
-		Button {
-			itemRouter.route(to: \.item, episode)
-		} label: {
-			HStack(alignment: .top) {
-				VStack(alignment: .leading) {
+    var body: some View {
+        Button {
+            itemRouter.route(to: \.item, episode)
+        } label: {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading) {
 
-					ImageView(episode.getBackdropImage(maxWidth: 200),
-					          blurHash: episode.getBackdropImageBlurHash())
-						.mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
-						.frame(width: 200, height: 112)
-						.overlay {
-							if episode.id == viewModel.item.id {
-								RoundedRectangle(cornerRadius: 6)
-									.stroke(Color.jellyfinPurple, lineWidth: 4)
-							}
-						}
-						.padding(.top)
-						.accessibilityIgnoresInvertColors()
+                    ImageView(
+                        episode.getBackdropImage(maxWidth: 200),
+                        blurHash: episode.getBackdropImageBlurHash()
+                    )
+                    .mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
+                    .frame(width: 200, height: 112)
+                    .overlay {
+                        if episode.id == viewModel.item.id {
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.jellyfinPurple, lineWidth: 4)
+                        }
+                    }
+                    .padding(.top)
+                    .accessibilityIgnoresInvertColors()
 
-					VStack(alignment: .leading) {
-						Text(episode.getEpisodeLocator() ?? "S-:E-")
-							.font(.footnote)
-							.foregroundColor(.secondary)
-						Text(episode.name ?? L10n.noTitle)
-							.font(.body)
-							.padding(.bottom, 1)
-							.lineLimit(2)
+                    VStack(alignment: .leading) {
+                        Text(episode.getEpisodeLocator() ?? "S-:E-")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                        Text(episode.name ?? L10n.noTitle)
+                            .font(.body)
+                            .padding(.bottom, 1)
+                            .lineLimit(2)
 
-						if episode.unaired {
-							Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
-								.font(.caption)
-								.foregroundColor(.secondary)
-								.fontWeight(.light)
-								.lineLimit(3)
-						} else {
-							Text(episode.overview ?? "")
-								.font(.caption)
-								.foregroundColor(.secondary)
-								.fontWeight(.light)
-								.lineLimit(3)
-						}
-					}
+                        if episode.unaired {
+                            Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .fontWeight(.light)
+                                .lineLimit(3)
+                        } else {
+                            Text(episode.overview ?? "")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .fontWeight(.light)
+                                .lineLimit(3)
+                        }
+                    }
 
-					Spacer()
-				}
-				.frame(width: 200)
-				.shadow(radius: 4, y: 2)
-			}
-		}
-		.buttonStyle(PlainButtonStyle())
-	}
+                    Spacer()
+                }
+                .frame(width: 200)
+                .shadow(radius: 4, y: 2)
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
 }
