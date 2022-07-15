@@ -2191,7 +2191,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PROJECT_DIR}/bin/swiftgen\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"swiftgen\"\n";
 		};
 		6286F0A3271C0ABA00C40ED5 /* R.swift */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2209,7 +2209,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PROJECT_DIR}/bin/swiftgen\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"swiftgen\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
