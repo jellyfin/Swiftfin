@@ -424,6 +424,14 @@ internal enum L10n {
   internal static var unknownError: String { return L10n.tr("Localizable", "unknownError") }
   /// URL
   internal static var url: String { return L10n.tr("Localizable", "url") }
+  /// 1. Open the Jellyfin app on your phone or webbrowser and sign in with your account
+  internal static var useQuickConnectStep1: String { return L10n.tr("Localizable", "useQuickConnectStep1") }
+  /// 2. Open the user menu and go to the Quick Connect page
+  internal static var useQuickConnectStep2: String { return L10n.tr("Localizable", "useQuickConnectStep2") }
+  /// 3. Enter the following code:
+  internal static var useQuickConnectStep3: String { return L10n.tr("Localizable", "useQuickConnectStep3") }
+  /// Use Quick Connect to sign in without entering your password
+  internal static var useQuickConnectWithoutPassword: String { return L10n.tr("Localizable", "useQuickConnectWithoutPassword") }
   /// User
   internal static var user: String { return L10n.tr("Localizable", "user") }
   /// User %s is already signed in

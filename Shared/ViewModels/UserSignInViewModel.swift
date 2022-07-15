@@ -17,8 +17,13 @@ final class UserSignInViewModel: ViewModel {
 	var router: UserSignInCoordinator.Router?
 	let server: SwiftfinStore.State.Server
 
+	var quickConnectManager: QuickConnectManager?
+
 	@Published
 	var publicUsers: [UserDto] = []
+
+	@Published
+	var magicCode: String?
 
 	init(server: SwiftfinStore.State.Server) {
 		self.server = server
@@ -32,6 +37,18 @@ final class UserSignInViewModel: ViewModel {
 		}
 		message.append(contentsOf: "\(errorMessage?.title ?? L10n.unknownError)")
 		return message
+	}
+
+	func loginQuickConnect(secret: String) {
+		LogManager.log.debug("Attempting to login to server at \"\(server.currentURI)\" with Quick Connect Secret \(secret)", tag: "login")
+
+		SessionManager.main.loginUser(server: server, quickConenctSecret: secret)
+			.trackActivity(loading)
+			.sink { completion in
+				self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
+			} receiveValue: { _ in
+			}
+			.store(in: &cancellables)
 	}
 
 	func login(username: String, password: String) {
@@ -52,6 +69,16 @@ final class UserSignInViewModel: ViewModel {
 		}
 
 		self.isLoading = false
+	}
+
+	func startQuickConnect() {
+		self.quickConnectManager = QuickConnectManager(server: server)
+
+		quickConnectManager?.startQuickConnect(magicCodeCallback: { magic in
+			self.magicCode = magic
+		}, authenticatedCallback: loginQuickConnect(secret:), failureCallback: { _ in
+			self.magicCode = nil
+		})
 	}
 
 	func loadUsers() {

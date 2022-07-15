@@ -41,7 +41,7 @@ final class SessionManager {
 			guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { return }
 
 			JellyfinAPIAPI.basePath = server.currentURI
-			setAuthHeader(with: accessToken.value)
+			AuthHeaderBuilder().setAuthHeader(accessToken: accessToken.value)
 			currentLogin = (server: existingServer.state, user: user.state)
 		}
 	}
@@ -186,11 +186,31 @@ final class SessionManager {
 	func loginUser(server: SwiftfinStore.State.Server, username: String,
 	               password: String) -> AnyPublisher<SwiftfinStore.State.User, Error>
 	{
-		setAuthHeader(with: "")
+
+		AuthHeaderBuilder().setAuthHeader(accessToken: "")
 
 		JellyfinAPIAPI.basePath = server.currentURI
 
-		return UserAPI.authenticateUserByName(authenticateUserByNameRequest: .init(username: username, pw: password))
+		return self.doUserStuff(UserAPI.authenticateUserByName(authenticateUserByNameRequest: .init(username: username, pw: password)),
+		                        server: server)
+	}
+
+	// MARK: loginUser QuickConnect
+
+	func loginUser(server: SwiftfinStore.State.Server, quickConenctSecret: String) -> AnyPublisher<SwiftfinStore.State.User, Error> {
+		AuthHeaderBuilder().setAuthHeader(accessToken: "")
+		JellyfinAPIAPI.basePath = server.currentURI
+
+		return self
+			.doUserStuff(UserAPI
+				.authenticateWithQuickConnect(authenticateWithQuickConnectRequest: AuthenticateWithQuickConnectRequest(secret: quickConenctSecret)),
+				server: server)
+	}
+
+	func doUserStuff(_ stuff: AnyPublisher<AuthenticationResult, Error>,
+	                 server: SwiftfinStore.State.Server) -> AnyPublisher<SwiftfinStore.State.User, Error>
+	{
+		stuff
 			.tryMap { response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
 
 				guard let accessToken = response.accessToken else { throw JellyfinAPIError("Access token missing from network call") }
@@ -230,7 +250,8 @@ final class SessionManager {
 				return (editUserServer, newUser, transaction)
 			}
 			.handleEvents(receiveOutput: { [unowned self] server, user, transaction in
-				setAuthHeader(with: user.accessToken?.value ?? "")
+
+				AuthHeaderBuilder().setAuthHeader(accessToken: user.accessToken?.value ?? "")
 				try? transaction.commitAndWait()
 
 				// Fetch for the right queue
@@ -253,7 +274,7 @@ final class SessionManager {
 	func loginUser(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
 		JellyfinAPIAPI.basePath = server.currentURI
 		Defaults[.lastServerUserID] = user.id
-		setAuthHeader(with: user.accessToken)
+		AuthHeaderBuilder().setAuthHeader(accessToken: user.accessToken)
 		currentLogin = (server: server, user: user)
 		Notifications[.didSignIn].post()
 	}
@@ -263,7 +284,7 @@ final class SessionManager {
 	func logout() {
 		currentLogin = nil
 		JellyfinAPIAPI.basePath = ""
-		setAuthHeader(with: "")
+		AuthHeaderBuilder().setAuthHeader(accessToken: "")
 		Defaults[.lastServerUserID] = nil
 		Notifications[.didSignOut].post()
 	}
@@ -317,28 +338,5 @@ final class SessionManager {
 
 		transaction.delete(server)
 		try? transaction.commitAndWait()
-	}
-
-	private func setAuthHeader(with accessToken: String) {
-		let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-		var deviceName = UIDevice.current.name
-		deviceName = deviceName.folding(options: .diacriticInsensitive, locale: .current)
-		deviceName = String(deviceName.unicodeScalars.filter { CharacterSet.urlQueryAllowed.contains($0) })
-
-		let platform: String
-		#if os(tvOS)
-			platform = "tvOS"
-		#else
-			platform = "iOS"
-		#endif
-
-		var header = "MediaBrowser "
-		header.append("Client=\"Jellyfin \(platform)\", ")
-		header.append("Device=\"\(deviceName)\", ")
-		header.append("DeviceId=\"\(platform)_\(UIDevice.vendorUUIDString)_\(String(Date().timeIntervalSince1970))\", ")
-		header.append("Version=\"\(appVersion ?? "0.0.1")\", ")
-		header.append("Token=\"\(accessToken)\"")
-
-		JellyfinAPIAPI.customHeaders["X-Emby-Authorization"] = header
 	}
 }
