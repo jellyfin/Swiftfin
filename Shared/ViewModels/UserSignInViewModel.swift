@@ -110,12 +110,15 @@ final class UserSignInViewModel: ViewModel {
         
         QuickConnectAPI.connect(secret: quickConnectSecret)
             .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(completion: completion)
+                // Prefer not to handle error handling like normal as
+                // this is a repeated call
             }, receiveValue: { value in
                 guard let authenticated = value.authenticated, authenticated else {
                     LogManager.log.debug("QuickConnect not authenticated yet")
                     return
                 }
+                
+                self.quickConnectTimer?.invalidate()
                 
                 SessionManager.main.signInUser(server: self.server, quickConnectSecret: quickConnectSecret)
                     .trackActivity(self.loading)

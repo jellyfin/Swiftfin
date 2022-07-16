@@ -65,21 +65,29 @@ struct UserSignInView: View {
                 }
                 .navigationTitle(L10n.signIn)
 
-                VStack(alignment: .leading) {
-                    Text("QuickConnect")
+                VStack(alignment: .center) {
+                    Text("Quick Connect")
                         .font(.title3)
-                        .padding(.vertical)
+                        .fontWeight(.semibold)
+                    
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("1. Open the Jellyfin app on your phone or webbrowser and sign in with your account")
+                        
+                        Text("2. Open the user menu and go to the Quick Connect page")
+                        
+                        Text("3. Enter the following code:")
+                    }
+                    .padding(.vertical)
                     
                     Text(viewModel.quickConnectCode ?? "------")
                         .tracking(10)
                         .font(.title)
-                        .padding(.all)
                         .monospacedDigit()
+                        .frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: .infinity)
             }
         }
-        .onAppear(perform: viewModel.startQuickConnect)
     }
 }
 
