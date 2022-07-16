@@ -11,88 +11,90 @@ import SwiftUI
 
 struct UserSignInView: View {
 
-    @ObservedObject
-    var viewModel: UserSignInViewModel
-    @State
-    private var username: String = ""
-    @State
-    private var password: String = ""
+	@ObservedObject
+	var viewModel: UserSignInViewModel
+	@State
+	private var username: String = ""
+	@State
+	private var password: String = ""
 
-    var body: some View {
-        ZStack {
-            ImageView(viewModel.getSplashscreenUrl())
-                .ignoresSafeArea()
+	var body: some View {
+		ZStack {
+			ImageView(viewModel.getSplashscreenUrl())
+				.ignoresSafeArea()
 
-            Color.black
-                .opacity(0.9)
-                .ignoresSafeArea()
+			Color.black
+				.opacity(0.9)
+				.ignoresSafeArea()
 
-            HStack(alignment: .top) {
-                Form {
-                    Section {
-                        TextField(L10n.username, text: $username)
-                            .disableAutocorrection(true)
-                            .autocapitalization(.none)
+			HStack(alignment: .top) {
+				Form {
+					Section {
+						TextField(L10n.username, text: $username)
+							.disableAutocorrection(true)
+							.autocapitalization(.none)
 
-                        SecureField(L10n.password, text: $password)
-                            .disableAutocorrection(true)
-                            .autocapitalization(.none)
+						SecureField(L10n.password, text: $password)
+							.disableAutocorrection(true)
+							.autocapitalization(.none)
 
-                        Button {
-                            viewModel.signIn(username: username, password: password)
-                        } label: {
-                            HStack {
-                                L10n.connect.text
-                                
-                                Spacer()
-                                
-                                if viewModel.isLoading {
-                                    ProgressView()
-                                }
-                            }
-                        }
-                        .disabled(viewModel.isLoading || username.isEmpty)
+						Button {
+							viewModel.signIn(username: username, password: password)
+						} label: {
+							HStack {
+								L10n.connect.text
 
-                    } header: {
-                        L10n.signInToServer(viewModel.server.name).text
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .alert(item: $viewModel.errorMessage) { _ in
-                    Alert(title: Text(viewModel.alertTitle),
-                          message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-                          dismissButton: .cancel())
-                }
-                .navigationTitle(L10n.signIn)
+								Spacer()
 
-                VStack(alignment: .center) {
-                    L10n.quickConnect.text
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                    
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("1. Open the Jellyfin app on your phone or web browser and sign in with your account")
-                        
-                        Text("2. Open the user menu and go to the Quick Connect page")
-                        
-                        Text("3. Enter the following code:")
-                    }
-                    .padding(.vertical)
-                    
-                    Text(viewModel.quickConnectCode ?? "------")
-                        .tracking(10)
-                        .font(.title)
-                        .monospacedDigit()
-                        .frame(maxWidth: .infinity)
-                }
-                .frame(maxWidth: .infinity)
-            }
-        }
-    }
+								if viewModel.isLoading {
+									ProgressView()
+								}
+							}
+						}
+						.disabled(viewModel.isLoading || username.isEmpty)
+
+					} header: {
+						L10n.signInToServer(viewModel.server.name).text
+					}
+				}
+				.frame(maxWidth: .infinity)
+				.alert(item: $viewModel.errorMessage) { _ in
+					Alert(title: Text(viewModel.alertTitle),
+					      message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
+					      dismissButton: .cancel())
+				}
+				.navigationTitle(L10n.signIn)
+
+				if viewModel.quickConnectEnabled {
+					VStack(alignment: .center) {
+						L10n.quickConnect.text
+							.font(.title3)
+							.fontWeight(.semibold)
+
+						VStack(alignment: .leading, spacing: 20) {
+							L10n.quickConnectStep1.text
+
+							L10n.quickConnectStep2.text
+
+							L10n.quickConnectStep3.text
+						}
+						.padding(.vertical)
+
+						Text(viewModel.quickConnectCode ?? "------")
+							.tracking(10)
+							.font(.title)
+							.monospacedDigit()
+							.frame(maxWidth: .infinity)
+					}
+					.frame(maxWidth: .infinity)
+				}
+			}
+		}
+	}
 }
 
 struct UserSignInView_Preivews: PreviewProvider {
-    static var previews: some View {
-        UserSignInView(viewModel: .init(server: .sample))
-    }
+	static var previews: some View {
+		UserSignInView(viewModel: .init(server: .sample))
+	}
 }

@@ -18,19 +18,21 @@ final class UserSignInViewModel: ViewModel {
 
 	@Published
 	var publicUsers: [UserDto] = []
-    @Published
-    var quickConnectCode: String?
-    
-    let server: SwiftfinStore.State.Server
-    private var quickConnectTimer: Timer?
-    private var quickConnectSecret: String?
+	@Published
+	var quickConnectCode: String?
+	@Published
+	var quickConnectEnabled = false
+
+	let server: SwiftfinStore.State.Server
+	private var quickConnectTimer: Timer?
+	private var quickConnectSecret: String?
 
 	init(server: SwiftfinStore.State.Server) {
 		self.server = server
-        super.init()
-        
-        JellyfinAPIAPI.basePath = server.currentURI
-        startQuickConnect()
+		super.init()
+
+		JellyfinAPIAPI.basePath = server.currentURI
+		startQuickConnect()
 	}
 
 	var alertTitle: String {
@@ -85,49 +87,58 @@ final class UserSignInViewModel: ViewModel {
 		let urlString = ImageAPI.getSplashscreenWithRequestBuilder().URLString
 		return URL(string: urlString)
 	}
-    
-    func startQuickConnect() {
-        QuickConnectAPI.initiate()
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(completion: completion)
-            }, receiveValue: { response in
-                
-                self.quickConnectSecret = response.secret
-                self.quickConnectCode = response.code
-                LogManager.log.debug("QuickConnect code: \(response.code ?? "--")")
 
-                self.quickConnectTimer = Timer.scheduledTimer(timeInterval: 5,
-                                                              target: self,
-                                                              selector: #selector(self.checkAuthStatus),
-                                                              userInfo: nil,
-                                                              repeats: true)
-            })
-            .store(in: &cancellables)
-    }
-    
-    @objc private func checkAuthStatus() {
-        guard let quickConnectSecret = quickConnectSecret else { return }
-        
-        QuickConnectAPI.connect(secret: quickConnectSecret)
-            .sink(receiveCompletion: { completion in
-                // Prefer not to handle error handling like normal as
-                // this is a repeated call
-            }, receiveValue: { value in
-                guard let authenticated = value.authenticated, authenticated else {
-                    LogManager.log.debug("QuickConnect not authenticated yet")
-                    return
-                }
-                
-                self.quickConnectTimer?.invalidate()
-                
-                SessionManager.main.signInUser(server: self.server, quickConnectSecret: quickConnectSecret)
-                    .trackActivity(self.loading)
-                    .sink { completion in
-                        self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-                    } receiveValue: { _ in
-                    }
-                    .store(in: &self.cancellables)
-            })
-            .store(in: &cancellables)
-    }
+	func startQuickConnect() {
+		QuickConnectAPI.getEnabled()
+			.sink(receiveCompletion: { completion in
+				self.handleAPIRequestError(completion: completion)
+			}, receiveValue: { enabled in
+				self.quickConnectEnabled = enabled
+			})
+			.store(in: &cancellables)
+
+		QuickConnectAPI.initiate()
+			.sink(receiveCompletion: { completion in
+				self.handleAPIRequestError(completion: completion)
+			}, receiveValue: { response in
+
+				self.quickConnectSecret = response.secret
+				self.quickConnectCode = response.code
+				LogManager.log.debug("QuickConnect code: \(response.code ?? "--")")
+
+				self.quickConnectTimer = Timer.scheduledTimer(timeInterval: 5,
+				                                              target: self,
+				                                              selector: #selector(self.checkAuthStatus),
+				                                              userInfo: nil,
+				                                              repeats: true)
+			})
+			.store(in: &cancellables)
+	}
+
+	@objc
+	private func checkAuthStatus() {
+		guard let quickConnectSecret = quickConnectSecret else { return }
+
+		QuickConnectAPI.connect(secret: quickConnectSecret)
+			.sink(receiveCompletion: { _ in
+				// Prefer not to handle error handling like normal as
+				// this is a repeated call
+			}, receiveValue: { value in
+				guard let authenticated = value.authenticated, authenticated else {
+					LogManager.log.debug("QuickConnect not authenticated yet")
+					return
+				}
+
+				self.quickConnectTimer?.invalidate()
+
+				SessionManager.main.signInUser(server: self.server, quickConnectSecret: quickConnectSecret)
+					.trackActivity(self.loading)
+					.sink { completion in
+						self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
+					} receiveValue: { _ in
+					}
+					.store(in: &self.cancellables)
+			})
+			.store(in: &cancellables)
+	}
 }

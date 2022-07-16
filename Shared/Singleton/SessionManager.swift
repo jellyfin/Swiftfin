@@ -31,8 +31,8 @@ final class SessionManager {
 	// MARK: init
 
 	private init() {
-        setAuthHeader(with: "")
-        
+		setAuthHeader(with: "")
+
 		if let lastUserID = Defaults[.lastServerUserID],
 		   let user = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
 		                                                    [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)])
@@ -186,21 +186,21 @@ final class SessionManager {
 
 	// Logs in a user with an associated server, storing if successful
 	func signInUser(server: SwiftfinStore.State.Server, username: String,
-	               password: String) -> AnyPublisher<SwiftfinStore.State.User, Error>
+	                password: String) -> AnyPublisher<SwiftfinStore.State.User, Error>
 	{
 		JellyfinAPIAPI.basePath = server.currentURI
 
 		return UserAPI.authenticateUserByName(authenticateUserByNameRequest: .init(username: username, pw: password))
-            .processAuthenticationRequest(with: self, server: server)
+			.processAuthenticationRequest(with: self, server: server)
 	}
-    
-    // Logs in a user with an associated server, storing if successful
-    func signInUser(server: SwiftfinStore.State.Server, quickConnectSecret: String) -> AnyPublisher<SwiftfinStore.State.User, Error> {
-        JellyfinAPIAPI.basePath = server.currentURI
-        
-        return UserAPI.authenticateWithQuickConnect(authenticateWithQuickConnectRequest: .init(secret: quickConnectSecret))
-            .processAuthenticationRequest(with: self, server: server)
-    }
+
+	// Logs in a user with an associated server, storing if successful
+	func signInUser(server: SwiftfinStore.State.Server, quickConnectSecret: String) -> AnyPublisher<SwiftfinStore.State.User, Error> {
+		JellyfinAPIAPI.basePath = server.currentURI
+
+		return UserAPI.authenticateWithQuickConnect(authenticateWithQuickConnectRequest: .init(secret: quickConnectSecret))
+			.processAuthenticationRequest(with: self, server: server)
+	}
 
 	// MARK: signInUser
 
@@ -298,62 +298,64 @@ final class SessionManager {
 }
 
 extension AnyPublisher where Output == AuthenticationResult {
-    func processAuthenticationRequest(with sessionManager: SessionManager, server: SwiftfinStore.State.Server) -> AnyPublisher<SwiftfinStore.State.User, Error> {
-        self
-        .tryMap { response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
+	func processAuthenticationRequest(with sessionManager: SessionManager,
+	                                  server: SwiftfinStore.State.Server) -> AnyPublisher<SwiftfinStore.State.User, Error>
+	{
+		self
+			.tryMap { response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
 
-            guard let accessToken = response.accessToken else { throw JellyfinAPIError("Access token missing from network call") }
+				guard let accessToken = response.accessToken else { throw JellyfinAPIError("Access token missing from network call") }
 
-            let transaction = SwiftfinStore.dataStack.beginUnsafe()
-            let newUser = transaction.create(Into<SwiftfinStore.Models.StoredUser>())
+				let transaction = SwiftfinStore.dataStack.beginUnsafe()
+				let newUser = transaction.create(Into<SwiftfinStore.Models.StoredUser>())
 
-            guard let username = response.user?.name,
-                  let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
+				guard let username = response.user?.name,
+				      let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
 
-            newUser.username = username
-            newUser.id = id
-            newUser.appleTVID = ""
+				newUser.username = username
+				newUser.id = id
+				newUser.appleTVID = ""
 
-            // Check for existing user on device
-            if let existingUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
-                                                                        [Where<SwiftfinStore.Models.StoredUser>("id == %@",
-                                                                                                                newUser.id)])
-            {
-                throw SwiftfinStore.Error.existingUser(existingUser.state)
-            }
+				// Check for existing user on device
+				if let existingUser = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredUser>(),
+				                                                            [Where<SwiftfinStore.Models.StoredUser>("id == %@",
+				                                                                                                    newUser.id)])
+				{
+					throw SwiftfinStore.Error.existingUser(existingUser.state)
+				}
 
-            let newAccessToken = transaction.create(Into<SwiftfinStore.Models.StoredAccessToken>())
-            newAccessToken.value = accessToken
-            newUser.accessToken = newAccessToken
+				let newAccessToken = transaction.create(Into<SwiftfinStore.Models.StoredAccessToken>())
+				newAccessToken.value = accessToken
+				newUser.accessToken = newAccessToken
 
-            guard let userServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
-                                                                         [
-                                                                             Where<SwiftfinStore.Models.StoredServer>("id == %@",
-                                                                                                                      server.id),
-                                                                         ])
-            else { fatalError("No stored server associated with given state server?") }
+				guard let userServer = try? SwiftfinStore.dataStack.fetchOne(From<SwiftfinStore.Models.StoredServer>(),
+				                                                             [
+				                                                             	Where<SwiftfinStore.Models.StoredServer>("id == %@",
+				                                                             	                                         server.id),
+				                                                             ])
+				else { fatalError("No stored server associated with given state server?") }
 
-            guard let editUserServer = transaction.edit(userServer) else { fatalError("Can't get proxy for existing object?") }
-            editUserServer.users.insert(newUser)
+				guard let editUserServer = transaction.edit(userServer) else { fatalError("Can't get proxy for existing object?") }
+				editUserServer.users.insert(newUser)
 
-            return (editUserServer, newUser, transaction)
-        }
-        .handleEvents(receiveOutput: { server, user, transaction in
-            sessionManager.setAuthHeader(with: user.accessToken?.value ?? "")
-            try? transaction.commitAndWait()
+				return (editUserServer, newUser, transaction)
+			}
+			.handleEvents(receiveOutput: { server, user, transaction in
+				sessionManager.setAuthHeader(with: user.accessToken?.value ?? "")
+				try? transaction.commitAndWait()
 
-            // Fetch for the right queue
-            let currentServer = SwiftfinStore.dataStack.fetchExisting(server)!
-            let currentUser = SwiftfinStore.dataStack.fetchExisting(user)!
+				// Fetch for the right queue
+				let currentServer = SwiftfinStore.dataStack.fetchExisting(server)!
+				let currentUser = SwiftfinStore.dataStack.fetchExisting(user)!
 
-            Defaults[.lastServerUserID] = user.id
+				Defaults[.lastServerUserID] = user.id
 
-            sessionManager.currentLogin = (server: currentServer.state, user: currentUser.state)
-            Notifications[.didSignIn].post()
-        })
-        .map { _, user, _ in
-            user.state
-        }
-        .eraseToAnyPublisher()
-    }
+				sessionManager.currentLogin = (server: currentServer.state, user: currentUser.state)
+				Notifications[.didSignIn].post()
+			})
+			.map { _, user, _ in
+				user.state
+			}
+			.eraseToAnyPublisher()
+	}
 }
