@@ -66,12 +66,12 @@ struct UserSignInView: View {
                 .navigationTitle(L10n.signIn)
 
                 VStack(alignment: .center) {
-                    Text("Quick Connect")
+                    L10n.quickConnect.text
                         .font(.title3)
                         .fontWeight(.semibold)
                     
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("1. Open the Jellyfin app on your phone or webbrowser and sign in with your account")
+                        Text("1. Open the Jellyfin app on your phone or web browser and sign in with your account")
                         
                         Text("2. Open the user menu and go to the Quick Connect page")
                         
