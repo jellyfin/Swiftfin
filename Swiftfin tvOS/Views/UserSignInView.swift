@@ -92,11 +92,7 @@ struct UserSignInView: View {
 }
 
 struct UserSignInView_Preivews: PreviewProvider {
-
-    static let mode = UserSignInViewModel(server: SwiftfinStore.State.Server.sample)
-
     static var previews: some View {
-
-        UserSignInView(viewModel: mode)
+        UserSignInView(viewModel: .init(server: .sample))
     }
 }
