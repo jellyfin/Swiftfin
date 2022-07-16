@@ -6,18 +6,17 @@
 
 ## Setup
 
-Fork the Swiftfin repo and install the necessary Carthage with Xcode 13:
+Fork the Swiftfin repo and install the necessary dependencies with Xcode 13:
 
 ```bash
-# install Carthage (if not installed)
-$ brew install carthage
+# install Carthage, SwiftFormat, and SwiftGen with homebrew
+$ brew install carthage swiftformat swiftgen
 
-# update dependencies
+# install or update dependencies
 $ carthage update --use-xcframeworks
-
-# open project and build
-$ open Swiftfin.xcodeproj
 ```
+
+If you run into a build error with Swift Packages because some have not finished installing, you may need to close and reopen Xcode to finish installing the last packages.
 
 ## Git Flow
 
@@ -30,11 +29,11 @@ If your Pull Request relates to an Issue, mention the issue correctly in your PR
 The following must pass in order for a PR to be merged:
 - automated `iOS` and `tvOS` builds must succeed
 - developer account cannot be attached
-- SwiftFormat linting check must pass
+- SwiftFormat linting check must pass. If this does not pass after you have linted, you may need to update your local `swiftformat`
 - new strings that are not part of an experimental feature must be localized
 - correct label(s) are attached, if applicable
 
-Labeling PRs with `enhancement`, `bug`, or `crash` will allow the PR to be tracked in GitHub's [automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) should also have the `ignore-for-release` label since many PRs may be similar. If you think that no labels are required, that is acceptable.
+Labeling PRs with `enhancement`, `bug`, or `crash` will allow the PR to be tracked in GitHub's [automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) can also have the `ignore-for-release` label because they may not be important to include in the release notes. If you think that no labels are required, that is acceptable.
 
 ### Documentation
 Documentation for advanced or complex features and other implementation reasoning is encouraged so that future developers may have insights and a better understand of the application. `// MARK:` comments are encouraged for organization, maintainability, and ease of navigation in Xcode's Minimap.
@@ -49,7 +48,7 @@ Playback is done with [VLCKit](https://code.videolan.org/videolan/VLCKit) for it
 
 While there are no design guidelines for UI/UX features, Swiftfin has the goal to use native SwiftUI/UIKit components while adhering to a Jellyfin theme. If your feature creates new UI/UX components, you are welcome to introduce a general design that may receive feedback during the PR process or may be re-designed later on.
 
-User customizable UI/UX features are welcome and intended, however not all customization may be accepted for code maintainability and to also establish a specific Swiftfin design. Taking inspiration, but not always copying, from other applications is encouraged.
+User customizable UI/UX features are welcome and intended, however not all customization may be accepted for code maintainability and to also establish a distinct Swiftfin design. Taking inspiration, but not always copying, from other applications is encouraged.
 
 ## New Features
 
@@ -57,7 +56,7 @@ If you would like to develop a new feature or `Developer` issue, create an issue
 
 ## Other Code Work
 
-Other code work like bug fixes, issues with `Developer` tags, and localization and accessibility efforts are welcome to be picked up at any time. Just leave a comment when you start work on a bug fix or `Developer` issue.
+Other code work like bug fixes, issues with `Developer` tags, localizations, and accessibility efforts are welcome to be picked up at any time. Just leave a comment when you start work on a bug fix or `Developer` issue.
 
 If you notice undesirable behavior or would like to make a UI/UX tweak, create an issue or ask in the iOS Matrix/Discord channel and a discussion will be made.
 
