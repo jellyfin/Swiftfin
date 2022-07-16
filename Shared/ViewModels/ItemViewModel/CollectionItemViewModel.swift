@@ -12,25 +12,27 @@ import JellyfinAPI
 
 final class CollectionItemViewModel: ItemViewModel {
 
-	@Published
-	var collectionItems: [BaseItemDto] = []
+    @Published
+    var collectionItems: [BaseItemDto] = []
 
-	override init(item: BaseItemDto) {
-		super.init(item: item)
+    override init(item: BaseItemDto) {
+        super.init(item: item)
 
-		getCollectionItems()
-	}
+        getCollectionItems()
+    }
 
-	private func getCollectionItems() {
-		ItemsAPI.getItems(userId: SessionManager.main.currentLogin.user.id,
-		                  parentId: item.id,
-		                  fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people])
-			.trackActivity(loading)
-			.sink { [weak self] completion in
-				self?.handleAPIRequestError(completion: completion)
-			} receiveValue: { [weak self] response in
-				self?.collectionItems = response.items ?? []
-			}
-			.store(in: &cancellables)
-	}
+    private func getCollectionItems() {
+        ItemsAPI.getItems(
+            userId: SessionManager.main.currentLogin.user.id,
+            parentId: item.id,
+            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people]
+        )
+        .trackActivity(loading)
+        .sink { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        } receiveValue: { [weak self] response in
+            self?.collectionItems = response.items ?? []
+        }
+        .store(in: &cancellables)
+    }
 }

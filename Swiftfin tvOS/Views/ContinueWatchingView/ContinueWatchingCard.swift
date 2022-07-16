@@ -11,70 +11,72 @@ import SwiftUI
 
 struct ContinueWatchingCard: View {
 
-	@EnvironmentObject
-	var homeRouter: HomeCoordinator.Router
-	let item: BaseItemDto
+    @EnvironmentObject
+    var homeRouter: HomeCoordinator.Router
+    let item: BaseItemDto
 
-	var body: some View {
-		VStack(alignment: .leading) {
-			Button {
-				homeRouter.route(to: \.modalItem, item)
-			} label: {
-				ZStack(alignment: .bottom) {
+    var body: some View {
+        VStack(alignment: .leading) {
+            Button {
+                homeRouter.route(to: \.modalItem, item)
+            } label: {
+                ZStack(alignment: .bottom) {
 
-					if item.itemType == .episode {
-						ImageView(item.getSeriesBackdropImage(maxWidth: 500))
-							.frame(width: 500, height: 281.25)
-					} else {
-						ImageView(item.getBackdropImage(maxWidth: 500))
-							.frame(width: 500, height: 281.25)
-					}
+                    if item.itemType == .episode {
+                        ImageView(item.getSeriesBackdropImage(maxWidth: 500))
+                            .frame(width: 500, height: 281.25)
+                    } else {
+                        ImageView(item.getBackdropImage(maxWidth: 500))
+                            .frame(width: 500, height: 281.25)
+                    }
 
-					VStack(alignment: .leading, spacing: 0) {
-						Text(item.getItemProgressString() ?? "")
-							.font(.subheadline)
-							.padding(.vertical, 5)
-							.padding(.leading, 10)
-							.foregroundColor(.white)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(item.getItemProgressString() ?? "")
+                            .font(.subheadline)
+                            .padding(.vertical, 5)
+                            .padding(.leading, 10)
+                            .foregroundColor(.white)
 
-						HStack {
-							Color(UIColor.systemPurple)
-								.frame(width: 500 * (item.userData?.playedPercentage ?? 0) / 100, height: 13)
+                        HStack {
+                            Color(UIColor.systemPurple)
+                                .frame(width: 500 * (item.userData?.playedPercentage ?? 0) / 100, height: 13)
 
-							Spacer(minLength: 0)
-						}
-					}
-					.background {
-						LinearGradient(colors: [.clear, .black.opacity(0.5), .black.opacity(0.7)],
-						               startPoint: .top,
-						               endPoint: .bottom)
-							.ignoresSafeArea()
-					}
-				}
-				.frame(width: 500, height: 281.25)
-			}
-			.buttonStyle(CardButtonStyle())
-			.padding(.top)
+                            Spacer(minLength: 0)
+                        }
+                    }
+                    .background {
+                        LinearGradient(
+                            colors: [.clear, .black.opacity(0.5), .black.opacity(0.7)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .ignoresSafeArea()
+                    }
+                }
+                .frame(width: 500, height: 281.25)
+            }
+            .buttonStyle(CardButtonStyle())
+            .padding(.top)
 
-			VStack(alignment: .leading) {
-				Text("\(item.seriesName ?? item.name ?? "")")
-					.font(.callout)
-					.fontWeight(.semibold)
-					.foregroundColor(.primary)
-					.lineLimit(1)
-					.frame(width: 500, alignment: .leading)
+            VStack(alignment: .leading) {
+                Text("\(item.seriesName ?? item.name ?? "")")
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .frame(width: 500, alignment: .leading)
 
-				if item.itemType == .episode {
-					Text(item.getEpisodeLocator() ?? "")
-						.font(.callout)
-						.fontWeight(.medium)
-						.foregroundColor(.secondary)
-						.lineLimit(1)
-				} else {
-					Text("")
-				}
-			}
-		}
-		.padding(.vertical)
-	}
+                if item.itemType == .episode {
+                    Text(item.getEpisodeLocator() ?? "")
+                        .font(.callout)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                } else {
+                    Text("")
+                }
+            }
+        }
+        .padding(.vertical)
+    }
 }

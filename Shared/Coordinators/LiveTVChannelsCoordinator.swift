@@ -12,37 +12,37 @@ import Stinsen
 import SwiftUI
 
 final class LiveTVChannelsCoordinator: NavigationCoordinatable {
-	let stack = NavigationStack(initial: \LiveTVChannelsCoordinator.start)
+    let stack = NavigationStack(initial: \LiveTVChannelsCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.modal)
-	var modalItem = makeModalItem
-	@Route(.fullScreen)
-	var videoPlayer = makeVideoPlayer
+    @Root
+    var start = makeStart
+    @Route(.modal)
+    var modalItem = makeModalItem
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
 
-	func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-		NavigationViewCoordinator(ItemCoordinator(item: item))
-	}
+    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        NavigationViewCoordinator(ItemCoordinator(item: item))
+    }
 
-	func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
-		NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
-	}
+    func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
+        NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		LiveTVChannelsView()
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        LiveTVChannelsView()
+    }
 }
 
 final class EmptyViewCoordinator: NavigationCoordinatable {
-	let stack = NavigationStack(initial: \EmptyViewCoordinator.start)
+    let stack = NavigationStack(initial: \EmptyViewCoordinator.start)
 
-	@Root
-	var start = makeStart
+    @Root
+    var start = makeStart
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		Text("Empty")
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        Text("Empty")
+    }
 }

@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 
 extension NameGuidPair: PillStackable {
-	var title: String {
-		self.name ?? ""
-	}
+    var title: String {
+        self.name ?? ""
+    }
 }

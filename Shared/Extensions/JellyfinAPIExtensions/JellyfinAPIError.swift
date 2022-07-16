@@ -10,13 +10,13 @@ import Foundation
 
 struct JellyfinAPIError: Error {
 
-	private let message: String
+    private let message: String
 
-	init(_ message: String) {
-		self.message = message
-	}
+    init(_ message: String) {
+        self.message = message
+    }
 
-	var localizedDescription: String {
-		message
-	}
+    var localizedDescription: String {
+        message
+    }
 }

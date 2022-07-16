@@ -9,6 +9,6 @@
 import Foundation
 
 enum ServerStreamType {
-	case direct
-	case transcode
+    case direct
+    case transcode
 }

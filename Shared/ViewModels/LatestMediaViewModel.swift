@@ -12,39 +12,42 @@ import JellyfinAPI
 
 final class LatestMediaViewModel: ViewModel {
 
-	@Published
-	var items = [BaseItemDto]()
+    @Published
+    var items = [BaseItemDto]()
 
-	let library: BaseItemDto
+    let library: BaseItemDto
 
-	init(library: BaseItemDto) {
-		self.library = library
-		super.init()
+    init(library: BaseItemDto) {
+        self.library = library
+        super.init()
 
-		requestLatestMedia()
-	}
+        requestLatestMedia()
+    }
 
-	func requestLatestMedia() {
-		LogManager.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id)")
-		UserLibraryAPI.getLatestMedia(userId: SessionManager.main.currentLogin.user.id,
-		                              parentId: library.id ?? "",
-		                              fields: [
-		                              	.primaryImageAspectRatio,
-		                              	.seriesPrimaryImage,
-		                              	.seasonUserData,
-		                              	.overview,
-		                              	.genres,
-		                              	.people,
-		                              ],
-		                              includeItemTypes: [.series, .movie],
-		                              enableUserData: true, limit: 12)
-			.trackActivity(loading)
-			.sink(receiveCompletion: { [weak self] completion in
-				self?.handleAPIRequestError(completion: completion)
-			}, receiveValue: { [weak self] response in
-				self?.items = response
-				LogManager.log.debug("Retrieved \(String(self?.items.count ?? 0)) items")
-			})
-			.store(in: &cancellables)
-	}
+    func requestLatestMedia() {
+        LogManager.log.debug("Requesting latest media for user id \(SessionManager.main.currentLogin.user.id)")
+        UserLibraryAPI.getLatestMedia(
+            userId: SessionManager.main.currentLogin.user.id,
+            parentId: library.id ?? "",
+            fields: [
+                .primaryImageAspectRatio,
+                .seriesPrimaryImage,
+                .seasonUserData,
+                .overview,
+                .genres,
+                .people,
+            ],
+            includeItemTypes: [.series, .movie],
+            enableUserData: true,
+            limit: 12
+        )
+        .trackActivity(loading)
+        .sink(receiveCompletion: { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        }, receiveValue: { [weak self] response in
+            self?.items = response
+            LogManager.log.debug("Retrieved \(String(self?.items.count ?? 0)) items")
+        })
+        .store(in: &cancellables)
+    }
 }

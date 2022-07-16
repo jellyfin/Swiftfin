@@ -12,57 +12,57 @@ import SwiftUI
 
 struct BasicAppSettingsView: View {
 
-	@EnvironmentObject
-	var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
-	@ObservedObject
-	var viewModel: BasicAppSettingsViewModel
-	@State
-	var resetTapped: Bool = false
+    @EnvironmentObject
+    var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
+    @ObservedObject
+    var viewModel: BasicAppSettingsViewModel
+    @State
+    var resetTapped: Bool = false
 
-	@Default(.appAppearance)
-	var appAppearance
+    @Default(.appAppearance)
+    var appAppearance
 
-	var body: some View {
-		Form {
+    var body: some View {
+        Form {
 
-			Section {
-				Button {} label: {
-					HStack {
-						L10n.version.text
-						Spacer()
-						Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
-							.foregroundColor(.secondary)
-					}
-				}
-			} header: {
-				L10n.about.text
-			}
+            Section {
+                Button {} label: {
+                    HStack {
+                        L10n.version.text
+                        Spacer()
+                        Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
+                            .foregroundColor(.secondary)
+                    }
+                }
+            } header: {
+                L10n.about.text
+            }
 
-			// TODO: Implement once design is theme appearance friendly
-//			Section {
-//				Picker(L10n.appearance, selection: $appAppearance) {
-//					ForEach(self.viewModel.appearances, id: \.self) { appearance in
-//						Text(appearance.localizedName).tag(appearance.rawValue)
-//					}
-//				}
-//			} header: {
-//				L10n.accessibility.text
-//			}
+            // TODO: Implement once design is theme appearance friendly
+            //			Section {
+            //				Picker(L10n.appearance, selection: $appAppearance) {
+            //					ForEach(self.viewModel.appearances, id: \.self) { appearance in
+            //						Text(appearance.localizedName).tag(appearance.rawValue)
+            //					}
+            //				}
+            //			} header: {
+            //				L10n.accessibility.text
+            //			}
 
-			Button {
-				resetTapped = true
-			} label: {
-				L10n.reset.text
-			}
-		}
-		.alert(L10n.reset, isPresented: $resetTapped, actions: {
-			Button(role: .destructive) {
-				viewModel.resetAppSettings()
-				basicAppSettingsRouter.dismissCoordinator()
-			} label: {
-				L10n.reset.text
-			}
-		})
-		.navigationTitle(L10n.settings)
-	}
+            Button {
+                resetTapped = true
+            } label: {
+                L10n.reset.text
+            }
+        }
+        .alert(L10n.reset, isPresented: $resetTapped, actions: {
+            Button(role: .destructive) {
+                viewModel.resetAppSettings()
+                basicAppSettingsRouter.dismissCoordinator()
+            } label: {
+                L10n.reset.text
+            }
+        })
+        .navigationTitle(L10n.settings)
+    }
 }

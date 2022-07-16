@@ -9,5 +9,5 @@
 import Foundation
 
 protocol PillStackable {
-	var title: String { get }
+    var title: String { get }
 }

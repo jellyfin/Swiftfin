@@ -11,23 +11,23 @@ import JellyfinAPI
 
 protocol PlayerOverlayDelegate {
 
-	func didSelectClose()
-	func didSelectMenu()
+    func didSelectClose()
+    func didSelectMenu()
 
-	func didSelectBackward()
-	func didSelectForward()
-	func didSelectMain()
+    func didSelectBackward()
+    func didSelectForward()
+    func didSelectMain()
 
-	func didGenerallyTap()
+    func didGenerallyTap()
 
-	func didBeginScrubbing()
-	func didEndScrubbing()
+    func didBeginScrubbing()
+    func didEndScrubbing()
 
-	func didSelectAudioStream(index: Int)
-	func didSelectSubtitleStream(index: Int)
+    func didSelectAudioStream(index: Int)
+    func didSelectSubtitleStream(index: Int)
 
-	func didSelectPlayPreviousItem()
-	func didSelectPlayNextItem()
+    func didSelectPlayPreviousItem()
+    func didSelectPlayNextItem()
 
-	func didSelectChapter(_ chapter: ChapterInfo)
+    func didSelectChapter(_ chapter: ChapterInfo)
 }

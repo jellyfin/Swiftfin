@@ -13,45 +13,45 @@ import UIKit
 
 class DynamicCinematicBackgroundViewModel: ObservableObject {
 
-	@Published
-	var currentItem: BaseItemDto?
-	@Published
-	var currentImageView: UIImageView?
+    @Published
+    var currentItem: BaseItemDto?
+    @Published
+    var currentImageView: UIImageView?
 
-	func select(item: BaseItemDto) {
+    func select(item: BaseItemDto) {
 
-		guard item.id != currentItem?.id else { return }
+        guard item.id != currentItem?.id else { return }
 
-		currentItem = item
+        currentItem = item
 
-		let itemImageView = UIImageView()
+        let itemImageView = UIImageView()
 
-		let backdropImage: URL
+        let backdropImage: URL
 
-		if item.itemType == .episode {
-			backdropImage = item.getSeriesBackdropImage(maxWidth: 1920)
-		} else {
-			backdropImage = item.getBackdropImage(maxWidth: 1920)
-		}
+        if item.itemType == .episode {
+            backdropImage = item.getSeriesBackdropImage(maxWidth: 1920)
+        } else {
+            backdropImage = item.getBackdropImage(maxWidth: 1920)
+        }
 
-		let options = ImageLoadingOptions(transition: .fadeIn(duration: 0.2))
+        let options = ImageLoadingOptions(transition: .fadeIn(duration: 0.2))
 
-		Nuke.loadImage(with: backdropImage, options: options, into: itemImageView, completion: { _ in })
+        Nuke.loadImage(with: backdropImage, options: options, into: itemImageView, completion: { _ in })
 
-		currentImageView = itemImageView
-	}
+        currentImageView = itemImageView
+    }
 }
 
 struct CinematicBackgroundView: UIViewRepresentable {
 
-	@ObservedObject
-	var viewModel: DynamicCinematicBackgroundViewModel
+    @ObservedObject
+    var viewModel: DynamicCinematicBackgroundViewModel
 
-	func updateUIView(_ uiView: UICinematicBackgroundView, context: Context) {
-		uiView.update(imageView: viewModel.currentImageView ?? UIImageView())
-	}
+    func updateUIView(_ uiView: UICinematicBackgroundView, context: Context) {
+        uiView.update(imageView: viewModel.currentImageView ?? UIImageView())
+    }
 
-	func makeUIView(context: Context) -> UICinematicBackgroundView {
-		UICinematicBackgroundView(initialImageView: viewModel.currentImageView ?? UIImageView())
-	}
+    func makeUIView(context: Context) -> UICinematicBackgroundView {
+        UICinematicBackgroundView(initialImageView: viewModel.currentImageView ?? UIImageView())
+    }
 }

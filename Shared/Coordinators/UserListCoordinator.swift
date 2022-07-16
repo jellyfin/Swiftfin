@@ -12,31 +12,31 @@ import SwiftUI
 
 final class UserListCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \UserListCoordinator.start)
+    let stack = NavigationStack(initial: \UserListCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.push)
-	var userSignIn = makeUserSignIn
-	@Route(.push)
-	var serverDetail = makeServerDetail
+    @Root
+    var start = makeStart
+    @Route(.push)
+    var userSignIn = makeUserSignIn
+    @Route(.push)
+    var serverDetail = makeServerDetail
 
-	let viewModel: UserListViewModel
+    let viewModel: UserListViewModel
 
-	init(viewModel: UserListViewModel) {
-		self.viewModel = viewModel
-	}
+    init(viewModel: UserListViewModel) {
+        self.viewModel = viewModel
+    }
 
-	func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
-		UserSignInCoordinator(viewModel: .init(server: server))
-	}
+    func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
+        UserSignInCoordinator(viewModel: .init(server: server))
+    }
 
-	func makeServerDetail(server: SwiftfinStore.State.Server) -> ServerDetailCoordinator {
-		ServerDetailCoordinator(viewModel: .init(server: server))
-	}
+    func makeServerDetail(server: SwiftfinStore.State.Server) -> ServerDetailCoordinator {
+        ServerDetailCoordinator(viewModel: .init(server: server))
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		UserListView(viewModel: viewModel)
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        UserListView(viewModel: viewModel)
+    }
 }

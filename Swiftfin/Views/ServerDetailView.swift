@@ -10,49 +10,49 @@ import SwiftUI
 
 struct ServerDetailView: View {
 
-	@ObservedObject
-	var viewModel: ServerDetailViewModel
-	@State
-	var currentServerURI: String
+    @ObservedObject
+    var viewModel: ServerDetailViewModel
+    @State
+    var currentServerURI: String
 
-	init(viewModel: ServerDetailViewModel) {
-		self.viewModel = viewModel
-		self.currentServerURI = viewModel.server.currentURI
-	}
+    init(viewModel: ServerDetailViewModel) {
+        self.viewModel = viewModel
+        self.currentServerURI = viewModel.server.currentURI
+    }
 
-	var body: some View {
-		Form {
-			Section(header: L10n.serverDetails.text) {
-				HStack {
-					L10n.name.text
-					Spacer()
-					Text(viewModel.server.name)
-						.foregroundColor(.secondary)
-				}
+    var body: some View {
+        Form {
+            Section(header: L10n.serverDetails.text) {
+                HStack {
+                    L10n.name.text
+                    Spacer()
+                    Text(viewModel.server.name)
+                        .foregroundColor(.secondary)
+                }
 
-				Picker(L10n.url, selection: $currentServerURI) {
-					ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
-						Text(uri).tag(uri)
-							.foregroundColor(.secondary)
-					}.onChange(of: currentServerURI) { newValue in
-						viewModel.setServerCurrentURI(uri: newValue)
-					}
-				}
+                Picker(L10n.url, selection: $currentServerURI) {
+                    ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
+                        Text(uri).tag(uri)
+                            .foregroundColor(.secondary)
+                    }.onChange(of: currentServerURI) { newValue in
+                        viewModel.setServerCurrentURI(uri: newValue)
+                    }
+                }
 
-				HStack {
-					L10n.version.text
-					Spacer()
-					Text(viewModel.server.version)
-						.foregroundColor(.secondary)
-				}
+                HStack {
+                    L10n.version.text
+                    Spacer()
+                    Text(viewModel.server.version)
+                        .foregroundColor(.secondary)
+                }
 
-				HStack {
-					L10n.operatingSystem.text
-					Spacer()
-					Text(viewModel.server.os)
-						.foregroundColor(.secondary)
-				}
-			}
-		}
-	}
+                HStack {
+                    L10n.operatingSystem.text
+                    Spacer()
+                    Text(viewModel.server.os)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+    }
 }

@@ -11,21 +11,21 @@ import JellyfinAPI
 
 struct ErrorMessage: Identifiable {
 
-	let code: Int
-	let title: String
-	let message: String
+    let code: Int
+    let title: String
+    let message: String
 
-	// Chosen value such that if an error has this code, don't show the code to the UI
-	// This was chosen because of its unlikelyhood to ever be used
-	static let noShowErrorCode = -69420
+    // Chosen value such that if an error has this code, don't show the code to the UI
+    // This was chosen because of its unlikelyhood to ever be used
+    static let noShowErrorCode = -69420
 
-	var id: String {
-		"\(code)\(title)\(message)"
-	}
+    var id: String {
+        "\(code)\(title)\(message)"
+    }
 
-	init(code: Int, title: String, message: String) {
-		self.code = code
-		self.title = title
-		self.message = message
-	}
+    init(code: Int, title: String, message: String) {
+        self.code = code
+        self.title = title
+        self.message = message
+    }
 }

@@ -9,6 +9,6 @@
 import Foundation
 
 enum PosterSize {
-	case small
-	case normal
+    case small
+    case normal
 }

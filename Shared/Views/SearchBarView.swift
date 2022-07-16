@@ -9,30 +9,30 @@
 import SwiftUI
 
 struct SearchBar: View {
-	@Binding
-	var text: String
+    @Binding
+    var text: String
 
-	@State
-	private var isEditing = false
+    @State
+    private var isEditing = false
 
-	var body: some View {
-		HStack(spacing: 8) {
-			TextField(L10n.searchDots, text: $text)
-				.padding(8)
-				.padding(.horizontal, 16)
-			#if os(iOS)
-				.background(Color(.systemGray6))
-			#endif
-				.cornerRadius(8)
-			if !text.isEmpty {
-				Button(action: {
-					self.text = ""
-				}) {
-					Image(systemName: "xmark.circle.fill")
-						.foregroundColor(.secondary)
-				}
-			}
-		}
-		.padding(.horizontal, 16)
-	}
+    var body: some View {
+        HStack(spacing: 8) {
+            TextField(L10n.searchDots, text: $text)
+                .padding(8)
+                .padding(.horizontal, 16)
+            #if os(iOS)
+                .background(Color(.systemGray6))
+            #endif
+                .cornerRadius(8)
+            if !text.isEmpty {
+                Button(action: {
+                    self.text = ""
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+    }
 }

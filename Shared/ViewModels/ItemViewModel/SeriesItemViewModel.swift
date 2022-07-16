@@ -13,83 +13,88 @@ import JellyfinAPI
 
 final class SeriesItemViewModel: ItemViewModel {
 
-	@Published
-	var seasons: [BaseItemDto] = []
+    @Published
+    var seasons: [BaseItemDto] = []
 
-	override init(item: BaseItemDto) {
-		super.init(item: item)
+    override init(item: BaseItemDto) {
+        super.init(item: item)
 
-		requestSeasons()
-		getNextUp()
-	}
+        requestSeasons()
+        getNextUp()
+    }
 
-	override func playButtonText() -> String {
+    override func playButtonText() -> String {
 
-		if item.unaired {
-			return L10n.unaired
-		}
+        if item.unaired {
+            return L10n.unaired
+        }
 
-		if item.missing {
-			return L10n.missing
-		}
+        if item.missing {
+            return L10n.missing
+        }
 
-		guard let playButtonItem = playButtonItem, let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
-		return episodeLocator
-	}
+        guard let playButtonItem = playButtonItem, let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
+        return episodeLocator
+    }
 
-	override func shouldDisplayRuntime() -> Bool {
-		false
-	}
+    override func shouldDisplayRuntime() -> Bool {
+        false
+    }
 
-	private func getNextUp() {
+    private func getNextUp() {
 
-		LogManager.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
-		TvShowsAPI.getNextUp(userId: SessionManager.main.currentLogin.user.id,
-		                     fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                     seriesId: self.item.id!,
-		                     enableUserData: true)
-			.trackActivity(loading)
-			.sink(receiveCompletion: { [weak self] completion in
-				self?.handleAPIRequestError(completion: completion)
-			}, receiveValue: { [weak self] response in
-				if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
-					self?.playButtonItem = nextUpItem
-				}
-			})
-			.store(in: &cancellables)
-	}
+        LogManager.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
+        TvShowsAPI.getNextUp(
+            userId: SessionManager.main.currentLogin.user.id,
+            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+            seriesId: self.item.id!,
+            enableUserData: true
+        )
+        .trackActivity(loading)
+        .sink(receiveCompletion: { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        }, receiveValue: { [weak self] response in
+            if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
+                self?.playButtonItem = nextUpItem
+            }
+        })
+        .store(in: &cancellables)
+    }
 
-	private func getRunYears() -> String {
-		let dateFormatter = DateFormatter()
-		dateFormatter.dateFormat = "yyyy"
+    private func getRunYears() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy"
 
-		var startYear: String?
-		var endYear: String?
+        var startYear: String?
+        var endYear: String?
 
-		if item.premiereDate != nil {
-			startYear = dateFormatter.string(from: item.premiereDate!)
-		}
+        if item.premiereDate != nil {
+            startYear = dateFormatter.string(from: item.premiereDate!)
+        }
 
-		if item.endDate != nil {
-			endYear = dateFormatter.string(from: item.endDate!)
-		}
+        if item.endDate != nil {
+            endYear = dateFormatter.string(from: item.endDate!)
+        }
 
-		return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
-	}
+        return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
+    }
 
-	private func requestSeasons() {
-		LogManager.log.debug("Getting seasons of show \(self.item.id!) (\(self.item.name!))")
-		TvShowsAPI.getSeasons(seriesId: item.id ?? "", userId: SessionManager.main.currentLogin.user.id,
-		                      fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                      isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false,
-		                      enableUserData: true)
-			.trackActivity(loading)
-			.sink(receiveCompletion: { [weak self] completion in
-				self?.handleAPIRequestError(completion: completion)
-			}, receiveValue: { [weak self] response in
-				self?.seasons = response.items ?? []
-				LogManager.log.debug("Retrieved \(String(self?.seasons.count ?? 0)) seasons")
-			})
-			.store(in: &cancellables)
-	}
+    private func requestSeasons() {
+        LogManager.log.debug("Getting seasons of show \(self.item.id!) (\(self.item.name!))")
+        TvShowsAPI.getSeasons(
+            seriesId: item.id ?? "",
+            userId: SessionManager.main.currentLogin.user.id,
+            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+            isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false,
+            enableUserData: true
+        )
+        .trackActivity(loading)
+        .sink(receiveCompletion: { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        }, receiveValue: { [weak self] response in
+            self?.seasons = response.items ?? []
+            LogManager.log.debug("Retrieved \(String(self?.seasons.count ?? 0)) seasons")
+        })
+        .store(in: &cancellables)
+    }
 }

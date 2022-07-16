@@ -11,58 +11,58 @@ import SwiftUI
 
 struct OverlaySettingsView: View {
 
-	@Default(.overlayType)
-	var overlayType
-	@Default(.shouldShowPlayPreviousItem)
-	var shouldShowPlayPreviousItem
-	@Default(.shouldShowPlayNextItem)
-	var shouldShowPlayNextItem
-	@Default(.shouldShowAutoPlay)
-	var shouldShowAutoPlay
-	@Default(.shouldShowJumpButtonsInOverlayMenu)
-	var shouldShowJumpButtonsInOverlayMenu
-	@Default(.shouldShowChaptersInfoInBottomOverlay)
-	var shouldShowChaptersInfoInBottomOverlay
+    @Default(.overlayType)
+    var overlayType
+    @Default(.shouldShowPlayPreviousItem)
+    var shouldShowPlayPreviousItem
+    @Default(.shouldShowPlayNextItem)
+    var shouldShowPlayNextItem
+    @Default(.shouldShowAutoPlay)
+    var shouldShowAutoPlay
+    @Default(.shouldShowJumpButtonsInOverlayMenu)
+    var shouldShowJumpButtonsInOverlayMenu
+    @Default(.shouldShowChaptersInfoInBottomOverlay)
+    var shouldShowChaptersInfoInBottomOverlay
 
-	var body: some View {
-		Form {
-			Section(header: L10n.overlay.text) {
-				Picker(L10n.overlayType, selection: $overlayType) {
-					ForEach(OverlayType.allCases, id: \.self) { overlay in
-						Text(overlay.label).tag(overlay)
-					}
-				}
+    var body: some View {
+        Form {
+            Section(header: L10n.overlay.text) {
+                Picker(L10n.overlayType, selection: $overlayType) {
+                    ForEach(OverlayType.allCases, id: \.self) { overlay in
+                        Text(overlay.label).tag(overlay)
+                    }
+                }
 
-				Toggle(isOn: $shouldShowPlayPreviousItem) {
-					HStack {
-						Image(systemName: "chevron.left.circle")
-						L10n.playPreviousItem.text
-					}
-				}
+                Toggle(isOn: $shouldShowPlayPreviousItem) {
+                    HStack {
+                        Image(systemName: "chevron.left.circle")
+                        L10n.playPreviousItem.text
+                    }
+                }
 
-				Toggle(isOn: $shouldShowPlayNextItem) {
-					HStack {
-						Image(systemName: "chevron.right.circle")
-						L10n.playNextItem.text
-					}
-				}
+                Toggle(isOn: $shouldShowPlayNextItem) {
+                    HStack {
+                        Image(systemName: "chevron.right.circle")
+                        L10n.playNextItem.text
+                    }
+                }
 
-				Toggle(isOn: $shouldShowAutoPlay) {
-					HStack {
-						Image(systemName: "play.circle.fill")
-						L10n.autoPlay.text
-					}
-				}
+                Toggle(isOn: $shouldShowAutoPlay) {
+                    HStack {
+                        Image(systemName: "play.circle.fill")
+                        L10n.autoPlay.text
+                    }
+                }
 
-				Toggle(isOn: $shouldShowChaptersInfoInBottomOverlay) {
-					HStack {
-						Image(systemName: "photo.on.rectangle")
-						L10n.showChaptersInfoInBottomOverlay.text
-					}
-				}
+                Toggle(isOn: $shouldShowChaptersInfoInBottomOverlay) {
+                    HStack {
+                        Image(systemName: "photo.on.rectangle")
+                        L10n.showChaptersInfoInBottomOverlay.text
+                    }
+                }
 
-				Toggle(L10n.editJumpLengths, isOn: $shouldShowJumpButtonsInOverlayMenu)
-			}
-		}
-	}
+                Toggle(L10n.editJumpLengths, isOn: $shouldShowJumpButtonsInOverlayMenu)
+            }
+        }
+    }
 }

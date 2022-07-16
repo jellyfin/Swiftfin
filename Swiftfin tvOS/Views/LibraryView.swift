@@ -11,81 +11,91 @@ import SwiftUI
 import SwiftUICollection
 
 struct LibraryView: View {
-	@EnvironmentObject
-	var libraryRouter: LibraryCoordinator.Router
-	@StateObject
-	var viewModel: LibraryViewModel
-	var title: String
+    @EnvironmentObject
+    var libraryRouter: LibraryCoordinator.Router
+    @StateObject
+    var viewModel: LibraryViewModel
+    var title: String
 
-	// MARK: tracks for grid
+    // MARK: tracks for grid
 
-	var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
+    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
 
-	@State
-	var isShowingSearchView = false
-	@State
-	var isShowingFilterView = false
+    @State
+    var isShowingSearchView = false
+    @State
+    var isShowingFilterView = false
 
-	var body: some View {
-		if viewModel.rows.isEmpty && viewModel.isLoading == true {
-			ProgressView()
-		} else if !viewModel.rows.isEmpty {
-			CollectionView(rows: viewModel.rows) { _, _ in
-				let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-				                                      heightDimension: .fractionalHeight(1))
-				let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    var body: some View {
+        if viewModel.rows.isEmpty && viewModel.isLoading == true {
+            ProgressView()
+        } else if !viewModel.rows.isEmpty {
+            CollectionView(rows: viewModel.rows) { _, _ in
+                let itemSize = NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: .fractionalHeight(1)
+                )
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-				let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(200),
-				                                       heightDimension: .absolute(300))
-				let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
-				                                               subitems: [item])
+                let groupSize = NSCollectionLayoutSize(
+                    widthDimension: .absolute(200),
+                    heightDimension: .absolute(300)
+                )
+                let group = NSCollectionLayoutGroup.horizontal(
+                    layoutSize: groupSize,
+                    subitems: [item]
+                )
 
-				let header =
-					NSCollectionLayoutBoundarySupplementaryItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-					                                                                               heightDimension: .absolute(44)),
-					                                            elementKind: UICollectionView.elementKindSectionHeader,
-					                                            alignment: .topLeading)
+                let header =
+                    NSCollectionLayoutBoundarySupplementaryItem(
+                        layoutSize: NSCollectionLayoutSize(
+                            widthDimension: .fractionalWidth(1),
+                            heightDimension: .absolute(44)
+                        ),
+                        elementKind: UICollectionView.elementKindSectionHeader,
+                        alignment: .topLeading
+                    )
 
-				let section = NSCollectionLayoutSection(group: group)
+                let section = NSCollectionLayoutSection(group: group)
 
-				section.contentInsets = NSDirectionalEdgeInsets(top: 30, leading: 0, bottom: 80, trailing: 80)
-				section.interGroupSpacing = 48
-				section.orthogonalScrollingBehavior = .continuous
-				section.boundarySupplementaryItems = [header]
-				return section
-			} cell: { _, cell in
-				GeometryReader { _ in
-					if let item = cell.item {
-						Button {
-							libraryRouter.route(to: \.modalItem, item)
-						} label: {
-							PortraitItemElement(item: item)
-						}
-						.buttonStyle(PlainNavigationLinkButtonStyle())
-						.onAppear {
-							if item == viewModel.items.last && viewModel.hasNextPage {
-								viewModel.requestNextPageAsync()
-							}
-						}
-					} else if cell.loadingCell {
-						ProgressView()
-							.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-					}
-				}
-			} supplementaryView: { _, indexPath in
-				HStack {
-					Spacer()
-				}.accessibilityIdentifier("\(indexPath.section).\(indexPath.row)")
-			}
-			.frame(maxWidth: .infinity, maxHeight: .infinity)
-			.ignoresSafeArea(.all)
-		} else {
-			VStack {
-				L10n.noResults.text
-				Button {} label: {
-					L10n.refresh.text
-				}
-			}
-		}
-	}
+                section.contentInsets = NSDirectionalEdgeInsets(top: 30, leading: 0, bottom: 80, trailing: 80)
+                section.interGroupSpacing = 48
+                section.orthogonalScrollingBehavior = .continuous
+                section.boundarySupplementaryItems = [header]
+                return section
+            } cell: { _, cell in
+                GeometryReader { _ in
+                    if let item = cell.item {
+                        Button {
+                            libraryRouter.route(to: \.modalItem, item)
+                        } label: {
+                            PortraitItemElement(item: item)
+                        }
+                        .buttonStyle(PlainNavigationLinkButtonStyle())
+                        .onAppear {
+                            if item == viewModel.items.last && viewModel.hasNextPage {
+                                viewModel.requestNextPageAsync()
+                            }
+                        }
+                    } else if cell.loadingCell {
+                        ProgressView()
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                    }
+                }
+            } supplementaryView: { _, indexPath in
+                HStack {
+                    Spacer()
+                }.accessibilityIdentifier("\(indexPath.section).\(indexPath.row)")
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea(.all)
+        } else {
+            VStack {
+                L10n.noResults.text
+                Button {} label: {
+                    L10n.refresh.text
+                }
+            }
+        }
+    }
 }

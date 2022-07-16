@@ -10,7 +10,7 @@ import Stinsen
 import SwiftUI
 
 struct LiveTVHomeView: View {
-	var body: some View {
-		Text("Coming Soon")
-	}
+    var body: some View {
+        Text("Coming Soon")
+    }
 }

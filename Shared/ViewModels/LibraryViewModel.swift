@@ -16,182 +16,188 @@ import UIKit
 typealias LibraryRow = CollectionRow<Int, LibraryRowCell>
 
 struct LibraryRowCell: Hashable {
-	let id = UUID()
-	let item: BaseItemDto?
-	var loadingCell: Bool = false
+    let id = UUID()
+    let item: BaseItemDto?
+    var loadingCell: Bool = false
 }
 
 final class LibraryViewModel: ViewModel {
 
-	@Published
-	var items: [BaseItemDto] = []
-	@Published
-	var rows: [LibraryRow] = []
+    @Published
+    var items: [BaseItemDto] = []
+    @Published
+    var rows: [LibraryRow] = []
 
-	@Published
-	var totalPages = 0
-	@Published
-	var currentPage = 0
-	@Published
-	var hasNextPage = false
+    @Published
+    var totalPages = 0
+    @Published
+    var currentPage = 0
+    @Published
+    var hasNextPage = false
 
-	// temp
-	@Published
-	var filters: LibraryFilters
+    // temp
+    @Published
+    var filters: LibraryFilters
 
-	var parentID: String?
-	var person: BaseItemPerson?
-	var genre: NameGuidPair?
-	var studio: NameGuidPair?
-	private let columns: Int
-	private let pageItemSize: Int
+    var parentID: String?
+    var person: BaseItemPerson?
+    var genre: NameGuidPair?
+    var studio: NameGuidPair?
+    private let columns: Int
+    private let pageItemSize: Int
 
-	var enabledFilterType: [FilterType] {
-		if genre == nil {
-			return [.tag, .genre, .sortBy, .sortOrder, .filter]
-		} else {
-			return [.tag, .sortBy, .sortOrder, .filter]
-		}
-	}
+    var enabledFilterType: [FilterType] {
+        if genre == nil {
+            return [.tag, .genre, .sortBy, .sortOrder, .filter]
+        } else {
+            return [.tag, .sortBy, .sortOrder, .filter]
+        }
+    }
 
-	init(parentID: String? = nil,
-	     person: BaseItemPerson? = nil,
-	     genre: NameGuidPair? = nil,
-	     studio: NameGuidPair? = nil,
-	     filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]),
-	     columns: Int = 7)
-	{
-		self.parentID = parentID
-		self.person = person
-		self.genre = genre
-		self.studio = studio
-		self.filters = filters
-		self.columns = columns
+    init(
+        parentID: String? = nil,
+        person: BaseItemPerson? = nil,
+        genre: NameGuidPair? = nil,
+        studio: NameGuidPair? = nil,
+        filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]),
+        columns: Int = 7
+    ) {
+        self.parentID = parentID
+        self.person = person
+        self.genre = genre
+        self.studio = studio
+        self.filters = filters
+        self.columns = columns
 
-		// Size is typical size of portrait items
-		self.pageItemSize = UIScreen.itemsFillableOnScreen(width: 130, height: 185)
+        // Size is typical size of portrait items
+        self.pageItemSize = UIScreen.itemsFillableOnScreen(width: 130, height: 185)
 
-		super.init()
+        super.init()
 
-		$filters
-			.sink(receiveValue: { newFilters in
-				self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
-			})
-			.store(in: &cancellables)
-	}
+        $filters
+            .sink(receiveValue: { newFilters in
+                self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
+            })
+            .store(in: &cancellables)
+    }
 
-	func requestItemsAsync(with filters: LibraryFilters, replaceCurrentItems: Bool = false) {
+    func requestItemsAsync(with filters: LibraryFilters, replaceCurrentItems: Bool = false) {
 
-		if replaceCurrentItems {
-			self.items = []
-		}
+        if replaceCurrentItems {
+            self.items = []
+        }
 
-		let personIDs: [String] = [person].compactMap(\.?.id)
-		let studioIDs: [String] = [studio].compactMap(\.?.id)
-		let genreIDs: [String]
-		if filters.withGenres.isEmpty {
-			genreIDs = [genre].compactMap(\.?.id)
-		} else {
-			genreIDs = filters.withGenres.compactMap(\.id)
-		}
-		let sortBy = filters.sortBy.map(\.rawValue)
-		let queryRecursive = Defaults[.showFlattenView] || filters.filters.contains(.isFavorite) ||
-			self.person != nil ||
-			self.genre != nil ||
-			self.studio != nil
-		let includeItemTypes: [BaseItemKind]
-		if filters.filters.contains(.isFavorite) {
-			includeItemTypes = [.movie, .series, .season, .episode, .boxSet]
-		} else {
-			includeItemTypes = [.movie, .series, .boxSet] + (Defaults[.showFlattenView] ? [] : [.folder])
-		}
+        let personIDs: [String] = [person].compactMap(\.?.id)
+        let studioIDs: [String] = [studio].compactMap(\.?.id)
+        let genreIDs: [String]
+        if filters.withGenres.isEmpty {
+            genreIDs = [genre].compactMap(\.?.id)
+        } else {
+            genreIDs = filters.withGenres.compactMap(\.id)
+        }
+        let sortBy = filters.sortBy.map(\.rawValue)
+        let queryRecursive = Defaults[.showFlattenView] || filters.filters.contains(.isFavorite) ||
+            self.person != nil ||
+            self.genre != nil ||
+            self.studio != nil
+        let includeItemTypes: [BaseItemKind]
+        if filters.filters.contains(.isFavorite) {
+            includeItemTypes = [.movie, .series, .season, .episode, .boxSet]
+        } else {
+            includeItemTypes = [.movie, .series, .boxSet] + (Defaults[.showFlattenView] ? [] : [.folder])
+        }
 
-		ItemsAPI.getItemsByUserId(userId: SessionManager.main.currentLogin.user.id, startIndex: currentPage * pageItemSize,
-		                          limit: pageItemSize,
-		                          recursive: queryRecursive,
-		                          searchTerm: nil,
-		                          sortOrder: filters.sortOrder.compactMap { SortOrder(rawValue: $0.rawValue) },
-		                          parentId: parentID,
-		                          fields: [
-		                          	.primaryImageAspectRatio,
-		                          	.seriesPrimaryImage,
-		                          	.seasonUserData,
-		                          	.overview,
-		                          	.genres,
-		                          	.people,
-		                          	.chapters,
-		                          ],
-		                          includeItemTypes: includeItemTypes,
-		                          filters: filters.filters,
-		                          sortBy: sortBy,
-		                          tags: filters.tags,
-		                          enableUserData: true,
-		                          personIds: personIDs,
-		                          studioIds: studioIDs,
-		                          genreIds: genreIDs,
-		                          enableImages: true)
-			.trackActivity(loading)
-			.sink(receiveCompletion: { [weak self] completion in
-				self?.handleAPIRequestError(completion: completion)
-			}, receiveValue: { [weak self] response in
+        ItemsAPI.getItemsByUserId(
+            userId: SessionManager.main.currentLogin.user.id,
+            startIndex: currentPage * pageItemSize,
+            limit: pageItemSize,
+            recursive: queryRecursive,
+            searchTerm: nil,
+            sortOrder: filters.sortOrder.compactMap { SortOrder(rawValue: $0.rawValue) },
+            parentId: parentID,
+            fields: [
+                .primaryImageAspectRatio,
+                .seriesPrimaryImage,
+                .seasonUserData,
+                .overview,
+                .genres,
+                .people,
+                .chapters,
+            ],
+            includeItemTypes: includeItemTypes,
+            filters: filters.filters,
+            sortBy: sortBy,
+            tags: filters.tags,
+            enableUserData: true,
+            personIds: personIDs,
+            studioIds: studioIDs,
+            genreIds: genreIDs,
+            enableImages: true
+        )
+        .trackActivity(loading)
+        .sink(receiveCompletion: { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        }, receiveValue: { [weak self] response in
 
-				guard let self = self else { return }
-				let totalPages = ceil(Double(response.totalRecordCount ?? 0) / Double(self.pageItemSize))
+            guard let self = self else { return }
+            let totalPages = ceil(Double(response.totalRecordCount ?? 0) / Double(self.pageItemSize))
 
-				self.totalPages = Int(totalPages)
-				self.hasNextPage = self.currentPage < self.totalPages - 1
-				self.items.append(contentsOf: response.items ?? [])
-				self.rows = self.calculateRows(for: self.items)
-			})
-			.store(in: &cancellables)
-	}
+            self.totalPages = Int(totalPages)
+            self.hasNextPage = self.currentPage < self.totalPages - 1
+            self.items.append(contentsOf: response.items ?? [])
+            self.rows = self.calculateRows(for: self.items)
+        })
+        .store(in: &cancellables)
+    }
 
-	func requestNextPageAsync() {
-		currentPage += 1
-		requestItemsAsync(with: filters)
-	}
+    func requestNextPageAsync() {
+        currentPage += 1
+        requestItemsAsync(with: filters)
+    }
 
-	// tvOS calculations for collection view
-	private func calculateRows(for itemList: [BaseItemDto]) -> [LibraryRow] {
-		guard !itemList.isEmpty else { return [] }
-		let rowCount = itemList.count / columns
-		var calculatedRows = [LibraryRow]()
-		for i in 0 ... rowCount {
-			let firstItemIndex = i * columns
-			var lastItemIndex = firstItemIndex + columns
-			if lastItemIndex > itemList.count {
-				lastItemIndex = itemList.count
-			}
+    // tvOS calculations for collection view
+    private func calculateRows(for itemList: [BaseItemDto]) -> [LibraryRow] {
+        guard !itemList.isEmpty else { return [] }
+        let rowCount = itemList.count / columns
+        var calculatedRows = [LibraryRow]()
+        for i in 0 ... rowCount {
+            let firstItemIndex = i * columns
+            var lastItemIndex = firstItemIndex + columns
+            if lastItemIndex > itemList.count {
+                lastItemIndex = itemList.count
+            }
 
-			var rowCells = [LibraryRowCell]()
-			for item in itemList[firstItemIndex ..< lastItemIndex] {
-				let newCell = LibraryRowCell(item: item)
-				rowCells.append(newCell)
-			}
-			if i == rowCount, hasNextPage {
-				var loadingCell = LibraryRowCell(item: nil)
-				loadingCell.loadingCell = true
-				rowCells.append(loadingCell)
-			}
+            var rowCells = [LibraryRowCell]()
+            for item in itemList[firstItemIndex ..< lastItemIndex] {
+                let newCell = LibraryRowCell(item: item)
+                rowCells.append(newCell)
+            }
+            if i == rowCount, hasNextPage {
+                var loadingCell = LibraryRowCell(item: nil)
+                loadingCell.loadingCell = true
+                rowCells.append(loadingCell)
+            }
 
-			calculatedRows.append(LibraryRow(section: i,
-			                                 items: rowCells))
-		}
-		return calculatedRows
-	}
+            calculatedRows.append(LibraryRow(
+                section: i,
+                items: rowCells
+            ))
+        }
+        return calculatedRows
+    }
 }
 
 extension UIScreen {
 
-	static func itemsFillableOnScreen(width: CGFloat, height: CGFloat) -> Int {
+    static func itemsFillableOnScreen(width: CGFloat, height: CGFloat) -> Int {
 
-		let screenSize = UIScreen.main.bounds.height * UIScreen.main.bounds.width
-		let itemSize = width * height
+        let screenSize = UIScreen.main.bounds.height * UIScreen.main.bounds.width
+        let itemSize = width * height
 
-		#if os(tvOS)
-			return Int(screenSize / itemSize) * 2
-		#else
-			return Int(screenSize / itemSize)
-		#endif
-	}
+        #if os(tvOS)
+            return Int(screenSize / itemSize) * 2
+        #else
+            return Int(screenSize / itemSize)
+        #endif
+    }
 }

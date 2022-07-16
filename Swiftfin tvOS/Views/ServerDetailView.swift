@@ -10,41 +10,41 @@ import SwiftUI
 
 struct ServerDetailView: View {
 
-	@ObservedObject
-	var viewModel: ServerDetailViewModel
+    @ObservedObject
+    var viewModel: ServerDetailViewModel
 
-	var body: some View {
-		Form {
-			Section(header: L10n.serverDetails.text) {
-				HStack {
-					L10n.name.text
-					Spacer()
-					Text(SessionManager.main.currentLogin.server.name)
-						.foregroundColor(.secondary)
-				}
-				.focusable()
+    var body: some View {
+        Form {
+            Section(header: L10n.serverDetails.text) {
+                HStack {
+                    L10n.name.text
+                    Spacer()
+                    Text(SessionManager.main.currentLogin.server.name)
+                        .foregroundColor(.secondary)
+                }
+                .focusable()
 
-				HStack {
-					L10n.url.text
-					Spacer()
-					Text(SessionManager.main.currentLogin.server.currentURI)
-						.foregroundColor(.secondary)
-				}
+                HStack {
+                    L10n.url.text
+                    Spacer()
+                    Text(SessionManager.main.currentLogin.server.currentURI)
+                        .foregroundColor(.secondary)
+                }
 
-				HStack {
-					L10n.version.text
-					Spacer()
-					Text(SessionManager.main.currentLogin.server.version)
-						.foregroundColor(.secondary)
-				}
+                HStack {
+                    L10n.version.text
+                    Spacer()
+                    Text(SessionManager.main.currentLogin.server.version)
+                        .foregroundColor(.secondary)
+                }
 
-				HStack {
-					L10n.operatingSystem.text
-					Spacer()
-					Text(SessionManager.main.currentLogin.server.os)
-						.foregroundColor(.secondary)
-				}
-			}
-		}
-	}
+                HStack {
+                    L10n.operatingSystem.text
+                    Spacer()
+                    Text(SessionManager.main.currentLogin.server.os)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+    }
 }

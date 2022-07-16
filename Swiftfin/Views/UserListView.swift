@@ -10,114 +10,114 @@ import SwiftUI
 
 struct UserListView: View {
 
-	@EnvironmentObject
-	var userListRouter: UserListCoordinator.Router
-	@ObservedObject
-	var viewModel: UserListViewModel
+    @EnvironmentObject
+    var userListRouter: UserListCoordinator.Router
+    @ObservedObject
+    var viewModel: UserListViewModel
 
-	private var listView: some View {
-		ScrollView {
-			LazyVStack {
-				ForEach(viewModel.users, id: \.id) { user in
-					Button {
-						viewModel.login(user: user)
-					} label: {
-						ZStack(alignment: Alignment.leading) {
-							Rectangle()
-								.foregroundColor(Color(UIColor.secondarySystemFill))
-								.frame(height: 50)
-								.cornerRadius(10)
+    private var listView: some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(viewModel.users, id: \.id) { user in
+                    Button {
+                        viewModel.login(user: user)
+                    } label: {
+                        ZStack(alignment: Alignment.leading) {
+                            Rectangle()
+                                .foregroundColor(Color(UIColor.secondarySystemFill))
+                                .frame(height: 50)
+                                .cornerRadius(10)
 
-							HStack {
-								Text(user.username)
-									.font(.title2)
+                            HStack {
+                                Text(user.username)
+                                    .font(.title2)
 
-								Spacer()
+                                Spacer()
 
-								if viewModel.isLoading {
-									ProgressView()
-								}
-							}.padding(.leading)
-						}
-						.padding()
-					}
-					.contextMenu {
-						Button(role: .destructive) {
-							viewModel.remove(user: user)
-						} label: {
-							Label(L10n.remove, systemImage: "trash")
-						}
-					}
-				}
-			}
-		}
-	}
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                }
+                            }.padding(.leading)
+                        }
+                        .padding()
+                    }
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            viewModel.remove(user: user)
+                        } label: {
+                            Label(L10n.remove, systemImage: "trash")
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	private var noUserView: some View {
-		VStack {
-			L10n.signInGetStarted.text
-				.frame(minWidth: 50, maxWidth: 240)
-				.multilineTextAlignment(.center)
+    private var noUserView: some View {
+        VStack {
+            L10n.signInGetStarted.text
+                .frame(minWidth: 50, maxWidth: 240)
+                .multilineTextAlignment(.center)
 
-			Button {
-				userListRouter.route(to: \.userSignIn, viewModel.server)
-			} label: {
-				ZStack {
-					Rectangle()
-						.foregroundColor(Color.jellyfinPurple)
-						.frame(maxWidth: 400, maxHeight: 50)
-						.frame(height: 50)
-						.cornerRadius(10)
-						.padding(.horizontal, 30)
-						.padding([.top, .bottom], 20)
+            Button {
+                userListRouter.route(to: \.userSignIn, viewModel.server)
+            } label: {
+                ZStack {
+                    Rectangle()
+                        .foregroundColor(Color.jellyfinPurple)
+                        .frame(maxWidth: 400, maxHeight: 50)
+                        .frame(height: 50)
+                        .cornerRadius(10)
+                        .padding(.horizontal, 30)
+                        .padding([.top, .bottom], 20)
 
-					L10n.signIn.text
-						.foregroundColor(Color.white)
-						.bold()
-				}
-			}
-		}
-	}
+                    L10n.signIn.text
+                        .foregroundColor(Color.white)
+                        .bold()
+                }
+            }
+        }
+    }
 
-	@ViewBuilder
-	private var innerBody: some View {
-		if viewModel.users.isEmpty {
-			noUserView
-				.offset(y: -50)
-		} else {
-			listView
-		}
-	}
+    @ViewBuilder
+    private var innerBody: some View {
+        if viewModel.users.isEmpty {
+            noUserView
+                .offset(y: -50)
+        } else {
+            listView
+        }
+    }
 
-	@ViewBuilder
-	private var toolbarContent: some View {
-		HStack {
-			Button {
-				userListRouter.route(to: \.serverDetail, viewModel.server)
-			} label: {
-				Image(systemName: "info.circle.fill")
-			}
+    @ViewBuilder
+    private var toolbarContent: some View {
+        HStack {
+            Button {
+                userListRouter.route(to: \.serverDetail, viewModel.server)
+            } label: {
+                Image(systemName: "info.circle.fill")
+            }
 
-			if !viewModel.users.isEmpty {
-				Button {
-					userListRouter.route(to: \.userSignIn, viewModel.server)
-				} label: {
-					Image(systemName: "person.crop.circle.fill.badge.plus")
-				}
-			}
-		}
-	}
+            if !viewModel.users.isEmpty {
+                Button {
+                    userListRouter.route(to: \.userSignIn, viewModel.server)
+                } label: {
+                    Image(systemName: "person.crop.circle.fill.badge.plus")
+                }
+            }
+        }
+    }
 
-	var body: some View {
-		innerBody
-			.navigationTitle(viewModel.server.name)
-			.toolbar {
-				ToolbarItem(placement: .navigationBarTrailing) {
-					toolbarContent
-				}
-			}
-			.onAppear {
-				viewModel.fetchUsers()
-			}
-	}
+    var body: some View {
+        innerBody
+            .navigationTitle(viewModel.server.name)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    toolbarContent
+                }
+            }
+            .onAppear {
+                viewModel.fetchUsers()
+            }
+    }
 }
