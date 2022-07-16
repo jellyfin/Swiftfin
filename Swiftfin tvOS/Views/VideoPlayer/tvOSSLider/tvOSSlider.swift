@@ -433,9 +433,7 @@ public final class TvOSSlider: UIControl {
 
         let threshold: Float = 0.7
         micro.reportsAbsoluteDpadValues = true
-        micro.dpad.valueChangedHandler = {
-            [weak self] _, x, _ in
-
+        micro.dpad.valueChangedHandler = { [weak self] _, x, _ in
             if x < -threshold {
                 self?.dPadState = .left
             } else if x > threshold {
