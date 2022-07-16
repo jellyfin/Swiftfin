@@ -9,8 +9,8 @@
 import Foundation
 
 struct TrackLanguage: Hashable {
-	var name: String
-	var isoCode: String
+    var name: String
+    var isoCode: String
 
-	static let auto = TrackLanguage(name: "Auto", isoCode: "Auto")
+    static let auto = TrackLanguage(name: "Auto", isoCode: "Auto")
 }

@@ -10,15 +10,15 @@ import Defaults
 import UIKit
 
 enum OverlaySliderColor: String, CaseIterable, DefaultsSerializable {
-	case white
-	case jellyfinPurple
+    case white
+    case jellyfinPurple
 
-	var displayLabel: String {
-		switch self {
-		case .white:
-			return "White"
-		case .jellyfinPurple:
-			return "Jellyfin Purple"
-		}
-	}
+    var displayLabel: String {
+        switch self {
+        case .white:
+            return "White"
+        case .jellyfinPurple:
+            return "Jellyfin Purple"
+        }
+    }
 }

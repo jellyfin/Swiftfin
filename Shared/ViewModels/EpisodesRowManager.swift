@@ -11,66 +11,70 @@ import JellyfinAPI
 import SwiftUI
 
 protocol EpisodesRowManager: ViewModel {
-	var item: BaseItemDto { get }
-	var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] { get set }
-	var selectedSeason: BaseItemDto? { get set }
-	func retrieveSeasons()
-	func retrieveEpisodesForSeason(_ season: BaseItemDto)
-	func select(season: BaseItemDto)
+    var item: BaseItemDto { get }
+    var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] { get set }
+    var selectedSeason: BaseItemDto? { get set }
+    func retrieveSeasons()
+    func retrieveEpisodesForSeason(_ season: BaseItemDto)
+    func select(season: BaseItemDto)
 }
 
 extension EpisodesRowManager {
 
-	var sortedSeasons: [BaseItemDto] {
-		Array(seasonsEpisodes.keys).sorted(by: { $0.indexNumber ?? 0 < $1.indexNumber ?? 0 })
-	}
+    var sortedSeasons: [BaseItemDto] {
+        Array(seasonsEpisodes.keys).sorted(by: { $0.indexNumber ?? 0 < $1.indexNumber ?? 0 })
+    }
 
-	// Also retrieves the current season episodes if available
-	func retrieveSeasons() {
-		TvShowsAPI.getSeasons(seriesId: item.seriesId ?? "",
-		                      userId: SessionManager.main.currentLogin.user.id,
-		                      isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false)
-			.sink { completion in
-				self.handleAPIRequestError(completion: completion)
-			} receiveValue: { response in
-				let seasons = response.items ?? []
-				seasons.forEach { season in
-					self.seasonsEpisodes[season] = []
+    // Also retrieves the current season episodes if available
+    func retrieveSeasons() {
+        TvShowsAPI.getSeasons(
+            seriesId: item.seriesId ?? "",
+            userId: SessionManager.main.currentLogin.user.id,
+            isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false
+        )
+        .sink { completion in
+            self.handleAPIRequestError(completion: completion)
+        } receiveValue: { response in
+            let seasons = response.items ?? []
+            seasons.forEach { season in
+                self.seasonsEpisodes[season] = []
 
-					if season.id == self.item.seasonId ?? "" {
-						self.selectedSeason = season
-						self.retrieveEpisodesForSeason(season)
-					} else if season.id == self.item.id ?? "" {
-						self.selectedSeason = season
-						self.retrieveEpisodesForSeason(season)
-					}
-				}
-			}
-			.store(in: &cancellables)
-	}
+                if season.id == self.item.seasonId ?? "" {
+                    self.selectedSeason = season
+                    self.retrieveEpisodesForSeason(season)
+                } else if season.id == self.item.id ?? "" {
+                    self.selectedSeason = season
+                    self.retrieveEpisodesForSeason(season)
+                }
+            }
+        }
+        .store(in: &cancellables)
+    }
 
-	func retrieveEpisodesForSeason(_ season: BaseItemDto) {
-		guard let seasonID = season.id else { return }
+    func retrieveEpisodesForSeason(_ season: BaseItemDto) {
+        guard let seasonID = season.id else { return }
 
-		TvShowsAPI.getEpisodes(seriesId: item.seriesId ?? "",
-		                       userId: SessionManager.main.currentLogin.user.id,
-		                       fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-		                       seasonId: seasonID,
-		                       isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false)
-			.trackActivity(loading)
-			.sink { completion in
-				self.handleAPIRequestError(completion: completion)
-			} receiveValue: { episodes in
-				self.seasonsEpisodes[season] = episodes.items ?? []
-			}
-			.store(in: &cancellables)
-	}
+        TvShowsAPI.getEpisodes(
+            seriesId: item.seriesId ?? "",
+            userId: SessionManager.main.currentLogin.user.id,
+            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+            seasonId: seasonID,
+            isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false
+        )
+        .trackActivity(loading)
+        .sink { completion in
+            self.handleAPIRequestError(completion: completion)
+        } receiveValue: { episodes in
+            self.seasonsEpisodes[season] = episodes.items ?? []
+        }
+        .store(in: &cancellables)
+    }
 
-	func select(season: BaseItemDto) {
-		self.selectedSeason = season
+    func select(season: BaseItemDto) {
+        self.selectedSeason = season
 
-		if seasonsEpisodes[season]!.isEmpty {
-			retrieveEpisodesForSeason(season)
-		}
-	}
+        if seasonsEpisodes[season]!.isEmpty {
+            retrieveEpisodesForSeason(season)
+        }
+    }
 }

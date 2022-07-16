@@ -12,19 +12,19 @@ import Stinsen
 import SwiftUI
 
 final class LiveTVCoordinator: NavigationCoordinatable {
-	let stack = NavigationStack(initial: \LiveTVCoordinator.start)
+    let stack = NavigationStack(initial: \LiveTVCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.fullScreen)
-	var videoPlayer = makeVideoPlayer
+    @Root
+    var start = makeStart
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		LiveTVChannelsView()
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        LiveTVChannelsView()
+    }
 
-	func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
-		NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
-	}
+    func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
+        NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
+    }
 }

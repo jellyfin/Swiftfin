@@ -12,20 +12,20 @@ import SwiftUI
 
 final class BasicAppSettingsCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \BasicAppSettingsCoordinator.start)
+    let stack = NavigationStack(initial: \BasicAppSettingsCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.push)
-	var about = makeAbout
+    @Root
+    var start = makeStart
+    @Route(.push)
+    var about = makeAbout
 
-	@ViewBuilder
-	func makeAbout() -> some View {
-		AboutView()
-	}
+    @ViewBuilder
+    func makeAbout() -> some View {
+        AboutView()
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		BasicAppSettingsView(viewModel: BasicAppSettingsViewModel())
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        BasicAppSettingsView(viewModel: BasicAppSettingsViewModel())
+    }
 }

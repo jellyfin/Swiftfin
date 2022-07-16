@@ -11,38 +11,38 @@ import SwiftUI
 
 struct OverlaySettingsView: View {
 
-	@Default(.shouldShowPlayPreviousItem)
-	var shouldShowPlayPreviousItem
-	@Default(.shouldShowPlayNextItem)
-	var shouldShowPlayNextItem
-	@Default(.shouldShowAutoPlay)
-	var shouldShowAutoPlay
+    @Default(.shouldShowPlayPreviousItem)
+    var shouldShowPlayPreviousItem
+    @Default(.shouldShowPlayNextItem)
+    var shouldShowPlayNextItem
+    @Default(.shouldShowAutoPlay)
+    var shouldShowAutoPlay
 
-	var body: some View {
-		Form {
-			Section(header: L10n.overlay.text) {
+    var body: some View {
+        Form {
+            Section(header: L10n.overlay.text) {
 
-				Toggle(isOn: $shouldShowPlayPreviousItem) {
-					HStack {
-						Image(systemName: "chevron.left.circle")
-						L10n.playPreviousItem.text
-					}
-				}
+                Toggle(isOn: $shouldShowPlayPreviousItem) {
+                    HStack {
+                        Image(systemName: "chevron.left.circle")
+                        L10n.playPreviousItem.text
+                    }
+                }
 
-				Toggle(isOn: $shouldShowPlayNextItem) {
-					HStack {
-						Image(systemName: "chevron.right.circle")
-						L10n.playNextItem.text
-					}
-				}
+                Toggle(isOn: $shouldShowPlayNextItem) {
+                    HStack {
+                        Image(systemName: "chevron.right.circle")
+                        L10n.playNextItem.text
+                    }
+                }
 
-				Toggle(isOn: $shouldShowAutoPlay) {
-					HStack {
-						Image(systemName: "play.circle.fill")
-						L10n.autoPlay.text
-					}
-				}
-			}
-		}
-	}
+                Toggle(isOn: $shouldShowAutoPlay) {
+                    HStack {
+                        Image(systemName: "play.circle.fill")
+                        L10n.autoPlay.text
+                    }
+                }
+            }
+        }
+    }
 }

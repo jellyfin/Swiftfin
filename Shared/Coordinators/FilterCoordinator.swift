@@ -14,24 +14,24 @@ typealias FilterCoordinatorParams = (filters: Binding<LibraryFilters>, enabledFi
 
 final class FilterCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \FilterCoordinator.start)
+    let stack = NavigationStack(initial: \FilterCoordinator.start)
 
-	@Root
-	var start = makeStart
+    @Root
+    var start = makeStart
 
-	@Binding
-	var filters: LibraryFilters
-	var enabledFilterType: [FilterType]
-	var parentId: String = ""
+    @Binding
+    var filters: LibraryFilters
+    var enabledFilterType: [FilterType]
+    var parentId: String = ""
 
-	init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String) {
-		_filters = filters
-		self.enabledFilterType = enabledFilterType
-		self.parentId = parentId
-	}
+    init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String) {
+        _filters = filters
+        self.enabledFilterType = enabledFilterType
+        self.parentId = parentId
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		LibraryFilterView(filters: $filters, enabledFilterType: enabledFilterType, parentId: parentId)
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        LibraryFilterView(filters: $filters, enabledFilterType: enabledFilterType, parentId: parentId)
+    }
 }

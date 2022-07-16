@@ -12,31 +12,31 @@ import SwiftUI
 
 final class ServerListCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \ServerListCoordinator.start)
+    let stack = NavigationStack(initial: \ServerListCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.push)
-	var connectToServer = makeConnectToServer
-	@Route(.push)
-	var userList = makeUserList
-	@Route(.modal)
-	var basicAppSettings = makeBasicAppSettings
+    @Root
+    var start = makeStart
+    @Route(.push)
+    var connectToServer = makeConnectToServer
+    @Route(.push)
+    var userList = makeUserList
+    @Route(.modal)
+    var basicAppSettings = makeBasicAppSettings
 
-	func makeConnectToServer() -> ConnectToServerCoodinator {
-		ConnectToServerCoodinator()
-	}
+    func makeConnectToServer() -> ConnectToServerCoodinator {
+        ConnectToServerCoodinator()
+    }
 
-	func makeUserList(server: SwiftfinStore.State.Server) -> UserListCoordinator {
-		UserListCoordinator(viewModel: .init(server: server))
-	}
+    func makeUserList(server: SwiftfinStore.State.Server) -> UserListCoordinator {
+        UserListCoordinator(viewModel: .init(server: server))
+    }
 
-	func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
-		NavigationViewCoordinator(BasicAppSettingsCoordinator())
-	}
+    func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
+        NavigationViewCoordinator(BasicAppSettingsCoordinator())
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		ServerListView(viewModel: ServerListViewModel())
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        ServerListView(viewModel: ServerListViewModel())
+    }
 }

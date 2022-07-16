@@ -12,70 +12,70 @@ import SwiftUI
 
 final class SettingsCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \SettingsCoordinator.start)
+    let stack = NavigationStack(initial: \SettingsCoordinator.start)
 
-	@Root
-	var start = makeStart
-	@Route(.push)
-	var serverDetail = makeServerDetail
-	@Route(.push)
-	var overlaySettings = makeOverlaySettings
-	@Route(.push)
-	var experimentalSettings = makeExperimentalSettings
-	@Route(.push)
-	var customizeViewsSettings = makeCustomizeViewsSettings
-	@Route(.push)
-	var missingSettings = makeMissingSettings
-	@Route(.push)
-	var about = makeAbout
+    @Root
+    var start = makeStart
+    @Route(.push)
+    var serverDetail = makeServerDetail
+    @Route(.push)
+    var overlaySettings = makeOverlaySettings
+    @Route(.push)
+    var experimentalSettings = makeExperimentalSettings
+    @Route(.push)
+    var customizeViewsSettings = makeCustomizeViewsSettings
+    @Route(.push)
+    var missingSettings = makeMissingSettings
+    @Route(.push)
+    var about = makeAbout
 
-	#if !os(tvOS)
-		@Route(.push)
-		var quickConnect = makeQuickConnectSettings
-	#endif
+    #if !os(tvOS)
+        @Route(.push)
+        var quickConnect = makeQuickConnectSettings
+    #endif
 
-	@ViewBuilder
-	func makeServerDetail() -> some View {
-		let viewModel = ServerDetailViewModel(server: SessionManager.main.currentLogin.server)
-		ServerDetailView(viewModel: viewModel)
-	}
+    @ViewBuilder
+    func makeServerDetail() -> some View {
+        let viewModel = ServerDetailViewModel(server: SessionManager.main.currentLogin.server)
+        ServerDetailView(viewModel: viewModel)
+    }
 
-	@ViewBuilder
-	func makeOverlaySettings() -> some View {
-		OverlaySettingsView()
-	}
+    @ViewBuilder
+    func makeOverlaySettings() -> some View {
+        OverlaySettingsView()
+    }
 
-	@ViewBuilder
-	func makeExperimentalSettings() -> some View {
-		ExperimentalSettingsView()
-	}
+    @ViewBuilder
+    func makeExperimentalSettings() -> some View {
+        ExperimentalSettingsView()
+    }
 
-	@ViewBuilder
-	func makeCustomizeViewsSettings() -> some View {
-		CustomizeViewsSettings()
-	}
+    @ViewBuilder
+    func makeCustomizeViewsSettings() -> some View {
+        CustomizeViewsSettings()
+    }
 
-	@ViewBuilder
-	func makeMissingSettings() -> some View {
-		MissingItemsSettingsView()
-	}
+    @ViewBuilder
+    func makeMissingSettings() -> some View {
+        MissingItemsSettingsView()
+    }
 
-	@ViewBuilder
-	func makeAbout() -> some View {
-		AboutView()
-	}
+    @ViewBuilder
+    func makeAbout() -> some View {
+        AboutView()
+    }
 
-	#if !os(tvOS)
-		@ViewBuilder
-		func makeQuickConnectSettings() -> some View {
-			let viewModel = QuickConnectSettingsViewModel()
-			QuickConnectSettingsView(viewModel: viewModel)
-		}
-	#endif
+    #if !os(tvOS)
+        @ViewBuilder
+        func makeQuickConnectSettings() -> some View {
+            let viewModel = QuickConnectSettingsViewModel()
+            QuickConnectSettingsView(viewModel: viewModel)
+        }
+    #endif
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		let viewModel = SettingsViewModel(server: SessionManager.main.currentLogin.server, user: SessionManager.main.currentLogin.user)
-		SettingsView(viewModel: viewModel)
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        let viewModel = SettingsViewModel(server: SessionManager.main.currentLogin.server, user: SessionManager.main.currentLogin.user)
+        SettingsView(viewModel: viewModel)
+    }
 }

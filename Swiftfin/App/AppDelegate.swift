@@ -11,27 +11,28 @@ import SwiftUI
 import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-	static var orientationLock = UIInterfaceOrientationMask.all
+    static var orientationLock = UIInterfaceOrientationMask.all
 
-	func application(_ application: UIApplication,
-	                 didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool
-	{
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
 
-		// Lazily initialize datastack
-		_ = SwiftfinStore.dataStack
-		LogManager.setup()
+        // Lazily initialize datastack
+        _ = SwiftfinStore.dataStack
+        LogManager.setup()
 
-		let audioSession = AVAudioSession.sharedInstance()
-		do {
-			try audioSession.setCategory(.playback)
-		} catch {
-			print("setting category AVAudioSessionCategoryPlayback failed")
-		}
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(.playback)
+        } catch {
+            print("setting category AVAudioSessionCategoryPlayback failed")
+        }
 
-		return true
-	}
+        return true
+    }
 
-	func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-		AppDelegate.orientationLock
-	}
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        AppDelegate.orientationLock
+    }
 }

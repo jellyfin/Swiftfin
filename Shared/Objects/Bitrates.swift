@@ -9,6 +9,6 @@
 import Foundation
 
 struct Bitrates: Codable, Hashable {
-	public var name: String
-	public var value: Int
+    public var name: String
+    public var value: Int
 }

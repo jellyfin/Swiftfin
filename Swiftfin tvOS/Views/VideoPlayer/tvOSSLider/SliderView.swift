@@ -10,30 +10,30 @@ import SwiftUI
 
 struct SliderView: UIViewRepresentable {
 
-	@ObservedObject
-	var viewModel: VideoPlayerViewModel
+    @ObservedObject
+    var viewModel: VideoPlayerViewModel
 
-	// TODO: look at adjusting value dependent on item runtime
-	private let maxValue: Double = 1000
+    // TODO: look at adjusting value dependent on item runtime
+    private let maxValue: Double = 1000
 
-	func updateUIView(_ uiView: TvOSSlider, context: Context) {
-		guard !viewModel.sliderIsScrubbing else { return }
-		uiView.value = Float(maxValue * viewModel.sliderPercentage)
-	}
+    func updateUIView(_ uiView: TvOSSlider, context: Context) {
+        guard !viewModel.sliderIsScrubbing else { return }
+        uiView.value = Float(maxValue * viewModel.sliderPercentage)
+    }
 
-	func makeUIView(context: Context) -> TvOSSlider {
-		let slider = TvOSSlider(viewModel: viewModel)
+    func makeUIView(context: Context) -> TvOSSlider {
+        let slider = TvOSSlider(viewModel: viewModel)
 
-		slider.minimumValue = 0
-		slider.maximumValue = Float(maxValue)
-		slider.value = Float(maxValue * viewModel.sliderPercentage)
-		slider.thumbSize = 25
-		slider.thumbTintColor = .white
-		slider.minimumTrackTintColor = .white
-		slider.focusScaleFactor = 1.4
-		slider.panDampingValue = 50
-		slider.fineTunningVelocityThreshold = 1000
+        slider.minimumValue = 0
+        slider.maximumValue = Float(maxValue)
+        slider.value = Float(maxValue * viewModel.sliderPercentage)
+        slider.thumbSize = 25
+        slider.thumbTintColor = .white
+        slider.minimumTrackTintColor = .white
+        slider.focusScaleFactor = 1.4
+        slider.panDampingValue = 50
+        slider.fineTunningVelocityThreshold = 1000
 
-		return slider
-	}
+        return slider
+    }
 }

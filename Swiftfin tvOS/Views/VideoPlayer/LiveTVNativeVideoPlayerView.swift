@@ -11,13 +11,13 @@ import UIKit
 
 struct LiveTVNativeVideoPlayerView: UIViewControllerRepresentable {
 
-	let viewModel: VideoPlayerViewModel
+    let viewModel: VideoPlayerViewModel
 
-	typealias UIViewControllerType = NativePlayerViewController
+    typealias UIViewControllerType = NativePlayerViewController
 
-	func makeUIViewController(context: Context) -> NativePlayerViewController {
-		NativePlayerViewController(viewModel: viewModel)
-	}
+    func makeUIViewController(context: Context) -> NativePlayerViewController {
+        NativePlayerViewController(viewModel: viewModel)
+    }
 
-	func updateUIViewController(_ uiViewController: NativePlayerViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: NativePlayerViewController, context: Context) {}
 }

@@ -10,19 +10,19 @@ import Foundation
 
 class TranslationService {
 
-	static let shared = TranslationService()
+    static let shared = TranslationService()
 
-	func lookupTranslation(forKey key: String, inTable table: String) -> String {
+    func lookupTranslation(forKey key: String, inTable table: String) -> String {
 
-		let expectedValue = Bundle.main.localizedString(forKey: key, value: nil, table: table)
+        let expectedValue = Bundle.main.localizedString(forKey: key, value: nil, table: table)
 
-		if expectedValue == key || NSLocale.preferredLanguages.first == "en" {
-			guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
-			      let bundle = Bundle(path: path) else { return expectedValue }
+        if expectedValue == key || NSLocale.preferredLanguages.first == "en" {
+            guard let path = Bundle.main.path(forResource: "en", ofType: "lproj"),
+                  let bundle = Bundle(path: path) else { return expectedValue }
 
-			return NSLocalizedString(key, bundle: bundle, comment: "")
-		} else {
-			return expectedValue
-		}
-	}
+            return NSLocalizedString(key, bundle: bundle, comment: "")
+        } else {
+            return expectedValue
+        }
+    }
 }

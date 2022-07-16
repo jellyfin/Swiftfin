@@ -11,46 +11,50 @@ import SwiftUI
 
 struct ItemPortraitMainView: View {
 
-	@EnvironmentObject
-	var itemRouter: ItemCoordinator.Router
-	@EnvironmentObject
-	private var viewModel: ItemViewModel
+    @EnvironmentObject
+    var itemRouter: ItemCoordinator.Router
+    @EnvironmentObject
+    private var viewModel: ItemViewModel
 
-	// MARK: portraitHeaderView
+    // MARK: portraitHeaderView
 
-	var portraitHeaderView: some View {
-		ImageView(viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-		          blurHash: viewModel.item.getBackdropImageBlurHash())
-			.opacity(0.4)
-			.blur(radius: 2.0)
-			.accessibilityIgnoresInvertColors()
-	}
+    var portraitHeaderView: some View {
+        ImageView(
+            viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
+            blurHash: viewModel.item.getBackdropImageBlurHash()
+        )
+        .opacity(0.4)
+        .blur(radius: 2.0)
+        .accessibilityIgnoresInvertColors()
+    }
 
-	// MARK: portraitStaticOverlayView
+    // MARK: portraitStaticOverlayView
 
-	var portraitStaticOverlayView: some View {
-		PortraitHeaderOverlayView()
-			.environmentObject(viewModel)
-	}
+    var portraitStaticOverlayView: some View {
+        PortraitHeaderOverlayView()
+            .environmentObject(viewModel)
+    }
 
-	// MARK: body
+    // MARK: body
 
-	var body: some View {
-		VStack(alignment: .leading) {
-			// MARK: ParallaxScrollView
+    var body: some View {
+        VStack(alignment: .leading) {
+            // MARK: ParallaxScrollView
 
-			ParallaxHeaderScrollView(header: portraitHeaderView,
-			                         staticOverlayView: portraitStaticOverlayView,
-			                         overlayAlignment: .bottomLeading,
-			                         headerHeight: UIScreen.main.bounds.width * 0.5625) {
-				VStack {
-					Spacer()
-						.frame(height: 70)
+            ParallaxHeaderScrollView(
+                header: portraitHeaderView,
+                staticOverlayView: portraitStaticOverlayView,
+                overlayAlignment: .bottomLeading,
+                headerHeight: UIScreen.main.bounds.width * 0.5625
+            ) {
+                VStack {
+                    Spacer()
+                        .frame(height: 70)
 
-					ItemViewBody()
-						.environmentObject(viewModel)
-				}
-			}
-		}
-	}
+                    ItemViewBody()
+                        .environmentObject(viewModel)
+                }
+            }
+        }
+    }
 }

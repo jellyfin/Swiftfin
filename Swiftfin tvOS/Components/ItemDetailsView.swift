@@ -10,82 +10,82 @@ import SwiftUI
 
 struct ItemDetailsView: View {
 
-	@ObservedObject
-	var viewModel: ItemViewModel
-	@FocusState
-	private var focused: Bool
+    @ObservedObject
+    var viewModel: ItemViewModel
+    @FocusState
+    private var focused: Bool
 
-	var body: some View {
+    var body: some View {
 
-		ZStack(alignment: .leading) {
+        ZStack(alignment: .leading) {
 
-			Color(UIColor.darkGray).opacity(focused ? 0.2 : 0)
-				.cornerRadius(30, corners: [.topLeft, .topRight])
+            Color(UIColor.darkGray).opacity(focused ? 0.2 : 0)
+                .cornerRadius(30, corners: [.topLeft, .topRight])
 
-			HStack(alignment: .top) {
-				VStack(alignment: .leading, spacing: 20) {
-					L10n.information.text
-						.font(.title3)
-						.padding(.bottom, 5)
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 20) {
+                    L10n.information.text
+                        .font(.title3)
+                        .padding(.bottom, 5)
 
-					ForEach(viewModel.informationItems, id: \.self.title) { informationItem in
-						ItemDetail(title: informationItem.title, content: informationItem.content)
-					}
-				}
+                    ForEach(viewModel.informationItems, id: \.self.title) { informationItem in
+                        ItemDetail(title: informationItem.title, content: informationItem.content)
+                    }
+                }
 
-				Spacer()
+                Spacer()
 
-				if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-					VStack(alignment: .leading, spacing: 20) {
-						L10n.media.text
-							.font(.title3)
-							.padding(.bottom, 5)
+                if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+                    VStack(alignment: .leading, spacing: 20) {
+                        L10n.media.text
+                            .font(.title3)
+                            .padding(.bottom, 5)
 
-						ForEach(selectedVideoPlayerViewModel.mediaItems, id: \.self.title) { mediaItem in
-							ItemDetail(title: mediaItem.title, content: mediaItem.content)
-						}
-					}
-				}
+                        ForEach(selectedVideoPlayerViewModel.mediaItems, id: \.self.title) { mediaItem in
+                            ItemDetail(title: mediaItem.title, content: mediaItem.content)
+                        }
+                    }
+                }
 
-				Spacer()
-			}
-			.ignoresSafeArea()
-			.focusable()
-			.focused($focused)
-			.padding(50)
-		}
-	}
+                Spacer()
+            }
+            .ignoresSafeArea()
+            .focusable()
+            .focused($focused)
+            .padding(50)
+        }
+    }
 }
 
 fileprivate struct ItemDetail: View {
 
-	let title: String
-	let content: String
+    let title: String
+    let content: String
 
-	var body: some View {
-		VStack(alignment: .leading) {
-			Text(title)
-				.font(.body)
-			Text(content)
-				.font(.footnote)
-				.foregroundColor(.secondary)
-		}
-	}
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(.body)
+            Text(content)
+                .font(.footnote)
+                .foregroundColor(.secondary)
+        }
+    }
 }
 
 struct RoundedCorner: Shape {
 
-	var radius: CGFloat = .infinity
-	var corners: UIRectCorner = .allCorners
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
 
-	func path(in rect: CGRect) -> Path {
-		let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-		return Path(path.cgPath)
-	}
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
 }
 
 extension View {
-	func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-		clipShape(RoundedCorner(radius: radius, corners: corners))
-	}
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
 }

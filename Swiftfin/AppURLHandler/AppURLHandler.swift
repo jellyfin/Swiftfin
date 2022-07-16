@@ -12,98 +12,98 @@ import JellyfinAPI
 import Stinsen
 
 final class AppURLHandler {
-	static let deepLinkScheme = "jellyfin"
+    static let deepLinkScheme = "jellyfin"
 
-	enum AppURLState {
-		case launched
-		case allowedInLogin
-		case allowed
+    enum AppURLState {
+        case launched
+        case allowedInLogin
+        case allowed
 
-		func allowedScheme(with url: URL) -> Bool {
-			switch self {
-			case .launched:
-				return false
-			case .allowed:
-				return true
-			case .allowedInLogin:
-				return false
-			}
-		}
-	}
+        func allowedScheme(with url: URL) -> Bool {
+            switch self {
+            case .launched:
+                return false
+            case .allowed:
+                return true
+            case .allowedInLogin:
+                return false
+            }
+        }
+    }
 
-	static let shared = AppURLHandler()
+    static let shared = AppURLHandler()
 
-	var cancellables = Set<AnyCancellable>()
+    var cancellables = Set<AnyCancellable>()
 
-	var appURLState: AppURLState = .launched
-	var launchURL: URL?
+    var appURLState: AppURLState = .launched
+    var launchURL: URL?
 }
 
 extension AppURLHandler {
-	@discardableResult
-	func processDeepLink(url: URL) -> Bool {
-		guard url.scheme == Self.deepLinkScheme || url.scheme == "widget-extension" else {
-			return false
-		}
-		if AppURLHandler.shared.appURLState.allowedScheme(with: url) {
-			return processURL(url)
-		} else {
-			launchURL = url
-		}
-		return true
-	}
+    @discardableResult
+    func processDeepLink(url: URL) -> Bool {
+        guard url.scheme == Self.deepLinkScheme || url.scheme == "widget-extension" else {
+            return false
+        }
+        if AppURLHandler.shared.appURLState.allowedScheme(with: url) {
+            return processURL(url)
+        } else {
+            launchURL = url
+        }
+        return true
+    }
 
-	func processLaunchedURLIfNeeded() {
-		guard let launchURL = launchURL,
-		      !launchURL.absoluteString.isEmpty else { return }
-		if processDeepLink(url: launchURL) {
-			self.launchURL = nil
-		}
-	}
+    func processLaunchedURLIfNeeded() {
+        guard let launchURL = launchURL,
+              !launchURL.absoluteString.isEmpty else { return }
+        if processDeepLink(url: launchURL) {
+            self.launchURL = nil
+        }
+    }
 
-	private func processURL(_ url: URL) -> Bool {
-		if processURLForUser(url: url) {
-			return true
-		}
+    private func processURL(_ url: URL) -> Bool {
+        if processURLForUser(url: url) {
+            return true
+        }
 
-		return false
-	}
+        return false
+    }
 
-	private func processURLForUser(url: URL) -> Bool {
-		guard url.host?.lowercased() == "users",
-		      url.pathComponents[safe: 1]?.isEmpty == false else { return false }
+    private func processURLForUser(url: URL) -> Bool {
+        guard url.host?.lowercased() == "users",
+              url.pathComponents[safe: 1]?.isEmpty == false else { return false }
 
-		// /Users/{UserID}/Items/{ItemID}
-		if url.pathComponents[safe: 2]?.lowercased() == "items",
-		   let userID = url.pathComponents[safe: 1],
-		   let itemID = url.pathComponents[safe: 3]
-		{
-			// It would be nice if the ItemViewModel could be initialized to id later.
-			getItem(userID: userID, itemID: itemID) { item in
-				guard let item = item else { return }
-				Notifications[.processDeepLink].post(object: DeepLink.item(item))
-			}
+        // /Users/{UserID}/Items/{ItemID}
+        if url.pathComponents[safe: 2]?.lowercased() == "items",
+           let userID = url.pathComponents[safe: 1],
+           let itemID = url.pathComponents[safe: 3]
+        {
+            // It would be nice if the ItemViewModel could be initialized to id later.
+            getItem(userID: userID, itemID: itemID) { item in
+                guard let item = item else { return }
+                Notifications[.processDeepLink].post(object: DeepLink.item(item))
+            }
 
-			return true
-		}
+            return true
+        }
 
-		return false
-	}
+        return false
+    }
 }
 
 extension AppURLHandler {
-	func getItem(userID: String, itemID: String, completion: @escaping (BaseItemDto?) -> Void) {
-		UserLibraryAPI.getItem(userId: userID, itemId: itemID)
-			.sink(receiveCompletion: { innerCompletion in
-				switch innerCompletion {
-				case .failure:
-					completion(nil)
-				default:
-					break
-				}
-			}, receiveValue: { item in
-				completion(item)
-			})
-			.store(in: &cancellables)
-	}
+    func getItem(userID: String, itemID: String, completion: @escaping (BaseItemDto?) -> Void) {
+        UserLibraryAPI.getItem(userId: userID, itemId: itemID)
+            .sink(receiveCompletion: { innerCompletion in
+                switch innerCompletion {
+                case .failure:
+                    completion(nil)
+                default:
+                    break
+                }
+            }, receiveValue: { item in
+                completion(item)
+            })
+            .store(in: &cancellables)
+    }
 }

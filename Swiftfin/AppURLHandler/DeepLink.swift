@@ -10,5 +10,5 @@ import Foundation
 import JellyfinAPI
 
 enum DeepLink {
-	case item(BaseItemDto)
+    case item(BaseItemDto)
 }

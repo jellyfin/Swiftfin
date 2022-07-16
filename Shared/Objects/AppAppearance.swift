@@ -10,29 +10,29 @@ import Defaults
 import SwiftUI
 
 enum AppAppearance: String, CaseIterable, Defaults.Serializable {
-	case system
-	case dark
-	case light
+    case system
+    case dark
+    case light
 
-	var localizedName: String {
-		switch self {
-		case .system:
-			return L10n.system
-		case .dark:
-			return L10n.dark
-		case .light:
-			return L10n.light
-		}
-	}
+    var localizedName: String {
+        switch self {
+        case .system:
+            return L10n.system
+        case .dark:
+            return L10n.dark
+        case .light:
+            return L10n.light
+        }
+    }
 
-	var style: UIUserInterfaceStyle {
-		switch self {
-		case .system:
-			return .unspecified
-		case .dark:
-			return .dark
-		case .light:
-			return .light
-		}
-	}
+    var style: UIUserInterfaceStyle {
+        switch self {
+        case .system:
+            return .unspecified
+        case .dark:
+            return .dark
+        case .light:
+            return .light
+        }
+    }
 }

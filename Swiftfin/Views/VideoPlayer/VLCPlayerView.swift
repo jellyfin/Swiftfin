@@ -11,28 +11,28 @@ import UIKit
 
 struct NativePlayerView: UIViewControllerRepresentable {
 
-	let viewModel: VideoPlayerViewModel
+    let viewModel: VideoPlayerViewModel
 
-	typealias UIViewControllerType = NativePlayerViewController
+    typealias UIViewControllerType = NativePlayerViewController
 
-	func makeUIViewController(context: Context) -> NativePlayerViewController {
+    func makeUIViewController(context: Context) -> NativePlayerViewController {
 
-		NativePlayerViewController(viewModel: viewModel)
-	}
+        NativePlayerViewController(viewModel: viewModel)
+    }
 
-	func updateUIViewController(_ uiViewController: NativePlayerViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: NativePlayerViewController, context: Context) {}
 }
 
 struct VLCPlayerView: UIViewControllerRepresentable {
 
-	let viewModel: VideoPlayerViewModel
+    let viewModel: VideoPlayerViewModel
 
-	typealias UIViewControllerType = VLCPlayerViewController
+    typealias UIViewControllerType = VLCPlayerViewController
 
-	func makeUIViewController(context: Context) -> VLCPlayerViewController {
+    func makeUIViewController(context: Context) -> VLCPlayerViewController {
 
-		VLCPlayerViewController(viewModel: viewModel)
-	}
+        VLCPlayerViewController(viewModel: viewModel)
+    }
 
-	func updateUIViewController(_ uiViewController: VLCPlayerViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: VLCPlayerViewController, context: Context) {}
 }

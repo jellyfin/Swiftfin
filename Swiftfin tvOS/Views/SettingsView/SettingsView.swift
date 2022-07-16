@@ -13,173 +13,173 @@ import SwiftUI
 
 struct SettingsView: View {
 
-	@EnvironmentObject
-	var settingsRouter: SettingsCoordinator.Router
-	@ObservedObject
-	var viewModel: SettingsViewModel
+    @EnvironmentObject
+    var settingsRouter: SettingsCoordinator.Router
+    @ObservedObject
+    var viewModel: SettingsViewModel
 
-	@Default(.autoSelectAudioLangCode)
-	var autoSelectAudioLangcode
-	@Default(.videoPlayerJumpForward)
-	var jumpForwardLength
-	@Default(.videoPlayerJumpBackward)
-	var jumpBackwardLength
-	@Default(.downActionShowsMenu)
-	var downActionShowsMenu
-	@Default(.confirmClose)
-	var confirmClose
-	@Default(.tvOSCinematicViews)
-	var tvOSCinematicViews
-	@Default(.showPosterLabels)
-	var showPosterLabels
-	@Default(.resumeOffset)
-	var resumeOffset
-	@Default(.subtitleSize)
-	var subtitleSize
+    @Default(.autoSelectAudioLangCode)
+    var autoSelectAudioLangcode
+    @Default(.videoPlayerJumpForward)
+    var jumpForwardLength
+    @Default(.videoPlayerJumpBackward)
+    var jumpBackwardLength
+    @Default(.downActionShowsMenu)
+    var downActionShowsMenu
+    @Default(.confirmClose)
+    var confirmClose
+    @Default(.tvOSCinematicViews)
+    var tvOSCinematicViews
+    @Default(.showPosterLabels)
+    var showPosterLabels
+    @Default(.resumeOffset)
+    var resumeOffset
+    @Default(.subtitleSize)
+    var subtitleSize
 
-	var body: some View {
-		GeometryReader { reader in
-			HStack {
+    var body: some View {
+        GeometryReader { reader in
+            HStack {
 
-				Image(uiImage: UIImage(named: "App Icon")!)
-					.cornerRadius(30)
-					.scaleEffect(2)
-					.frame(width: reader.size.width / 2)
+                Image(uiImage: UIImage(named: "App Icon")!)
+                    .cornerRadius(30)
+                    .scaleEffect(2)
+                    .frame(width: reader.size.width / 2)
 
-				Form {
-					Section(header: EmptyView()) {
+                Form {
+                    Section(header: EmptyView()) {
 
-						Button {} label: {
-							HStack {
-								L10n.user.text
-								Spacer()
-								Text(viewModel.user.username)
-									.foregroundColor(.jellyfinPurple)
-							}
-						}
+                        Button {} label: {
+                            HStack {
+                                L10n.user.text
+                                Spacer()
+                                Text(viewModel.user.username)
+                                    .foregroundColor(.jellyfinPurple)
+                            }
+                        }
 
-						Button {
-							settingsRouter.route(to: \.serverDetail)
-						} label: {
-							HStack {
-								L10n.server.text
-									.foregroundColor(.primary)
-								Spacer()
-								Text(viewModel.server.name)
-									.foregroundColor(.jellyfinPurple)
+                        Button {
+                            settingsRouter.route(to: \.serverDetail)
+                        } label: {
+                            HStack {
+                                L10n.server.text
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text(viewModel.server.name)
+                                    .foregroundColor(.jellyfinPurple)
 
-								Image(systemName: "chevron.right")
-									.foregroundColor(.jellyfinPurple)
-							}
-						}
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.jellyfinPurple)
+                            }
+                        }
 
-						Button {
-							SessionManager.main.logout()
-						} label: {
-							L10n.switchUser.text
-								.foregroundColor(Color.jellyfinPurple)
-								.font(.callout)
-						}
-					}
+                        Button {
+                            SessionManager.main.logout()
+                        } label: {
+                            L10n.switchUser.text
+                                .foregroundColor(Color.jellyfinPurple)
+                                .font(.callout)
+                        }
+                    }
 
-					Section(header: L10n.videoPlayer.text) {
-						Picker(L10n.jumpForwardLength, selection: $jumpForwardLength) {
-							ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
-								Text(length.label).tag(length.rawValue)
-							}
-						}
+                    Section(header: L10n.videoPlayer.text) {
+                        Picker(L10n.jumpForwardLength, selection: $jumpForwardLength) {
+                            ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
+                                Text(length.label).tag(length.rawValue)
+                            }
+                        }
 
-						Picker(L10n.jumpBackwardLength, selection: $jumpBackwardLength) {
-							ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
-								Text(length.label).tag(length.rawValue)
-							}
-						}
+                        Picker(L10n.jumpBackwardLength, selection: $jumpBackwardLength) {
+                            ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
+                                Text(length.label).tag(length.rawValue)
+                            }
+                        }
 
-						Toggle(L10n.resume5SecondOffset, isOn: $resumeOffset)
+                        Toggle(L10n.resume5SecondOffset, isOn: $resumeOffset)
 
-						Toggle(L10n.pressDownForMenu, isOn: $downActionShowsMenu)
+                        Toggle(L10n.pressDownForMenu, isOn: $downActionShowsMenu)
 
-						Toggle(L10n.confirmClose, isOn: $confirmClose)
+                        Toggle(L10n.confirmClose, isOn: $confirmClose)
 
-						Button {
-							settingsRouter.route(to: \.overlaySettings)
-						} label: {
-							HStack {
-								L10n.overlay.text
-									.foregroundColor(.primary)
-								Spacer()
-								Image(systemName: "chevron.right")
-							}
-						}
+                        Button {
+                            settingsRouter.route(to: \.overlaySettings)
+                        } label: {
+                            HStack {
+                                L10n.overlay.text
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                        }
 
-						Button {
-							settingsRouter.route(to: \.experimentalSettings)
-						} label: {
-							HStack {
-								L10n.experimental.text
-									.foregroundColor(.primary)
-								Spacer()
-								Image(systemName: "chevron.right")
-							}
-						}
-					}
+                        Button {
+                            settingsRouter.route(to: \.experimentalSettings)
+                        } label: {
+                            HStack {
+                                L10n.experimental.text
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                        }
+                    }
 
-					Section {
-						Toggle(L10n.cinematicViews, isOn: $tvOSCinematicViews)
-					} header: {
-						L10n.appearance.text
-					}
+                    Section {
+                        Toggle(L10n.cinematicViews, isOn: $tvOSCinematicViews)
+                    } header: {
+                        L10n.appearance.text
+                    }
 
-					Section(header: L10n.accessibility.text) {
-						Button {
-							settingsRouter.route(to: \.customizeViewsSettings)
-						} label: {
-							HStack {
-								L10n.customize.text
-									.foregroundColor(.primary)
-								Spacer()
-								Image(systemName: "chevron.right")
-							}
-						}
+                    Section(header: L10n.accessibility.text) {
+                        Button {
+                            settingsRouter.route(to: \.customizeViewsSettings)
+                        } label: {
+                            HStack {
+                                L10n.customize.text
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                        }
 
-						Button {
-							settingsRouter.route(to: \.missingSettings)
-						} label: {
-							HStack {
-								L10n.missingItems.text
-									.foregroundColor(.primary)
-								Spacer()
-								Image(systemName: "chevron.right")
-							}
-						}
+                        Button {
+                            settingsRouter.route(to: \.missingSettings)
+                        } label: {
+                            HStack {
+                                L10n.missingItems.text
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                        }
 
-						Picker(L10n.subtitleSize, selection: $subtitleSize) {
-							ForEach(SubtitleSize.allCases, id: \.self) { size in
-								Text(size.label).tag(size.rawValue)
-							}
-						}
-					}
+                        Picker(L10n.subtitleSize, selection: $subtitleSize) {
+                            ForEach(SubtitleSize.allCases, id: \.self) { size in
+                                Text(size.label).tag(size.rawValue)
+                            }
+                        }
+                    }
 
-					Section {
-						Button {} label: {
-							HStack {
-								L10n.version.text
-								Spacer()
-								Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
-									.foregroundColor(.secondary)
-							}
-						}
-					} header: {
-						L10n.about.text
-					}
-				}
-			}
-		}
-	}
+                    Section {
+                        Button {} label: {
+                            HStack {
+                                L10n.version.text
+                                Spacer()
+                                Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    } header: {
+                        L10n.about.text
+                    }
+                }
+            }
+        }
+    }
 }
 
 struct SettingsView_Previews: PreviewProvider {
-	static var previews: some View {
-		SettingsView(viewModel: SettingsViewModel(server: .sample, user: .sample))
-	}
+    static var previews: some View {
+        SettingsView(viewModel: SettingsViewModel(server: .sample, user: .sample))
+    }
 }

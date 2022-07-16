@@ -10,17 +10,17 @@ import SwiftUI
 
 final class BasicAppSettingsViewModel: ViewModel {
 
-	let appearances = AppAppearance.allCases
+    let appearances = AppAppearance.allCases
 
-	func resetUserSettings() {
-		SwiftfinStore.Defaults.generalSuite.removeAll()
-	}
+    func resetUserSettings() {
+        SwiftfinStore.Defaults.generalSuite.removeAll()
+    }
 
-	func resetAppSettings() {
-		SwiftfinStore.Defaults.universalSuite.removeAll()
-	}
+    func resetAppSettings() {
+        SwiftfinStore.Defaults.universalSuite.removeAll()
+    }
 
-	func removeAllUsers() {
-		SessionManager.main.purge()
-	}
+    func removeAllUsers() {
+        SessionManager.main.purge()
+    }
 }

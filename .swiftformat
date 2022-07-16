@@ -1,16 +1,15 @@
-# version: 0.47.5
+# version: 0.49.11
 
 --swiftversion 5.5
 
---indent tab
 --tabwidth 4
 --xcodeindentation enabled
 --semicolons never
 --stripunusedargs closure-only
 --maxwidth 140
 --assetliterals visual-width
---wraparguments after-first
---wrapparameters after-first
+--wraparguments before-first
+--wrapparameters before-first
 --wrapcollections before-first
 --wrapconditions after-first
 --funcattributes prev-line
@@ -44,7 +43,6 @@
     redundantClosure,       \
     redundantType
 
---exclude Pods
 --exclude Shared/Generated/Strings.swift
 
 --header "\nSwiftfin is subject to the terms of the Mozilla Public\nLicense, v2.0. If a copy of the MPL was not distributed with this\nfile, you can obtain one at https://mozilla.org/MPL/2.0/.\n\nCopyright (c) {year} Jellyfin & Jellyfin Contributors\n"

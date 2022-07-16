@@ -11,59 +11,60 @@ import SwiftUI
 
 struct PortraitItemsRowView: View {
 
-	@EnvironmentObject
-	var itemRouter: ItemCoordinator.Router
+    @EnvironmentObject
+    var itemRouter: ItemCoordinator.Router
 
-	let rowTitle: String
-	let items: [BaseItemDto]
-	let showItemTitles: Bool
-	let selectedAction: (BaseItemDto) -> Void
+    let rowTitle: String
+    let items: [BaseItemDto]
+    let showItemTitles: Bool
+    let selectedAction: (BaseItemDto) -> Void
 
-	init(rowTitle: String,
-	     items: [BaseItemDto],
-	     showItemTitles: Bool = true,
-	     selectedAction: @escaping (BaseItemDto) -> Void)
-	{
-		self.rowTitle = rowTitle
-		self.items = items
-		self.showItemTitles = showItemTitles
-		self.selectedAction = selectedAction
-	}
+    init(
+        rowTitle: String,
+        items: [BaseItemDto],
+        showItemTitles: Bool = true,
+        selectedAction: @escaping (BaseItemDto) -> Void
+    ) {
+        self.rowTitle = rowTitle
+        self.items = items
+        self.showItemTitles = showItemTitles
+        self.selectedAction = selectedAction
+    }
 
-	var body: some View {
-		VStack(alignment: .leading) {
+    var body: some View {
+        VStack(alignment: .leading) {
 
-			Text(rowTitle)
-				.font(.title3)
-				.padding(.horizontal, 50)
+            Text(rowTitle)
+                .font(.title3)
+                .padding(.horizontal, 50)
 
-			ScrollView(.horizontal) {
-				HStack(alignment: .top) {
-					ForEach(items, id: \.self) { item in
+            ScrollView(.horizontal) {
+                HStack(alignment: .top) {
+                    ForEach(items, id: \.self) { item in
 
-						VStack(spacing: 15) {
-							Button {
-								selectedAction(item)
-							} label: {
-								ImageView(item.portraitHeaderViewURL(maxWidth: 257))
-									.frame(width: 257, height: 380)
-							}
-							.frame(height: 380)
-							.buttonStyle(PlainButtonStyle())
+                        VStack(spacing: 15) {
+                            Button {
+                                selectedAction(item)
+                            } label: {
+                                ImageView(item.portraitHeaderViewURL(maxWidth: 257))
+                                    .frame(width: 257, height: 380)
+                            }
+                            .frame(height: 380)
+                            .buttonStyle(PlainButtonStyle())
 
-							if showItemTitles {
-								Text(item.title)
-									.lineLimit(2)
-									.frame(width: 257)
-							}
-						}
-					}
-				}
-				.padding(.horizontal, 50)
-				.padding(.vertical)
-			}
-			.edgesIgnoringSafeArea(.horizontal)
-		}
-		.focusSection()
-	}
+                            if showItemTitles {
+                                Text(item.title)
+                                    .lineLimit(2)
+                                    .frame(width: 257)
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 50)
+                .padding(.vertical)
+            }
+            .edgesIgnoringSafeArea(.horizontal)
+        }
+        .focusSection()
+    }
 }

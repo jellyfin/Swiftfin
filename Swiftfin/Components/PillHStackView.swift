@@ -10,47 +10,47 @@ import SwiftUI
 
 struct PillHStackView<ItemType: PillStackable>: View {
 
-	let title: String
-	let items: [ItemType]
-	let selectedAction: (ItemType) -> Void
+    let title: String
+    let items: [ItemType]
+    let selectedAction: (ItemType) -> Void
 
-	var body: some View {
-		VStack(alignment: .leading) {
-			Text(title)
-				.font(.callout)
-				.fontWeight(.semibold)
-				.padding(.top, 3)
-				.padding(.leading, 16)
-				.accessibility(addTraits: [.isHeader])
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(.callout)
+                .fontWeight(.semibold)
+                .padding(.top, 3)
+                .padding(.leading, 16)
+                .accessibility(addTraits: [.isHeader])
 
-			ScrollView(.horizontal, showsIndicators: false) {
-				HStack {
-					ForEach(items, id: \.title) { item in
-						Button {
-							selectedAction(item)
-						} label: {
-							ZStack {
-								Color(UIColor.systemFill)
-									.frame(maxWidth: .infinity, maxHeight: .infinity)
-									.cornerRadius(10)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(items, id: \.title) { item in
+                        Button {
+                            selectedAction(item)
+                        } label: {
+                            ZStack {
+                                Color(UIColor.systemFill)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .cornerRadius(10)
 
-								Text(item.title)
-									.font(.caption)
-									.fontWeight(.semibold)
-									.foregroundColor(.primary)
-									.fixedSize()
-									.padding(.leading, 10)
-									.padding(.trailing, 10)
-									.padding(.top, 10)
-									.padding(.bottom, 10)
-							}
-							.fixedSize()
-						}
-					}
-				}
-				.padding(.leading, 16)
-				.padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
-			}
-		}
-	}
+                                Text(item.title)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .fixedSize()
+                                    .padding(.leading, 10)
+                                    .padding(.trailing, 10)
+                                    .padding(.top, 10)
+                                    .padding(.bottom, 10)
+                            }
+                            .fixedSize()
+                        }
+                    }
+                }
+                .padding(.leading, 16)
+                .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 55)
+            }
+        }
+    }
 }

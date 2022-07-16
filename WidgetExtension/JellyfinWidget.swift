@@ -11,8 +11,8 @@ import WidgetKit
 
 @main
 struct JellyfinWidgetBundle: WidgetBundle {
-	@WidgetBundleBuilder
-	var body: some Widget {
-		NextUpWidget()
-	}
+    @WidgetBundleBuilder
+    var body: some Widget {
+        NextUpWidget()
+    }
 }

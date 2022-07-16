@@ -14,35 +14,35 @@ import SwiftUI
 
 final class VideoPlayerCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
+    let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
 
-	@Root
-	var start = makeStart
+    @Root
+    var start = makeStart
 
-	let viewModel: VideoPlayerViewModel
+    let viewModel: VideoPlayerViewModel
 
-	init(viewModel: VideoPlayerViewModel) {
-		self.viewModel = viewModel
-	}
+    init(viewModel: VideoPlayerViewModel) {
+        self.viewModel = viewModel
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		PreferenceUIHostingControllerView {
-			if Defaults[.Experimental.nativePlayer] {
-				NativePlayerView(viewModel: self.viewModel)
-					.navigationBarHidden(true)
-					.statusBar(hidden: true)
-					.ignoresSafeArea()
-					.prefersHomeIndicatorAutoHidden(true)
-					.supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
-			} else {
-				VLCPlayerView(viewModel: self.viewModel)
-					.navigationBarHidden(true)
-					.statusBar(hidden: true)
-					.ignoresSafeArea()
-					.prefersHomeIndicatorAutoHidden(true)
-					.supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
-			}
-		}.ignoresSafeArea()
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        PreferenceUIHostingControllerView {
+            if Defaults[.Experimental.nativePlayer] {
+                NativePlayerView(viewModel: self.viewModel)
+                    .navigationBarHidden(true)
+                    .statusBar(hidden: true)
+                    .ignoresSafeArea()
+                    .prefersHomeIndicatorAutoHidden(true)
+                    .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+            } else {
+                VLCPlayerView(viewModel: self.viewModel)
+                    .navigationBarHidden(true)
+                    .statusBar(hidden: true)
+                    .ignoresSafeArea()
+                    .prefersHomeIndicatorAutoHidden(true)
+                    .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+            }
+        }.ignoresSafeArea()
+    }
 }

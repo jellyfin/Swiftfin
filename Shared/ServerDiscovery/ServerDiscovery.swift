@@ -10,69 +10,69 @@ import Foundation
 import UDPBroadcast
 
 public class ServerDiscovery {
-	public struct ServerLookupResponse: Codable, Hashable, Identifiable {
+    public struct ServerLookupResponse: Codable, Hashable, Identifiable {
 
-		public func hash(into hasher: inout Hasher) {
-			hasher.combine(id)
-		}
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
 
-		private let address: String
-		public let id: String
-		public let name: String
+        private let address: String
+        public let id: String
+        public let name: String
 
-		public var url: URL {
-			URL(string: self.address)!
-		}
+        public var url: URL {
+            URL(string: self.address)!
+        }
 
-		public var host: String {
-			let components = URLComponents(string: self.address)
-			if let host = components?.host {
-				return host
-			}
-			return self.address
-		}
+        public var host: String {
+            let components = URLComponents(string: self.address)
+            if let host = components?.host {
+                return host
+            }
+            return self.address
+        }
 
-		public var port: Int {
-			let components = URLComponents(string: self.address)
-			if let port = components?.port {
-				return port
-			}
-			return 7359
-		}
+        public var port: Int {
+            let components = URLComponents(string: self.address)
+            if let port = components?.port {
+                return port
+            }
+            return 7359
+        }
 
-		enum CodingKeys: String, CodingKey {
-			case address = "Address"
-			case id = "Id"
-			case name = "Name"
-		}
-	}
+        enum CodingKeys: String, CodingKey {
+            case address = "Address"
+            case id = "Id"
+            case name = "Name"
+        }
+    }
 
-	private var connection: UDPBroadcastConnection?
+    private var connection: UDPBroadcastConnection?
 
-	init() {}
+    init() {}
 
-	public func locateServer(completion: @escaping (ServerLookupResponse?) -> Void) {
+    public func locateServer(completion: @escaping (ServerLookupResponse?) -> Void) {
 
-		func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
-			do {
-				let response = try JSONDecoder().decode(ServerLookupResponse.self, from: data)
-				LogManager.log.debug("Received JellyfinServer from \"\(response.name)\"", tag: "ServerDiscovery")
-				completion(response)
-			} catch {
-				completion(nil)
-			}
-		}
+        func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
+            do {
+                let response = try JSONDecoder().decode(ServerLookupResponse.self, from: data)
+                LogManager.log.debug("Received JellyfinServer from \"\(response.name)\"", tag: "ServerDiscovery")
+                completion(response)
+            } catch {
+                completion(nil)
+            }
+        }
 
-		func errorHandler(error: UDPBroadcastConnection.ConnectionError) {
-			LogManager.log.error("Error handling response: \(error.localizedDescription)", tag: "ServerDiscovery")
-		}
+        func errorHandler(error: UDPBroadcastConnection.ConnectionError) {
+            LogManager.log.error("Error handling response: \(error.localizedDescription)", tag: "ServerDiscovery")
+        }
 
-		do {
-			self.connection = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
-			try self.connection?.sendBroadcast("Who is JellyfinServer?")
-			LogManager.log.debug("Discovery broadcast sent", tag: "ServerDiscovery")
-		} catch {
-			LogManager.log.error("Error sending discovery broadcast", tag: "ServerDiscovery")
-		}
-	}
+        do {
+            self.connection = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
+            try self.connection?.sendBroadcast("Who is JellyfinServer?")
+            LogManager.log.debug("Discovery broadcast sent", tag: "ServerDiscovery")
+        } catch {
+            LogManager.log.error("Error sending discovery broadcast", tag: "ServerDiscovery")
+        }
+    }
 }

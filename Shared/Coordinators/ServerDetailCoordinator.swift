@@ -12,19 +12,19 @@ import SwiftUI
 
 final class ServerDetailCoordinator: NavigationCoordinatable {
 
-	let stack = NavigationStack(initial: \ServerDetailCoordinator.start)
+    let stack = NavigationStack(initial: \ServerDetailCoordinator.start)
 
-	@Root
-	var start = makeStart
+    @Root
+    var start = makeStart
 
-	let viewModel: ServerDetailViewModel
+    let viewModel: ServerDetailViewModel
 
-	init(viewModel: ServerDetailViewModel) {
-		self.viewModel = viewModel
-	}
+    init(viewModel: ServerDetailViewModel) {
+        self.viewModel = viewModel
+    }
 
-	@ViewBuilder
-	func makeStart() -> some View {
-		ServerDetailView(viewModel: viewModel)
-	}
+    @ViewBuilder
+    func makeStart() -> some View {
+        ServerDetailView(viewModel: viewModel)
+    }
 }
