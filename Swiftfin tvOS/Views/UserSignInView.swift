@@ -28,7 +28,7 @@ struct UserSignInView: View {
                 .ignoresSafeArea()
 
             HStack(alignment: .top) {
-                Form {
+                VStack(alignment: .leading) {
                     Section {
                         TextField(L10n.username, text: $username)
                             .disableAutocorrection(true)
@@ -55,6 +55,13 @@ struct UserSignInView: View {
 
                     } header: {
                         L10n.signInToServer(viewModel.server.name).text
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    if !viewModel.quickConnectEnabled {
+                        L10n.quickConnectNotEnabled.text
                     }
                 }
                 .frame(maxWidth: .infinity)

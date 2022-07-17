@@ -32,7 +32,7 @@ final class UserSignInViewModel: ViewModel {
         super.init()
 
         JellyfinAPIAPI.basePath = server.currentURI
-        startQuickConnect()
+        checkQuickConnect()
     }
 
     var alertTitle: String {
@@ -90,15 +90,20 @@ final class UserSignInViewModel: ViewModel {
         return URL(string: urlString)
     }
 
-    func startQuickConnect() {
+    func checkQuickConnect() {
         QuickConnectAPI.getEnabled()
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
             }, receiveValue: { enabled in
                 self.quickConnectEnabled = enabled
+                if enabled {
+                    self.startQuickConnect()
+                }
             })
             .store(in: &cancellables)
+    }
 
+    private func startQuickConnect() {
         QuickConnectAPI.initiate()
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
