@@ -37,7 +37,7 @@ struct UserSignInView: View {
                     }
                 } else {
                     Button {
-                        viewModel.login(username: username, password: password)
+                        viewModel.signIn(username: username, password: password)
                     } label: {
                         L10n.signIn.text
                     }

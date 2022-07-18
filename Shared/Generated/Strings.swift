@@ -270,6 +270,14 @@ internal enum L10n {
   internal static var quickConnectCode: String { return L10n.tr("Localizable", "quickConnectCode") }
   /// Invalid Quick Connect code
   internal static var quickConnectInvalidError: String { return L10n.tr("Localizable", "quickConnectInvalidError") }
+  /// Note: Quick Connect not enabled
+  internal static var quickConnectNotEnabled: String { return L10n.tr("Localizable", "quickConnectNotEnabled") }
+  /// 1. Open the Jellyfin app on your phone or web browser and sign in with your account
+  internal static var quickConnectStep1: String { return L10n.tr("Localizable", "quickConnectStep1") }
+  /// 2. Open the user menu and go to the Quick Connect page
+  internal static var quickConnectStep2: String { return L10n.tr("Localizable", "quickConnectStep2") }
+  /// 3. Enter the following code:
+  internal static var quickConnectStep3: String { return L10n.tr("Localizable", "quickConnectStep3") }
   /// Authorizing Quick Connect successful. Please continue on your other device.
   internal static var quickConnectSuccessMessage: String { return L10n.tr("Localizable", "quickConnectSuccessMessage") }
   /// Rated

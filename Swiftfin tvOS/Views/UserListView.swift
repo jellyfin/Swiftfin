@@ -21,7 +21,7 @@ struct UserListView: View {
             LazyVStack {
                 ForEach(viewModel.users, id: \.id) { user in
                     Button {
-                        viewModel.login(user: user)
+                        viewModel.signIn(user: user)
                     } label: {
                         HStack {
                             Text(user.username)

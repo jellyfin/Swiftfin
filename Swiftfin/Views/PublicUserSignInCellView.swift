@@ -23,7 +23,7 @@ struct UserLoginCellView: View {
         DisclosureGroup {
             SecureField(L10n.password, text: $enteredPassword)
             Button {
-                viewModel.login(username: user.name ?? "--", password: enteredPassword)
+                viewModel.signIn(username: user.name ?? "--", password: enteredPassword)
             } label: {
                 L10n.signIn.text
             }

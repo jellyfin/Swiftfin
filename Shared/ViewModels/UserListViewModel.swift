@@ -34,9 +34,9 @@ class UserListViewModel: ViewModel {
         self.users = SessionManager.main.fetchUsers(for: server)
     }
 
-    func login(user: SwiftfinStore.State.User) {
+    func signIn(user: SwiftfinStore.State.User) {
         self.isLoading = true
-        SessionManager.main.loginUser(server: server, user: user)
+        SessionManager.main.signInUser(server: server, user: user)
     }
 
     func remove(user: SwiftfinStore.State.User) {

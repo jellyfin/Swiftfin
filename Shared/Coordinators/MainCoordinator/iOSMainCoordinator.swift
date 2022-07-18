@@ -89,7 +89,7 @@ final class MainCoordinator: NavigationCoordinatable {
         else { fatalError("Need to have new current login state server") }
         guard SessionManager.main.currentLogin != nil else { return }
         if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
-            SessionManager.main.loginUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
+            SessionManager.main.signInUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
         }
     }
 
