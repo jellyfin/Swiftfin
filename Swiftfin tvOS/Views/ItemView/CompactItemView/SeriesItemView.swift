@@ -164,7 +164,7 @@ struct SeriesItemView: View {
                                 Spacer().frame(width: 45)
                             }
                         }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
-                            .frame(height: 360)
+                            .frame(height: 450)
                     }
 
                     if !viewModel.similarItems.isEmpty {
@@ -182,7 +182,7 @@ struct SeriesItemView: View {
                                 Spacer().frame(width: 45)
                             }
                         }.padding(EdgeInsets(top: -30, leading: -90, bottom: 0, trailing: -90))
-                            .frame(height: 360)
+                            .frame(height: 450)
                     }
                 }.padding(EdgeInsets(top: 90, leading: 90, bottom: 45, trailing: 90))
             }.focusScope(namespace)
