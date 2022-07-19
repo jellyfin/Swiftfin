@@ -11,13 +11,13 @@ import SwiftUI
 
 struct MovieItemView: View {
 
-	@ObservedObject
-	var viewModel: MovieItemViewModel
+    @ObservedObject
+    var viewModel: MovieItemViewModel
 
-	var body: some View {
-		ItemView.CinematicScrollView(viewModel: viewModel) { _ in
-			ContentView(viewModel: viewModel)
-				.padding(.top)
-		}
-	}
+    var body: some View {
+        ItemView.CinematicScrollView(viewModel: viewModel) { _ in
+            ContentView(viewModel: viewModel)
+                .padding(.top)
+        }
+    }
 }

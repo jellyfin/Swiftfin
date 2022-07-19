@@ -10,13 +10,13 @@ import SwiftUI
 
 struct SeriesItemView: View {
 
-	@ObservedObject
-	var viewModel: SeriesItemViewModel
+    @ObservedObject
+    var viewModel: SeriesItemViewModel
 
-	var body: some View {
-		ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
-			ContentView(viewModel: viewModel, scrollViewProxy: scrollViewProxy)
-				.ignoresSafeArea()
-		}
-	}
+    var body: some View {
+        ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
+            ContentView(viewModel: viewModel, scrollViewProxy: scrollViewProxy)
+                .ignoresSafeArea()
+        }
+    }
 }

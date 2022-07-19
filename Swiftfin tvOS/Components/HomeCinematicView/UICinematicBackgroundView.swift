@@ -11,61 +11,66 @@ import UIKit
 
 class UICinematicBackgroundView: UIView {
 
-	private var currentImageView: UIView?
+    private var currentImageView: UIView?
 
-	private var selectDelayTimer: Timer?
+    private var selectDelayTimer: Timer?
 
-	init(initialImageView: UIImageView) {
-		super.init(frame: .zero)
+    init(initialImageView: UIImageView) {
+        super.init(frame: .zero)
 
-		initialImageView.translatesAutoresizingMaskIntoConstraints = false
-		initialImageView.alpha = 0
+        initialImageView.translatesAutoresizingMaskIntoConstraints = false
+        initialImageView.alpha = 0
 
-		addSubview(initialImageView)
-		NSLayoutConstraint.activate([
-			initialImageView.topAnchor.constraint(equalTo: topAnchor),
-			initialImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-			initialImageView.leftAnchor.constraint(equalTo: leftAnchor),
-			initialImageView.rightAnchor.constraint(equalTo: rightAnchor),
-		])
+        addSubview(initialImageView)
+        NSLayoutConstraint.activate([
+            initialImageView.topAnchor.constraint(equalTo: topAnchor),
+            initialImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            initialImageView.leftAnchor.constraint(equalTo: leftAnchor),
+            initialImageView.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
 
-		self.currentImageView = initialImageView
-	}
+        self.currentImageView = initialImageView
+    }
 
-	@available(*, unavailable)
-	required init?(coder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
-	func update(imageView: UIImageView) {
+    func update(imageView: UIImageView) {
 
-		selectDelayTimer?.invalidate()
+        selectDelayTimer?.invalidate()
 
-		selectDelayTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(delayTimerTimed), userInfo: imageView,
-		                                        repeats: false)
-	}
+        selectDelayTimer = Timer.scheduledTimer(
+            timeInterval: 0.5,
+            target: self,
+            selector: #selector(delayTimerTimed),
+            userInfo: imageView,
+            repeats: false
+        )
+    }
 
-	@objc
-	private func delayTimerTimed(timer: Timer) {
-		let newImageView = timer.userInfo as! UIImageView
+    @objc
+    private func delayTimerTimed(timer: Timer) {
+        let newImageView = timer.userInfo as! UIImageView
 
-		newImageView.translatesAutoresizingMaskIntoConstraints = false
-		newImageView.alpha = 0
+        newImageView.translatesAutoresizingMaskIntoConstraints = false
+        newImageView.alpha = 0
 
-		addSubview(newImageView)
-		NSLayoutConstraint.activate([
-			newImageView.topAnchor.constraint(equalTo: topAnchor),
-			newImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-			newImageView.leftAnchor.constraint(equalTo: leftAnchor),
-			newImageView.rightAnchor.constraint(equalTo: rightAnchor),
-		])
+        addSubview(newImageView)
+        NSLayoutConstraint.activate([
+            newImageView.topAnchor.constraint(equalTo: topAnchor),
+            newImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            newImageView.leftAnchor.constraint(equalTo: leftAnchor),
+            newImageView.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
 
-		UIView.animate(withDuration: 0.2) {
-			newImageView.alpha = 1
-			self.currentImageView?.alpha = 0
-		} completion: { _ in
-			self.currentImageView?.removeFromSuperview()
-			self.currentImageView = newImageView
-		}
-	}
+        UIView.animate(withDuration: 0.2) {
+            newImageView.alpha = 1
+            self.currentImageView?.alpha = 0
+        } completion: { _ in
+            self.currentImageView?.removeFromSuperview()
+            self.currentImageView = newImageView
+        }
+    }
 }

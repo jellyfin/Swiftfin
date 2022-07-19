@@ -145,7 +145,7 @@ struct SettingsView: View {
                         Image(systemName: "chevron.right")
                     }
                 }
-                
+
                 Picker("Item View", selection: $itemViewType) {
                     ForEach(ItemViewType.allCases, id: \.self) { itemViewType in
                         Text(itemViewType.rawValue).tag(itemViewType.rawValue)

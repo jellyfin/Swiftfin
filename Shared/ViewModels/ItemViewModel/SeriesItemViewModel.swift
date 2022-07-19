@@ -21,6 +21,8 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
     override init(item: BaseItemDto) {
         super.init(item: item)
 
+        getSeasons()
+
         // The server won't have both a next up item
         // and a resume item at the same time, so they
         // control the button first. Also fetch first available
