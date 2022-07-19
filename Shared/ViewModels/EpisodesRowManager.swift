@@ -28,8 +28,12 @@ extension EpisodesRowManager {
 	}
     
     var currentEpisodes: [BaseItemDto]? {
-        guard let selectedSeason = selectedSeason else { return nil }
-        return seasonsEpisodes[selectedSeason]
+        if let selectedSeason = selectedSeason {
+            return seasonsEpisodes[selectedSeason]
+        } else {
+            guard let firstSeason = seasonsEpisodes.keys.first else { return nil }
+            return seasonsEpisodes[firstSeason]
+        }
     }
 
 	// Also retrieves the current season episodes if available
@@ -69,7 +73,6 @@ extension EpisodesRowManager {
 	}
 
 	func select(season: BaseItemDto) {
-		//        guard season != selectedSeason else { return }
 		self.selectedSeason = season
 
 		if seasonsEpisodes[season]!.isEmpty {

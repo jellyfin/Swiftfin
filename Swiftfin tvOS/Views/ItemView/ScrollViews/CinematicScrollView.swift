@@ -58,8 +58,8 @@ extension ItemView {
         @FocusState
         private var focusedLayer: StaticOverlayFocusLayer?
         
-        @Binding
-        var seriesItemTransitionBinding: SeriesItemView.FocusTransition?
+        @EnvironmentObject
+        var focusGuide: FocusGuide
         
         var body: some View {
             VStack {
@@ -77,11 +77,6 @@ extension ItemView {
                             .focusSection()
                             .frame(width: 300)
                             .focused($focusedLayer, equals: .actionButton)
-                        
-                        Color.red
-                            .frame(height: 1)
-                            .focusable()
-                            .focused($focusedLayer, equals: .bottomDivider)
                     }
                     .frame(width: 350)
                     
@@ -115,16 +110,6 @@ extension ItemView {
                     Spacer(minLength: 0)
                 }
                 .padding(.horizontal, 50)
-            }
-            .onChange(of: focusedLayer) { newValue in
-                if newValue == .bottomDivider {
-                    seriesItemTransitionBinding = .leavingActionBottom
-                }
-            }
-            .onChange(of: seriesItemTransitionBinding) { newValue in
-                if newValue == .leavingSeasonsTop {
-                    focusedLayer = .actionButton
-                }
             }
         }
     }

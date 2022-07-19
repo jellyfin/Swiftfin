@@ -14,65 +14,20 @@ struct SeriesEpisodesView: View {
     
     @ObservedObject
     var viewModel: SeriesItemViewModel
-    @State
-    var currentLayerTransition: FocusedLayerTransition?
     
     @FocusState
     var isFocused: Bool
-    @FocusState
-    var focusedLayer: FocusedLayer?
     
-    @Binding
-    var seriesItemTransitionBinding: SeriesItemView.FocusTransition?
+    @EnvironmentObject
+    var parentFocusGuide: FocusGuide
     
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear
-                .frame(height: 1)
-                .focusable()
-                .focused($focusedLayer, equals: .topDivider)
+            SeasonsHStack(viewModel: viewModel)
+                .environmentObject(parentFocusGuide)
             
-            SeasonsHStack(viewModel: viewModel,
-                          transitionBinding: $currentLayerTransition)
-                .focused($focusedLayer, equals: .seasons)
-            
-            Color.clear
-                .frame(height: 1)
-                .focusable()
-                .focused($focusedLayer, equals: .middleDivider)
-            
-            EpisodesHStack(viewModel: viewModel,
-                           transitionBinding: $currentLayerTransition)
-                .focused($focusedLayer, equals: .episodes)
-            
-            Color.clear
-                .frame(height: 1)
-                .focusable()
-                .focused($focusedLayer, equals: .bottomDivider)
-                .id("body")
-        }
-        .focused($isFocused)
-        .onChange(of: focusedLayer) { [focusedLayer] newLayer in
-            if newLayer == .middleDivider && focusedLayer == .seasons {
-                currentLayerTransition = .leavingSeasonsToEpisodes
-            } else if newLayer == .middleDivider && focusedLayer == .episodes {
-                currentLayerTransition = .leavingEpisodesToSeasons
-            } else if newLayer == .topDivider && focusedLayer == nil {
-                currentLayerTransition = .enteringSectionSeasons
-            } else if newLayer == .bottomDivider && focusedLayer == nil {
-                currentLayerTransition = .enteringSectionEpisodes
-            } else if newLayer == .topDivider && focusedLayer == .seasons {
-                currentLayerTransition = .exitingSectionTop
-                seriesItemTransitionBinding = .leavingSeasonsTop
-            } else if newLayer == .bottomDivider && focusedLayer == .episodes {
-                currentLayerTransition = .exitingSectionBottom
-                seriesItemTransitionBinding = .leavingSeasonsBottom
-            }
-        }
-        .onChange(of: seriesItemTransitionBinding) { newValue in
-            if newValue == .leavingActionBottom {
-                currentLayerTransition = .enteringSectionSeasons
-            }
+            EpisodesHStack(viewModel: viewModel)
+                .environmentObject(parentFocusGuide)
         }
     }
 }
@@ -83,16 +38,10 @@ extension SeriesEpisodesView {
         
         @ObservedObject
         var viewModel: SeriesItemViewModel
-        
-        // MARK: Focus
-        
+        @EnvironmentObject
+        var focusGuide: FocusGuide
         @FocusState
         var focusedSeason: BaseItemDto?
-        
-        // MARK: Transition
-        
-        @Binding
-        var transitionBinding: FocusedLayerTransition?
         
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
@@ -113,24 +62,19 @@ extension SeriesEpisodesView {
                                 }
                         }
                         .buttonStyle(PlainButtonStyle())
-                        .background(Color.clear)
                         .id(season)
                         .focused($focusedSeason, equals: season)
                     }
                 }
+                .focusGuide(focusGuide, tag: "seasons", onContentFocus: { focusedSeason = viewModel.selectedSeason }, top: "mediaButtons", bottom: "episodes")
                 .frame(height: 70)
                 .padding(.horizontal, 50)
-                .padding(.vertical)
-                .padding(.bottom)
+                .padding(.top)
+                .padding(.bottom, 45)
             }
             .onChange(of: focusedSeason) { season in
                 guard let season = season else { return }
                 viewModel.select(season: season)
-            }
-            .onChange(of: transitionBinding) { transition in
-                if transition == .leavingEpisodesToSeasons || transition == .enteringSectionSeasons {
-                    focusedSeason = viewModel.selectedSeason
-                }
             }
         }
     }
@@ -142,81 +86,56 @@ extension SeriesEpisodesView {
         
         @ObservedObject
         var viewModel: SeriesItemViewModel
-        
-        // MARK: Focus
-        
+        @EnvironmentObject
+        var focusGuide: FocusGuide
         @FocusState
-        var focusedEpisode: BaseItemDto?
+        var focusedEpisodeIndex: Int?
         @State
-        var lastFocusedEpisode: BaseItemDto?
+        var lastFocusedEpisodeIndex: Int?
+        @State
+        var currentEpisodes: [BaseItemDto] = []
         @State
         var wrappedScrollView: UIScrollView?
-        
-        // MARK: Transition
-        
-        @Binding
-        var transitionBinding: FocusedLayerTransition?
         
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top) {
-                    if let currentEpisodes = viewModel.currentEpisodes, !currentEpisodes.isEmpty {
+                    if !currentEpisodes.isEmpty {
                         ForEach(currentEpisodes, id: \.self) { episode in
                             EpisodeCard(episode: episode)
-                                .focused($focusedEpisode, equals: episode)
+                                .focused($focusedEpisodeIndex, equals: episode.indexNumber ?? -1)
                         }
                     } else {
-                        ForEach(0..<10) { _ in
+                        ForEach(1..<10) { i in
                             EpisodeCard(episode: .init(name: "Test",
-                                                          overview: String(repeating: "a", count: Int.random(in: 0..<50)),
+                                                          overview: String(repeating: "a", count: 21),
                                                           indexNumber: 20))
                             .redacted(reason: .placeholder)
+                            .focused($focusedEpisodeIndex, equals: i)
                         }
                     }
                 }
                 .padding(.horizontal, 50)
                 .padding(.vertical)
             }
+            .focusGuide(focusGuide, tag: "episodes", onContentFocus: { focusedEpisodeIndex = lastFocusedEpisodeIndex }, top: "seasons", bottom: "recommended")
             .animation(.linear(duration: 0.1), value: viewModel.selectedSeason)
             .transition(.opacity)
             .introspectScrollView { scrollView in
                 wrappedScrollView = scrollView
             }
             .onChange(of: viewModel.selectedSeason) { season in
-                lastFocusedEpisode = viewModel.currentEpisodes?.first
+                currentEpisodes = viewModel.currentEpisodes ?? []
+                lastFocusedEpisodeIndex = viewModel.currentEpisodes?.first?.indexNumber ?? 1
                 wrappedScrollView?.scrollToTop(animated: false)
             }
-            .onChange(of: focusedEpisode) { episode in
-                guard let episode = episode else { return }
-                lastFocusedEpisode = episode
+            .onChange(of: focusedEpisodeIndex) { episodeIndex in
+                guard let episodeIndex = episodeIndex else { return }
+                lastFocusedEpisodeIndex = episodeIndex
             }
-            .onChange(of: transitionBinding) { transition in
-                if transition == .leavingSeasonsToEpisodes || transition == .enteringSectionEpisodes {
-                    if lastFocusedEpisode == nil {
-                        lastFocusedEpisode = viewModel.currentEpisodes?.first
-                    }
-                    focusedEpisode = lastFocusedEpisode
-                }
+            .onChange(of: viewModel.seasonsEpisodes) { _ in
+                currentEpisodes = viewModel.currentEpisodes ?? []
             }
         }
-    }
-}
-
-extension SeriesEpisodesView {
-    enum FocusedLayerTransition: Hashable {
-        case leavingSeasonsToEpisodes
-        case leavingEpisodesToSeasons
-        case enteringSectionSeasons
-        case enteringSectionEpisodes
-        case exitingSectionTop
-        case exitingSectionBottom
-    }
-
-    enum FocusedLayer: Hashable {
-        case topDivider
-        case seasons
-        case middleDivider
-        case episodes
-        case bottomDivider
     }
 }

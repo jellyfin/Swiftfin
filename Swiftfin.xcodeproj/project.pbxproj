@@ -388,6 +388,7 @@
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
+		E17BDA1528868A3900156203 /* FocusGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17BDA1428868A3900156203 /* FocusGuide.swift */; };
 		E18845F526DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F626DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18E6DF12860FD7F00832CA0 /* PlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E6DF02860FD7F00832CA0 /* PlayButton.swift */; };
@@ -856,6 +857,7 @@
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVLCOverlay.swift; sourceTree = "<group>"; };
 		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
+		E17BDA1428868A3900156203 /* FocusGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusGuide.swift; sourceTree = "<group>"; };
 		E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+Stackable.swift"; sourceTree = "<group>"; };
 		E18E6DF02860FD7F00832CA0 /* PlayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButton.swift; sourceTree = "<group>"; };
 		E18E6DF32860FDAD00832CA0 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -1782,6 +1784,7 @@
 			isa = PBXGroup;
 			children = (
 				E145CDBF287D10EF00FC40FB /* SeriesEpisodesView.swift */,
+				E17BDA1428868A3900156203 /* FocusGuide.swift */,
 				E1BDE35A278EA3A3004E4022 /* EpisodeCard.swift */,
 			);
 			path = Components;
@@ -2441,6 +2444,7 @@
 				E178859E2780F53B0094FBCF /* SliderView.swift in Sources */,
 				536D3D7F267BDF100004248C /* LatestInLibraryView.swift in Sources */,
 				E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */,
+				E17BDA1528868A3900156203 /* FocusGuide.swift in Sources */,
 				E1002B652793CEE800E47059 /* ChapterInfoExtensions.swift in Sources */,
 				E103A6A5278A82E500820EC7 /* HomeCinematicView.swift in Sources */,
 				E10EAA50277BBCC4000269ED /* CGSizeExtensions.swift in Sources */,

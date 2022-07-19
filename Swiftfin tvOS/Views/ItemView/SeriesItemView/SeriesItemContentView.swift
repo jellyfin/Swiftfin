@@ -12,18 +12,11 @@ import SwiftUI
 
 extension SeriesItemView {
     
-    enum FocusTransition: Hashable {
-        case leavingActionBottom
-        case leavingSeasonsTop
-        case leavingSeasonsBottom
-    }
-    
     struct ContentView: View {
         
-        @Default(.showPosterLabels)
-        var showPosterLabels
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
+        
         @ObservedObject
         var viewModel: SeriesItemViewModel
         @State
@@ -31,24 +24,21 @@ extension SeriesItemView {
         @State
         var showLogo: Bool = false
         
-        // MARK: Transition
-        
-        @State
-        var transitionBinding: FocusTransition?
+        @ObservedObject
+        var focusGuide = FocusGuide()
         
         var body: some View {
             VStack(spacing: 0) {
                 
                 ItemView.StaticOverlayView(viewModel: viewModel,
-                                           scrollViewProxy: scrollViewProxy,
-                                           seriesItemTransitionBinding: $transitionBinding)
+                                           scrollViewProxy: scrollViewProxy)
+                .focusGuide(focusGuide, tag: "mediaButtons", bottom: "seasons")
                 .frame(height: UIScreen.main.bounds.height - 150)
                 .padding(.bottom, 50)
-                .id("staticOverlayView")
                 
                 VStack(spacing: 0) {
                     
-                    Color.red
+                    Color.clear
                         .frame(height: 0.5)
                         .id("topContentDivider")
 
@@ -67,29 +57,18 @@ extension SeriesItemView {
                                 .padding(.top, 5)
                     }
                     
-                    SeriesEpisodesView(viewModel: viewModel,
-                                      seriesItemTransitionBinding: $transitionBinding)
-                        .focusSection()
-                        .id("seasonsAndEpisodes")
+                    SeriesEpisodesView(viewModel: viewModel)
+                        .environmentObject(focusGuide)
                     
                     PortraitImageHStack(title: L10n.recommended,
                                         items: viewModel.similarItems) { item in
-                        print("here")
+                        itemRouter.route(to: \.item, item)
                     }
-                                        .id("recommendedItems")
-                    
-//                    if !viewModel.similarItems.isEmpty {
-//                        PortraitImageHStack(rowTitle: L10n.recommended,
-//                                             items: viewModel.similarItems,
-//                                             showItemTitles: showPosterLabels) { item in
-//                            itemRouter.route(to: \.item, item)
-//                        }
-//                    }
+                    .focusGuide(focusGuide, tag: "recommended", top: "seasons")
                     
                     Spacer()
                 }
                 .frame(minHeight: UIScreen.main.bounds.height)
-//                    .focusSection()
             }
             .background {
                 BlurView()
@@ -106,24 +85,19 @@ extension SeriesItemView {
                         }
                     }
             }
-            .onChange(of: transitionBinding) { newValue in
-                if newValue == .leavingActionBottom {
-                    withAnimation {
-                        self.showLogo = true
-                    }
+            .onChange(of: focusGuide.focusedTag) { newTag in
+                if newTag == "seasons" && !showLogo {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        withAnimation {
+                        withAnimation(.easeIn(duration: 0.35)) {
                             scrollViewProxy.scrollTo("topContentDivider")
                         }
                     }
-                } else if newValue == .leavingSeasonsTop {
+                    withAnimation {
+                        self.showLogo = true
+                    }
+                } else if newTag == "mediaButtons" {
                     withAnimation {
                         self.showLogo = false
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        withAnimation {
-                            scrollViewProxy.scrollTo("staticOverlayView")
-                        }
                     }
                 }
             }
