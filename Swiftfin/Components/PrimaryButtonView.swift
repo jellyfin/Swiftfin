@@ -24,12 +24,12 @@ struct PrimaryButtonView: View {
         } label: {
             ZStack {
                 Rectangle()
-                    .foregroundColor(Color(UIColor.systemPurple))
-                    .frame(maxWidth: 400, maxHeight: 50)
+                    .foregroundColor(Color.jellyfinPurple)
+                    .frame(maxWidth: 400)
                     .frame(height: 50)
                     .cornerRadius(10)
-                    .padding(.horizontal, 30)
-                    .padding([.top, .bottom], 20)
+                //                    .padding(.horizontal, 30)
+                //                    .padding(.vertical, 20)
 
                 Text(title)
                     .foregroundColor(Color.white)

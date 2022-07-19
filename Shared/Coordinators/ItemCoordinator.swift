@@ -44,12 +44,16 @@ final class ItemCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
     }
 
+    func makeSeason(item: BaseItemDto) -> ItemCoordinator {
+        ItemCoordinator(item: item)
+    }
+
     func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
         NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        ItemNavigationView(item: itemDto)
+        ItemView(item: itemDto)
     }
 }

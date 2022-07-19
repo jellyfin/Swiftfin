@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 public protocol PortraitImageStackable {
     func imageURLConstructor(maxWidth: Int) -> URL

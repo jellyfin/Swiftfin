@@ -25,7 +25,7 @@ struct PreferenceUIHostingControllerView<Wrapped: View>: UIViewControllerReprese
     var wrappedView: () -> Wrapped
 
     func makeUIViewController(context: Context) -> PreferenceUIHostingController {
-        PreferenceUIHostingController(wrappedView: wrappedView())
+        PreferenceUIHostingController { wrappedView() }
     }
 
     func updateUIViewController(_ uiViewController: PreferenceUIHostingController, context: Context) {}

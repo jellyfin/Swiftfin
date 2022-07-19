@@ -8,83 +8,71 @@
 
 import Defaults
 import Foundation
+import Introspect
 import JellyfinAPI
 import SwiftUI
 
 struct HomeView: View {
 
-    @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
-    @StateObject
-    var viewModel = HomeViewModel()
-    @Default(.showPosterLabels)
-    var showPosterLabels
+	@EnvironmentObject
+	var homeRouter: HomeCoordinator.Router
+	@StateObject
+	var viewModel = HomeViewModel()
+	@Default(.showPosterLabels)
+	var showPosterLabels
 
-    @State
-    var showingSettings = false
+	var body: some View {
+		if viewModel.isLoading {
+			ProgressView()
+				.scaleEffect(2)
+		} else {
+			ScrollView {
+				LazyVStack(alignment: .leading) {
 
-    var body: some View {
-        if viewModel.isLoading {
-            ProgressView()
-                .scaleEffect(2)
-        } else {
-            ScrollView {
-                LazyVStack(alignment: .leading) {
+					if viewModel.resumeItems.isEmpty {
+						HomeCinematicView(viewModel: viewModel,
+						                  items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
+						                  forcedItemSubtitle: L10n.recentlyAdded)
 
-                    if viewModel.resumeItems.isEmpty {
-                        HomeCinematicView(
-                            viewModel: viewModel,
-                            items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
-                            forcedItemSubtitle: L10n.recentlyAdded
-                        )
+//						if !viewModel.nextUpItems.isEmpty {
+//							NextUpView(items: viewModel.nextUpItems)
+//						}
+					} else {
+						HomeCinematicView(viewModel: viewModel,
+						                  items: viewModel.resumeItems.map { .init(item: $0, type: .resume) })
 
-                        if !viewModel.nextUpItems.isEmpty {
-                            NextUpView(items: viewModel.nextUpItems)
-                                .focusSection()
-                        }
-                    } else {
-                        HomeCinematicView(
-                            viewModel: viewModel,
-                            items: viewModel.resumeItems.map { .init(item: $0, type: .resume) }
-                        )
+//						if !viewModel.nextUpItems.isEmpty {
+//							NextUpView(items: viewModel.nextUpItems)
+//						}
 
-                        if !viewModel.nextUpItems.isEmpty {
-                            NextUpView(items: viewModel.nextUpItems)
-                                .focusSection()
-                        }
+						PortraitImageHStack(title: L10n.recentlyAdded,
+						                    items: viewModel.latestAddedItems) { item in
+							homeRouter.route(to: \.modalItem, item)
+						}
+						.fixedSize(horizontal: false, vertical: true)
+					}
 
-                        PortraitItemsRowView(
-                            rowTitle: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems,
-                            showItemTitles: showPosterLabels
-                        ) { item in
-                            homeRouter.route(to: \.modalItem, item)
-                        }
-                    }
+					ForEach(viewModel.libraries, id: \.self) { library in
+						LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
+					}
 
-                    ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestMediaView(viewModel: LatestMediaViewModel(library: library))
-                            .focusSection()
-                    }
+					Spacer(minLength: 100)
 
-                    Spacer(minLength: 100)
+					HStack {
+						Spacer()
 
-                    HStack {
-                        Spacer()
+						Button {
+							viewModel.refresh()
+						} label: {
+							L10n.refresh.text
+						}
 
-                        Button {
-                            viewModel.refresh()
-                        } label: {
-                            L10n.refresh.text
-                        }
-
-                        Spacer()
-                    }
-                    .focusSection()
-                }
-            }
-            .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.horizontal)
-        }
-    }
+						Spacer()
+					}
+				}
+			}
+			.edgesIgnoringSafeArea(.top)
+			.edgesIgnoringSafeArea(.horizontal)
+		}
+	}
 }

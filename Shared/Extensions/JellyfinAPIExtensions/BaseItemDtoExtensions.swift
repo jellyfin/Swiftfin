@@ -110,7 +110,27 @@ public extension BaseItemDto {
         return URL(string: urlString)!
     }
 
-    func getEpisodeLocator() -> String? {
+    func getLogoImage(maxWidth: Int) -> URL {
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(
+            itemId: id ?? "",
+            imageType: .logo,
+            maxWidth: Int(x),
+            quality: 96
+        ).URLString
+        return URL(string: urlString)!
+    }
+
+    var episodeLocator: String? {
+        if let episodeNo = indexNumber {
+            return nil
+            //			return L10n.episode(String(episodeNo))
+        }
+        return nil
+    }
+
+    var seasonEpisodeLocator: String? {
         if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
             return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
         }
@@ -282,6 +302,10 @@ public extension BaseItemDto {
         return knownType
     }
 
+    var displayName: String {
+        name ?? "--"
+    }
+
     // MARK: PortraitHeaderViewURL
 
     func portraitHeaderViewURL(maxWidth: Int) -> URL {
@@ -329,13 +353,13 @@ public extension BaseItemDto {
 
             if !audioStreams.isEmpty {
                 let audioList = audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                    .joined(separator: ", ")
+                    .joined(separator: "\n")
                 mediaItems.append(ItemDetail(title: L10n.audio, content: audioList))
             }
 
             if !subtitleStreams.isEmpty {
                 let subtitleList = subtitleStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                    .joined(separator: ", ")
+                    .joined(separator: "\n")
                 mediaItems.append(ItemDetail(title: L10n.subtitles, content: subtitleList))
             }
         }
@@ -367,6 +391,13 @@ public extension BaseItemDto {
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
+        return dateFormatter.string(from: premiereDate)
+    }
+
+    var premiereDateYear: String? {
+        guard let premiereDate = premiereDate else { return nil }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY"
         return dateFormatter.string(from: premiereDate)
     }
 
