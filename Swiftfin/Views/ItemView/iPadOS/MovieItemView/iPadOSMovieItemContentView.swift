@@ -10,78 +10,78 @@ import JellyfinAPI
 import SwiftUI
 
 extension iPadOSMovieItemView {
-    
-    struct ContentView: View {
 
-        @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: MovieItemViewModel
+	struct ContentView: View {
 
-        var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+		@EnvironmentObject
+		var itemRouter: ItemCoordinator.Router
+		@ObservedObject
+		var viewModel: MovieItemViewModel
 
-                // MARK: Genres
+		var body: some View {
+			VStack(alignment: .leading, spacing: 10) {
 
-                if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(title: L10n.genres,
-                               items: genres) { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
-                    
-                    Divider()
-                }
+				// MARK: Genres
 
-                // MARK: Studios
+				if let genres = viewModel.item.genreItems, !genres.isEmpty {
+					PillHStack(title: L10n.genres,
+					           items: genres) { genre in
+						itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+					}
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
-                    PillHStack(title: L10n.studios,
-                               items: studios) { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
-                    
-                    Divider()
-                }
-                
-                // MARK: Cast and Crew
+					Divider()
+				}
 
-                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                !castAndCrew.isEmpty {
-                    PortraitImageHStack(title: L10n.castAndCrew,
-                                        items: castAndCrew,
-                                        itemWidth: UIDevice.isIPad ? 130 : 110) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
-                    
-                    Divider()
-                }
+				// MARK: Studios
 
-                // MARK: Similar
+				if let studios = viewModel.item.studios, !studios.isEmpty {
+					PillHStack(title: L10n.studios,
+					           items: studios) { studio in
+						itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
+					}
 
-                if !viewModel.similarItems.isEmpty {
-                    PortraitImageHStack(title: L10n.recommended,
-                                        items: viewModel.similarItems,
-                                        itemWidth: UIDevice.isIPad ? 130 : 110) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-                    
-                    Divider()
-                }
+					Divider()
+				}
 
-                ItemView.AboutView(viewModel: viewModel)
+				// MARK: Cast and Crew
 
-                // MARK: Details
+				if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+				   !castAndCrew.isEmpty {
+				   	PortraitImageHStack(title: L10n.castAndCrew,
+				   	                    items: castAndCrew,
+				   	                    itemWidth: UIDevice.isIPad ? 130 : 110) { person in
+				   		itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+				   	}
 
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
+				   	Divider()
+				   }
 
-                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                    ListDetailsView(title: L10n.media, items: mediaItems)
-                        .padding(.horizontal)
-                }
-            }
-        }
-    }
+				// MARK: Similar
+
+				if !viewModel.similarItems.isEmpty {
+					PortraitImageHStack(title: L10n.recommended,
+					                    items: viewModel.similarItems,
+					                    itemWidth: UIDevice.isIPad ? 130 : 110) { item in
+						itemRouter.route(to: \.item, item)
+					}
+
+					Divider()
+				}
+
+				ItemView.AboutView(viewModel: viewModel)
+
+				// MARK: Details
+
+				if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
+					ListDetailsView(title: L10n.information, items: informationItems)
+						.padding(.horizontal)
+				}
+
+				if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
+					ListDetailsView(title: L10n.media, items: mediaItems)
+						.padding(.horizontal)
+				}
+			}
+		}
+	}
 }

@@ -14,28 +14,28 @@ struct HomeView: View {
 	@EnvironmentObject
 	var homeRouter: HomeCoordinator.Router
 	@ObservedObject
-    var viewModel: HomeViewModel
+	var viewModel: HomeViewModel
 
 	var body: some View {
-        Group {
-            if let errorMessage = viewModel.errorMessage {
-                ErrorView(errorMessage: errorMessage, viewModel: viewModel)
-            } else if viewModel.isLoading {
-                ProgressView()
-            } else {
-                ContentView(viewModel: viewModel)
-            }
-        }
-        .navigationTitle(L10n.home)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button {
-                    homeRouter.route(to: \.settings)
-                } label: {
-                    Image(systemName: "gearshape.fill")
-                        .accessibilityLabel(L10n.settings)
-                }
-            }
-        }
+		Group {
+			if let errorMessage = viewModel.errorMessage {
+				ErrorView(errorMessage: errorMessage, viewModel: viewModel)
+			} else if viewModel.isLoading {
+				ProgressView()
+			} else {
+				ContentView(viewModel: viewModel)
+			}
+		}
+		.navigationTitle(L10n.home)
+		.toolbar {
+			ToolbarItemGroup(placement: .navigationBarTrailing) {
+				Button {
+					homeRouter.route(to: \.settings)
+				} label: {
+					Image(systemName: "gearshape.fill")
+						.accessibilityLabel(L10n.settings)
+				}
+			}
+		}
 	}
 }

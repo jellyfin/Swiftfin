@@ -8,26 +8,26 @@
 
 import JellyfinAPI
 import SwiftUI
-import TVUIKit
 import SwiftUICollection
+import TVUIKit
 
-//typealias LiveTVChannelRow = CollectionRow<Int, LiveTVChannelRowCell>
+// typealias LiveTVChannelRow = CollectionRow<Int, LiveTVChannelRowCell>
 
 struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: View {
-    
-    private let title: String
-    private let items: [ItemType]
-    private let selectedAction: (ItemType) -> Void
-    private let lastView: () -> LastView
+
+	private let title: String
+	private let items: [ItemType]
+	private let selectedAction: (ItemType) -> Void
+	private let lastView: () -> LastView
 
 	init(title: String,
 	     items: [ItemType],
-         @ViewBuilder lastView: @escaping () -> LastView,
-         selectedAction: @escaping (ItemType) -> Void)
+	     @ViewBuilder lastView: @escaping () -> LastView,
+	     selectedAction: @escaping (ItemType) -> Void)
 	{
 		self.title = title
 		self.items = items
-        self.lastView = lastView
+		self.lastView = lastView
 		self.selectedAction = selectedAction
 	}
 
@@ -36,22 +36,22 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: Vi
 
 			Text(title)
 				.font(.title3)
-                .fontWeight(.semibold)
+				.fontWeight(.semibold)
 				.padding(.leading, 50)
-            
+
 			ScrollView(.horizontal) {
-                HStack(alignment: .top, spacing: 0) {
-                    ForEach(items, id: \.portraitImageID) { item in
-                        PortraitButton(item: item) { item in
-                            selectedAction(item)
-                        }
+				HStack(alignment: .top, spacing: 0) {
+					ForEach(items, id: \.portraitImageID) { item in
+						PortraitButton(item: item) { item in
+							selectedAction(item)
+						}
 					}
 
-                    lastView()
+					lastView()
 				}
 				.padding(.horizontal, 50)
 				.padding(.vertical)
-                .padding(.vertical)
+				.padding(.vertical)
 			}
 			.edgesIgnoringSafeArea(.horizontal)
 		}
@@ -59,13 +59,13 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: Vi
 }
 
 extension PortraitImageHStack where LastView == EmptyView {
-    init(title: String,
-         items: [ItemType],
-         selectedAction: @escaping (ItemType) -> Void)
-    {
-        self.title = title
-        self.items = items
-        self.lastView = { EmptyView() }
-        self.selectedAction = selectedAction
-    }
+	init(title: String,
+	     items: [ItemType],
+	     selectedAction: @escaping (ItemType) -> Void)
+	{
+		self.title = title
+		self.items = items
+		self.lastView = { EmptyView() }
+		self.selectedAction = selectedAction
+	}
 }

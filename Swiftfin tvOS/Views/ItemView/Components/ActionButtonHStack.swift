@@ -9,37 +9,37 @@
 import SwiftUI
 
 extension ItemView {
-    
-    struct ActionButtonHStack: View {
-        
-        @ObservedObject
-        var viewModel: ItemViewModel
-        
-        var body: some View {
-            HStack {
-                Button {
-                    viewModel.toggleWatchState()
-                } label: {
-                    Image(systemName: "checkmark.circle")
-                        .font(.title3)
-                        .frame(height: 100)
-                        .frame(maxWidth: .infinity)
-//                        .frame(width: 100, height: 100)
-                }
-                .buttonStyle(PlainButtonStyle())
-//                .buttonStyle(CardButtonStyle())
-                
-                Button {
-                    viewModel.toggleFavoriteState()
-                } label: {
-                    Image(systemName: "heart")
-                        .font(.title3)
-                        .frame(height: 100)
-                        .frame(maxWidth: .infinity)
-//                        .frame(width: 100, height: 100)
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-        }
-    }
+
+	struct ActionButtonHStack: View {
+
+		@ObservedObject
+		var viewModel: ItemViewModel
+
+		var body: some View {
+			HStack {
+				Button {
+					viewModel.toggleWatchState()
+				} label: {
+					Image(systemName: "checkmark.circle")
+						.font(.title3)
+						.frame(height: 100)
+						.frame(maxWidth: .infinity)
+					//                        .frame(width: 100, height: 100)
+				}
+				.buttonStyle(PlainButtonStyle())
+				//                .buttonStyle(CardButtonStyle())
+
+				Button {
+					viewModel.toggleFavoriteState()
+				} label: {
+					Image(systemName: "heart")
+						.font(.title3)
+						.frame(height: 100)
+						.frame(maxWidth: .infinity)
+					//                        .frame(width: 100, height: 100)
+				}
+				.buttonStyle(PlainButtonStyle())
+			}
+		}
+	}
 }

@@ -40,7 +40,7 @@ extension ItemView {
 			                         staticOverlayView: staticOverlayView,
 			                         headerHeight: UIScreen.main.bounds.height * 0.35) {
 				content()
-                    .padding(.top)
+					.padding(.top)
 			}
 		}
 	}
@@ -69,25 +69,25 @@ extension ItemView.CompactPosterScrollView {
 					.fixedSize(horizontal: false, vertical: true)
 
 				// MARK: Details
-                
-                DotHStack {
-                    if viewModel.item.unaired {
-                        if let premiereDateLabel = viewModel.item.airDateLabel {
-                            Text(premiereDateLabel)
-                        }
-                    } else {
-                        if let productionYear = viewModel.item.productionYear {
-                            Text(String(productionYear))
-                        }
-                    }
 
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                        Text(runtime)
-                    }
-                }
-                .lineLimit(1)
-                .font(.subheadline.weight(.medium))
-                .foregroundColor(.secondary)
+				DotHStack {
+					if viewModel.item.unaired {
+						if let premiereDateLabel = viewModel.item.airDateLabel {
+							Text(premiereDateLabel)
+						}
+					} else {
+						if let productionYear = viewModel.item.productionYear {
+							Text(String(productionYear))
+						}
+					}
+
+					if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+						Text(runtime)
+					}
+				}
+				.lineLimit(1)
+				.font(.subheadline.weight(.medium))
+				.foregroundColor(.secondary)
 
 				ItemView.AttributesHStack(viewModel: viewModel)
 			}
@@ -117,8 +117,8 @@ extension ItemView.CompactPosterScrollView {
 
 					Spacer()
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
-                        .font(.title2)
+					ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
+						.font(.title2)
 				}
 			}
 			.padding(.horizontal)

@@ -14,9 +14,9 @@ struct iPadOSSeriesItemView: View {
 	@ObservedObject
 	var viewModel: SeriesItemViewModel
 
-    var body: some View {
-        ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
-            ContentView(viewModel: viewModel)
-        }
-    }
+	var body: some View {
+		ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
+			ContentView(viewModel: viewModel)
+		}
+	}
 }

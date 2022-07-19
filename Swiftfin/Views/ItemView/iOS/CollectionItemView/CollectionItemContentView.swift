@@ -20,39 +20,39 @@ extension CollectionItemView {
 		var viewModel: CollectionItemViewModel
 		@Default(.itemViewType)
 		private var itemViewType
-        
-        @ViewBuilder
-        private var compactPosterOverview: some View {
-            if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-                Text(firstTagline)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .foregroundColor(.white)
-                    .padding(.horizontal)
-            }
 
-            if let itemOverview = viewModel.item.overview {
-                TruncatedTextView(itemOverview,
-                                  lineLimit: 4,
-                                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-                    itemRouter.route(to: \.itemOverview, viewModel.item)
-                }
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal)
-            }
-        }
+		@ViewBuilder
+		private var compactPosterOverview: some View {
+			if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+				Text(firstTagline)
+					.font(.body)
+					.fontWeight(.semibold)
+					.lineLimit(2)
+					.foregroundColor(.white)
+					.padding(.horizontal)
+			}
+
+			if let itemOverview = viewModel.item.overview {
+				TruncatedTextView(itemOverview,
+				                  lineLimit: 4,
+				                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+					itemRouter.route(to: \.itemOverview, viewModel.item)
+				}
+				.fixedSize(horizontal: false, vertical: true)
+				.padding(.horizontal)
+			}
+		}
 
 		var body: some View {
 			VStack(alignment: .leading, spacing: 20) {
-                
-                if case ItemViewType.compactPoster = itemViewType {
-                    compactPosterOverview
-                }
-                
-                if case ItemViewType.compactLogo = itemViewType {
-                    compactPosterOverview
-                }
+
+				if case ItemViewType.compactPoster = itemViewType {
+					compactPosterOverview
+				}
+
+				if case ItemViewType.compactLogo = itemViewType {
+					compactPosterOverview
+				}
 
 				// MARK: Genres
 
@@ -61,8 +61,8 @@ extension CollectionItemView {
 					           items: genres) { genre in
 						itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
 					}
-                    
-                    Divider()
+
+					Divider()
 				}
 
 				// MARK: Studios
@@ -72,18 +72,18 @@ extension CollectionItemView {
 					           items: studios) { studio in
 						itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
 					}
-                    
-                    Divider()
+
+					Divider()
 				}
 
-                // MARK: Items
+				// MARK: Items
 
-                if !viewModel.collectionItems.isEmpty {
-                    PortraitImageHStack(title: L10n.items,
-                                        items: viewModel.collectionItems) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-                }
+				if !viewModel.collectionItems.isEmpty {
+					PortraitImageHStack(title: L10n.items,
+					                    items: viewModel.collectionItems) { item in
+						itemRouter.route(to: \.item, item)
+					}
+				}
 			}
 		}
 	}

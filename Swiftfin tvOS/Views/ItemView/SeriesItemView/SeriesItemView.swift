@@ -9,14 +9,14 @@
 import SwiftUI
 
 struct SeriesItemView: View {
-    
-    @ObservedObject
-    var viewModel: SeriesItemViewModel
 
-    var body: some View {
-        ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
-            ContentView(viewModel: viewModel, scrollViewProxy: scrollViewProxy)
-                .ignoresSafeArea()
-        }
-    }
+	@ObservedObject
+	var viewModel: SeriesItemViewModel
+
+	var body: some View {
+		ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
+			ContentView(viewModel: viewModel, scrollViewProxy: scrollViewProxy)
+				.ignoresSafeArea()
+		}
+	}
 }

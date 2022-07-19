@@ -10,27 +10,27 @@ import SwiftUI
 
 struct DotHStack: View {
 
-    private let items: [AnyView]
-    private let restItems: [AnyView]
+	private let items: [AnyView]
+	private let restItems: [AnyView]
 	private let alignment: HorizontalAlignment
 
-    var body: some View {
-        HStack {
-            items.first
+	var body: some View {
+		HStack {
+			items.first
 
-            ForEach(0 ..< restItems.count, id: \.self) { i in
+			ForEach(0 ..< restItems.count, id: \.self) { i in
 
-                Circle()
-                    .frame(width: 2, height: 2)
+				Circle()
+					.frame(width: 2, height: 2)
 
-                restItems[i]
-            }
-        }
-    }
+				restItems[i]
+			}
+		}
+	}
 }
 
 extension DotHStack {
-    
+
 	init<Data: RandomAccessCollection, Content: View>(_ data: Data,
 	                                                  id: KeyPath<Data.Element, Data.Element> = \.self,
 	                                                  alignment: HorizontalAlignment = .leading,
@@ -54,7 +54,7 @@ extension DotHStack {
 	{
 		self.alignment = alignment
 		let _content = content()
-        
+
 		self.items = [
 			_content.value.0.eraseToAnyView(),
 			_content.value.1.eraseToAnyView(),
@@ -67,13 +67,13 @@ extension DotHStack {
 	{
 		self.alignment = alignment
 		let _content = content()
-        
+
 		self.items = [
-            _content.value.0.eraseToAnyView(),
+			_content.value.0.eraseToAnyView(),
 			_content.value.1.eraseToAnyView(),
 			_content.value.2.eraseToAnyView(),
 		]
-        self.restItems = Array(items.dropFirst())
+		self.restItems = Array(items.dropFirst())
 	}
 
 	init<A: View, B: View, C: View, D: View>(alignment: HorizontalAlignment = .leading,

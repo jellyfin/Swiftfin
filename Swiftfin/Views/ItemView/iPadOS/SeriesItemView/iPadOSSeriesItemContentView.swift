@@ -10,66 +10,66 @@ import JellyfinAPI
 import SwiftUI
 
 extension iPadOSSeriesItemView {
-    
-    struct ContentView: View {
-        
-        @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: SeriesItemViewModel
 
-        var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+	struct ContentView: View {
 
-                // MARK: Genres
+		@EnvironmentObject
+		var itemRouter: ItemCoordinator.Router
+		@ObservedObject
+		var viewModel: SeriesItemViewModel
 
-                if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(title: L10n.genres,
-                               items: genres) { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
-                    
-                    Divider()
-                }
+		var body: some View {
+			VStack(alignment: .leading, spacing: 10) {
 
-                // MARK: Studios
+				// MARK: Genres
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
-                    PillHStack(title: L10n.studios,
-                               items: studios) { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
-                    
-                    Divider()
-                }
-                
-                // MARK: Cast and Crew
+				if let genres = viewModel.item.genreItems, !genres.isEmpty {
+					PillHStack(title: L10n.genres,
+					           items: genres) { genre in
+						itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+					}
 
-                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                !castAndCrew.isEmpty {
-                    PortraitImageHStack(title: L10n.castAndCrew,
-                                        items: castAndCrew,
-                                        itemWidth: UIDevice.isIPad ? 130 : 110) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
-                    
-                    Divider()
-                }
+					Divider()
+				}
 
-                // MARK: Similar
+				// MARK: Studios
 
-                if !viewModel.similarItems.isEmpty {
-                    PortraitImageHStack(title: L10n.recommended,
-                                        items: viewModel.similarItems,
-                                        itemWidth: UIDevice.isIPad ? 130 : 110) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-                    
-                    Divider()
-                }
+				if let studios = viewModel.item.studios, !studios.isEmpty {
+					PillHStack(title: L10n.studios,
+					           items: studios) { studio in
+						itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
+					}
 
-                ItemView.AboutView(viewModel: viewModel)
-            }
-        }
-    }
+					Divider()
+				}
+
+				// MARK: Cast and Crew
+
+				if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+				   !castAndCrew.isEmpty {
+				   	PortraitImageHStack(title: L10n.castAndCrew,
+				   	                    items: castAndCrew,
+				   	                    itemWidth: UIDevice.isIPad ? 130 : 110) { person in
+				   		itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+				   	}
+
+				   	Divider()
+				   }
+
+				// MARK: Similar
+
+				if !viewModel.similarItems.isEmpty {
+					PortraitImageHStack(title: L10n.recommended,
+					                    items: viewModel.similarItems,
+					                    itemWidth: UIDevice.isIPad ? 130 : 110) { item in
+						itemRouter.route(to: \.item, item)
+					}
+
+					Divider()
+				}
+
+				ItemView.AboutView(viewModel: viewModel)
+			}
+		}
+	}
 }

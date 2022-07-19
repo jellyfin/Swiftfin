@@ -26,15 +26,15 @@ extension EpisodesRowManager {
 	var sortedSeasons: [BaseItemDto] {
 		Array(seasonsEpisodes.keys).sorted(by: { $0.indexNumber ?? 0 < $1.indexNumber ?? 0 })
 	}
-    
-    var currentEpisodes: [BaseItemDto]? {
-        if let selectedSeason = selectedSeason {
-            return seasonsEpisodes[selectedSeason]
-        } else {
-            guard let firstSeason = seasonsEpisodes.keys.first else { return nil }
-            return seasonsEpisodes[firstSeason]
-        }
-    }
+
+	var currentEpisodes: [BaseItemDto]? {
+		if let selectedSeason = selectedSeason {
+			return seasonsEpisodes[selectedSeason]
+		} else {
+			guard let firstSeason = seasonsEpisodes.keys.first else { return nil }
+			return seasonsEpisodes[firstSeason]
+		}
+	}
 
 	// Also retrieves the current season episodes if available
 	func getSeasons() {

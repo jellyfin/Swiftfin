@@ -52,7 +52,7 @@ struct CinematicResumeCardView: View {
 							.foregroundColor(.white)
 
 						HStack {
-                            Color.jellyfinPurple
+							Color.jellyfinPurple
 								.frame(width: 350 * (item.userData?.playedPercentage ?? 0) / 100, height: 7)
 
 							Spacer(minLength: 0)

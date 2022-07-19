@@ -20,10 +20,10 @@ struct PillHStack<ItemType: PillStackable>: View {
 				.font(.title2)
 				.fontWeight(.semibold)
 				.accessibility(addTraits: [.isHeader])
-                .padding(.leading)
-                .if(UIDevice.isIPad) { view in
-                    view.padding(.leading)
-                }
+				.padding(.leading)
+				.if(UIDevice.isIPad) { view in
+					view.padding(.leading)
+				}
 
 			ScrollView(.horizontal, showsIndicators: false) {
 				HStack {
@@ -48,9 +48,9 @@ struct PillHStack<ItemType: PillStackable>: View {
 					}
 				}
 				.padding(.horizontal)
-                .if(UIDevice.isIPad) { view in
-                    view.padding(.horizontal)
-                }
+				.if(UIDevice.isIPad) { view in
+					view.padding(.horizontal)
+				}
 			}
 		}
 	}

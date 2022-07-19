@@ -9,24 +9,24 @@
 import SwiftUI
 
 extension MovieItemView {
-    
-    struct ContentView: View {
-        
-        @ObservedObject
-        var viewModel: MovieItemViewModel
-        @FocusState
-        var isFocused: Bool
-        
-        var body: some View {
-            HStack {
-                VStack {
-                    ForEach(0..<10) { _ in
-                        ItemView.PlayButton(viewModel: viewModel)
-                    }
-                }
-                
-                Spacer()
-            }
-        }
-    }
+
+	struct ContentView: View {
+
+		@ObservedObject
+		var viewModel: MovieItemViewModel
+		@FocusState
+		var isFocused: Bool
+
+		var body: some View {
+			HStack {
+				VStack {
+					ForEach(0 ..< 10) { _ in
+						ItemView.PlayButton(viewModel: viewModel)
+					}
+				}
+
+				Spacer()
+			}
+		}
+	}
 }

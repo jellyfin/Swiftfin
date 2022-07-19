@@ -75,8 +75,8 @@ extension SeasonItemView {
 					           })
 					           .padding(.bottom)
 				}
-                
-                // MARK: Studios
+
+				// MARK: Studios
 
 				if let studios = viewModel.item.studios {
 					PillHStack(title: L10n.studios,
@@ -86,15 +86,15 @@ extension SeasonItemView {
 					.padding(.bottom)
 				}
 
-                // MARK: Cast and Crew
+				// MARK: Cast and Crew
 
-                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                !castAndCrew.isEmpty {
-                    PortraitImageHStack(title: L10n.castAndCrew,
-                                        items: castAndCrew) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
-                }
+				if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+				   !castAndCrew.isEmpty {
+				   	PortraitImageHStack(title: L10n.castAndCrew,
+				   	                    items: castAndCrew) { person in
+				   		itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+				   	}
+				   }
 
 				// MARK: Details
 

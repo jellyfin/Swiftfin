@@ -14,12 +14,12 @@ extension ItemView {
 
 		@ObservedObject
 		private var viewModel: ItemViewModel
-        private let equalSpacing: Bool
-        
-        init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
-            self.viewModel = viewModel
-            self.equalSpacing = equalSpacing
-        }
+		private let equalSpacing: Bool
+
+		init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
+			self.viewModel = viewModel
+			self.equalSpacing = equalSpacing
+		}
 
 		var body: some View {
 			HStack(alignment: .center, spacing: 15) {
@@ -30,19 +30,17 @@ extension ItemView {
 					if viewModel.isWatched {
 						Image(systemName: "checkmark.circle.fill")
 							.symbolRenderingMode(.palette)
-                            .foregroundStyle(
-                                .primary,
-                                Color.jellyfinPurple
-                            )
+							.foregroundStyle(.primary,
+							                 Color.jellyfinPurple)
 					} else {
 						Image(systemName: "checkmark.circle")
-                            .foregroundStyle(.primary)
+							.foregroundStyle(.primary)
 					}
 				}
-                .buttonStyle(PlainButtonStyle())
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
-                }
+				.buttonStyle(PlainButtonStyle())
+				.if(equalSpacing) { view in
+					view.frame(maxWidth: .infinity)
+				}
 
 				Button {
 					UIDevice.impact(.light)
@@ -57,10 +55,10 @@ extension ItemView {
 							.foregroundStyle(.primary)
 					}
 				}
-                .buttonStyle(PlainButtonStyle())
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
-                }
+				.buttonStyle(PlainButtonStyle())
+				.if(equalSpacing) { view in
+					view.frame(maxWidth: .infinity)
+				}
 
 				if viewModel.videoPlayerViewModels.count > 1 {
 					Menu {

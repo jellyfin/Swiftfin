@@ -10,194 +10,194 @@ import SwiftUI
 
 struct DotHStack: View {
 
-    private let items: [AnyView]
-    private let restItems: [AnyView]
-    private let alignment: HorizontalAlignment
+	private let items: [AnyView]
+	private let restItems: [AnyView]
+	private let alignment: HorizontalAlignment
 
-    var body: some View {
-        HStack(spacing: 0) {
-            items.first
+	var body: some View {
+		HStack(spacing: 0) {
+			items.first
 
-            ForEach(0 ..< restItems.count, id: \.self) { i in
+			ForEach(0 ..< restItems.count, id: \.self) { i in
 
-                Circle()
-                    .frame(width: 5, height: 5)
-                    .padding(.horizontal)
+				Circle()
+					.frame(width: 5, height: 5)
+					.padding(.horizontal)
 
-                restItems[i]
-            }
-        }
-    }
+				restItems[i]
+			}
+		}
+	}
 }
 
 extension DotHStack {
-    
-    init<Data: RandomAccessCollection, Content: View>(_ data: Data,
-                                                      id: KeyPath<Data.Element, Data.Element> = \.self,
-                                                      alignment: HorizontalAlignment = .leading,
-                                                      @ViewBuilder content: @escaping (Data.Element) -> Content)
-    {
-        self.alignment = alignment
-        self.items = data.map { content($0[keyPath: id]).eraseToAnyView() }
-        self.restItems = Array(items.dropFirst())
-    }
 
-    init<A: View>(alignment: HorizontalAlignment = .leading,
-                  @ViewBuilder content: () -> A)
-    {
-        self.alignment = alignment
-        self.items = [content().eraseToAnyView()]
-        self.restItems = Array(items.dropFirst())
-    }
+	init<Data: RandomAccessCollection, Content: View>(_ data: Data,
+	                                                  id: KeyPath<Data.Element, Data.Element> = \.self,
+	                                                  alignment: HorizontalAlignment = .leading,
+	                                                  @ViewBuilder content: @escaping (Data.Element) -> Content)
+	{
+		self.alignment = alignment
+		self.items = data.map { content($0[keyPath: id]).eraseToAnyView() }
+		self.restItems = Array(items.dropFirst())
+	}
 
-    init<A: View, B: View>(alignment: HorizontalAlignment = .leading,
-                           @ViewBuilder content: () -> TupleView<(A, B)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+	init<A: View>(alignment: HorizontalAlignment = .leading,
+	              @ViewBuilder content: () -> A)
+	{
+		self.alignment = alignment
+		self.items = [content().eraseToAnyView()]
+		self.restItems = Array(items.dropFirst())
+	}
 
-    init<A: View, B: View, C: View>(alignment: HorizontalAlignment = .leading,
-                                    @ViewBuilder content: () -> TupleView<(A, B, C)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-            _content.value.2.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+	init<A: View, B: View>(alignment: HorizontalAlignment = .leading,
+	                       @ViewBuilder content: () -> TupleView<(A, B)>)
+	{
+		self.alignment = alignment
+		let _content = content()
 
-    init<A: View, B: View, C: View, D: View>(alignment: HorizontalAlignment = .leading,
-                                             @ViewBuilder content: () -> TupleView<(A, B, C, D)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-            _content.value.2.eraseToAnyView(),
-            _content.value.3.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
 
-    init<A: View, B: View, C: View, D: View, E: View>(alignment: HorizontalAlignment = .leading,
-                                                      @ViewBuilder content: () -> TupleView<(A, B, C, D, E)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-            _content.value.2.eraseToAnyView(),
-            _content.value.3.eraseToAnyView(),
-            _content.value.4.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+	init<A: View, B: View, C: View>(alignment: HorizontalAlignment = .leading,
+	                                @ViewBuilder content: () -> TupleView<(A, B, C)>)
+	{
+		self.alignment = alignment
+		let _content = content()
 
-    init<A: View, B: View, C: View, D: View, E: View, F: View>(alignment: HorizontalAlignment = .leading,
-                                                               @ViewBuilder content: () -> TupleView<(A, B, C, D, E, F)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-            _content.value.2.eraseToAnyView(),
-            _content.value.3.eraseToAnyView(),
-            _content.value.4.eraseToAnyView(),
-            _content.value.5.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+			_content.value.2.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
 
-    init<A: View, B: View, C: View, D: View, E: View, F: View, G: View>(alignment: HorizontalAlignment = .leading,
-                                                                        @ViewBuilder content: () -> TupleView<(A, B, C, D, E, F, G)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-            _content.value.2.eraseToAnyView(),
-            _content.value.3.eraseToAnyView(),
-            _content.value.4.eraseToAnyView(),
-            _content.value.5.eraseToAnyView(),
-            _content.value.6.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+	init<A: View, B: View, C: View, D: View>(alignment: HorizontalAlignment = .leading,
+	                                         @ViewBuilder content: () -> TupleView<(A, B, C, D)>)
+	{
+		self.alignment = alignment
+		let _content = content()
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+			_content.value.2.eraseToAnyView(),
+			_content.value.3.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
 
-    init<A: View, B: View, C: View, D: View, E: View, F: View, G: View, H: View>(alignment: HorizontalAlignment = .leading,
-                                                                                 @ViewBuilder content: ()
-                                                                                     -> TupleView<(A, B, C, D, E, F, G, H)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-            _content.value.2.eraseToAnyView(),
-            _content.value.3.eraseToAnyView(),
-            _content.value.4.eraseToAnyView(),
-            _content.value.5.eraseToAnyView(),
-            _content.value.6.eraseToAnyView(),
-            _content.value.7.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+	init<A: View, B: View, C: View, D: View, E: View>(alignment: HorizontalAlignment = .leading,
+	                                                  @ViewBuilder content: () -> TupleView<(A, B, C, D, E)>)
+	{
+		self.alignment = alignment
+		let _content = content()
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+			_content.value.2.eraseToAnyView(),
+			_content.value.3.eraseToAnyView(),
+			_content.value.4.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
 
-    init<A: View, B: View, C: View, D: View, E: View, F: View, G: View, H: View, I: View>(alignment: HorizontalAlignment = .leading,
-                                                                                          @ViewBuilder content: ()
-                                                                                              -> TupleView<(A, B, C, D, E, F, G, H, I)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-            _content.value.2.eraseToAnyView(),
-            _content.value.3.eraseToAnyView(),
-            _content.value.4.eraseToAnyView(),
-            _content.value.5.eraseToAnyView(),
-            _content.value.6.eraseToAnyView(),
-            _content.value.7.eraseToAnyView(),
-            _content.value.8.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+	init<A: View, B: View, C: View, D: View, E: View, F: View>(alignment: HorizontalAlignment = .leading,
+	                                                           @ViewBuilder content: () -> TupleView<(A, B, C, D, E, F)>)
+	{
+		self.alignment = alignment
+		let _content = content()
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+			_content.value.2.eraseToAnyView(),
+			_content.value.3.eraseToAnyView(),
+			_content.value.4.eraseToAnyView(),
+			_content.value.5.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
 
-    init<A: View, B: View, C: View, D: View, E: View, F: View, G: View, H: View, I: View,
-        J: View>(alignment: HorizontalAlignment = .leading,
-                 @ViewBuilder content: ()
-                     -> TupleView<(A, B, C, D, E, F, G, H, I,
-                                   J)>)
-    {
-        self.alignment = alignment
-        let _content = content()
-        self.items = [
-            _content.value.0.eraseToAnyView(),
-            _content.value.1.eraseToAnyView(),
-            _content.value.2.eraseToAnyView(),
-            _content.value.3.eraseToAnyView(),
-            _content.value.4.eraseToAnyView(),
-            _content.value.5.eraseToAnyView(),
-            _content.value.6.eraseToAnyView(),
-            _content.value.7.eraseToAnyView(),
-            _content.value.8.eraseToAnyView(),
-            _content.value.9.eraseToAnyView(),
-        ]
-        self.restItems = Array(items.dropFirst())
-    }
+	init<A: View, B: View, C: View, D: View, E: View, F: View, G: View>(alignment: HorizontalAlignment = .leading,
+	                                                                    @ViewBuilder content: () -> TupleView<(A, B, C, D, E, F, G)>)
+	{
+		self.alignment = alignment
+		let _content = content()
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+			_content.value.2.eraseToAnyView(),
+			_content.value.3.eraseToAnyView(),
+			_content.value.4.eraseToAnyView(),
+			_content.value.5.eraseToAnyView(),
+			_content.value.6.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
+
+	init<A: View, B: View, C: View, D: View, E: View, F: View, G: View, H: View>(alignment: HorizontalAlignment = .leading,
+	                                                                             @ViewBuilder content: ()
+	                                                                             	-> TupleView<(A, B, C, D, E, F, G, H)>)
+	{
+		self.alignment = alignment
+		let _content = content()
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+			_content.value.2.eraseToAnyView(),
+			_content.value.3.eraseToAnyView(),
+			_content.value.4.eraseToAnyView(),
+			_content.value.5.eraseToAnyView(),
+			_content.value.6.eraseToAnyView(),
+			_content.value.7.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
+
+	init<A: View, B: View, C: View, D: View, E: View, F: View, G: View, H: View, I: View>(alignment: HorizontalAlignment = .leading,
+	                                                                                      @ViewBuilder content: ()
+	                                                                                      	-> TupleView<(A, B, C, D, E, F, G, H, I)>)
+	{
+		self.alignment = alignment
+		let _content = content()
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+			_content.value.2.eraseToAnyView(),
+			_content.value.3.eraseToAnyView(),
+			_content.value.4.eraseToAnyView(),
+			_content.value.5.eraseToAnyView(),
+			_content.value.6.eraseToAnyView(),
+			_content.value.7.eraseToAnyView(),
+			_content.value.8.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
+
+	init<A: View, B: View, C: View, D: View, E: View, F: View, G: View, H: View, I: View,
+		J: View>(alignment: HorizontalAlignment = .leading,
+		         @ViewBuilder content: ()
+		         	-> TupleView<(A, B, C, D, E, F, G, H, I,
+		         	              J)>)
+	{
+		self.alignment = alignment
+		let _content = content()
+		self.items = [
+			_content.value.0.eraseToAnyView(),
+			_content.value.1.eraseToAnyView(),
+			_content.value.2.eraseToAnyView(),
+			_content.value.3.eraseToAnyView(),
+			_content.value.4.eraseToAnyView(),
+			_content.value.5.eraseToAnyView(),
+			_content.value.6.eraseToAnyView(),
+			_content.value.7.eraseToAnyView(),
+			_content.value.8.eraseToAnyView(),
+			_content.value.9.eraseToAnyView(),
+		]
+		self.restItems = Array(items.dropFirst())
+	}
 }

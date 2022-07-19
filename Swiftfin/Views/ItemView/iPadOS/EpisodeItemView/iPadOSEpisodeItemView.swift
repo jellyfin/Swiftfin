@@ -10,15 +10,15 @@ import JellyfinAPI
 import SwiftUI
 
 struct iPadOSEpisodeItemView: View {
-    
-    @EnvironmentObject
-    var itemRouter: ItemCoordinator.Router
-    @ObservedObject
-    var viewModel: EpisodeItemViewModel
-    
-    var body: some View {
-        NavBarOffsetScrollView(headerHeight: 10) {
-            ContentView(viewModel: viewModel)
-        }
-    }
+
+	@EnvironmentObject
+	var itemRouter: ItemCoordinator.Router
+	@ObservedObject
+	var viewModel: EpisodeItemViewModel
+
+	var body: some View {
+		NavBarOffsetScrollView(headerHeight: 10) {
+			ContentView(viewModel: viewModel)
+		}
+	}
 }

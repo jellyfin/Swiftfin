@@ -10,13 +10,13 @@ import JellyfinAPI
 import SwiftUI
 
 struct iPadOSMovieItemView: View {
-    
-    @ObservedObject
-    var viewModel: MovieItemViewModel
-    
-    var body: some View {
-        ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
-            ContentView(viewModel: viewModel)
-        }
-    }
+
+	@ObservedObject
+	var viewModel: MovieItemViewModel
+
+	var body: some View {
+		ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
+			ContentView(viewModel: viewModel)
+		}
+	}
 }

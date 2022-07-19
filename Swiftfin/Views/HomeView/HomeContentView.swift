@@ -9,45 +9,45 @@
 import SwiftUI
 
 extension HomeView {
-    
-    struct ContentView: View {
-        
-        @EnvironmentObject
-        var homeRouter: HomeCoordinator.Router
-        @ObservedObject
-        var viewModel: HomeViewModel
-        
-        var body: some View {
-            RefreshableScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    if !viewModel.resumeItems.isEmpty {
-                        ContinueWatchingView(viewModel: viewModel)
-                    }
 
-                    if !viewModel.nextUpItems.isEmpty {
-                        PortraitImageHStack(title: L10n.nextUp,
-                                            items: viewModel.nextUpItems,
-                                            itemWidth: UIDevice.isIPad ? 130 : 110) { item in
-                            homeRouter.route(to: \.item, item)
-                        }
-                    }
+	struct ContentView: View {
 
-                    if !viewModel.latestAddedItems.isEmpty {
-                        PortraitImageHStack(title: L10n.recentlyAdded,
-                                            items: viewModel.latestAddedItems,
-                                            itemWidth: UIDevice.isIPad ? 130 : 110) { item in
-                            homeRouter.route(to: \.item, item)
-                        }
-                    }
+		@EnvironmentObject
+		var homeRouter: HomeCoordinator.Router
+		@ObservedObject
+		var viewModel: HomeViewModel
 
-                    ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestInLibraryView(viewModel: .init(library: library))
-                    }
-                }
-                .padding(.bottom, 50)
-            } onRefresh: {
-                viewModel.refresh()
-            }
-        }
-    }
+		var body: some View {
+			RefreshableScrollView {
+				VStack(alignment: .leading, spacing: 20) {
+					if !viewModel.resumeItems.isEmpty {
+						ContinueWatchingView(viewModel: viewModel)
+					}
+
+					if !viewModel.nextUpItems.isEmpty {
+						PortraitImageHStack(title: L10n.nextUp,
+						                    items: viewModel.nextUpItems,
+						                    itemWidth: UIDevice.isIPad ? 130 : 110) { item in
+							homeRouter.route(to: \.item, item)
+						}
+					}
+
+					if !viewModel.latestAddedItems.isEmpty {
+						PortraitImageHStack(title: L10n.recentlyAdded,
+						                    items: viewModel.latestAddedItems,
+						                    itemWidth: UIDevice.isIPad ? 130 : 110) { item in
+							homeRouter.route(to: \.item, item)
+						}
+					}
+
+					ForEach(viewModel.libraries, id: \.self) { library in
+						LatestInLibraryView(viewModel: .init(library: library))
+					}
+				}
+				.padding(.bottom, 50)
+			} onRefresh: {
+				viewModel.refresh()
+			}
+		}
+	}
 }

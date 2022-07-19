@@ -9,38 +9,38 @@
 import SwiftUI
 
 extension HomeView {
-    
-    struct ErrorView: View {
-        
-        @ObservedObject
-        var viewModel: HomeViewModel
-        
-        let errorMessage: ErrorMessage
-        
-        var body: some View {
-            VStack(spacing: 5) {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(width: 100, height: 100)
-                        .scaleEffect(2)
-                } else {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 72))
-                        .foregroundColor(Color.red)
-                        .frame(width: 100, height: 100)
-                }
 
-                Text("\(errorMessage.code)")
-                
-                Text(errorMessage.message)
-                    .frame(minWidth: 50, maxWidth: 240)
-                    .multilineTextAlignment(.center)
+	struct ErrorView: View {
 
-                PrimaryButtonView(title: L10n.retry) {
-                    viewModel.refresh()
-                }
-            }
-            .offset(y: -50)
-        }
-    }
+		@ObservedObject
+		var viewModel: HomeViewModel
+
+		let errorMessage: ErrorMessage
+
+		var body: some View {
+			VStack(spacing: 5) {
+				if viewModel.isLoading {
+					ProgressView()
+						.frame(width: 100, height: 100)
+						.scaleEffect(2)
+				} else {
+					Image(systemName: "xmark.circle.fill")
+						.font(.system(size: 72))
+						.foregroundColor(Color.red)
+						.frame(width: 100, height: 100)
+				}
+
+				Text("\(errorMessage.code)")
+
+				Text(errorMessage.message)
+					.frame(minWidth: 50, maxWidth: 240)
+					.multilineTextAlignment(.center)
+
+				PrimaryButtonView(title: L10n.retry) {
+					viewModel.refresh()
+				}
+			}
+			.offset(y: -50)
+		}
+	}
 }

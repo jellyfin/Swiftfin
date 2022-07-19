@@ -51,88 +51,88 @@ extension ItemView.CinematicScrollView {
 			VStack(alignment: .center, spacing: 10) {
 
 				Spacer()
-                
-                VStack {
-                    ImageView(viewModel.item.getLogoImage(maxWidth: Int(UIScreen.main.bounds.width)),
-                              resizingMode: .aspectFit,
-                              failureView: {
-                                  Text(viewModel.item.displayName)
-                                      .font(.largeTitle)
-                                      .fontWeight(.semibold)
-                                      .multilineTextAlignment(.center)
-                                      .foregroundColor(.white)
-                                      .frame(alignment: .bottom)
-                              })
-                              .frame(height: 100, alignment: .bottom)
 
-                    DotHStack {
-                        if let firstGenre = viewModel.item.genres?.first {
-                            Text(firstGenre)
-                        }
+				VStack {
+					ImageView(viewModel.item.getLogoImage(maxWidth: Int(UIScreen.main.bounds.width)),
+					          resizingMode: .aspectFit,
+					          failureView: {
+					          	Text(viewModel.item.displayName)
+					          		.font(.largeTitle)
+					          		.fontWeight(.semibold)
+					          		.multilineTextAlignment(.center)
+					          		.foregroundColor(.white)
+					          		.frame(alignment: .bottom)
+					          })
+					          .frame(height: 100, alignment: .bottom)
 
-                        if let premiereYear = viewModel.item.premiereDateYear {
-                            Text(String(premiereYear))
-                        }
+					DotHStack {
+						if let firstGenre = viewModel.item.genres?.first {
+							Text(firstGenre)
+						}
 
-                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                            Text(runtime)
-                        }
-                    }
-                    .font(.caption)
-                    .foregroundColor(Color(UIColor.lightGray))
-                    .padding(.horizontal)
+						if let premiereYear = viewModel.item.premiereDateYear {
+							Text(String(premiereYear))
+						}
 
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(maxWidth: 300)
-                        .frame(height: 50)
+						if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+							Text(runtime)
+						}
+					}
+					.font(.caption)
+					.foregroundColor(Color(UIColor.lightGray))
+					.padding(.horizontal)
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .frame(maxWidth: 300)
-                        .colorScheme(.dark)
+					ItemView.PlayButton(viewModel: viewModel)
+						.frame(maxWidth: 300)
+						.frame(height: 50)
 
-                    if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-                        Text(firstTagline)
-                            .font(.body)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.white)
-                    }
+					ItemView.ActionButtonHStack(viewModel: viewModel)
+						.font(.title)
+						.frame(maxWidth: 300)
+						.colorScheme(.dark)
 
-                    if let playButtonOverview = viewModel.playButtonItem?.overview {
-                        TruncatedTextView(playButtonOverview,
-                                          lineLimit: 3,
-                                          font: UIFont.preferredFont(forTextStyle: .footnote)) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
-                        .foregroundColor(.white)
-                    } else if let seriesOverview = viewModel.item.overview {
-                        TruncatedTextView(seriesOverview,
-                                          lineLimit: 3,
-                                          font: UIFont.preferredFont(forTextStyle: .footnote)) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
-                        .foregroundColor(.white)
-                    }
+					if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+						Text(firstTagline)
+							.font(.body)
+							.fontWeight(.semibold)
+							.lineLimit(2)
+							.frame(maxWidth: .infinity, alignment: .leading)
+							.foregroundColor(.white)
+					}
 
-                    HStack {
-                        ItemView.AttributesHStack(viewModel: viewModel)
+					if let playButtonOverview = viewModel.playButtonItem?.overview {
+						TruncatedTextView(playButtonOverview,
+						                  lineLimit: 3,
+						                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+							itemRouter.route(to: \.itemOverview, viewModel.item)
+						}
+						.foregroundColor(.white)
+					} else if let seriesOverview = viewModel.item.overview {
+						TruncatedTextView(seriesOverview,
+						                  lineLimit: 3,
+						                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+							itemRouter.route(to: \.itemOverview, viewModel.item)
+						}
+						.foregroundColor(.white)
+					}
 
-                        Spacer()
-                    }
-                }
-                .padding()
-                .background {
-                    BlurView(style: .systemThinMaterialDark)
-                        .mask {
-                            LinearGradient(gradient: Gradient(stops: [
-                                .init(color: .white, location: 0),
-                                .init(color: .white, location: 0.2),
-                                .init(color: .white.opacity(0), location: 1),
-                            ]), startPoint: .bottom, endPoint: .top)
-                        }
-                }
+					HStack {
+						ItemView.AttributesHStack(viewModel: viewModel)
+
+						Spacer()
+					}
+				}
+				.padding()
+				.background {
+					BlurView(style: .systemThinMaterialDark)
+						.mask {
+							LinearGradient(gradient: Gradient(stops: [
+								.init(color: .white, location: 0),
+								.init(color: .white, location: 0.2),
+								.init(color: .white.opacity(0), location: 1),
+							]), startPoint: .bottom, endPoint: .top)
+						}
+				}
 			}
 		}
 	}

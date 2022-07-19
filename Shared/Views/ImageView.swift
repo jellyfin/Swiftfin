@@ -80,8 +80,8 @@ struct ImageView<FailureView: View>: View {
 		if let currentURL = currentURL {
 			LazyImage(source: currentURL) { state in
 				if let image = state.image {
-                    image
-                        .resizingMode(resizingMode)
+					image
+						.resizingMode(resizingMode)
 				} else if state.error != nil {
 					placeholderView.onAppear {
 						sources.removeFirst()

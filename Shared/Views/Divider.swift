@@ -9,10 +9,10 @@
 import SwiftUI
 
 struct Divider: View {
-    
-    var body: some View {
-        Color.secondarySystemFill
-            .frame(height: 0.5)
-            .padding(.horizontal)
-    }
+
+	var body: some View {
+		Color.secondarySystemFill
+			.frame(height: 0.5)
+			.padding(.horizontal)
+	}
 }

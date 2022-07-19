@@ -10,24 +10,22 @@ import SwiftUI
 import UIKit
 
 struct SeriesTextButton: UIViewRepresentable {
-    
-    let title: String
-    let action: () -> Void
-    
-    func makeUIView(context: Context) -> some UIButton {
-        var configuration = UIButton.Configuration.plain()
-        configuration.title = title
-        
-        let buttonAction = UIAction(title: "") { _ in
-            self.action()
-        }
-        
-        return UIButton(configuration: configuration, primaryAction: buttonAction)
-    }
-    
-    func updateUIView(_ uiView: UIViewType, context: Context) {
-        
-    }
+
+	let title: String
+	let action: () -> Void
+
+	func makeUIView(context: Context) -> some UIButton {
+		var configuration = UIButton.Configuration.plain()
+		configuration.title = title
+
+		let buttonAction = UIAction(title: "") { _ in
+			self.action()
+		}
+
+		return UIButton(configuration: configuration, primaryAction: buttonAction)
+	}
+
+	func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
 
 struct SFSymbolButton: UIViewRepresentable {

@@ -16,7 +16,7 @@ extension ItemView {
 		var viewModel: ItemViewModel
 
 		var body: some View {
-            HStack {
+			HStack {
 				if let officialRating = viewModel.item.officialRating {
 					AttributeOutlineView(text: officialRating)
 				}
@@ -43,7 +43,7 @@ extension ItemView {
 					}
 				}
 			}
-            .foregroundColor(Color(UIColor.darkGray))
+			.foregroundColor(Color(UIColor.darkGray))
 		}
 	}
 }

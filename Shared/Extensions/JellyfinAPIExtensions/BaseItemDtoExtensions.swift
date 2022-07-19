@@ -115,20 +115,20 @@ public extension BaseItemDto {
 		                                                        quality: 96).URLString
 		return URL(string: urlString)!
 	}
-    
-    var episodeLocator: String? {
-        if let episodeNo = indexNumber {
-            return L10n.episode(String(episodeNo))
-        }
-        return nil
-    }
-    
-    var seasonEpisodeLocator: String? {
-        if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
-            return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
-        }
-        return nil
-    }
+
+	var episodeLocator: String? {
+		if let episodeNo = indexNumber {
+			return L10n.episode(String(episodeNo))
+		}
+		return nil
+	}
+
+	var seasonEpisodeLocator: String? {
+		if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
+			return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
+		}
+		return nil
+	}
 
 	func getSeriesBackdropImage(maxWidth: Int) -> URL {
 		let x = UIScreen.main.nativeScale * CGFloat(maxWidth)

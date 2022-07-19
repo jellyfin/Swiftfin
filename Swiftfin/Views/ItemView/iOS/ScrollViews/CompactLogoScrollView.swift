@@ -39,12 +39,12 @@ extension ItemView {
 			ParallaxHeaderScrollView(header: headerView,
 			                         staticOverlayView: staticOverlayView,
 			                         headerHeight: UIScreen.main.bounds.height * 0.3) {
-                VStack(alignment: .center, spacing: 0) {
+				VStack(alignment: .center, spacing: 0) {
 
 					SubOverlayView(viewModel: viewModel)
 
 					content()
-                        .padding(.top)
+						.padding(.top)
 				}
 			}
 		}
@@ -106,22 +106,22 @@ extension ItemView.CompactLogoScrollView {
 //				Color(UIColor.lightGray)
 
 				VStack(alignment: .center, spacing: 10) {
-                    DotHStack {
-                        if let firstGenre = viewModel.item.genres?.first {
-                            Text(firstGenre)
-                        }
+					DotHStack {
+						if let firstGenre = viewModel.item.genres?.first {
+							Text(firstGenre)
+						}
 
-                        if let premiereYear = viewModel.item.premiereDateYear {
-                            Text(String(premiereYear))
-                        }
+						if let premiereYear = viewModel.item.premiereDateYear {
+							Text(String(premiereYear))
+						}
 
-                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                            Text(runtime)
-                        }
-                    }
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
+						if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+							Text(runtime)
+						}
+					}
+					.font(.caption)
+					.foregroundColor(.secondary)
+					.padding(.horizontal)
 
 					ItemView.AttributesHStack(viewModel: viewModel)
 
@@ -130,7 +130,7 @@ extension ItemView.CompactLogoScrollView {
 						.frame(height: 50)
 
 					ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
+						.font(.title)
 						.frame(maxWidth: 300)
 				}
 				.padding(.horizontal)

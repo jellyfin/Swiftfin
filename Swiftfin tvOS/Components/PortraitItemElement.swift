@@ -11,7 +11,7 @@ import SwiftUI
 
 // TODO: Transition to `PortraitButton`
 struct PortraitItemElement: View {
-    
+
 	@Environment(\.isFocused)
 	var envFocused: Bool
 	@State

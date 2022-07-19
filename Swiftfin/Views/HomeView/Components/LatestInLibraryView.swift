@@ -11,27 +11,27 @@ import SwiftUI
 
 struct LatestInLibraryView: View {
 
-    @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
-    @ObservedObject
-    var viewModel: LatestMediaViewModel
+	@EnvironmentObject
+	var homeRouter: HomeCoordinator.Router
+	@ObservedObject
+	var viewModel: LatestMediaViewModel
 
-    var body: some View {
-        PortraitImageHStack(title: L10n.latestWithString(viewModel.library.displayName),
-                            items: viewModel.items,
-                            itemWidth: UIDevice.isIPad ? 130 : 110) {
-            Button {
-                let libraryViewModel = LibraryViewModel(parentID: viewModel.library.id, filters: HomeViewModel.recentFilterSet)
-                homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))
-            } label: {
-                HStack {
-                    L10n.seeAll.text
-                    Image(systemName: "chevron.right")
-                }
-                .font(.subheadline.bold())
-            }
-        } selectedAction: { item in
-            homeRouter.route(to: \.item, item)
-        }
-    }
+	var body: some View {
+		PortraitImageHStack(title: L10n.latestWithString(viewModel.library.displayName),
+		                    items: viewModel.items,
+		                    itemWidth: UIDevice.isIPad ? 130 : 110) {
+			Button {
+				let libraryViewModel = LibraryViewModel(parentID: viewModel.library.id, filters: HomeViewModel.recentFilterSet)
+				homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))
+			} label: {
+				HStack {
+					L10n.seeAll.text
+					Image(systemName: "chevron.right")
+				}
+				.font(.subheadline.bold())
+			}
+		} selectedAction: { item in
+			homeRouter.route(to: \.item, item)
+		}
+	}
 }

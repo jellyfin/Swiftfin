@@ -21,12 +21,10 @@ struct AttributeFillView: View {
 			.background {
 				Color(UIColor.lightGray)
 					.cornerRadius(2)
-					.inverseMask(
-						Text(text)
-							.font(.caption)
-							.fontWeight(.semibold)
-							.padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-					)
+					.inverseMask(Text(text)
+						.font(.caption)
+						.fontWeight(.semibold)
+						.padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4)))
 			}
 	}
 }

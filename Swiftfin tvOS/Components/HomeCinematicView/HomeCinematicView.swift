@@ -76,7 +76,7 @@ struct HomeCinematicView: View {
 							.foregroundColor(Color.secondary)
 					} else {
 						if updatedSelectedItem?.itemType == .episode {
-                            Text(updatedSelectedItem?.episodeLocator ?? "")
+							Text(updatedSelectedItem?.episodeLocator ?? "")
 								.font(.callout)
 								.fontWeight(.medium)
 								.foregroundColor(Color.secondary)

@@ -44,12 +44,12 @@ struct HomeView: View {
 						if !viewModel.nextUpItems.isEmpty {
 							NextUpView(items: viewModel.nextUpItems)
 						}
-                        
-                        PortraitImageHStack(title: L10n.recentlyAdded,
-                                            items: viewModel.latestAddedItems) { item in
-                            homeRouter.route(to: \.modalItem, item)
-                        }
-                        .fixedSize(horizontal: false, vertical: true)
+
+						PortraitImageHStack(title: L10n.recentlyAdded,
+						                    items: viewModel.latestAddedItems) { item in
+							homeRouter.route(to: \.modalItem, item)
+						}
+						.fixedSize(horizontal: false, vertical: true)
 					}
 
 					ForEach(viewModel.libraries, id: \.self) { library in

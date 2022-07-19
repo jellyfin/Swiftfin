@@ -115,39 +115,39 @@ class ItemViewModel: ViewModel {
 	}
 
 	func toggleWatchState() {
-        let current = isWatched
-        isWatched.toggle()
-        
-        PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id,
-                                      itemId: item.id!)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case .failure(_):
-                    self?.isWatched = !current
-                case .finished: ()
-                }
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { _ in })
-            .store(in: &cancellables)
+		let current = isWatched
+		isWatched.toggle()
+
+		PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id,
+		                              itemId: item.id!)
+			.trackActivity(loading)
+			.sink(receiveCompletion: { [weak self] completion in
+				switch completion {
+				case .failure:
+					self?.isWatched = !current
+				case .finished: ()
+				}
+				self?.handleAPIRequestError(completion: completion)
+			}, receiveValue: { _ in })
+			.store(in: &cancellables)
 	}
 
 	func toggleFavoriteState() {
-        let current = isFavorited
-        isFavorited.toggle()
-        
-        UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case .failure(_):
-                    self?.isFavorited = !current
-                case .finished: ()
-                }
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { _ in })
-            .store(in: &cancellables)
-    }
+		let current = isFavorited
+		isFavorited.toggle()
+
+		UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+			.trackActivity(loading)
+			.sink(receiveCompletion: { [weak self] completion in
+				switch completion {
+				case .failure:
+					self?.isFavorited = !current
+				case .finished: ()
+				}
+				self?.handleAPIRequestError(completion: completion)
+			}, receiveValue: { _ in })
+			.store(in: &cancellables)
+	}
 
 	// Overridden by subclasses
 	func updateItem() {}

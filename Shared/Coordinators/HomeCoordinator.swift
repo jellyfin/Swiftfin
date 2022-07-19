@@ -50,6 +50,6 @@ final class HomeCoordinator: NavigationCoordinatable {
 
 	@ViewBuilder
 	func makeStart() -> some View {
-        HomeView(viewModel: .init())
+		HomeView(viewModel: .init())
 	}
 }

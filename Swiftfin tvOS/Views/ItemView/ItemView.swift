@@ -23,13 +23,13 @@ struct ItemView: View {
 		Group {
 			switch item.itemType {
 			case .movie:
-                MovieItemView(viewModel: .init(item: item))
+				MovieItemView(viewModel: .init(item: item))
 			case .episode:
-                CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
+				CinematicEpisodeItemView(viewModel: EpisodeItemViewModel(item: item))
 			case .season:
-                CinematicSeasonItemView(viewModel: SeasonItemViewModel(item: item))
+				CinematicSeasonItemView(viewModel: SeasonItemViewModel(item: item))
 			case .series:
-                SeriesItemView(viewModel: .init(item: item))
+				SeriesItemView(viewModel: .init(item: item))
 			case .boxset, .folder:
 				CinematicCollectionItemView(viewModel: CollectionItemViewModel(item: item))
 			default:

@@ -146,7 +146,7 @@ struct tvOSLiveTVOverlay_Previews: PreviewProvider {
 	                                                       hlsStreamURL: URL(string: "www.apple.com")!,
 	                                                       streamType: .direct,
 	                                                       response: PlaybackInfoResponse(),
-                                                           videoStream: MediaStream(),
+	                                                       videoStream: MediaStream(),
 	                                                       audioStreams: [MediaStream(displayTitle: "English", index: -1)],
 	                                                       subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
 	                                                       chapters: [],

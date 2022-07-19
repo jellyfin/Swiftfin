@@ -25,9 +25,9 @@ extension ItemView {
 					.fontWeight(.bold)
 					.accessibility(addTraits: [.isHeader])
 					.padding(.horizontal)
-                    .if(UIDevice.isIPad) { view in
-                        view.padding(.horizontal)
-                    }
+					.if(UIDevice.isIPad) { view in
+						view.padding(.horizontal)
+					}
 
 				ScrollView(.horizontal, showsIndicators: false) {
 					HStack {
@@ -64,7 +64,7 @@ extension ItemView {
 								}
 								.padding()
 							}
-                            .frame(width: 330, height: 165)
+							.frame(width: 330, height: 165)
 						}
 						.buttonStyle(PlainButtonStyle())
 					}

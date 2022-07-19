@@ -22,7 +22,7 @@ struct CinematicEpisodeItemView: View {
 	var showPosterLabels
 
 	func generateSubtitle() -> String? {
-        guard let seriesName = viewModel.item.seriesName, let episodeLocator = viewModel.item.episodeLocator else {
+		guard let seriesName = viewModel.item.seriesName, let episodeLocator = viewModel.item.episodeLocator else {
 			return nil
 		}
 

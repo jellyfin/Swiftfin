@@ -65,7 +65,7 @@ struct ContinueWatchingCard: View {
 					.frame(width: 500, alignment: .leading)
 
 				if item.itemType == .episode {
-                    Text(item.episodeLocator ?? "")
+					Text(item.episodeLocator ?? "")
 						.font(.callout)
 						.fontWeight(.medium)
 						.foregroundColor(.secondary)

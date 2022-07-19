@@ -20,51 +20,51 @@ extension MovieItemView {
 		var viewModel: MovieItemViewModel
 		@Default(.itemViewType)
 		private var itemViewType
-        
-        // MARK: Compact Poster Overview
-        
-        @ViewBuilder
-        private var compactPosterOverview: some View {
-            if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-                Text(firstTagline)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-            }
 
-            if let itemOverview = viewModel.item.overview {
-                TruncatedTextView(itemOverview,
-                                  lineLimit: 4,
-                                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
-                    itemRouter.route(to: \.itemOverview, viewModel.item)
-                }
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal)
-            }
-        }
+		// MARK: Compact Poster Overview
+
+		@ViewBuilder
+		private var compactPosterOverview: some View {
+			if let firstTagline = viewModel.playButtonItem?.taglines?.first {
+				Text(firstTagline)
+					.font(.body)
+					.fontWeight(.semibold)
+					.lineLimit(2)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.padding(.horizontal)
+			}
+
+			if let itemOverview = viewModel.item.overview {
+				TruncatedTextView(itemOverview,
+				                  lineLimit: 4,
+				                  font: UIFont.preferredFont(forTextStyle: .footnote)) {
+					itemRouter.route(to: \.itemOverview, viewModel.item)
+				}
+				.fixedSize(horizontal: false, vertical: true)
+				.padding(.horizontal)
+			}
+		}
 
 		var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+			VStack(alignment: .leading, spacing: 10) {
 
 				if case ItemViewType.compactPoster = itemViewType {
-                    compactPosterOverview
+					compactPosterOverview
 				}
-                
-                if case ItemViewType.compactLogo = itemViewType {
-                    compactPosterOverview
-                }
+
+				if case ItemViewType.compactLogo = itemViewType {
+					compactPosterOverview
+				}
 
 				// MARK: Genres
 
 				if let genres = viewModel.item.genreItems, !genres.isEmpty {
 					PillHStack(title: L10n.genres,
 					           items: genres) { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
-                    
-                    Divider()
+						itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+					}
+
+					Divider()
 				}
 
 				// MARK: Studios
@@ -74,46 +74,46 @@ extension MovieItemView {
 					           items: studios) { studio in
 						itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
 					}
-                    
-                    Divider()
-				}
-                
-                // MARK: Cast and Crew
 
-                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                !castAndCrew.isEmpty {
-                    PortraitImageHStack(title: L10n.castAndCrew,
-                                        items: castAndCrew) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
-                    
-                    Divider()
+					Divider()
 				}
+
+				// MARK: Cast and Crew
+
+				if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+				   !castAndCrew.isEmpty {
+				   	PortraitImageHStack(title: L10n.castAndCrew,
+				   	                    items: castAndCrew) { person in
+				   		itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+				   	}
+
+				   	Divider()
+				   }
 
 				// MARK: Similar
 
 				if !viewModel.similarItems.isEmpty {
-                    PortraitImageHStack(title: L10n.recommended,
-                                        items: viewModel.similarItems) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-                    
-                    Divider()
+					PortraitImageHStack(title: L10n.recommended,
+					                    items: viewModel.similarItems) { item in
+						itemRouter.route(to: \.item, item)
+					}
+
+					Divider()
 				}
 
-                ItemView.AboutView(viewModel: viewModel)
+				ItemView.AboutView(viewModel: viewModel)
 
-                // MARK: Details
+				// MARK: Details
 
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
+				if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
+					ListDetailsView(title: L10n.information, items: informationItems)
+						.padding(.horizontal)
+				}
 
-                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                    ListDetailsView(title: L10n.media, items: mediaItems)
-                        .padding(.horizontal)
-                }
+				if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
+					ListDetailsView(title: L10n.media, items: mediaItems)
+						.padding(.horizontal)
+				}
 			}
 		}
 	}
