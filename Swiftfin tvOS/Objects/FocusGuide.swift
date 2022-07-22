@@ -139,8 +139,11 @@ class FocusGuide: ObservableObject {
 
     @Published
     private(set) var focusedTag: String?
+    
+    private(set) var lastFocusedTag: String?
 
     func transition(to tag: String?) {
+        lastFocusedTag = focusedTag
         focusedTag = tag
     }
 }

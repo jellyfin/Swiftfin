@@ -58,6 +58,10 @@ extension SeriesItemView {
 
                     SeriesEpisodesView(viewModel: viewModel)
                         .environmentObject(focusGuide)
+                    
+                    Color.clear
+                        .frame(height: 0.5)
+                        .id("seasonsRecommendedContentDivider")
 
                     PortraitImageHStack(
                         title: L10n.recommended,
@@ -65,6 +69,7 @@ extension SeriesItemView {
                     ) { item in
                         itemRouter.route(to: \.item, item)
                     }
+                    .id("recommended")
                     .focusGuide(focusGuide, tag: "recommended", top: "seasons", bottom: "about")
                     
                     ItemView.AboutView(viewModel: viewModel)
@@ -102,6 +107,12 @@ extension SeriesItemView {
                 } else if newTag == "mediaButtons" {
                     withAnimation {
                         self.showLogo = false
+                    }
+                } else if newTag == "recommended" && focusGuide.lastFocusedTag == "episodes" {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        withAnimation(.easeIn(duration: 0.35)) {
+                            scrollViewProxy.scrollTo("seasonsRecommendedContentDivider")
+                        }
                     }
                 }
             }
