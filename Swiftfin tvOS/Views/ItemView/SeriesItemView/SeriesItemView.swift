@@ -16,7 +16,6 @@ struct SeriesItemView: View {
     var body: some View {
         ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
             ContentView(viewModel: viewModel, scrollViewProxy: scrollViewProxy)
-                .ignoresSafeArea()
         }
     }
 }

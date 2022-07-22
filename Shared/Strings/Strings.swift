@@ -100,6 +100,10 @@ internal enum L10n {
   internal static var editJumpLengths: String { return L10n.tr("Localizable", "editJumpLengths") }
   /// Empty Next Up
   internal static var emptyNextUp: String { return L10n.tr("Localizable", "emptyNextUp") }
+  /// Episode %2$@
+  internal static func episodeNumber(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "episodeNumber", String(describing: p1))
+  }
   /// Episodes
   internal static var episodes: String { return L10n.tr("Localizable", "episodes") }
   /// Error

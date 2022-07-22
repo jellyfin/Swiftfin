@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 extension View {
-    func eraseToAnyView() -> AnyView {
+    @inlinable func eraseToAnyView() -> AnyView {
         AnyView(self)
     }
 
@@ -26,7 +26,7 @@ extension View {
 
     // From: https://www.avanderlee.com/swiftui/conditional-view-modifier/
     @ViewBuilder
-    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+    @inlinable func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
         if condition {
             transform(self)
         } else {
@@ -35,7 +35,7 @@ extension View {
     }
 
     @ViewBuilder
-    func `if`<Content: View>(_ condition: Bool, transformIf: (Self) -> Content, transformElse: (Self) -> Content) -> some View {
+    @inlinable func `if`<Content: View>(_ condition: Bool, transformIf: (Self) -> Content, transformElse: (Self) -> Content) -> some View {
         if condition {
             transformIf(self)
         } else {
@@ -47,5 +47,10 @@ extension View {
     func portraitPoster(width: CGFloat) -> some View {
         self.frame(width: width, height: width * 1.5)
             .cornerRadius((width * 1.5) / 40)
+    }
+    
+    @inlinable func padding2(_ edges: Edge.Set = .all) -> some View {
+        self.padding(edges)
+            .padding(edges)
     }
 }

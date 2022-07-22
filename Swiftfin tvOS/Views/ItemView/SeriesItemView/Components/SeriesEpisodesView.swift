@@ -14,12 +14,10 @@ struct SeriesEpisodesView: View {
 
     @ObservedObject
     var viewModel: SeriesItemViewModel
-
     @FocusState
-    var isFocused: Bool
-
+    private var isFocused: Bool
     @EnvironmentObject
-    var parentFocusGuide: FocusGuide
+    private var parentFocusGuide: FocusGuide
 
     var body: some View {
         VStack(spacing: 0) {
@@ -34,21 +32,23 @@ struct SeriesEpisodesView: View {
 
 extension SeriesEpisodesView {
 
+    // MARK: SeasonsHStack
+    
     struct SeasonsHStack: View {
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
         @EnvironmentObject
-        var focusGuide: FocusGuide
+        private var focusGuide: FocusGuide
         @FocusState
-        var focusedSeason: BaseItemDto?
+        private var focusedSeason: BaseItemDto?
 
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(viewModel.sortedSeasons, id: \.self) { season in
                         Button {
-                            print(season.displayName)
+                            
                         } label: {
                             Text(season.displayName)
                                 .fontWeight(.semibold)
@@ -87,25 +87,27 @@ extension SeriesEpisodesView {
 }
 
 extension SeriesEpisodesView {
+    
+    // MARK: EpisodesHStack
 
     struct EpisodesHStack: View {
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
         @EnvironmentObject
-        var focusGuide: FocusGuide
+        private var focusGuide: FocusGuide
         @FocusState
-        var focusedEpisodeIndex: Int?
+        private var focusedEpisodeIndex: Int?
         @State
-        var lastFocusedEpisodeIndex: Int?
+        private var lastFocusedEpisodeIndex: Int?
         @State
-        var currentEpisodes: [BaseItemDto] = []
+        private var currentEpisodes: [BaseItemDto] = []
         @State
-        var wrappedScrollView: UIScrollView?
+        private var wrappedScrollView: UIScrollView?
 
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top) {
+                HStack(alignment: .top, spacing: 10) {
                     if !currentEpisodes.isEmpty {
                         ForEach(currentEpisodes, id: \.self) { episode in
                             EpisodeCard(episode: episode)
@@ -113,11 +115,7 @@ extension SeriesEpisodesView {
                         }
                     } else {
                         ForEach(1 ..< 10) { i in
-                            EpisodeCard(episode: .init(
-                                name: "Test",
-                                overview: String(repeating: "a", count: 21),
-                                indexNumber: 20
-                            ))
+                            EpisodeCard(episode: .placeHolder)
                             .redacted(reason: .placeholder)
                             .focused($focusedEpisodeIndex, equals: i)
                         }

@@ -15,9 +15,8 @@ struct MovieItemView: View {
     var viewModel: MovieItemViewModel
 
     var body: some View {
-        ItemView.CinematicScrollView(viewModel: viewModel) { _ in
-            ContentView(viewModel: viewModel)
-                .padding(.top)
+        ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
+            ContentView(viewModel: viewModel, scrollViewProxy: scrollViewProxy)
         }
     }
 }

@@ -12,7 +12,7 @@ import SwiftUI
 struct EpisodeCard: View {
 
     @EnvironmentObject
-    var itemRouter: ItemCoordinator.Router
+    private var itemRouter: ItemCoordinator.Router
 
     let episode: BaseItemDto
 
@@ -25,15 +25,19 @@ struct EpisodeCard: View {
                     episode.getBackdropImage(maxWidth: 600),
                     blurHash: episode.getBackdropImageBlurHash()
                 ) {
-                    InitialFailureView("FF")
+                    InitialFailureView(episode.failureInitials)
                 }
                 .frame(width: 550, height: 308)
             }
             .buttonStyle(CardButtonStyle())
 
             VStack(alignment: .leading) {
+                
+                Color.clear
+                    .frame(height: 0.5)
+                    .frame(maxWidth: .infinity)
 
-                Text(episode.episodeLocator ?? "")
+                Text(episode.episodeLocator ?? "--")
                     .font(.caption)
                     .foregroundColor(.secondary)
 

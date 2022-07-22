@@ -17,11 +17,13 @@ struct FocusGuideModifier: ViewModifier {
 
     let focusConstructor: FocusConstructor
     let onContentFocus: (() -> Void)?
+    
+    let debug = false
 
     func body(content: Content) -> some View {
         VStack(spacing: 0) {
 
-            Color.clear
+            Color(debug ? .red : .clear)
                 .frame(height: 1)
                 .if(focusConstructor.topTarget != nil, transform: { boundary in
                     boundary.focusable()
@@ -29,7 +31,7 @@ struct FocusGuideModifier: ViewModifier {
                 .focused($focusDirection, equals: .top)
 
             HStack(spacing: 0) {
-                Color.clear
+                Color(debug ? .red : .clear)
                     .frame(width: 1)
                     .if(focusConstructor.leftTarget != nil, transform: { boundary in
                         boundary.focusable()
@@ -39,7 +41,7 @@ struct FocusGuideModifier: ViewModifier {
                 content
                     .focused($focusDirection, equals: .content)
 
-                Color.clear
+                Color(debug ? .red : .clear)
                     .frame(width: 1)
                     .if(focusConstructor.rightTarget != nil, transform: { boundary in
                         boundary.focusable()
@@ -47,7 +49,7 @@ struct FocusGuideModifier: ViewModifier {
                     .focused($focusDirection, equals: .right)
             }
 
-            Color.clear
+            Color(debug ? .red : .clear)
                 .frame(height: 1)
                 .if(focusConstructor.bottomTarget != nil, transform: { boundary in
                     boundary.focusable()

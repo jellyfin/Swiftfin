@@ -16,27 +16,22 @@ extension SeriesItemView {
 
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
-
         @ObservedObject
         var viewModel: SeriesItemViewModel
+        @ObservedObject
+        private var focusGuide = FocusGuide()
         @State
         var scrollViewProxy: ScrollViewProxy
         @State
-        var showLogo: Bool = false
-
-        @ObservedObject
-        var focusGuide = FocusGuide()
+        private var showLogo: Bool = false
 
         var body: some View {
             VStack(spacing: 0) {
 
-                ItemView.StaticOverlayView(
-                    viewModel: viewModel,
-                    scrollViewProxy: scrollViewProxy
-                )
-                .focusGuide(focusGuide, tag: "mediaButtons", bottom: "seasons")
-                .frame(height: UIScreen.main.bounds.height - 150)
-                .padding(.bottom, 50)
+                ItemView.CinematicHeaderView(viewModel: viewModel)
+                    .focusGuide(focusGuide, tag: "mediaButtons", bottom: "seasons")
+                    .frame(height: UIScreen.main.bounds.height - 150)
+                    .padding(.bottom, 50)
 
                 VStack(spacing: 0) {
 
@@ -70,7 +65,10 @@ extension SeriesItemView {
                     ) { item in
                         itemRouter.route(to: \.item, item)
                     }
-                    .focusGuide(focusGuide, tag: "recommended", top: "seasons")
+                    .focusGuide(focusGuide, tag: "recommended", top: "seasons", bottom: "about")
+                    
+                    ItemView.AboutView(viewModel: viewModel)
+                        .focusGuide(focusGuide, tag: "about", top: "recommended")
 
                     Spacer()
                 }
@@ -82,7 +80,7 @@ extension SeriesItemView {
                         VStack(spacing: 0) {
                             LinearGradient(gradient: Gradient(stops: [
                                 .init(color: .white, location: 0),
-                                .init(color: .white.opacity(0.5), location: 0.2),
+                                .init(color: .white.opacity(0.7), location: 0.4),
                                 .init(color: .white.opacity(0), location: 1),
                             ]), startPoint: .bottom, endPoint: .top)
                                 .frame(height: UIScreen.main.bounds.height - 150)

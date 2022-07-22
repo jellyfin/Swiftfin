@@ -123,11 +123,8 @@ public extension BaseItemDto {
     }
 
     var episodeLocator: String? {
-        if let episodeNo = indexNumber {
-            return nil
-            //			return L10n.episode(String(episodeNo))
-        }
-        return nil
+        guard let episodeNo = indexNumber else { return nil }
+        return L10n.episodeNumber(episodeNo)
     }
 
     var seasonEpisodeLocator: String? {
@@ -366,6 +363,14 @@ public extension BaseItemDto {
 
         return mediaItems
     }
+    
+    var subtitleStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .subtitle } ?? []
+    }
+    
+    var audioStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .audio } ?? []
+    }
 
     // MARK: Missing and Unaired
 
@@ -419,5 +424,17 @@ public extension BaseItemDto {
         }
 
         return chapterImageURLs
+    }
+    
+    static var placeHolder: BaseItemDto {
+        .init(
+            name: "Placeholder",
+            overview: String.init(repeating: "a", count: 100),
+            indexNumber: 20
+        )
+    }
+    
+    static var noResults: BaseItemDto {
+        .init(name: L10n.noResults)
     }
 }

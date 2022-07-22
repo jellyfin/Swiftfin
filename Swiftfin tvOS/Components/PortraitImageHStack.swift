@@ -15,17 +15,20 @@ import TVUIKit
 
 struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: View {
 
+    private let loading: Bool
     private let title: String
     private let items: [ItemType]
     private let selectedAction: (ItemType) -> Void
     private let lastView: () -> LastView
 
     init(
+        loading: Bool = false,
         title: String,
         items: [ItemType],
         @ViewBuilder lastView: @escaping () -> LastView,
         selectedAction: @escaping (ItemType) -> Void
     ) {
+        self.loading = loading
         self.title = title
         self.items = items
         self.lastView = lastView
@@ -42,29 +45,40 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: Vi
 
             ScrollView(.horizontal) {
                 HStack(alignment: .top, spacing: 0) {
-                    ForEach(items, id: \.portraitImageID) { item in
-                        PortraitButton(item: item) { item in
-                            selectedAction(item)
+                    if loading {
+                        ForEach(0..<10) { _ in
+                            PortraitButton(item: BaseItemDto.placeHolder,
+                                           selectedAction: { _ in })
+                            .redacted(reason: .placeholder)
+                        }
+                    } else if items.isEmpty {
+                        PortraitButton(item: BaseItemDto.noResults,
+                                       selectedAction: { _ in })
+                    } else {
+                        ForEach(items, id: \.portraitImageID) { item in
+                            PortraitButton(item: item) { item in
+                                selectedAction(item)
+                            }
                         }
                     }
 
                     lastView()
                 }
                 .padding(.horizontal, 50)
-                .padding(.vertical)
-                .padding(.vertical)
+                .padding2(.vertical)
             }
-            .edgesIgnoringSafeArea(.horizontal)
         }
     }
 }
 
 extension PortraitImageHStack where LastView == EmptyView {
     init(
+        loading: Bool = false,
         title: String,
         items: [ItemType],
         selectedAction: @escaping (ItemType) -> Void
     ) {
+        self.loading = loading
         self.title = title
         self.items = items
         self.lastView = { EmptyView() }

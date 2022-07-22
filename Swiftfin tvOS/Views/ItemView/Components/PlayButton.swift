@@ -16,6 +16,8 @@ extension ItemView {
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
+        @FocusState
+        var isFocused: Bool
 
         var body: some View {
             Button {
@@ -33,10 +35,18 @@ extension ItemView {
                         .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .fontWeight(.semibold)
                 }
-                .frame(width: 300, height: 100)
-                .background(viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white)
+                .frame(width: 400, height: 100)
+                .background {
+                    if isFocused {
+                        viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white
+                    } else {
+                        Color.white
+                            .opacity(0.5)
+                    }
+                }
                 .cornerRadius(10)
             }
+            .focused($isFocused)
             .buttonStyle(CardButtonStyle())
             .contextMenu {
                 if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {

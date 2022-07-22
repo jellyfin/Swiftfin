@@ -24,10 +24,8 @@ extension ItemView {
                         .font(.title3)
                         .frame(height: 100)
                         .frame(maxWidth: .infinity)
-                    //                        .frame(width: 100, height: 100)
                 }
                 .buttonStyle(PlainButtonStyle())
-                //                .buttonStyle(CardButtonStyle())
 
                 Button {
                     viewModel.toggleFavoriteState()
@@ -36,7 +34,6 @@ extension ItemView {
                         .font(.title3)
                         .frame(height: 100)
                         .frame(maxWidth: .infinity)
-                    //                        .frame(width: 100, height: 100)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
