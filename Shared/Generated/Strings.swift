@@ -396,6 +396,8 @@ internal enum L10n {
   internal static var studio: String { return L10n.tr("Localizable", "studio") }
   /// Studios
   internal static var studios: String { return L10n.tr("Localizable", "studios") }
+  /// Subtitle Font
+  internal static var subtitleFont: String { return L10n.tr("Localizable", "subtitleFont") }
   /// Subtitles
   internal static var subtitles: String { return L10n.tr("Localizable", "subtitles") }
   /// Subtitle Size
