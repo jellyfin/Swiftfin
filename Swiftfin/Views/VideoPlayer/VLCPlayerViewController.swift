@@ -568,6 +568,7 @@ extension VLCPlayerViewController {
         vlcMediaPlayer.delegate = self
         vlcMediaPlayer.drawable = videoContentView
 
+        vlcMediaPlayer.setSubtitleFont(fontName: Defaults[.subtitleFontName])
         vlcMediaPlayer.setSubtitleSize(Defaults[.subtitleSize])
 
         stopOverlayDismissTimer()

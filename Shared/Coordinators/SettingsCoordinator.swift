@@ -11,7 +11,6 @@ import Stinsen
 import SwiftUI
 
 final class SettingsCoordinator: NavigationCoordinatable {
-
     let stack = NavigationStack(initial: \SettingsCoordinator.start)
 
     @Root
@@ -32,6 +31,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #if !os(tvOS)
         @Route(.push)
         var quickConnect = makeQuickConnectSettings
+        @Route(.push)
+        var fontPicker = makeFontPicker
     #endif
 
     @ViewBuilder
@@ -70,6 +71,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
         func makeQuickConnectSettings() -> some View {
             let viewModel = QuickConnectSettingsViewModel()
             QuickConnectSettingsView(viewModel: viewModel)
+        }
+
+        @ViewBuilder
+        func makeFontPicker() -> some View {
+            FontPickerView()
+                .navigationTitle(L10n.subtitleFont)
         }
     #endif
 
