@@ -107,7 +107,7 @@ extension SeriesEpisodesView {
 
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: 40) {
                     if !currentEpisodes.isEmpty {
                         ForEach(currentEpisodes, id: \.self) { episode in
                             EpisodeCard(episode: episode)
@@ -122,7 +122,8 @@ extension SeriesEpisodesView {
                     }
                 }
                 .padding(.horizontal, 50)
-                .padding(.vertical)
+                .padding(.bottom, 50)
+                .padding(.top)
             }
             .focusGuide(
                 focusGuide,
@@ -131,7 +132,6 @@ extension SeriesEpisodesView {
                 top: "seasons",
                 bottom: "recommended"
             )
-            .animation(.linear(duration: 0.1), value: viewModel.selectedSeason)
             .transition(.opacity)
             .introspectScrollView { scrollView in
                 wrappedScrollView = scrollView

@@ -23,7 +23,7 @@ struct PortraitButton<ItemType: PortraitImageStackable>: View {
                     item.imageURLConstructor(maxWidth: 300),
                     blurHash: item.blurHash,
                     failureView: {
-                        InitialFailureView(item.failureInitials)
+                        InitialFailureView(item.titleInitials)
                     }
                 )
                 .frame(width: 270, height: 405)

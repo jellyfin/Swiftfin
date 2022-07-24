@@ -36,7 +36,7 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: Vi
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
 
             Text(title)
                 .font(.title3)
@@ -55,7 +55,7 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: Vi
                         PortraitButton(item: BaseItemDto.noResults,
                                        selectedAction: { _ in })
                     } else {
-                        ForEach(items, id: \.portraitImageID) { item in
+                        ForEach(items, id: \.id) { item in
                             PortraitButton(item: item) { item in
                                 selectedAction(item)
                             }

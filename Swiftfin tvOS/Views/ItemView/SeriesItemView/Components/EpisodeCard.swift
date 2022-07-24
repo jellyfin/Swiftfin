@@ -17,9 +17,9 @@ struct EpisodeCard: View {
     let episode: BaseItemDto
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .center, spacing: 20) {
             Button {
-                itemRouter.route(to: \.item, episode)
+                
             } label: {
                 ImageView(
                     episode.getBackdropImage(maxWidth: 600),
@@ -30,36 +30,45 @@ struct EpisodeCard: View {
                 .frame(width: 550, height: 308)
             }
             .buttonStyle(CardButtonStyle())
+            
+            Button {
+                itemRouter.route(to: \.item, episode)
+            } label: {
+                VStack(alignment: .leading) {
 
-            VStack(alignment: .leading) {
-                
-                Color.clear
-                    .frame(height: 0.5)
-                    .frame(maxWidth: .infinity)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Color.clear
+                            .frame(height: 0.01)
+                            .frame(maxWidth: .infinity)
+                        
+                        Text(episode.episodeLocator ?? "--")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
 
-                Text(episode.episodeLocator ?? "--")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    Text(episode.displayName)
+                        .font(.footnote)
+                        .padding(.bottom, 1)
 
-                Text(episode.displayName)
-                    .font(.footnote)
-                    .padding(.bottom, 1)
-
-                if episode.unaired {
-                    Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .fontWeight(.light)
-                        .lineLimit(1)
-                } else {
-                    Text(episode.overview ?? "--")
-                        .font(.caption)
-                        .fontWeight(.light)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if episode.unaired {
+                        Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .fontWeight(.light)
+                            .lineLimit(1)
+                    } else {
+                        Text(episode.overview ?? "--")
+                            .font(.caption)
+                            .fontWeight(.light)
+                            .lineLimit(3)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
+                .frame(width: 510, height: 220)
+                .padding(.horizontal)
             }
-            .frame(width: 570)
+            .buttonStyle(CardButtonStyle())
         }
     }
 }

@@ -52,11 +52,7 @@ extension SeriesItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
 
-                if case ItemViewType.compactPoster = itemViewType {
-                    compactPosterOverview
-                }
-
-                if case ItemViewType.compactLogo = itemViewType {
+                if itemViewType == .compactPoster || itemViewType == .compactLogo {
                     compactPosterOverview
                 }
 

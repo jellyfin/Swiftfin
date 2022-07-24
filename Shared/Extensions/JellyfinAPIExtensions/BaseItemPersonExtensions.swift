@@ -12,30 +12,16 @@ import UIKit
 
 extension BaseItemPerson {
 
-    // MARK: Get Image
-
-    func getImage(baseURL: String, maxWidth: Int) -> URL {
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: id ?? "",
-            imageType: .primary,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: primaryImageTag
-        ).URLString
-        return URL(string: urlString)!
-    }
-
     func getBlurHash() -> String {
-        let imgURL = getImage(baseURL: "", maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"],
-              let hash = imageBlurHashes?.primary?[imgTag]
-        else {
-            return "001fC^"
-        }
-
-        return hash
+        return ""
+//        let imgURL = getImage(baseURL: "", maxWidth: 1)
+//        guard let imgTag = imgURL.queryParameters?["tag"],
+//              let hash = imageBlurHashes?.primary?[imgTag]
+//        else {
+//            return "001fC^"
+//        }
+//
+//        return hash
     }
 
     // MARK: First Role
@@ -44,7 +30,7 @@ extension BaseItemPerson {
     //    text too long. This will grab the first role which:
     //      - assumes that the most important role is the first
     //      - will also grab the last "(<text>)" instance, like "(voice)"
-    func firstRole() -> String? {
+    var firstRole: String? {
         guard let role = self.role else { return nil }
         let split = role.split(separator: "/")
         guard split.count > 1 else { return role }
@@ -66,12 +52,17 @@ extension BaseItemPerson {
 // MARK: PortraitImageStackable
 
 extension BaseItemPerson: PortraitImageStackable {
-    public var portraitImageID: String {
-        (id ?? "noid") + title + (subtitle ?? "nodescription") + blurHash + failureInitials
-    }
-
     public func imageURLConstructor(maxWidth: Int) -> URL {
-        self.getImage(baseURL: SessionManager.main.currentLogin.server.currentURI, maxWidth: maxWidth)
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(
+            itemId: id ?? "",
+            imageType: .primary,
+            maxWidth: Int(x),
+            quality: 96,
+            tag: primaryImageTag
+        ).URLString
+        return URL(string: urlString)!
     }
 
     public var title: String {
@@ -79,7 +70,7 @@ extension BaseItemPerson: PortraitImageStackable {
     }
 
     public var subtitle: String? {
-        self.firstRole()
+        self.firstRole
     }
 
     public var blurHash: String {

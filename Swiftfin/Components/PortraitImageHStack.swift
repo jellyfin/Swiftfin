@@ -49,7 +49,7 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
-                    ForEach(items, id: \.self.portraitImageID) { item in
+                    ForEach(items, id: \.id) { item in
                         PortraitItemButton(
                             item: item,
                             maxWidth: itemWidth,

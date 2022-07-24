@@ -315,6 +315,8 @@
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
+		E184C160288C5C08000B25BA /* RequestBuilderExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E184C15F288C5C08000B25BA /* RequestBuilderExtensions.swift */; };
+		E184C161288C5C08000B25BA /* RequestBuilderExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E184C15F288C5C08000B25BA /* RequestBuilderExtensions.swift */; };
 		E18845F526DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18845F626DD631E00B0C5B7 /* BaseItemDto+Stackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */; };
 		E18E01A8288746AF0022598C /* NavBarOffsetScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01A2288746AF0022598C /* NavBarOffsetScrollView.swift */; };
@@ -759,6 +761,7 @@
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVLCOverlay.swift; sourceTree = "<group>"; };
 		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
+		E184C15F288C5C08000B25BA /* RequestBuilderExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestBuilderExtensions.swift; sourceTree = "<group>"; };
 		E18845F426DD631E00B0C5B7 /* BaseItemDto+Stackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+Stackable.swift"; sourceTree = "<group>"; };
 		E18E01A2288746AF0022598C /* NavBarOffsetScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavBarOffsetScrollView.swift; sourceTree = "<group>"; };
 		E18E01A3288746AF0022598C /* PortraitImageHStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PortraitImageHStack.swift; sourceTree = "<group>"; };
@@ -1128,12 +1131,12 @@
 		536D3D77267BB9650004248C /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E1C92618288756BD002A7A66 /* DotHStack.swift */,
 				E103A6A1278A7EB500820EC7 /* HomeCinematicView */,
 				E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */,
-				E1C92618288756BD002A7A66 /* DotHStack.swift */,
+				531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */,
 				E1C92617288756BD002A7A66 /* PortraitButton.swift */,
 				E1C92619288756BD002A7A66 /* PortraitImageHStack.swift */,
-				531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */,
 				536D3D80267BDFC60004248C /* PortraitItemElement.swift */,
 				E17885A3278105170094FBCF /* SFSymbolButton.swift */,
 				E1A16C9E2889D88A00EA4679 /* TruncatedTextView.swift */,
@@ -1746,8 +1749,8 @@
 		E18E01CE288747230022598C /* MovieItemView */ = {
 			isa = PBXGroup;
 			children = (
-				E18E01CF288747230022598C /* MovieItemView.swift */,
 				E18E01D0288747230022598C /* MovieItemContentView.swift */,
+				E18E01CF288747230022598C /* MovieItemView.swift */,
 			);
 			path = MovieItemView;
 			sourceTree = "<group>";
@@ -1858,6 +1861,7 @@
 				E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */,
 				E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */,
 				E1AD105E26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift */,
+				E184C15F288C5C08000B25BA /* RequestBuilderExtensions.swift */,
 			);
 			path = JellyfinAPIExtensions;
 			sourceTree = "<group>";
@@ -2359,6 +2363,7 @@
 				E193D549271941CC00900D82 /* UserSignInView.swift in Sources */,
 				535870AA2669D8AE00D05A09 /* BlurHashDecode.swift in Sources */,
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
+				E184C161288C5C08000B25BA /* RequestBuilderExtensions.swift in Sources */,
 				E19169CF272514760085832A /* HTTPScheme.swift in Sources */,
 				E13849452780370B0024FB48 /* PlaybackSpeed.swift in Sources */,
 				E1C812CD277AE40A00918266 /* VideoPlayerViewModel.swift in Sources */,
@@ -2563,6 +2568,7 @@
 				E193D4D827193CAC00900D82 /* PortraitImageStackable.swift in Sources */,
 				E18E01DD288747230022598C /* iPadOSSeriesItemContentView.swift in Sources */,
 				C4E5598928124C10003DECA5 /* LiveTVChannelItemElement.swift in Sources */,
+				E184C160288C5C08000B25BA /* RequestBuilderExtensions.swift in Sources */,
 				E1C925F72887504B002A7A66 /* PanDirectionGestureRecognizer.swift in Sources */,
 				E18E01E9288747230022598C /* SeriesItemView.swift in Sources */,
 				624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */,

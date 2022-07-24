@@ -30,7 +30,7 @@ extension MovieItemView {
                 ItemView.CinematicHeaderView(viewModel: viewModel)
                     .focusGuide(focusGuide, tag: "mediaButtons", bottom: "recommended")
                     .frame(height: UIScreen.main.bounds.height - 150)
-//                    .padding(.bottom, 50)
+                    .padding(.bottom, 50)
 
                 VStack(spacing: 0) {
 

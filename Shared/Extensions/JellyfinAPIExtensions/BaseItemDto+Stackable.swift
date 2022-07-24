@@ -13,21 +13,18 @@ import JellyfinAPI
 // MARK: PortraitImageStackable
 
 extension BaseItemDto: PortraitImageStackable {
-    public var portraitImageID: String {
-        id ?? "no id"
-    }
-
     public func imageURLConstructor(maxWidth: Int) -> URL {
-        switch self.itemType {
-        case .episode:
-            return getSeriesPrimaryImage(maxWidth: maxWidth)
-        default:
-            return self.getPrimaryImage(maxWidth: maxWidth)
-        }
+        imageURL(.primary, maxWidth: maxWidth)
+//        switch type {
+//        case .episode:
+//            return getSeriesPrimaryImage(maxWidth: maxWidth)
+//        default:
+//            return self.getPrimaryImage(maxWidth: maxWidth)
+//        }
     }
 
     public var title: String {
-        switch self.itemType {
+        switch type {
         case .episode:
             return self.seriesName ?? self.name ?? ""
         default:
@@ -36,7 +33,7 @@ extension BaseItemDto: PortraitImageStackable {
     }
 
     public var subtitle: String? {
-        switch self.itemType {
+        switch type {
         case .episode:
             return seasonEpisodeLocator
         default:
@@ -45,7 +42,7 @@ extension BaseItemDto: PortraitImageStackable {
     }
 
     public var blurHash: String {
-        self.getPrimaryImageBlurHash()
+        getPrimaryImageBlurHash()
     }
 
     public var failureInitials: String {
@@ -55,8 +52,8 @@ extension BaseItemDto: PortraitImageStackable {
     }
 
     public var showTitle: Bool {
-        switch self.itemType {
-        case .episode, .series, .movie, .boxset:
+        switch type {
+        case .episode, .series, .movie, .boxSet:
             return Defaults[.showPosterLabels]
         default:
             return true

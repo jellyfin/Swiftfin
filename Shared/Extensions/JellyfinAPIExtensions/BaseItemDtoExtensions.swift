@@ -12,7 +12,7 @@ import UIKit
 
 // 001fC^ = dark grey plain blurhash
 
-public extension BaseItemDto {
+extension BaseItemDto {
     // MARK: Images
 
     func getSeriesBackdropImageBlurHash() -> String {
@@ -63,6 +63,30 @@ public extension BaseItemDto {
         } else {
             return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
         }
+    }
+    
+    func imageURL(_ type: ImageType, maxWidth: Int) -> URL {
+        let scaleWidth = Int(UIScreen.main.nativeScale) * maxWidth
+        let tag = imageTags?[type.rawValue]
+        return ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
+                                                       imageType: type,
+                                                       maxWidth: scaleWidth,
+                                                       tag: tag).url
+    }
+    
+    func blurHash(_ type: ImageType) -> String {
+        if let tag = imageTags?[type.rawValue], let taggedBlurHash = imageBlurHashes?[type]?[tag] {
+            return taggedBlurHash
+        } else if let firstBlurHash = imageBlurHashes?[type]?.values.first {
+            return firstBlurHash
+        }
+        return BlurHashView.defaultBlurHash
+    }
+    
+    func imageViewSource(_ type: ImageType, maxWidth: Int) -> ImageViewSource {
+        let url = imageURL(type, maxWidth: maxWidth)
+        let blurHash = blurHash(type)
+        return ImageViewSource(url: url, blurHash: blurHash)
     }
 
     func getBackdropImage(maxWidth: Int) -> URL {
@@ -436,5 +460,38 @@ public extension BaseItemDto {
     
     static var noResults: BaseItemDto {
         .init(name: L10n.noResults)
+    }
+}
+
+extension BaseItemDtoImageBlurHashes {
+    subscript(imageType: ImageType) -> [String: String]? {
+        switch imageType {
+        case .primary:
+            return primary
+        case .art:
+            return art
+        case .backdrop:
+            return backdrop
+        case .banner:
+            return banner
+        case .logo:
+            return logo
+        case .thumb:
+            return thumb
+        case .disc:
+            return disc
+        case .box:
+            return box
+        case .screenshot:
+            return screenshot
+        case .menu:
+            return menu
+        case .chapter:
+            return chapter
+        case .boxRear:
+            return boxRear
+        case .profile:
+            return profile
+        }
     }
 }
