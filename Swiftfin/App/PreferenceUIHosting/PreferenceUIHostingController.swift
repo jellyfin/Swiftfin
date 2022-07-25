@@ -12,10 +12,10 @@ import UIKit
 // MARK: PreferenceUIHostingController
 
 class PreferenceUIHostingController: UIHostingController<AnyView> {
-    init<V: View>(wrappedView: V) {
+    init<V: View>(@ViewBuilder wrappedView: @escaping () -> V) {
         let box = Box()
         super.init(rootView: AnyView(
-            wrappedView
+            wrappedView()
                 .onPreferenceChange(PrefersHomeIndicatorAutoHiddenPreferenceKey.self) {
                     box.value?._prefersHomeIndicatorAutoHidden = $0
                 }.onPreferenceChange(SupportedOrientationsPreferenceKey.self) {

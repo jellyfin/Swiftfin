@@ -14,123 +14,148 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
     @EnvironmentObject
     var itemRouter: ItemCoordinator.Router
     @ObservedObject
-    var viewModel: RowManager
-    let onlyCurrentSeason: Bool
+    private var viewModel: RowManager
+    private let singleSeason: Bool
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+    init(viewModel: RowManager, singleSeason: Bool = false) {
+        self.viewModel = viewModel
+        self.singleSeason = singleSeason
+    }
 
+    @ViewBuilder
+    private var loadingCard: some View {
+        VStack(alignment: .leading) {
+
+            Color.gray
+                .frame(width: 200, height: 112)
+                .cornerRadius(10)
+
+            VStack(alignment: .leading) {
+                Text("S-:E-")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                Text("Placeholder Title")
+                    .font(.body)
+                    .padding(.bottom, 1)
+                    .lineLimit(2)
+
+                Text(String(repeating: "Placeholder", count: 20))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fontWeight(.light)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer()
+        }
+        .redacted(reason: .placeholder)
+        .frame(width: 200)
+        .animation(Animation.easeInOut(duration: 1).repeatForever(autoreverses: true), value: 1)
+    }
+
+    @ViewBuilder
+    private var noEpisodesCard: some View {
+        VStack(alignment: .leading) {
+
+            Color.gray.ignoresSafeArea()
+                .mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
+                .frame(width: 200, height: 112)
+
+            VStack(alignment: .leading) {
+                Text("--")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+
+                L10n.noEpisodesAvailable.text
+                    .font(.body)
+                    .padding(.bottom, 1)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+        }
+        .frame(width: 200)
+    }
+
+    @ViewBuilder
+    private var headerView: some View {
+        if singleSeason {
             HStack {
+                Text(viewModel.selectedSeason?.name ?? L10n.season)
 
-                if onlyCurrentSeason {
-                    if let currentSeason = Array(viewModel.seasonsEpisodes.keys).first(where: { $0.id == viewModel.item.id }) {
-                        Text(currentSeason.name ?? L10n.noTitle)
-                            .accessibility(addTraits: [.isHeader])
-                    }
-                } else {
-                    Menu {
-                        ForEach(
-                            viewModel.sortedSeasons,
-                            id: \.self
-                        ) { season in
-                            Button {
-                                viewModel.select(season: season)
-                            } label: {
-                                if season.id == viewModel.selectedSeason?.id {
-                                    Label(season.name ?? L10n.season, systemImage: "checkmark")
-                                } else {
-                                    Text(season.name ?? L10n.season)
-                                }
+                Spacer()
+            }
+            .font(.title3.weight(.semibold))
+            .padding(.horizontal)
+            .padding(.top)
+        } else {
+            HStack {
+                Menu {
+                    ForEach(
+                        viewModel.sortedSeasons,
+                        id: \.self
+                    ) { season in
+                        Button {
+                            viewModel.select(season: season)
+                        } label: {
+                            if season.id == viewModel.selectedSeason?.id {
+                                Label(season.name ?? L10n.season, systemImage: "checkmark")
+                            } else {
+                                Text(season.name ?? L10n.season)
                             }
                         }
-                    } label: {
-                        HStack(spacing: 5) {
+                    }
+                } label: {
+                    HStack(spacing: 5) {
+                        Group {
                             Text(viewModel.selectedSeason?.name ?? L10n.unknown)
-                                .fontWeight(.semibold)
                                 .fixedSize()
                             Image(systemName: "chevron.down")
                         }
+                        .font(.title3.weight(.semibold))
                     }
                 }
 
                 Spacer()
+
+                if let selectedSeason = viewModel.selectedSeason, !singleSeason {
+                    Button {
+                        itemRouter.route(to: \.item, selectedSeason)
+                    } label: {
+                        Image(systemName: "info.circle.fill")
+                            .font(.title3.weight(.semibold))
+                    }
+                }
             }
             .padding()
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+
+            headerView
 
             ScrollView(.horizontal, showsIndicators: false) {
-                ScrollViewReader { reader in
-                    HStack(alignment: .top, spacing: 15) {
-                        if viewModel.isLoading {
-                            VStack(alignment: .leading) {
-
-                                ZStack {
-                                    Color.gray.ignoresSafeArea()
-
-                                    ProgressView()
-                                }
-                                .mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
-                                .frame(width: 200, height: 112)
-
-                                VStack(alignment: .leading) {
-                                    Text("S-:E-")
-                                        .font(.footnote)
-                                        .foregroundColor(.secondary)
-                                    Text("--")
-                                        .font(.body)
-                                        .padding(.bottom, 1)
-                                        .lineLimit(2)
-                                }
-
-                                Spacer()
-                            }
-                            .frame(width: 200)
-                            .shadow(radius: 4, y: 2)
-                        } else if let selectedSeason = viewModel.selectedSeason {
-                            if let seasonEpisodes = viewModel.seasonsEpisodes[selectedSeason] {
-                                if seasonEpisodes.isEmpty {
-                                    VStack(alignment: .leading) {
-
-                                        Color.gray.ignoresSafeArea()
-                                            .mask(Rectangle().frame(width: 200, height: 112).cornerRadius(10))
-                                            .frame(width: 200, height: 112)
-
-                                        VStack(alignment: .leading) {
-                                            Text("--")
-                                                .font(.footnote)
-                                                .foregroundColor(.secondary)
-
-                                            L10n.noEpisodesAvailable.text
-                                                .font(.body)
-                                                .padding(.bottom, 1)
-                                                .lineLimit(2)
-                                        }
-
-                                        Spacer()
-                                    }
-                                    .frame(width: 200)
-                                    .shadow(radius: 4, y: 2)
-                                } else {
-                                    ForEach(seasonEpisodes, id: \.self) { episode in
-                                        EpisodeRowCard(viewModel: viewModel, episode: episode)
-                                            .id(episode.id)
-                                    }
+                HStack(alignment: .top, spacing: 15) {
+                    if viewModel.isLoading {
+                        loadingCard
+                    } else if let selectedSeason = viewModel.selectedSeason {
+                        if let seasonEpisodes = viewModel.seasonsEpisodes[selectedSeason] {
+                            if seasonEpisodes.isEmpty {
+                                noEpisodesCard
+                            } else {
+                                ForEach(seasonEpisodes, id: \.self) { episode in
+                                    EpisodeRowCard(viewModel: viewModel, episode: episode)
+                                        .id(episode.id)
                                 }
                             }
-                        }
-                    }
-                    .padding(.horizontal)
-                    .onChange(of: viewModel.selectedSeason) { _ in
-                        if viewModel.selectedSeason?.id == viewModel.item.seasonId {
-                            reader.scrollTo(viewModel.item.id)
-                        }
-                    }
-                    .onChange(of: viewModel.seasonsEpisodes) { _ in
-                        if viewModel.selectedSeason?.id == viewModel.item.seasonId {
-                            reader.scrollTo(viewModel.item.id)
                         }
                     }
                 }
-                .edgesIgnoringSafeArea(.horizontal)
+                .padding(.horizontal)
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
     }

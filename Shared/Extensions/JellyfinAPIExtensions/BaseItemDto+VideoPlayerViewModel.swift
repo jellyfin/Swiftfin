@@ -94,11 +94,13 @@ extension BaseItemDto {
                         _static: true,
                         tag: currentMediaSource.eTag,
                         deviceProfileId: nil,
-                        playSessionId: response.playSessionId,
+                        playSessionId: response
+                            .playSessionId,
                         segmentContainer: "ts",
                         segmentLength: nil,
                         minSegments: 2,
-                        deviceId: UIDevice.vendorUUIDString,
+                        deviceId: UIDevice
+                            .vendorUUIDString,
                         audioCodec: audioStreams
                             .compactMap(\.codec)
                             .joined(separator: ","),
@@ -106,7 +108,8 @@ extension BaseItemDto {
                         requireAvc: true,
                         transcodingMaxAudioChannels: 6,
                         videoCodec: videoStream?.codec,
-                        videoStreamIndex: videoStream?.index,
+                        videoStreamIndex: videoStream?
+                            .index,
                         enableAdaptiveBitrateStreaming: true
                     )
 
@@ -126,7 +129,7 @@ extension BaseItemDto {
 
                     // TODO: other forms of media subtitle
                     if self.itemType == .episode {
-                        if let seriesName = self.seriesName, let episodeLocator = self.getEpisodeLocator() {
+                        if let seriesName = self.seriesName, let episodeLocator = self.episodeLocator {
                             subtitle = "\(seriesName) - \(episodeLocator)"
                         }
                     }
@@ -155,6 +158,7 @@ extension BaseItemDto {
                         hlsStreamURL: hlsStreamURL,
                         streamType: streamType,
                         response: response,
+                        videoStream: videoStream!,
                         audioStreams: audioStreams,
                         subtitleStreams: subtitleStreams,
                         chapters: modifiedSelfItem.chapters ?? [],
@@ -261,11 +265,13 @@ extension BaseItemDto {
                         _static: true,
                         tag: currentMediaSource.eTag,
                         deviceProfileId: nil,
-                        playSessionId: response.playSessionId,
+                        playSessionId: response
+                            .playSessionId,
                         segmentContainer: "ts",
                         segmentLength: nil,
                         minSegments: 2,
-                        deviceId: UIDevice.vendorUUIDString,
+                        deviceId: UIDevice
+                            .vendorUUIDString,
                         audioCodec: audioStreams
                             .compactMap(\.codec)
                             .joined(separator: ","),
@@ -273,7 +279,8 @@ extension BaseItemDto {
                         requireAvc: true,
                         transcodingMaxAudioChannels: 6,
                         videoCodec: videoStream?.codec,
-                        videoStreamIndex: videoStream?.index,
+                        videoStreamIndex: videoStream?
+                            .index,
                         enableAdaptiveBitrateStreaming: true
                     )
 
@@ -293,7 +300,7 @@ extension BaseItemDto {
 
                     // TODO: other forms of media subtitle
                     if self.itemType == .episode {
-                        if let seriesName = self.seriesName, let episodeLocator = self.getEpisodeLocator() {
+                        if let seriesName = self.seriesName, let episodeLocator = self.episodeLocator {
                             subtitle = "\(seriesName) - \(episodeLocator)"
                         }
                     }
@@ -322,6 +329,7 @@ extension BaseItemDto {
                         hlsStreamURL: hlsStreamURL,
                         streamType: streamType,
                         response: response,
+                        videoStream: videoStream!,
                         audioStreams: audioStreams,
                         subtitleStreams: subtitleStreams,
                         chapters: modifiedSelfItem.chapters ?? [],

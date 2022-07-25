@@ -9,10 +9,11 @@
 import Foundation
 import JellyfinAPI
 import UIKit
+import NukeUI
 
 // 001fC^ = dark grey plain blurhash
 
-public extension BaseItemDto {
+extension BaseItemDto {
     // MARK: Images
 
     func getSeriesBackdropImageBlurHash() -> String {
@@ -48,55 +49,132 @@ public extension BaseItemDto {
         return hash
     }
 
-    func getBackdropImageBlurHash() -> String {
-        let imgURL = getBackdropImage(maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"] else {
-            return "001fC^"
-        }
-
-        if imgURL.queryParameters?[ImageType.backdrop.rawValue] == nil {
-            if itemType == .episode {
-                return imageBlurHashes?.backdrop?.values.first ?? "001fC^"
-            } else {
-                return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
-            }
-        } else {
-            return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
-        }
+//    func getBackdropImageBlurHash() -> String {
+//        let imgURL = getBackdropImage(maxWidth: 1)
+//        guard let imgTag = imgURL.queryParameters?["tag"] else {
+//            return "001fC^"
+//        }
+//
+//        if imgURL.queryParameters?[ImageType.backdrop.rawValue] == nil {
+//            if itemType == .episode {
+//                return imageBlurHashes?.backdrop?.values.first ?? "001fC^"
+//            } else {
+//                return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
+//            }
+//        } else {
+//            return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
+//        }
+//    }
+    
+    func imageURL(_ type: ImageType, maxWidth: Int) -> URL {
+        let scaleWidth = Int(UIScreen.main.nativeScale) * maxWidth
+        let tag = imageTags?[type.rawValue]
+        return ImageAPI.getItemImageWithRequestBuilder(itemId: id ?? "",
+                                                       imageType: type,
+                                                       maxWidth: scaleWidth,
+                                                       tag: tag).url
     }
-
-    func getBackdropImage(maxWidth: Int) -> URL {
-        var imageType = ImageType.backdrop
-        var imageTag: String?
-        var imageItemId = id ?? ""
-
-        if primaryImageAspectRatio ?? 0.0 < 1.0 {
-            if !(backdropImageTags?.isEmpty ?? true) {
-                imageTag = backdropImageTags?.first
-            }
-        } else {
-            imageType = .primary
-            imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
+    
+    func blurHash(_ type: ImageType) -> String {
+        if let tag = imageTags?[type.rawValue], let taggedBlurHash = imageBlurHashes?[type]?[tag] {
+            return taggedBlurHash
+        } else if let firstBlurHash = imageBlurHashes?[type]?.values.first {
+            return firstBlurHash
         }
-
-        if imageTag == nil || imageItemId.isEmpty {
-            if !(parentBackdropImageTags?.isEmpty ?? true) {
-                imageTag = parentBackdropImageTags?.first
-                imageItemId = parentBackdropItemId ?? ""
-            }
-        }
-
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: imageItemId,
-            imageType: imageType,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: imageTag
-        ).URLString
-        return URL(string: urlString)!
+        return BlurHashView.defaultBlurHash
     }
+    
+    func imageViewSource(_ type: ImageType, maxWidth: Int) -> ImageViewSource {
+        let url = imageURL(type, maxWidth: maxWidth)
+        let blurHash = blurHash(type)
+        return ImageViewSource(url: url, blurHash: blurHash)
+    }
+    
+    func imageViewSource(_ type: ImageType, maxWidth: CGFloat) -> ImageViewSource {
+        imageViewSource(type, maxWidth: Int(maxWidth))
+    }
+    
+    func seriesImageURL(_ type: ImageType, maxWidth: Int) -> URL {
+        let scaleWidth = Int(UIScreen.main.nativeScale) * maxWidth
+        let tag = imageTags?[type.rawValue]
+        return ImageAPI.getItemImageWithRequestBuilder(itemId: seriesId ?? "",
+                                                       imageType: type,
+                                                       maxWidth: scaleWidth,
+                                                       tag: tag).url
+    }
+    
+    func seriesBlurHash(_ type: ImageType) -> String {
+        if let tag = imageTags?[type.rawValue], let taggedBlurHash = imageBlurHashes?[type]?[tag] {
+            return taggedBlurHash
+        } else if let firstBlurHash = imageBlurHashes?[type]?.values.first {
+            return firstBlurHash
+        }
+        return BlurHashView.defaultBlurHash
+    }
+    
+//    func seriesImageViewSource(_ type: ImageType, maxWidth: Int) -> ImageViewSource {
+//        switch type {
+//        case .primary:
+//
+//        case .art:
+//            <#code#>
+//        case .backdrop:
+//            <#code#>
+//        case .banner:
+//            <#code#>
+//        case .logo:
+//            <#code#>
+//        case .thumb:
+//            <#code#>
+//        case .disc:
+//            <#code#>
+//        case .box:
+//            <#code#>
+//        case .screenshot:
+//            <#code#>
+//        case .menu:
+//            <#code#>
+//        case .chapter:
+//            <#code#>
+//        case .boxRear:
+//            <#code#>
+//        case .profile:
+//            <#code#>
+//        }
+//    }
+
+//    func getBackdropImage(maxWidth: Int) -> URL {
+//        var imageType = ImageType.backdrop
+//        var imageTag: String?
+//        var imageItemId = id ?? ""
+//
+//        if primaryImageAspectRatio ?? 0.0 < 1.0 {
+//            if !(backdropImageTags?.isEmpty ?? true) {
+//                imageTag = backdropImageTags?.first
+//            }
+//        } else {
+//            imageType = .primary
+//            imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
+//        }
+//
+//        if imageTag == nil || imageItemId.isEmpty {
+//            if !(parentBackdropImageTags?.isEmpty ?? true) {
+//                imageTag = parentBackdropImageTags?.first
+//                imageItemId = parentBackdropItemId ?? ""
+//            }
+//        }
+//
+//        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+//
+//        let urlString = ImageAPI.getItemImageWithRequestBuilder(
+//            itemId: imageItemId,
+//            imageType: imageType,
+//            maxWidth: Int(x),
+//            quality: 96,
+//            tag: imageTag
+//        ).URLString
+//        return URL(string: urlString)!
+//    }
 
     func getThumbImage(maxWidth: Int) -> URL {
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
@@ -110,7 +188,24 @@ public extension BaseItemDto {
         return URL(string: urlString)!
     }
 
-    func getEpisodeLocator() -> String? {
+    func getLogoImage(maxWidth: Int) -> URL {
+        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+
+        let urlString = ImageAPI.getItemImageWithRequestBuilder(
+            itemId: id ?? "",
+            imageType: .logo,
+            maxWidth: Int(x),
+            quality: 96
+        ).URLString
+        return URL(string: urlString)!
+    }
+
+    var episodeLocator: String? {
+        guard let episodeNo = indexNumber else { return nil }
+        return L10n.episodeNumber(episodeNo)
+    }
+
+    var seasonEpisodeLocator: String? {
         if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
             return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
         }
@@ -282,6 +377,10 @@ public extension BaseItemDto {
         return knownType
     }
 
+    var displayName: String {
+        name ?? "--"
+    }
+
     // MARK: PortraitHeaderViewURL
 
     func portraitHeaderViewURL(maxWidth: Int) -> URL {
@@ -329,18 +428,26 @@ public extension BaseItemDto {
 
             if !audioStreams.isEmpty {
                 let audioList = audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                    .joined(separator: ", ")
+                    .joined(separator: "\n")
                 mediaItems.append(ItemDetail(title: L10n.audio, content: audioList))
             }
 
             if !subtitleStreams.isEmpty {
                 let subtitleList = subtitleStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                    .joined(separator: ", ")
+                    .joined(separator: "\n")
                 mediaItems.append(ItemDetail(title: L10n.subtitles, content: subtitleList))
             }
         }
 
         return mediaItems
+    }
+    
+    var subtitleStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .subtitle } ?? []
+    }
+    
+    var audioStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .audio } ?? []
     }
 
     // MARK: Missing and Unaired
@@ -370,6 +477,13 @@ public extension BaseItemDto {
         return dateFormatter.string(from: premiereDate)
     }
 
+    var premiereDateYear: String? {
+        guard let premiereDate = premiereDate else { return nil }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY"
+        return dateFormatter.string(from: premiereDate)
+    }
+
     // MARK: Chapter Images
 
     func getChapterImage(maxWidth: Int) -> [URL] {
@@ -388,5 +502,50 @@ public extension BaseItemDto {
         }
 
         return chapterImageURLs
+    }
+    
+    static var placeHolder: BaseItemDto {
+        .init(
+            name: "Placeholder",
+            overview: String.init(repeating: "a", count: 100),
+            indexNumber: 20
+        )
+    }
+    
+    static var noResults: BaseItemDto {
+        .init(name: L10n.noResults)
+    }
+}
+
+extension BaseItemDtoImageBlurHashes {
+    subscript(imageType: ImageType) -> [String: String]? {
+        switch imageType {
+        case .primary:
+            return primary
+        case .art:
+            return art
+        case .backdrop:
+            return backdrop
+        case .banner:
+            return banner
+        case .logo:
+            return logo
+        case .thumb:
+            return thumb
+        case .disc:
+            return disc
+        case .box:
+            return box
+        case .screenshot:
+            return screenshot
+        case .menu:
+            return menu
+        case .chapter:
+            return chapter
+        case .boxRear:
+            return boxRear
+        case .profile:
+            return profile
+        }
     }
 }

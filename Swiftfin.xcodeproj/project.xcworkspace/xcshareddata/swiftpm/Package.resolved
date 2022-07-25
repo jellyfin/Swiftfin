@@ -100,15 +100,6 @@
       }
     },
     {
-      "identity" : "parallaxview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PGSSoft/ParallaxView",
-      "state" : {
-        "revision" : "a4165b0edd9c9c923a1d6e3e4c9a807302a1a475",
-        "version" : "3.1.2"
-      }
-    },
-    {
       "identity" : "puppy",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sushichop/Puppy",

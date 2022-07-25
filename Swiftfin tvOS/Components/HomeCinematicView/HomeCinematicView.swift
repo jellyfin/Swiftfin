@@ -54,7 +54,7 @@ struct HomeCinematicView: View {
         ZStack(alignment: .bottom) {
 
             CinematicBackgroundView(viewModel: backgroundViewModel)
-                .frame(height: UIScreen.main.bounds.height - 10)
+                .frame(height: UIScreen.main.bounds.height - 50)
 
             LinearGradient(
                 stops: [
@@ -78,7 +78,7 @@ struct HomeCinematicView: View {
                             .foregroundColor(Color.secondary)
                     } else {
                         if updatedSelectedItem?.itemType == .episode {
-                            Text(updatedSelectedItem?.getEpisodeLocator() ?? "")
+                            Text(updatedSelectedItem?.episodeLocator ?? "")
                                 .font(.callout)
                                 .fontWeight(.medium)
                                 .foregroundColor(Color.secondary)

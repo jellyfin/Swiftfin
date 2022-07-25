@@ -25,7 +25,7 @@ final class CollectionItemViewModel: ItemViewModel {
         ItemsAPI.getItems(
             userId: SessionManager.main.currentLogin.user.id,
             parentId: item.id,
-            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people]
+            fields: ItemFields.allCases
         )
         .trackActivity(loading)
         .sink { [weak self] completion in

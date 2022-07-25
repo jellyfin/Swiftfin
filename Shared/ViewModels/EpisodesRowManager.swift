@@ -14,9 +14,11 @@ protocol EpisodesRowManager: ViewModel {
     var item: BaseItemDto { get }
     var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] { get set }
     var selectedSeason: BaseItemDto? { get set }
-    func retrieveSeasons()
-    func retrieveEpisodesForSeason(_ season: BaseItemDto)
+
+    func getSeasons()
+    func getEpisodesForSeason(_ season: BaseItemDto)
     func select(season: BaseItemDto)
+    func select(seasonID: String)
 }
 
 extension EpisodesRowManager {
@@ -25,10 +27,19 @@ extension EpisodesRowManager {
         Array(seasonsEpisodes.keys).sorted(by: { $0.indexNumber ?? 0 < $1.indexNumber ?? 0 })
     }
 
+    var currentEpisodes: [BaseItemDto]? {
+        if let selectedSeason = selectedSeason {
+            return seasonsEpisodes[selectedSeason]
+        } else {
+            guard let firstSeason = seasonsEpisodes.keys.first else { return nil }
+            return seasonsEpisodes[firstSeason]
+        }
+    }
+
     // Also retrieves the current season episodes if available
-    func retrieveSeasons() {
+    func getSeasons() {
         TvShowsAPI.getSeasons(
-            seriesId: item.seriesId ?? "",
+            seriesId: item.id ?? "",
             userId: SessionManager.main.currentLogin.user.id,
             isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false
         )
@@ -36,26 +47,21 @@ extension EpisodesRowManager {
             self.handleAPIRequestError(completion: completion)
         } receiveValue: { response in
             let seasons = response.items ?? []
+
             seasons.forEach { season in
                 self.seasonsEpisodes[season] = []
-
-                if season.id == self.item.seasonId ?? "" {
-                    self.selectedSeason = season
-                    self.retrieveEpisodesForSeason(season)
-                } else if season.id == self.item.id ?? "" {
-                    self.selectedSeason = season
-                    self.retrieveEpisodesForSeason(season)
-                }
             }
+
+            self.selectedSeason = seasons.first
         }
         .store(in: &cancellables)
     }
 
-    func retrieveEpisodesForSeason(_ season: BaseItemDto) {
+    func getEpisodesForSeason(_ season: BaseItemDto) {
         guard let seasonID = season.id else { return }
 
         TvShowsAPI.getEpisodes(
-            seriesId: item.seriesId ?? "",
+            seriesId: item.id ?? "",
             userId: SessionManager.main.currentLogin.user.id,
             fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
             seasonId: seasonID,
@@ -74,7 +80,12 @@ extension EpisodesRowManager {
         self.selectedSeason = season
 
         if seasonsEpisodes[season]!.isEmpty {
-            retrieveEpisodesForSeason(season)
+            getEpisodesForSeason(season)
         }
+    }
+
+    func select(seasonID: String) {
+        guard let selectedSeason = Array(seasonsEpisodes.keys).first(where: { $0.id == seasonID }) else { return }
+        select(season: selectedSeason)
     }
 }

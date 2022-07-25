@@ -62,7 +62,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeAbout() -> some View {
-        AboutView()
+        AboutAppView()
     }
 
     #if !os(tvOS)

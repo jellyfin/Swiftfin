@@ -20,8 +20,8 @@ public extension Color {
     #else
         static let systemFill = Color(UIColor.systemFill)
         static let systemBackground = Color(UIColor.systemBackground)
-        static let secondarySystemFill = Color(UIColor.secondarySystemBackground)
-        static let tertiarySystemFill = Color(UIColor.tertiarySystemBackground)
+        static let secondarySystemFill = Color(UIColor.secondarySystemFill)
+        static let tertiarySystemFill = Color(UIColor.tertiarySystemFill)
     #endif
 }
 

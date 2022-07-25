@@ -11,16 +11,25 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-final class SeriesItemViewModel: ItemViewModel {
+final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 
     @Published
-    var seasons: [BaseItemDto] = []
+    var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
+    @Published
+    var selectedSeason: BaseItemDto?
 
     override init(item: BaseItemDto) {
         super.init(item: item)
 
-        requestSeasons()
+        getSeasons()
+
+        // The server won't have both a next up item
+        // and a resume item at the same time, so they
+        // control the button first. Also fetch first available
+        // item, which may be overwritten by next up or resume.
         getNextUp()
+        getResumeItem()
+        getFirstAvailableItem()
     }
 
     override func playButtonText() -> String {
@@ -33,20 +42,16 @@ final class SeriesItemViewModel: ItemViewModel {
             return L10n.missing
         }
 
-        guard let playButtonItem = playButtonItem, let episodeLocator = playButtonItem.getEpisodeLocator() else { return L10n.play }
+        guard let playButtonItem = playButtonItem,
+              let episodeLocator = playButtonItem.seasonEpisodeLocator else { return L10n.play }
+
         return episodeLocator
     }
 
-    override func shouldDisplayRuntime() -> Bool {
-        false
-    }
-
     private func getNextUp() {
-
         LogManager.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
         TvShowsAPI.getNextUp(
             userId: SessionManager.main.currentLogin.user.id,
-            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
             seriesId: self.item.id!,
             enableUserData: true
         )
@@ -56,12 +61,64 @@ final class SeriesItemViewModel: ItemViewModel {
         }, receiveValue: { [weak self] response in
             if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
                 self?.playButtonItem = nextUpItem
+
+                if let seasonID = nextUpItem.seasonId {
+                    self?.select(seasonID: seasonID)
+                }
             }
         })
         .store(in: &cancellables)
     }
 
-    private func getRunYears() -> String {
+    private func getResumeItem() {
+        ItemsAPI.getResumeItems(
+            userId: SessionManager.main.currentLogin.user.id,
+            limit: 1,
+            parentId: item.id
+        )
+        .trackActivity(loading)
+        .sink { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        } receiveValue: { [weak self] response in
+            if let firstItem = response.items?.first {
+                self?.playButtonItem = firstItem
+
+                if let seasonID = firstItem.seasonId {
+                    self?.select(seasonID: seasonID)
+                }
+            }
+        }
+        .store(in: &cancellables)
+    }
+
+    private func getFirstAvailableItem() {
+        ItemsAPI.getItemsByUserId(
+            userId: SessionManager.main.currentLogin.user.id,
+            limit: 2,
+            recursive: true,
+            sortOrder: [.ascending],
+            parentId: item.id,
+            includeItemTypes: [.episode]
+        )
+        .trackActivity(loading)
+        .sink { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        } receiveValue: { [weak self] response in
+            if let firstItem = response.items?.first {
+                if self?.playButtonItem == nil {
+                    // If other calls finish after this, it will be overwritten
+                    self?.playButtonItem = firstItem
+
+                    if let seasonID = firstItem.seasonId {
+                        self?.select(seasonID: seasonID)
+                    }
+                }
+            }
+        }
+        .store(in: &cancellables)
+    }
+
+    func getRunYears() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
 
@@ -77,24 +134,5 @@ final class SeriesItemViewModel: ItemViewModel {
         }
 
         return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
-    }
-
-    private func requestSeasons() {
-        LogManager.log.debug("Getting seasons of show \(self.item.id!) (\(self.item.name!))")
-        TvShowsAPI.getSeasons(
-            seriesId: item.id ?? "",
-            userId: SessionManager.main.currentLogin.user.id,
-            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-            isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false,
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.seasons = response.items ?? []
-            LogManager.log.debug("Retrieved \(String(self?.seasons.count ?? 0)) seasons")
-        })
-        .store(in: &cancellables)
     }
 }
