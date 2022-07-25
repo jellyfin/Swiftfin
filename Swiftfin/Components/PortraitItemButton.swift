@@ -40,7 +40,7 @@ struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
                     item.imageURLConstructor(maxWidth: Int(maxWidth)),
                     blurHash: item.blurHash,
                     failureView: {
-                        InitialFailureView(item.failureInitials)
+                        InitialFailureView(item.titleInitials)
                     }
                 )
                 .portraitPoster(width: maxWidth)

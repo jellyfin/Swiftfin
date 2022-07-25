@@ -9,6 +9,7 @@
 import Foundation
 import JellyfinAPI
 import UIKit
+import NukeUI
 
 // 001fC^ = dark grey plain blurhash
 
@@ -48,22 +49,22 @@ extension BaseItemDto {
         return hash
     }
 
-    func getBackdropImageBlurHash() -> String {
-        let imgURL = getBackdropImage(maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"] else {
-            return "001fC^"
-        }
-
-        if imgURL.queryParameters?[ImageType.backdrop.rawValue] == nil {
-            if itemType == .episode {
-                return imageBlurHashes?.backdrop?.values.first ?? "001fC^"
-            } else {
-                return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
-            }
-        } else {
-            return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
-        }
-    }
+//    func getBackdropImageBlurHash() -> String {
+//        let imgURL = getBackdropImage(maxWidth: 1)
+//        guard let imgTag = imgURL.queryParameters?["tag"] else {
+//            return "001fC^"
+//        }
+//
+//        if imgURL.queryParameters?[ImageType.backdrop.rawValue] == nil {
+//            if itemType == .episode {
+//                return imageBlurHashes?.backdrop?.values.first ?? "001fC^"
+//            } else {
+//                return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
+//            }
+//        } else {
+//            return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
+//        }
+//    }
     
     func imageURL(_ type: ImageType, maxWidth: Int) -> URL {
         let scaleWidth = Int(UIScreen.main.nativeScale) * maxWidth
@@ -88,39 +89,92 @@ extension BaseItemDto {
         let blurHash = blurHash(type)
         return ImageViewSource(url: url, blurHash: blurHash)
     }
-
-    func getBackdropImage(maxWidth: Int) -> URL {
-        var imageType = ImageType.backdrop
-        var imageTag: String?
-        var imageItemId = id ?? ""
-
-        if primaryImageAspectRatio ?? 0.0 < 1.0 {
-            if !(backdropImageTags?.isEmpty ?? true) {
-                imageTag = backdropImageTags?.first
-            }
-        } else {
-            imageType = .primary
-            imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
-        }
-
-        if imageTag == nil || imageItemId.isEmpty {
-            if !(parentBackdropImageTags?.isEmpty ?? true) {
-                imageTag = parentBackdropImageTags?.first
-                imageItemId = parentBackdropItemId ?? ""
-            }
-        }
-
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: imageItemId,
-            imageType: imageType,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: imageTag
-        ).URLString
-        return URL(string: urlString)!
+    
+    func imageViewSource(_ type: ImageType, maxWidth: CGFloat) -> ImageViewSource {
+        imageViewSource(type, maxWidth: Int(maxWidth))
     }
+    
+    func seriesImageURL(_ type: ImageType, maxWidth: Int) -> URL {
+        let scaleWidth = Int(UIScreen.main.nativeScale) * maxWidth
+        let tag = imageTags?[type.rawValue]
+        return ImageAPI.getItemImageWithRequestBuilder(itemId: seriesId ?? "",
+                                                       imageType: type,
+                                                       maxWidth: scaleWidth,
+                                                       tag: tag).url
+    }
+    
+    func seriesBlurHash(_ type: ImageType) -> String {
+        if let tag = imageTags?[type.rawValue], let taggedBlurHash = imageBlurHashes?[type]?[tag] {
+            return taggedBlurHash
+        } else if let firstBlurHash = imageBlurHashes?[type]?.values.first {
+            return firstBlurHash
+        }
+        return BlurHashView.defaultBlurHash
+    }
+    
+//    func seriesImageViewSource(_ type: ImageType, maxWidth: Int) -> ImageViewSource {
+//        switch type {
+//        case .primary:
+//
+//        case .art:
+//            <#code#>
+//        case .backdrop:
+//            <#code#>
+//        case .banner:
+//            <#code#>
+//        case .logo:
+//            <#code#>
+//        case .thumb:
+//            <#code#>
+//        case .disc:
+//            <#code#>
+//        case .box:
+//            <#code#>
+//        case .screenshot:
+//            <#code#>
+//        case .menu:
+//            <#code#>
+//        case .chapter:
+//            <#code#>
+//        case .boxRear:
+//            <#code#>
+//        case .profile:
+//            <#code#>
+//        }
+//    }
+
+//    func getBackdropImage(maxWidth: Int) -> URL {
+//        var imageType = ImageType.backdrop
+//        var imageTag: String?
+//        var imageItemId = id ?? ""
+//
+//        if primaryImageAspectRatio ?? 0.0 < 1.0 {
+//            if !(backdropImageTags?.isEmpty ?? true) {
+//                imageTag = backdropImageTags?.first
+//            }
+//        } else {
+//            imageType = .primary
+//            imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
+//        }
+//
+//        if imageTag == nil || imageItemId.isEmpty {
+//            if !(parentBackdropImageTags?.isEmpty ?? true) {
+//                imageTag = parentBackdropImageTags?.first
+//                imageItemId = parentBackdropItemId ?? ""
+//            }
+//        }
+//
+//        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
+//
+//        let urlString = ImageAPI.getItemImageWithRequestBuilder(
+//            itemId: imageItemId,
+//            imageType: imageType,
+//            maxWidth: Int(x),
+//            quality: 96,
+//            tag: imageTag
+//        ).URLString
+//        return URL(string: urlString)!
+//    }
 
     func getThumbImage(maxWidth: Int) -> URL {
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)

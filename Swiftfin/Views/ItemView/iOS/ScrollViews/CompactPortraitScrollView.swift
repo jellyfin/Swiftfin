@@ -22,10 +22,11 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             VStack {
-                ImageView(
-                    viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-                    blurHash: viewModel.item.getBackdropImageBlurHash()
-                )
+                ImageView(viewModel.item.imageViewSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+//                ImageView(
+//                    viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
+//                    blurHash: viewModel.item.getBackdropImageBlurHash()
+//                )
 
                 Spacer()
                     .frame(height: 50)

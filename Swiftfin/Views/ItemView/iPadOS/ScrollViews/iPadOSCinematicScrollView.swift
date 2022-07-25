@@ -19,10 +19,11 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(
-                viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-                blurHash: viewModel.item.getPrimaryImageBlurHash()
-            )
+            ImageView(viewModel.item.imageViewSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+//            ImageView(
+//                viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
+//                blurHash: viewModel.item.getPrimaryImageBlurHash()
+//            )
         }
 
         @ViewBuilder

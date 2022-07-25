@@ -14,13 +14,11 @@ import JellyfinAPI
 
 extension BaseItemDto: PortraitImageStackable {
     public func imageURLConstructor(maxWidth: Int) -> URL {
-        imageURL(.primary, maxWidth: maxWidth)
-//        switch type {
-//        case .episode:
-//            return getSeriesPrimaryImage(maxWidth: maxWidth)
-//        default:
-//            return self.getPrimaryImage(maxWidth: maxWidth)
-//        }
+        if type == .episode {
+            return seriesImageURL(.primary, maxWidth: maxWidth)
+        } else {
+            return imageURL(.primary, maxWidth: maxWidth)
+        }
     }
 
     public var title: String {

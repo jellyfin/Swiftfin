@@ -22,10 +22,11 @@ struct EpisodeRowCard: View {
         } label: {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    ImageView(
-                        episode.getBackdropImage(maxWidth: 200),
-                        blurHash: episode.getBackdropImageBlurHash()
-                    )
+//                    ImageView(
+//                        episode.getBackdropImage(maxWidth: 200),
+//                        blurHash: episode.getBackdropImageBlurHash()
+//                    )
+                    ImageView(viewModel.item.imageViewSource(.backdrop, maxWidth: 200))
                     .frame(width: 200, height: 112)
                     .cornerRadius(10)
                     .padding(.top)

@@ -8,6 +8,7 @@
 
 import JellyfinAPI
 import SwiftUI
+import NukeUI
 
 struct ContinueWatchingView: View {
 
@@ -29,28 +30,30 @@ struct ContinueWatchingView: View {
                             ZStack {
                                 Group {
                                     if item.itemType == .episode {
-                                        ImageView([
-                                            ImageViewSource(
-                                                url: item.getSeriesThumbImage(maxWidth: 320),
-                                                blurHash: item.getBackdropImageBlurHash()
-                                            ),
-                                            ImageViewSource(
-                                                url: item.getSeriesBackdropImage(maxWidth: 320),
-                                                blurHash: item.getBackdropImageBlurHash()
-                                            ),
-                                        ])
+                                        ImageView(item.imageViewSource(.thumb, maxWidth: 320))
+//                                        ImageView([
+//                                            ImageViewSource(
+//                                                url: item.getSeriesThumbImage(maxWidth: 320),
+//                                                blurHash: item.getBackdropImageBlurHash()
+//                                            ),
+//                                            ImageViewSource(
+//                                                url: item.getSeriesBackdropImage(maxWidth: 320),
+//                                                blurHash: item.getBackdropImageBlurHash()
+//                                            ),
+//                                        ])
                                         .frame(width: 320, height: 180)
                                     } else {
-                                        ImageView([
-                                            ImageViewSource(
-                                                url: item.getThumbImage(maxWidth: 320),
-                                                blurHash: item.getBackdropImageBlurHash()
-                                            ),
-                                            ImageViewSource(
-                                                url: item.getBackdropImage(maxWidth: 320),
-                                                blurHash: item.getBackdropImageBlurHash()
-                                            ),
-                                        ])
+                                        ImageView(item.imageViewSource(.thumb, maxWidth: 320))
+//                                        ImageView([
+//                                            ImageViewSource(
+//                                                url: item.getThumbImage(maxWidth: 320),
+//                                                blurHash: item.getBackdropImageBlurHash()
+//                                            ),
+//                                            ImageViewSource(
+//                                                url: item.getBackdropImage(maxWidth: 320),
+//                                                blurHash: item.getBackdropImageBlurHash()
+//                                            ),
+//                                        ])
                                         .frame(width: 320, height: 180)
                                     }
                                 }
