@@ -31,9 +31,13 @@ struct CinematicNextUpCardView: View {
                         .frame(width: 350, height: 210)
                     } else {
                         ImageView([
-                            .init(url: item.getThumbImage(maxWidth: 350)),
-                            .init(url: item.getBackdropImage(maxWidth: 350), blurHash: item.getBackdropImageBlurHash()),
+                            item.imageViewSource(.thumb, maxWidth: 350),
+                            item.imageViewSource(.backdrop, maxWidth: 350)
                         ])
+//                        ImageView([
+//                            .init(url: item.getThumbImage(maxWidth: 350)),
+//                            .init(url: item.getBackdropImage(maxWidth: 350), blurHash: item.getBackdropImageBlurHash()),
+//                        ])
                         .frame(width: 350, height: 210)
                     }
 

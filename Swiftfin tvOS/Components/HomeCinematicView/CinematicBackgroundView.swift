@@ -31,7 +31,8 @@ class DynamicCinematicBackgroundViewModel: ObservableObject {
         if item.itemType == .episode {
             backdropImage = item.getSeriesBackdropImage(maxWidth: 1920)
         } else {
-            backdropImage = item.getBackdropImage(maxWidth: 1920)
+            backdropImage = item.imageURL(.backdrop, maxWidth: 1920)
+//            backdropImage = item.getBackdropImage(maxWidth: 1920)
         }
 
         let options = ImageLoadingOptions(transition: .fadeIn(duration: 0.2))

@@ -22,10 +22,11 @@ extension iPadOSEpisodeItemView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center) {
-                    ImageView(
-                        viewModel.item.getPrimaryImage(maxWidth: 600),
-                        blurHash: viewModel.item.getPrimaryImageBlurHash()
-                    )
+//                    ImageView(
+//                        viewModel.item.getPrimaryImage(maxWidth: 600),
+//                        blurHash: viewModel.item.getPrimaryImageBlurHash()
+//                    )
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 400))
                     .cornerRadius(10)
                     .frame(maxHeight: 400)
                     .aspectRatio(1.77, contentMode: .fit)
@@ -61,7 +62,7 @@ extension iPadOSEpisodeItemView {
 
                 if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                    !castAndCrew.isEmpty {
-                       PortraitImageHStack(
+                       PortraitPosterHStack(
                            title: L10n.castAndCrew,
                            items: castAndCrew,
                            itemWidth: UIDevice.isIPad ? 130 : 110

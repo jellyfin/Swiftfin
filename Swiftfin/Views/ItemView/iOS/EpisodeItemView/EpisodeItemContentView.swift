@@ -22,10 +22,11 @@ extension EpisodeItemView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center) {
-                    ImageView(
-                        viewModel.item.getPrimaryImage(maxWidth: 600),
-                        blurHash: viewModel.item.getPrimaryImageBlurHash()
-                    )
+//                    ImageView(
+//                        viewModel.item.getPrimaryImage(maxWidth: 600),
+//                        blurHash: viewModel.item.getPrimaryImageBlurHash()
+//                    )
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 600))
                     .cornerRadius(10)
                     .frame(maxWidth: 600)
                     .aspectRatio(1.77, contentMode: .fit)
@@ -75,7 +76,7 @@ extension EpisodeItemView {
 
                 if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                    !castAndCrew.isEmpty {
-                       PortraitImageHStack(
+                       PortraitPosterHStack(
                            title: L10n.castAndCrew,
                            items: castAndCrew
                        ) { person in

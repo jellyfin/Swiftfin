@@ -22,7 +22,7 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             VStack {
-                ImageView(viewModel.item.imageViewSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
 //                ImageView(
 //                    viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
 //                    blurHash: viewModel.item.getBackdropImageBlurHash()
@@ -78,19 +78,16 @@ extension ItemView.CompactLogoScrollView {
 
                 VStack {
                     Spacer()
-
-                    ImageView(
-                        viewModel.item.getLogoImage(maxWidth: Int(UIScreen.main.bounds.width)),
-                        resizingMode: .aspectFit,
-                        failureView: {
-                            Text(viewModel.item.displayName)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.primary)
-                                .frame(alignment: .bottom)
-                        }
-                    )
+                    
+                    ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
+                              resizingMode: .aspectFit) {
+                        Text(viewModel.item.displayName)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.primary)
+                            .frame(alignment: .bottom)
+                    }
                     .frame(maxHeight: 100, alignment: .bottom)
                 }
                 .padding(.horizontal)

@@ -23,11 +23,8 @@ extension SeasonItemView {
             VStack(spacing: 10) {
 
                 HStack(alignment: .bottom) {
-                    ImageView(
-                        viewModel.item.getPrimaryImage(maxWidth: 150),
-                        blurHash: viewModel.item.getPrimaryImageBlurHash()
-                    )
-                    .portraitPoster(width: 150)
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 150))
+                        .portraitPoster(width: 150)
 
                     VStack(alignment: .leading) {
                         Text(viewModel.item.seriesName ?? "--")
@@ -98,7 +95,7 @@ extension SeasonItemView {
 
                 if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                    !castAndCrew.isEmpty {
-                       PortraitImageHStack(
+                       PortraitPosterHStack(
                            title: L10n.castAndCrew,
                            items: castAndCrew
                        ) { person in

@@ -336,7 +336,7 @@ extension VideoPlayerViewModel {
 
 extension VideoPlayerViewModel {
     func getAdjacentEpisodes() {
-        guard let seriesID = item.seriesId, item.itemType == .episode else { return }
+        guard let seriesID = item.seriesId, item.type == .episode else { return }
 
         TvShowsAPI.getEpisodes(
             seriesId: seriesID,

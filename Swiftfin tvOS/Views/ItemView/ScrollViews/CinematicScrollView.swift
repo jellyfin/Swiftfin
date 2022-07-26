@@ -22,8 +22,7 @@ extension ItemView {
 
             ZStack {
                 ImageView(
-                    viewModel.item.getBackdropImage(maxWidth: 1920),
-                    blurHash: viewModel.item.getBackdropImageBlurHash()
+                    viewModel.item.imageViewSource(.backdrop, maxWidth: 1920)
                 )
 
                 ScrollView(.vertical, showsIndicators: false) {

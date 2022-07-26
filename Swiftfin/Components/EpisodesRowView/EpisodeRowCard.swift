@@ -26,7 +26,7 @@ struct EpisodeRowCard: View {
 //                        episode.getBackdropImage(maxWidth: 200),
 //                        blurHash: episode.getBackdropImageBlurHash()
 //                    )
-                    ImageView(viewModel.item.imageViewSource(.backdrop, maxWidth: 200))
+                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 200))
                     .frame(width: 200, height: 112)
                     .cornerRadius(10)
                     .padding(.top)

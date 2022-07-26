@@ -22,7 +22,7 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             VStack {
-                ImageView(viewModel.item.imageViewSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
 //                ImageView(
 //                    viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
 //                    blurHash: viewModel.item.getBackdropImageBlurHash()
@@ -104,12 +104,13 @@ extension ItemView.CompactPosterScrollView {
 
                     // MARK: Portrait Image
 
-                    ImageView(
-                        viewModel.item.portraitHeaderViewURL(maxWidth: 130),
-                        blurHash: viewModel.item.getPrimaryImageBlurHash()
-                    )
-                    .portraitPoster(width: 130)
-                    .accessibilityIgnoresInvertColors()
+//                    ImageView(
+//                        viewModel.item.portraitHeaderViewURL(maxWidth: 130),
+//                        blurHash: viewModel.item.getPrimaryImageBlurHash()
+//                    )
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
+                        .portraitPoster(width: 130)
+                        .accessibilityIgnoresInvertColors()
 
                     rightShelfView
                         .padding(.bottom)

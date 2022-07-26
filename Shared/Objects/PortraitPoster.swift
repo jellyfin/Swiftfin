@@ -10,18 +10,10 @@ import Defaults
 import Foundation
 import SwiftUI
 
-protocol PortraitImageStackable: Identifiable {
-    func imageURLConstructor(maxWidth: Int) -> URL
-    var blurHash: String { get }
+protocol PortraitPoster: Identifiable {
     var title: String { get }
     var subtitle: String? { get }
-    var titleInitials: String { get }
     var showTitle: Bool { get }
-}
-
-extension PortraitImageStackable {
-    var titleInitials: String {
-        let initials = title.split(separator: " ").compactMap { String($0).first }
-        return String(initials)
-    }
+    
+    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
 }

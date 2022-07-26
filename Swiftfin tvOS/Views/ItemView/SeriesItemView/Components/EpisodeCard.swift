@@ -22,8 +22,7 @@ struct EpisodeCard: View {
                 
             } label: {
                 ImageView(
-                    episode.getBackdropImage(maxWidth: 600),
-                    blurHash: episode.getBackdropImageBlurHash()
+                    episode.imageViewSource(.primary, maxWidth: 600)
                 ) {
                     InitialFailureView(episode.failureInitials)
                 }

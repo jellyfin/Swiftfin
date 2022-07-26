@@ -21,104 +21,14 @@ struct ContinueWatchingView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: 20) {
                 ForEach(viewModel.resumeItems, id: \.id) { item in
-
-                    Button {
-                        homeRouter.route(to: \.item, item)
-                    } label: {
-                        VStack(alignment: .leading) {
-
-                            ZStack {
-                                Group {
-                                    if item.itemType == .episode {
-                                        ImageView(item.imageViewSource(.thumb, maxWidth: 320))
-//                                        ImageView([
-//                                            ImageViewSource(
-//                                                url: item.getSeriesThumbImage(maxWidth: 320),
-//                                                blurHash: item.getBackdropImageBlurHash()
-//                                            ),
-//                                            ImageViewSource(
-//                                                url: item.getSeriesBackdropImage(maxWidth: 320),
-//                                                blurHash: item.getBackdropImageBlurHash()
-//                                            ),
-//                                        ])
-                                        .frame(width: 320, height: 180)
-                                    } else {
-                                        ImageView(item.imageViewSource(.thumb, maxWidth: 320))
-//                                        ImageView([
-//                                            ImageViewSource(
-//                                                url: item.getThumbImage(maxWidth: 320),
-//                                                blurHash: item.getBackdropImageBlurHash()
-//                                            ),
-//                                            ImageViewSource(
-//                                                url: item.getBackdropImage(maxWidth: 320),
-//                                                blurHash: item.getBackdropImageBlurHash()
-//                                            ),
-//                                        ])
-                                        .frame(width: 320, height: 180)
-                                    }
-                                }
-                                .accessibilityIgnoresInvertColors()
-
-                                HStack {
-                                    VStack {
-
-                                        Spacer()
-
-                                        ZStack(alignment: .bottom) {
-
-                                            LinearGradient(
-                                                colors: [.clear, .black.opacity(0.5), .black.opacity(0.7)],
-                                                startPoint: .top,
-                                                endPoint: .bottom
-                                            )
-                                            .frame(height: 35)
-
-                                            VStack(alignment: .leading, spacing: 0) {
-                                                Text(item.getItemProgressString() ?? L10n.continue)
-                                                    .font(.subheadline)
-                                                    .padding(.bottom, 5)
-                                                    .padding(.leading, 10)
-                                                    .foregroundColor(.white)
-
-                                                HStack {
-                                                    Color.jellyfinPurple
-                                                        .frame(width: 320 * (item.userData?.playedPercentage ?? 0) / 100, height: 7)
-
-                                                    Spacer(minLength: 0)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            .frame(width: 320, height: 180)
-                            .mask(Rectangle().cornerRadius(10))
-                            .shadow(radius: 4, y: 2)
-
-                            VStack(alignment: .leading) {
-                                Text("\(item.seriesName ?? item.name ?? "")")
-                                    .font(.callout)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .lineLimit(1)
-
-                                if item.itemType == .episode {
-                                    Text(item.seasonEpisodeLocator ?? "")
-                                        .font(.callout)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.secondary)
-                                        .lineLimit(1)
-                                }
+                    ContinueWatchingLandscapeButton(item: item)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                viewModel.removeItemFromResume(item)
+                            } label: {
+                                Label(L10n.removeFromResume, systemImage: "minus.circle")
                             }
                         }
-                    }
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            viewModel.removeItemFromResume(item)
-                        } label: {
-                            Label(L10n.removeFromResume, systemImage: "minus.circle")
-                        }
-                    }
                 }
             }
             .padding(.horizontal)

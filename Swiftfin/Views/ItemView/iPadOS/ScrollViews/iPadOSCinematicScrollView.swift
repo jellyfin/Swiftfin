@@ -19,7 +19,7 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageViewSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
 //            ImageView(
 //                viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
 //                blurHash: viewModel.item.getPrimaryImageBlurHash()
@@ -57,18 +57,15 @@ extension ItemView.iPadOSCinematicScrollView {
                 Spacer()
 
                 HStack {
-                    ImageView(
-                        viewModel.item.getLogoImage(maxWidth: 500),
-                        resizingMode: .aspectFit,
-                        failureView: {
-                            Text(viewModel.item.displayName)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                                .foregroundColor(.white)
-                        }
-                    )
+                    ImageView(viewModel.item.imageURL(.logo, maxWidth: 500),
+                              resizingMode: .aspectFit) {
+                        Text(viewModel.item.displayName)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(.white)
+                    }
                     .frame(maxWidth: UIScreen.main.bounds.width * 0.5, maxHeight: 150)
 
                     Spacer()

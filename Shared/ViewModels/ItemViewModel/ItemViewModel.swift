@@ -39,7 +39,7 @@ class ItemViewModel: ViewModel {
         self.item = item
         super.init()
 
-        switch item.itemType {
+        switch item.type {
         case .episode, .movie:
             if !item.missing && !item.unaired {
                 self.playButtonItem = item
@@ -70,7 +70,7 @@ class ItemViewModel: ViewModel {
     }
 
     func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
-        guard item.itemType == .episode || item.itemType == .movie else { return }
+        guard item.type == .episode || item.type == .movie else { return }
         guard !item.missing, !item.unaired else { return }
 
         item.createVideoPlayerViewModel()

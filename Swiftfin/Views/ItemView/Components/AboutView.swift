@@ -31,12 +31,9 @@ extension ItemView {
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ImageView(
-                            viewModel.item.portraitHeaderViewURL(maxWidth: 130),
-                            blurHash: viewModel.item.getPrimaryImageBlurHash()
-                        )
-                        .portraitPoster(width: 130)
-                        .accessibilityIgnoresInvertColors()
+                        ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
+                            .portraitPoster(width: 130)
+                            .accessibilityIgnoresInvertColors()
 
                         Button {
                             itemRouter.route(to: \.itemOverview, viewModel.item)

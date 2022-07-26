@@ -11,8 +11,6 @@ import UIKit
 
 struct BlurHashView: UIViewRepresentable {
     
-    static let defaultBlurHash: String = "001fC^"
-
     let blurHash: String
 
     func makeUIView(context: Context) -> UIBlurHashView {

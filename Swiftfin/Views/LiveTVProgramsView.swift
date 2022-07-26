@@ -22,7 +22,7 @@ struct LiveTVProgramsView: View {
                    let items = viewModel.recommendedItems
                 {
 
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: "On Now",
                         items: items
                     ) { item in
@@ -38,7 +38,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.seriesItems.isEmpty,
                    let items = viewModel.seriesItems
                 {
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: "Shows",
                         items: items
                     ) { item in
@@ -54,7 +54,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.movieItems.isEmpty,
                    let items = viewModel.movieItems
                 {
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: "Movies",
                         items: items
                     ) { item in
@@ -70,7 +70,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.sportsItems.isEmpty,
                    let items = viewModel.sportsItems
                 {
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: "Sports",
                         items: items
                     ) { item in
@@ -86,7 +86,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.kidsItems.isEmpty,
                    let items = viewModel.kidsItems
                 {
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: "Kids",
                         items: items
                     ) { item in
@@ -102,7 +102,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.newsItems.isEmpty,
                    let items = viewModel.newsItems
                 {
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: "News",
                         items: items
                     ) { item in

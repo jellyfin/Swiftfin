@@ -85,7 +85,7 @@ extension CollectionItemView {
                 // MARK: Items
 
                 if !viewModel.collectionItems.isEmpty {
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: L10n.items,
                         items: viewModel.collectionItems
                     ) { item in

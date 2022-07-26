@@ -51,7 +51,7 @@ extension BaseItemPerson {
 
 // MARK: PortraitImageStackable
 
-extension BaseItemPerson: PortraitImageStackable {
+extension BaseItemPerson: PortraitPoster {
     public func imageURLConstructor(maxWidth: Int) -> URL {
         let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
 
@@ -85,6 +85,22 @@ extension BaseItemPerson: PortraitImageStackable {
 
     public var showTitle: Bool {
         true
+    }
+    
+    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
+        let scaleWidth = UIScreen.main.scale(maxWidth)
+        let url = ImageAPI.getItemImageWithRequestBuilder(
+                itemId: id ?? "",
+                imageType: .primary,
+                maxWidth: scaleWidth).url
+        
+        var blurHash: String? = nil
+        
+        if let tag = primaryImageTag, let taggedBlurHash = imageBlurHashes?.primary?[tag] {
+            blurHash = taggedBlurHash
+        }
+        
+        return ImageSource(url: url, blurHash: blurHash)
     }
 }
 

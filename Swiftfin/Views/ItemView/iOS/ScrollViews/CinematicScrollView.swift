@@ -19,10 +19,11 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(
-                viewModel.item.getPrimaryImage(maxWidth: Int(UIScreen.main.bounds.width)),
-                blurHash: viewModel.item.getPrimaryImageBlurHash()
-            )
+            ImageView(viewModel.item.imageSource(.primary, maxWidth: UIScreen.main.bounds.width))
+//            ImageView(
+//                viewModel.item.getPrimaryImage(maxWidth: Int(UIScreen.main.bounds.width)),
+//                blurHash: viewModel.item.getPrimaryImageBlurHash()
+//            )
         }
 
         @ViewBuilder
@@ -57,18 +58,16 @@ extension ItemView.CinematicScrollView {
                 Spacer()
 
                 VStack {
-                    ImageView(
-                        viewModel.item.getLogoImage(maxWidth: Int(UIScreen.main.bounds.width)),
-                        resizingMode: .aspectFit,
-                        failureView: {
-                            Text(viewModel.item.displayName)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.white)
-                                .frame(alignment: .bottom)
-                        }
-                    )
+                    
+                    ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
+                              resizingMode: .aspectFit) {
+                        Text(viewModel.item.displayName)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.primary)
+                            .frame(alignment: .bottom)
+                    }
                     .frame(height: 100, alignment: .bottom)
 
                     DotHStack {

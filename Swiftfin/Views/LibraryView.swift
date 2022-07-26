@@ -47,7 +47,7 @@ struct LibraryView: View {
             VStack {
                 LazyVGrid(columns: tracks) {
                     ForEach(viewModel.items, id: \.id) { item in
-                        PortraitItemButton(item: item) { item in
+                        PortraitPosterButton(item: item) { item in
                             libraryRouter.route(to: \.item, item)
                         }
                     }

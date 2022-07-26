@@ -88,7 +88,7 @@ extension MovieItemView {
 
                 if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                    !castAndCrew.isEmpty {
-                       PortraitImageHStack(
+                       PortraitPosterHStack(
                            title: L10n.castAndCrew,
                            items: castAndCrew
                        ) { person in
@@ -101,7 +101,7 @@ extension MovieItemView {
                 // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: L10n.recommended,
                         items: viewModel.similarItems
                     ) { item in

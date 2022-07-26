@@ -8,25 +8,25 @@
 
 import SwiftUI
 
-struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: View>: View {
+struct PortraitPosterHStack<Item: PortraitPoster, TrailingContent: View>: View {
 
     private let title: String
-    private let items: [ItemType]
+    private let items: [Item]
     private let itemWidth: CGFloat
-    private let rightBarButton: () -> RightBarButton
-    private let selectedAction: (ItemType) -> Void
+    private let trailingContent: () -> TrailingContent
+    private let selectedAction: (Item) -> Void
 
     init(
         title: String,
-        items: [ItemType],
+        items: [Item],
         itemWidth: CGFloat = 110,
-        @ViewBuilder rightBarButton: @escaping () -> RightBarButton,
-        selectedAction: @escaping (ItemType) -> Void
+        @ViewBuilder trailingContent: @escaping () -> TrailingContent,
+        selectedAction: @escaping (Item) -> Void
     ) {
         self.title = title
         self.items = items
         self.itemWidth = itemWidth
-        self.rightBarButton = rightBarButton
+        self.trailingContent = trailingContent
         self.selectedAction = selectedAction
     }
 
@@ -44,13 +44,13 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
 
                 Spacer()
 
-                rightBarButton()
+                trailingContent()
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
                     ForEach(items, id: \.id) { item in
-                        PortraitItemButton(
+                        PortraitPosterButton(
                             item: item,
                             maxWidth: itemWidth,
                             horizontalAlignment: .leading
@@ -68,17 +68,17 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, RightBarButton: Vie
     }
 }
 
-extension PortraitImageHStack where RightBarButton == EmptyView {
+extension PortraitPosterHStack where TrailingContent == EmptyView {
     init(
         title: String,
-        items: [ItemType],
+        items: [Item],
         itemWidth: CGFloat = 110,
-        selectedAction: @escaping (ItemType) -> Void
+        selectedAction: @escaping (Item) -> Void
     ) {
         self.title = title
         self.items = items
         self.itemWidth = itemWidth
-        self.rightBarButton = { EmptyView() }
+        self.trailingContent = { EmptyView() }
         self.selectedAction = selectedAction
     }
 }

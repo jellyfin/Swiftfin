@@ -102,6 +102,7 @@ extension SeriesItemView {
                         }
                     }
                     withAnimation {
+                        print("showing logo")
                         self.showLogo = true
                     }
                 } else if newTag == "mediaButtons" {

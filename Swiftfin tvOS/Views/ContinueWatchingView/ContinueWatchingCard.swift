@@ -26,7 +26,8 @@ struct ContinueWatchingCard: View {
                         ImageView(item.getSeriesBackdropImage(maxWidth: 500))
                             .frame(width: 500, height: 281.25)
                     } else {
-                        ImageView(item.getBackdropImage(maxWidth: 500))
+//                        ImageView(item.getBackdropImage(maxWidth: 500))
+                        ImageView(item.imageURL(.backdrop, maxWidth: 500))
                             .frame(width: 500, height: 281.25)
                     }
 

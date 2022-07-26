@@ -25,7 +25,7 @@ extension HomeView {
                     }
 
                     if !viewModel.nextUpItems.isEmpty {
-                        PortraitImageHStack(
+                        PortraitPosterHStack(
                             title: L10n.nextUp,
                             items: viewModel.nextUpItems,
                             itemWidth: UIDevice.isIPad ? 130 : 110
@@ -35,7 +35,7 @@ extension HomeView {
                     }
 
                     if !viewModel.latestAddedItems.isEmpty {
-                        PortraitImageHStack(
+                        PortraitPosterHStack(
                             title: L10n.recentlyAdded,
                             items: viewModel.latestAddedItems,
                             itemWidth: UIDevice.isIPad ? 130 : 110

@@ -13,9 +13,13 @@ final class LibraryListViewModel: ViewModel {
 
     @Published
     var libraries: [BaseItemDto] = []
+    
+//    var filteredLibraries: [BaseItemDto] {
+//        libraries.filter { $0.collection }
+//    }
 
     // temp
-    var withFavorites = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
+    let withFavorites = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
 
     override init() {
         super.init()
@@ -30,6 +34,7 @@ final class LibraryListViewModel: ViewModel {
                 self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
                 self.libraries = response.items ?? []
+                print(self.libraries.map(\.collectionType))
             })
             .store(in: &cancellables)
     }

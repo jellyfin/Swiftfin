@@ -61,7 +61,7 @@ struct LiveTVChannelItemElement: View {
                 Spacer()
             }
             VStack {
-                ImageView(channel.getPrimaryImage(maxWidth: 128))
+                ImageView(channel.imageURL(.primary, maxWidth: 128))
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 128, alignment: .center)
                     .padding(.init(top: 8, leading: 0, bottom: 0, trailing: 0))

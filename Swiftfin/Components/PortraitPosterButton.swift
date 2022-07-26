@@ -6,23 +6,22 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
-struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
+struct PortraitPosterButton<Item: PortraitPoster>: View {
 
-    let item: ItemType
+    let item: Item
     let maxWidth: CGFloat
     let horizontalAlignment: HorizontalAlignment
     let textAlignment: TextAlignment
-    let selectedAction: (ItemType) -> Void
+    let selectedAction: (Item) -> Void
 
     init(
-        item: ItemType,
+        item: Item,
         maxWidth: CGFloat = 110,
         horizontalAlignment: HorizontalAlignment = .leading,
         textAlignment: TextAlignment = .leading,
-        selectedAction: @escaping (ItemType) -> Void
+        selectedAction: @escaping (Item) -> Void
     ) {
         self.item = item
         self.maxWidth = maxWidth
@@ -36,13 +35,10 @@ struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
             selectedAction(item)
         } label: {
             VStack(alignment: horizontalAlignment) {
-                ImageView(
-                    item.imageURLConstructor(maxWidth: Int(maxWidth)),
-                    blurHash: item.blurHash,
-                    failureView: {
-                        InitialFailureView(item.titleInitials)
-                    }
-                )
+                ImageView(item.portraitPosterImageSource(maxWidth: maxWidth),
+                          failureView: {
+                    InitialFailureView(item.title.initials)
+                })
                 .portraitPoster(width: maxWidth)
                 .accessibilityIgnoresInvertColors()
 
@@ -68,6 +64,5 @@ struct PortraitItemButton<ItemType: PortraitImageStackable>: View {
             }
             .frame(width: maxWidth)
         }
-        .frame(alignment: .top)
     }
 }

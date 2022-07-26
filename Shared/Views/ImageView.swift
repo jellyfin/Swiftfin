@@ -11,7 +11,7 @@ import NukeUI
 import SwiftUI
 import UIKit
 
-struct ImageViewSource {
+struct ImageSource {
     let url: URL?
     let blurHash: String?
 
@@ -31,7 +31,7 @@ struct DefaultFailureView: View {
 struct ImageView<FailureView: View>: View {
 
     @State
-    private var sources: [ImageViewSource]
+    private var sources: [ImageSource]
     private var currentURL: URL? { sources.first?.url }
     private var currentBlurHash: String? { sources.first?.blurHash }
     private var failureView: () -> FailureView
@@ -43,14 +43,14 @@ struct ImageView<FailureView: View>: View {
         resizingMode: ImageResizingMode = .aspectFill,
         @ViewBuilder failureView: @escaping () -> FailureView
     ) {
-        let imageViewSource = ImageViewSource(url: source, blurHash: blurHash)
+        let imageViewSource = ImageSource(url: source, blurHash: blurHash)
         _sources = State(initialValue: [imageViewSource])
         self.resizingMode = resizingMode
         self.failureView = failureView
     }
 
     init(
-        _ source: ImageViewSource,
+        _ source: ImageSource,
         resizingMode: ImageResizingMode = .aspectFill,
         @ViewBuilder failureView: @escaping () -> FailureView
     ) {
@@ -60,7 +60,7 @@ struct ImageView<FailureView: View>: View {
     }
 
     init(
-        _ sources: [ImageViewSource],
+        _ sources: [ImageSource],
         resizingMode: ImageResizingMode = .aspectFill,
         @ViewBuilder failureView: @escaping () -> FailureView
     ) {
@@ -75,7 +75,7 @@ struct ImageView<FailureView: View>: View {
             BlurHashView(blurHash: currentBlurHash)
                 .id(currentBlurHash)
         } else {
-            Color.clear
+            Color.secondary
         }
     }
 
@@ -103,20 +103,20 @@ struct ImageView<FailureView: View>: View {
 
 extension ImageView where FailureView == DefaultFailureView {
     init(_ source: URL?, blurHash: String? = nil, resizingMode: ImageResizingMode = .aspectFill) {
-        let imageViewSource = ImageViewSource(url: source, blurHash: blurHash)
+        let imageViewSource = ImageSource(url: source, blurHash: blurHash)
         self.init(imageViewSource, resizingMode: resizingMode, failureView: { DefaultFailureView() })
     }
 
-    init(_ source: ImageViewSource, resizingMode: ImageResizingMode = .aspectFill) {
+    init(_ source: ImageSource, resizingMode: ImageResizingMode = .aspectFill) {
         self.init(source, resizingMode: resizingMode, failureView: { DefaultFailureView() })
     }
 
-    init(_ sources: [ImageViewSource], resizingMode: ImageResizingMode = .aspectFill) {
+    init(_ sources: [ImageSource], resizingMode: ImageResizingMode = .aspectFill) {
         self.init(sources, resizingMode: resizingMode, failureView: { DefaultFailureView() })
     }
 
     init(sources: [URL], resizingMode: ImageResizingMode = .aspectFill) {
-        let imageViewSources = sources.compactMap { ImageViewSource(url: $0, blurHash: nil) }
+        let imageViewSources = sources.compactMap { ImageSource(url: $0, blurHash: nil) }
         self.init(imageViewSources, resizingMode: resizingMode, failureView: { DefaultFailureView() })
     }
 }

@@ -17,7 +17,7 @@ struct LatestInLibraryView: View {
     var viewModel: LatestMediaViewModel
 
     var body: some View {
-        PortraitImageHStack(
+        PortraitPosterHStack(
             title: L10n.latestWithString(viewModel.library.displayName),
             items: viewModel.items,
             itemWidth: UIDevice.isIPad ? 130 : 110
