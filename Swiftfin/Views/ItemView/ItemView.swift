@@ -33,7 +33,11 @@ struct ItemView: View {
             case .season:
                 SeasonItemView(viewModel: .init(item: item))
             case .episode:
-                Text("Unsupported")
+                if UIDevice.isIPad {
+                    iPadOSEpisodeItemView(viewModel: .init(item: item))
+                } else {
+                    EpisodeItemView(viewModel: .init(item: item))
+                }
             case .boxSet:
                 CollectionItemView(viewModel: .init(item: item))
             default:

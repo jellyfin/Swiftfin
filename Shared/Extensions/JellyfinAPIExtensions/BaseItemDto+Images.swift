@@ -12,7 +12,7 @@ import UIKit
 
 extension BaseItemDto {
     
-    // MARK: Images
+    // MARK: Item Images
     
     func imageURL(_ type: ImageType,
                   maxWidth: Int) -> URL {
@@ -61,7 +61,7 @@ extension BaseItemDto {
         seriesImageSource(type, maxWidth: Int(maxWidth))
     }
     
-    // MARK: Helpers
+    // MARK: Fileprivate
     
     fileprivate func _imageURL(_ type: ImageType,
                                maxWidth: Int,

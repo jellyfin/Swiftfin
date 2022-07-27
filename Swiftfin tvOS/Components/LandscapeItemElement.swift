@@ -59,7 +59,7 @@ struct LandscapeItemElement: View {
 //                    .getBackdropImage(maxWidth: 445),
 //                blurHash: item.type == .episode ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash()
 //            )
-            ImageView(item.imageSource(.backdrop, maxWidth: 445))
+            ImageView(item.imageViewSource(.backdrop, maxWidth: 445))
             .frame(width: 445, height: 250)
             .cornerRadius(10)
             .ignoresSafeArea()

@@ -43,8 +43,8 @@ struct ImageView<FailureView: View>: View {
         resizingMode: ImageResizingMode = .aspectFill,
         @ViewBuilder failureView: @escaping () -> FailureView
     ) {
-        let imageSource = ImageSource(url: source, blurHash: blurHash)
-        _sources = State(initialValue: [imageSource])
+        let imageViewSource = ImageSource(url: source, blurHash: blurHash)
+        _sources = State(initialValue: [imageViewSource])
         self.resizingMode = resizingMode
         self.failureView = failureView
     }
@@ -103,8 +103,8 @@ struct ImageView<FailureView: View>: View {
 
 extension ImageView where FailureView == DefaultFailureView {
     init(_ source: URL?, blurHash: String? = nil, resizingMode: ImageResizingMode = .aspectFill) {
-        let imageSource = ImageSource(url: source, blurHash: blurHash)
-        self.init(imageSource, resizingMode: resizingMode, failureView: { DefaultFailureView() })
+        let imageViewSource = ImageSource(url: source, blurHash: blurHash)
+        self.init(imageViewSource, resizingMode: resizingMode, failureView: { DefaultFailureView() })
     }
 
     init(_ source: ImageSource, resizingMode: ImageResizingMode = .aspectFill) {
@@ -116,7 +116,7 @@ extension ImageView where FailureView == DefaultFailureView {
     }
 
     init(sources: [URL], resizingMode: ImageResizingMode = .aspectFill) {
-        let imageSources = sources.compactMap { ImageSource(url: $0, blurHash: nil) }
-        self.init(imageSources, resizingMode: resizingMode, failureView: { DefaultFailureView() })
+        let imageViewSources = sources.compactMap { ImageSource(url: $0, blurHash: nil) }
+        self.init(imageViewSources, resizingMode: resizingMode, failureView: { DefaultFailureView() })
     }
 }
