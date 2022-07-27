@@ -31,7 +31,7 @@ struct ItemView: View {
                     SeriesItemView(viewModel: .init(item: item))
                 }
             case .season:
-                SeasonItemView(viewModel: .init(item: item))
+                Text("Unsupported")
             case .episode:
                 if UIDevice.isIPad {
                     iPadOSEpisodeItemView(viewModel: .init(item: item))

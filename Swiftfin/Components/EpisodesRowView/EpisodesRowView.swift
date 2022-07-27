@@ -118,15 +118,6 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
                 }
 
                 Spacer()
-
-                if let selectedSeason = viewModel.selectedSeason, !singleSeason {
-                    Button {
-                        itemRouter.route(to: \.item, selectedSeason)
-                    } label: {
-                        Image(systemName: "info.circle.fill")
-                            .font(.title3.weight(.semibold))
-                    }
-                }
             }
             .padding()
         }

@@ -343,8 +343,6 @@
 		E18E01E9288747230022598C /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01CD288747230022598C /* SeriesItemView.swift */; };
 		E18E01EA288747230022598C /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01CF288747230022598C /* MovieItemView.swift */; };
 		E18E01EB288747230022598C /* MovieItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D0288747230022598C /* MovieItemContentView.swift */; };
-		E18E01EC288747230022598C /* SeasonItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D2288747230022598C /* SeasonItemView.swift */; };
-		E18E01ED288747230022598C /* SeasonItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D3288747230022598C /* SeasonItemContentView.swift */; };
 		E18E01EE288747230022598C /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D5288747230022598C /* AboutView.swift */; };
 		E18E01EF288747230022598C /* ListDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D6288747230022598C /* ListDetailsView.swift */; };
 		E18E01F0288747230022598C /* AttributeHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D7288747230022598C /* AttributeHStack.swift */; };
@@ -794,8 +792,6 @@
 		E18E01CD288747230022598C /* SeriesItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeriesItemView.swift; sourceTree = "<group>"; };
 		E18E01CF288747230022598C /* MovieItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieItemView.swift; sourceTree = "<group>"; };
 		E18E01D0288747230022598C /* MovieItemContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieItemContentView.swift; sourceTree = "<group>"; };
-		E18E01D2288747230022598C /* SeasonItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeasonItemView.swift; sourceTree = "<group>"; };
-		E18E01D3288747230022598C /* SeasonItemContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeasonItemContentView.swift; sourceTree = "<group>"; };
 		E18E01D5288747230022598C /* AboutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		E18E01D6288747230022598C /* ListDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDetailsView.swift; sourceTree = "<group>"; };
 		E18E01D7288747230022598C /* AttributeHStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributeHStack.swift; sourceTree = "<group>"; };
@@ -1718,7 +1714,6 @@
 				E18E01C8288747230022598C /* CollectionItemView */,
 				E18E01CB288747230022598C /* SeriesItemView */,
 				E18E01CE288747230022598C /* MovieItemView */,
-				E18E01D1288747230022598C /* SeasonItemView */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -1767,15 +1762,6 @@
 				E18E01CF288747230022598C /* MovieItemView.swift */,
 			);
 			path = MovieItemView;
-			sourceTree = "<group>";
-		};
-		E18E01D1288747230022598C /* SeasonItemView */ = {
-			isa = PBXGroup;
-			children = (
-				E18E01D2288747230022598C /* SeasonItemView.swift */,
-				E18E01D3288747230022598C /* SeasonItemContentView.swift */,
-			);
-			path = SeasonItemView;
 			sourceTree = "<group>";
 		};
 		E18E01D4288747230022598C /* Components */ = {
@@ -2479,7 +2465,6 @@
 				E176DE6D278E30D2001EFD8D /* EpisodeRowCard.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				E10EAA4F277BBCC4000269ED /* CGSizeExtensions.swift in Sources */,
-				E18E01EC288747230022598C /* SeasonItemView.swift in Sources */,
 				E10D87E227852FD000BD264C /* EpisodesRowManager.swift in Sources */,
 				E18E01EB288747230022598C /* MovieItemContentView.swift in Sources */,
 				E18E01FA288747580022598C /* AboutAppView.swift in Sources */,
@@ -2593,7 +2578,6 @@
 				E18E01E9288747230022598C /* SeriesItemView.swift in Sources */,
 				624C21752685CF60007F1390 /* SearchablePickerView.swift in Sources */,
 				E18E023A288749540022598C /* UIScrollViewExtensions.swift in Sources */,
-				E18E01ED288747230022598C /* SeasonItemContentView.swift in Sources */,
 				E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
 				62EC352F267666A5000E9F2D /* SessionManager.swift in Sources */,
