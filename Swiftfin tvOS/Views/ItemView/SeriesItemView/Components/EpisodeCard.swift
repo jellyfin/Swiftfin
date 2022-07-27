@@ -22,7 +22,7 @@ struct EpisodeCard: View {
                 
             } label: {
                 ImageView(
-                    episode.imageViewSource(.primary, maxWidth: 600)
+                    episode.imageSource(.primary, maxWidth: 600)
                 ) {
                     InitialFailureView(episode.failureInitials)
                 }

@@ -22,7 +22,7 @@ extension ItemView {
 
             ZStack {
                 ImageView(
-                    viewModel.item.imageViewSource(.backdrop, maxWidth: 1920)
+                    viewModel.item.imageSource(.backdrop, maxWidth: 1920)
                 )
 
                 ScrollView(.vertical, showsIndicators: false) {
