@@ -12,7 +12,7 @@ import SwiftUI
 struct CinematicResumeCardView: View {
 
     @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
+    private var homeRouter: HomeCoordinator.Router
     @ObservedObject
     var viewModel: HomeViewModel
     let item: BaseItemDto
@@ -24,7 +24,7 @@ struct CinematicResumeCardView: View {
             } label: {
                 ZStack(alignment: .bottom) {
 
-                    if item.itemType == .episode {
+                    if item.type == .episode {
                         ImageView(sources: [
                             item.getSeriesThumbImage(maxWidth: 350),
                             item.getSeriesBackdropImage(maxWidth: 350),
@@ -32,8 +32,8 @@ struct CinematicResumeCardView: View {
                         .frame(width: 350, height: 210)
                     } else {
                         ImageView([
-                            item.imageViewSource(.thumb, maxWidth: 350),
-                            item.imageViewSource(.backdrop, maxWidth: 350)
+                            item.imageSource(.thumb, maxWidth: 350),
+                            item.imageSource(.backdrop, maxWidth: 350)
                         ])
 //                        ImageView([
 //                            .init(url: item.getThumbImage(maxWidth: 350)),

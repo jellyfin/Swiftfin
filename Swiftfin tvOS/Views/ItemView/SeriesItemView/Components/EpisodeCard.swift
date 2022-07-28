@@ -22,7 +22,7 @@ struct EpisodeCard: View {
                 
             } label: {
                 ImageView(
-                    episode.imageViewSource(.primary, maxWidth: 600)
+                    episode.imageSource(.primary, maxWidth: 600)
                 ) {
                     InitialFailureView(episode.failureInitials)
                 }
@@ -40,7 +40,7 @@ struct EpisodeCard: View {
                             .frame(height: 0.01)
                             .frame(maxWidth: .infinity)
                         
-                        Text(episode.episodeLocator ?? "--")
+                        Text(episode.episodeLocator ?? L10n.unknown)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

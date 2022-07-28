@@ -13,7 +13,7 @@ extension ItemView {
     struct CompactPosterScrollView<Content: View>: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 
@@ -23,10 +23,6 @@ extension ItemView {
         private var headerView: some View {
             VStack {
                 ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
-//                ImageView(
-//                    viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-//                    blurHash: viewModel.item.getBackdropImageBlurHash()
-//                )
 
                 Spacer()
                     .frame(height: 50)
@@ -37,15 +33,43 @@ extension ItemView {
         private var staticOverlayView: some View {
             StaticOverlayView(viewModel: viewModel)
         }
+        
+        @ViewBuilder
+        private var overview: some View {
+            if let firstTagline = viewModel.item.taglines?.first {
+                Text(firstTagline)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+            }
+
+            if let itemOverview = viewModel.item.overview {
+                TruncatedTextView(
+                    itemOverview,
+                    lineLimit: 4,
+                    font: UIFont.preferredFont(forTextStyle: .footnote)
+                ) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal)
+            }
+        }
 
         var body: some View {
             ParallaxHeaderScrollView(
                 header: headerView,
-                staticOverlayView: staticOverlayView,
+                staticOverlay: staticOverlayView,
                 headerHeight: UIScreen.main.bounds.height * 0.35
             ) {
-                content()
-                    .padding(.top)
+                VStack {
+                    overview
+                    
+                    content()
+                }
+                .padding(.top)
             }
         }
     }
@@ -56,7 +80,7 @@ extension ItemView.CompactPosterScrollView {
     struct StaticOverlayView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 
@@ -104,10 +128,6 @@ extension ItemView.CompactPosterScrollView {
 
                     // MARK: Portrait Image
 
-//                    ImageView(
-//                        viewModel.item.portraitHeaderViewURL(maxWidth: 130),
-//                        blurHash: viewModel.item.getPrimaryImageBlurHash()
-//                    )
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
                         .portraitPoster(width: 130)
                         .accessibilityIgnoresInvertColors()

@@ -12,7 +12,7 @@ import SwiftUI
 struct LibraryView: View {
 
     @EnvironmentObject
-    var libraryRouter: LibraryCoordinator.Router
+    private var libraryRouter: LibraryCoordinator.Router
     @StateObject
     var viewModel: LibraryViewModel
     var title: String

@@ -13,7 +13,7 @@ import SwiftUI
 struct BasicAppSettingsView: View {
 
     @EnvironmentObject
-    var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
+    private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
     @ObservedObject
     var viewModel: BasicAppSettingsViewModel
     @State

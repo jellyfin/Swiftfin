@@ -41,7 +41,7 @@ extension MovieItemView {
                     Group {
                         if showLogo {
                             ImageView(
-                                viewModel.item.getLogoImage(maxWidth: 500),
+                                viewModel.item.imageSource(.logo, maxWidth: 500),
                                 resizingMode: .aspectFit,
                                 failureView: {
                                     Text(viewModel.item.displayName)

@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -16,34 +15,18 @@ struct LibraryListView: View {
     @EnvironmentObject
     var mainCoordinator: MainCoordinator.Router
     @EnvironmentObject
-    var libraryListRouter: LibraryListCoordinator.Router
+    private var libraryListRouter: LibraryListCoordinator.Router
     @StateObject
     var viewModel = LibraryListViewModel()
-
-    @Default(.Experimental.liveTVAlphaEnabled)
-    var liveTVAlphaEnabled
-
-    var supportedCollectionTypes: [BaseItemDto.ItemType] {
-        if liveTVAlphaEnabled {
-            return [.movie, .season, .series, .liveTV, .boxset, .unknown]
-        } else {
-            return [.movie, .season, .series, .boxset, .unknown]
-        }
-    }
 
     var body: some View {
         ScrollView {
             LazyVStack {
                 if !viewModel.isLoading {
 
-                    ForEach(viewModel.libraries.filter { [self] library in
-                        let collectionType = library.collectionType ?? "other"
-                        let itemType = BaseItemDto.ItemType(rawValue: collectionType) ?? .unknown
-                        return self.supportedCollectionTypes.contains(itemType)
-                    }, id: \.id) { library in
+                    ForEach(viewModel.filteredLibraries, id: \.id) { library in
                         Button {
-                            let itemType = BaseItemDto.ItemType(rawValue: library.collectionType ?? "other") ?? .unknown
-                            if itemType == .liveTV {
+                            if library.collectionType == "livetv" {
                                 self.mainCoordinator.root(\.liveTV)
                             } else {
                                 self.libraryListRouter.route(

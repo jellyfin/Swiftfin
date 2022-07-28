@@ -13,7 +13,7 @@ extension ItemView {
     struct CompactLogoScrollView<Content: View>: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 
@@ -23,13 +23,9 @@ extension ItemView {
         private var headerView: some View {
             VStack {
                 ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
-//                ImageView(
-//                    viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-//                    blurHash: viewModel.item.getBackdropImageBlurHash()
-//                )
 
                 Spacer()
-                    .frame(height: 10)
+                    .frame(height: 100)
             }
         }
 
@@ -37,11 +33,35 @@ extension ItemView {
         private var staticOverlayView: some View {
             StaticOverlayView(viewModel: viewModel)
         }
+        
+        @ViewBuilder
+        private var overview: some View {
+            if let firstTagline = viewModel.item.taglines?.first {
+                Text(firstTagline)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+            }
+
+            if let itemOverview = viewModel.item.overview {
+                TruncatedTextView(
+                    itemOverview,
+                    lineLimit: 4,
+                    font: UIFont.preferredFont(forTextStyle: .footnote)
+                ) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal)
+            }
+        }
 
         var body: some View {
             ParallaxHeaderScrollView(
                 header: headerView,
-                staticOverlayView: staticOverlayView,
+                staticOverlay: staticOverlayView,
                 headerHeight: UIScreen.main.bounds.height * 0.3
             ) {
                 VStack(alignment: .center, spacing: 0) {
@@ -101,13 +121,12 @@ extension ItemView.CompactLogoScrollView {
     struct SubOverlayView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 
         var body: some View {
             ZStack {
-                //				Color(UIColor.lightGray)
 
                 VStack(alignment: .center, spacing: 10) {
                     DotHStack {

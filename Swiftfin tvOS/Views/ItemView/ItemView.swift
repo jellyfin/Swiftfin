@@ -21,7 +21,7 @@ struct ItemView: View {
 
     var body: some View {
         Group {
-            switch item.itemType {
+            switch item.type {
             case .movie:
                 MovieItemView(viewModel: .init(item: item))
             case .episode:
@@ -30,8 +30,8 @@ struct ItemView: View {
                 Text("Help")
             case .series:
                 SeriesItemView(viewModel: .init(item: item))
-            case .boxset, .folder:
-                Text("Help")
+//            case .boxset, .folder:
+//                Text("Help")
             default:
                 Text(L10n.notImplementedYetWithType(item.type ?? ""))
             }

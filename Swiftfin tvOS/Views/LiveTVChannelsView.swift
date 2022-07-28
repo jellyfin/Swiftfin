@@ -15,7 +15,7 @@ typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 
 struct LiveTVChannelsView: View {
     @EnvironmentObject
-    var router: LiveTVChannelsCoordinator.Router
+    private var Router: LiveTVChannelsCoordinator.Router
     @StateObject
     var viewModel = LiveTVChannelsViewModel()
 

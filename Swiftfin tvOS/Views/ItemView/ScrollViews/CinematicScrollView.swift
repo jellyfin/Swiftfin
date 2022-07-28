@@ -22,7 +22,7 @@ extension ItemView {
 
             ZStack {
                 ImageView(
-                    viewModel.item.imageViewSource(.backdrop, maxWidth: 1920)
+                    viewModel.item.imageSource(.backdrop, maxWidth: 1920)
                 )
 
                 ScrollView(.vertical, showsIndicators: false) {
@@ -66,7 +66,7 @@ extension ItemView {
                     VStack(alignment: .leading, spacing: 20) {
                         
                         ImageView(
-                            viewModel.item.getLogoImage(maxWidth: 500),
+                            viewModel.item.imageSource(.logo, maxWidth: 500),
                             resizingMode: .aspectFit,
                             failureView: {
                                 Text(viewModel.item.displayName)

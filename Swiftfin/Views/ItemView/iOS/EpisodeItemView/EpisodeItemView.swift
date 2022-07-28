@@ -12,7 +12,7 @@ import SwiftUI
 struct EpisodeItemView: View {
 
     @EnvironmentObject
-    var itemRouter: ItemCoordinator.Router
+    private var itemRouter: ItemCoordinator.Router
     @ObservedObject
     var viewModel: EpisodeItemViewModel
 

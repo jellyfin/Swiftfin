@@ -15,7 +15,7 @@ import SwiftUI
 struct HomeView: View {
 
     @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
+    private var homeRouter: HomeCoordinator.Router
     @StateObject
     var viewModel = HomeViewModel()
     @Default(.showPosterLabels)
@@ -49,13 +49,20 @@ struct HomeView: View {
                         //							NextUpView(items: viewModel.nextUpItems)
                         //						}
 
+                        
                         PortraitImageHStack(
                             title: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems
-                        ) { item in
-                            homeRouter.route(to: \.modalItem, item)
-                        }
-                        .fixedSize(horizontal: false, vertical: true)
+                            items: viewModel.latestAddedItems) { item in
+                                homeRouter.route(to: \.modalItem, item)
+                            }
+                        
+//                        PortraitImageHStack(
+//                            title: L10n.recentlyAdded,
+//                            items: viewModel.latestAddedItems
+//                        ) { item in
+//                            homeRouter.route(to: \.modalItem, item)
+//                        }
+//                        .fixedSize(horizontal: false, vertical: true)
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in

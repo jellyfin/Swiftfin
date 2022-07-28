@@ -14,7 +14,7 @@ import Stinsen
 final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
 
     @RouterObject
-    var itemRouter: ItemCoordinator.Router?
+    private var itemRouter: ItemCoordinator.Router?
     @Published
     var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
     @Published

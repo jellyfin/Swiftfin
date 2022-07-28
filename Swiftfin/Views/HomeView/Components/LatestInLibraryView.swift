@@ -12,7 +12,7 @@ import SwiftUI
 struct LatestInLibraryView: View {
 
     @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
+    private var homeRouter: HomeCoordinator.Router
     @ObservedObject
     var viewModel: LatestMediaViewModel
 

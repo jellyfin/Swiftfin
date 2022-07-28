@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 
@@ -14,9 +15,15 @@ final class LibraryListViewModel: ViewModel {
     @Published
     var libraries: [BaseItemDto] = []
     
-//    var filteredLibraries: [BaseItemDto] {
-//        libraries.filter { $0.collection }
-//    }
+    var filteredLibraries: [BaseItemDto] {
+        var supportedLibraries = ["movies", "tvshows", "unknown"]
+        
+        if Defaults[.Experimental.liveTVAlphaEnabled] {
+            supportedLibraries.append("livetv")
+        }
+        
+        return libraries.filter { supportedLibraries.contains($0.collectionType ?? "unknown") }
+    }
 
     // temp
     let withFavorites = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
@@ -34,7 +41,6 @@ final class LibraryListViewModel: ViewModel {
                 self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
                 self.libraries = response.items ?? []
-                print(self.libraries.map(\.collectionType))
             })
             .store(in: &cancellables)
     }

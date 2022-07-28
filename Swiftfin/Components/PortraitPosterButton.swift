@@ -48,7 +48,6 @@ struct PortraitPosterButton<Item: PortraitPoster>: View {
                         .fontWeight(.regular)
                         .foregroundColor(.primary)
                         .multilineTextAlignment(textAlignment)
-                        //						.fixedSize(horizontal: false, vertical: true)
                         .lineLimit(2)
                 }
 
@@ -58,7 +57,6 @@ struct PortraitPosterButton<Item: PortraitPoster>: View {
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(textAlignment)
-                        //						.fixedSize(horizontal: false, vertical: true)
                         .lineLimit(2)
                 }
             }

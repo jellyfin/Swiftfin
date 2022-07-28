@@ -13,7 +13,7 @@ import SwiftUI
 
 struct LibrarySearchView: View {
     @EnvironmentObject
-    var searchRouter: SearchCoordinator.Router
+    private var searchRouter: SearchCoordinator.Router
     @StateObject
     var viewModel: LibrarySearchViewModel
     @State

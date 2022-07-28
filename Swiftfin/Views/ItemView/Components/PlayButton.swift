@@ -13,7 +13,7 @@ extension ItemView {
     struct PlayButton: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 

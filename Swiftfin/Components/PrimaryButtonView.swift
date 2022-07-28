@@ -28,8 +28,6 @@ struct PrimaryButtonView: View {
                     .frame(maxWidth: 400)
                     .frame(height: 50)
                     .cornerRadius(10)
-                //                    .padding(.horizontal, 30)
-                //                    .padding(.vertical, 20)
 
                 Text(title)
                     .foregroundColor(Color.white)

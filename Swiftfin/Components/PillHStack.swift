@@ -8,11 +8,11 @@
 
 import SwiftUI
 
-struct PillHStack<ItemType: PillStackable>: View {
+struct PillHStack<Item: PillStackable>: View {
 
     let title: String
-    let items: [ItemType]
-    let selectedAction: (ItemType) -> Void
+    let items: [Item]
+    let selectedAction: (Item) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {

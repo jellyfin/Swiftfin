@@ -14,7 +14,7 @@ import Stinsen
 final class EpisodeItemViewModel: ItemViewModel {
 
     @RouterObject
-    var itemRouter: ItemCoordinator.Router?
+    private var itemRouter: ItemCoordinator.Router?
     @Published
     var playButtonText: String = ""
     @Published

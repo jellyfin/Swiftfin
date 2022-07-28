@@ -15,7 +15,7 @@ extension CollectionItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: CollectionItemViewModel
         @Default(.itemViewType)

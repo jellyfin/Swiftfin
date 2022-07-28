@@ -11,7 +11,7 @@ import SwiftUI
 struct UserListView: View {
 
     @EnvironmentObject
-    var userListRouter: UserListCoordinator.Router
+    private var userListRouter: UserListCoordinator.Router
     @ObservedObject
     var viewModel: UserListViewModel
 

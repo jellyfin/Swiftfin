@@ -14,7 +14,7 @@ extension ItemView {
     struct AboutView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 
@@ -63,7 +63,7 @@ extension ItemView {
                                 }
                                 .padding()
                             }
-                            .frame(width: 330, height: 165)
+                            .frame(width: 330, height: 195)
                         }
                         .buttonStyle(PlainButtonStyle())
                     }

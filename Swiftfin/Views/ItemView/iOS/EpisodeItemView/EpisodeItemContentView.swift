@@ -14,7 +14,7 @@ extension EpisodeItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 
@@ -22,15 +22,11 @@ extension EpisodeItemView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center) {
-//                    ImageView(
-//                        viewModel.item.getPrimaryImage(maxWidth: 600),
-//                        blurHash: viewModel.item.getPrimaryImageBlurHash()
-//                    )
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 600))
-                    .cornerRadius(10)
-                    .frame(maxWidth: 600)
-                    .aspectRatio(1.77, contentMode: .fit)
-                    .padding(.horizontal)
+                        .frame(maxHeight: 300)
+                        .aspectRatio(1.77, contentMode: .fill)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
 
                     ShelfView(viewModel: viewModel)
                 }
@@ -74,7 +70,7 @@ extension EpisodeItemView {
                     Divider()
                 }
 
-                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty {
                        PortraitPosterHStack(
                            title: L10n.castAndCrew,
@@ -107,7 +103,7 @@ extension EpisodeItemView.ContentView {
     struct ShelfView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 

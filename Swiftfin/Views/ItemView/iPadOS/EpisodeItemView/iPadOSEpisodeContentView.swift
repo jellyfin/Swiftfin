@@ -14,7 +14,7 @@ extension iPadOSEpisodeItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 
@@ -60,7 +60,8 @@ extension iPadOSEpisodeItemView {
                     Divider()
                 }
 
-                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+//                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty {
                        PortraitPosterHStack(
                            title: L10n.castAndCrew,
@@ -94,7 +95,7 @@ extension iPadOSEpisodeItemView.ContentView {
     struct ShelfView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 

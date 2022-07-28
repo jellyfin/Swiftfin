@@ -14,7 +14,7 @@ import SwiftUI
 struct SettingsView: View {
 
     @EnvironmentObject
-    var settingsRouter: SettingsCoordinator.Router
+    private var settingsRouter: SettingsCoordinator.Router
     @ObservedObject
     var viewModel: SettingsViewModel
 

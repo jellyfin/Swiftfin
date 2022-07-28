@@ -11,7 +11,7 @@ import SwiftUI
 
 struct LiveTVProgramsView: View {
     @EnvironmentObject
-    var programsRouter: LiveTVProgramsCoordinator.Router
+    private var programsRouter: LiveTVProgramsCoordinator.Router
     @StateObject
     var viewModel = LiveTVProgramsViewModel()
 

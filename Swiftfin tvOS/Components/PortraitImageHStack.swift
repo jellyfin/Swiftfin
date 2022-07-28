@@ -11,22 +11,20 @@ import SwiftUI
 import SwiftUICollection
 import TVUIKit
 
-// typealias LiveTVChannelRow = CollectionRow<Int, LiveTVChannelRowCell>
-
-struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: View {
+struct PortraitImageHStack<Item: PortraitPoster, LastView: View>: View {
 
     private let loading: Bool
     private let title: String
-    private let items: [ItemType]
-    private let selectedAction: (ItemType) -> Void
+    private let items: [Item]
+    private let selectedAction: (Item) -> Void
     private let lastView: () -> LastView
 
     init(
         loading: Bool = false,
         title: String,
-        items: [ItemType],
+        items: [Item],
         @ViewBuilder lastView: @escaping () -> LastView,
-        selectedAction: @escaping (ItemType) -> Void
+        selectedAction: @escaping (Item) -> Void
     ) {
         self.loading = loading
         self.title = title
@@ -55,7 +53,7 @@ struct PortraitImageHStack<ItemType: PortraitImageStackable, LastView: View>: Vi
                         PortraitButton(item: BaseItemDto.noResults,
                                        selectedAction: { _ in })
                     } else {
-                        ForEach(items, id: \.id) { item in
+                        ForEach(items, id: \.title + \.subtitle) { item in
                             PortraitButton(item: item) { item in
                                 selectedAction(item)
                             }

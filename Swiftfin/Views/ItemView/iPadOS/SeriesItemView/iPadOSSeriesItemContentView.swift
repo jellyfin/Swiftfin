@@ -14,7 +14,7 @@ extension iPadOSSeriesItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
@@ -49,7 +49,7 @@ extension iPadOSSeriesItemView {
 
                 // MARK: Cast and Crew
 
-                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
+                if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty {
                        PortraitPosterHStack(
                            title: L10n.castAndCrew,

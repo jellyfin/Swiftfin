@@ -34,7 +34,7 @@ extension ItemView {
         var body: some View {
             ParallaxHeaderScrollView(
                 header: headerView,
-                staticOverlayView: staticOverlayView,
+                staticOverlay: staticOverlayView,
                 headerHeight: UIScreen.main.bounds.height * 0.7
             ) {
                 content()

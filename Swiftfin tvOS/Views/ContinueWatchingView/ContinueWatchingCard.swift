@@ -12,7 +12,7 @@ import SwiftUI
 struct ContinueWatchingCard: View {
 
     @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
+    private var homeRouter: HomeCoordinator.Router
     let item: BaseItemDto
 
     var body: some View {
@@ -22,11 +22,13 @@ struct ContinueWatchingCard: View {
             } label: {
                 ZStack(alignment: .bottom) {
 
-                    if item.itemType == .episode {
-                        ImageView(item.getSeriesBackdropImage(maxWidth: 500))
+                    if item.type == .episode {
+                        ImageView([
+                            item.seriesImageSource(.thumb, maxWidth: 500),
+                            item.imageSource(.primary, maxWidth: 500)
+                        ])
                             .frame(width: 500, height: 281.25)
                     } else {
-//                        ImageView(item.getBackdropImage(maxWidth: 500))
                         ImageView(item.imageURL(.backdrop, maxWidth: 500))
                             .frame(width: 500, height: 281.25)
                     }
@@ -67,7 +69,7 @@ struct ContinueWatchingCard: View {
                     .lineLimit(1)
                     .frame(width: 500, alignment: .leading)
 
-                if item.itemType == .episode {
+                if item.type == .episode {
                     Text(item.episodeLocator ?? "--")
                         .font(.callout)
                         .fontWeight(.medium)

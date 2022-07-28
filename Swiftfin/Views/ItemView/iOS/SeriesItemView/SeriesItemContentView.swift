@@ -15,46 +15,12 @@ extension SeriesItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        var itemRouter: ItemCoordinator.Router
+        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: SeriesItemViewModel
-        @Default(.itemViewType)
-        private var itemViewType
-
-        // MARK: Compact Poster Overview
-
-        @ViewBuilder
-        private var compactPosterOverview: some View {
-            if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-                Text(firstTagline)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundColor(.white)
-                    .padding(.horizontal)
-            }
-
-            if let itemOverview = viewModel.item.overview {
-                TruncatedTextView(
-                    itemOverview,
-                    lineLimit: 4,
-                    font: UIFont.preferredFont(forTextStyle: .footnote)
-                ) {
-                    itemRouter.route(to: \.itemOverview, viewModel.item)
-                }
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal)
-                .padding(.bottom)
-            }
-        }
 
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
-
-                if itemViewType == .compactPoster || itemViewType == .compactLogo {
-                    compactPosterOverview
-                }
 
                 // MARK: Episodes
 
@@ -88,8 +54,7 @@ extension SeriesItemView {
 
                 // MARK: Cast and Crew
 
-                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
-                   !castAndCrew.isEmpty {
+                if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed), !castAndCrew.isEmpty {
                        PortraitPosterHStack(
                            title: L10n.castAndCrew,
                            items: castAndCrew

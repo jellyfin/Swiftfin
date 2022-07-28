@@ -12,7 +12,7 @@ import SwiftUICollection
 
 struct MovieLibrariesView: View {
     @EnvironmentObject
-    var movieLibrariesRouter: MovieLibrariesCoordinator.Router
+    private var movieLibrariesRouter: MovieLibrariesCoordinator.Router
     @StateObject
     var viewModel: MovieLibrariesViewModel
     var title: String

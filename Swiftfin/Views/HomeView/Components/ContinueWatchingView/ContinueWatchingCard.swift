@@ -11,11 +11,14 @@ import SwiftUI
 
 struct ContinueWatchingLandscapeButton: View {
     
+    @EnvironmentObject
+    private var homeRouter: HomeCoordinator.Router
+    
     let item: BaseItemDto
     
     var body: some View {
         Button {
-//            homeRouter.route(to: \.item, item)
+            homeRouter.route(to: \.item, item)
         } label: {
             VStack(alignment: .leading) {
 
@@ -24,7 +27,7 @@ struct ContinueWatchingLandscapeButton: View {
                         if item.type == .episode {
                             ImageView([
                                 item.seriesImageSource(.thumb, maxWidth: 320),
-                                item.seriesImageSource(.backdrop, maxWidth: 320)
+                                item.seriesImageSource(.backdrop, maxWidth: 320),
                             ])
                             .frame(width: 320, height: 180)
                         } else {

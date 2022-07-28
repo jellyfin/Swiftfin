@@ -49,7 +49,7 @@ struct PortraitPosterHStack<Item: PortraitPoster, TrailingContent: View>: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
-                    ForEach(items, id: \.id) { item in
+                    ForEach(items, id: \.hashValue) { item in
                         PortraitPosterButton(
                             item: item,
                             maxWidth: itemWidth,

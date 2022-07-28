@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 import SwiftUI
 
-protocol PortraitPoster: Identifiable {
+protocol PortraitPoster: Hashable {
     var title: String { get }
     var subtitle: String? { get }
     var showTitle: Bool { get }

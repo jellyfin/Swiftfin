@@ -12,18 +12,6 @@ import UIKit
 
 extension BaseItemPerson {
 
-    func getBlurHash() -> String {
-        return ""
-//        let imgURL = getImage(baseURL: "", maxWidth: 1)
-//        guard let imgTag = imgURL.queryParameters?["tag"],
-//              let hash = imageBlurHashes?.primary?[imgTag]
-//        else {
-//            return "001fC^"
-//        }
-//
-//        return hash
-    }
-
     // MARK: First Role
 
     // Jellyfin will grab all roles the person played in the show which makes the role
@@ -47,77 +35,18 @@ extension BaseItemPerson {
 
         return final
     }
-}
-
-// MARK: PortraitImageStackable
-
-extension BaseItemPerson: PortraitPoster {
-    public func imageURLConstructor(maxWidth: Int) -> URL {
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: id ?? "",
-            imageType: .primary,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: primaryImageTag
-        ).URLString
-        return URL(string: urlString)!
-    }
-
-    public var title: String {
-        self.name ?? ""
-    }
-
-    public var subtitle: String? {
-        self.firstRole
-    }
-
-    public var blurHash: String {
-        self.getBlurHash()
-    }
-
-    public var failureInitials: String {
-        guard let name = self.name else { return "" }
-        let initials = name.split(separator: " ").compactMap { String($0).first }
-        return String(initials)
-    }
-
-    public var showTitle: Bool {
-        true
-    }
     
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-        let scaleWidth = UIScreen.main.scale(maxWidth)
-        let url = ImageAPI.getItemImageWithRequestBuilder(
-                itemId: id ?? "",
-                imageType: .primary,
-                maxWidth: scaleWidth).url
-        
-        var blurHash: String? = nil
-        
-        if let tag = primaryImageTag, let taggedBlurHash = imageBlurHashes?.primary?[tag] {
-            blurHash = taggedBlurHash
-        }
-        
-        return ImageSource(url: url, blurHash: blurHash)
-    }
-}
-
-// MARK: DiplayedType
-
-extension BaseItemPerson {
-
     // Only displayed person types.
-    // Will ignore people like "GuestStar"
-    enum DisplayedType: String, CaseIterable {
+    // Will ignore types like "GuestStar"
+    enum DisplayedType: String {
         case actor = "Actor"
         case director = "Director"
         case writer = "Writer"
         case producer = "Producer"
-
-        static var allCasesRaw: [String] {
-            self.allCases.map(\.rawValue)
-        }
+    }
+    
+    var isDisplayed: Bool {
+        guard let type = type else { return false }
+        return DisplayedType(rawValue: type) != nil
     }
 }
