@@ -59,13 +59,14 @@ extension ItemView {
         }
 
         var body: some View {
-            ParallaxHeaderScrollView(
-                header: headerView,
-                staticOverlay: staticOverlayView,
-                headerHeight: UIScreen.main.bounds.height * 0.35
-            ) {
-                content()
-            }
+            Text("N/A")
+//            ParallaxHeaderScrollView(
+//                header: headerView,
+//                staticOverlay: staticOverlayView,
+//                headerHeight: UIScreen.main.bounds.height * 0.35
+//            ) {
+//                content()
+//            }
         }
     }
 }

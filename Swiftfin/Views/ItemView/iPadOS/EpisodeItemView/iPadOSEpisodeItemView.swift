@@ -17,8 +17,9 @@ struct iPadOSEpisodeItemView: View {
     var viewModel: EpisodeItemViewModel
 
     var body: some View {
-        NavBarOffsetScrollView(headerHeight: 10) {
-            ContentView(viewModel: viewModel)
-        }
+        Text("N/A")
+//        NavBarOffsetScrollView(headerHeight: 10) {
+//            ContentView(viewModel: viewModel)
+//        }
     }
 }
