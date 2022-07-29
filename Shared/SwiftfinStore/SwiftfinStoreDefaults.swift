@@ -8,6 +8,7 @@
 
 import Defaults
 import Foundation
+import UIKit
 
 extension SwiftfinStore {
     enum Defaults {
@@ -69,6 +70,11 @@ extension Defaults.Keys {
     )
     static let autoplayEnabled = Key<Bool>("autoPlayNextItem", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     static let resumeOffset = Key<Bool>("resumeOffset", default: false, suite: SwiftfinStore.Defaults.generalSuite)
+    static let subtitleFontName = Key<String>(
+        "subtitleFontName",
+        default: UIFont.systemFont(ofSize: 14).fontName,
+        suite: SwiftfinStore.Defaults.generalSuite
+    )
     static let subtitleSize = Key<SubtitleSize>("subtitleSize", default: .regular, suite: SwiftfinStore.Defaults.generalSuite)
 
     // Should show video player items

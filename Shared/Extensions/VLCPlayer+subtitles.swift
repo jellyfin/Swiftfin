@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import UIKit
 #if os(tvOS)
     import TVVLCKit
 #else
@@ -20,6 +21,16 @@ extension VLCMediaPlayer {
         perform(
             Selector(("setTextRendererFontSize:")),
             with: size.textRendererFontSize
+        )
+    }
+
+    /// Applies font to the player
+    ///
+    /// This is pretty hacky until VLCKit 4 has a public API to support this
+    func setSubtitleFont(fontName: String) {
+        perform(
+            Selector(("setTextRendererFont:")),
+            with: fontName
         )
     }
 }
