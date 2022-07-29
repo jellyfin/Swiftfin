@@ -10,11 +10,15 @@ import Foundation
 import SwiftUI
 
 struct ParallaxHeaderScrollView<Header: View, StaticOverlay: View, Content: View>: View {
-    var header: Header
-    var staticOverlay: StaticOverlay
-    var overlayAlignment: Alignment
-    var headerHeight: CGFloat
-    var content: () -> Content
+    
+    @State
+    private var scrollViewOffset: CGFloat = 0
+    
+    let header: Header
+    let staticOverlay: StaticOverlay
+    let overlayAlignment: Alignment
+    let headerHeight: CGFloat
+    let content: () -> Content
 
     init(
         header: Header,
@@ -31,20 +35,25 @@ struct ParallaxHeaderScrollView<Header: View, StaticOverlay: View, Content: View
     }
 
     var body: some View {
-        NavBarOffsetScrollView(headerHeight: headerHeight) {
-            GeometryReader { proxy in
-                let yOffset = proxy.frame(in: .global).minY > 0 ? -proxy.frame(in: .global).minY : 0
-                header
-                    .frame(width: proxy.size.width, height: proxy.size.height - yOffset)
-                    .overlay(staticOverlay, alignment: overlayAlignment)
-                    .offset(y: yOffset)
-            }
-            .frame(height: headerHeight)
+        NavBarOffsetScrollView(scrollViewOffset: $scrollViewOffset, headerHeight: headerHeight) {
+            ZStack {
+//                GeometryReader { proxy in
+//                    let yOffset = proxy.frame(in: .global).minY > 0 ? -proxy.frame(in: .global).minY : 0
+//                    header
+//                        .frame(width: proxy.size.width, height: proxy.size.height - yOffset)
+//                        .overlay(staticOverlay, alignment: overlayAlignment)
+//                        .offset(y: yOffset)
+//                }
+//                .frame(height: headerHeight)
+                
+                
 
-            HStack {
                 content()
-                Spacer(minLength: 0)
+                    .frame(maxWidth: .infinity)
             }
+        }
+        .onChange(of: scrollViewOffset) { newValue in
+            print(newValue)
         }
     }
 }

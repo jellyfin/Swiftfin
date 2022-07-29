@@ -24,8 +24,8 @@ extension ItemView {
             VStack {
                 ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
 
-                Spacer()
-                    .frame(height: 100)
+                Color.red
+                    .frame(height: 50)
             }
         }
 
@@ -62,15 +62,9 @@ extension ItemView {
             ParallaxHeaderScrollView(
                 header: headerView,
                 staticOverlay: staticOverlayView,
-                headerHeight: UIScreen.main.bounds.height * 0.3
+                headerHeight: UIScreen.main.bounds.height * 0.35
             ) {
-                VStack(alignment: .center, spacing: 0) {
-
-                    SubOverlayView(viewModel: viewModel)
-
-                    content()
-                        .padding(.top)
-                }
+                content()
             }
         }
     }
@@ -84,80 +78,48 @@ extension ItemView.CompactLogoScrollView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            ZStack {
-                VStack {
-                    Spacer()
-
-                    LinearGradient(gradient: Gradient(stops: [
-                        .init(color: .init(UIColor.black), location: 0),
-                        .init(color: .init(UIColor.black), location: 0.2),
-                        .init(color: .init(UIColor.black).opacity(0), location: 1),
-                    ]), startPoint: .bottom, endPoint: .top)
-                        .frame(height: 100)
+            VStack(alignment: .center, spacing: 10) {
+                
+                Spacer()
+                
+                ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
+                          resizingMode: .aspectFit) {
+                    Text(viewModel.item.displayName)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.primary)
                 }
-
-                VStack {
-                    Spacer()
-                    
-                    ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
-                              resizingMode: .aspectFit) {
-                        Text(viewModel.item.displayName)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.primary)
-                            .frame(alignment: .bottom)
+                .frame(maxHeight: 100)
+                
+                DotHStack {
+                    if let firstGenre = viewModel.item.genres?.first {
+                        Text(firstGenre)
                     }
-                    .frame(maxHeight: 100, alignment: .bottom)
-                }
-                .padding(.horizontal)
-            }
-        }
-    }
-}
 
-extension ItemView.CompactLogoScrollView {
-
-    struct SubOverlayView: View {
-
-        @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: ItemViewModel
-
-        var body: some View {
-            ZStack {
-
-                VStack(alignment: .center, spacing: 10) {
-                    DotHStack {
-                        if let firstGenre = viewModel.item.genres?.first {
-                            Text(firstGenre)
-                        }
-
-                        if let premiereYear = viewModel.item.premiereDateYear {
-                            Text(String(premiereYear))
-                        }
-
-                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                            Text(runtime)
-                        }
+                    if let premiereYear = viewModel.item.premiereDateYear {
+                        Text(String(premiereYear))
                     }
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
 
-                    ItemView.AttributesHStack(viewModel: viewModel)
-
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(maxWidth: 300)
-                        .frame(height: 50)
-
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .frame(maxWidth: 300)
+                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                        Text(runtime)
+                    }
                 }
+                .font(.caption)
+                .foregroundColor(.secondary)
                 .padding(.horizontal)
+
+                ItemView.AttributesHStack(viewModel: viewModel)
+
+                ItemView.PlayButton(viewModel: viewModel)
+                    .frame(maxWidth: 300)
+                    .frame(height: 50)
+
+                ItemView.ActionButtonHStack(viewModel: viewModel)
+                    .font(.title)
+                    .frame(maxWidth: 300)
             }
+            .padding(.horizontal)
         }
     }
 }

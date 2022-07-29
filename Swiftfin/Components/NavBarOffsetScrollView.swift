@@ -9,22 +9,55 @@
 import SwiftUI
 import UIKit
 
+protocol NavBarOffsetScrollViewControllerDelegate {
+    func scrollViewDidScroll(offset: CGFloat)
+}
+
 struct NavBarOffsetScrollView<Body: View>: UIViewControllerRepresentable {
 
-    let headerHeight: CGFloat
-    let body: () -> Body
+    @Binding
+    private var scrollViewOffset: CGFloat
+    
+    private let headerHeight: CGFloat
+    private let body: () -> Body
 
+    init(scrollViewOffset: Binding<CGFloat>, headerHeight: CGFloat, @ViewBuilder body: @escaping () -> Body) {
+        self._scrollViewOffset = scrollViewOffset
+        self.headerHeight = headerHeight
+        self.body = body
+    }
+    
     init(headerHeight: CGFloat, @ViewBuilder body: @escaping () -> Body) {
+        self._scrollViewOffset = Binding(get: { 0 }, set: { _ in })
         self.headerHeight = headerHeight
         self.body = body
     }
 
     func makeUIViewController(context: Context) -> NavBarOffsetScrollViewController<Body> {
-        NavBarOffsetScrollViewController(headerHeight: headerHeight, body: body)
+        let vc = NavBarOffsetScrollViewController(headerHeight: headerHeight, body: body)
+        vc.delegate = context.coordinator
+        return vc
     }
 
     func updateUIViewController(_ uiViewController: NavBarOffsetScrollViewController<Body>, context: Context) {
         uiViewController.update(self.body, self.headerHeight)
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, NavBarOffsetScrollViewControllerDelegate {
+        
+        let parent: NavBarOffsetScrollView
+        
+        init(_ parent: NavBarOffsetScrollView) {
+            self.parent = parent
+        }
+        
+        func scrollViewDidScroll(offset: CGFloat) {
+            parent.scrollViewOffset = offset
+        }
     }
 }
 
@@ -36,6 +69,8 @@ class NavBarOffsetScrollViewController<Body: View>: UIViewController, UIScrollVi
 
     private var body: () -> Body
     private var headerHeight: CGFloat
+    
+    var delegate: NavBarOffsetScrollViewControllerDelegate?
 
     init(headerHeight: CGFloat, body: @escaping () -> Body) {
         self.body = body
@@ -125,6 +160,7 @@ class NavBarOffsetScrollViewController<Body: View>: UIViewController, UIScrollVi
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        delegate?.scrollViewDidScroll(offset: scrollView.contentOffset.y)
         let maxHeight: CGFloat = headerHeight + 10
         let currentProgress = (scrollView.contentOffset.y - headerHeight) * 8 / maxHeight
         let offset = min(max(currentProgress, 0), 1)
