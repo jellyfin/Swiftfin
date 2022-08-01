@@ -35,10 +35,12 @@ struct PortraitPosterButton<Item: PortraitPoster>: View {
             selectedAction(item)
         } label: {
             VStack(alignment: horizontalAlignment) {
-                ImageView(item.portraitPosterImageSource(maxWidth: maxWidth),
-                          failureView: {
-                    InitialFailureView(item.title.initials)
-                })
+                ImageView(
+                    item.portraitPosterImageSource(maxWidth: maxWidth),
+                    failureView: {
+                        InitialFailureView(item.title.initials)
+                    }
+                )
                 .portraitPoster(width: maxWidth)
                 .accessibilityIgnoresInvertColors()
 

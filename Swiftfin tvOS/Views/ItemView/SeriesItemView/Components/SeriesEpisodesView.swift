@@ -33,7 +33,7 @@ struct SeriesEpisodesView: View {
 extension SeriesEpisodesView {
 
     // MARK: SeasonsHStack
-    
+
     struct SeasonsHStack: View {
 
         @ObservedObject
@@ -47,9 +47,7 @@ extension SeriesEpisodesView {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(viewModel.sortedSeasons, id: \.self) { season in
-                        Button {
-                            
-                        } label: {
+                        Button {} label: {
                             Text(season.displayName)
                                 .fontWeight(.semibold)
                                 .fixedSize()
@@ -87,7 +85,7 @@ extension SeriesEpisodesView {
 }
 
 extension SeriesEpisodesView {
-    
+
     // MARK: EpisodesHStack
 
     struct EpisodesHStack: View {
@@ -116,8 +114,8 @@ extension SeriesEpisodesView {
                     } else {
                         ForEach(1 ..< 10) { i in
                             EpisodeCard(episode: .placeHolder)
-                            .redacted(reason: .placeholder)
-                            .focused($focusedEpisodeIndex, equals: i)
+                                .redacted(reason: .placeholder)
+                                .focused($focusedEpisodeIndex, equals: i)
                         }
                     }
                 }

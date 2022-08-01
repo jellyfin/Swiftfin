@@ -12,7 +12,7 @@ extension UIScreen {
     func scale(_ x: Int) -> Int {
         Int(nativeScale) * x
     }
-    
+
     func scale(_ x: CGFloat) -> Int {
         Int(nativeScale * x)
     }

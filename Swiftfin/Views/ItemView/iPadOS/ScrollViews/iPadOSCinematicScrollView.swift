@@ -12,41 +12,84 @@ extension ItemView {
 
     struct iPadOSCinematicScrollView<Content: View>: View {
 
+        @EnvironmentObject
+        private var itemRouter: ItemCoordinator.Router
+        @State
+        private var scrollViewOffset: CGFloat = 0
         @ObservedObject
         var viewModel: ItemViewModel
 
         let content: () -> Content
+        
+        private var topOpacity: CGFloat {
+            let start = UIScreen.main.bounds.height * 0.45
+            let end = UIScreen.main.bounds.height * 0.65
+            let diff = end - start
+            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            return opacity
+        }
 
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
-//            ImageView(
-//                viewModel.item.getBackdropImage(maxWidth: Int(UIScreen.main.bounds.width)),
-//                blurHash: viewModel.item.getPrimaryImageBlurHash()
-//            )
-        }
-
-        @ViewBuilder
-        private var staticOverlayView: some View {
-            StaticOverlayView(viewModel: viewModel)
+                .frame(height: UIScreen.main.bounds.height * 0.8)
         }
 
         var body: some View {
-            Text("N/A")
-//            ParallaxHeaderScrollView(
-//                header: headerView,
-//                staticOverlay: staticOverlayView,
-//                headerHeight: UIScreen.main.bounds.height * 0.8
-//            ) {
-//                content()
-//            }
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    VStack(spacing: 0) {
+                        Spacer()
+                        
+                        OverlayView(viewModel: viewModel)
+                            .padding(.horizontal)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .padding(.bottom)
+                    }
+                    .frame(height: UIScreen.main.bounds.height * 0.8)
+                    .background {
+                        BlurView(style: .systemThinMaterialDark)
+                            .mask {
+                                LinearGradient(
+                                    stops: [
+                                        .init(color: .white.opacity(0), location: 0.5),
+                                        .init(color: .white, location: 1),
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            }
+                    }
+                    .overlay {
+                        Color.systemBackground
+                            .opacity(topOpacity)
+                    }
+                    
+                    content()
+                        .padding(.vertical)
+                        .background(Color.systemBackground)
+                }
+            }
+            .edgesIgnoringSafeArea(.top)
+            .edgesIgnoringSafeArea(.horizontal)
+            .scrollViewOffset($scrollViewOffset)
+            .navBarOffset($scrollViewOffset,
+                          start: UIScreen.main.bounds.height * 0.65,
+                          end: UIScreen.main.bounds.height * 0.65 + 50)
+            .backgroundParallaxHeader($scrollViewOffset,
+                                      height: UIScreen.main.bounds.height * 0.8,
+                                      multiplier: 0.3) {
+                headerView
+            }
+            
         }
     }
 }
 
 extension ItemView.iPadOSCinematicScrollView {
 
-    struct StaticOverlayView: View {
+    struct OverlayView: View {
 
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
@@ -55,11 +98,11 @@ extension ItemView.iPadOSCinematicScrollView {
 
         var body: some View {
             VStack {
-                Spacer()
-
                 HStack {
-                    ImageView(viewModel.item.imageURL(.logo, maxWidth: 500),
-                              resizingMode: .aspectFit) {
+                    ImageView(
+                        viewModel.item.imageURL(.logo, maxWidth: 500),
+                        resizingMode: .aspectFit
+                    ) {
                         Text(viewModel.item.displayName)
                             .font(.largeTitle)
                             .fontWeight(.semibold)
@@ -71,20 +114,8 @@ extension ItemView.iPadOSCinematicScrollView {
 
                     Spacer()
                 }
-                .padding(.horizontal)
-                .padding(.horizontal)
 
-                HStack(alignment: .top) {
-
-                    VStack(spacing: 10) {
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .frame(height: 50)
-
-                        ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .font(.title)
-                    }
-                    .frame(width: 250)
-                    .padding(.trailing)
+                HStack(alignment: .bottom) {
 
                     VStack(alignment: .leading) {
 
@@ -129,19 +160,16 @@ extension ItemView.iPadOSCinematicScrollView {
                     .padding(.trailing, 200)
 
                     Spacer()
-                }
-                .padding()
-                .padding()
-            }
-            .background {
-                BlurView(style: .systemThinMaterialDark)
-                    .mask {
-                        LinearGradient(gradient: Gradient(stops: [
-                            .init(color: .white, location: 0),
-                            .init(color: .white, location: 0.3),
-                            .init(color: .white.opacity(0), location: 0.5),
-                        ]), startPoint: .bottom, endPoint: .top)
+                    
+                    VStack(spacing: 10) {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(height: 50)
+
+                        ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .font(.title)
                     }
+                    .frame(width: 250)
+                }
             }
         }
     }

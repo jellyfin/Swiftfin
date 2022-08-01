@@ -9,13 +9,13 @@
 import SwiftUI
 
 struct NavBarOffsetModifier: ViewModifier {
-    
+
     @Binding
     var scrollViewOffset: CGFloat
-    
+
     let start: CGFloat
     let end: CGFloat
-    
+
     func body(content: Content) -> some View {
         NavBarOffsetView(scrollViewOffset: $scrollViewOffset, start: start, end: end) {
             content

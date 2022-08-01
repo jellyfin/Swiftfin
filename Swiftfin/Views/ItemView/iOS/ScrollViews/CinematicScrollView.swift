@@ -12,137 +12,174 @@ extension ItemView {
 
     struct CinematicScrollView<Content: View>: View {
 
+        @EnvironmentObject
+        private var itemRouter: ItemCoordinator.Router
+        @State
+        private var scrollViewOffset: CGFloat = 0
+        @State
+        private var blurHashBottomEdgeColor: Color = .secondarySystemFill
         @ObservedObject
         var viewModel: ItemViewModel
 
         let content: () -> Content
+        
+        private var topOpacity: CGFloat {
+            let start = UIScreen.main.bounds.height * 0.5
+            let end = UIScreen.main.bounds.height * 0.65
+            let diff = end - start
+            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            return opacity
+        }
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.primary, maxWidth: UIScreen.main.bounds.width))
-//            ImageView(
-//                viewModel.item.getPrimaryImage(maxWidth: Int(UIScreen.main.bounds.width)),
-//                blurHash: viewModel.item.getPrimaryImageBlurHash()
-//            )
-        }
-
-        @ViewBuilder
-        private var staticOverlayView: some View {
-            StaticOverlayView(viewModel: viewModel)
+            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                .frame(height: UIScreen.main.bounds.height * 0.6)
+                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+                .onAppear {
+                    if let headerBlurHash = viewModel.item.blurHash(.backdrop) {
+                        let bottomRGB = BlurHash(string: headerBlurHash)!.averageLinearRGB
+                        blurHashBottomEdgeColor = Color(
+                            red: Double(bottomRGB.0),
+                            green: Double(bottomRGB.1),
+                            blue: Double(bottomRGB.2)
+                        )
+                    }
+                }
         }
 
         var body: some View {
-            Text("N/A")
-//            ParallaxHeaderScrollView(
-//                header: headerView,
-//                staticOverlay: staticOverlayView,
-//                headerHeight: UIScreen.main.bounds.height * 0.7
-//            ) {
-//                content()
-//            }
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+
+                    VStack(spacing: 0) {
+                        Spacer()
+
+                        OverlayView(viewModel: viewModel)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .frame(maxHeight: UIScreen.main.bounds.height * 0.4)
+                            .background {
+                                BlurView(style: .systemThinMaterialDark)
+                                    .mask {
+                                        LinearGradient(
+                                            stops: [
+                                                .init(color: .white.opacity(0), location: 0),
+                                                .init(color: .white, location: 0.3),
+                                                .init(color: .white, location: 1),
+                                            ],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    }
+                            }
+                            .overlay {
+                                Color.systemBackground
+                                    .opacity(topOpacity)
+                            }
+                    }
+                    .frame(height: UIScreen.main.bounds.height * 0.8)
+                    
+                    content()
+                        .padding(.vertical)
+                        .background(Color.systemBackground)
+                }
+            }
+            .edgesIgnoringSafeArea(.top)
+            .edgesIgnoringSafeArea(.horizontal)
+            .scrollViewOffset($scrollViewOffset)
+            .navBarOffset(
+                $scrollViewOffset,
+                start: UIScreen.main.bounds.height * 0.66,
+                end: UIScreen.main.bounds.height * 0.66 + 50
+            )
+            .backgroundParallaxHeader(
+                $scrollViewOffset,
+                height: UIScreen.main.bounds.height * 0.6,
+                multiplier: 0.3
+            ) {
+                headerView
+            }
         }
     }
 }
 
 extension ItemView.CinematicScrollView {
 
-    struct StaticOverlayView: View {
+    struct OverlayView: View {
 
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
+        
+        @ViewBuilder
+        private var overview: some View {
+            if let firstTagline = viewModel.item.taglines?.first {
+                Text(firstTagline)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            if let itemOverview = viewModel.item.overview {
+                TruncatedTextView(
+                    itemOverview,
+                    lineLimit: 4,
+                    font: UIFont.preferredFont(forTextStyle: .footnote)
+                ) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
 
-                Spacer()
-
-                VStack {
-                    
-                    ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
-                              resizingMode: .aspectFit) {
-                        Text(viewModel.item.displayName)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.primary)
-                            .frame(alignment: .bottom)
-                    }
-                    .frame(height: 100, alignment: .bottom)
-
-                    DotHStack {
-                        if let firstGenre = viewModel.item.genres?.first {
-                            Text(firstGenre)
-                        }
-
-                        if let premiereYear = viewModel.item.premiereDateYear {
-                            Text(String(premiereYear))
-                        }
-
-                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                            Text(runtime)
-                        }
-                    }
-                    .font(.caption)
-                    .foregroundColor(Color(UIColor.lightGray))
-                    .padding(.horizontal)
-
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(maxWidth: 300)
-                        .frame(height: 50)
-
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .frame(maxWidth: 300)
-                        .colorScheme(.dark)
-
-                    if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-                        Text(firstTagline)
-                            .font(.body)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.white)
-                    }
-
-                    if let playButtonOverview = viewModel.playButtonItem?.overview {
-                        TruncatedTextView(
-                            playButtonOverview,
-                            lineLimit: 3,
-                            font: UIFont.preferredFont(forTextStyle: .footnote)
-                        ) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
+                ImageView(
+                    viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
+                    resizingMode: .aspectFit
+                ) {
+                    Text(viewModel.item.displayName)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.center)
                         .foregroundColor(.white)
-                    } else if let seriesOverview = viewModel.item.overview {
-                        TruncatedTextView(
-                            seriesOverview,
-                            lineLimit: 3,
-                            font: UIFont.preferredFont(forTextStyle: .footnote)
-                        ) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
-                        .foregroundColor(.white)
+                }
+                .frame(height: 100)
+                .frame(maxWidth: .infinity)
+
+                DotHStack {
+                    if let firstGenre = viewModel.item.genres?.first {
+                        Text(firstGenre)
                     }
 
-                    HStack {
-                        ItemView.AttributesHStack(viewModel: viewModel)
+                    if let premiereYear = viewModel.item.premiereDateYear {
+                        Text(premiereYear)
+                    }
 
-                        Spacer()
+                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                        Text(runtime)
                     }
                 }
-                .padding()
-                .background {
-                    BlurView(style: .systemThinMaterialDark)
-                        .mask {
-                            LinearGradient(gradient: Gradient(stops: [
-                                .init(color: .white, location: 0),
-                                .init(color: .white, location: 0.2),
-                                .init(color: .white.opacity(0), location: 1),
-                            ]), startPoint: .bottom, endPoint: .top)
-                        }
-                }
+                .font(.caption)
+                .foregroundColor(Color(UIColor.lightGray))
+                .padding(.horizontal)
+
+                ItemView.PlayButton(viewModel: viewModel)
+                    .frame(maxWidth: 300)
+                    .frame(height: 50)
+
+                ItemView.ActionButtonHStack(viewModel: viewModel)
+                    .font(.title)
+                    .frame(maxWidth: 300)
+
+                overview
+                    .frame(maxWidth: .infinity)
+
+                ItemView.AttributesHStack(viewModel: viewModel)
             }
         }
     }

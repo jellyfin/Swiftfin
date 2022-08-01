@@ -10,7 +10,7 @@ import SwiftUI
 import UIKit
 
 struct BlurHashView: UIViewRepresentable {
-    
+
     let blurHash: String
 
     func makeUIView(context: Context) -> UIBlurHashView {

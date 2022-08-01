@@ -14,7 +14,7 @@ import UIKit
 // MARK: PortraitPoster
 
 extension BaseItemDto: PortraitPoster {
-    
+
     public var title: String {
         switch type {
         case .episode:
@@ -47,7 +47,7 @@ extension BaseItemDto: PortraitPoster {
             return true
         }
     }
-    
+
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
         switch type {
         case .episode:
@@ -65,12 +65,16 @@ extension BaseItemDto: LandscapePoster {
         switch type {
         case .episode:
             // TODO: Set episode image preference based on defaults
-            return [seriesImageSource(.thumb, maxWidth: maxWidth),
-                    seriesImageSource(.backdrop, maxWidth: maxWidth),
-                    imageSource(.primary, maxWidth: maxWidth)]
+            return [
+                seriesImageSource(.thumb, maxWidth: maxWidth),
+                seriesImageSource(.backdrop, maxWidth: maxWidth),
+                imageSource(.primary, maxWidth: maxWidth),
+            ]
         default:
-            return [imageSource(.thumb, maxWidth: maxWidth),
-                    imageSource(.backdrop, maxWidth: maxWidth)]
+            return [
+                imageSource(.thumb, maxWidth: maxWidth),
+                imageSource(.backdrop, maxWidth: maxWidth),
+            ]
         }
     }
 }

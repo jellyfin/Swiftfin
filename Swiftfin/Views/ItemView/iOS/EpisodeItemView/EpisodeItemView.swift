@@ -13,13 +13,18 @@ struct EpisodeItemView: View {
 
     @EnvironmentObject
     private var itemRouter: ItemCoordinator.Router
+    @State
+    private var scrollViewOffset: CGFloat = 0
     @ObservedObject
     var viewModel: EpisodeItemViewModel
 
     var body: some View {
-        Text("N/A")
-//        NavBarOffsetScrollView(headerHeight: 10) {
-//            ContentView(viewModel: viewModel)
-//        }
+        ScrollView(showsIndicators: false) {
+            ContentView(viewModel: viewModel)
+        }
+        .scrollViewOffset($scrollViewOffset)
+        .navBarOffset($scrollViewOffset,
+                      start: 300,
+                      end: 350)
     }
 }

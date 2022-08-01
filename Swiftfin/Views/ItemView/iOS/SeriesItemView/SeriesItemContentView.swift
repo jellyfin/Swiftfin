@@ -55,15 +55,15 @@ extension SeriesItemView {
                 // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed), !castAndCrew.isEmpty {
-                       PortraitPosterHStack(
-                           title: L10n.castAndCrew,
-                           items: castAndCrew
-                       ) { person in
-                           itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                       }
+                    PortraitPosterHStack(
+                        title: L10n.castAndCrew,
+                        items: castAndCrew
+                    ) { person in
+                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                    }
 
-                       Divider()
-                   }
+                    Divider()
+                }
 
                 // MARK: Similar
 
@@ -79,13 +79,6 @@ extension SeriesItemView {
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
-
-                // MARK: Details
-
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
             }
         }
     }

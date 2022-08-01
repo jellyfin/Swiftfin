@@ -58,7 +58,7 @@ extension SeriesItemView {
 
                     SeriesEpisodesView(viewModel: viewModel)
                         .environmentObject(focusGuide)
-                    
+
                     Color.clear
                         .frame(height: 0.5)
                         .id("seasonsRecommendedContentDivider")
@@ -71,7 +71,7 @@ extension SeriesItemView {
                     }
                     .id("recommended")
                     .focusGuide(focusGuide, tag: "recommended", top: "seasons", bottom: "about")
-                    
+
                     ItemView.AboutView(viewModel: viewModel)
                         .focusGuide(focusGuide, tag: "about", top: "recommended")
 

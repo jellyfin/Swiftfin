@@ -9,59 +9,120 @@
 import SwiftUI
 
 extension ItemView {
-    
+
     struct CompactPosterScrollView<Content: View>: View {
-        
+
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: ItemViewModel
         @State
         private var scrollViewOffset: CGFloat = 0
-        
+        @State
+        private var blurHashBottomEdgeColor: Color = .secondarySystemFill
+        @ObservedObject
+        var viewModel: ItemViewModel
+
         let content: () -> Content
         
+        private var topOpacity: CGFloat {
+            let start = UIScreen.main.bounds.height * 0.20
+            let end = UIScreen.main.bounds.height * 0.4
+            let diff = end - start
+            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            return opacity
+        }
+
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
                 .frame(height: UIScreen.main.bounds.height * 0.35)
+                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
         }
         
+        @ViewBuilder
+        private var overview: some View {
+            if let firstTagline = viewModel.item.taglines?.first {
+                Text(firstTagline)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            if let itemOverview = viewModel.item.overview {
+                TruncatedTextView(
+                    itemOverview,
+                    lineLimit: 4,
+                    font: UIFont.preferredFont(forTextStyle: .footnote)
+                ) {
+                    itemRouter.route(to: \.itemOverview, viewModel.item)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+
         var body: some View {
             ScrollView(showsIndicators: false) {
-                ZStack(alignment: .top) {
-                    VStack(spacing: 0) {
+                VStack(spacing: 0) {
+                    Color.clear
+                        .frame(height: UIScreen.main.bounds.height * 0.15)
+
+                    OverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                        .background {
+                            BlurView(style: .systemThinMaterialDark)
+                                .mask {
+                                    LinearGradient(
+                                        stops: [
+                                            .init(color: .white.opacity(0), location: 0.2),
+                                            .init(color: .white.opacity(0.5), location: 0.3),
+                                            .init(color: .white, location: 0.55)
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                }
+                        }
+                    .overlay {
                         Color.systemBackground
-                            .mask {
-                                LinearGradient(gradient: Gradient(stops: [
-                                    .init(color: .white, location: 0),
-                                    .init(color: .white.opacity(0), location: 0.3),
-                                ]), startPoint: .bottom, endPoint: .top)
-                            }
-                            .frame(height: UIScreen.main.bounds.height * 0.35)
-                        
-                        Color.systemBackground
+                            .opacity(topOpacity)
                     }
                     
-                    VStack(spacing: 10) {
-                        Color.clear
-                            .frame(height: UIScreen.main.bounds.height * 0.15)
-                        
-                        StaticOverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
-                        
-                        content()
-                    }
+                    overview
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal)
+                        .padding(.top)
+                        .background(Color.systemBackground)
+
+                    content()
+                        .padding(.vertical)
+                        .background(Color.systemBackground)
                 }
             }
-            .ignoresSafeArea()
+            .edgesIgnoringSafeArea(.top)
+            .edgesIgnoringSafeArea(.horizontal)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset($scrollViewOffset,
-                          start: UIScreen.main.bounds.height * 0.28,
-                          end: UIScreen.main.bounds.height * 0.28 + 50)
-            .backgroundParallaxHeader($scrollViewOffset,
-                                      height: UIScreen.main.bounds.height * 0.35,
-                                      multiplier: 0.8) {
+            .navBarOffset(
+                $scrollViewOffset,
+                start: UIScreen.main.bounds.height * 0.28,
+                end: UIScreen.main.bounds.height * 0.28 + 50
+            )
+            .backgroundParallaxHeader(
+                $scrollViewOffset,
+                height: UIScreen.main.bounds.height * 0.35,
+                multiplier: 0.8
+            ) {
                 headerView
+            }
+            .onAppear {
+                if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                    let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                    blurHashBottomEdgeColor = Color(
+                        red: Double(bottomRGB.0),
+                        green: Double(bottomRGB.1),
+                        blue: Double(bottomRGB.2)
+                    )
+                }
             }
         }
     }
@@ -69,7 +130,7 @@ extension ItemView {
 
 extension ItemView.CompactPosterScrollView {
 
-    struct StaticOverlayView: View {
+    struct OverlayView: View {
 
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
@@ -113,65 +174,34 @@ extension ItemView.CompactPosterScrollView {
                 ItemView.AttributesHStack(viewModel: viewModel)
             }
         }
-        
-        private var topOpacity: CGFloat {
-            let start = UIScreen.main.bounds.height * 0.24
-            let end = UIScreen.main.bounds.height * 0.31
-            let diff = end - start
-            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
-            return 1 - opacity
-        }
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(alignment: .bottom, spacing: 12) {
+                HStack(alignment: .bottom, spacing: 12) {
 
-                        // MARK: Portrait Image
+                    // MARK: Portrait Image
 
-                        ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
-                            .portraitPoster(width: 130)
-                            .accessibilityIgnoresInvertColors()
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
+                        .portraitPoster(width: 130)
+                        .accessibilityIgnoresInvertColors()
 
-                        rightShelfView
-                            .padding(.bottom)
-                    }
-
-                    // MARK: Play
-
-                    HStack(alignment: .center) {
-
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .frame(width: 130, height: 40)
-
-                        Spacer()
-
-                        ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
-                            .font(.title2)
-                    }
+                    rightShelfView
+                        .padding(.bottom)
                 }
-                .opacity(topOpacity)
 
-                if let firstTagline = viewModel.item.taglines?.first {
-                    Text(firstTagline)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .lineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-    
-                if let itemOverview = viewModel.item.overview {
-                    TruncatedTextView(
-                        itemOverview,
-                        lineLimit: 4,
-                        font: UIFont.preferredFont(forTextStyle: .footnote)
-                    ) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
+                // MARK: Play
+
+                HStack(alignment: .center) {
+
+                    ItemView.PlayButton(viewModel: viewModel)
+                        .frame(width: 130, height: 40)
+
+                    Spacer()
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
+                        .font(.title2)
                 }
             }
-            .padding(.horizontal)
         }
     }
 }

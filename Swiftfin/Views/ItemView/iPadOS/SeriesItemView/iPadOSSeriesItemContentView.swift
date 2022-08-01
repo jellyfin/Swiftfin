@@ -50,17 +50,18 @@ extension iPadOSSeriesItemView {
                 // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
-                   !castAndCrew.isEmpty {
-                       PortraitPosterHStack(
-                           title: L10n.castAndCrew,
-                           items: castAndCrew,
-                           itemWidth: UIDevice.isIPad ? 130 : 110
-                       ) { person in
-                           itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                       }
+                   !castAndCrew.isEmpty
+                {
+                    PortraitPosterHStack(
+                        title: L10n.castAndCrew,
+                        items: castAndCrew,
+                        itemWidth: UIDevice.isIPad ? 130 : 110
+                    ) { person in
+                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                    }
 
-                       Divider()
-                   }
+                    Divider()
+                }
 
                 // MARK: Similar
 

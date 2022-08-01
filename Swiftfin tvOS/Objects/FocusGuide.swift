@@ -17,7 +17,7 @@ struct FocusGuideModifier: ViewModifier {
 
     let focusConstructor: FocusConstructor
     let onContentFocus: (() -> Void)?
-    
+
     let debug = false
 
     func body(content: Content) -> some View {
@@ -139,7 +139,7 @@ class FocusGuide: ObservableObject {
 
     @Published
     private(set) var focusedTag: String?
-    
+
     private(set) var lastFocusedTag: String?
 
     func transition(to tag: String?) {

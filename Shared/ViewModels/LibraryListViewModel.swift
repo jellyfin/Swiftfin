@@ -14,14 +14,14 @@ final class LibraryListViewModel: ViewModel {
 
     @Published
     var libraries: [BaseItemDto] = []
-    
+
     var filteredLibraries: [BaseItemDto] {
         var supportedLibraries = ["movies", "tvshows", "unknown"]
-        
+
         if Defaults[.Experimental.liveTVAlphaEnabled] {
             supportedLibraries.append("livetv")
         }
-        
+
         return libraries.filter { supportedLibraries.contains($0.collectionType ?? "unknown") }
     }
 

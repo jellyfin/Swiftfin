@@ -44,14 +44,18 @@ struct PortraitImageHStack<Item: PortraitPoster, LastView: View>: View {
             ScrollView(.horizontal) {
                 HStack(alignment: .top, spacing: 0) {
                     if loading {
-                        ForEach(0..<10) { _ in
-                            PortraitButton(item: BaseItemDto.placeHolder,
-                                           selectedAction: { _ in })
+                        ForEach(0 ..< 10) { _ in
+                            PortraitButton(
+                                item: BaseItemDto.placeHolder,
+                                selectedAction: { _ in }
+                            )
                             .redacted(reason: .placeholder)
                         }
                     } else if items.isEmpty {
-                        PortraitButton(item: BaseItemDto.noResults,
-                                       selectedAction: { _ in })
+                        PortraitButton(
+                            item: BaseItemDto.noResults,
+                            selectedAction: { _ in }
+                        )
                     } else {
                         ForEach(items, id: \.title + \.subtitle) { item in
                             PortraitButton(item: item) { item in

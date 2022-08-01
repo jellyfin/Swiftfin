@@ -49,13 +49,13 @@ struct HomeView: View {
                         //							NextUpView(items: viewModel.nextUpItems)
                         //						}
 
-                        
                         PortraitImageHStack(
                             title: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems) { item in
-                                homeRouter.route(to: \.modalItem, item)
-                            }
-                        
+                            items: viewModel.latestAddedItems
+                        ) { item in
+                            homeRouter.route(to: \.modalItem, item)
+                        }
+
 //                        PortraitImageHStack(
 //                            title: L10n.recentlyAdded,
 //                            items: viewModel.latestAddedItems

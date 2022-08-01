@@ -11,7 +11,7 @@ import SwiftUI
 extension MovieItemView {
 
     struct ContentView: View {
-        
+
         @ObservedObject
         var viewModel: MovieItemViewModel
         @State
@@ -65,7 +65,7 @@ extension MovieItemView {
                         .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
                     }
                     .focusSection()
-                    
+
                     ItemView.AboutView(viewModel: viewModel)
                         .focusGuide(focusGuide, tag: "about", top: "recommended")
 

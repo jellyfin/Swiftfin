@@ -33,13 +33,13 @@ struct CinematicResumeCardView: View {
                     } else {
                         ImageView([
                             item.imageSource(.thumb, maxWidth: 350),
-                            item.imageSource(.backdrop, maxWidth: 350)
+                            item.imageSource(.backdrop, maxWidth: 350),
                         ])
 //                        ImageView([
 //                            .init(url: item.getThumbImage(maxWidth: 350)),
 //                            .init(url: item.getBackdropImage(maxWidth: 350), blurHash: item.getBackdropImageBlurHash()),
 //                        ])
-                        .frame(width: 350, height: 210)
+                            .frame(width: 350, height: 210)
                     }
 
                     LinearGradient(

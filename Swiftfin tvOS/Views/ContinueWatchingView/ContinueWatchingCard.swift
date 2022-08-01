@@ -25,9 +25,9 @@ struct ContinueWatchingCard: View {
                     if item.type == .episode {
                         ImageView([
                             item.seriesImageSource(.thumb, maxWidth: 500),
-                            item.imageSource(.primary, maxWidth: 500)
+                            item.imageSource(.primary, maxWidth: 500),
                         ])
-                            .frame(width: 500, height: 281.25)
+                        .frame(width: 500, height: 281.25)
                     } else {
                         ImageView(item.imageURL(.backdrop, maxWidth: 500))
                             .frame(width: 500, height: 281.25)

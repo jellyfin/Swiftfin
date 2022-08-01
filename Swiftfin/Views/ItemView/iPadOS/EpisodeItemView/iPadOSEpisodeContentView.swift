@@ -27,10 +27,10 @@ extension iPadOSEpisodeItemView {
 //                        blurHash: viewModel.item.getPrimaryImageBlurHash()
 //                    )
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 400))
-                    .cornerRadius(10)
-                    .frame(maxHeight: 400)
-                    .aspectRatio(1.77, contentMode: .fit)
-                    .padding(.horizontal)
+                        .cornerRadius(10)
+                        .frame(maxHeight: 400)
+                        .aspectRatio(1.77, contentMode: .fit)
+                        .padding(.horizontal)
 
                     ShelfView(viewModel: viewModel)
                 }
@@ -62,17 +62,18 @@ extension iPadOSEpisodeItemView {
 
 //                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
-                   !castAndCrew.isEmpty {
-                       PortraitPosterHStack(
-                           title: L10n.castAndCrew,
-                           items: castAndCrew,
-                           itemWidth: UIDevice.isIPad ? 130 : 110
-                       ) { person in
-                           itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                       }
+                   !castAndCrew.isEmpty
+                {
+                    PortraitPosterHStack(
+                        title: L10n.castAndCrew,
+                        items: castAndCrew,
+                        itemWidth: UIDevice.isIPad ? 130 : 110
+                    ) { person in
+                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                    }
 
-                       Divider()
-                   }
+                    Divider()
+                }
 
                 // MARK: Details
 

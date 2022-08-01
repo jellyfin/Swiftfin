@@ -35,7 +35,7 @@ extension BaseItemPerson {
 
         return final
     }
-    
+
     // Only displayed person types.
     // Will ignore types like "GuestStar"
     enum DisplayedType: String {
@@ -44,7 +44,7 @@ extension BaseItemPerson {
         case writer = "Writer"
         case producer = "Producer"
     }
-    
+
     var isDisplayed: Bool {
         guard let type = type else { return false }
         return DisplayedType(rawValue: type) != nil

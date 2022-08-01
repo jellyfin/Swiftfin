@@ -18,9 +18,7 @@ struct EpisodeCard: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
-            Button {
-                
-            } label: {
+            Button {} label: {
                 ImageView(
                     episode.imageSource(.primary, maxWidth: 600)
                 ) {
@@ -29,7 +27,7 @@ struct EpisodeCard: View {
                 .frame(width: 550, height: 308)
             }
             .buttonStyle(CardButtonStyle())
-            
+
             Button {
                 itemRouter.route(to: \.item, episode)
             } label: {
@@ -39,7 +37,7 @@ struct EpisodeCard: View {
                         Color.clear
                             .frame(height: 0.01)
                             .frame(maxWidth: .infinity)
-                        
+
                         Text(episode.episodeLocator ?? L10n.unknown)
                             .font(.caption)
                             .foregroundColor(.secondary)

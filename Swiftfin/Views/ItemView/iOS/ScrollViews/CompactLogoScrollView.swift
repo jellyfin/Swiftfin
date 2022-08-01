@@ -14,24 +14,38 @@ extension ItemView {
 
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
+        @State
+        private var scrollViewOffset: CGFloat = 0
+        @State
+        private var blurHashBottomEdgeColor: Color = .secondarySystemFill
         @ObservedObject
         var viewModel: ItemViewModel
 
         let content: () -> Content
-
-        @ViewBuilder
-        private var headerView: some View {
-            VStack {
-                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
-
-                Color.red
-                    .frame(height: 50)
-            }
+        
+        private var topOpacity: CGFloat {
+            let start = UIScreen.main.bounds.height * 0.25
+            let end = UIScreen.main.bounds.height * 0.44
+            let diff = end - start
+            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            return opacity
         }
 
         @ViewBuilder
-        private var staticOverlayView: some View {
-            StaticOverlayView(viewModel: viewModel)
+        private var headerView: some View {
+            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                .frame(height: UIScreen.main.bounds.height * 0.35)
+                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+                .onAppear {
+                    if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                        let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                        blurHashBottomEdgeColor = Color(
+                            red: Double(bottomRGB.0),
+                            green: Double(bottomRGB.1),
+                            blue: Double(bottomRGB.2)
+                        )
+                    }
+                }
         }
         
         @ViewBuilder
@@ -42,7 +56,6 @@ extension ItemView {
                     .fontWeight(.semibold)
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
             }
 
             if let itemOverview = viewModel.item.overview {
@@ -54,52 +67,108 @@ extension ItemView {
                     itemRouter.route(to: \.itemOverview, viewModel.item)
                 }
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal)
             }
         }
 
         var body: some View {
-            Text("N/A")
-//            ParallaxHeaderScrollView(
-//                header: headerView,
-//                staticOverlay: staticOverlayView,
-//                headerHeight: UIScreen.main.bounds.height * 0.35
-//            ) {
-//                content()
-//            }
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+
+                    Color.clear
+                        .frame(height: UIScreen.main.bounds.height * 0.25)
+
+                    OverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                        .background {
+                            BlurView(style: .systemThinMaterialDark)
+                                .mask {
+                                    LinearGradient(
+                                        stops: [
+                                            .init(color: .clear, location: 0),
+                                            .init(color: .white, location: 0.15),
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                }
+                        }
+                        .overlay {
+                            Color.systemBackground
+                                .opacity(topOpacity)
+                        }
+                    
+                    overview
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal)
+                        .padding(.top)
+                        .background(Color.systemBackground)
+                    
+                    content()
+                        .padding(.vertical)
+                        .background(Color.systemBackground)
+                }
+            }
+            .edgesIgnoringSafeArea(.top)
+            .edgesIgnoringSafeArea(.horizontal)
+            .scrollViewOffset($scrollViewOffset)
+            .navBarOffset(
+                $scrollViewOffset,
+                start: UIScreen.main.bounds.height * 0.43,
+                end: UIScreen.main.bounds.height * 0.43 + 50
+            )
+            .backgroundParallaxHeader(
+                $scrollViewOffset,
+                height: UIScreen.main.bounds.height * 0.35,
+                multiplier: 0.3
+            ) {
+                headerView
+            }
         }
     }
 }
 
 extension ItemView.CompactLogoScrollView {
 
-    struct StaticOverlayView: View {
+    struct OverlayView: View {
 
+        @EnvironmentObject
+        private var itemRouter: ItemCoordinator.Router
+        @Binding
+        var scrollViewOffset: CGFloat
         @ObservedObject
         var viewModel: ItemViewModel
 
+        private var topOpacity: CGFloat {
+            let start = UIScreen.main.bounds.height * 0.25
+            let end = UIScreen.main.bounds.height * 0.44
+            let diff = end - start
+            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            return 1 - opacity
+        }
+
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                
-                Spacer()
-                
-                ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
-                          resizingMode: .aspectFit) {
+                ImageView(
+                    viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
+                    resizingMode: .aspectFit
+                ) {
                     Text(viewModel.item.displayName)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.white)
                 }
-                .frame(maxHeight: 100)
-                
+                .frame(height: 100)
+                .frame(maxWidth: .infinity)
+
                 DotHStack {
                     if let firstGenre = viewModel.item.genres?.first {
                         Text(firstGenre)
                     }
 
                     if let premiereYear = viewModel.item.premiereDateYear {
-                        Text(String(premiereYear))
+                        Text(premiereYear)
                     }
 
                     if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
@@ -107,7 +176,7 @@ extension ItemView.CompactLogoScrollView {
                     }
                 }
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(Color(UIColor.lightGray))
                 .padding(.horizontal)
 
                 ItemView.AttributesHStack(viewModel: viewModel)
@@ -120,7 +189,6 @@ extension ItemView.CompactLogoScrollView {
                     .font(.title)
                     .frame(maxWidth: 300)
             }
-            .padding(.horizontal)
         }
     }
 }

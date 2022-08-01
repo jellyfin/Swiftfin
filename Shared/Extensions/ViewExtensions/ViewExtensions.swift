@@ -10,7 +10,8 @@ import Foundation
 import SwiftUI
 
 extension View {
-    @inlinable func eraseToAnyView() -> AnyView {
+    @inlinable
+    func eraseToAnyView() -> AnyView {
         AnyView(self)
     }
 
@@ -26,7 +27,8 @@ extension View {
 
     // From: https://www.avanderlee.com/swiftui/conditional-view-modifier/
     @ViewBuilder
-    @inlinable func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+    @inlinable
+    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
         if condition {
             transform(self)
         } else {
@@ -35,7 +37,8 @@ extension View {
     }
 
     @ViewBuilder
-    @inlinable func `if`<Content: View>(_ condition: Bool, transformIf: (Self) -> Content, transformElse: (Self) -> Content) -> some View {
+    @inlinable
+    func `if`<Content: View>(_ condition: Bool, transformIf: (Self) -> Content, transformElse: (Self) -> Content) -> some View {
         if condition {
             transformIf(self)
         } else {
@@ -48,24 +51,31 @@ extension View {
         self.frame(width: width, height: width * 1.5)
             .cornerRadius((width * 1.5) / 40)
     }
-    
-    @inlinable func padding2(_ edges: Edge.Set = .all) -> some View {
+
+    @inlinable
+    func padding2(_ edges: Edge.Set = .all) -> some View {
         self.padding(edges)
             .padding(edges)
     }
-    
+
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
         self.modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
-    
+
     func navBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
         self.modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
-    
-    func backgroundParallaxHeader<Header: View>(_ scrollViewOffset: Binding<CGFloat>,
-                                                height: CGFloat,
-                                                multiplier: CGFloat = 1,
-                                                @ViewBuilder header: @escaping () -> Header) -> some View {
+
+    func backgroundParallaxHeader<Header: View>(
+        _ scrollViewOffset: Binding<CGFloat>,
+        height: CGFloat,
+        multiplier: CGFloat = 1,
+        @ViewBuilder header: @escaping () -> Header
+    ) -> some View {
         self.modifier(BackgroundParallaxHeaderModifier(scrollViewOffset, height: height, multiplier: multiplier, header: header))
+    }
+
+    func bottomEdgeGradient(bottomColor: Color) -> some View {
+        self.modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
 }

@@ -64,7 +64,7 @@ extension ItemView {
                 HStack(alignment: .bottom) {
 
                     VStack(alignment: .leading, spacing: 20) {
-                        
+
                         ImageView(
                             viewModel.item.imageSource(.logo, maxWidth: 500),
                             resizingMode: .aspectFit,
@@ -78,7 +78,7 @@ extension ItemView {
                             }
                         )
                         .frame(maxWidth: 500, maxHeight: 200)
-                        
+
                         if let overview = viewModel.item.overview {
                             overview.text
                                 .font(.subheadline)

@@ -86,7 +86,7 @@ extension BaseItemDto {
     var displayName: String {
         name ?? "--"
     }
-    
+
     // MARK: ItemDetail
 
     struct ItemDetail {
@@ -134,11 +134,11 @@ extension BaseItemDto {
 
         return mediaItems
     }
-    
+
     var subtitleStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .subtitle } ?? []
     }
-    
+
     var audioStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .audio } ?? []
     }
@@ -196,15 +196,15 @@ extension BaseItemDto {
 
         return chapterImageURLs
     }
-    
+
     static var placeHolder: BaseItemDto {
         .init(
             name: "Placeholder",
-            overview: String.init(repeating: "a", count: 100),
+            overview: String(repeating: "a", count: 100),
             indexNumber: 20
         )
     }
-    
+
     static var noResults: BaseItemDto {
         .init(name: L10n.noResults)
     }

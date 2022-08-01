@@ -15,7 +15,7 @@ struct EpisodeRowCard: View {
     private var itemRouter: ItemCoordinator.Router
     @ScaledMetric
     private var staticOverviewHeight: CGFloat = 50
-    
+
     let episode: BaseItemDto
 
     var body: some View {
@@ -32,7 +32,7 @@ struct EpisodeRowCard: View {
                     Text(episode.episodeLocator ?? L10n.unknown)
                         .font(.footnote)
                         .foregroundColor(.secondary)
-                    
+
                     Text(episode.displayName)
                         .font(.body)
                         .padding(.bottom, 1)
@@ -41,7 +41,7 @@ struct EpisodeRowCard: View {
                     ZStack(alignment: .topLeading) {
                         Color.clear
                             .frame(height: staticOverviewHeight)
-                        
+
                         if episode.unaired {
                             Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
                         } else {

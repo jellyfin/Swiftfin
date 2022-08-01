@@ -25,21 +25,22 @@ extension BaseItemPerson: PortraitPoster {
     var showTitle: Bool {
         true
     }
-    
+
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
         let scaleWidth = UIScreen.main.scale(maxWidth)
         let url = ImageAPI.getItemImageWithRequestBuilder(
-                itemId: id ?? "",
-                imageType: .primary,
-                maxWidth: scaleWidth,
-                tag: primaryImageTag).url
-        
-        var blurHash: String? = nil
-        
+            itemId: id ?? "",
+            imageType: .primary,
+            maxWidth: scaleWidth,
+            tag: primaryImageTag
+        ).url
+
+        var blurHash: String?
+
         if let tag = primaryImageTag, let taggedBlurHash = imageBlurHashes?.primary?[tag] {
             blurHash = taggedBlurHash
         }
-        
+
         return ImageSource(url: url, blurHash: blurHash)
     }
 }

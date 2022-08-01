@@ -11,6 +11,6 @@ import JellyfinAPI
 
 extension RequestBuilder where T == URL {
     var url: URL {
-        return URL(string: URLString)!
+        URL(string: URLString)!
     }
 }

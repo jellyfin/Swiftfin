@@ -71,26 +71,22 @@ extension EpisodeItemView {
                 }
 
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
-                   !castAndCrew.isEmpty {
-                       PortraitPosterHStack(
-                           title: L10n.castAndCrew,
-                           items: castAndCrew
-                       ) { person in
-                           itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                       }
+                   !castAndCrew.isEmpty
+                {
+                    PortraitPosterHStack(
+                        title: L10n.castAndCrew,
+                        items: castAndCrew
+                    ) { person in
+                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                    }
 
-                       Divider()
-                   }
+                    Divider()
+                }
 
                 // MARK: Details
 
                 if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
                     ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
-
-                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                    ListDetailsView(title: L10n.media, items: mediaItems)
                         .padding(.horizontal)
                 }
             }

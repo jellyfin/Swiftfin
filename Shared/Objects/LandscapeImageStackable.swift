@@ -14,6 +14,6 @@ protocol LandscapePoster: Identifiable {
     var title: String { get }
     var subtitle: String? { get }
     var showTitle: Bool { get }
-    
+
     func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource]
 }

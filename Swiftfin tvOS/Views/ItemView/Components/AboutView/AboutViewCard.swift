@@ -9,15 +9,15 @@
 import SwiftUI
 
 extension ItemView.AboutView {
-    
+
     struct AboutViewCard: View {
-        
+
         @Binding
         var isShowingAlert: Bool
-        
+
         let title: String
         let text: String
-        
+
         var body: some View {
             Button {
                 isShowingAlert = true
@@ -29,10 +29,12 @@ extension ItemView.AboutView {
                         .lineLimit(2)
 
                     Spacer()
-                    
-                    TruncatedTextView(text,
-                                      lineLimit: 4,
-                                      font: .preferredFont(forTextStyle: .subheadline))
+
+                    TruncatedTextView(
+                        text,
+                        lineLimit: 4,
+                        font: .preferredFont(forTextStyle: .subheadline)
+                    )
                 }
                 .padding2()
                 .frame(width: 700, height: 405)

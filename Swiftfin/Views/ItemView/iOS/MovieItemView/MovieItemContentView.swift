@@ -18,12 +18,10 @@ extension MovieItemView {
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: MovieItemViewModel
-        @Default(.itemViewType)
-        private var itemViewType
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
-                
+
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
@@ -53,16 +51,17 @@ extension MovieItemView {
                 // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
-                   !castAndCrew.isEmpty {
-                       PortraitPosterHStack(
-                           title: L10n.castAndCrew,
-                           items: castAndCrew
-                       ) { person in
-                           itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                       }
+                   !castAndCrew.isEmpty
+                {
+                    PortraitPosterHStack(
+                        title: L10n.castAndCrew,
+                        items: castAndCrew
+                    ) { person in
+                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                    }
 
-                       Divider()
-                   }
+                    Divider()
+                }
 
                 // MARK: Similar
 
@@ -78,16 +77,9 @@ extension MovieItemView {
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
-
-                // MARK: Details
-
+                
                 if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
                     ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
-
-                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                    ListDetailsView(title: L10n.media, items: mediaItems)
                         .padding(.horizontal)
                 }
             }

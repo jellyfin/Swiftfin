@@ -26,13 +26,13 @@ struct CinematicNextUpCardView: View {
                     if item.type == .episode {
                         ImageView([
                             item.seriesImageSource(.thumb, maxWidth: 350),
-                            item.seriesImageSource(.backdrop, maxWidth: 350)
+                            item.seriesImageSource(.backdrop, maxWidth: 350),
                         ])
                         .frame(width: 350, height: 210)
                     } else {
                         ImageView([
                             item.imageSource(.thumb, maxWidth: 350),
-                            item.imageSource(.backdrop, maxWidth: 350)
+                            item.imageSource(.backdrop, maxWidth: 350),
                         ])
                         .frame(width: 350, height: 210)
                     }

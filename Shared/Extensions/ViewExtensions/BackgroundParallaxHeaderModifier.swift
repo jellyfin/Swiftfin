@@ -12,15 +12,17 @@ struct BackgroundParallaxHeaderModifier<Header: View>: ViewModifier {
 
     @Binding
     var scrollViewOffset: CGFloat
-    
+
     let height: CGFloat
     let multiplier: CGFloat
     let header: () -> Header
-    
-    init(_ scrollViewOffset: Binding<CGFloat>,
-         height: CGFloat,
-         multiplier: CGFloat = 1,
-         @ViewBuilder header: @escaping () -> Header) {
+
+    init(
+        _ scrollViewOffset: Binding<CGFloat>,
+        height: CGFloat,
+        multiplier: CGFloat = 1,
+        @ViewBuilder header: @escaping () -> Header
+    ) {
         self._scrollViewOffset = scrollViewOffset
         self.height = height
         self.multiplier = multiplier

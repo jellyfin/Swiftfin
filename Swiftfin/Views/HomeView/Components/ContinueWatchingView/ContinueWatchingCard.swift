@@ -10,12 +10,12 @@ import JellyfinAPI
 import SwiftUI
 
 struct ContinueWatchingLandscapeButton: View {
-    
+
     @EnvironmentObject
     private var homeRouter: HomeCoordinator.Router
-    
+
     let item: BaseItemDto
-    
+
     var body: some View {
         Button {
             homeRouter.route(to: \.item, item)
@@ -33,7 +33,7 @@ struct ContinueWatchingLandscapeButton: View {
                         } else {
                             ImageView([
                                 item.imageSource(.thumb, maxWidth: 320),
-                                item.imageSource(.backdrop, maxWidth: 320)
+                                item.imageSource(.backdrop, maxWidth: 320),
                             ])
                             .frame(width: 320, height: 180)
                         }
