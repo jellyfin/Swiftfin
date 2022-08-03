@@ -31,7 +31,7 @@ extension ItemView {
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
+                        ImageView(viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel.item.imageSource(.primary, maxWidth: 300))
                             .portraitPoster(width: 130)
                             .accessibilityIgnoresInvertColors()
 
@@ -68,6 +68,9 @@ extension ItemView {
                         .buttonStyle(PlainButtonStyle())
                     }
                     .padding(.horizontal)
+                    .if(UIDevice.isIPad) { view in
+                        view.padding(.horizontal)
+                    }
                 }
             }
         }

@@ -69,7 +69,6 @@ extension SeriesItemView {
                     ) { item in
                         itemRouter.route(to: \.item, item)
                     }
-                    .id("recommended")
                     .focusGuide(focusGuide, tag: "recommended", top: "seasons", bottom: "about")
 
                     ItemView.AboutView(viewModel: viewModel)

@@ -6,15 +6,12 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
-struct iPadOSEpisodeItemView: View {
+struct iPadOSCollectionItemView: View {
 
-    @EnvironmentObject
-    private var itemRouter: ItemCoordinator.Router
     @ObservedObject
-    var viewModel: EpisodeItemViewModel
+    var viewModel: CollectionItemViewModel
 
     var body: some View {
         ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {

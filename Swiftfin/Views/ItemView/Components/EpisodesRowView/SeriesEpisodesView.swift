@@ -51,6 +51,9 @@ struct SeriesEpisodesView<RowManager: EpisodesRowManager>: View {
 
             headerView
                 .padding(.horizontal)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.horizontal)
+                }
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
@@ -73,6 +76,9 @@ struct SeriesEpisodesView<RowManager: EpisodesRowManager>: View {
                     }
                 }
                 .padding(.horizontal)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.horizontal)
+                }
             }
         }
     }

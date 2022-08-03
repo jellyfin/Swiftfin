@@ -30,8 +30,6 @@ struct ItemView: View {
                 } else {
                     SeriesItemView(viewModel: .init(item: item))
                 }
-            case .season:
-                Text("Unsupported")
             case .episode:
                 if UIDevice.isIPad {
                     iPadOSEpisodeItemView(viewModel: .init(item: item))
@@ -39,9 +37,13 @@ struct ItemView: View {
                     EpisodeItemView(viewModel: .init(item: item))
                 }
             case .boxSet:
-                CollectionItemView(viewModel: .init(item: item))
+                if UIDevice.isIPad {
+                    iPadOSCollectionItemView(viewModel: .init(item: item))
+                } else {
+                    CollectionItemView(viewModel: .init(item: item))
+                }
             default:
-                Text("N/A")
+                Text(L10n.notImplementedYetWithType(item.type ?? "--"))
             }
         }
         .navigationBarTitleDisplayMode(.inline)

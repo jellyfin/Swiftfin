@@ -6,8 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import ASCollectionView
-import Defaults
 import SwiftUI
 
 extension CollectionItemView {
@@ -18,8 +16,6 @@ extension CollectionItemView {
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: CollectionItemViewModel
-        @Default(.itemViewType)
-        private var itemViewType
 
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {

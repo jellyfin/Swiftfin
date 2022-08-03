@@ -119,28 +119,39 @@ class ItemViewModel: ViewModel {
     func toggleWatchState() {
         let current = isWatched
         isWatched.toggle()
-
-        PlaystateAPI.markUnplayedItem(
-            userId: SessionManager.main.currentLogin.user.id,
-            itemId: item.id!
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            switch completion {
-            case .failure:
-                self?.isWatched = !current
-            case .finished: ()
-            }
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { _ in })
-        .store(in: &cancellables)
+        let request: AnyPublisher<UserItemDataDto, Error>
+        
+        if current {
+            request = PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+        } else {
+            request = PlaystateAPI.markPlayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+        }
+        
+        request
+            .trackActivity(loading)
+            .sink(receiveCompletion: { [weak self] completion in
+                switch completion {
+                case .failure:
+                    self?.isWatched = !current
+                case .finished: ()
+                }
+                self?.handleAPIRequestError(completion: completion)
+            }, receiveValue: { _ in })
+            .store(in: &cancellables)
     }
 
     func toggleFavoriteState() {
         let current = isFavorited
         isFavorited.toggle()
-
-        UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+        let request: AnyPublisher<UserItemDataDto, Error>
+        
+        if current {
+            request = UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+        } else {
+            request = UserLibraryAPI.markFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+        }
+        
+        request
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
                 switch completion {

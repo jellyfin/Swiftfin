@@ -37,24 +37,21 @@ extension EpisodeItemView {
                         .frame(height: 0.5)
                         .id("topContentDivider")
 
-                    Group {
-                        if showName {
-                            Text(viewModel.item.displayName)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .lineLimit(1)
-                                .foregroundColor(.white)
-                        }
-
-                        PortraitPosterHStack(
-                            title: L10n.recommended,
-                            items: viewModel.similarItems
-                        ) { item in
-                            itemRouter.route(to: \.item, item)
-                        }
-                        .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
+                    if showName {
+                        Text(viewModel.item.displayName)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+                            .foregroundColor(.white)
                     }
-                    .focusSection()
+
+                    PortraitPosterHStack(
+                        title: L10n.recommended,
+                        items: viewModel.similarItems
+                    ) { item in
+                        itemRouter.route(to: \.item, item)
+                    }
+                    .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
 
                     ItemView.AboutView(viewModel: viewModel)
                         .focusGuide(focusGuide, tag: "about", top: "recommended")

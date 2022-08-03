@@ -28,7 +28,7 @@ struct ItemView: View {
         case .series:
             SeriesItemView(viewModel: .init(item: item))
         default:
-            Text(L10n.notImplementedYetWithType(item.type ?? ""))
+            Text(L10n.notImplementedYetWithType(item.type ?? "--"))
         }
     }
 }

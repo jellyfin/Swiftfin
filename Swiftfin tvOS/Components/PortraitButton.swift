@@ -53,5 +53,6 @@ struct PortraitButton<Item: PortraitPoster>: View {
             .zIndex(-1)
             .frame(maxWidth: .infinity)
         }
+        .focusSection()
     }
 }

@@ -6,24 +6,19 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
-extension iPadOSSeriesItemView {
+extension iPadOSCollectionItemView {
 
     struct ContentView: View {
-
+        
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
-        var viewModel: SeriesItemViewModel
+        var viewModel: CollectionItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
-                
-                // MARK: Episodes
-
-                SeriesEpisodesView(viewModel: viewModel)
+            VStack(alignment: .leading, spacing: 20) {
 
                 // MARK: Genres
 
@@ -40,7 +35,7 @@ extension iPadOSSeriesItemView {
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
+                if let studios = viewModel.item.studios {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
@@ -51,36 +46,18 @@ extension iPadOSSeriesItemView {
                     Divider()
                 }
 
-                // MARK: Cast and Crew
+                // MARK: Items
 
-                if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
-                   !castAndCrew.isEmpty
-                {
+                if !viewModel.collectionItems.isEmpty {
                     PortraitPosterHStack(
-                        title: L10n.castAndCrew,
-                        items: castAndCrew,
-                        itemWidth: 130
-                    ) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
-
-                    Divider()
-                }
-
-                // MARK: Similar
-
-                if !viewModel.similarItems.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.recommended,
-                        items: viewModel.similarItems,
+                        title: L10n.items,
+                        items: viewModel.collectionItems,
                         itemWidth: 130
                     ) { item in
                         itemRouter.route(to: \.item, item)
                     }
-
-                    Divider()
                 }
-
+                
                 ItemView.AboutView(viewModel: viewModel)
             }
         }

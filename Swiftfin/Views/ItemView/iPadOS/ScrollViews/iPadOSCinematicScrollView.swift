@@ -31,8 +31,14 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
-                .frame(height: UIScreen.main.bounds.height * 0.8)
+            Group {
+                if viewModel.item.type == .episode {
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 1920))
+                } else {
+                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
+                }
+            }
+            .frame(height: UIScreen.main.bounds.height * 0.8)
         }
 
         var body: some View {
@@ -42,10 +48,8 @@ extension ItemView {
                         Spacer()
                         
                         OverlayView(viewModel: viewModel)
-                            .padding(.horizontal)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .padding(.bottom)
+                            .padding2(.horizontal)
+                            .padding2(.bottom)
                     }
                     .frame(height: UIScreen.main.bounds.height * 0.8)
                     .background {
@@ -53,8 +57,8 @@ extension ItemView {
                             .mask {
                                 LinearGradient(
                                     stops: [
-                                        .init(color: .white.opacity(0), location: 0.5),
-                                        .init(color: .white, location: 1),
+                                        .init(color: .clear, location: 0.4),
+                                        .init(color: .white, location: 0.8),
                                     ],
                                     startPoint: .top,
                                     endPoint: .bottom
@@ -82,7 +86,6 @@ extension ItemView {
                                       multiplier: 0.3) {
                 headerView
             }
-            
         }
     }
 }
@@ -97,23 +100,19 @@ extension ItemView.iPadOSCinematicScrollView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            VStack {
-                HStack {
-                    ImageView(
-                        viewModel.item.imageURL(.logo, maxWidth: 500),
-                        resizingMode: .aspectFit
-                    ) {
-                        Text(viewModel.item.displayName)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(.white)
-                    }
-                    .frame(maxWidth: UIScreen.main.bounds.width * 0.5, maxHeight: 150)
-
-                    Spacer()
+            VStack(alignment: .leading) {
+                ImageView(
+                    viewModel.item.imageURL(.logo, maxWidth: 500),
+                    resizingMode: .aspectFit
+                ) {
+                    Text(viewModel.item.displayName)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(.white)
                 }
+                .frame(maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 100)
 
                 HStack(alignment: .bottom) {
 
@@ -134,26 +133,12 @@ extension ItemView.iPadOSCinematicScrollView {
                         }
                         .font(.caption)
                         .foregroundColor(Color(UIColor.lightGray))
-
-//                        if let playButtonOverview = viewModel.playButtonItem?.overview {
-//                            TruncatedTextView(
-//                                playButtonOverview,
-//                                lineLimit: 2,
-//                                font: UIFont.preferredFont(forTextStyle: .subheadline)
-//                            ) {
-//                                itemRouter.route(to: \.itemOverview, viewModel.item)
-//                            }
-//                            .foregroundColor(.white)
-//                        } else if let seriesOverview = viewModel.item.overview {
-//                            TruncatedTextView(
-//                                seriesOverview,
-//                                lineLimit: 2,
-//                                font: UIFont.preferredFont(forTextStyle: .subheadline)
-//                            ) {
-//                                itemRouter.route(to: \.itemOverview, viewModel.item)
-//                            }
-//                            .foregroundColor(.white)
-//                        }
+                        
+                        TruncatedTextView(text: viewModel.item.overview ?? L10n.noOverviewAvailable) {
+                            itemRouter.route(to: \.itemOverview, viewModel.item)
+                        }
+                        .lineLimit(3)
+                        .foregroundColor(.white)
 
                         ItemView.AttributesHStack(viewModel: viewModel)
                     }

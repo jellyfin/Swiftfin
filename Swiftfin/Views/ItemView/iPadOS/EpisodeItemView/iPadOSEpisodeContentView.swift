@@ -21,16 +21,6 @@ extension iPadOSEpisodeItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
 
-                VStack(alignment: .center) {
-                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 400))
-                        .cornerRadius(10)
-                        .frame(maxHeight: 400)
-                        .aspectRatio(1.77, contentMode: .fit)
-                        .padding(.horizontal)
-
-                    ShelfView(viewModel: viewModel)
-                }
-
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
@@ -56,111 +46,22 @@ extension iPadOSEpisodeItemView {
                     Divider()
                 }
 
-//                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty
                 {
                     PortraitPosterHStack(
                         title: L10n.castAndCrew,
                         items: castAndCrew,
-                        itemWidth: UIDevice.isIPad ? 130 : 110
+                        itemWidth: 130
                     ) { person in
                         itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                     }
 
                     Divider()
                 }
-
-                // MARK: Details
-
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
-
-                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                    ListDetailsView(title: L10n.media, items: mediaItems)
-                        .padding(.horizontal)
-                }
+                
+                ItemView.AboutView(viewModel: viewModel)
             }
-        }
-    }
-}
-
-extension iPadOSEpisodeItemView.ContentView {
-
-    struct ShelfView: View {
-
-        @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        var viewModel: EpisodeItemViewModel
-
-        var body: some View {
-            HStack(alignment: .bottom) {
-                VStack(alignment: .leading) {
-
-                    Text(viewModel.item.seriesName ?? "--")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-
-                    Text(viewModel.item.displayName)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    DotHStack {
-                        if let firstGenre = viewModel.item.genres?.first {
-                            Text(firstGenre)
-                        }
-
-                        if let premiereYear = viewModel.item.premiereDateYear {
-                            Text(String(premiereYear))
-                        }
-
-                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                            Text(runtime)
-                        }
-                    }
-                    .font(.caption)
-                    .foregroundColor(Color(UIColor.lightGray))
-
-//                    if let playButtonOverview = viewModel.playButtonItem?.overview {
-//                        TruncatedTextView(
-//                            playButtonOverview,
-//                            lineLimit: 3,
-//                            font: UIFont.preferredFont(forTextStyle: .footnote)
-//                        ) {
-//                            itemRouter.route(to: \.itemOverview, viewModel.item)
-//                        }
-//                    } else if let seriesOverview = viewModel.item.overview {
-//                        TruncatedTextView(
-//                            seriesOverview,
-//                            lineLimit: 3,
-//                            font: UIFont.preferredFont(forTextStyle: .footnote)
-//                        ) {
-//                            itemRouter.route(to: \.itemOverview, viewModel.item)
-//                        }
-//                    }
-
-                    ItemView.AttributesHStack(viewModel: viewModel)
-                }
-
-                Spacer()
-
-                VStack(spacing: 10) {
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(height: 50)
-
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                }
-                .frame(width: 300)
-                .padding(.leading, 150)
-            }
-            .padding()
         }
     }
 }

@@ -20,7 +20,9 @@ struct EpisodeCard: View {
 
     var body: some View {
         Button {
-            itemRouter.route(to: \.item, episode)
+            if episode != .placeHolder && episode != .noResults {
+                itemRouter.route(to: \.item, episode)
+            }
         } label: {
             VStack(alignment: .leading) {
                 ImageView(episode.imageSource(.primary, maxWidth: 200))

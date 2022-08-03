@@ -49,7 +49,6 @@ extension iPadOSMovieItemView {
 
                 // MARK: Cast and Crew
 
-//                if let castAndCrew = viewModel.item.people?.filter { BaseItemPerson.DisplayedType.allCasesRaw.contains($0.type ?? "") },
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty
                 {
@@ -79,18 +78,6 @@ extension iPadOSMovieItemView {
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
-
-                // MARK: Details
-
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
-
-                if let mediaItems = viewModel.selectedVideoPlayerViewModel?.item.createMediaItems(), !mediaItems.isEmpty {
-                    ListDetailsView(title: L10n.media, items: mediaItems)
-                        .padding(.horizontal)
-                }
             }
         }
     }
