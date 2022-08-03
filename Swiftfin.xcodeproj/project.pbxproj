@@ -1813,9 +1813,9 @@
 			children = (
 				E1FA891C289A302600176FEB /* CollectionItemView */,
 				E18E01B5288747230022598C /* EpisodeItemView */,
+				E18E01BD288747230022598C /* MovieItemView */,
 				E18E01B8288747230022598C /* ScrollViews */,
 				E18E01BA288747230022598C /* SeriesItemView */,
-				E18E01BD288747230022598C /* MovieItemView */,
 			);
 			path = iPadOS;
 			sourceTree = "<group>";
@@ -1858,11 +1858,11 @@
 		E18E01C0288747230022598C /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				E18E01C1288747230022598C /* EpisodeItemView */,
-				E18E01C4288747230022598C /* ScrollViews */,
 				E18E01C8288747230022598C /* CollectionItemView */,
-				E18E01CB288747230022598C /* SeriesItemView */,
+				E18E01C1288747230022598C /* EpisodeItemView */,
 				E18E01CE288747230022598C /* MovieItemView */,
+				E18E01C4288747230022598C /* ScrollViews */,
+				E18E01CB288747230022598C /* SeriesItemView */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -1955,12 +1955,12 @@
 		E193D54E271942C000900D82 /* ItemView */ = {
 			isa = PBXGroup;
 			children = (
+				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
+				E1546778289AF47100087E35 /* CollectionItemView */,
 				E1C925FF2887565C002A7A66 /* Components */,
 				E1C925FA2887565C002A7A66 /* MovieItemView */,
 				E1C925FD2887565C002A7A66 /* ScrollViews */,
 				E1C926042887565C002A7A66 /* SeriesItemView */,
-				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
-				E1546778289AF47100087E35 /* CollectionItemView */,
 			);
 			path = ItemView;
 			sourceTree = "<group>";

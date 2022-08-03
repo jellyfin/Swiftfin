@@ -29,14 +29,7 @@ final class LatestMediaViewModel: ViewModel {
         UserLibraryAPI.getLatestMedia(
             userId: SessionManager.main.currentLogin.user.id,
             parentId: library.id ?? "",
-            fields: [
-                .primaryImageAspectRatio,
-                .seriesPrimaryImage,
-                .seasonUserData,
-                .overview,
-                .genres,
-                .people,
-            ],
+            fields: ItemFields.allCases,
             includeItemTypes: [.series, .movie],
             enableUserData: true,
             limit: 12

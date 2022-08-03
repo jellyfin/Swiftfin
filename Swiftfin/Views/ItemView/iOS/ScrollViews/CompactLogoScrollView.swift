@@ -48,24 +48,6 @@ extension ItemView {
                 }
         }
 
-        @ViewBuilder
-        private var overview: some View {
-            if let firstTagline = viewModel.item.taglines?.first {
-                Text(firstTagline)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-            }
-
-            if let itemOverview = viewModel.item.overview {
-                TruncatedTextView(text: itemOverview) {
-                    itemRouter.route(to: \.itemOverview, viewModel.item)
-                }
-                .font(.footnote)
-                .lineLimit(4)
-            }
-        }
-
         var body: some View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
@@ -94,11 +76,29 @@ extension ItemView {
                                 .opacity(topOpacity)
                         }
 
-                    overview
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal)
-                        .padding(.top)
-                        .background(Color.systemBackground)
+                    VStack(alignment: .leading, spacing: 10) {
+                        if let firstTagline = viewModel.item.taglines?.first {
+                            Text(firstTagline)
+                                .font(.body)
+                                .fontWeight(.semibold)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        if let itemOverview = viewModel.item.overview {
+                            TruncatedTextView(text: itemOverview) {
+                                itemRouter.route(to: \.itemOverview, viewModel.item)
+                            }
+                            .font(.footnote)
+                            .lineLimit(4)
+                            .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .background(Color.systemBackground)
+                    .frame(maxWidth: .infinity)
 
                     content()
                         .padding(.vertical)

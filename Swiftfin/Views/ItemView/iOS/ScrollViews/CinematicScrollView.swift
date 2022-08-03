@@ -162,6 +162,7 @@ extension ItemView.CinematicScrollView {
                         .multilineTextAlignment(.leading)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
+                        .foregroundColor(.white)
                 }
 
                 if let itemOverview = viewModel.item.overview {
@@ -170,6 +171,7 @@ extension ItemView.CinematicScrollView {
                     }
                     .font(.footnote)
                     .lineLimit(4)
+                    .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
                 }
 
