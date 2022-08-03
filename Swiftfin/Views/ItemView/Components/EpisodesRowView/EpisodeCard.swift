@@ -15,6 +15,8 @@ struct EpisodeCard: View {
     private var itemRouter: ItemCoordinator.Router
     @ScaledMetric
     private var staticOverviewHeight: CGFloat = 50
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     let episode: BaseItemDto
 
@@ -59,5 +61,8 @@ struct EpisodeCard: View {
             .frame(width: 200)
         }
         .buttonStyle(PlainButtonStyle())
+        .if(colorScheme == .light) { view in
+            view.shadow(radius: 4, y: 2)
+        }
     }
 }

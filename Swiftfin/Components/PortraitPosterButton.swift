@@ -9,6 +9,9 @@
 import SwiftUI
 
 struct PortraitPosterButton<Item: PortraitPoster>: View {
+    
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     let item: Item
     let maxWidth: CGFloat
@@ -63,6 +66,9 @@ struct PortraitPosterButton<Item: PortraitPoster>: View {
                 }
             }
             .frame(width: maxWidth)
+        }
+        .if(colorScheme == .light) { view in
+            view.shadow(radius: 4, y: 2)
         }
     }
 }
