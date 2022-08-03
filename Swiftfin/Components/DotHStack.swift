@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// TODO: <#TODO#>
+// TODO: Check for if statements, look at ViewBuilder's buildIf
 
 struct DotHStack: View {
 
