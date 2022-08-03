@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct PortraitPosterButton<Item: PortraitPoster>: View {
-    
+
     @Environment(\.colorScheme)
     private var colorScheme
 
