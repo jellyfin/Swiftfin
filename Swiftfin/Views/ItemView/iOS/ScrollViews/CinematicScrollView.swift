@@ -124,14 +124,11 @@ extension ItemView.CinematicScrollView {
             }
 
             if let itemOverview = viewModel.item.overview {
-                TruncatedTextView(
-                    itemOverview,
-                    lineLimit: 4,
-                    font: UIFont.preferredFont(forTextStyle: .footnote)
-                ) {
+                TruncatedTextView(text: itemOverview) {
                     itemRouter.route(to: \.itemOverview, viewModel.item)
                 }
-                .fixedSize(horizontal: false, vertical: true)
+                .font(.footnote)
+                .lineLimit(4)
             }
         }
 

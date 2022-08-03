@@ -19,7 +19,7 @@ struct CinematicNextUpCardView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Button {
-                homeRouter.route(to: \.modalItem, item)
+                homeRouter.route(to: \.item, item)
             } label: {
                 ZStack(alignment: .bottomLeading) {
 

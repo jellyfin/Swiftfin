@@ -9,10 +9,10 @@
 import SwiftUI
 import SwiftUICollection
 
-struct PortraitButton<ItemType: PortraitImageStackable>: View {
+struct PortraitButton<Item: PortraitPoster>: View {
 
-    let item: ItemType
-    let selectedAction: (ItemType) -> Void
+    let item: Item
+    let selectedAction: (Item) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
@@ -20,10 +20,9 @@ struct PortraitButton<ItemType: PortraitImageStackable>: View {
                 selectedAction(item)
             } label: {
                 ImageView(
-                    item.imageURLConstructor(maxWidth: 300),
-                    blurHash: item.blurHash,
+                    item.portraitPosterImageSource(maxWidth: 300),
                     failureView: {
-                        InitialFailureView(item.titleInitials)
+                        InitialFailureView(item.title.initials)
                     }
                 )
                 .frame(width: 270, height: 405)

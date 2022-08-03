@@ -19,11 +19,12 @@ extension ItemView {
         let content: (ScrollViewProxy) -> Content
 
         var body: some View {
-
             ZStack {
-                ImageView(
-                    viewModel.item.imageSource(.backdrop, maxWidth: 1920)
-                )
+                if viewModel.item.type == .episode {
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 1920))
+                } else {
+                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
+                }
 
                 ScrollView(.vertical, showsIndicators: false) {
                     ScrollViewReader { scrollViewProxy in
@@ -79,13 +80,9 @@ extension ItemView {
                         )
                         .frame(maxWidth: 500, maxHeight: 200)
 
-                        if let overview = viewModel.item.overview {
-                            overview.text
-                                .font(.subheadline)
-                                .lineLimit(4)
-                        } else {
-                            L10n.noOverviewAvailable.text
-                        }
+                        Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
+                            .font(.subheadline)
+                            .lineLimit(3)
 
                         HStack {
                             DotHStack {

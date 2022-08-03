@@ -74,7 +74,7 @@ struct LiveTVChannelItemElement: View {
 
             GeometryReader { gp in
                 VStack {
-                    ImageView(channel.getPrimaryImage(maxWidth: 192))
+                    ImageView(channel.imageSource(.primary, maxWidth: 192))
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 192, alignment: .center)
                 }

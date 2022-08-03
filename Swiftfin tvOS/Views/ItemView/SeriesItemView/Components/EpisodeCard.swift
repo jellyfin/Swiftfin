@@ -6,30 +6,41 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import JellyfinAPI
 import SwiftUI
 
 struct EpisodeCard: View {
 
     @EnvironmentObject
-    private var itemRouter: ItemCoordinator.Router
+    private var router: ItemCoordinator.Router
+    @State
+    private var cancellables = Set<AnyCancellable>()
 
     let episode: BaseItemDto
 
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
-            Button {} label: {
+            Button {
+                // TODO: Figure out ad-hoc video player view model creation
+                episode.createVideoPlayerViewModel()
+                    .sink(receiveCompletion: { _ in }) { viewModels in
+                        guard !viewModels.isEmpty else { return }
+                        self.router.route(to: \.videoPlayer, viewModels[0])
+                    }
+                    .store(in: &cancellables)
+            } label: {
                 ImageView(
                     episode.imageSource(.primary, maxWidth: 600)
                 ) {
-                    InitialFailureView(episode.failureInitials)
+                    InitialFailureView(episode.title.initials)
                 }
                 .frame(width: 550, height: 308)
             }
             .buttonStyle(CardButtonStyle())
 
             Button {
-                itemRouter.route(to: \.item, episode)
+                router.route(to: \.item, episode)
             } label: {
                 VStack(alignment: .leading) {
 
@@ -50,20 +61,22 @@ struct EpisodeCard: View {
                     if episode.unaired {
                         Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
                             .font(.caption)
-                            .foregroundColor(.secondary)
-                            .fontWeight(.light)
                             .lineLimit(1)
                     } else {
-                        Text(episode.overview ?? "--")
+                        Text(episode.overview ?? L10n.noOverviewAvailable)
                             .font(.caption)
-                            .fontWeight(.light)
                             .lineLimit(3)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
+                    
+                    Spacer(minLength: 0)
+                    
+                    L10n.seeMore.text
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(Color(UIColor.systemCyan))
                 }
                 .frame(width: 510, height: 220)
-                .padding(.horizontal)
+                .padding()
             }
             .buttonStyle(CardButtonStyle())
         }

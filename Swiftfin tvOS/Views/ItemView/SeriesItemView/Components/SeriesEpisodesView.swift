@@ -92,12 +92,13 @@ extension SeriesEpisodesView {
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
+        
         @EnvironmentObject
         private var focusGuide: FocusGuide
         @FocusState
-        private var focusedEpisodeIndex: Int?
+        private var focusedEpisodeID: String?
         @State
-        private var lastFocusedEpisodeIndex: Int?
+        private var lastFocusedEpisodeID: String?
         @State
         private var currentEpisodes: [BaseItemDto] = []
         @State
@@ -109,13 +110,13 @@ extension SeriesEpisodesView {
                     if !currentEpisodes.isEmpty {
                         ForEach(currentEpisodes, id: \.self) { episode in
                             EpisodeCard(episode: episode)
-                                .focused($focusedEpisodeIndex, equals: episode.indexNumber ?? -1)
+                                .focused($focusedEpisodeID, equals: episode.id)
                         }
                     } else {
                         ForEach(1 ..< 10) { i in
                             EpisodeCard(episode: .placeHolder)
                                 .redacted(reason: .placeholder)
-                                .focused($focusedEpisodeIndex, equals: i)
+                                .focused($focusedEpisodeID, equals: "\(i)")
                         }
                     }
                 }
@@ -126,7 +127,7 @@ extension SeriesEpisodesView {
             .focusGuide(
                 focusGuide,
                 tag: "episodes",
-                onContentFocus: { focusedEpisodeIndex = lastFocusedEpisodeIndex },
+                onContentFocus: { focusedEpisodeID = lastFocusedEpisodeID },
                 top: "seasons",
                 bottom: "recommended"
             )
@@ -136,15 +137,16 @@ extension SeriesEpisodesView {
             }
             .onChange(of: viewModel.selectedSeason) { _ in
                 currentEpisodes = viewModel.currentEpisodes ?? []
-                lastFocusedEpisodeIndex = viewModel.currentEpisodes?.first?.indexNumber ?? 1
+                lastFocusedEpisodeID = currentEpisodes.first?.id
                 wrappedScrollView?.scrollToTop(animated: false)
             }
-            .onChange(of: focusedEpisodeIndex) { episodeIndex in
+            .onChange(of: focusedEpisodeID) { episodeIndex in
                 guard let episodeIndex = episodeIndex else { return }
-                lastFocusedEpisodeIndex = episodeIndex
+                lastFocusedEpisodeID = episodeIndex
             }
             .onChange(of: viewModel.seasonsEpisodes) { _ in
                 currentEpisodes = viewModel.currentEpisodes ?? []
+                lastFocusedEpisodeID = currentEpisodes.first?.id
             }
         }
     }

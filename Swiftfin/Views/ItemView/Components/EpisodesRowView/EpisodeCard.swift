@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct EpisodeRowCard: View {
+struct EpisodeCard: View {
 
     @EnvironmentObject
     private var itemRouter: ItemCoordinator.Router
@@ -50,7 +50,7 @@ struct EpisodeRowCard: View {
                     }
                     .font(.caption.weight(.light))
                     .foregroundColor(.secondary)
-                    .lineLimit(3)
+                    .lineLimit(4)
                     .multilineTextAlignment(.leading)
                 }
             }

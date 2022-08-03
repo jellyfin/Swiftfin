@@ -34,15 +34,21 @@ extension EpisodeItemView {
                 // MARK: Overview
 
                 if let itemOverview = viewModel.item.overview {
-                    TruncatedTextView(
-                        itemOverview,
-                        lineLimit: 5,
-                        font: UIFont.preferredFont(forTextStyle: .footnote)
-                    ) {
+                    TruncatedTextView(text: itemOverview) {
                         itemRouter.route(to: \.itemOverview, viewModel.item)
                     }
-                    .fixedSize(horizontal: false, vertical: true)
+                    .font(.footnote)
+                    .lineLimit(5)
                     .padding(.horizontal)
+//                    TruncatedTextView(
+//                        itemOverview,
+//                        lineLimit: 5,
+//                        font: UIFont.preferredFont(forTextStyle: .footnote)
+//                    ) {
+//                        itemRouter.route(to: \.itemOverview, viewModel.item)
+//                    }
+//                    .fixedSize(horizontal: false, vertical: true)
+//                    .padding(.horizontal)
                 }
 
                 // MARK: Genres

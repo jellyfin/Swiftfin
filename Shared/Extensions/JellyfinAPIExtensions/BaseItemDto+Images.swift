@@ -29,6 +29,7 @@ extension BaseItemDto {
     }
 
     func blurHash(_ type: ImageType) -> String? {
+        guard type != .logo else { return nil }
         if let tag = imageTags?[type.rawValue], let taggedBlurHash = imageBlurHashes?[type]?[tag] {
             return taggedBlurHash
         } else if let firstBlurHash = imageBlurHashes?[type]?.values.first {

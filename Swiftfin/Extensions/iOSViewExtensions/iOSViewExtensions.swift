@@ -6,14 +6,10 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
 import SwiftUI
 
-protocol LandscapePoster: Identifiable {
-    var title: String { get }
-    var subtitle: String? { get }
-    var showTitle: Bool { get }
-
-    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource]
+extension View {
+    func navBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
+        self.modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
+    }
 }

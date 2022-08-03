@@ -10,10 +10,23 @@ import Defaults
 import Foundation
 import SwiftUI
 
-protocol PortraitPoster: Hashable {
+protocol Poster: Hashable {
     var title: String { get }
     var subtitle: String? { get }
     var showTitle: Bool { get }
+}
 
+extension Poster {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(title)
+        hasher.combine(subtitle)
+    }
+}
+
+protocol PortraitPoster: Poster {
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
+}
+
+protocol LandscapePoster: Poster {
+    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource]
 }

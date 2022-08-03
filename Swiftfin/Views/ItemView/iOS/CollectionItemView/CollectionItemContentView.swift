@@ -21,40 +21,8 @@ extension CollectionItemView {
         @Default(.itemViewType)
         private var itemViewType
 
-        @ViewBuilder
-        private var compactPosterOverview: some View {
-            if let firstTagline = viewModel.playButtonItem?.taglines?.first {
-                Text(firstTagline)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .foregroundColor(.white)
-                    .padding(.horizontal)
-            }
-
-            if let itemOverview = viewModel.item.overview {
-                TruncatedTextView(
-                    itemOverview,
-                    lineLimit: 4,
-                    font: UIFont.preferredFont(forTextStyle: .footnote)
-                ) {
-                    itemRouter.route(to: \.itemOverview, viewModel.item)
-                }
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal)
-            }
-        }
-
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
-
-                if case ItemViewType.compactPoster = itemViewType {
-                    compactPosterOverview
-                }
-
-                if case ItemViewType.compactLogo = itemViewType {
-                    compactPosterOverview
-                }
 
                 // MARK: Genres
 

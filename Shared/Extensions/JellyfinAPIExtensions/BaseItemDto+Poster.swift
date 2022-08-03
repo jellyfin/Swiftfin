@@ -15,7 +15,7 @@ import UIKit
 
 extension BaseItemDto: PortraitPoster {
 
-    public var title: String {
+    var title: String {
         switch type {
         case .episode:
             return seriesName ?? displayName
@@ -24,7 +24,7 @@ extension BaseItemDto: PortraitPoster {
         }
     }
 
-    public var subtitle: String? {
+    var subtitle: String? {
         switch type {
         case .episode:
             return seasonEpisodeLocator
@@ -33,13 +33,7 @@ extension BaseItemDto: PortraitPoster {
         }
     }
 
-    public var failureInitials: String {
-        guard let name = self.name else { return "" }
-        let initials = name.split(separator: " ").compactMap { String($0).first }
-        return String(initials)
-    }
-
-    public var showTitle: Bool {
+    var showTitle: Bool {
         switch type {
         case .episode, .series, .movie, .boxSet:
             return Defaults[.showPosterLabels]
@@ -60,7 +54,7 @@ extension BaseItemDto: PortraitPoster {
 
 // MARK: LandscapePoster
 
-extension BaseItemDto: LandscapePoster {
+extension BaseItemDto {
     func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource] {
         switch type {
         case .episode:

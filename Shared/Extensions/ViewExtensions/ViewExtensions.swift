@@ -62,10 +62,6 @@ extension View {
         self.modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
 
-    func navBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
-        self.modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
-    }
-
     func backgroundParallaxHeader<Header: View>(
         _ scrollViewOffset: Binding<CGFloat>,
         height: CGFloat,

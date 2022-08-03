@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
+struct SeriesEpisodesView<RowManager: EpisodesRowManager>: View {
 
     @EnvironmentObject
     private var itemRouter: ItemCoordinator.Router
@@ -56,16 +56,16 @@ struct EpisodesRowView<RowManager>: View where RowManager: EpisodesRowManager {
                 HStack(alignment: .top, spacing: 15) {
                     if viewModel.isLoading {
                         ForEach(0 ..< 5) { _ in
-                            EpisodeRowCard(episode: .placeHolder)
+                            EpisodeCard(episode: .placeHolder)
                                 .redacted(reason: .placeholder)
                         }
                     } else if let selectedSeason = viewModel.selectedSeason {
                         if let seasonEpisodes = viewModel.seasonsEpisodes[selectedSeason] {
                             if seasonEpisodes.isEmpty {
-                                EpisodeRowCard(episode: .noResults)
+                                EpisodeCard(episode: .noResults)
                             } else {
                                 ForEach(seasonEpisodes) { episode in
-                                    EpisodeRowCard(episode: episode)
+                                    EpisodeCard(episode: episode)
                                         .id(episode.id)
                                 }
                             }

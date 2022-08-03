@@ -22,10 +22,6 @@ extension iPadOSEpisodeItemView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center) {
-//                    ImageView(
-//                        viewModel.item.getPrimaryImage(maxWidth: 600),
-//                        blurHash: viewModel.item.getPrimaryImageBlurHash()
-//                    )
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 400))
                         .cornerRadius(10)
                         .frame(maxHeight: 400)
@@ -131,23 +127,23 @@ extension iPadOSEpisodeItemView.ContentView {
                     .font(.caption)
                     .foregroundColor(Color(UIColor.lightGray))
 
-                    if let playButtonOverview = viewModel.playButtonItem?.overview {
-                        TruncatedTextView(
-                            playButtonOverview,
-                            lineLimit: 3,
-                            font: UIFont.preferredFont(forTextStyle: .footnote)
-                        ) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
-                    } else if let seriesOverview = viewModel.item.overview {
-                        TruncatedTextView(
-                            seriesOverview,
-                            lineLimit: 3,
-                            font: UIFont.preferredFont(forTextStyle: .footnote)
-                        ) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
-                    }
+//                    if let playButtonOverview = viewModel.playButtonItem?.overview {
+//                        TruncatedTextView(
+//                            playButtonOverview,
+//                            lineLimit: 3,
+//                            font: UIFont.preferredFont(forTextStyle: .footnote)
+//                        ) {
+//                            itemRouter.route(to: \.itemOverview, viewModel.item)
+//                        }
+//                    } else if let seriesOverview = viewModel.item.overview {
+//                        TruncatedTextView(
+//                            seriesOverview,
+//                            lineLimit: 3,
+//                            font: UIFont.preferredFont(forTextStyle: .footnote)
+//                        ) {
+//                            itemRouter.route(to: \.itemOverview, viewModel.item)
+//                        }
+//                    }
 
                     ItemView.AttributesHStack(viewModel: viewModel)
                 }

@@ -38,33 +38,30 @@ extension MovieItemView {
                         .frame(height: 0.5)
                         .id("topContentDivider")
 
-                    Group {
-                        if showLogo {
-                            ImageView(
-                                viewModel.item.imageSource(.logo, maxWidth: 500),
-                                resizingMode: .aspectFit,
-                                failureView: {
-                                    Text(viewModel.item.displayName)
-                                        .font(.largeTitle)
-                                        .fontWeight(.semibold)
-                                        .lineLimit(2)
-                                        .multilineTextAlignment(.leading)
-                                        .foregroundColor(.white)
-                                }
-                            )
-                            .frame(width: 500, height: 150)
-                            .padding(.top, 5)
-                        }
-
-                        PortraitImageHStack(
-                            title: L10n.recommended,
-                            items: viewModel.similarItems
-                        ) { item in
-                            itemRouter.route(to: \.item, item)
-                        }
-                        .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
+                    if showLogo {
+                        ImageView(
+                            viewModel.item.imageSource(.logo, maxWidth: 500),
+                            resizingMode: .aspectFit,
+                            failureView: {
+                                Text(viewModel.item.displayName)
+                                    .font(.largeTitle)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+                                    .foregroundColor(.white)
+                            }
+                        )
+                        .frame(width: 500, height: 150)
+                        .padding(.top, 5)
                     }
-                    .focusSection()
+
+                    PortraitPosterHStack(
+                        title: L10n.recommended,
+                        items: viewModel.similarItems
+                    ) { item in
+                        itemRouter.route(to: \.item, item)
+                    }
+                    .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
 
                     ItemView.AboutView(viewModel: viewModel)
                         .focusGuide(focusGuide, tag: "about", top: "recommended")
@@ -74,15 +71,19 @@ extension MovieItemView {
                 .frame(minHeight: UIScreen.main.bounds.height)
             }
             .background {
-                BlurView()
+                BlurView(style: .dark)
                     .mask {
                         VStack(spacing: 0) {
-                            LinearGradient(gradient: Gradient(stops: [
-                                .init(color: .white, location: 0),
-                                .init(color: .white.opacity(0.5), location: 0.6),
-                                .init(color: .white.opacity(0), location: 1),
-                            ]), startPoint: .bottom, endPoint: .top)
-                                .frame(height: UIScreen.main.bounds.height - 150)
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .clear, location: 0.5),
+                                    .init(color: .white.opacity(0.8), location: 0.7),
+                                    .init(color: .white.opacity(0.8), location: 0.95),
+                                    .init(color: .white, location: 1)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom)
+                            .frame(height: UIScreen.main.bounds.height - 150)
 
                             Color.white
                         }

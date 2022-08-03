@@ -67,7 +67,7 @@ struct LibraryView: View {
                 GeometryReader { _ in
                     if let item = cell.item {
                         Button {
-                            libraryRouter.route(to: \.modalItem, item)
+                            libraryRouter.route(to: \.item, item)
                         } label: {
                             PortraitItemElement(item: item)
                         }

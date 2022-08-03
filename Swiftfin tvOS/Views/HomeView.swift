@@ -15,11 +15,9 @@ import SwiftUI
 struct HomeView: View {
 
     @EnvironmentObject
-    private var homeRouter: HomeCoordinator.Router
-    @StateObject
-    var viewModel = HomeViewModel()
-    @Default(.showPosterLabels)
-    var showPosterLabels
+    private var router: HomeCoordinator.Router
+    @ObservedObject
+    var viewModel: HomeViewModel
 
     var body: some View {
         if viewModel.isLoading {
@@ -35,57 +33,60 @@ struct HomeView: View {
                             items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
                             forcedItemSubtitle: L10n.recentlyAdded
                         )
-
-                        //						if !viewModel.nextUpItems.isEmpty {
-                        //							NextUpView(items: viewModel.nextUpItems)
-                        //						}
+                        
+                        if !viewModel.nextUpItems.isEmpty {
+                            PortraitPosterHStack(title: L10n.nextUp,
+                                                 items: viewModel.nextUpItems) { item in
+                                router.route(to: \.item, item)
+                            }
+                        }
                     } else {
                         HomeCinematicView(
                             viewModel: viewModel,
                             items: viewModel.resumeItems.map { .init(item: $0, type: .resume) }
                         )
-
-                        //						if !viewModel.nextUpItems.isEmpty {
-                        //							NextUpView(items: viewModel.nextUpItems)
-                        //						}
-
-                        PortraitImageHStack(
-                            title: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems
-                        ) { item in
-                            homeRouter.route(to: \.modalItem, item)
+                        
+                        if !viewModel.nextUpItems.isEmpty {
+                            PortraitPosterHStack(title: L10n.nextUp,
+                                                 items: viewModel.nextUpItems) { item in
+                                router.route(to: \.item, item)
+                            }
                         }
-
-//                        PortraitImageHStack(
-//                            title: L10n.recentlyAdded,
-//                            items: viewModel.latestAddedItems
-//                        ) { item in
-//                            homeRouter.route(to: \.modalItem, item)
-//                        }
-//                        .fixedSize(horizontal: false, vertical: true)
+                        
+                        if !viewModel.latestAddedItems.isEmpty {
+                            PortraitPosterHStack(title: L10n.recentlyAdded,
+                                                 items: viewModel.latestAddedItems) { item in
+                                router.route(to: \.item, item)
+                            }
+                        }
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in
                         LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
                     }
 
-                    Spacer(minLength: 100)
+//                    Spacer(minLength: 100)
 
-                    HStack {
-                        Spacer()
-
-                        Button {
-                            viewModel.refresh()
-                        } label: {
-                            L10n.refresh.text
-                        }
-
-                        Spacer()
-                    }
+//                    HStack {
+//                        Spacer()
+//
+//
+//
+//                        Spacer()
+//                    }
                 }
             }
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.horizontal)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        viewModel.refresh()
+                    } label: {
+                        L10n.refresh.text
+                    }
+                }
+            }
         }
     }
 }

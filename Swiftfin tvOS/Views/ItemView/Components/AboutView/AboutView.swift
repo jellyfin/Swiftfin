@@ -35,10 +35,9 @@ extension ItemView {
                 ScrollView(.horizontal) {
                     HStack {
                         ImageView(
-                            viewModel.item.getPrimaryImage(maxWidth: 300),
-                            blurHash: viewModel.item.getPrimaryImageBlurHash(),
+                            viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel.item.imageSource(.primary, maxWidth: 300),
                             failureView: {
-                                InitialFailureView(viewModel.item.failureInitials)
+                                InitialFailureView(viewModel.item.title.initials)
                             }
                         )
                         .portraitPoster(width: 270)

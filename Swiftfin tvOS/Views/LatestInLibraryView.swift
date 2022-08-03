@@ -12,17 +12,17 @@ import SwiftUI
 struct LatestInLibraryView: View {
 
     @EnvironmentObject
-    private var homeRouter: HomeCoordinator.Router
+    private var router: HomeCoordinator.Router
     @StateObject
     var viewModel: LatestMediaViewModel
 
     var body: some View {
-        PortraitImageHStack(
+        PortraitPosterHStack(
             title: L10n.latestWithString(viewModel.library.displayName),
             items: viewModel.items
         ) {
             Button {
-                homeRouter.route(to: \.library, (
+                router.route(to: \.library, (
                     viewModel: .init(
                         parentID: viewModel.library.id!,
                         filters: LibraryFilters(
@@ -49,18 +49,8 @@ struct LatestInLibraryView: View {
             }
             .frame(width: 257, height: 380)
             .buttonStyle(PlainButtonStyle())
-        } selectedAction: { _ in
-            homeRouter.route(to: \.library, (
-                viewModel: .init(
-                    parentID: viewModel.library.id!,
-                    filters: LibraryFilters(
-                        filters: [],
-                        sortOrder: [.descending],
-                        sortBy: [.dateAdded]
-                    )
-                ),
-                title: viewModel.library.displayName
-            ))
+        } selectedAction: { item in
+            router.route(to: \.item, item)
         }
     }
 }

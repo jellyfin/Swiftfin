@@ -63,7 +63,7 @@ extension SeriesItemView {
                         .frame(height: 0.5)
                         .id("seasonsRecommendedContentDivider")
 
-                    PortraitImageHStack(
+                    PortraitPosterHStack(
                         title: L10n.recommended,
                         items: viewModel.similarItems
                     ) { item in
@@ -80,7 +80,7 @@ extension SeriesItemView {
                 .frame(minHeight: UIScreen.main.bounds.height)
             }
             .background {
-                BlurView()
+                BlurView(style: .dark)
                     .mask {
                         VStack(spacing: 0) {
                             LinearGradient(gradient: Gradient(stops: [
@@ -102,7 +102,6 @@ extension SeriesItemView {
                         }
                     }
                     withAnimation {
-                        print("showing logo")
                         self.showLogo = true
                     }
                 } else if newTag == "mediaButtons" {

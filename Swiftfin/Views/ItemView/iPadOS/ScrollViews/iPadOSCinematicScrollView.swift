@@ -125,7 +125,7 @@ extension ItemView.iPadOSCinematicScrollView {
                             }
 
                             if let premiereYear = viewModel.item.premiereDateYear {
-                                Text(String(premiereYear))
+                                Text(premiereYear)
                             }
 
                             if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
@@ -135,25 +135,25 @@ extension ItemView.iPadOSCinematicScrollView {
                         .font(.caption)
                         .foregroundColor(Color(UIColor.lightGray))
 
-                        if let playButtonOverview = viewModel.playButtonItem?.overview {
-                            TruncatedTextView(
-                                playButtonOverview,
-                                lineLimit: 2,
-                                font: UIFont.preferredFont(forTextStyle: .subheadline)
-                            ) {
-                                itemRouter.route(to: \.itemOverview, viewModel.item)
-                            }
-                            .foregroundColor(.white)
-                        } else if let seriesOverview = viewModel.item.overview {
-                            TruncatedTextView(
-                                seriesOverview,
-                                lineLimit: 2,
-                                font: UIFont.preferredFont(forTextStyle: .subheadline)
-                            ) {
-                                itemRouter.route(to: \.itemOverview, viewModel.item)
-                            }
-                            .foregroundColor(.white)
-                        }
+//                        if let playButtonOverview = viewModel.playButtonItem?.overview {
+//                            TruncatedTextView(
+//                                playButtonOverview,
+//                                lineLimit: 2,
+//                                font: UIFont.preferredFont(forTextStyle: .subheadline)
+//                            ) {
+//                                itemRouter.route(to: \.itemOverview, viewModel.item)
+//                            }
+//                            .foregroundColor(.white)
+//                        } else if let seriesOverview = viewModel.item.overview {
+//                            TruncatedTextView(
+//                                seriesOverview,
+//                                lineLimit: 2,
+//                                font: UIFont.preferredFont(forTextStyle: .subheadline)
+//                            ) {
+//                                itemRouter.route(to: \.itemOverview, viewModel.item)
+//                            }
+//                            .foregroundColor(.white)
+//                        }
 
                         ItemView.AttributesHStack(viewModel: viewModel)
                     }

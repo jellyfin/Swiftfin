@@ -23,10 +23,7 @@ struct PortraitItemElement: View {
 
     var body: some View {
         VStack {
-            ImageView(
-                item.type == .episode ? item.getSeriesPrimaryImage(maxWidth: 200) : item.getPrimaryImage(maxWidth: 200),
-                blurHash: item.type == .episode ? item.getSeriesPrimaryImageBlurHash() : item.getPrimaryImageBlurHash()
-            )
+            ImageView(item.type == .episode ? item.seriesImageSource(.primary, maxWidth: 200) : item.imageSource(.primary, maxWidth: 200))
             .frame(width: 200, height: 300)
             .cornerRadius(10)
             .shadow(radius: focused ? 10.0 : 0)

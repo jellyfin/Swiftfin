@@ -24,7 +24,7 @@ extension SeriesItemView {
 
                 // MARK: Episodes
 
-                EpisodesRowView(viewModel: viewModel)
+                SeriesEpisodesView(viewModel: viewModel)
 
                 // MARK: Genres
 

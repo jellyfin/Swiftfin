@@ -10,6 +10,8 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+extension BaseItemDto: Identifiable { }
+
 extension BaseItemDto {
 
     var episodeLocator: String? {
@@ -200,6 +202,7 @@ extension BaseItemDto {
     static var placeHolder: BaseItemDto {
         .init(
             name: "Placeholder",
+            id: "1",
             overview: String(repeating: "a", count: 100),
             indexNumber: 20
         )

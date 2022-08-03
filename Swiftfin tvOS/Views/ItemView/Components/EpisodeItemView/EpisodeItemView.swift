@@ -6,17 +6,16 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
 import SwiftUI
 
-extension Image {
-    func centerCropped() -> some View {
-        GeometryReader { geo in
-            self
-                .resizable()
-                .scaledToFill()
-                .frame(width: geo.size.width, height: geo.size.height)
-                .clipped()
+struct EpisodeItemView: View {
+
+    @ObservedObject
+    var viewModel: EpisodeItemViewModel
+
+    var body: some View {
+        ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
+            ContentView(viewModel: viewModel, scrollViewProxy: scrollViewProxy)
         }
     }
 }

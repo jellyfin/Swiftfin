@@ -11,25 +11,25 @@ import SwiftUI
 import SwiftUICollection
 import TVUIKit
 
-struct PortraitImageHStack<Item: PortraitPoster, LastView: View>: View {
+struct PortraitPosterHStack<Item: PortraitPoster, TrailingContent: View>: View {
 
     private let loading: Bool
     private let title: String
     private let items: [Item]
     private let selectedAction: (Item) -> Void
-    private let lastView: () -> LastView
+    private let trailingContent: () -> TrailingContent
 
     init(
         loading: Bool = false,
         title: String,
         items: [Item],
-        @ViewBuilder lastView: @escaping () -> LastView,
+        @ViewBuilder trailingContent: @escaping () -> TrailingContent,
         selectedAction: @escaping (Item) -> Void
     ) {
         self.loading = loading
         self.title = title
         self.items = items
-        self.lastView = lastView
+        self.trailingContent = trailingContent
         self.selectedAction = selectedAction
     }
 
@@ -57,14 +57,14 @@ struct PortraitImageHStack<Item: PortraitPoster, LastView: View>: View {
                             selectedAction: { _ in }
                         )
                     } else {
-                        ForEach(items, id: \.title + \.subtitle) { item in
+                        ForEach(items, id: \.hashValue) { item in
                             PortraitButton(item: item) { item in
                                 selectedAction(item)
                             }
                         }
                     }
 
-                    lastView()
+                    trailingContent()
                 }
                 .padding(.horizontal, 50)
                 .padding2(.vertical)
@@ -73,17 +73,17 @@ struct PortraitImageHStack<Item: PortraitPoster, LastView: View>: View {
     }
 }
 
-extension PortraitImageHStack where LastView == EmptyView {
+extension PortraitPosterHStack where TrailingContent == EmptyView {
     init(
         loading: Bool = false,
         title: String,
-        items: [ItemType],
-        selectedAction: @escaping (ItemType) -> Void
+        items: [Item],
+        selectedAction: @escaping (Item) -> Void
     ) {
         self.loading = loading
         self.title = title
         self.items = items
-        self.lastView = { EmptyView() }
+        self.trailingContent = { EmptyView() }
         self.selectedAction = selectedAction
     }
 }

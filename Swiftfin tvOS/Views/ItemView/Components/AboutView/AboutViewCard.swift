@@ -29,12 +29,10 @@ extension ItemView.AboutView {
                         .lineLimit(2)
 
                     Spacer()
-
-                    TruncatedTextView(
-                        text,
-                        lineLimit: 4,
-                        font: .preferredFont(forTextStyle: .subheadline)
-                    )
+                    
+                    TruncatedTextView(text: text, seeMoreAction: {})
+                        .font(.subheadline)
+                        .lineLimit(4)
                 }
                 .padding2()
                 .frame(width: 700, height: 405)
