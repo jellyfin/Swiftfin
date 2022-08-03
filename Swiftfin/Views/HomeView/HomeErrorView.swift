@@ -36,9 +36,11 @@ extension HomeView {
                     .frame(minWidth: 50, maxWidth: 240)
                     .multilineTextAlignment(.center)
 
-                PrimaryButtonView(title: L10n.retry) {
+                PrimaryButton(title: L10n.retry) {
                     viewModel.refresh()
                 }
+                .frame(maxWidth: 300)
+                .frame(height: 50)
             }
             .offset(y: -50)
         }

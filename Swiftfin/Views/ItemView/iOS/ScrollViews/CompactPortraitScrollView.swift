@@ -45,7 +45,6 @@ extension ItemView {
                     .font(.body)
                     .fontWeight(.semibold)
                     .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             if let itemOverview = viewModel.item.overview {
@@ -97,7 +96,6 @@ extension ItemView {
                 }
             }
             .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.horizontal)
             .scrollViewOffset($scrollViewOffset)
             .navBarOffset(
                 $scrollViewOffset,

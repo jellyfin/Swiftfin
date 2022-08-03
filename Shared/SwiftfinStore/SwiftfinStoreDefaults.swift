@@ -10,6 +10,8 @@ import Defaults
 import Foundation
 import UIKit
 
+// TODO: Refactor...
+
 extension SwiftfinStore {
     enum Defaults {
         static let generalSuite: UserDefaults = .init(suiteName: "swiftfinstore-general-defaults")!
@@ -39,7 +41,7 @@ extension Defaults.Keys {
     static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     static let showCastAndCrew = Key<Bool>("showCastAndCrew", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     static let showFlattenView = Key<Bool>("showFlattenView", default: true, suite: SwiftfinStore.Defaults.generalSuite)
-    static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactPoster, suite: SwiftfinStore.Defaults.generalSuite)
+    static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactLogo, suite: SwiftfinStore.Defaults.generalSuite)
 
     // Video player / overlay settings
     static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: SwiftfinStore.Defaults.generalSuite)

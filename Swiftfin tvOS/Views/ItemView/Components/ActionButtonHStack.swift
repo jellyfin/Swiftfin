@@ -20,20 +20,34 @@ extension ItemView {
                 Button {
                     viewModel.toggleWatchState()
                 } label: {
-                    Image(systemName: "checkmark.circle")
-                        .font(.title3)
-                        .frame(height: 100)
-                        .frame(maxWidth: .infinity)
+                    Group {
+                        if viewModel.isWatched {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.jellyfinPurple)
+                        } else {
+                            Image(systemName: "checkmark.circle")
+                        }
+                    }
+                    .font(.title3)
+                    .frame(height: 100)
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(PlainButtonStyle())
 
                 Button {
                     viewModel.toggleFavoriteState()
                 } label: {
-                    Image(systemName: "heart")
-                        .font(.title3)
-                        .frame(height: 100)
-                        .frame(maxWidth: .infinity)
+                    Group {
+                        if viewModel.isFavorited {
+                            Image(systemName: "heart.fill")
+                                .foregroundColor(.red)
+                        } else {
+                            Image(systemName: "heart")
+                        }
+                    }
+                    .font(.title3)
+                    .frame(height: 100)
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(PlainButtonStyle())
             }

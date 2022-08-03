@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: Replace and remove
+
 struct ItemDetailsView: View {
 
     @ObservedObject

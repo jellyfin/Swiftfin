@@ -1740,10 +1740,10 @@
 		E168BD07289A4162001A6922 /* HomeView */ = {
 			isa = PBXGroup;
 			children = (
-				E168BD08289A4162001A6922 /* HomeView.swift */,
-				E168BD09289A4162001A6922 /* HomeContentView.swift */,
 				E168BD0A289A4162001A6922 /* Components */,
+				E168BD09289A4162001A6922 /* HomeContentView.swift */,
 				E168BD0F289A4162001A6922 /* HomeErrorView.swift */,
+				E168BD08289A4162001A6922 /* HomeView.swift */,
 			);
 			path = HomeView;
 			sourceTree = "<group>";

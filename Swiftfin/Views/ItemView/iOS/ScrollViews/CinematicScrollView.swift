@@ -58,7 +58,6 @@ extension ItemView {
                         OverlayView(viewModel: viewModel)
                             .padding(.horizontal)
                             .padding(.bottom)
-                            .frame(maxHeight: UIScreen.main.bounds.height * 0.4)
                             .background {
                                 BlurView(style: .systemThinMaterialDark)
                                     .mask {
@@ -86,7 +85,6 @@ extension ItemView {
                 }
             }
             .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.horizontal)
             .scrollViewOffset($scrollViewOffset)
             .navBarOffset(
                 $scrollViewOffset,
@@ -112,69 +110,68 @@ extension ItemView.CinematicScrollView {
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
-        
-        @ViewBuilder
-        private var overview: some View {
-            if let firstTagline = viewModel.item.taglines?.first {
-                Text(firstTagline)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-            if let itemOverview = viewModel.item.overview {
-                TruncatedTextView(text: itemOverview) {
-                    itemRouter.route(to: \.itemOverview, viewModel.item)
-                }
-                .font(.footnote)
-                .lineLimit(4)
-            }
-        }
 
         var body: some View {
-            VStack(alignment: .center, spacing: 10) {
+            VStack(alignment: .leading, spacing: 10) {
 
-                ImageView(
-                    viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
-                    resizingMode: .aspectFit
-                ) {
-                    Text(viewModel.item.displayName)
-                        .font(.largeTitle)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.white)
+                VStack(alignment: .center, spacing: 10) {
+                    ImageView(
+                        viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
+                        resizingMode: .aspectFit
+                    ) {
+                        Text(viewModel.item.displayName)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white)
+                    }
+                    .frame(height: 100)
+                    .frame(maxWidth: .infinity)
+
+                    DotHStack {
+                        if let firstGenre = viewModel.item.genres?.first {
+                            Text(firstGenre)
+                        }
+
+                        if let premiereYear = viewModel.item.premiereDateYear {
+                            Text(premiereYear)
+                        }
+
+                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                            Text(runtime)
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundColor(Color(UIColor.lightGray))
+                    .padding(.horizontal)
+
+                    ItemView.PlayButton(viewModel: viewModel)
+                        .frame(maxWidth: 300)
+                        .frame(height: 50)
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .font(.title)
+                        .frame(maxWidth: 300)
                 }
-                .frame(height: 100)
                 .frame(maxWidth: .infinity)
 
-                DotHStack {
-                    if let firstGenre = viewModel.item.genres?.first {
-                        Text(firstGenre)
-                    }
-
-                    if let premiereYear = viewModel.item.premiereDateYear {
-                        Text(premiereYear)
-                    }
-
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                        Text(runtime)
-                    }
+                if let firstTagline = viewModel.item.taglines?.first {
+                    Text(firstTagline)
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .font(.caption)
-                .foregroundColor(Color(UIColor.lightGray))
-                .padding(.horizontal)
 
-                ItemView.PlayButton(viewModel: viewModel)
-                    .frame(maxWidth: 300)
-                    .frame(height: 50)
-
-                ItemView.ActionButtonHStack(viewModel: viewModel)
-                    .font(.title)
-                    .frame(maxWidth: 300)
-
-                overview
-                    .frame(maxWidth: .infinity)
+                if let itemOverview = viewModel.item.overview {
+                    TruncatedTextView(text: itemOverview) {
+                        itemRouter.route(to: \.itemOverview, viewModel.item)
+                    }
+                    .font(.footnote)
+                    .lineLimit(4)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
 
                 ItemView.AttributesHStack(viewModel: viewModel)
             }

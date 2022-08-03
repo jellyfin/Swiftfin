@@ -24,7 +24,7 @@ struct EpisodeItemView: View {
         }
         .scrollViewOffset($scrollViewOffset)
         .navBarOffset($scrollViewOffset,
-                      start: 300,
-                      end: 350)
+                      start: 0,
+                      end: 10)
     }
 }

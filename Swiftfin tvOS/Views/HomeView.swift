@@ -64,29 +64,10 @@ struct HomeView: View {
                     ForEach(viewModel.libraries, id: \.self) { library in
                         LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
                     }
-
-//                    Spacer(minLength: 100)
-
-//                    HStack {
-//                        Spacer()
-//
-//
-//
-//                        Spacer()
-//                    }
                 }
             }
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.horizontal)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        viewModel.refresh()
-                    } label: {
-                        L10n.refresh.text
-                    }
-                }
-            }
         }
     }
 }

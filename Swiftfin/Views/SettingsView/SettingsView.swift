@@ -148,9 +148,10 @@ struct SettingsView: View {
                     }
                 }
 
+                // Not localized yet. Will be in a settings re-organization
                 Picker("Item View", selection: $itemViewType) {
                     ForEach(ItemViewType.allCases, id: \.self) { itemViewType in
-                        Text(itemViewType.rawValue).tag(itemViewType.rawValue)
+                        Text(itemViewType.label).tag(itemViewType.rawValue)
                     }
                 }
 

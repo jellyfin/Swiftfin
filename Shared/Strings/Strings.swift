@@ -54,6 +54,8 @@ internal enum L10n {
   internal static var channels: String { return L10n.tr("Localizable", "channels") }
   /// Chapters
   internal static var chapters: String { return L10n.tr("Localizable", "chapters") }
+  /// Cinematic
+  internal static var cinematic: String { return L10n.tr("Localizable", "cinematic") }
   /// Cinematic Views
   internal static var cinematicViews: String { return L10n.tr("Localizable", "cinematicViews") }
   /// Close
@@ -62,6 +64,10 @@ internal enum L10n {
   internal static var closedCaptions: String { return L10n.tr("Localizable", "closedCaptions") }
   /// Compact
   internal static var compact: String { return L10n.tr("Localizable", "compact") }
+  /// Compact Logo
+  internal static var compactLogo: String { return L10n.tr("Localizable", "compactLogo") }
+  /// Compact Poster
+  internal static var compactPoster: String { return L10n.tr("Localizable", "compactPoster") }
   /// Confirm Close
   internal static var confirmClose: String { return L10n.tr("Localizable", "confirmClose") }
   /// Connect
