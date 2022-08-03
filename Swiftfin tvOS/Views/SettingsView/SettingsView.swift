@@ -28,8 +28,6 @@ struct SettingsView: View {
     var downActionShowsMenu
     @Default(.confirmClose)
     var confirmClose
-    @Default(.tvOSCinematicViews)
-    var tvOSCinematicViews
     @Default(.showPosterLabels)
     var showPosterLabels
     @Default(.resumeOffset)
@@ -122,12 +120,6 @@ struct SettingsView: View {
                                 Image(systemName: "chevron.right")
                             }
                         }
-                    }
-
-                    Section {
-                        Toggle(L10n.cinematicViews, isOn: $tvOSCinematicViews)
-                    } header: {
-                        L10n.appearance.text
                     }
 
                     Section(header: L10n.accessibility.text) {

@@ -119,5 +119,4 @@ extension Defaults.Keys {
     // tvos specific
     static let downActionShowsMenu = Key<Bool>("downActionShowsMenu", default: true, suite: SwiftfinStore.Defaults.generalSuite)
     static let confirmClose = Key<Bool>("confirmClose", default: false, suite: SwiftfinStore.Defaults.generalSuite)
-    static let tvOSCinematicViews = Key<Bool>("tvOSCinematicViews", default: false, suite: SwiftfinStore.Defaults.generalSuite)
 }
