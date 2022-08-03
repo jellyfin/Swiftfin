@@ -40,6 +40,8 @@ struct SettingsView: View {
     var subtitleSize
     @Default(.itemViewType)
     var itemViewType
+    @Default(.subtitleFontName)
+    var subtitleFontName
 
     var body: some View {
         Form {
@@ -168,6 +170,20 @@ struct SettingsView: View {
                         Text(appearance.localizedName).tag(appearance.rawValue)
                     }
                 }
+
+                Button {
+                    settingsRouter.route(to: \.fontPicker)
+                } label: {
+                    HStack {
+                        L10n.subtitleFont.text
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Text(subtitleFontName)
+                            .foregroundColor(.gray)
+                        Image(systemName: "chevron.right")
+                    }
+                }
+
                 Picker(L10n.subtitleSize, selection: $subtitleSize) {
                     ForEach(SubtitleSize.allCases, id: \.self) { size in
                         Text(size.label).tag(size.rawValue)
