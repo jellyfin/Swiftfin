@@ -104,7 +104,7 @@ class ItemViewModel: ViewModel {
         LibraryAPI.getSimilarItems(
             itemId: item.id!,
             userId: SessionManager.main.currentLogin.user.id,
-            limit: 10,
+            limit: 20,
             fields: ItemFields.allCases
         )
         .trackActivity(loading)
