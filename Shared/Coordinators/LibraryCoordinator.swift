@@ -23,13 +23,13 @@ final class LibraryCoordinator: NavigationCoordinatable {
     var search = makeSearch
     @Route(.modal)
     var filter = makeFilter
-    
+
     #if os(tvOS)
-    @Route(.modal)
-    var item = makeModalItem
+        @Route(.modal)
+        var item = makeModalItem
     #else
-    @Route(.push)
-    var item = makeItem
+        @Route(.push)
+        var item = makeItem
     #endif
 
     let viewModel: LibraryViewModel

@@ -19,17 +19,17 @@ final class HomeCoordinator: NavigationCoordinatable {
     var start = makeStart
     @Route(.modal)
     var settings = makeSettings
-    
+
     #if os(tvOS)
-    @Route(.modal)
-    var item = makeModalItem
-    @Route(.modal)
-    var library = makeModalLibrary
+        @Route(.modal)
+        var item = makeModalItem
+        @Route(.modal)
+        var library = makeModalLibrary
     #else
-    @Route(.push)
-    var item = makeItem
-    @Route(.push)
-    var library = makeLibrary
+        @Route(.push)
+        var item = makeItem
+        @Route(.push)
+        var library = makeLibrary
     #endif
 
     func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {

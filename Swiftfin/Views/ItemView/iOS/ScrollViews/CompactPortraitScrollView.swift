@@ -22,7 +22,7 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         let content: () -> Content
-        
+
         private var topOpacity: CGFloat {
             let start = UIScreen.main.bounds.height * 0.20
             let end = UIScreen.main.bounds.height * 0.4
@@ -37,7 +37,7 @@ extension ItemView {
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
         }
-        
+
         @ViewBuilder
         private var overview: some View {
             if let firstTagline = viewModel.item.taglines?.first {
@@ -72,18 +72,18 @@ extension ItemView {
                                         stops: [
                                             .init(color: .white.opacity(0), location: 0.2),
                                             .init(color: .white.opacity(0.5), location: 0.3),
-                                            .init(color: .white, location: 0.55)
+                                            .init(color: .white, location: 0.55),
                                         ],
                                         startPoint: .top,
                                         endPoint: .bottom
                                     )
                                 }
                         }
-                    .overlay {
-                        Color.systemBackground
-                            .opacity(topOpacity)
-                    }
-                    
+                        .overlay {
+                            Color.systemBackground
+                                .opacity(topOpacity)
+                        }
+
                     overview
                         .frame(maxWidth: .infinity)
                         .padding(.horizontal)

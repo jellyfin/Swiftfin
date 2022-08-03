@@ -35,7 +35,8 @@ extension ItemView {
                 ScrollView(.horizontal) {
                     HStack {
                         ImageView(
-                            viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel.item.imageSource(.primary, maxWidth: 300),
+                            viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel.item
+                                .imageSource(.primary, maxWidth: 300),
                             failureView: {
                                 InitialFailureView(viewModel.item.title.initials)
                             }

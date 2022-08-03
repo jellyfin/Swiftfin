@@ -120,13 +120,13 @@ class ItemViewModel: ViewModel {
         let current = isWatched
         isWatched.toggle()
         let request: AnyPublisher<UserItemDataDto, Error>
-        
+
         if current {
             request = PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
         } else {
             request = PlaystateAPI.markPlayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
         }
-        
+
         request
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in
@@ -144,13 +144,13 @@ class ItemViewModel: ViewModel {
         let current = isFavorited
         isFavorited.toggle()
         let request: AnyPublisher<UserItemDataDto, Error>
-        
+
         if current {
             request = UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
         } else {
             request = UserLibraryAPI.markFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
         }
-        
+
         request
             .trackActivity(loading)
             .sink(receiveCompletion: { [weak self] completion in

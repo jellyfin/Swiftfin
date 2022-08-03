@@ -18,7 +18,7 @@ extension SeriesItemView {
         var viewModel: SeriesItemViewModel
         @State
         var scrollViewProxy: ScrollViewProxy
-        
+
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject

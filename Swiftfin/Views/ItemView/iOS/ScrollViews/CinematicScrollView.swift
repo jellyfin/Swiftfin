@@ -22,7 +22,7 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         let content: () -> Content
-        
+
         private var topOpacity: CGFloat {
             let start = UIScreen.main.bounds.height * 0.5
             let end = UIScreen.main.bounds.height * 0.65
@@ -78,7 +78,7 @@ extension ItemView {
                             }
                     }
                     .frame(height: UIScreen.main.bounds.height * 0.8)
-                    
+
                     content()
                         .padding(.vertical)
                         .background(Color.systemBackground)

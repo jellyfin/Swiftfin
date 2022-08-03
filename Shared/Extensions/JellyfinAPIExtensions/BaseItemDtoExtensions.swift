@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-extension BaseItemDto: Identifiable { }
+extension BaseItemDto: Identifiable {}
 
 extension BaseItemDto {
 
@@ -198,7 +198,7 @@ extension BaseItemDto {
 
         return chapterImageURLs
     }
-    
+
     // TODO: Don't use spoof objects as a placeholder or no results
 
     static var placeHolder: BaseItemDto {

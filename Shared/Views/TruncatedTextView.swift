@@ -14,13 +14,13 @@ extension TruncatedTextView {
         result.font = font
         return result
     }
-    
+
     func lineLimit(_ lineLimit: Int) -> TruncatedTextView {
         var result = self
         result.lineLimit = lineLimit
         return result
     }
-    
+
     func foregroundColor(_ color: Color) -> TruncatedTextView {
         var result = self
         result.foregroundColor = color
@@ -34,7 +34,7 @@ extension String {
         let textSize = self.size(withAttributes: fontAttributes)
         return textSize.height
     }
-    
+
     func widthOfString(usingFont font: UIFont) -> CGFloat {
         let fontAttributes = [NSAttributedString.Key.font: font]
         let textSize = self.size(withAttributes: fontAttributes)
@@ -43,25 +43,25 @@ extension String {
 }
 
 struct TruncatedTextView: View {
-    
+
     @State
     private var truncated: Bool = false
     @State
     private var fullSize: CGFloat = 0
-    
+
     private var font: Font = .body
     private var lineLimit: Int = 3
     private var foregroundColor: Color = .primary
-    
+
     let text: String
     let seeMoreAction: () -> Void
     let seeMoreText = "... \(L10n.seeMore)"
-    
+
     public init(text: String, seeMoreAction: @escaping () -> Void) {
         self.text = text
         self.seeMoreAction = seeMoreAction
     }
-    
+
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Text(text)
@@ -72,42 +72,43 @@ struct TruncatedTextView: View {
                     text.mask {
                         VStack(spacing: 0) {
                             Color.black
-                            
+
                             HStack(spacing: 0) {
                                 Color.black
-                                
+
                                 LinearGradient(
                                     stops: [
                                         .init(color: .black, location: 0),
-                                        .init(color: .clear, location: 0.1)
+                                        .init(color: .clear, location: 0.1),
                                     ],
                                     startPoint: .leading,
-                                    endPoint: .trailing)
+                                    endPoint: .trailing
+                                )
                                 .frame(width: seeMoreText.widthOfString(usingFont: font.toUIFont()) + 15)
                             }
                             .frame(height: seeMoreText.heightOfString(usingFont: font.toUIFont()))
                         }
                     }
                 }
-            
+
             if truncated {
                 #if os(tvOS)
-                Text(seeMoreText)
-                    .font(font)
-                    .foregroundColor(.purple)
-                #else
-                Button {
-                    seeMoreAction()
-                } label: {
                     Text(seeMoreText)
                         .font(font)
                         .foregroundColor(.purple)
-                }
+                #else
+                    Button {
+                        seeMoreAction()
+                    } label: {
+                        Text(seeMoreText)
+                            .font(font)
+                            .foregroundColor(.purple)
+                    }
                 #endif
             }
         }
         .background {
-            ZStack{
+            ZStack {
                 if !truncated {
                     if fullSize != 0 {
                         Text(text)
@@ -124,7 +125,7 @@ struct TruncatedTextView: View {
                                 }
                             }
                     }
-                    
+
                     Text(text)
                         .font(font)
                         .lineLimit(10)
@@ -139,7 +140,7 @@ struct TruncatedTextView: View {
                         }
                 }
             }
-                .hidden()
+            .hidden()
         }
     }
 }

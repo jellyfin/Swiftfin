@@ -35,7 +35,7 @@ struct CinematicResumeCardView: View {
                             item.imageSource(.thumb, maxWidth: 350),
                             item.imageSource(.backdrop, maxWidth: 350),
                         ])
-                            .frame(width: 350, height: 210)
+                        .frame(width: 350, height: 210)
                     }
 
                     LinearGradient(

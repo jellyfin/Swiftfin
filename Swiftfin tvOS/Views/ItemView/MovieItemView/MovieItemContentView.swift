@@ -16,7 +16,7 @@ extension MovieItemView {
         var viewModel: MovieItemViewModel
         @State
         var scrollViewProxy: ScrollViewProxy
-        
+
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
@@ -79,10 +79,11 @@ extension MovieItemView {
                                     .init(color: .clear, location: 0.5),
                                     .init(color: .white.opacity(0.8), location: 0.7),
                                     .init(color: .white.opacity(0.8), location: 0.95),
-                                    .init(color: .white, location: 1)
+                                    .init(color: .white, location: 1),
                                 ],
                                 startPoint: .top,
-                                endPoint: .bottom)
+                                endPoint: .bottom
+                            )
                             .frame(height: UIScreen.main.bounds.height - 150)
 
                             Color.white

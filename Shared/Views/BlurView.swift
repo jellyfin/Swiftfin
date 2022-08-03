@@ -12,7 +12,7 @@ import UIKit
 struct BlurView: UIViewRepresentable {
 
     let style: UIBlurEffect.Style
-    
+
     init(style: UIBlurEffect.Style = .regular) {
         self.style = style
     }

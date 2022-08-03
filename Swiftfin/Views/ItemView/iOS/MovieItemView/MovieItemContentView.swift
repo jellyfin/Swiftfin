@@ -77,7 +77,7 @@ extension MovieItemView {
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
-                
+
                 if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
                     ListDetailsView(title: L10n.information, items: informationItems)
                         .padding(.horizontal)

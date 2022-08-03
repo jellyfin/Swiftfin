@@ -13,7 +13,7 @@ enum ItemViewType: String, CaseIterable, Defaults.Serializable {
     case compactPoster
     case compactLogo
     case cinematic
-    
+
     var label: String {
         switch self {
         case .compactPoster:

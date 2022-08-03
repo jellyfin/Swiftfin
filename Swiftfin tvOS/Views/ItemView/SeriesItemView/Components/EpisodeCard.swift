@@ -67,9 +67,9 @@ struct EpisodeCard: View {
                             .font(.caption)
                             .lineLimit(3)
                     }
-                    
+
                     Spacer(minLength: 0)
-                    
+
                     L10n.seeMore.text
                         .font(.caption)
                         .fontWeight(.medium)

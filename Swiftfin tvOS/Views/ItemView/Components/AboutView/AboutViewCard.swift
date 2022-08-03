@@ -29,7 +29,7 @@ extension ItemView.AboutView {
                         .lineLimit(2)
 
                     Spacer()
-                    
+
                     TruncatedTextView(text: text, seeMoreAction: {})
                         .font(.subheadline)
                         .lineLimit(4)

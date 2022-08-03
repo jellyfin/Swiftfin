@@ -20,7 +20,7 @@ extension iPadOSSeriesItemView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
-                
+
                 // MARK: Episodes
 
                 SeriesEpisodesView(viewModel: viewModel)

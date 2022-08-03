@@ -11,7 +11,7 @@ import SwiftUI
 extension iPadOSCollectionItemView {
 
     struct ContentView: View {
-        
+
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
@@ -57,7 +57,7 @@ extension iPadOSCollectionItemView {
                         itemRouter.route(to: \.item, item)
                     }
                 }
-                
+
                 ItemView.AboutView(viewModel: viewModel)
             }
         }

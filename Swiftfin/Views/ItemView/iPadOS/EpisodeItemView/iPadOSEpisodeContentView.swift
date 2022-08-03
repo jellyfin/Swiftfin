@@ -59,7 +59,7 @@ extension iPadOSEpisodeItemView {
 
                     Divider()
                 }
-                
+
                 ItemView.AboutView(viewModel: viewModel)
             }
         }

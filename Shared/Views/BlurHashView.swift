@@ -13,7 +13,7 @@ struct BlurHashView: UIViewRepresentable {
 
     private let blurHash: String
     private let size: CGSize
-    
+
     init(blurHash: String, size: CGSize = .Circle(radius: 12)) {
         self.blurHash = blurHash
         self.size = size

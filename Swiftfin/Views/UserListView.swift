@@ -58,7 +58,7 @@ struct UserListView: View {
             L10n.signInGetStarted.text
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
-            
+
             PrimaryButton(title: L10n.signIn) {
                 userListRouter.route(to: \.userSignIn, viewModel.server)
             }

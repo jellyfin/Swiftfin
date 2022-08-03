@@ -33,10 +33,12 @@ struct HomeView: View {
                             items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
                             forcedItemSubtitle: L10n.recentlyAdded
                         )
-                        
+
                         if !viewModel.nextUpItems.isEmpty {
-                            PortraitPosterHStack(title: L10n.nextUp,
-                                                 items: viewModel.nextUpItems) { item in
+                            PortraitPosterHStack(
+                                title: L10n.nextUp,
+                                items: viewModel.nextUpItems
+                            ) { item in
                                 router.route(to: \.item, item)
                             }
                         }
@@ -45,17 +47,21 @@ struct HomeView: View {
                             viewModel: viewModel,
                             items: viewModel.resumeItems.map { .init(item: $0, type: .resume) }
                         )
-                        
+
                         if !viewModel.nextUpItems.isEmpty {
-                            PortraitPosterHStack(title: L10n.nextUp,
-                                                 items: viewModel.nextUpItems) { item in
+                            PortraitPosterHStack(
+                                title: L10n.nextUp,
+                                items: viewModel.nextUpItems
+                            ) { item in
                                 router.route(to: \.item, item)
                             }
                         }
-                        
+
                         if !viewModel.latestAddedItems.isEmpty {
-                            PortraitPosterHStack(title: L10n.recentlyAdded,
-                                                 items: viewModel.latestAddedItems) { item in
+                            PortraitPosterHStack(
+                                title: L10n.recentlyAdded,
+                                items: viewModel.latestAddedItems
+                            ) { item in
                                 router.route(to: \.item, item)
                             }
                         }

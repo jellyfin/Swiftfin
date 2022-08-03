@@ -20,7 +20,7 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         let content: () -> Content
-        
+
         private var topOpacity: CGFloat {
             let start = UIScreen.main.bounds.height * 0.45
             let end = UIScreen.main.bounds.height * 0.65
@@ -46,7 +46,7 @@ extension ItemView {
                 VStack(spacing: 0) {
                     VStack(spacing: 0) {
                         Spacer()
-                        
+
                         OverlayView(viewModel: viewModel)
                             .padding2(.horizontal)
                             .padding2(.bottom)
@@ -69,7 +69,7 @@ extension ItemView {
                         Color.systemBackground
                             .opacity(topOpacity)
                     }
-                    
+
                     content()
                         .padding(.vertical)
                         .background(Color.systemBackground)
@@ -78,12 +78,16 @@ extension ItemView {
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.horizontal)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset($scrollViewOffset,
-                          start: UIScreen.main.bounds.height * 0.65,
-                          end: UIScreen.main.bounds.height * 0.65 + 50)
-            .backgroundParallaxHeader($scrollViewOffset,
-                                      height: UIScreen.main.bounds.height * 0.8,
-                                      multiplier: 0.3) {
+            .navBarOffset(
+                $scrollViewOffset,
+                start: UIScreen.main.bounds.height * 0.65,
+                end: UIScreen.main.bounds.height * 0.65 + 50
+            )
+            .backgroundParallaxHeader(
+                $scrollViewOffset,
+                height: UIScreen.main.bounds.height * 0.8,
+                multiplier: 0.3
+            ) {
                 headerView
             }
         }
@@ -133,7 +137,7 @@ extension ItemView.iPadOSCinematicScrollView {
                         }
                         .font(.caption)
                         .foregroundColor(Color(UIColor.lightGray))
-                        
+
                         TruncatedTextView(text: viewModel.item.overview ?? L10n.noOverviewAvailable) {
                             itemRouter.route(to: \.itemOverview, viewModel.item)
                         }
@@ -145,7 +149,7 @@ extension ItemView.iPadOSCinematicScrollView {
                     .padding(.trailing, 200)
 
                     Spacer()
-                    
+
                     VStack(spacing: 10) {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)

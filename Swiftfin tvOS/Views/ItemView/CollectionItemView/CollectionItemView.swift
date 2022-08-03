@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct CollectionItemView: View {
-    
+
     @ObservedObject
     var viewModel: CollectionItemViewModel
 

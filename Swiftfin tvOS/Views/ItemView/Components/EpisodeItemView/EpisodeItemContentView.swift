@@ -11,7 +11,7 @@ import SwiftUI
 extension EpisodeItemView {
 
     struct ContentView: View {
-        
+
         @ObservedObject
         var viewModel: EpisodeItemViewModel
         @State
@@ -23,14 +23,14 @@ extension EpisodeItemView {
         private var focusGuide = FocusGuide()
         @State
         private var showName: Bool = false
-        
+
         var body: some View {
             VStack {
                 Self.EpisodeCinematicHeaderView(viewModel: viewModel)
                     .focusGuide(focusGuide, tag: "mediaButtons", bottom: "recommended")
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
-                
+
                 VStack(spacing: 0) {
 
                     Color.clear
@@ -96,9 +96,9 @@ extension EpisodeItemView {
 }
 
 extension EpisodeItemView.ContentView {
-    
+
     struct EpisodeCinematicHeaderView: View {
-        
+
         enum CinematicHeaderFocusLayer: Hashable {
             case top
             case playButton
@@ -130,7 +130,7 @@ extension EpisodeItemView.ContentView {
                                 .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         Text(viewModel.item.displayName)
                             .font(.title2)
                             .fontWeight(.semibold)

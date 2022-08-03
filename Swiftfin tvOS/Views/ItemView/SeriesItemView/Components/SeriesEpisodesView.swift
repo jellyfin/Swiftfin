@@ -92,7 +92,7 @@ extension SeriesEpisodesView {
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
-        
+
         @EnvironmentObject
         private var focusGuide: FocusGuide
         @FocusState
