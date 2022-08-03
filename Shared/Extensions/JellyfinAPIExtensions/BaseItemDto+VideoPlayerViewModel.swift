@@ -125,21 +125,21 @@ extension BaseItemDto {
                 modifiedSelfItem.mediaStreams = currentMediaSource.mediaStreams
 
                 // TODO: other forms of media subtitle
-                if self.itemType == .episode {
-                    if let seriesName = self.seriesName, let episodeLocator = self.getEpisodeLocator() {
+                if self.type == .episode {
+                    if let seriesName = self.seriesName, let episodeLocator = self.episodeLocator {
                         subtitle = "\(seriesName) - \(episodeLocator)"
                     }
                 }
 
                 let subtitlesEnabled = defaultSubtitleStream != nil
 
-                let shouldShowAutoPlay = Defaults[.shouldShowAutoPlay] && itemType == .episode
+                let shouldShowAutoPlay = Defaults[.shouldShowAutoPlay] && type == .episode
                 let autoplayEnabled = Defaults[.autoplayEnabled] && shouldShowAutoPlay
 
                 let overlayType = Defaults[.overlayType]
 
-                let shouldShowPlayPreviousItem = Defaults[.shouldShowPlayPreviousItem] && itemType == .episode
-                let shouldShowPlayNextItem = Defaults[.shouldShowPlayNextItem] && itemType == .episode
+                let shouldShowPlayPreviousItem = Defaults[.shouldShowPlayPreviousItem] && type == .episode
+                let shouldShowPlayNextItem = Defaults[.shouldShowPlayNextItem] && type == .episode
 
                 var fileName: String?
                 if let lastInPath = currentMediaSource.path?.split(separator: "/").last {
@@ -155,6 +155,7 @@ extension BaseItemDto {
                     hlsStreamURL: hlsStreamURL,
                     streamType: streamType,
                     response: response,
+                    videoStream: videoStream!,
                     audioStreams: audioStreams,
                     subtitleStreams: subtitleStreams,
                     chapters: modifiedSelfItem.chapters ?? [],
@@ -292,21 +293,21 @@ extension BaseItemDto {
                 modifiedSelfItem.mediaStreams = currentMediaSource.mediaStreams
 
                 // TODO: other forms of media subtitle
-                if self.itemType == .episode {
-                    if let seriesName = self.seriesName, let episodeLocator = self.getEpisodeLocator() {
+                if self.type == .episode {
+                    if let seriesName = self.seriesName, let episodeLocator = self.episodeLocator {
                         subtitle = "\(seriesName) - \(episodeLocator)"
                     }
                 }
 
                 let subtitlesEnabled = defaultSubtitleStream != nil
 
-                let shouldShowAutoPlay = Defaults[.shouldShowAutoPlay] && itemType == .episode
+                let shouldShowAutoPlay = Defaults[.shouldShowAutoPlay] && type == .episode
                 let autoplayEnabled = Defaults[.autoplayEnabled] && shouldShowAutoPlay
 
                 let overlayType = Defaults[.overlayType]
 
-                let shouldShowPlayPreviousItem = Defaults[.shouldShowPlayPreviousItem] && itemType == .episode
-                let shouldShowPlayNextItem = Defaults[.shouldShowPlayNextItem] && itemType == .episode
+                let shouldShowPlayPreviousItem = Defaults[.shouldShowPlayPreviousItem] && type == .episode
+                let shouldShowPlayNextItem = Defaults[.shouldShowPlayNextItem] && type == .episode
 
                 var fileName: String?
                 if let lastInPath = currentMediaSource.path?.split(separator: "/").last {
@@ -322,6 +323,7 @@ extension BaseItemDto {
                     hlsStreamURL: hlsStreamURL,
                     streamType: streamType,
                     response: response,
+                    videoStream: videoStream!,
                     audioStreams: audioStreams,
                     subtitleStreams: subtitleStreams,
                     chapters: modifiedSelfItem.chapters ?? [],
