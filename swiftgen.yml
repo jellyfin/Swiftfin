@@ -3,5 +3,3 @@ strings:
   outputs:
     - templateName: structured-swift5
       output: Shared/Strings/Strings.swift
-      params:
-        lookupFunction: TranslationService.shared.lookupTranslation(forKey:inTable:)
