@@ -25,7 +25,7 @@ extension MovieItemView {
         private var showLogo: Bool = false
 
         var body: some View {
-            VStack {
+            VStack(spacing: 0) {
 
                 ItemView.CinematicHeaderView(viewModel: viewModel)
                     .focusGuide(focusGuide, tag: "mediaButtons", bottom: "recommended")

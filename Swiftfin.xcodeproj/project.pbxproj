@@ -313,6 +313,8 @@
 		E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD4012717EE79009D4DAF /* UserListCoordinator.swift */; };
 		E14B4141279354770016CBE5 /* LocalizedLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B4140279354770016CBE5 /* LocalizedLookup.swift */; };
 		E14B4142279354770016CBE5 /* LocalizedLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B4140279354770016CBE5 /* LocalizedLookup.swift */; };
+		E1546777289AF46E00087E35 /* CollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1546776289AF46E00087E35 /* CollectionItemView.swift */; };
+		E154677A289AF48200087E35 /* CollectionItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1546779289AF48200087E35 /* CollectionItemContentView.swift */; };
 		E159AA0B28874D2B00FEBF86 /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = E159AA0A28874D2B00FEBF86 /* Defaults+Workaround.swift */; };
 		E159AA0D28874D2B00FEBF86 /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = E159AA0A28874D2B00FEBF86 /* Defaults+Workaround.swift */; };
 		E168BD10289A4162001A6922 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD08289A4162001A6922 /* HomeView.swift */; };
@@ -794,6 +796,8 @@
 		E13DD3FB2717EAE8009D4DAF /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
 		E13DD4012717EE79009D4DAF /* UserListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListCoordinator.swift; sourceTree = "<group>"; };
 		E14B4140279354770016CBE5 /* LocalizedLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedLookup.swift; sourceTree = "<group>"; };
+		E1546776289AF46E00087E35 /* CollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemView.swift; sourceTree = "<group>"; };
+		E1546779289AF48200087E35 /* CollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemContentView.swift; sourceTree = "<group>"; };
 		E159AA0A28874D2B00FEBF86 /* Defaults+Workaround.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Defaults+Workaround.swift"; path = "../../../../../Downloads/Swiftfin-main/Shared/Extensions/Defaults+Workaround.swift"; sourceTree = "<group>"; };
 		E168BD08289A4162001A6922 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		E168BD09289A4162001A6922 /* HomeContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeContentView.swift; sourceTree = "<group>"; };
@@ -1725,6 +1729,15 @@
 			path = ItemView;
 			sourceTree = "<group>";
 		};
+		E1546778289AF47100087E35 /* CollectionItemView */ = {
+			isa = PBXGroup;
+			children = (
+				E1546776289AF46E00087E35 /* CollectionItemView.swift */,
+				E1546779289AF48200087E35 /* CollectionItemContentView.swift */,
+			);
+			path = CollectionItemView;
+			sourceTree = "<group>";
+		};
 		E168BD06289A414B001A6922 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -1947,6 +1960,7 @@
 				E1C925FD2887565C002A7A66 /* ScrollViews */,
 				E1C926042887565C002A7A66 /* SeriesItemView */,
 				53CD2A3F268A49C2002ABD4E /* ItemView.swift */,
+				E1546778289AF47100087E35 /* CollectionItemView */,
 			);
 			path = ItemView;
 			sourceTree = "<group>";
@@ -2427,6 +2441,7 @@
 				E1C9260C2887565C002A7A66 /* MovieItemContentView.swift in Sources */,
 				E1C9260B2887565C002A7A66 /* MovieItemView.swift in Sources */,
 				62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
+				E1546777289AF46E00087E35 /* CollectionItemView.swift in Sources */,
 				E1C812CC277AE40A00918266 /* VideoPlayerView.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
 				E122A9142788EAAD0060FA63 /* MediaStreamExtension.swift in Sources */,
@@ -2495,6 +2510,7 @@
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				E18E02202887492B0022598C /* AttributeFillView.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
+				E154677A289AF48200087E35 /* CollectionItemContentView.swift in Sources */,
 				E1C812D1277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift in Sources */,
 				E1A2C156279A7D5A005EC829 /* UIApplicationExtensions.swift in Sources */,
 				E193D53D27193F9700900D82 /* UserSignInCoordinator.swift in Sources */,

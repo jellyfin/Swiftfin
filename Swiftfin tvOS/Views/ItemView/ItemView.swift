@@ -27,6 +27,8 @@ struct ItemView: View {
             EpisodeItemView(viewModel: .init(item: item))
         case .series:
             SeriesItemView(viewModel: .init(item: item))
+        case .boxSet:
+            CollectionItemView(viewModel: .init(item: item))
         default:
             Text(L10n.notImplementedYetWithType(item.type ?? "--"))
         }

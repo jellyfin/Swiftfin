@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-struct MovieItemView: View {
-
+struct CollectionItemView: View {
+    
     @ObservedObject
-    var viewModel: MovieItemViewModel
+    var viewModel: CollectionItemViewModel
 
     var body: some View {
         ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
