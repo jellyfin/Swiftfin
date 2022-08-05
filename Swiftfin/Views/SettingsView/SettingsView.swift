@@ -14,20 +14,10 @@ import SwiftUI
 struct SettingsView: View {
 
     @EnvironmentObject
-    var settingsRouter: SettingsCoordinator.Router
+    private var settingsRouter: SettingsCoordinator.Router
     @ObservedObject
     var viewModel: SettingsViewModel
 
-    @Default(.inNetworkBandwidth)
-    var inNetworkStreamBitrate
-    @Default(.outOfNetworkBandwidth)
-    var outOfNetworkStreamBitrate
-    @Default(.isAutoSelectSubtitles)
-    var isAutoSelectSubtitles
-    @Default(.autoSelectSubtitlesLangCode)
-    var autoSelectSubtitlesLangcode
-    @Default(.autoSelectAudioLangCode)
-    var autoSelectAudioLangcode
     @Default(.appAppearance)
     var appAppearance
     @Default(.overlayType)
@@ -48,6 +38,8 @@ struct SettingsView: View {
     var resumeOffset
     @Default(.subtitleSize)
     var subtitleSize
+    @Default(.itemViewType)
+    var itemViewType
     @Default(.subtitleFontName)
     var subtitleFontName
 
@@ -95,21 +87,6 @@ struct SettingsView: View {
                     }
                 }
             }
-
-            // TODO: Implement these for playback
-            //            Section(header: Text("Networking")) {
-            //                Picker("Default local quality", selection: $inNetworkStreamBitrate) {
-            //                    ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
-            //                        Text(bitrate.name).tag(bitrate.value)
-            //                    }
-            //                }
-//
-            //                Picker("Default remote quality", selection: $outOfNetworkStreamBitrate) {
-            //                    ForEach(self.viewModel.bitrates, id: \.self) { bitrate in
-            //                        Text(bitrate.name).tag(bitrate.value)
-            //                    }
-            //                }
-            //            }
 
             Section(header: L10n.videoPlayer.text) {
                 Picker(L10n.jumpForwardLength, selection: $jumpForwardLength) {
@@ -168,6 +145,13 @@ struct SettingsView: View {
                             .foregroundColor(.primary)
                         Spacer()
                         Image(systemName: "chevron.right")
+                    }
+                }
+
+                // Not localized yet. Will be in a settings re-organization
+                Picker("Item View", selection: $itemViewType) {
+                    ForEach(ItemViewType.allCases, id: \.self) { itemViewType in
+                        Text(itemViewType.label).tag(itemViewType.rawValue)
                     }
                 }
 

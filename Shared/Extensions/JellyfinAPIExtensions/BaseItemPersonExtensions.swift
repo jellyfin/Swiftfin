@@ -12,39 +12,13 @@ import UIKit
 
 extension BaseItemPerson {
 
-    // MARK: Get Image
-
-    func getImage(baseURL: String, maxWidth: Int) -> URL {
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: id ?? "",
-            imageType: .primary,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: primaryImageTag
-        ).URLString
-        return URL(string: urlString)!
-    }
-
-    func getBlurHash() -> String {
-        let imgURL = getImage(baseURL: "", maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"],
-              let hash = imageBlurHashes?.primary?[imgTag]
-        else {
-            return "001fC^"
-        }
-
-        return hash
-    }
-
     // MARK: First Role
 
     // Jellyfin will grab all roles the person played in the show which makes the role
     //    text too long. This will grab the first role which:
     //      - assumes that the most important role is the first
     //      - will also grab the last "(<text>)" instance, like "(voice)"
-    func firstRole() -> String? {
+    var firstRole: String? {
         guard let role = self.role else { return nil }
         let split = role.split(separator: "/")
         guard split.count > 1 else { return role }
@@ -61,56 +35,18 @@ extension BaseItemPerson {
 
         return final
     }
-}
-
-// MARK: PortraitImageStackable
-
-extension BaseItemPerson: PortraitImageStackable {
-    public var portraitImageID: String {
-        (id ?? "noid") + title + (subtitle ?? "nodescription") + blurHash + failureInitials
-    }
-
-    public func imageURLConstructor(maxWidth: Int) -> URL {
-        self.getImage(baseURL: SessionManager.main.currentLogin.server.currentURI, maxWidth: maxWidth)
-    }
-
-    public var title: String {
-        self.name ?? ""
-    }
-
-    public var subtitle: String? {
-        self.firstRole()
-    }
-
-    public var blurHash: String {
-        self.getBlurHash()
-    }
-
-    public var failureInitials: String {
-        guard let name = self.name else { return "" }
-        let initials = name.split(separator: " ").compactMap { String($0).first }
-        return String(initials)
-    }
-
-    public var showTitle: Bool {
-        true
-    }
-}
-
-// MARK: DiplayedType
-
-extension BaseItemPerson {
 
     // Only displayed person types.
-    // Will ignore people like "GuestStar"
-    enum DisplayedType: String, CaseIterable {
+    // Will ignore types like "GuestStar"
+    enum DisplayedType: String {
         case actor = "Actor"
         case director = "Director"
         case writer = "Writer"
         case producer = "Producer"
+    }
 
-        static var allCasesRaw: [String] {
-            self.allCases.map(\.rawValue)
-        }
+    var isDisplayed: Bool {
+        guard let type = type else { return false }
+        return DisplayedType(rawValue: type) != nil
     }
 }

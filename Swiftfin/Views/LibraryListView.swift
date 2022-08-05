@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -14,20 +13,9 @@ import SwiftUI
 
 struct LibraryListView: View {
     @EnvironmentObject
-    var libraryListRouter: LibraryListCoordinator.Router
+    private var libraryListRouter: LibraryListCoordinator.Router
     @StateObject
     var viewModel = LibraryListViewModel()
-
-    @Default(.Experimental.liveTVAlphaEnabled)
-    var liveTVAlphaEnabled
-
-    var supportedCollectionTypes: [BaseItemDto.ItemType] {
-        if liveTVAlphaEnabled {
-            return [.movie, .season, .series, .liveTV, .boxset, .unknown]
-        } else {
-            return [.movie, .season, .series, .boxset, .unknown]
-        }
-    }
 
     var body: some View {
         ScrollView {
@@ -57,14 +45,9 @@ struct LibraryListView: View {
                 .padding(.bottom, 5)
 
                 if !viewModel.isLoading {
-                    ForEach(viewModel.libraries.filter { [self] library in
-                        let collectionType = library.collectionType ?? "other"
-                        let itemType = BaseItemDto.ItemType(rawValue: collectionType) ?? .unknown
-                        return self.supportedCollectionTypes.contains(itemType)
-                    }, id: \.id) { library in
+                    ForEach(viewModel.filteredLibraries, id: \.id) { library in
                         Button {
-                            let itemType = BaseItemDto.ItemType(rawValue: library.collectionType ?? "other") ?? .unknown
-                            if itemType == .liveTV {
+                            if library.collectionType == "livetv" {
                                 libraryListRouter.route(to: \.liveTV)
                             } else {
                                 libraryListRouter.route(
@@ -77,7 +60,7 @@ struct LibraryListView: View {
                             }
                         } label: {
                             ZStack {
-                                ImageView(library.getPrimaryImage(maxWidth: 500), blurHash: library.getPrimaryImageBlurHash())
+                                ImageView(library.imageSource(.primary, maxWidth: 500))
                                     .opacity(0.4)
                                     .accessibilityIgnoresInvertColors()
                                 HStack {

@@ -37,4 +37,9 @@ extension String {
     var text: Text {
         Text(self)
     }
+
+    var initials: String {
+        let initials = self.split(separator: " ").compactMap(\.first)
+        return String(initials)
+    }
 }

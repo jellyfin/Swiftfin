@@ -10,173 +10,20 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-// 001fC^ = dark grey plain blurhash
+extension BaseItemDto: Identifiable {}
 
-public extension BaseItemDto {
-    // MARK: Images
+extension BaseItemDto {
 
-    func getSeriesBackdropImageBlurHash() -> String {
-        let imgURL = getSeriesBackdropImage(maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"],
-              let hash = imageBlurHashes?.backdrop?[imgTag]
-        else {
-            return "001fC^"
-        }
-
-        return hash
+    var episodeLocator: String? {
+        guard let episodeNo = indexNumber else { return nil }
+        return L10n.episodeNumber(episodeNo)
     }
 
-    func getSeriesPrimaryImageBlurHash() -> String {
-        let imgURL = getSeriesPrimaryImage(maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"],
-              let hash = imageBlurHashes?.primary?[imgTag]
-        else {
-            return "001fC^"
-        }
-
-        return hash
-    }
-
-    func getPrimaryImageBlurHash() -> String {
-        let imgURL = getPrimaryImage(maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"],
-              let hash = imageBlurHashes?.primary?[imgTag]
-        else {
-            return "001fC^"
-        }
-
-        return hash
-    }
-
-    func getBackdropImageBlurHash() -> String {
-        let imgURL = getBackdropImage(maxWidth: 1)
-        guard let imgTag = imgURL.queryParameters?["tag"] else {
-            return "001fC^"
-        }
-
-        if imgURL.queryParameters?[ImageType.backdrop.rawValue] == nil {
-            if itemType == .episode {
-                return imageBlurHashes?.backdrop?.values.first ?? "001fC^"
-            } else {
-                return imageBlurHashes?.backdrop?[imgTag] ?? "001fC^"
-            }
-        } else {
-            return imageBlurHashes?.primary?[imgTag] ?? "001fC^"
-        }
-    }
-
-    func getBackdropImage(maxWidth: Int) -> URL {
-        var imageType = ImageType.backdrop
-        var imageTag: String?
-        var imageItemId = id ?? ""
-
-        if primaryImageAspectRatio ?? 0.0 < 1.0 {
-            if !(backdropImageTags?.isEmpty ?? true) {
-                imageTag = backdropImageTags?.first
-            }
-        } else {
-            imageType = .primary
-            imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
-        }
-
-        if imageTag == nil || imageItemId.isEmpty {
-            if !(parentBackdropImageTags?.isEmpty ?? true) {
-                imageTag = parentBackdropImageTags?.first
-                imageItemId = parentBackdropItemId ?? ""
-            }
-        }
-
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: imageItemId,
-            imageType: imageType,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: imageTag
-        ).URLString
-        return URL(string: urlString)!
-    }
-
-    func getThumbImage(maxWidth: Int) -> URL {
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: id ?? "",
-            imageType: .thumb,
-            maxWidth: Int(x),
-            quality: 96
-        ).URLString
-        return URL(string: urlString)!
-    }
-
-    func getEpisodeLocator() -> String? {
+    var seasonEpisodeLocator: String? {
         if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
             return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
         }
         return nil
-    }
-
-    func getSeriesBackdropImage(maxWidth: Int) -> URL {
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: parentBackdropItemId ?? "",
-            imageType: .backdrop,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: parentBackdropImageTags?.first
-        ).URLString
-        return URL(string: urlString)!
-    }
-
-    func getSeriesPrimaryImage(maxWidth: Int) -> URL {
-        guard let seriesId = seriesId else {
-            return getPrimaryImage(maxWidth: maxWidth)
-        }
-
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: seriesId,
-            imageType: .primary,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: seriesPrimaryImageTag
-        ).URLString
-        return URL(string: urlString)!
-    }
-
-    func getSeriesThumbImage(maxWidth: Int) -> URL {
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: seriesId ?? "",
-            imageType: .thumb,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: seriesPrimaryImageTag
-        ).URLString
-        return URL(string: urlString)!
-    }
-
-    func getPrimaryImage(maxWidth: Int) -> URL {
-        let imageType = ImageType.primary
-        var imageTag = imageTags?[ImageType.primary.rawValue] ?? ""
-        var imageItemId = id ?? ""
-
-        if imageTag.isEmpty || imageItemId.isEmpty {
-            imageTag = seriesPrimaryImageTag ?? ""
-            imageItemId = seriesId ?? ""
-        }
-
-        let x = UIScreen.main.nativeScale * CGFloat(maxWidth)
-
-        let urlString = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: imageItemId,
-            imageType: imageType,
-            maxWidth: Int(x),
-            quality: 96,
-            tag: imageTag
-        ).URLString
-        return URL(string: urlString)!
     }
 
     // MARK: Calculations
@@ -238,61 +85,8 @@ public extension BaseItemDto {
         return 0
     }
 
-    // MARK: ItemType
-
-    enum ItemType: String {
-        case movie = "Movie"
-        case season = "Season"
-        case episode = "Episode"
-        case series = "Series"
-        case boxset = "BoxSet"
-        case collectionFolder = "CollectionFolder"
-        case folder = "Folder"
-        case liveTV = "LiveTV"
-
-        case unknown
-
-        var showDetails: Bool {
-            switch self {
-            case .season, .series:
-                return false
-            default:
-                return true
-            }
-        }
-
-        public init?(rawValue: String) {
-            let lowerCase = rawValue.lowercased()
-            switch lowerCase {
-            case "movie": self = .movie
-            case "season": self = .season
-            case "episode": self = .episode
-            case "series": self = .series
-            case "boxset": self = .boxset
-            case "collectionfolder": self = .collectionFolder
-            case "folder": self = .folder
-            case "livetv": self = .liveTV
-            default: self = .unknown
-            }
-        }
-    }
-
-    var itemType: ItemType {
-        guard let originalType = type, let knownType = ItemType(rawValue: originalType.rawValue) else { return .unknown }
-        return knownType
-    }
-
-    // MARK: PortraitHeaderViewURL
-
-    func portraitHeaderViewURL(maxWidth: Int) -> URL {
-        switch itemType {
-        case .movie, .season, .series, .boxset, .collectionFolder, .folder, .liveTV:
-            return getPrimaryImage(maxWidth: maxWidth)
-        case .episode:
-            return getSeriesPrimaryImage(maxWidth: maxWidth)
-        case .unknown:
-            return getPrimaryImage(maxWidth: maxWidth)
-        }
+    var displayName: String {
+        name ?? "--"
     }
 
     // MARK: ItemDetail
@@ -329,18 +123,26 @@ public extension BaseItemDto {
 
             if !audioStreams.isEmpty {
                 let audioList = audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                    .joined(separator: ", ")
+                    .joined(separator: "\n")
                 mediaItems.append(ItemDetail(title: L10n.audio, content: audioList))
             }
 
             if !subtitleStreams.isEmpty {
                 let subtitleList = subtitleStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                    .joined(separator: ", ")
+                    .joined(separator: "\n")
                 mediaItems.append(ItemDetail(title: L10n.subtitles, content: subtitleList))
             }
         }
 
         return mediaItems
+    }
+
+    var subtitleStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .subtitle } ?? []
+    }
+
+    var audioStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .audio } ?? []
     }
 
     // MARK: Missing and Unaired
@@ -370,6 +172,13 @@ public extension BaseItemDto {
         return dateFormatter.string(from: premiereDate)
     }
 
+    var premiereDateYear: String? {
+        guard let premiereDate = premiereDate else { return nil }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY"
+        return dateFormatter.string(from: premiereDate)
+    }
+
     // MARK: Chapter Images
 
     func getChapterImage(maxWidth: Int) -> [URL] {
@@ -388,5 +197,53 @@ public extension BaseItemDto {
         }
 
         return chapterImageURLs
+    }
+
+    // TODO: Don't use spoof objects as a placeholder or no results
+
+    static var placeHolder: BaseItemDto {
+        .init(
+            name: "Placeholder",
+            id: "1",
+            overview: String(repeating: "a", count: 100),
+            indexNumber: 20
+        )
+    }
+
+    static var noResults: BaseItemDto {
+        .init(name: L10n.noResults)
+    }
+}
+
+extension BaseItemDtoImageBlurHashes {
+    subscript(imageType: ImageType) -> [String: String]? {
+        switch imageType {
+        case .primary:
+            return primary
+        case .art:
+            return art
+        case .backdrop:
+            return backdrop
+        case .banner:
+            return banner
+        case .logo:
+            return logo
+        case .thumb:
+            return thumb
+        case .disc:
+            return disc
+        case .box:
+            return box
+        case .screenshot:
+            return screenshot
+        case .menu:
+            return menu
+        case .chapter:
+            return chapter
+        case .boxRear:
+            return boxRear
+        case .profile:
+            return profile
+        }
     }
 }

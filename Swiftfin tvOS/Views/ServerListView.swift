@@ -12,7 +12,7 @@ import SwiftUI
 struct ServerListView: View {
 
     @EnvironmentObject
-    var serverListRouter: ServerListCoordinator.Router
+    private var serverListRouter: ServerListCoordinator.Router
     @ObservedObject
     var viewModel: ServerListViewModel
 

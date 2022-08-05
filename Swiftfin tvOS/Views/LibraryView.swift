@@ -12,7 +12,7 @@ import SwiftUICollection
 
 struct LibraryView: View {
     @EnvironmentObject
-    var libraryRouter: LibraryCoordinator.Router
+    private var libraryRouter: LibraryCoordinator.Router
     @StateObject
     var viewModel: LibraryViewModel
     var title: String
@@ -67,7 +67,7 @@ struct LibraryView: View {
                 GeometryReader { _ in
                     if let item = cell.item {
                         Button {
-                            libraryRouter.route(to: \.modalItem, item)
+                            libraryRouter.route(to: \.item, item)
                         } label: {
                             PortraitItemElement(item: item)
                         }

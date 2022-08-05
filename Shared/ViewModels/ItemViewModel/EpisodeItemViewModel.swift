@@ -11,39 +11,22 @@ import Foundation
 import JellyfinAPI
 import Stinsen
 
-final class EpisodeItemViewModel: ItemViewModel, EpisodesRowManager {
+final class EpisodeItemViewModel: ItemViewModel {
 
     @RouterObject
-    var itemRouter: ItemCoordinator.Router?
+    private var itemRouter: ItemCoordinator.Router?
     @Published
-    var series: BaseItemDto?
+    var playButtonText: String = ""
     @Published
-    var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
-    @Published
-    var selectedSeason: BaseItemDto?
+    var mediaDetailItems: [[BaseItemDto.ItemDetail]] = []
 
     override init(item: BaseItemDto) {
         super.init(item: item)
 
-        getEpisodeSeries()
-        retrieveSeasons()
-    }
-
-    override func getItemDisplayName() -> String {
-        guard let episodeLocator = item.getEpisodeLocator() else { return item.name ?? "" }
-        return "\(episodeLocator)\n\(item.name ?? "")"
-    }
-
-    func getEpisodeSeries() {
-        guard let id = item.seriesId else { return }
-        UserLibraryAPI.getItem(userId: SessionManager.main.currentLogin.user.id, itemId: id)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] item in
-                self?.series = item
-            })
-            .store(in: &cancellables)
+        $videoPlayerViewModels.sink(receiveValue: { newValue in
+            self.mediaDetailItems = self.createMediaDetailItems(viewModels: newValue)
+        })
+        .store(in: &cancellables)
     }
 
     override func updateItem() {
@@ -71,5 +54,31 @@ final class EpisodeItemViewModel: ItemViewModel, EpisodesRowManager {
             }
         }
         .store(in: &cancellables)
+    }
+
+    private func createMediaDetailItems(viewModels: [VideoPlayerViewModel]) -> [[BaseItemDto.ItemDetail]] {
+        var fileMediaItems: [[BaseItemDto.ItemDetail]] = []
+
+        for viewModel in viewModels {
+
+            let audioStreams = viewModel.audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
+                .joined(separator: ", ")
+
+            let subtitleStreams = viewModel.subtitleStreams
+                .compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
+                .joined(separator: ", ")
+
+            let currentMediaItems: [BaseItemDto.ItemDetail] = [
+                .init(title: "File", content: viewModel.filename ?? "--"),
+                .init(title: "Audio", content: audioStreams),
+                .init(title: "Subtitles", content: subtitleStreams),
+            ]
+
+            fileMediaItems.append(currentMediaItems)
+        }
+
+        //        print(fileMediaItems)
+
+        return fileMediaItems
     }
 }

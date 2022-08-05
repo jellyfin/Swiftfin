@@ -123,6 +123,7 @@ final class VideoPlayerViewModel: ViewModel {
     let directStreamURL: URL
     let transcodedStreamURL: URL?
     let hlsStreamURL: URL
+    let videoStream: MediaStream
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
     let chapters: [ChapterInfo]
@@ -220,6 +221,7 @@ final class VideoPlayerViewModel: ViewModel {
         hlsStreamURL: URL,
         streamType: ServerStreamType,
         response: PlaybackInfoResponse,
+        videoStream: MediaStream,
         audioStreams: [MediaStream],
         subtitleStreams: [MediaStream],
         chapters: [ChapterInfo],
@@ -243,6 +245,7 @@ final class VideoPlayerViewModel: ViewModel {
         self.hlsStreamURL = hlsStreamURL
         self.streamType = streamType
         self.response = response
+        self.videoStream = videoStream
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
         self.chapters = chapters
@@ -333,7 +336,7 @@ extension VideoPlayerViewModel {
 
 extension VideoPlayerViewModel {
     func getAdjacentEpisodes() {
-        guard let seriesID = item.seriesId, item.itemType == .episode else { return }
+        guard let seriesID = item.seriesId, item.type == .episode else { return }
 
         TvShowsAPI.getEpisodes(
             seriesId: seriesID,

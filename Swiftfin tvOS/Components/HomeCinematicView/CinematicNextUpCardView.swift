@@ -12,27 +12,27 @@ import SwiftUI
 struct CinematicNextUpCardView: View {
 
     @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
+    private var homeRouter: HomeCoordinator.Router
     let item: BaseItemDto
     let showOverlay: Bool
 
     var body: some View {
         VStack(alignment: .leading) {
             Button {
-                homeRouter.route(to: \.modalItem, item)
+                homeRouter.route(to: \.item, item)
             } label: {
                 ZStack(alignment: .bottomLeading) {
 
-                    if item.itemType == .episode {
-                        ImageView(sources: [
-                            item.getSeriesThumbImage(maxWidth: 350),
-                            item.getSeriesBackdropImage(maxWidth: 350),
+                    if item.type == .episode {
+                        ImageView([
+                            item.seriesImageSource(.thumb, maxWidth: 350),
+                            item.seriesImageSource(.backdrop, maxWidth: 350),
                         ])
                         .frame(width: 350, height: 210)
                     } else {
                         ImageView([
-                            .init(url: item.getThumbImage(maxWidth: 350)),
-                            .init(url: item.getBackdropImage(maxWidth: 350), blurHash: item.getBackdropImageBlurHash()),
+                            item.imageSource(.thumb, maxWidth: 350),
+                            item.imageSource(.backdrop, maxWidth: 350),
                         ])
                         .frame(width: 350, height: 210)
                     }

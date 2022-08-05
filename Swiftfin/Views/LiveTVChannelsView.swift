@@ -16,7 +16,7 @@ typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 
 struct LiveTVChannelsView: View {
     @EnvironmentObject
-    var router: LiveTVCoordinator.Router
+    private var liveTVRouter: LiveTVCoordinator.Router
     @StateObject
     var viewModel = LiveTVChannelsViewModel()
     @State
@@ -97,7 +97,7 @@ struct LiveTVChannelsView: View {
             onSelect: { loadingAction in
                 loadingAction(true)
                 self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-                    self.router.route(to: \.videoPlayer, playerViewModel)
+                    self.liveTVRouter.route(to: \.videoPlayer, playerViewModel)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         loadingAction(false)
                     }

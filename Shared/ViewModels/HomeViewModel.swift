@@ -25,7 +25,7 @@ final class HomeViewModel: ViewModel {
     var libraries: [BaseItemDto] = []
 
     // temp
-    var recentFilterSet = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: [.dateAdded])
+    static let recentFilterSet = LibraryFilters(filters: [], sortOrder: [.descending], sortBy: [.dateAdded])
 
     override init() {
         super.init()
@@ -139,7 +139,7 @@ final class HomeViewModel: ViewModel {
             includeItemTypes: [.movie, .series],
             enableImageTypes: [.primary, .backdrop, .thumb],
             enableUserData: true,
-            limit: 8
+            limit: 20
         )
         .sink { completion in
             switch completion {
@@ -161,7 +161,7 @@ final class HomeViewModel: ViewModel {
     private func refreshResumeItems() {
         ItemsAPI.getResumeItems(
             userId: SessionManager.main.currentLogin.user.id,
-            limit: 6,
+            limit: 20,
             fields: [
                 .primaryImageAspectRatio,
                 .seriesPrimaryImage,
@@ -210,7 +210,7 @@ final class HomeViewModel: ViewModel {
     private func refreshNextUpItems() {
         TvShowsAPI.getNextUp(
             userId: SessionManager.main.currentLogin.user.id,
-            limit: 6,
+            limit: 20,
             fields: [
                 .primaryImageAspectRatio,
                 .seriesPrimaryImage,

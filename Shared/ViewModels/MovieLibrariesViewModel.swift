@@ -29,7 +29,7 @@ final class MovieLibrariesViewModel: ViewModel {
     private let columns: Int
 
     @RouterObject
-    var router: MovieLibrariesCoordinator.Router?
+    private var router: MovieLibrariesCoordinator.Router?
 
     init(columns: Int = 7) {
         self.columns = columns

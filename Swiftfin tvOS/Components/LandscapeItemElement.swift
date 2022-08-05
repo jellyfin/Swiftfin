@@ -54,65 +54,61 @@ struct LandscapeItemElement: View {
 
     var body: some View {
         VStack {
-            ImageView(
-                item.type == .episode && !(inSeasonView ?? false) ? item.getSeriesBackdropImage(maxWidth: 445) : item
-                    .getBackdropImage(maxWidth: 445),
-                blurHash: item.type == .episode ? item.getSeriesBackdropImageBlurHash() : item.getBackdropImageBlurHash()
-            )
-            .frame(width: 445, height: 250)
-            .cornerRadius(10)
-            .ignoresSafeArea()
-            .overlay(
-                ZStack {
-                    if item.userData?.played ?? false {
-                        Image(systemName: "circle.fill")
-                            .foregroundColor(.white)
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(Color(.systemBlue))
-                    }
-                }.padding(2)
-                    .opacity(1),
-                alignment: .topTrailing
-            ).opacity(1)
-            .overlay(ZStack(alignment: .leading) {
-                if focused && item.userData?.playedPercentage != nil {
-                    Rectangle()
-                        .fill(LinearGradient(
-                            gradient: Gradient(colors: [.black, .clear]),
-                            startPoint: .bottom,
-                            endPoint: .top
-                        ))
-                        .frame(width: 445, height: 90)
-                        .mask(CutOffShadow())
-                    VStack(alignment: .leading) {
-                        Text("CONTINUE • \(item.getItemProgressString() ?? "")")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .offset(y: 5)
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.gray)
-                                .opacity(0.4)
-                                .frame(minWidth: 100, maxWidth: .infinity, minHeight: 12, maxHeight: 12)
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.jellyfinPurple)
-                                .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 4.45 - 0.16), height: 12)
+            ImageView(item.imageSource(.backdrop, maxWidth: 445))
+                .frame(width: 445, height: 250)
+                .cornerRadius(10)
+                .ignoresSafeArea()
+                .overlay(
+                    ZStack {
+                        if item.userData?.played ?? false {
+                            Image(systemName: "circle.fill")
+                                .foregroundColor(.white)
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(Color(.systemBlue))
                         }
-                    }.padding(12)
-                } else {
-                    EmptyView()
-                }
-            }, alignment: .bottomLeading)
-            .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
-            .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
+                    }.padding(2)
+                        .opacity(1),
+                    alignment: .topTrailing
+                ).opacity(1)
+                .overlay(ZStack(alignment: .leading) {
+                    if focused && item.userData?.playedPercentage != nil {
+                        Rectangle()
+                            .fill(LinearGradient(
+                                gradient: Gradient(colors: [.black, .clear]),
+                                startPoint: .bottom,
+                                endPoint: .top
+                            ))
+                            .frame(width: 445, height: 90)
+                            .mask(CutOffShadow())
+                        VStack(alignment: .leading) {
+                            Text("CONTINUE • \(item.getItemProgressString() ?? "")")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .offset(y: 5)
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.gray)
+                                    .opacity(0.4)
+                                    .frame(minWidth: 100, maxWidth: .infinity, minHeight: 12, maxHeight: 12)
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.jellyfinPurple)
+                                    .frame(width: CGFloat(item.userData?.playedPercentage ?? 0 * 4.45 - 0.16), height: 12)
+                            }
+                        }.padding(12)
+                    } else {
+                        EmptyView()
+                    }
+                }, alignment: .bottomLeading)
+                .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
+                .shadow(radius: focused ? 10.0 : 0, y: focused ? 10.0 : 0)
             if inSeasonView ?? false {
-                Text("\(item.getEpisodeLocator() ?? "") • \(item.name ?? "")")
+                Text("\(item.episodeLocator ?? "") • \(item.name ?? "")")
                     .font(.callout)
                     .fontWeight(.semibold)
                     .lineLimit(1)
                     .frame(width: 445)
             } else {
-                Text(item.type == .episode ? "\(item.seriesName ?? "") • \(item.getEpisodeLocator() ?? "")" : item.name ?? "")
+                Text(item.type == .episode ? "\(item.seriesName ?? "") • \(item.episodeLocator ?? "")" : item.name ?? "")
                     .font(.callout)
                     .fontWeight(.semibold)
                     .lineLimit(1)
@@ -122,16 +118,6 @@ struct LandscapeItemElement: View {
         .onChange(of: envFocused) { envFocus in
             withAnimation(.linear(duration: 0.15)) {
                 self.focused = envFocus
-            }
-
-            if envFocus == true {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    // your code here
-                    if focused == true {
-                        backgroundURL = item.getBackdropImage(maxWidth: 1080)
-                        BackgroundManager.current.setBackground(to: backgroundURL!, hash: item.getBackdropImageBlurHash())
-                    }
-                }
             }
         }
         .scaleEffect(focused ? 1.1 : 1)

@@ -12,7 +12,7 @@ import SwiftUICollection
 
 struct TVLibrariesView: View {
     @EnvironmentObject
-    var tvLibrariesRouter: TVLibrariesCoordinator.Router
+    private var tvLibrariesRouter: TVLibrariesCoordinator.Router
     @StateObject
     var viewModel: TVLibrariesViewModel
     var title: String

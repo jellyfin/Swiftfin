@@ -12,13 +12,13 @@ import SwiftUI
 struct ItemOverviewView: View {
 
     @EnvironmentObject
-    var itemOverviewRouter: ItemOverviewCoordinator.Router
+    private var itemOverviewRouter: ItemOverviewCoordinator.Router
     let item: BaseItemDto
 
     var body: some View {
         ScrollView(showsIndicators: false) {
             Text(item.overview ?? "")
-                .font(.footnote)
+                .font(.body)
                 .padding()
         }
         .navigationBarTitle(L10n.overview, displayMode: .inline)

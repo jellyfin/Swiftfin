@@ -8,20 +8,16 @@
 
 import Defaults
 import Foundation
+import Introspect
 import JellyfinAPI
 import SwiftUI
 
 struct HomeView: View {
 
     @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
-    @StateObject
-    var viewModel = HomeViewModel()
-    @Default(.showPosterLabels)
-    var showPosterLabels
-
-    @State
-    var showingSettings = false
+    private var router: HomeCoordinator.Router
+    @ObservedObject
+    var viewModel: HomeViewModel
 
     var body: some View {
         if viewModel.isLoading {
@@ -39,8 +35,12 @@ struct HomeView: View {
                         )
 
                         if !viewModel.nextUpItems.isEmpty {
-                            NextUpView(items: viewModel.nextUpItems)
-                                .focusSection()
+                            PortraitPosterHStack(
+                                title: L10n.nextUp,
+                                items: viewModel.nextUpItems
+                            ) { item in
+                                router.route(to: \.item, item)
+                            }
                         }
                     } else {
                         HomeCinematicView(
@@ -49,38 +49,27 @@ struct HomeView: View {
                         )
 
                         if !viewModel.nextUpItems.isEmpty {
-                            NextUpView(items: viewModel.nextUpItems)
-                                .focusSection()
+                            PortraitPosterHStack(
+                                title: L10n.nextUp,
+                                items: viewModel.nextUpItems
+                            ) { item in
+                                router.route(to: \.item, item)
+                            }
                         }
 
-                        PortraitItemsRowView(
-                            rowTitle: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems,
-                            showItemTitles: showPosterLabels
-                        ) { item in
-                            homeRouter.route(to: \.modalItem, item)
+                        if !viewModel.latestAddedItems.isEmpty {
+                            PortraitPosterHStack(
+                                title: L10n.recentlyAdded,
+                                items: viewModel.latestAddedItems
+                            ) { item in
+                                router.route(to: \.item, item)
+                            }
                         }
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestMediaView(viewModel: LatestMediaViewModel(library: library))
-                            .focusSection()
+                        LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
                     }
-
-                    Spacer(minLength: 100)
-
-                    HStack {
-                        Spacer()
-
-                        Button {
-                            viewModel.refresh()
-                        } label: {
-                            L10n.refresh.text
-                        }
-
-                        Spacer()
-                    }
-                    .focusSection()
                 }
             }
             .edgesIgnoringSafeArea(.top)

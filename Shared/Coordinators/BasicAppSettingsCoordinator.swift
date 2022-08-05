@@ -21,7 +21,7 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeAbout() -> some View {
-        AboutView()
+        AboutAppView()
     }
 
     @ViewBuilder

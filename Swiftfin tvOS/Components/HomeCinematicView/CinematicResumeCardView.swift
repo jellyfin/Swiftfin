@@ -12,7 +12,7 @@ import SwiftUI
 struct CinematicResumeCardView: View {
 
     @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
+    private var homeRouter: HomeCoordinator.Router
     @ObservedObject
     var viewModel: HomeViewModel
     let item: BaseItemDto
@@ -20,20 +20,20 @@ struct CinematicResumeCardView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Button {
-                homeRouter.route(to: \.modalItem, item)
+                homeRouter.route(to: \.item, item)
             } label: {
                 ZStack(alignment: .bottom) {
 
-                    if item.itemType == .episode {
-                        ImageView(sources: [
-                            item.getSeriesThumbImage(maxWidth: 350),
-                            item.getSeriesBackdropImage(maxWidth: 350),
+                    if item.type == .episode {
+                        ImageView([
+                            item.seriesImageSource(.thumb, maxWidth: 350),
+                            item.seriesImageSource(.backdrop, maxWidth: 350),
                         ])
                         .frame(width: 350, height: 210)
                     } else {
                         ImageView([
-                            .init(url: item.getThumbImage(maxWidth: 350)),
-                            .init(url: item.getBackdropImage(maxWidth: 350), blurHash: item.getBackdropImageBlurHash()),
+                            item.imageSource(.thumb, maxWidth: 350),
+                            item.imageSource(.backdrop, maxWidth: 350),
                         ])
                         .frame(width: 350, height: 210)
                     }
@@ -54,7 +54,7 @@ struct CinematicResumeCardView: View {
                             .foregroundColor(.white)
 
                         HStack {
-                            Color(UIColor.systemPurple)
+                            Color.jellyfinPurple
                                 .frame(width: 350 * (item.userData?.playedPercentage ?? 0) / 100, height: 7)
 
                             Spacer(minLength: 0)

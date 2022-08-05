@@ -24,7 +24,10 @@ struct JellyfinPlayerApp: App {
             EmptyView()
                 .ignoresSafeArea()
                 .withHostingWindow { window in
-                    window?.rootViewController = PreferenceUIHostingController(wrappedView: MainCoordinator().view())
+                    window?.rootViewController = PreferenceUIHostingController {
+                        MainCoordinator()
+                            .view()
+                    }
                 }
                 .onAppear {
                     JellyfinPlayerApp.setupAppearance()
@@ -61,5 +64,12 @@ struct HostingWindowFinder: UIViewRepresentable {
 extension View {
     func withHostingWindow(_ callback: @escaping (UIWindow?) -> Void) -> some View {
         background(HostingWindowFinder(callback: callback))
+    }
+}
+
+extension UINavigationController {
+    // Remove back button text
+    override open func viewWillLayoutSubviews() {
+        navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
 }

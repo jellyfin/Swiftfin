@@ -11,10 +11,16 @@ import UIKit
 
 struct BlurHashView: UIViewRepresentable {
 
-    let blurHash: String
+    private let blurHash: String
+    private let size: CGSize
+
+    init(blurHash: String, size: CGSize = .Circle(radius: 12)) {
+        self.blurHash = blurHash
+        self.size = size
+    }
 
     func makeUIView(context: Context) -> UIBlurHashView {
-        UIBlurHashView(blurHash)
+        UIBlurHashView(blurHash, size: size)
     }
 
     func updateUIView(_ uiView: UIBlurHashView, context: Context) {}
@@ -24,14 +30,14 @@ class UIBlurHashView: UIView {
 
     private let imageView: UIImageView
 
-    init(_ blurHash: String) {
+    init(_ blurHash: String, size: CGSize) {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         self.imageView = imageView
 
         super.init(frame: .zero)
 
-        computeBlurHashImageAsync(blurHash: blurHash) { [weak self] blurImage in
+        computeBlurHashImageAsync(blurHash: blurHash, size: size) { [weak self] blurImage in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.imageView.image = blurImage
@@ -54,9 +60,9 @@ class UIBlurHashView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func computeBlurHashImageAsync(blurHash: String, _ completion: @escaping (UIImage?) -> Void) {
+    private func computeBlurHashImageAsync(blurHash: String, size: CGSize, _ completion: @escaping (UIImage?) -> Void) {
         DispatchQueue.global(qos: .utility).async {
-            let image = UIImage(blurHash: blurHash, size: .Circle(radius: 12))
+            let image = UIImage(blurHash: blurHash, size: size)
             completion(image)
         }
     }

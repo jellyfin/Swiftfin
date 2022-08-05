@@ -64,7 +64,7 @@ struct LiveTVChannelItemWideElement: View {
             ZStack {
                 HStack {
                     ZStack(alignment: .center) {
-                        ImageView(channel.getPrimaryImage(maxWidth: 128))
+                        ImageView(channel.imageURL(.primary, maxWidth: 128))
                             .aspectRatio(contentMode: .fit)
                             .padding(.init(top: 0, leading: 0, bottom: 8, trailing: 0))
                         VStack(alignment: .center) {

@@ -29,7 +29,7 @@ final class TVLibrariesViewModel: ViewModel {
     private let columns: Int
 
     @RouterObject
-    var router: TVLibrariesCoordinator.Router?
+    private var router: TVLibrariesCoordinator.Router?
 
     init(columns: Int = 7) {
         self.columns = columns

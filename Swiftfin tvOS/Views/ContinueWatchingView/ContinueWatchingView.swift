@@ -14,7 +14,7 @@ import SwiftUI
 struct ContinueWatchingView: View {
 
     @EnvironmentObject
-    var homeRouter: HomeCoordinator.Router
+    private var homeRouter: HomeCoordinator.Router
     let items: [BaseItemDto]
 
     var body: some View {

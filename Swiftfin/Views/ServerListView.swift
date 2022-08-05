@@ -12,7 +12,7 @@ import SwiftUI
 struct ServerListView: View {
 
     @EnvironmentObject
-    var serverListRouter: ServerListCoordinator.Router
+    private var serverListRouter: ServerListCoordinator.Router
     @ObservedObject
     var viewModel: ServerListViewModel
 
@@ -69,9 +69,11 @@ struct ServerListView: View {
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 
-            PrimaryButtonView(title: L10n.connect.stringValue) {
+            PrimaryButton(title: L10n.connect.stringValue) {
                 serverListRouter.route(to: \.connectToServer)
             }
+            .frame(maxWidth: 300)
+            .frame(height: 50)
         }
     }
 

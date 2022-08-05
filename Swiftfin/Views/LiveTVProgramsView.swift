@@ -11,7 +11,7 @@ import SwiftUI
 
 struct LiveTVProgramsView: View {
     @EnvironmentObject
-    var programsRouter: LiveTVProgramsCoordinator.Router
+    private var programsRouter: LiveTVProgramsCoordinator.Router
     @StateObject
     var viewModel = LiveTVProgramsViewModel()
 
@@ -21,15 +21,11 @@ struct LiveTVProgramsView: View {
                 if !viewModel.recommendedItems.isEmpty,
                    let items = viewModel.recommendedItems
                 {
-                    PortraitImageHStackView(
-                        items: items,
-                        horizontalAlignment: .leading
-                    ) {
-                        Text("On Now")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 90)
-                    } selectedAction: { item in
+
+                    PortraitPosterHStack(
+                        title: "On Now",
+                        items: items
+                    ) { item in
                         if let chanId = item.channelId,
                            let chan = viewModel.findChannel(id: chanId)
                         {
@@ -42,15 +38,10 @@ struct LiveTVProgramsView: View {
                 if !viewModel.seriesItems.isEmpty,
                    let items = viewModel.seriesItems
                 {
-                    PortraitImageHStackView(
-                        items: items,
-                        horizontalAlignment: .leading
-                    ) {
-                        Text("Shows")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 90)
-                    } selectedAction: { item in
+                    PortraitPosterHStack(
+                        title: "Shows",
+                        items: items
+                    ) { item in
                         if let chanId = item.channelId,
                            let chan = viewModel.findChannel(id: chanId)
                         {
@@ -63,15 +54,10 @@ struct LiveTVProgramsView: View {
                 if !viewModel.movieItems.isEmpty,
                    let items = viewModel.movieItems
                 {
-                    PortraitImageHStackView(
-                        items: items,
-                        horizontalAlignment: .leading
-                    ) {
-                        Text("Movies")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 90)
-                    } selectedAction: { item in
+                    PortraitPosterHStack(
+                        title: "Movies",
+                        items: items
+                    ) { item in
                         if let chanId = item.channelId,
                            let chan = viewModel.findChannel(id: chanId)
                         {
@@ -84,15 +70,10 @@ struct LiveTVProgramsView: View {
                 if !viewModel.sportsItems.isEmpty,
                    let items = viewModel.sportsItems
                 {
-                    PortraitImageHStackView(
-                        items: items,
-                        horizontalAlignment: .leading
-                    ) {
-                        Text("Sports")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 90)
-                    } selectedAction: { item in
+                    PortraitPosterHStack(
+                        title: "Sports",
+                        items: items
+                    ) { item in
                         if let chanId = item.channelId,
                            let chan = viewModel.findChannel(id: chanId)
                         {
@@ -105,15 +86,10 @@ struct LiveTVProgramsView: View {
                 if !viewModel.kidsItems.isEmpty,
                    let items = viewModel.kidsItems
                 {
-                    PortraitImageHStackView(
-                        items: items,
-                        horizontalAlignment: .leading
-                    ) {
-                        Text("Kids")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 90)
-                    } selectedAction: { item in
+                    PortraitPosterHStack(
+                        title: "Kids",
+                        items: items
+                    ) { item in
                         if let chanId = item.channelId,
                            let chan = viewModel.findChannel(id: chanId)
                         {
@@ -126,15 +102,10 @@ struct LiveTVProgramsView: View {
                 if !viewModel.newsItems.isEmpty,
                    let items = viewModel.newsItems
                 {
-                    PortraitImageHStackView(
-                        items: items,
-                        horizontalAlignment: .leading
-                    ) {
-                        Text("News")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 90)
-                    } selectedAction: { item in
+                    PortraitPosterHStack(
+                        title: "News",
+                        items: items
+                    ) { item in
                         if let chanId = item.channelId,
                            let chan = viewModel.findChannel(id: chanId)
                         {

@@ -2,6 +2,4 @@ strings:
   inputs: Translations/en.lproj
   outputs:
     - templateName: structured-swift5
-      output: Shared/Generated/Strings.swift
-      params:
-        lookupFunction: TranslationService.shared.lookupTranslation(forKey:inTable:)
+      output: Shared/Strings/Strings.swift

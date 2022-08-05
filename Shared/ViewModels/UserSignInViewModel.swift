@@ -14,7 +14,7 @@ import Stinsen
 final class UserSignInViewModel: ViewModel {
 
     @RouterObject
-    var router: UserSignInCoordinator.Router?
+    private var Router: UserSignInCoordinator.Router?
 
     @Published
     var publicUsers: [UserDto] = []

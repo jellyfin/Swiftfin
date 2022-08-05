@@ -9,64 +9,44 @@
 import Introspect
 import JellyfinAPI
 import SwiftUI
+import WidgetKit
 
-// Intermediary view for ItemView to set navigation bar settings
-struct ItemNavigationView: View {
-    private let item: BaseItemDto
+struct ItemView: View {
 
-    init(item: BaseItemDto) {
-        self.item = item
-    }
-
-    var body: some View {
-        ItemView(item: item)
-            .navigationBarTitle(item.name ?? "", displayMode: .inline)
-            .introspectNavigationController { navigationController in
-                let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
-                navigationController.navigationBar.titleTextAttributes = textAttributes
-            }
-    }
-}
-
-private struct ItemView: View {
-    @EnvironmentObject
-    var itemRouter: ItemCoordinator.Router
-
-    @State
-    private var orientation: UIDeviceOrientation = .unknown
-    @Environment(\.horizontalSizeClass)
-    private var hSizeClass
-    @Environment(\.verticalSizeClass)
-    private var vSizeClass
-
-    private let viewModel: ItemViewModel
-
-    init(item: BaseItemDto) {
-        switch item.itemType {
-        case .movie:
-            self.viewModel = MovieItemViewModel(item: item)
-        case .season:
-            self.viewModel = SeasonItemViewModel(item: item)
-        case .episode:
-            self.viewModel = EpisodeItemViewModel(item: item)
-        case .series:
-            self.viewModel = SeriesItemViewModel(item: item)
-        case .boxset, .folder:
-            self.viewModel = CollectionItemViewModel(item: item)
-        default:
-            self.viewModel = ItemViewModel(item: item)
-        }
-    }
+    let item: BaseItemDto
 
     var body: some View {
         Group {
-            if hSizeClass == .compact && vSizeClass == .regular {
-                ItemPortraitMainView()
-                    .environmentObject(viewModel)
-            } else {
-                ItemLandscapeMainView()
-                    .environmentObject(viewModel)
+            switch item.type {
+            case .movie:
+                if UIDevice.isIPad {
+                    iPadOSMovieItemView(viewModel: .init(item: item))
+                } else {
+                    MovieItemView(viewModel: .init(item: item))
+                }
+            case .series:
+                if UIDevice.isIPad {
+                    iPadOSSeriesItemView(viewModel: .init(item: item))
+                } else {
+                    SeriesItemView(viewModel: .init(item: item))
+                }
+            case .episode:
+                if UIDevice.isIPad {
+                    iPadOSEpisodeItemView(viewModel: .init(item: item))
+                } else {
+                    EpisodeItemView(viewModel: .init(item: item))
+                }
+            case .boxSet:
+                if UIDevice.isIPad {
+                    iPadOSCollectionItemView(viewModel: .init(item: item))
+                } else {
+                    CollectionItemView(viewModel: .init(item: item))
+                }
+            default:
+                Text(L10n.notImplementedYetWithType(item.type ?? "--"))
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(item.displayName)
     }
 }

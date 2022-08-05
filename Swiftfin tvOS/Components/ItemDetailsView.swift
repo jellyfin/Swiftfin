@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: Replace and remove
+
 struct ItemDetailsView: View {
 
     @ObservedObject
@@ -28,9 +30,9 @@ struct ItemDetailsView: View {
                         .font(.title3)
                         .padding(.bottom, 5)
 
-                    ForEach(viewModel.informationItems, id: \.self.title) { informationItem in
-                        ItemDetail(title: informationItem.title, content: informationItem.content)
-                    }
+                    //					ForEach(viewModel.informationItems, id: \.self.title) { informationItem in
+                    //						ItemDetail(title: informationItem.title, content: informationItem.content)
+                    //					}
                 }
 
                 Spacer()

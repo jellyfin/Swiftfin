@@ -12,7 +12,7 @@ import SwiftUI
 struct LibraryView: View {
 
     @EnvironmentObject
-    var libraryRouter: LibraryCoordinator.Router
+    private var libraryRouter: LibraryCoordinator.Router
     @StateObject
     var viewModel: LibraryViewModel
     var title: String
@@ -47,7 +47,7 @@ struct LibraryView: View {
             VStack {
                 LazyVGrid(columns: tracks) {
                     ForEach(viewModel.items, id: \.id) { item in
-                        PortraitItemButton(item: item) { item in
+                        PortraitPosterButton(item: item) { item in
                             libraryRouter.route(to: \.item, item)
                         }
                     }
