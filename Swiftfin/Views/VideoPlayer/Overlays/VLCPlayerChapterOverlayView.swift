@@ -67,6 +67,7 @@ struct VLCPlayerChapterOverlayView: View {
                                                 .font(.subheadline)
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(.white)
+                                                .lineLimit(1)
 
                                             Text(viewModel.chapters[chapterIndex].timestampLabel)
                                                 .font(.subheadline)
@@ -78,6 +79,7 @@ struct VLCPlayerChapterOverlayView: View {
                                                     Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
                                                 }
                                         }
+                                        .frame(width: 150, alignment: .leading)
                                     }
                                     .id(viewModel.chapters[chapterIndex])
                                 }
