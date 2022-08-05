@@ -95,6 +95,7 @@ struct ContinueWatchingView: View {
                                         .lineLimit(1)
                                 }
                             }
+                            .frame(width: 320, alignment: .leading)
                         }
                     }
                     .contextMenu {
