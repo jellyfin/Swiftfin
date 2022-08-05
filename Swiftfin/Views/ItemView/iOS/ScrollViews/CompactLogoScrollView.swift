@@ -97,8 +97,8 @@ extension ItemView {
                     }
                     .padding(.horizontal)
                     .padding(.top)
-                    .background(Color.systemBackground)
                     .frame(maxWidth: .infinity)
+                    .background(Color.systemBackground)
 
                     content()
                         .padding(.vertical)
