@@ -9,9 +9,7 @@
 import SwiftUI
 
 extension ItemView {
-
     struct iPadOSCinematicScrollView<Content: View>: View {
-
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @State
@@ -95,9 +93,7 @@ extension ItemView {
 }
 
 extension ItemView.iPadOSCinematicScrollView {
-
     struct OverlayView: View {
-
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
@@ -108,20 +104,21 @@ extension ItemView.iPadOSCinematicScrollView {
                 ImageView(
                     viewModel.item.imageURL(.logo, maxWidth: 500),
                     resizingMode: .aspectFit
-                ) {
+                ) { view in
+                    view
+                        .frame(maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 100)
+                } failureView: {
                     Text(viewModel.item.displayName)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .foregroundColor(.white)
+                        .frame(maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 100, alignment: .leading)
                 }
-                .frame(maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 100)
 
                 HStack(alignment: .bottom) {
-
                     VStack(alignment: .leading) {
-
                         DotHStack {
                             if let firstGenre = viewModel.item.genres?.first {
                                 Text(firstGenre)
