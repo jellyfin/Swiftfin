@@ -11,7 +11,7 @@ import NukeUI
 import SwiftUI
 import UIKit
 
-struct ImageSource {
+struct ImageSource: Hashable {
     let url: URL?
     let blurHash: String?
 
@@ -114,5 +114,118 @@ extension ImageView where FailureView == DefaultFailureView {
     init(sources: [URL], resizingMode: ImageResizingMode = .aspectFill) {
         let imageSources = sources.compactMap { ImageSource(url: $0, blurHash: nil) }
         self.init(imageSources, resizingMode: resizingMode, failureView: { DefaultFailureView() })
+    }
+}
+
+struct RefactoredImageView<PlaceholderView: View, FailureView: View>: View {
+
+    @State
+    private var sources: [ImageSource]
+    private var currentSource: ImageSource? { sources.first }
+    private var resizingMode: ImageResizingMode = .aspectFill
+    
+    private var image: (NukeUI.Image) -> NukeUI.Image
+    private var placeholder: () -> PlaceholderView
+    private var blurhashView: (PlaceholderView) -> PlaceholderView
+    private var failure: () -> FailureView
+
+    init(
+        _ source: ImageSource,
+        @ViewBuilder image: @escaping (NukeUI.Image) -> NukeUI.Image,
+        @ViewBuilder placeholder: @escaping () -> PlaceholderView,
+        @ViewBuilder blurHashView: @escaping (PlaceholderView) -> PlaceholderView,
+        @ViewBuilder failureView: @escaping () -> FailureView
+    ) {
+        self.init([source],
+                  image: image,
+                  placeholder: placeholder,
+                  blurHashView: blurHashView,
+                  failureView: failureView)
+    }
+
+    init(
+        _ sources: [ImageSource],
+        @ViewBuilder image: @escaping (NukeUI.Image) -> NukeUI.Image,
+        @ViewBuilder placeholder: @escaping () -> PlaceholderView,
+        @ViewBuilder blurHashView: @escaping (PlaceholderView) -> PlaceholderView,
+        @ViewBuilder failureView: @escaping () -> FailureView
+    ) {
+        _sources = State(initialValue: sources)
+        
+        self.image = image
+        self.placeholder = placeholder
+        self.blurhashView = blurHashView
+        self.failure = failureView
+    }
+
+    var body: some View {
+        if let currentSource = currentSource {
+            LazyImage(source: currentSource.url) { state in
+                if let image = state.image {
+                    image()
+//                        .resizingMode(resizingMode)
+                } else if state.error != nil {
+                    placeholder(currentSource).onAppear {
+                        sources.removeFirst()
+                    }
+                } else {
+                    placeholder(currentSource)
+                }
+            }
+            .pipeline(ImagePipeline(configuration: .withDataCache))
+            .id(currentSource)
+        } else {
+            failure()
+        }
+    }
+}
+
+extension RefactoredImageView where PlaceholderView == BlurHashView {
+    
+}
+
+extension RefactoredImageView where PlaceholderView == EmptyView, FailureView == DefaultFailureView {
+    init(_ source: ImageSource,
+         @ViewBuilder image: @escaping (NukeUI.Image) -> NukeUI.Image) {
+        self.init([source],
+                  image: image,
+                  placeholder: { EmptyView() },
+                  failureView: { DefaultFailureView() })
+    }
+
+    init(_ sources: [ImageSource],
+         @ViewBuilder image: @escaping (NukeUI.Image) -> NukeUI.Image) {
+        self.init(sources,
+                  image: image,
+                  placeholder: { EmptyView() },
+                  failureView: { DefaultFailureView() })
+    }
+    
+    // exist for the sake of not breaking everything at first.
+    // Move to the above inits
+    
+    init(_ source: ImageSource) {
+        self.init([source],
+                  image: { $0 },
+                  placeholder: { EmptyView() },
+                  failureView: { DefaultFailureView() })
+    }
+
+    init(_ sources: [ImageSource]) {
+        self.init(sources,
+                  image: { $0 },
+                  placeholder: { EmptyView() },
+                  blurHashView, { BlurHashView(blurHash: <#T##String#>) }
+                  failureView: { DefaultFailureView() })
+    }
+}
+
+// MARK: Extensions
+
+extension RefactoredImageView {
+    func resizingMode(_ mode: ImageResizingMode) -> RefactoredImageView {
+        var copy = self
+        copy.resizingMode = mode
+        return copy
     }
 }
