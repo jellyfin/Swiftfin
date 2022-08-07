@@ -728,9 +728,7 @@ extension VLCPlayerViewController {
     }
 
     private func toggleOverlay() {
-        guard let overlayHostingController = currentOverlayHostingController else { return }
-
-        if overlayHostingController.view.alpha < 1 {
+        if viewModel.isHiddenOverlay {
             showOverlay()
         } else {
             hideOverlay()
