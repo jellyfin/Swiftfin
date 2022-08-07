@@ -117,59 +117,57 @@ extension ImageView where FailureView == DefaultFailureView {
     }
 }
 
-struct RefactoredImageView<PlaceholderView: View, FailureView: View>: View {
+struct RefactoredImageView<ImageType: View, PlaceholderView: View, FailureView: View>: View {
 
     @State
     private var sources: [ImageSource]
     private var currentSource: ImageSource? { sources.first }
     private var resizingMode: ImageResizingMode = .aspectFill
     
-    private var image: (NukeUI.Image) -> NukeUI.Image
-    private var placeholder: () -> PlaceholderView
-    private var blurhashView: (PlaceholderView) -> PlaceholderView
+    private var image: (NukeUI.Image) -> ImageType
+    private var placeholder: (() -> PlaceholderView)?
+    private var blurHashView: ((BlurHashView) -> BlurHashView)?
     private var failure: () -> FailureView
-
-    init(
-        _ source: ImageSource,
-        @ViewBuilder image: @escaping (NukeUI.Image) -> NukeUI.Image,
-        @ViewBuilder placeholder: @escaping () -> PlaceholderView,
-        @ViewBuilder blurHashView: @escaping (PlaceholderView) -> PlaceholderView,
-        @ViewBuilder failureView: @escaping () -> FailureView
-    ) {
-        self.init([source],
-                  image: image,
-                  placeholder: placeholder,
-                  blurHashView: blurHashView,
-                  failureView: failureView)
-    }
-
-    init(
+    
+    private init(
         _ sources: [ImageSource],
-        @ViewBuilder image: @escaping (NukeUI.Image) -> NukeUI.Image,
-        @ViewBuilder placeholder: @escaping () -> PlaceholderView,
-        @ViewBuilder blurHashView: @escaping (PlaceholderView) -> PlaceholderView,
+        @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
+        placeHolder: (() -> PlaceholderView)?,
+        blurHashView: ((BlurHashView) -> BlurHashView)?,
         @ViewBuilder failureView: @escaping () -> FailureView
     ) {
         _sources = State(initialValue: sources)
         
         self.image = image
-        self.placeholder = placeholder
-        self.blurhashView = blurHashView
+        self.placeholder = placeHolder
+        self.blurHashView = blurHashView
         self.failure = failureView
+    }
+    
+    @ViewBuilder
+    private func _placeholder(_ currentSource: ImageSource) -> some View {
+        if let placeholder = placeholder {
+            placeholder()
+        } else if let blurHashView = blurHashView, let blurHash = currentSource.blurHash {
+            blurHashView(BlurHashView(blurHash: blurHash))
+        } else {
+            EmptyView()
+        }
     }
 
     var body: some View {
         if let currentSource = currentSource {
             LazyImage(source: currentSource.url) { state in
-                if let image = state.image {
-                    image()
-//                        .resizingMode(resizingMode)
+                if let _image = state.image {
+                    // Given image
+                    image(_image.resizingMode(resizingMode))
                 } else if state.error != nil {
-                    placeholder(currentSource).onAppear {
+                    // Placeholder
+                    _placeholder(currentSource).onAppear {
                         sources.removeFirst()
                     }
                 } else {
-                    placeholder(currentSource)
+                    EmptyView()
                 }
             }
             .pipeline(ImagePipeline(configuration: .withDataCache))
@@ -180,42 +178,104 @@ struct RefactoredImageView<PlaceholderView: View, FailureView: View>: View {
     }
 }
 
-extension RefactoredImageView where PlaceholderView == BlurHashView {
-    
-}
+// MARK: inits
 
-extension RefactoredImageView where PlaceholderView == EmptyView, FailureView == DefaultFailureView {
-    init(_ source: ImageSource,
-         @ViewBuilder image: @escaping (NukeUI.Image) -> NukeUI.Image) {
+extension RefactoredImageView {
+    init(
+        _ source: ImageSource,
+        @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
+        @ViewBuilder placeholder: @escaping () -> PlaceholderView,
+        @ViewBuilder failureView: @escaping () -> FailureView
+    ) {
         self.init([source],
                   image: image,
-                  placeholder: { EmptyView() },
+                  placeHolder: placeholder,
+                  blurHashView: nil,
+                  failureView: failureView)
+    }
+
+    init(
+        _ sources: [ImageSource],
+        @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
+        @ViewBuilder placeholder: @escaping () -> PlaceholderView,
+        @ViewBuilder failureView: @escaping () -> FailureView
+    ) {
+        self.init(sources,
+                  image: image,
+                  placeHolder: placeholder,
+                  blurHashView: nil,
+                  failureView: failureView)
+    }
+}
+
+extension RefactoredImageView where PlaceholderView == EmptyView {
+    init(
+        _ source: ImageSource,
+        @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
+        @ViewBuilder blurHashView: @escaping (BlurHashView) -> BlurHashView,
+        @ViewBuilder failureView: @escaping () -> FailureView
+    ) {
+        self.init([source],
+                  image: image,
+                  placeHolder: nil,
+                  blurHashView: blurHashView,
+                  failureView: failureView)
+    }
+    
+    init(
+        _ sources: [ImageSource],
+        @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
+        @ViewBuilder blurHashView: @escaping (BlurHashView) -> BlurHashView,
+        @ViewBuilder failureView: @escaping () -> FailureView
+    ) {
+        self.init(sources,
+                  image: image,
+                  placeHolder: nil,
+                  blurHashView: blurHashView,
+                  failureView: failureView)
+    }
+    
+    init(
+        _ source: ImageSource,
+        @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
+        @ViewBuilder failureView: @escaping () -> FailureView
+    ) {
+        self.init([source],
+                  image: image,
+                  placeHolder: nil,
+                  blurHashView: { $0 },
+                  failureView: failureView)
+    }
+    
+    init(
+        _ sources: [ImageSource],
+        @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
+        @ViewBuilder failureView: @escaping () -> FailureView
+    ) {
+        self.init(sources,
+                  image: image,
+                  placeHolder: nil,
+                  blurHashView: { $0 },
+                  failureView: failureView)
+    }
+}
+
+extension RefactoredImageView where FailureView == DefaultFailureView {
+    init(_ source: ImageSource,
+         @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType) {
+        self.init([source],
+                  image: image,
+                  placeHolder: nil,
+                  blurHashView: { $0 },
                   failureView: { DefaultFailureView() })
     }
 
     init(_ sources: [ImageSource],
-         @ViewBuilder image: @escaping (NukeUI.Image) -> NukeUI.Image) {
+         @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType) {
         self.init(sources,
                   image: image,
-                  placeholder: { EmptyView() },
-                  failureView: { DefaultFailureView() })
-    }
-    
-    // exist for the sake of not breaking everything at first.
-    // Move to the above inits
-    
-    init(_ source: ImageSource) {
-        self.init([source],
-                  image: { $0 },
-                  placeholder: { EmptyView() },
-                  failureView: { DefaultFailureView() })
-    }
-
-    init(_ sources: [ImageSource]) {
-        self.init(sources,
-                  image: { $0 },
-                  placeholder: { EmptyView() },
-                  blurHashView, { BlurHashView(blurHash: <#T##String#>) }
+                  placeHolder: nil,
+                  blurHashView: { $0 },
                   failureView: { DefaultFailureView() })
     }
 }
