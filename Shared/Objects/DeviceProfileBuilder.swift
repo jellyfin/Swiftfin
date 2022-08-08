@@ -8,10 +8,10 @@
 
 // lol can someone buy me a coffee this took forever :|
 
-import Foundation
-import JellyfinAPI
 import AVFoundation
 import Defaults
+import Foundation
+import JellyfinAPI
 
 class DeviceProfileBuilder {
     public var bitrate: Int = 0
@@ -28,24 +28,24 @@ class DeviceProfileBuilder {
         var transcodingProfiles: [TranscodingProfile] = []
         var codecProfiles: [CodecProfile] = []
         var subtitleProfiles: [SubtitleProfile] = []
-        
-        var containerString = "mpegts,mov,mp4,m4v,avi,3gp,3g2"
+
+        let containerString = "mpegts,mov,mp4,m4v,avi,3gp,3g2"
         var audioCodecString = "alac,aac,mp3,wav,ac3,eac3,opus,amr"
         var videoCodecString = "h264,h263,mpeg4"
-        
+
         // Supports HEVC?
         if AVURLAsset.isPlayableExtendedMIMEType("video/mp4; codecs=hvc1") {
             videoCodecString = videoCodecString+",hevc"
         }
-        
+
         // Separate native player profile from VLCKit profile
         if Defaults[.Experimental.nativePlayer] { // Native
-            
+
             // Supports FLAC natively?
             if AVURLAsset.isPlayableExtendedMIMEType("audio/flac") {
                 audioCodecString = audioCodecString+",flac"
             }
-            
+
             // Build direct play profiles
             directPlayProfiles = [DirectPlayProfile(
                 container: containerString,
@@ -53,7 +53,7 @@ class DeviceProfileBuilder {
                 videoCodec: videoCodecString,
                 type: .video
             )]
-            
+
             // Build transcoding profiles
             transcodingProfiles = [TranscodingProfile(
                 container: "ts",
@@ -66,7 +66,7 @@ class DeviceProfileBuilder {
                 minSegments: 2,
                 breakOnNonKeyFrames: true
             )]
-            
+
             // Create subtitle profiles
             subtitleProfiles.append(SubtitleProfile(format: "ass", method: .embed))
             subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .embed))
@@ -81,9 +81,9 @@ class DeviceProfileBuilder {
             subtitleProfiles.append(SubtitleProfile(format: "vtt", method: .external))
             subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
             subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
-            
+
         } else { // VLCKit
-            
+
             // Build direct play profiles
             directPlayProfiles = [DirectPlayProfile(
                 container: containerString+",mkv,webm,ogg,asf,wmv,mpeg,mpg,flv",
@@ -91,7 +91,7 @@ class DeviceProfileBuilder {
                 videoCodec: videoCodecString+"vc1,vp8,vp9,av1,wmv1,wmv2,msmpeg4v2,msmpeg4v3,mpeg2video,theora",
                 type: .video
             )]
-            
+
             // Build transcoding profiles
             transcodingProfiles = [TranscodingProfile(
                 container: "ts",
@@ -104,7 +104,7 @@ class DeviceProfileBuilder {
                 minSegments: 2,
                 breakOnNonKeyFrames: true
             )]
-            
+
             // Create subtitle profiles
             subtitleProfiles.append(SubtitleProfile(format: "ass", method: .embed))
             subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .embed))
@@ -119,11 +119,11 @@ class DeviceProfileBuilder {
             subtitleProfiles.append(SubtitleProfile(format: "vtt", method: .external))
             subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
             subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
-            
+
         }
         // Need to check for FLAC, HEVC - what about dolby vision? (dvhe, dvh1, hev1)
         // truehd is not supported by VLCKit or native
-        
+
         // For now, assume native and VLCKit support same codec conditions:
         let h264CodecConditions: [ProfileCondition] = [
             ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
@@ -142,7 +142,7 @@ class DeviceProfileBuilder {
             ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "175", isRequired: false),
             ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false),
         ]
-        
+
         codecProfiles.append(CodecProfile(type: .video, applyConditions: h264CodecConditions, codec: "h264"))
 
         if AVURLAsset.isPlayableExtendedMIMEType("video/mp4; codecs=hvc1") {
