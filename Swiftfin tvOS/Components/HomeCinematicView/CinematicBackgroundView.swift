@@ -19,7 +19,8 @@ class DynamicCinematicBackgroundViewModel: ObservableObject {
     @Published
     var currentImageView: UIImageView?
 
-    @MainActor func select(item: BaseItemDto) {
+    @MainActor
+    func select(item: BaseItemDto) {
 
         guard item.id != currentItem?.id else { return }
 
