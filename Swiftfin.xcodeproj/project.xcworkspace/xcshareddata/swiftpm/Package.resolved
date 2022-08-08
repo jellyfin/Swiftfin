@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "blurhashkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/BlurHashKit",
+      "state" : {
+        "revision" : "ee9f34f4f8fc03f3d67622e2a6eeb65f5108f2a3",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "combineext",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CombineCommunity/CombineExt",
@@ -64,15 +73,6 @@
       }
     },
     {
-      "identity" : "gifu",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kaishin/Gifu",
-      "state" : {
-        "revision" : "51f2eab32903e336f590c013267cfa4d7f8b06c4",
-        "version" : "3.3.1"
-      }
-    },
-    {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift",
@@ -86,17 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "a002b7fd786f2df2ed4333fe73a9727499fd9d97",
-        "version" : "10.11.2"
-      }
-    },
-    {
-      "identity" : "nukeui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kean/NukeUI",
-      "state" : {
-        "revision" : "db55022a8e483774ebbf3568727071477546d9ea",
-        "version" : "0.8.3"
+        "revision" : "8ea514737c2011ff7d7544aa065ad44905bdae0b",
+        "version" : "11.1.0"
       }
     },
     {

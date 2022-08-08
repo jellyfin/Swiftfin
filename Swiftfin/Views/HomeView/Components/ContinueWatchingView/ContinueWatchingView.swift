@@ -7,7 +7,6 @@
 //
 
 import JellyfinAPI
-import NukeUI
 import SwiftUI
 
 struct ContinueWatchingView: View {
