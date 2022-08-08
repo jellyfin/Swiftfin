@@ -8,6 +8,7 @@
 
 import JellyfinAPI
 import Nuke
+import NukeExtensions
 import SwiftUI
 import UIKit
 
@@ -18,6 +19,7 @@ class DynamicCinematicBackgroundViewModel: ObservableObject {
     @Published
     var currentImageView: UIImageView?
 
+    @MainActor
     func select(item: BaseItemDto) {
 
         guard item.id != currentItem?.id else { return }
@@ -36,7 +38,7 @@ class DynamicCinematicBackgroundViewModel: ObservableObject {
 
         let options = ImageLoadingOptions(transition: .fadeIn(duration: 0.2))
 
-        Nuke.loadImage(with: backdropImage, options: options, into: itemImageView, completion: { _ in })
+        loadImage(with: backdropImage, options: options, into: itemImageView, completion: { _ in })
 
         currentImageView = itemImageView
     }

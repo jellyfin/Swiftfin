@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import BlurHashKit
 import SwiftUI
 import UIKit
 
