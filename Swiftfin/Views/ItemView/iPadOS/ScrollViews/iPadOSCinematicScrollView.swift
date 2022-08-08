@@ -108,9 +108,11 @@ extension ItemView.iPadOSCinematicScrollView {
                 
                 RefactoredImageView(viewModel.item.imageSource(.logo,
                                                                maxWidth: UIScreen.main.bounds.width * 0.4,
-                                                               maxHeight: 100)) { image in
-                    image
-                } failureView: {
+                                                               maxHeight: 100))
+                .image { image in
+                    image.resizingMode(.bottomLeft)
+                }
+                .failure {
                     Text(viewModel.item.displayName)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
@@ -118,7 +120,6 @@ extension ItemView.iPadOSCinematicScrollView {
                         .multilineTextAlignment(.leading)
                         .foregroundColor(.white)
                 }
-                .resizingMode(.bottomLeft)
 
                 HStack(alignment: .bottom) {
 
