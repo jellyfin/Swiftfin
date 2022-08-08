@@ -30,7 +30,7 @@ class DeviceProfileBuilder {
         var subtitleProfiles: [SubtitleProfile] = []
 
         let containerString = "mpegts,mov,mp4,m4v,avi,3gp,3g2"
-        var audioCodecString = "aac,mp3,wav,ac3,eac3,opus,amr"
+        var audioCodecString = "aac,mp3,ac3,eac3,opus,amr"
         var videoCodecString = "h264,mpeg4"
 
         // Supports HEVC?
