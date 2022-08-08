@@ -287,6 +287,10 @@
 		E1399475289B1EA900401ABC /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1399473289B1EA900401ABC /* Defaults+Workaround.swift */; };
 		E13AD72E2798BC8D00FDCEE8 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */; };
 		E13AD7302798C60F00FDCEE8 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */; };
+		E13AF3B628A0C598009093AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B528A0C598009093AB /* Nuke */; };
+		E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B728A0C598009093AB /* NukeExtensions */; };
+		E13AF3BA28A0C598009093AB /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B928A0C598009093AB /* NukeUI */; };
+		E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3BB28A0C59E009093AB /* BlurHashKit */; };
 		E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */; };
 		E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
 		E13DD3C327164941009D4DAF /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C127164941009D4DAF /* SwiftfinStore.swift */; };
@@ -928,6 +932,8 @@
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				637FCAF5287B5B2600C0A353 /* UDPBroadcast.xcframework in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
+				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
+				E13AF3BA28A0C598009093AB /* NukeUI in Frameworks */,
 				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
@@ -936,7 +942,9 @@
 				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
+				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
+				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E178857D278037FD0094FBCF /* JellyfinAPI in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				E1347DB6279E3CA500BC6161 /* Puppy in Frameworks */,
@@ -1172,7 +1180,6 @@
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
-				E19E6DFF28A0B7FB005C10C8 /* Packages */,
 				534D4FE126A7D7CC000A7A48 /* Translations */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				5377CBF3263B596A003A4E83 /* Swiftfin */,
@@ -1926,13 +1933,6 @@
 			path = ItemView;
 			sourceTree = "<group>";
 		};
-		E19E6DFF28A0B7FB005C10C8 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Packages;
-			sourceTree = "<group>";
-		};
 		E1A16C9328875F2F00EA4679 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
@@ -2136,6 +2136,10 @@
 				E1002B6A2793E36600E47059 /* Algorithms */,
 				E1347DB5279E3CA500BC6161 /* Puppy */,
 				C409CE9B284EA6EA00CABC12 /* SwiftUICollection */,
+				E13AF3B528A0C598009093AB /* Nuke */,
+				E13AF3B728A0C598009093AB /* NukeExtensions */,
+				E13AF3B928A0C598009093AB /* NukeUI */,
+				E13AF3BB28A0C59E009093AB /* BlurHashKit */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -3396,6 +3400,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1347DB0279E3C6200BC6161 /* XCRemoteSwiftPackageReference "Puppy" */;
 			productName = Puppy;
+		};
+		E13AF3B528A0C598009093AB /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		E13AF3B728A0C598009093AB /* NukeExtensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeExtensions;
+		};
+		E13AF3B928A0C598009093AB /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
+		};
+		E13AF3BB28A0C59E009093AB /* BlurHashKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */;
+			productName = BlurHashKit;
 		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;
