@@ -59,7 +59,7 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
         if let placeholder = placeholder {
             placeholder()
         } else if let blurHashView = blurHashView, let blurHash = currentSource.blurHash {
-            blurHashView(BlurHashView(blurHash: blurHash))
+            blurHashView(BlurHashView(blurHash: blurHash, size: .Circle(radius: 2), pixels: 56))
         } else {
             EmptyView()
         }
@@ -126,6 +126,7 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
 // MARK: Extensions
 
 extension ImageView {
+    @ViewBuilder
     func image<I: View>(@ViewBuilder _ content: @escaping (NukeUI.Image) -> I) -> ImageView<I, PlaceholderView, FailureView> {
         ImageView<I, PlaceholderView, FailureView>(
             sources,
@@ -136,6 +137,7 @@ extension ImageView {
         )
     }
     
+    @ViewBuilder
     func placeholder<P: View>(@ViewBuilder _ content: @escaping () -> P) -> ImageView<ImageType, P, FailureView> {
         ImageView<ImageType, P, FailureView>(
             sources,
@@ -146,6 +148,7 @@ extension ImageView {
         )
     }
     
+    @ViewBuilder
     func failure<F: View>(@ViewBuilder _ content: @escaping () -> F) -> ImageView<ImageType, PlaceholderView, F> {
         ImageView<ImageType, PlaceholderView, F>(
             sources,

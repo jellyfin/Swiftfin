@@ -107,8 +107,8 @@ extension ItemView.iPadOSCinematicScrollView {
             VStack(alignment: .leading) {
                 
                 ImageView(viewModel.item.imageSource(.logo,
-                                                               maxWidth: UIScreen.main.bounds.width * 0.4,
-                                                               maxHeight: 100))
+                                                     maxWidth: UIScreen.main.bounds.width * 0.4,
+                                                     maxHeight: 100))
                 .image { image in
                     image.resizingMode(.bottomLeft)
                 }
