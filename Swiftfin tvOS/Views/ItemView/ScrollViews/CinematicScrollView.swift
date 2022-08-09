@@ -65,11 +65,12 @@ extension ItemView {
                 HStack(alignment: .bottom) {
 
                     VStack(alignment: .leading, spacing: 20) {
-
-                        ImageView(
-                            viewModel.item.imageSource(.logo, maxWidth: 500),
-                            resizingMode: .aspectFit,
-                            failureView: {
+                        
+                        ImageView(viewModel.item.imageSource(.logo, maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 250))
+                            .image { image in
+                                image.resizingMode(.bottomLeft)
+                            }
+                            .failure {
                                 Text(viewModel.item.displayName)
                                     .font(.largeTitle)
                                     .fontWeight(.semibold)
@@ -77,8 +78,7 @@ extension ItemView {
                                     .multilineTextAlignment(.leading)
                                     .foregroundColor(.white)
                             }
-                        )
-                        .frame(maxWidth: 500, maxHeight: 200)
+                            .padding(.bottom)
 
                         Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
                             .font(.subheadline)
