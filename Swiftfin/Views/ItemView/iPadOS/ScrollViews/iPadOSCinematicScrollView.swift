@@ -104,27 +104,35 @@ extension ItemView.iPadOSCinematicScrollView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading) {
-                
-                ImageView(viewModel.item.imageSource(.logo,
-                                                     maxWidth: UIScreen.main.bounds.width * 0.4,
-                                                     maxHeight: 100))
-                .image { image in
-                    image.resizingMode(.bottomLeft)
-                }
-                .failure {
-                    Text(viewModel.item.displayName)
-                        .font(.largeTitle)
-                        .fontWeight(.semibold)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-                        .foregroundColor(.white)
-                }
+            HStack(alignment: .bottom) {
 
-                HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 20) {
+                    
+                    ImageView(viewModel.item.imageSource(.logo,
+                                                         maxWidth: UIScreen.main.bounds.width * 0.4,
+                                                         maxHeight: 150))
+                    .image { image in
+                        image
+                            .resizingMode(.bottomLeft)
+                    }
+                    .failure {
+                        Text(viewModel.item.displayName)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(.white)
+                    }
 
-                    VStack(alignment: .leading) {
-
+                    TruncatedTextView(text: viewModel.item.overview ?? L10n.noOverviewAvailable) {
+                        itemRouter.route(to: \.itemOverview, viewModel.item)
+                    }
+                    .lineLimit(3)
+                    .foregroundColor(.white)
+                    
+                    HStack(spacing: 30) {
+                        ItemView.AttributesHStack(viewModel: viewModel)
+                        
                         DotHStack {
                             if let firstGenre = viewModel.item.genres?.first {
                                 Text(firstGenre)
@@ -138,30 +146,22 @@ extension ItemView.iPadOSCinematicScrollView {
                                 Text(runtime)
                             }
                         }
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundColor(Color(UIColor.lightGray))
-
-                        TruncatedTextView(text: viewModel.item.overview ?? L10n.noOverviewAvailable) {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        }
-                        .lineLimit(3)
-                        .foregroundColor(.white)
-
-                        ItemView.AttributesHStack(viewModel: viewModel)
                     }
-                    .padding(.trailing, 200)
-
-                    Spacer()
-
-                    VStack(spacing: 10) {
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .frame(height: 50)
-
-                        ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .font(.title)
-                    }
-                    .frame(width: 250)
                 }
+                .padding(.trailing, 200)
+
+                Spacer()
+
+                VStack(spacing: 10) {
+                    ItemView.PlayButton(viewModel: viewModel)
+                        .frame(height: 50)
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .font(.title)
+                }
+                .frame(width: 250)
             }
         }
     }

@@ -66,9 +66,12 @@ extension ItemView {
 
                     VStack(alignment: .leading, spacing: 20) {
                         
-                        ImageView(viewModel.item.imageSource(.logo, maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 250))
+                        ImageView(viewModel.item.imageSource(.logo,
+                                                             maxWidth: UIScreen.main.bounds.width * 0.4,
+                                                             maxHeight: 250))
                             .image { image in
-                                image.resizingMode(.bottomLeft)
+                                image
+                                    .resizingMode(.bottomLeft)
                             }
                             .failure {
                                 Text(viewModel.item.displayName)
