@@ -16,12 +16,22 @@ final class UserSignInCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
+    #if !os(tvOS)
+        @Route(.modal)
+        var quickConnect = makeQuickConnect
+    #endif
 
     let viewModel: UserSignInViewModel
 
     init(viewModel: UserSignInViewModel) {
         self.viewModel = viewModel
     }
+
+    #if !os(tvOS)
+        func makeQuickConnect() -> NavigationViewCoordinator<QuickConnectCoordinator> {
+            NavigationViewCoordinator(QuickConnectCoordinator(viewModel: viewModel))
+        }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {
