@@ -68,15 +68,6 @@ struct SettingsView: View {
                 }
 
                 Button {
-                    settingsRouter.dismissCoordinator {
-                        SessionManager.main.logout()
-                    }
-                } label: {
-                    L10n.switchUser.text
-                        .font(.callout)
-                }
-
-                Button {
                     settingsRouter.route(to: \.quickConnect)
                 } label: {
                     HStack {
@@ -85,6 +76,15 @@ struct SettingsView: View {
                         Spacer()
                         Image(systemName: "chevron.right")
                     }
+                }
+
+                Button {
+                    settingsRouter.dismissCoordinator {
+                        SessionManager.main.logout()
+                    }
+                } label: {
+                    L10n.switchUser.text
+                        .font(.callout)
                 }
             }
 

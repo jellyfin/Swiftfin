@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
@@ -20,7 +21,7 @@ struct UserSignInView: View {
 
     var body: some View {
         ZStack {
-            ImageView(viewModel.getSplashscreenUrl())
+            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
                 .ignoresSafeArea()
 
             Color.black
@@ -96,14 +97,20 @@ struct UserSignInView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .frame(maxWidth: .infinity)
+                    .onAppear {
+                        viewModel.startQuickConnect {}
+                    }
+                    .onDisappear {
+                        viewModel.stopQuickConnectAuthCheck()
+                    }
                 }
             }
         }
     }
 }
 
-struct UserSignInView_Preivews: PreviewProvider {
-    static var previews: some View {
-        UserSignInView(viewModel: .init(server: .sample))
-    }
-}
+// struct UserSignInView_Preivews: PreviewProvider {
+//    static var previews: some View {
+//        UserSignInView(viewModel: .init(server: .sample))
+//    }
+// }

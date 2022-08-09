@@ -11,6 +11,8 @@ import SwiftUI
 
 struct UserSignInView: View {
 
+    @EnvironmentObject
+    private var router: UserSignInCoordinator.Router
     @ObservedObject
     var viewModel: UserSignInViewModel
     @State
@@ -47,10 +49,18 @@ struct UserSignInView: View {
                 L10n.signInToServer(viewModel.server.name).text
             }
 
+            if viewModel.quickConnectEnabled {
+                Button {
+                    router.route(to: \.quickConnect)
+                } label: {
+                    L10n.quickConnect.text
+                }
+            }
+
             Section {
                 if !viewModel.publicUsers.isEmpty {
                     ForEach(viewModel.publicUsers, id: \.id) { user in
-                        UserLoginCellView(viewModel: viewModel, user: user)
+                        PublicUserSignInView(viewModel: viewModel, publicUser: user)
                             .disabled(viewModel.isLoading)
                     }
                 } else {
@@ -65,9 +75,11 @@ struct UserSignInView: View {
             } header: {
                 HStack {
                     L10n.publicUsers.text
+
                     Spacer()
+
                     Button {
-                        viewModel.loadUsers()
+                        viewModel.getPublicUsers()
                     } label: {
                         Image(systemName: "arrow.clockwise.circle.fill")
                     }
@@ -85,6 +97,8 @@ struct UserSignInView: View {
         }
         .navigationTitle(L10n.signIn)
         .navigationBarBackButtonHidden(viewModel.isLoading)
-        .onAppear(perform: viewModel.loadUsers)
+        .onDisappear {
+            viewModel.stopQuickConnectAuthCheck()
+        }
     }
 }
