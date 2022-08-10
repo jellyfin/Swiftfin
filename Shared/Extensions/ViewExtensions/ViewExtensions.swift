@@ -52,6 +52,11 @@ extension View {
             .cornerRadius((width * 1.5) / 40)
     }
 
+    func landscapePoster(width: CGFloat) -> some View {
+        self.frame(width: width, height: width / 1.77)
+            .cornerRadius(width / 30)
+    }
+
     @inlinable
     func padding2(_ edges: Edge.Set = .all) -> some View {
         self.padding(edges)
@@ -73,5 +78,9 @@ extension View {
 
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         self.modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
+    }
+    
+    func posterShadow() -> some View {
+        self.shadow(radius: 4, y: 2)
     }
 }

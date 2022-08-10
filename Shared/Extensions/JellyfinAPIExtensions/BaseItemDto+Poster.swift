@@ -54,7 +54,7 @@ extension BaseItemDto: PortraitPoster {
 
 // MARK: LandscapePoster
 
-extension BaseItemDto {
+extension BaseItemDto: LandscapePoster {
     func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource] {
         switch type {
         case .episode:

@@ -25,21 +25,23 @@ extension HomeView {
                     }
 
                     if !viewModel.nextUpItems.isEmpty {
-                        PortraitPosterHStack(
-                            title: L10n.nextUp,
-                            items: viewModel.nextUpItems,
-                            itemWidth: UIDevice.isIPad ? 130 : 110
-                        ) { item in
+                        LandscapePosterHStack(title: L10n.nextUp,
+                                              items: viewModel.nextUpItems) { item in
                             homeRouter.route(to: \.item, item)
                         }
                     }
 
                     if !viewModel.latestAddedItems.isEmpty {
-                        PortraitPosterHStack(
-                            title: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems,
-                            itemWidth: UIDevice.isIPad ? 130 : 110
-                        ) { item in
+//                        PortraitPosterHStack(
+//                            title: L10n.recentlyAdded,
+//                            items: viewModel.latestAddedItems,
+//                            itemWidth: UIDevice.isIPad ? 130 : 110
+//                        ) { item in
+//                            homeRouter.route(to: \.item, item)
+//                        }
+                        
+                        LandscapePosterHStack(title: L10n.recentlyAdded,
+                                              items: viewModel.latestAddedItems) { item in
                             homeRouter.route(to: \.item, item)
                         }
                     }

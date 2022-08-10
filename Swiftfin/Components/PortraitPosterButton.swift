@@ -16,20 +16,17 @@ struct PortraitPosterButton<Item: PortraitPoster>: View {
     let item: Item
     let maxWidth: CGFloat
     let horizontalAlignment: HorizontalAlignment
-    let textAlignment: TextAlignment
     let selectedAction: (Item) -> Void
 
     init(
         item: Item,
         maxWidth: CGFloat = 110,
         horizontalAlignment: HorizontalAlignment = .leading,
-        textAlignment: TextAlignment = .leading,
         selectedAction: @escaping (Item) -> Void
     ) {
         self.item = item
         self.maxWidth = maxWidth
         self.horizontalAlignment = horizontalAlignment
-        self.textAlignment = textAlignment
         self.selectedAction = selectedAction
     }
 
@@ -52,7 +49,6 @@ struct PortraitPosterButton<Item: PortraitPoster>: View {
                         .font(.footnote)
                         .fontWeight(.regular)
                         .foregroundColor(.primary)
-                        .multilineTextAlignment(textAlignment)
                         .lineLimit(2)
                 }
 
@@ -61,14 +57,11 @@ struct PortraitPosterButton<Item: PortraitPoster>: View {
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
-                        .multilineTextAlignment(textAlignment)
                         .lineLimit(2)
                 }
             }
             .frame(width: maxWidth)
         }
-        .if(colorScheme == .light) { view in
-            view.shadow(radius: 4, y: 2)
-        }
+        .posterShadow()
     }
 }

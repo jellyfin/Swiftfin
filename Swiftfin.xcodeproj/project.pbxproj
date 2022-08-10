@@ -323,6 +323,8 @@
 		E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */; };
 		E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */; };
 		E168BD15289A4162001A6922 /* HomeErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0F289A4162001A6922 /* HomeErrorView.swift */; };
+		E16AA60828A364A6009A983C /* LandscapePosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16AA60728A364A6009A983C /* LandscapePosterButton.swift */; };
+		E16AA60A28A3695A009A983C /* LandscapePosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16AA60928A36959009A983C /* LandscapePosterHStack.swift */; };
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
 		E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
@@ -788,6 +790,8 @@
 		E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
 		E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LatestInLibraryView.swift; sourceTree = "<group>"; };
 		E168BD0F289A4162001A6922 /* HomeErrorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeErrorView.swift; sourceTree = "<group>"; };
+		E16AA60728A364A6009A983C /* LandscapePosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterButton.swift; sourceTree = "<group>"; };
+		E16AA60928A36959009A983C /* LandscapePosterHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterHStack.swift; sourceTree = "<group>"; };
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
@@ -1417,6 +1421,8 @@
 				E18E01A5288746AF0022598C /* PillHStack.swift */,
 				53F866432687A45F00DCD1D7 /* PortraitPosterButton.swift */,
 				E18E01A3288746AF0022598C /* PortraitPosterHStack.swift */,
+				E16AA60728A364A6009A983C /* LandscapePosterButton.swift */,
+				E16AA60928A36959009A983C /* LandscapePosterHStack.swift */,
 				E1AA331C2782541500F6439C /* PrimaryButton.swift */,
 				E18E01A4288746AF0022598C /* RefreshableScrollView.swift */,
 			);
@@ -2585,6 +2591,7 @@
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
 				E18E01DB288747230022598C /* iPadOSEpisodeItemView.swift in Sources */,
+				E16AA60A28A3695A009A983C /* LandscapePosterHStack.swift in Sources */,
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* StringExtensions.swift in Sources */,
 				62C83B08288C6A630004ED0C /* FontPicker.swift in Sources */,
@@ -2609,6 +2616,7 @@
 				C45942CD27F6994A00C54FE7 /* LiveTVPlayerView.swift in Sources */,
 				62C29EA126D102A500C1D2E7 /* iOSMainTabCoordinator.swift in Sources */,
 				E18E01E8288747230022598C /* SeriesItemContentView.swift in Sources */,
+				E16AA60828A364A6009A983C /* LandscapePosterButton.swift in Sources */,
 				E18CE0AF28A222240092E7F1 /* PublicUserSignInView.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
 				E1C812C0277A8E5D00918266 /* VLCPlayerView.swift in Sources */,
