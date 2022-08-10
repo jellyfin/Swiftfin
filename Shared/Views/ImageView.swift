@@ -38,16 +38,18 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
     private var placeholder: (() -> PlaceholderView)?
     private var blurHashView: ((BlurHashView) -> BlurHashView)?
     private var failure: () -> FailureView
+    private var resizingMode: ImageResizingMode
     
     private init(
         _ sources: [ImageSource],
+        resizingMode: ImageResizingMode,
         @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
         placeHolder: (() -> PlaceholderView)?,
         blurHashView: ((BlurHashView) -> BlurHashView)?,
         @ViewBuilder failureView: @escaping () -> FailureView
     ) {
         _sources = State(initialValue: sources)
-        
+        self.resizingMode = resizingMode
         self.image = image
         self.placeholder = placeHolder
         self.blurHashView = blurHashView
@@ -70,7 +72,8 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
             LazyImage(url: currentSource.url) { state in
                 if let _image = state.image {
                     // Given image
-                    image(_image)
+//                    image(_image.resizingMode(resizingMode))
+                    _placeholder(currentSource)
                 } else if state.error != nil {
                     // Placeholder
                     _placeholder(currentSource).onAppear {
@@ -91,6 +94,7 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
 extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyView, FailureView == DefaultFailureView {
     init(_ source: ImageSource) {
         self.init([source],
+                  resizingMode: .aspectFill,
                   image: { $0 },
                   placeHolder: nil,
                   blurHashView: { $0 },
@@ -99,6 +103,7 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
     
     init(_ sources: [ImageSource]) {
         self.init(sources,
+                  resizingMode: .aspectFill,
                   image: { $0 },
                   placeHolder: nil,
                   blurHashView: { $0 },
@@ -107,6 +112,7 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
     
     init(_ source: URL?) {
         self.init([ImageSource(url: source, blurHash: nil)],
+                  resizingMode: .aspectFill,
                   image: { $0 },
                   placeHolder: nil,
                   blurHashView: { $0 },
@@ -115,6 +121,7 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
     
     init(_ sources: [URL?]) {
         self.init(sources.map { ImageSource(url: $0, blurHash: nil) },
+                  resizingMode: .aspectFill,
                   image: { $0 },
                   placeHolder: nil,
                   blurHashView: { $0 },
@@ -130,6 +137,7 @@ extension ImageView {
     func image<I: View>(@ViewBuilder _ content: @escaping (NukeUI.Image) -> I) -> ImageView<I, PlaceholderView, FailureView> {
         ImageView<I, PlaceholderView, FailureView>(
             sources,
+            resizingMode: resizingMode,
             image: content,
             placeHolder: placeholder,
             blurHashView: blurHashView,
@@ -141,6 +149,7 @@ extension ImageView {
     func placeholder<P: View>(@ViewBuilder _ content: @escaping () -> P) -> ImageView<ImageType, P, FailureView> {
         ImageView<ImageType, P, FailureView>(
             sources,
+            resizingMode: resizingMode,
             image: image,
             placeHolder: content,
             blurHashView: blurHashView,
@@ -152,10 +161,23 @@ extension ImageView {
     func failure<F: View>(@ViewBuilder _ content: @escaping () -> F) -> ImageView<ImageType, PlaceholderView, F> {
         ImageView<ImageType, PlaceholderView, F>(
             sources,
+            resizingMode: resizingMode,
             image: image,
             placeHolder: placeholder,
             blurHashView: blurHashView,
             failureView: content
+        )
+    }
+    
+    @ViewBuilder
+    func resizingMode(_ resizingMode: ImageResizingMode) -> ImageView<ImageType, PlaceholderView, FailureView> {
+        ImageView<ImageType, PlaceholderView, FailureView>(
+            sources,
+            resizingMode: resizingMode,
+            image: image,
+            placeHolder: placeholder,
+            blurHashView: blurHashView,
+            failureView: failure
         )
     }
 }
