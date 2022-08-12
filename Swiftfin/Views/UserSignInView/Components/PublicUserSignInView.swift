@@ -31,13 +31,13 @@ extension UserSignInView {
                 }
             } label: {
                 HStack {
-                    ImageView(publicUser.profileImageSource(maxWidth: 50, maxHeight: 50)) {
-                        Image(systemName: "person.circle")
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                    }
-                    .frame(width: 50, height: 50)
-                    .clipShape(Circle())
+                    ImageView(publicUser.profileImageSource(maxWidth: 50, maxHeight: 50))
+                        .failure {
+                            Image(systemName: "person.circle")
+                                .resizable()
+                        }
+                        .frame(width: 50, height: 50)
+                        .clipShape(Circle())
 
                     Text(publicUser.name ?? "--")
                     Spacer()

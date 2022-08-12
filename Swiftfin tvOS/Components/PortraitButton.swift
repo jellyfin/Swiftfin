@@ -19,13 +19,11 @@ struct PortraitButton<Item: PortraitPoster>: View {
             Button {
                 selectedAction(item)
             } label: {
-                ImageView(
-                    item.portraitPosterImageSource(maxWidth: 300),
-                    failureView: {
+                ImageView(item.portraitPosterImageSource(maxWidth: 270))
+                    .failure {
                         InitialFailureView(item.title.initials)
                     }
-                )
-                .frame(width: 270, height: 405)
+                    .frame(width: 270, height: 405)
             }
             .buttonStyle(CardButtonStyle())
 

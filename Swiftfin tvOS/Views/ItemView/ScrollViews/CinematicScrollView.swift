@@ -66,19 +66,21 @@ extension ItemView {
 
                     VStack(alignment: .leading, spacing: 20) {
 
-                        ImageView(
-                            viewModel.item.imageSource(.logo, maxWidth: 500),
-                            resizingMode: .aspectFit,
-                            failureView: {
-                                Text(viewModel.item.displayName)
-                                    .font(.largeTitle)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
-                                    .foregroundColor(.white)
-                            }
-                        )
-                        .frame(maxWidth: 500, maxHeight: 200)
+                        ImageView(viewModel.item.imageSource(
+                            .logo,
+                            maxWidth: UIScreen.main.bounds.width * 0.4,
+                            maxHeight: 250
+                        ))
+                        .resizingMode(.bottomLeft)
+                        .failure {
+                            Text(viewModel.item.displayName)
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.bottom)
 
                         Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
                             .font(.subheadline)

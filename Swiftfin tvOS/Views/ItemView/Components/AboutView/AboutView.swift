@@ -36,11 +36,11 @@ extension ItemView {
                     HStack {
                         ImageView(
                             viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel.item
-                                .imageSource(.primary, maxWidth: 300),
-                            failureView: {
-                                InitialFailureView(viewModel.item.title.initials)
-                            }
+                                .imageSource(.primary, maxWidth: 300)
                         )
+                        .failure {
+                            InitialFailureView(viewModel.item.title.initials)
+                        }
                         .portraitPoster(width: 270)
 
                         AboutViewCard(

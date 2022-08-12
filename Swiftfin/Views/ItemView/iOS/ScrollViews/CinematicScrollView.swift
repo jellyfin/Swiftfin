@@ -116,18 +116,17 @@ extension ItemView.CinematicScrollView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center, spacing: 10) {
-                    ImageView(
-                        viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
-                        resizingMode: .aspectFit
-                    ) {
-                        Text(viewModel.item.displayName)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.white)
-                    }
-                    .frame(height: 100)
-                    .frame(maxWidth: .infinity)
+                    ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
+                        .resizingMode(.aspectFit)
+                        .failure {
+                            Text(viewModel.item.displayName)
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white)
+                        }
+                        .frame(height: 100)
+                        .frame(maxWidth: .infinity)
 
                     DotHStack {
                         if let firstGenre = viewModel.item.genres?.first {

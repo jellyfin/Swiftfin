@@ -16,16 +16,18 @@ extension BaseItemDto {
 
     func imageURL(
         _ type: ImageType,
-        maxWidth: Int
+        maxWidth: Int? = nil,
+        maxHeight: Int? = nil
     ) -> URL {
-        _imageURL(type, maxWidth: maxWidth, itemID: id ?? "")
+        _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
     }
 
     func imageURL(
         _ type: ImageType,
-        maxWidth: CGFloat
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil
     ) -> URL {
-        _imageURL(type, maxWidth: Int(maxWidth), itemID: id ?? "")
+        _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: id ?? "")
     }
 
     func blurHash(_ type: ImageType) -> String? {
@@ -39,26 +41,28 @@ extension BaseItemDto {
         return nil
     }
 
-    func imageSource(_ type: ImageType, maxWidth: Int) -> ImageSource {
-        _imageSource(type, maxWidth: maxWidth)
+    func imageSource(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> ImageSource {
+        _imageSource(type, maxWidth: maxWidth, maxHeight: maxHeight)
     }
 
-    func imageSource(_ type: ImageType, maxWidth: CGFloat) -> ImageSource {
-        _imageSource(type, maxWidth: Int(maxWidth))
+    func imageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> ImageSource {
+        _imageSource(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight))
     }
 
     // MARK: Series Images
 
-    func seriesImageURL(_ type: ImageType, maxWidth: Int) -> URL {
-        _imageURL(type, maxWidth: maxWidth, itemID: seriesId ?? "")
+    func seriesImageURL(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> URL {
+        _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
     }
 
-    func seriesImageURL(_ type: ImageType, maxWidth: CGFloat) -> URL {
-        _imageURL(type, maxWidth: Int(maxWidth), itemID: seriesId ?? "")
+    func seriesImageURL(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> URL {
+        let maxWidth = maxWidth != nil ? Int(maxWidth!) : nil
+        let maxHeight = maxHeight != nil ? Int(maxHeight!) : nil
+        return _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
     }
 
-    func seriesImageSource(_ type: ImageType, maxWidth: Int) -> ImageSource {
-        let url = _imageURL(type, maxWidth: maxWidth, itemID: seriesId ?? "")
+    func seriesImageSource(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> ImageSource {
+        let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
         return ImageSource(url: url, blurHash: nil)
     }
 
@@ -70,22 +74,35 @@ extension BaseItemDto {
 
     fileprivate func _imageURL(
         _ type: ImageType,
-        maxWidth: Int,
+        maxWidth: Int?,
+        maxHeight: Int?,
         itemID: String
     ) -> URL {
-        let scaleWidth = UIScreen.main.scale(maxWidth)
+        let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
+        let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
         let tag = imageTags?[type.rawValue]
         return ImageAPI.getItemImageWithRequestBuilder(
             itemId: itemID,
             imageType: type,
             maxWidth: scaleWidth,
+            maxHeight: scaleHeight,
             tag: tag
         ).url
     }
 
-    fileprivate func _imageSource(_ type: ImageType, maxWidth: Int) -> ImageSource {
-        let url = _imageURL(type, maxWidth: maxWidth, itemID: id ?? "")
+    fileprivate func _imageSource(_ type: ImageType, maxWidth: Int?, maxHeight: Int?) -> ImageSource {
+        let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
         let blurHash = blurHash(type)
         return ImageSource(url: url, blurHash: blurHash)
+    }
+}
+
+fileprivate extension Int {
+    init?(_ source: CGFloat?) {
+        if let source = source {
+            self.init(source)
+        } else {
+            return nil
+        }
     }
 }
