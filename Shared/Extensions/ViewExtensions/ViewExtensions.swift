@@ -79,7 +79,7 @@ extension View {
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         self.modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
-    
+
     func posterShadow() -> some View {
         self.shadow(radius: 4, y: 2)
     }

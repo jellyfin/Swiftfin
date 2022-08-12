@@ -17,11 +17,11 @@ struct LatestInLibraryView: View {
     var viewModel: LatestMediaViewModel
 
     var body: some View {
-        PortraitPosterHStack(
+        LandscapePosterHStack(
             title: L10n.latestWithString(viewModel.library.displayName),
-            items: viewModel.items,
-            itemWidth: UIDevice.isIPad ? 130 : 110
-        ) {
+            items: viewModel.items
+        )
+        .trailing {
             Button {
                 let libraryViewModel = LibraryViewModel(parentID: viewModel.library.id, filters: HomeViewModel.recentFilterSet)
                 homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))
@@ -32,7 +32,8 @@ struct LatestInLibraryView: View {
                 }
                 .font(.subheadline.bold())
             }
-        } selectedAction: { item in
+        }
+        .selectedAction { item in
             homeRouter.route(to: \.item, item)
         }
     }
