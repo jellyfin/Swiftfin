@@ -40,9 +40,7 @@ extension MovieItemView {
 
                     if showLogo {
                         ImageView(viewModel.item.imageSource(.logo, maxWidth: 500, maxHeight: 150))
-                            .image { image in
-                                image.resizingMode(.aspectFit)
-                            }
+                            .resizingMode(.aspectFit)
                             .failure {
                                 Text(viewModel.item.displayName)
                                     .font(.largeTitle)

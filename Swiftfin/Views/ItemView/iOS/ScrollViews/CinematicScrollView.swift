@@ -117,9 +117,7 @@ extension ItemView.CinematicScrollView {
 
                 VStack(alignment: .center, spacing: 10) {
                     ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
-                    .image { image in
-                        image.resizingMode(.aspectFit)
-                    }
+                    .resizingMode(.aspectFit)
                     .failure {
                         Text(viewModel.item.displayName)
                             .font(.largeTitle)

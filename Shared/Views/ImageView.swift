@@ -33,10 +33,8 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
 
     @State
     private var sources: [ImageSource]
-    
     private var image: (NukeUI.Image) -> ImageType
     private var placeholder: (() -> PlaceholderView)?
-    private var blurHashView: ((BlurHashView) -> BlurHashView)?
     private var failure: () -> FailureView
     private var resizingMode: ImageResizingMode
     
@@ -45,14 +43,12 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
         resizingMode: ImageResizingMode,
         @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
         placeHolder: (() -> PlaceholderView)?,
-        blurHashView: ((BlurHashView) -> BlurHashView)?,
         @ViewBuilder failureView: @escaping () -> FailureView
     ) {
         _sources = State(initialValue: sources)
         self.resizingMode = resizingMode
         self.image = image
         self.placeholder = placeHolder
-        self.blurHashView = blurHashView
         self.failure = failureView
     }
     
@@ -60,8 +56,8 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
     private func _placeholder(_ currentSource: ImageSource) -> some View {
         if let placeholder = placeholder {
             placeholder()
-        } else if let blurHashView = blurHashView, let blurHash = currentSource.blurHash {
-            blurHashView(BlurHashView(blurHash: blurHash, size: .Circle(radius: 2), pixels: 56))
+        } else if let blurHash = currentSource.blurHash {
+            BlurHashView(blurHash: blurHash, size: .Circle(radius: 16))
         } else {
             EmptyView()
         }
@@ -70,17 +66,12 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
     var body: some View {
         if let currentSource = sources.first {
             LazyImage(url: currentSource.url) { state in
-                if let _image = state.image {
-                    // Given image
-//                    image(_image.resizingMode(resizingMode))
+                if state.isLoading {
                     _placeholder(currentSource)
-                } else if state.error != nil {
-                    // Placeholder
-                    _placeholder(currentSource).onAppear {
-                        sources.removeFirst()
-                    }
+                } else if let _image = state.image {
+                    image(_image.resizingMode(resizingMode))
                 } else {
-                    EmptyView()
+                    failure()
                 }
             }
             .pipeline(ImagePipeline(configuration: .withDataCache))
@@ -97,7 +88,6 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
                   resizingMode: .aspectFill,
                   image: { $0 },
                   placeHolder: nil,
-                  blurHashView: { $0 },
                   failureView: { DefaultFailureView() })
     }
     
@@ -106,7 +96,6 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
                   resizingMode: .aspectFill,
                   image: { $0 },
                   placeHolder: nil,
-                  blurHashView: { $0 },
                   failureView: { DefaultFailureView() })
     }
     
@@ -115,7 +104,6 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
                   resizingMode: .aspectFill,
                   image: { $0 },
                   placeHolder: nil,
-                  blurHashView: { $0 },
                   failureView: { DefaultFailureView() })
     }
     
@@ -124,7 +112,6 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
                   resizingMode: .aspectFill,
                   image: { $0 },
                   placeHolder: nil,
-                  blurHashView: { $0 },
                   failureView: { DefaultFailureView() })
     }
 }
@@ -140,7 +127,6 @@ extension ImageView {
             resizingMode: resizingMode,
             image: content,
             placeHolder: placeholder,
-            blurHashView: blurHashView,
             failureView: failure
         )
     }
@@ -152,7 +138,6 @@ extension ImageView {
             resizingMode: resizingMode,
             image: image,
             placeHolder: content,
-            blurHashView: blurHashView,
             failureView: failure
         )
     }
@@ -164,7 +149,6 @@ extension ImageView {
             resizingMode: resizingMode,
             image: image,
             placeHolder: placeholder,
-            blurHashView: blurHashView,
             failureView: content
         )
     }
@@ -176,7 +160,6 @@ extension ImageView {
             resizingMode: resizingMode,
             image: image,
             placeHolder: placeholder,
-            blurHashView: blurHashView,
             failureView: failure
         )
     }
