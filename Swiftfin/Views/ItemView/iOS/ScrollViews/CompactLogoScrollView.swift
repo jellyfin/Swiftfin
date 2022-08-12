@@ -145,18 +145,17 @@ extension ItemView.CompactLogoScrollView {
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                ImageView(
-                    viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width),
-                    resizingMode: .aspectFit
-                ) {
-                    Text(viewModel.item.displayName)
-                        .font(.largeTitle)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.white)
-                }
-                .frame(height: 100)
-                .frame(maxWidth: .infinity)
+                ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width, maxHeight: 100))
+                    .resizingMode(.aspectFit)
+                    .failure {
+                        Text(viewModel.item.displayName)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 100)
 
                 DotHStack {
                     if let firstGenre = viewModel.item.genres?.first {

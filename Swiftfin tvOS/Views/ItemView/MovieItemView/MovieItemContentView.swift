@@ -39,10 +39,9 @@ extension MovieItemView {
                         .id("topContentDivider")
 
                     if showLogo {
-                        ImageView(
-                            viewModel.item.imageSource(.logo, maxWidth: 500),
-                            resizingMode: .aspectFit,
-                            failureView: {
+                        ImageView(viewModel.item.imageSource(.logo, maxWidth: 500, maxHeight: 150))
+                            .resizingMode(.aspectFit)
+                            .failure {
                                 Text(viewModel.item.displayName)
                                     .font(.largeTitle)
                                     .fontWeight(.semibold)
@@ -50,9 +49,8 @@ extension MovieItemView {
                                     .multilineTextAlignment(.leading)
                                     .foregroundColor(.white)
                             }
-                        )
-                        .frame(width: 500, height: 150)
-                        .padding(.top, 5)
+                            .frame(width: 500, height: 150)
+                            .padding(.top, 5)
                     }
 
                     PortraitPosterHStack(
