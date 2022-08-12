@@ -27,7 +27,7 @@ extension BaseItemDto {
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil
     ) -> URL {
-        return _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: id ?? "")
+        _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: id ?? "")
     }
 
     func blurHash(_ type: ImageType) -> String? {
@@ -46,7 +46,7 @@ extension BaseItemDto {
     }
 
     func imageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> ImageSource {
-        return _imageSource(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight))
+        _imageSource(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight))
     }
 
     // MARK: Series Images
@@ -61,7 +61,7 @@ extension BaseItemDto {
         return _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
     }
 
-    func seriesImageSource(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil ) -> ImageSource {
+    func seriesImageSource(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> ImageSource {
         let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
         return ImageSource(url: url, blurHash: nil)
     }

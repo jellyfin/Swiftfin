@@ -65,20 +65,22 @@ extension ItemView {
                 HStack(alignment: .bottom) {
 
                     VStack(alignment: .leading, spacing: 20) {
-                        
-                        ImageView(viewModel.item.imageSource(.logo,
-                                                             maxWidth: UIScreen.main.bounds.width * 0.4,
-                                                             maxHeight: 250))
+
+                        ImageView(viewModel.item.imageSource(
+                            .logo,
+                            maxWidth: UIScreen.main.bounds.width * 0.4,
+                            maxHeight: 250
+                        ))
                         .resizingMode(.bottomLeft)
-                            .failure {
-                                Text(viewModel.item.displayName)
-                                    .font(.largeTitle)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
-                                    .foregroundColor(.white)
-                            }
-                            .padding(.bottom)
+                        .failure {
+                            Text(viewModel.item.displayName)
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.bottom)
 
                         Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
                             .font(.subheadline)

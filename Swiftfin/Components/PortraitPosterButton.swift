@@ -42,8 +42,8 @@ struct PortraitPosterButton<Item: PortraitPoster>: View {
                     .failure {
                         InitialFailureView(item.title.initials)
                     }
-                .portraitPoster(width: maxWidth)
-                .accessibilityIgnoresInvertColors()
+                    .portraitPoster(width: maxWidth)
+                    .accessibilityIgnoresInvertColors()
 
                 if item.showTitle {
                     Text(item.title)

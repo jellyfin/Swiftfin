@@ -37,7 +37,7 @@ extension UserSignInView {
                                 .resizable()
                         }
                         .frame(width: 50, height: 50)
-                    .clipShape(Circle())
+                        .clipShape(Circle())
 
                     Text(publicUser.name ?? "--")
                     Spacer()

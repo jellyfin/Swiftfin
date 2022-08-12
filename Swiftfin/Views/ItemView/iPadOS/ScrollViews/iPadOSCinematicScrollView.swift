@@ -107,10 +107,12 @@ extension ItemView.iPadOSCinematicScrollView {
             HStack(alignment: .bottom) {
 
                 VStack(alignment: .leading, spacing: 20) {
-                    
-                    ImageView(viewModel.item.imageSource(.logo,
-                                                         maxWidth: UIScreen.main.bounds.width * 0.4,
-                                                         maxHeight: 150))
+
+                    ImageView(viewModel.item.imageSource(
+                        .logo,
+                        maxWidth: UIScreen.main.bounds.width * 0.4,
+                        maxHeight: 150
+                    ))
                     .resizingMode(.bottomLeft)
                     .failure {
                         Text(viewModel.item.displayName)
@@ -126,10 +128,10 @@ extension ItemView.iPadOSCinematicScrollView {
                     }
                     .lineLimit(3)
                     .foregroundColor(.white)
-                    
+
                     HStack(spacing: 30) {
                         ItemView.AttributesHStack(viewModel: viewModel)
-                        
+
                         DotHStack {
                             if let firstGenre = viewModel.item.genres?.first {
                                 Text(firstGenre)
