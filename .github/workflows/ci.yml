@@ -4,11 +4,15 @@ on:
   push:
     branches: [ main ]
   pull_request:
+    types:
+      - synchronize
+      - ready_for_review
     branches: [ main ]
 
 jobs:
   build:
-    name: ""
+    name: "Build 🔨"
+    if: github.event.pull_request.draft == false
     strategy:
       matrix:
         scheme:
