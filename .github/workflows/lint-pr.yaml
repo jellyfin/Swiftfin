@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     name: "Lint 🧹"
+    if: github.event.pull_request.draft == false
     runs-on: macos-12
 
     steps:

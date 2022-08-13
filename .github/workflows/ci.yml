@@ -8,7 +8,8 @@ on:
 
 jobs:
   build:
-    name: ""
+    name: "Build 🔨"
+    if: github.event.pull_request.draft == false
     strategy:
       matrix:
         scheme:
