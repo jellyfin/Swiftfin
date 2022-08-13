@@ -2,11 +2,15 @@ name: "Lint 🧹"
 
 on:
   pull_request:
+    types:
+      - synchronize
+      - ready_for_review
     branches: [ main ]
 
 jobs:
   build:
     name: "Lint 🧹"
+    if: github.event.pull_request.draft == false
     runs-on: macos-12
 
     steps:
