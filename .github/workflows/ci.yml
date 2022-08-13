@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
   pull_request:
+    types:
+      - synchronize
+      - ready_for_review
     branches: [ main ]
 
 jobs:
