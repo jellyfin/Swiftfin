@@ -70,12 +70,10 @@ extension EpisodeItemView {
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty
                 {
-                    PortraitPosterHStack(
-                        title: L10n.castAndCrew,
-                        items: castAndCrew
-                    ) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
+                    PortraitPosterHStack(title: L10n.castAndCrew, items: castAndCrew)
+                        .selectedAction { person in
+                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                        }
 
                     Divider()
                 }

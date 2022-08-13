@@ -49,13 +49,10 @@ extension iPadOSCollectionItemView {
                 // MARK: Items
 
                 if !viewModel.collectionItems.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.items,
-                        items: viewModel.collectionItems,
-                        itemWidth: 130
-                    ) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
+                    PortraitPosterHStack(title: L10n.items, items: viewModel.collectionItems)
+                        .selectedAction { item in
+                            itemRouter.route(to: \.item, item)
+                        }
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

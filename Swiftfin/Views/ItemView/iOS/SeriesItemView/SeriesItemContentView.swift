@@ -29,10 +29,7 @@ extension SeriesItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(
-                        title: L10n.genres,
-                        items: genres
-                    ) { genre in
+                    PillHStack(title: L10n.genres, items: genres) { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
@@ -55,12 +52,10 @@ extension SeriesItemView {
                 // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed), !castAndCrew.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.castAndCrew,
-                        items: castAndCrew
-                    ) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
+                    PortraitPosterHStack(title: L10n.castAndCrew, items: castAndCrew)
+                        .selectedAction { person in
+                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                        }
 
                     Divider()
                 }
@@ -68,12 +63,10 @@ extension SeriesItemView {
                 // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.recommended,
-                        items: viewModel.similarItems
-                    ) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
+                    PortraitPosterHStack(title: L10n.recommended, items: viewModel.similarItems)
+                        .selectedAction { item in
+                            itemRouter.route(to: \.item, item)
+                        }
 
                     Divider()
                 }

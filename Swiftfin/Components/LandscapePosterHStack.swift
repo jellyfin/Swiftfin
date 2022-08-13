@@ -51,11 +51,11 @@ struct LandscapePosterHStack<Item: LandscapePoster, Content: View, ImageOverlay:
 
                 trailingContent()
             }
-            
-            .padding(.horizontal)
-            .if(UIDevice.isIPad) { view in
-                view.padding(.horizontal)
-            }
+
+                .padding(.horizontal)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.horizontal)
+                }
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
@@ -75,10 +75,10 @@ struct LandscapePosterHStack<Item: LandscapePoster, Content: View, ImageOverlay:
     }
 }
 
-extension LandscapePosterHStack where Content == LandscapePosterButtonDefaultContentView<Item>,
-                                      ImageOverlay == EmptyView,
-                                      ContextMenu == EmptyView,
-                                      TrailingContent == EmptyView
+extension LandscapePosterHStack where Content == PosterButtonDefaultContentView<Item>,
+    ImageOverlay == EmptyView,
+    ContextMenu == EmptyView,
+    TrailingContent == EmptyView
 {
     init(
         title: String,
@@ -88,7 +88,7 @@ extension LandscapePosterHStack where Content == LandscapePosterButtonDefaultCon
             title: title,
             items: items,
             itemScale: 1,
-            content: { LandscapePosterButtonDefaultContentView(item: $0) },
+            content: { PosterButtonDefaultContentView(item: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -113,7 +113,8 @@ extension LandscapePosterHStack {
     }
 
     @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C) -> LandscapePosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent> {
+    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
+    -> LandscapePosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent> {
         LandscapePosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent>(
             title: title,
             items: items,
@@ -140,7 +141,7 @@ extension LandscapePosterHStack {
             selectedAction: selectedAction
         )
     }
-    
+
     @ViewBuilder
     func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
     -> LandscapePosterHStack<Item, Content, ImageOverlay, M, TrailingContent> {
@@ -157,7 +158,8 @@ extension LandscapePosterHStack {
     }
 
     @ViewBuilder
-    func trailing<T: View>(@ViewBuilder _ trailingContent: @escaping () -> T) -> LandscapePosterHStack<Item, Content, ImageOverlay, ContextMenu, T> {
+    func trailing<T: View>(@ViewBuilder _ trailingContent: @escaping () -> T)
+    -> LandscapePosterHStack<Item, Content, ImageOverlay, ContextMenu, T> {
         LandscapePosterHStack<Item, Content, ImageOverlay, ContextMenu, T>(
             title: title,
             items: items,

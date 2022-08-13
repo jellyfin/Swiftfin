@@ -11,7 +11,7 @@ import SwiftUI
 struct LandscapePosterButton<Item: LandscapePoster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     @ScaledMetric(relativeTo: .largeTitle)
-    private var scaledImageWidth = 200.0
+    private var baseImageWidth = 200.0
 
     private let item: Item
     private let itemScale: CGFloat
@@ -22,7 +22,7 @@ struct LandscapePosterButton<Item: LandscapePoster, Content: View, ImageOverlay:
     private let selectedAction: (Item) -> Void
 
     private var itemWidth: CGFloat {
-        scaledImageWidth * itemScale
+        baseImageWidth * itemScale
     }
 
     private init(
@@ -62,7 +62,7 @@ struct LandscapePosterButton<Item: LandscapePoster, Content: View, ImageOverlay:
     }
 }
 
-extension LandscapePosterButton where Content == LandscapePosterButtonDefaultContentView<Item>,
+extension LandscapePosterButton where Content == PosterButtonDefaultContentView<Item>,
     ImageOverlay == EmptyView,
     ContextMenu == EmptyView
 {
@@ -71,7 +71,7 @@ extension LandscapePosterButton where Content == LandscapePosterButtonDefaultCon
             item: item,
             itemScale: 1,
             horizontalAlignment: .leading,
-            content: { LandscapePosterButtonDefaultContentView(item: $0) },
+            content: { PosterButtonDefaultContentView(item: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             selectedAction: { _ in }
@@ -131,7 +131,7 @@ extension LandscapePosterButton {
             selectedAction: selectedAction
         )
     }
-    
+
     @ViewBuilder
     func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M) -> LandscapePosterButton<Item, Content, ImageOverlay, M> {
         LandscapePosterButton<Item, Content, ImageOverlay, M>(
@@ -156,30 +156,5 @@ extension LandscapePosterButton {
             contextMenu: contextMenu,
             selectedAction: action
         )
-    }
-}
-
-struct LandscapePosterButtonDefaultContentView<Item: LandscapePoster>: View {
-
-    let item: Item
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            if item.showTitle {
-                Text(item.title)
-                    .font(.footnote)
-                    .fontWeight(.regular)
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
-            }
-
-            if let description = item.subtitle {
-                Text(description)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-            }
-        }
     }
 }

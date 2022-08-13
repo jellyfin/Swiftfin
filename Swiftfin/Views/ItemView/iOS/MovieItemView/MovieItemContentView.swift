@@ -53,12 +53,10 @@ extension MovieItemView {
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty
                 {
-                    PortraitPosterHStack(
-                        title: L10n.castAndCrew,
-                        items: castAndCrew
-                    ) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
+                    PortraitPosterHStack(title: L10n.castAndCrew, items: castAndCrew)
+                        .selectedAction { person in
+                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                        }
 
                     Divider()
                 }
@@ -66,12 +64,10 @@ extension MovieItemView {
                 // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.recommended,
-                        items: viewModel.similarItems
-                    ) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
+                    PortraitPosterHStack(title: L10n.recommended, items: viewModel.similarItems)
+                        .selectedAction { item in
+                            itemRouter.route(to: \.item, item)
+                        }
 
                     Divider()
                 }
