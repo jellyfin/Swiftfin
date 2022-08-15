@@ -28,5 +28,6 @@ protocol PortraitPoster: Poster {
 }
 
 protocol LandscapePoster: Poster {
-    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource]
+    // single is used as a workaround for SeriesEpisode view
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
 }

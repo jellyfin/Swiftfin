@@ -29,7 +29,7 @@ extension SeriesItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(title: L10n.genres, items: genres) { genre in
+                    PillHStack(title: L10n.genres, items: genres).selectedAction { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
@@ -42,7 +42,7 @@ extension SeriesItemView {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
-                    ) { studio in
+                    ).selectedAction { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 

@@ -49,7 +49,10 @@ struct PortraitPosterButton<Item: PortraitPoster, Content: View, ImageOverlay: V
                 selectedAction(item)
             } label: {
                 ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                    .overlay(imageOverlay(item))
+            }
+            .portraitPoster(width: itemWidth)
+            .overlay {
+                imageOverlay(item)
                     .portraitPoster(width: itemWidth)
             }
             .contextMenu(menuItems: {
@@ -59,6 +62,7 @@ struct PortraitPosterButton<Item: PortraitPoster, Content: View, ImageOverlay: V
 
             content(item)
         }
+        .frame(width: itemWidth)
     }
 }
 

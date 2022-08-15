@@ -14,6 +14,16 @@ struct PillHStack<Item: PillStackable>: View {
     let items: [Item]
     let selectedAction: (Item) -> Void
 
+    private init(
+        title: String,
+        items: [Item],
+        selectedAction: @escaping (Item) -> Void
+    ) {
+        self.title = title
+        self.items = items
+        self.selectedAction = selectedAction
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
@@ -31,19 +41,15 @@ struct PillHStack<Item: PillStackable>: View {
                         Button {
                             selectedAction(item)
                         } label: {
-                            ZStack {
-                                Color(UIColor.systemFill)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .cornerRadius(10)
-
-                                Text(item.title)
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .fixedSize()
-                                    .padding(10)
-                            }
-                            .fixedSize()
+                            Text(item.title)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                                .padding(10)
+                                .background {
+                                    Color.systemFill
+                                        .cornerRadius(10)
+                                }
                         }
                     }
                 }
@@ -53,5 +59,21 @@ struct PillHStack<Item: PillStackable>: View {
                 }
             }
         }
+    }
+}
+
+extension PillHStack {
+
+    init(title: String, items: [Item]) {
+        self.init(title: title, items: items, selectedAction: { _ in })
+    }
+
+    @ViewBuilder
+    func selectedAction(_ selectedAction: @escaping (Item) -> Void) -> PillHStack {
+        PillHStack(
+            title: title,
+            items: items,
+            selectedAction: selectedAction
+        )
     }
 }

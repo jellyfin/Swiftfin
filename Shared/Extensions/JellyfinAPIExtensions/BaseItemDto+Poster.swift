@@ -55,15 +55,19 @@ extension BaseItemDto: PortraitPoster {
 // MARK: LandscapePoster
 
 extension BaseItemDto: LandscapePoster {
-    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource] {
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool = false) -> [ImageSource] {
         switch type {
         case .episode:
             // TODO: Set episode image preference based on defaults
-            return [
-                seriesImageSource(.thumb, maxWidth: maxWidth),
-                seriesImageSource(.backdrop, maxWidth: maxWidth),
-                imageSource(.primary, maxWidth: maxWidth),
-            ]
+            if single {
+                return [imageSource(.primary, maxWidth: maxWidth)]
+            } else {
+                return [
+                    seriesImageSource(.thumb, maxWidth: maxWidth),
+                    seriesImageSource(.backdrop, maxWidth: maxWidth),
+                    imageSource(.primary, maxWidth: maxWidth),
+                ]
+            }
         default:
             return [
                 imageSource(.thumb, maxWidth: maxWidth),

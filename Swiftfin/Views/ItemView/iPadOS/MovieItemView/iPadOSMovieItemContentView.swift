@@ -27,7 +27,8 @@ extension iPadOSMovieItemView {
                     PillHStack(
                         title: L10n.genres,
                         items: genres
-                    ) { genre in
+                    )
+                    .selectedAction { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
@@ -40,7 +41,7 @@ extension iPadOSMovieItemView {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
-                    ) { studio in
+                    ).selectedAction { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 

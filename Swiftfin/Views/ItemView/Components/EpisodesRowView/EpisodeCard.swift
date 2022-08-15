@@ -15,23 +15,13 @@ struct EpisodeCard: View {
     private var itemRouter: ItemCoordinator.Router
     @ScaledMetric
     private var staticOverviewHeight: CGFloat = 50
-    @Environment(\.colorScheme)
-    private var colorScheme
 
     let episode: BaseItemDto
 
     var body: some View {
-        Button {
-            if episode != .placeHolder && episode != .noResults {
-                itemRouter.route(to: \.item, episode)
-            }
-        } label: {
-            VStack(alignment: .leading) {
-                ImageView(episode.imageSource(.primary, maxWidth: 200))
-                    .frame(width: 200, height: 112)
-                    .cornerRadius(10)
-                    .accessibilityIgnoresInvertColors()
-
+        LandscapePosterButton(item: episode, singleImage: true)
+            .scaleItem(1.2)
+            .content { _ in
                 VStack(alignment: .leading) {
                     Text(episode.episodeLocator ?? L10n.unknown)
                         .font(.footnote)
@@ -58,11 +48,8 @@ struct EpisodeCard: View {
                     .multilineTextAlignment(.leading)
                 }
             }
-            .frame(width: 200)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .if(colorScheme == .light) { view in
-            view.shadow(radius: 4, y: 2)
-        }
+            .selectedAction { _ in
+                itemRouter.route(to: \.item, episode)
+            }
     }
 }

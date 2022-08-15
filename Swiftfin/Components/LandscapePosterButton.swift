@@ -20,6 +20,7 @@ struct LandscapePosterButton<Item: LandscapePoster, Content: View, ImageOverlay:
     private let imageOverlay: (Item) -> ImageOverlay
     private let contextMenu: (Item) -> ContextMenu
     private let selectedAction: (Item) -> Void
+    private let singleImage: Bool
 
     private var itemWidth: CGFloat {
         baseImageWidth * itemScale
@@ -32,7 +33,8 @@ struct LandscapePosterButton<Item: LandscapePoster, Content: View, ImageOverlay:
         @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
         @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
-        selectedAction: @escaping (Item) -> Void
+        selectedAction: @escaping (Item) -> Void,
+        singleImage: Bool
     ) {
         self.item = item
         self.itemScale = itemScale
@@ -41,6 +43,7 @@ struct LandscapePosterButton<Item: LandscapePoster, Content: View, ImageOverlay:
         self.imageOverlay = imageOverlay
         self.contextMenu = contextMenu
         self.selectedAction = selectedAction
+        self.singleImage = singleImage
     }
 
     var body: some View {
@@ -48,8 +51,11 @@ struct LandscapePosterButton<Item: LandscapePoster, Content: View, ImageOverlay:
             Button {
                 selectedAction(item)
             } label: {
-                ImageView(item.landscapePosterImageSources(maxWidth: itemWidth))
-                    .overlay(imageOverlay(item))
+                ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+            }
+            .landscapePoster(width: itemWidth)
+            .overlay {
+                imageOverlay(item)
                     .landscapePoster(width: itemWidth)
             }
             .contextMenu(menuItems: {
@@ -59,6 +65,7 @@ struct LandscapePosterButton<Item: LandscapePoster, Content: View, ImageOverlay:
 
             content(item)
         }
+        .frame(width: itemWidth)
     }
 }
 
@@ -66,7 +73,7 @@ extension LandscapePosterButton where Content == PosterButtonDefaultContentView<
     ImageOverlay == EmptyView,
     ContextMenu == EmptyView
 {
-    init(item: Item) {
+    init(item: Item, singleImage: Bool = false) {
         self.init(
             item: item,
             itemScale: 1,
@@ -74,7 +81,8 @@ extension LandscapePosterButton where Content == PosterButtonDefaultContentView<
             content: { PosterButtonDefaultContentView(item: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
-            selectedAction: { _ in }
+            selectedAction: { _ in },
+            singleImage: singleImage
         )
     }
 }
@@ -89,7 +97,8 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            selectedAction: selectedAction,
+            singleImage: singleImage
         )
     }
 
@@ -102,7 +111,8 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            selectedAction: selectedAction,
+            singleImage: singleImage
         )
     }
 
@@ -115,7 +125,8 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            selectedAction: selectedAction,
+            singleImage: singleImage
         )
     }
 
@@ -128,7 +139,8 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            selectedAction: selectedAction,
+            singleImage: singleImage
         )
     }
 
@@ -141,7 +153,8 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            selectedAction: selectedAction,
+            singleImage: singleImage
         )
     }
 
@@ -154,7 +167,8 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: action
+            selectedAction: action,
+            singleImage: singleImage
         )
     }
 }
