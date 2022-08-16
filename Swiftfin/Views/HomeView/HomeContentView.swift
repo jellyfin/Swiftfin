@@ -17,7 +17,7 @@ extension HomeView {
         private var homeRouter: HomeCoordinator.Router
         @ObservedObject
         var viewModel: HomeViewModel
-        
+
         @Default(.Customization.nextUpPosterType)
         var nextUpPosterType
         @Default(.Customization.recentlyAddedPosterType)

@@ -14,7 +14,7 @@ protocol Poster: Hashable {
     var title: String { get }
     var subtitle: String? { get }
     var showTitle: Bool { get }
-    
+
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
 }

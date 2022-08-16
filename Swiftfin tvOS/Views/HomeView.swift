@@ -37,8 +37,8 @@ struct HomeView: View {
                         if !viewModel.nextUpItems.isEmpty {
                             PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
                                 .onSelect { item in
-                                router.route(to: \.item, item)
-                            }
+                                    router.route(to: \.item, item)
+                                }
                         }
                     } else {
                         HomeCinematicView(
@@ -47,17 +47,17 @@ struct HomeView: View {
                         )
 
                         if !viewModel.nextUpItems.isEmpty {
-                            PosterHStack(title: L10n.nextUp, type:.portrait, items: viewModel.nextUpItems)
+                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
                                 .onSelect { item in
-                                router.route(to: \.item, item)
-                            }
+                                    router.route(to: \.item, item)
+                                }
                         }
 
                         if !viewModel.latestAddedItems.isEmpty {
                             PosterHStack(title: L10n.recentlyAdded, type: .portrait, items: viewModel.latestAddedItems)
                                 .onSelect { item in
-                                router.route(to: \.item, item)
-                            }
+                                    router.route(to: \.item, item)
+                                }
                         }
                     }
 

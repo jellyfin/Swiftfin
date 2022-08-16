@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
-    
+
     private let title: String
     private let type: PosterType
     private let items: [Item]
@@ -54,10 +54,10 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
 
                 trailingContent()
             }
-                .padding(.horizontal)
-                .if(UIDevice.isIPad) { view in
-                    view.padding(.horizontal)
-                }
+            .padding(.horizontal)
+            .if(UIDevice.isIPad) { view in
+                view.padding(.horizontal)
+            }
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {

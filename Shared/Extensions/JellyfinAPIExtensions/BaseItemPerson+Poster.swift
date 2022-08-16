@@ -43,8 +43,8 @@ extension BaseItemPerson: Poster {
 
         return ImageSource(url: url, blurHash: blurHash)
     }
-    
+
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
-        return []
+        []
     }
 }

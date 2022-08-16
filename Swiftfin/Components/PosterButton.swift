@@ -12,7 +12,7 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
 
     @ScaledMetric(relativeTo: .largeTitle)
     private var landscapePosterWidth = 200.0
-    
+
     @ScaledMetric(relativeTo: .largeTitle)
     private var portraitPosterWidth = 100.0
 

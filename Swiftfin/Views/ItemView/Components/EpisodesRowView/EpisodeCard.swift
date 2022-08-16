@@ -25,7 +25,7 @@ struct EpisodeCard: View {
                 if episode.userData?.played ?? false {
                     ZStack(alignment: .bottomTrailing) {
                         Color.clear
-                        
+
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
                             .frame(width: 30, height: 30, alignment: .bottomTrailing)

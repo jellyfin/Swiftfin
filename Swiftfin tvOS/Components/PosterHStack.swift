@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
-    
+
     private let title: String
     private let type: PosterType
     private let items: [Item]
@@ -63,7 +63,7 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                             .contextMenu(contextMenu)
                             .onSelect(onSelect)
                     }
-                    
+
                     trailingContent()
                 }
                 .padding(.horizontal, 50)

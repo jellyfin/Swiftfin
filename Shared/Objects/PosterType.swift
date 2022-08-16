@@ -12,7 +12,7 @@ import Foundation
 enum PosterType: String, CaseIterable, Defaults.Serializable {
     case portrait
     case landscape
-    
+
     var localizedName: String {
         switch self {
         case .portrait:

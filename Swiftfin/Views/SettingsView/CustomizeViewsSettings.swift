@@ -15,12 +15,12 @@ struct CustomizeViewsSettings: View {
     var showFlattenView
     @Default(.Customization.itemViewType)
     var itemViewType
-    
+
     @Default(.shouldShowMissingSeasons)
     var shouldShowMissingSeasons
     @Default(.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
-    
+
     @Default(.Customization.showPosterLabels)
     var showPosterLabels
     @Default(.Customization.nextUpPosterType)
@@ -37,24 +37,24 @@ struct CustomizeViewsSettings: View {
             Section {
 
                 Toggle(L10n.showFlattenView, isOn: $showFlattenView)
-                
+
                 Picker(L10n.items, selection: $itemViewType) {
                     ForEach(ItemViewType.allCases, id: \.self) { type in
                         Text(type.localizedName).tag(type.rawValue)
                     }
                 }
-                
+
             } header: {
                 EmptyView()
             }
-            
+
             Section {
                 Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
                 Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
             } header: {
                 L10n.missingItems.text
             }
-            
+
             Section {
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
@@ -64,26 +64,26 @@ struct CustomizeViewsSettings: View {
                         Text(type.localizedName).tag(type.rawValue)
                     }
                 }
-                
+
                 Picker(L10n.recentlyAdded, selection: $recentlyAddedPosterType) {
                     ForEach(PosterType.allCases, id: \.self) { type in
                         Text(type.localizedName).tag(type.rawValue)
                     }
                 }
-                
+
                 Picker(L10n.library, selection: $latestInLibraryPosterType) {
                     ForEach(PosterType.allCases, id: \.self) { type in
                         Text(type.localizedName).tag(type.rawValue)
                     }
                 }
-  
+
                 // TODO: Take time to do this for a lot of views
 //                Picker(L10n.recommended, selection: $recommendedPosterType) {
 //                    ForEach(PosterType.allCases, id: \.self) { type in
 //                        Text(type.localizedName).tag(type.rawValue)
 //                    }
 //                }
-                
+
             } header: {
                 Text("Posters")
             }

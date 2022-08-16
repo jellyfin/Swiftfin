@@ -16,7 +16,7 @@ struct LatestInLibraryView: View {
     private var homeRouter: HomeCoordinator.Router
     @ObservedObject
     var viewModel: LatestMediaViewModel
-    
+
     @Default(.Customization.latestInLibraryPosterType)
     var latestInLibraryPosterType
 

@@ -35,11 +35,11 @@ struct LatestInLibraryView: View {
                     ZStack {
                         Color(UIColor.darkGray)
                             .opacity(0.5)
-    
+
                         VStack(spacing: 20) {
                             Image(systemName: "chevron.right")
                                 .font(.title)
-    
+
                             L10n.seeAll.text
                                 .font(.title3)
                         }

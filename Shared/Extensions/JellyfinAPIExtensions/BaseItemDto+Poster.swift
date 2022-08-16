@@ -50,7 +50,7 @@ extension BaseItemDto: Poster {
             return imageSource(.primary, maxWidth: maxWidth)
         }
     }
-    
+
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool = false) -> [ImageSource] {
         switch type {
         case .episode:

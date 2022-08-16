@@ -55,9 +55,9 @@ extension CollectionItemView {
 
                     PosterHStack(title: L10n.items, type: .portrait, items: viewModel.collectionItems)
                         .onSelect { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-                    .focusGuide(focusGuide, tag: "items", top: "mediaButtons", bottom: "about")
+                            itemRouter.route(to: \.item, item)
+                        }
+                        .focusGuide(focusGuide, tag: "items", top: "mediaButtons", bottom: "about")
 
                     ItemView.AboutView(viewModel: viewModel)
                         .focusGuide(focusGuide, tag: "about", top: "items")

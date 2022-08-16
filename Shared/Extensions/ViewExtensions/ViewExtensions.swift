@@ -45,7 +45,7 @@ extension View {
             transformElse(self)
         }
     }
-    
+
     func poster(type: PosterType, width: CGFloat) -> some View {
         Group {
             switch type {
