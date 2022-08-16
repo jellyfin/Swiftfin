@@ -54,8 +54,7 @@ extension BaseItemDto: Poster {
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool = false) -> [ImageSource] {
         switch type {
         case .episode:
-            // TODO: Set episode image preference based on defaults
-            if single {
+            if single || Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
                 return [imageSource(.primary, maxWidth: maxWidth)]
             } else {
                 return [

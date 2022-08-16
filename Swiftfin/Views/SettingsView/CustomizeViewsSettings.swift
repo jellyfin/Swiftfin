@@ -32,6 +32,9 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.recommendedPosterType)
     var recommendedPosterType
 
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    var useSeriesLandscapeBackdrop
+
     var body: some View {
         List {
             Section {
@@ -85,7 +88,16 @@ struct CustomizeViewsSettings: View {
 //                }
 
             } header: {
+                // TODO: localize after organization
                 Text("Posters")
+            }
+
+            Section {
+                Toggle("Series Backdrop", isOn: $useSeriesLandscapeBackdrop)
+            } header: {
+                // TODO: think of a better name
+                // TODO: localize after organization
+                Text("Episode Landscape Poster")
             }
         }
         .navigationTitle(L10n.customize)

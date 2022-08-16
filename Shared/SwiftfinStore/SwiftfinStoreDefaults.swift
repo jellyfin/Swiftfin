@@ -28,13 +28,18 @@ extension Defaults.Keys {
     static let outOfNetworkBandwidth = Key<Int>("OutOfNetworkBandwidth", default: 40_000_000, suite: .generalSuite)
 
     enum Customization {
-        static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: .generalSuite)
         static let showFlattenView = Key<Bool>("showFlattenView", default: true, suite: .generalSuite)
         static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactLogo, suite: .generalSuite)
+
+        static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: .generalSuite)
         static let nextUpPosterType = Key<PosterType>("nextUpPosterType", default: .portrait, suite: .generalSuite)
         static let recentlyAddedPosterType = Key<PosterType>("recentlyAddedPosterType", default: .portrait, suite: .generalSuite)
         static let latestInLibraryPosterType = Key<PosterType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
         static let recommendedPosterType = Key<PosterType>("recommendedPosterType", default: .portrait, suite: .generalSuite)
+
+        enum Episodes {
+            static let useSeriesLandscapeBackdrop = Key<Bool>("useSeriesBackdrop", default: true, suite: .generalSuite)
+        }
     }
 
     // Video player / overlay settings
