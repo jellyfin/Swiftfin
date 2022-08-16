@@ -8,12 +8,16 @@
 
 import SwiftUI
 
-struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
+struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     @ScaledMetric(relativeTo: .largeTitle)
-    private var baseImageWidth = 200.0
+    private var landscapePosterWidth = 200.0
+    
+    @ScaledMetric(relativeTo: .largeTitle)
+    private var portraitPosterWidth = 100.0
 
     private let item: Item
+    private let type: PosterType
     private let itemScale: CGFloat
     private let horizontalAlignment: HorizontalAlignment
     private let content: (Item) -> Content
@@ -23,11 +27,17 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
     private let singleImage: Bool
 
     private var itemWidth: CGFloat {
-        baseImageWidth * itemScale
+        switch type {
+        case .portrait:
+            return portraitPosterWidth * itemScale
+        case .landscape:
+            return landscapePosterWidth * itemScale
+        }
     }
 
     private init(
         item: Item,
+        type: PosterType,
         itemScale: CGFloat,
         horizontalAlignment: HorizontalAlignment,
         @ViewBuilder content: @escaping (Item) -> Content,
@@ -37,6 +47,7 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
         singleImage: Bool
     ) {
         self.item = item
+        self.type = type
         self.itemScale = itemScale
         self.horizontalAlignment = horizontalAlignment
         self.content = content
@@ -51,16 +62,21 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
             Button {
                 onSelect(item)
             } label: {
-                ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
-            }
-            .landscapePoster(width: itemWidth)
-            .overlay {
-                imageOverlay(item)
-                    .landscapePoster(width: itemWidth)
+                switch type {
+                case .portrait:
+                    ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+                case .landscape:
+                    ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                }
             }
             .contextMenu(menuItems: {
                 contextMenu(item)
             })
+            .poster(type: type, width: itemWidth)
+            .overlay {
+                imageOverlay(item)
+                    .poster(type: type, width: itemWidth)
+            }
             .posterShadow()
 
             content(item)
@@ -69,13 +85,14 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
     }
 }
 
-extension LandscapePosterButton where Content == PosterButtonDefaultContentView<Item>,
+extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
     ImageOverlay == EmptyView,
     ContextMenu == EmptyView
 {
-    init(item: Item, singleImage: Bool = false) {
+    init(item: Item, type: PosterType, singleImage: Bool = false) {
         self.init(
             item: item,
+            type: type,
             itemScale: 1,
             horizontalAlignment: .leading,
             content: { PosterButtonDefaultContentView(item: $0) },
@@ -87,11 +104,12 @@ extension LandscapePosterButton where Content == PosterButtonDefaultContentView<
     }
 }
 
-extension LandscapePosterButton {
+extension PosterButton {
     @ViewBuilder
-    func horizontalAlignment(_ alignment: HorizontalAlignment) -> LandscapePosterButton {
-        LandscapePosterButton(
+    func horizontalAlignment(_ alignment: HorizontalAlignment) -> PosterButton {
+        PosterButton(
             item: item,
+            type: type,
             itemScale: itemScale,
             horizontalAlignment: alignment,
             content: content,
@@ -103,9 +121,10 @@ extension LandscapePosterButton {
     }
 
     @ViewBuilder
-    func scaleItem(_ scale: CGFloat) -> LandscapePosterButton {
-        LandscapePosterButton(
+    func scaleItem(_ scale: CGFloat) -> PosterButton {
+        PosterButton(
             item: item,
+            type: type,
             itemScale: scale,
             horizontalAlignment: horizontalAlignment,
             content: content,
@@ -117,9 +136,10 @@ extension LandscapePosterButton {
     }
 
     @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C) -> LandscapePosterButton<Item, C, ImageOverlay, ContextMenu> {
-        LandscapePosterButton<Item, C, ImageOverlay, ContextMenu>(
+    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C) -> PosterButton<Item, C, ImageOverlay, ContextMenu> {
+        PosterButton<Item, C, ImageOverlay, ContextMenu>(
             item: item,
+            type: type,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
             content: content,
@@ -131,9 +151,10 @@ extension LandscapePosterButton {
     }
 
     @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O) -> LandscapePosterButton<Item, Content, O, ContextMenu> {
-        LandscapePosterButton<Item, Content, O, ContextMenu>(
+    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O) -> PosterButton<Item, Content, O, ContextMenu> {
+        PosterButton<Item, Content, O, ContextMenu>(
             item: item,
+            type: type,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
             content: content,
@@ -145,9 +166,10 @@ extension LandscapePosterButton {
     }
 
     @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M) -> LandscapePosterButton<Item, Content, ImageOverlay, M> {
-        LandscapePosterButton<Item, Content, ImageOverlay, M>(
+    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M) -> PosterButton<Item, Content, ImageOverlay, M> {
+        PosterButton<Item, Content, ImageOverlay, M>(
             item: item,
+            type: type,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
             content: content,
@@ -159,9 +181,10 @@ extension LandscapePosterButton {
     }
 
     @ViewBuilder
-    func onSelect(_ action: @escaping (Item) -> Void) -> LandscapePosterButton {
-        LandscapePosterButton(
+    func onSelect(_ action: @escaping (Item) -> Void) -> PosterButton {
+        PosterButton(
             item: item,
+            type: type,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
             content: content,

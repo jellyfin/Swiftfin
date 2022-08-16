@@ -19,7 +19,7 @@ struct EpisodeCard: View {
     let episode: BaseItemDto
 
     var body: some View {
-        LandscapePosterButton(item: episode, singleImage: true)
+        PosterButton(item: episode, type: .landscape, singleImage: true)
             .scaleItem(1.2)
             .imageOverlay { _ in
                 if episode.userData?.played ?? false {

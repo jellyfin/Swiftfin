@@ -87,7 +87,6 @@
 		53DF641E263D9C0600A7CD1A /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF641D263D9C0600A7CD1A /* LibraryView.swift */; };
 		53E4E649263F725B00F67C6B /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E4E648263F725B00F67C6B /* MultiSelectorView.swift */; };
 		53EE24E6265060780068F029 /* LibrarySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE24E5265060780068F029 /* LibrarySearchView.swift */; };
-		53F866442687A45F00DCD1D7 /* PortraitPosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F866432687A45F00DCD1D7 /* PortraitPosterButton.swift */; };
 		5D1603FC278A3D5800D22B99 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
 		5D1603FD278A40DB00D22B99 /* SubtitleSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */; };
 		5D160403278A41FD00D22B99 /* VLCPlayer+subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */; };
@@ -321,7 +320,7 @@
 		E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */; };
 		E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */; };
 		E168BD15289A4162001A6922 /* HomeErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0F289A4162001A6922 /* HomeErrorView.swift */; };
-		E16AA60828A364A6009A983C /* LandscapePosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16AA60728A364A6009A983C /* LandscapePosterButton.swift */; };
+		E16AA60828A364A6009A983C /* PosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16AA60728A364A6009A983C /* PosterButton.swift */; };
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
 		E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
@@ -625,7 +624,6 @@
 		53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilterView.swift; sourceTree = "<group>"; };
 		53E4E648263F725B00F67C6B /* MultiSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectorView.swift; sourceTree = "<group>"; };
 		53EE24E5265060780068F029 /* LibrarySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySearchView.swift; sourceTree = "<group>"; };
-		53F866432687A45F00DCD1D7 /* PortraitPosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitPosterButton.swift; sourceTree = "<group>"; };
 		5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleSize.swift; sourceTree = "<group>"; };
 		5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VLCPlayer+subtitles.swift"; sourceTree = "<group>"; };
 		5D64683C277B1649009E09AE /* PreferenceUIHostingSwizzling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingSwizzling.swift; sourceTree = "<group>"; };
@@ -786,7 +784,7 @@
 		E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
 		E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LatestInLibraryView.swift; sourceTree = "<group>"; };
 		E168BD0F289A4162001A6922 /* HomeErrorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeErrorView.swift; sourceTree = "<group>"; };
-		E16AA60728A364A6009A983C /* LandscapePosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterButton.swift; sourceTree = "<group>"; };
+		E16AA60728A364A6009A983C /* PosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterButton.swift; sourceTree = "<group>"; };
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
@@ -1415,9 +1413,8 @@
 			children = (
 				E111DE212790BB46008118A3 /* DetectBottomScrollView.swift */,
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
-				E16AA60728A364A6009A983C /* LandscapePosterButton.swift */,
 				E18E01A5288746AF0022598C /* PillHStack.swift */,
-				53F866432687A45F00DCD1D7 /* PortraitPosterButton.swift */,
+				E16AA60728A364A6009A983C /* PosterButton.swift */,
 				E19AB24D28A70F0C00ACFD9C /* PosterDefaultContentView.swift */,
 				E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */,
 				E1AA331C2782541500F6439C /* PrimaryButton.swift */,
@@ -2595,13 +2592,12 @@
 				E18E01AA288746AF0022598C /* RefreshableScrollView.swift in Sources */,
 				E18E0208288749200022598C /* BlurView.swift in Sources */,
 				E18E01E7288747230022598C /* CollectionItemContentView.swift in Sources */,
-				53F866442687A45F00DCD1D7 /* PortraitPosterButton.swift in Sources */,
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
 				C45942CD27F6994A00C54FE7 /* LiveTVPlayerView.swift in Sources */,
 				62C29EA126D102A500C1D2E7 /* iOSMainTabCoordinator.swift in Sources */,
 				E18E01E8288747230022598C /* SeriesItemContentView.swift in Sources */,
-				E16AA60828A364A6009A983C /* LandscapePosterButton.swift in Sources */,
+				E16AA60828A364A6009A983C /* PosterButton.swift in Sources */,
 				E18CE0AF28A222240092E7F1 /* PublicUserSignInView.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
 				E1C812C0277A8E5D00918266 /* VLCPlayerView.swift in Sources */,

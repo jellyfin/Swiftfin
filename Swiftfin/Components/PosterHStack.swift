@@ -63,20 +63,11 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
                     ForEach(items, id: \.hashValue) { item in
-                        switch type {
-                        case .portrait:
-                            PortraitPosterButton(item: item)
-                                .scaleItem(itemScale)
-                                .imageOverlay(imageOverlay)
-                                .contextMenu(contextMenu)
-                                .onSelect(onSelect)
-                        case .landscape:
-                            LandscapePosterButton(item: item)
-                                .scaleItem(itemScale)
-                                .imageOverlay(imageOverlay)
-                                .contextMenu(contextMenu)
-                                .onSelect(onSelect)
-                        }
+                        PosterButton(item: item, type: type)
+                            .scaleItem(itemScale)
+                            .imageOverlay(imageOverlay)
+                            .contextMenu(contextMenu)
+                            .onSelect(onSelect)
                     }
                 }
                 .padding(.horizontal)

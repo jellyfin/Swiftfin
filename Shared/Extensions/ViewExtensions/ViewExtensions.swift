@@ -45,6 +45,17 @@ extension View {
             transformElse(self)
         }
     }
+    
+    func poster(type: PosterType, width: CGFloat) -> some View {
+        Group {
+            switch type {
+            case .portrait:
+                self.portraitPoster(width: width)
+            case .landscape:
+                self.landscapePoster(width: width)
+            }
+        }
+    }
 
     /// Applies Portrait Poster frame with proper corner radius ratio against the width
     func portraitPoster(width: CGFloat) -> some View {

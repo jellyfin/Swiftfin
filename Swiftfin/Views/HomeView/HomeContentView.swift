@@ -32,6 +32,9 @@ extension HomeView {
 
                     if !viewModel.nextUpItems.isEmpty {
                         PosterHStack(title: L10n.nextUp, type: nextUpPosterType, items: viewModel.nextUpItems)
+                            .onSelect { item in
+                                homeRouter.route(to: \.item, item)
+                            }
                     }
 
                     if !viewModel.latestAddedItems.isEmpty {
