@@ -76,12 +76,13 @@ struct CustomizeViewsSettings: View {
                         Text(type.localizedName).tag(type.rawValue)
                     }
                 }
-                
-                Picker(L10n.recommended, selection: $recommendedPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+  
+                // TODO: Take time to do this for a lot of views
+//                Picker(L10n.recommended, selection: $recommendedPosterType) {
+//                    ForEach(PosterType.allCases, id: \.self) { type in
+//                        Text(type.localizedName).tag(type.rawValue)
+//                    }
+//                }
                 
             } header: {
                 Text("Posters")

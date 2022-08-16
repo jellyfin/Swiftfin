@@ -9,8 +9,6 @@
 import Defaults
 import SwiftUI
 
-// TODO: figure out cleaning up the portrait/landscape checks
-
 extension HomeView {
 
     struct ContentView: View {

@@ -25,12 +25,3 @@ extension Poster {
         hasher.combine(subtitle)
     }
 }
-
-//protocol PortraitPoster: Poster {
-//    
-//}
-//
-//protocol LandscapePoster: Poster {
-//    // single is used as a workaround for SeriesEpisode view
-//    
-//}
