@@ -26,7 +26,7 @@ extension CollectionItemView {
                     PillHStack(
                         title: L10n.genres,
                         items: genres
-                    ).selectedAction { genre in
+                    ).onSelect { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
@@ -39,7 +39,7 @@ extension CollectionItemView {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
-                    ).selectedAction { studio in
+                    ).onSelect { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 
@@ -50,7 +50,7 @@ extension CollectionItemView {
 
                 if !viewModel.collectionItems.isEmpty {
                     PosterHStack(title: L10n.items, type: .portrait, items: viewModel.collectionItems)
-                        .selectedAction { item in
+                        .onSelect { item in
                             itemRouter.route(to: \.item, item)
                         }
                 }

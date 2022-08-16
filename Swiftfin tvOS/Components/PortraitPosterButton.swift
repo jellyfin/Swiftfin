@@ -20,7 +20,7 @@ struct PortraitPosterButton<Item: PortraitPoster, Content: View, ImageOverlay: V
     private let content: (Item) -> Content
     private let imageOverlay: (Item) -> ImageOverlay
     private let contextMenu: (Item) -> ContextMenu
-    private let selectedAction: (Item) -> Void
+    private let onSelect: (Item) -> Void
 
     private var itemWidth: CGFloat {
         baseImageWidth * itemScale
@@ -33,7 +33,7 @@ struct PortraitPosterButton<Item: PortraitPoster, Content: View, ImageOverlay: V
         @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
         @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
-        selectedAction: @escaping (Item) -> Void
+        onSelect: @escaping (Item) -> Void
     ) {
         self.item = item
         self.itemScale = itemScale
@@ -41,13 +41,13 @@ struct PortraitPosterButton<Item: PortraitPoster, Content: View, ImageOverlay: V
         self.content = content
         self.imageOverlay = imageOverlay
         self.contextMenu = contextMenu
-        self.selectedAction = selectedAction
+        self.onSelect = onSelect
     }
 
     var body: some View {
         VStack(alignment: horizontalAlignment) {
             Button {
-                selectedAction(item)
+                onSelect(item)
             } label: {
                 ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
             }
@@ -79,7 +79,7 @@ extension PortraitPosterButton where Content == PosterButtonDefaultContentView<I
             content: { PosterButtonDefaultContentView(item: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
-            selectedAction: { _ in }
+            onSelect: { _ in }
         )
     }
 }
@@ -94,7 +94,7 @@ extension PortraitPosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
@@ -107,7 +107,7 @@ extension PortraitPosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
@@ -120,7 +120,7 @@ extension PortraitPosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
@@ -133,7 +133,7 @@ extension PortraitPosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
@@ -146,12 +146,12 @@ extension PortraitPosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
     @ViewBuilder
-    func selectedAction(_ action: @escaping (Item) -> Void) -> PortraitPosterButton {
+    func onSelect(_ action: @escaping (Item) -> Void) -> PortraitPosterButton {
         PortraitPosterButton(
             item: item,
             itemScale: itemScale,
@@ -159,7 +159,7 @@ extension PortraitPosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: action
+            onSelect: action
         )
     }
 }

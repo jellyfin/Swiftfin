@@ -48,7 +48,7 @@ extension EpisodeItemView {
                     PillHStack(
                         title: L10n.genres,
                         items: genres
-                    ).selectedAction { genre in
+                    ).onSelect { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
@@ -59,7 +59,7 @@ extension EpisodeItemView {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
-                    ).selectedAction { studio in
+                    ).onSelect { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 
@@ -70,7 +70,7 @@ extension EpisodeItemView {
                    !castAndCrew.isEmpty
                 {
                     PosterHStack(title: L10n.castAndCrew, type: .portrait, items: castAndCrew)
-                        .selectedAction { person in
+                        .onSelect { person in
                             itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                         }
 

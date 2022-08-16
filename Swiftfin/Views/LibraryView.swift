@@ -48,7 +48,7 @@ struct LibraryView: View {
                 LazyVGrid(columns: tracks) {
                     ForEach(viewModel.items, id: \.id) { item in
                         PortraitPosterButton(item: item)
-                            .selectedAction { item in
+                            .onSelect { item in
                                 libraryRouter.route(to: \.item, item)
                             }
                     }

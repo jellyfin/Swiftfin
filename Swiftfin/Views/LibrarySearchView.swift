@@ -85,7 +85,7 @@ struct LibrarySearchView: View {
                         LazyVGrid(columns: tracks) {
                             ForEach(items, id: \.id) { item in
                                 PortraitPosterButton(item: item)
-                                    .selectedAction { item in
+                                    .onSelect { item in
                                         searchRouter.route(to: \.item, item)
                                     }
                             }

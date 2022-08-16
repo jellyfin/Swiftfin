@@ -22,7 +22,7 @@ struct LiveTVProgramsView: View {
                    let items = viewModel.recommendedItems
                 {
                     PosterHStack(title: "On Now", type: .portrait, items: items)
-                        .selectedAction { item in
+                        .onSelect { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
                             {
@@ -36,7 +36,7 @@ struct LiveTVProgramsView: View {
                    let items = viewModel.seriesItems
                 {
                     PosterHStack(title: "Shows", type: .portrait, items: items)
-                        .selectedAction { item in
+                        .onSelect { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
                             {
@@ -50,7 +50,7 @@ struct LiveTVProgramsView: View {
                    let items = viewModel.movieItems
                 {
                     PosterHStack(title: "Movies", type: .portrait, items: items)
-                        .selectedAction { item in
+                        .onSelect { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
                             {
@@ -64,7 +64,7 @@ struct LiveTVProgramsView: View {
                    let items = viewModel.sportsItems
                 {
                     PosterHStack(title: "Sports", type: .portrait, items: items)
-                        .selectedAction { item in
+                        .onSelect { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
                             {
@@ -78,7 +78,7 @@ struct LiveTVProgramsView: View {
                    let items = viewModel.kidsItems
                 {
                     PosterHStack(title: "Kids", type: .portrait, items: items)
-                        .selectedAction { item in
+                        .onSelect { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
                             {
@@ -92,7 +92,7 @@ struct LiveTVProgramsView: View {
                    let items = viewModel.newsItems
                 {
                     PosterHStack(title: "News", type: .portrait, items: items)
-                        .selectedAction { item in
+                        .onSelect { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
                             {

@@ -34,7 +34,7 @@ struct LatestInLibraryView: View {
                     .font(.subheadline.bold())
                 }
             }
-            .selectedAction { item in
+            .onSelect { item in
                 homeRouter.route(to: \.item, item)
             }
     }

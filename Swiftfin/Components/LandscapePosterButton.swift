@@ -19,7 +19,7 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
     private let content: (Item) -> Content
     private let imageOverlay: (Item) -> ImageOverlay
     private let contextMenu: (Item) -> ContextMenu
-    private let selectedAction: (Item) -> Void
+    private let onSelect: (Item) -> Void
     private let singleImage: Bool
 
     private var itemWidth: CGFloat {
@@ -33,7 +33,7 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
         @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
         @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
-        selectedAction: @escaping (Item) -> Void,
+        onSelect: @escaping (Item) -> Void,
         singleImage: Bool
     ) {
         self.item = item
@@ -42,14 +42,14 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
         self.content = content
         self.imageOverlay = imageOverlay
         self.contextMenu = contextMenu
-        self.selectedAction = selectedAction
+        self.onSelect = onSelect
         self.singleImage = singleImage
     }
 
     var body: some View {
         VStack(alignment: horizontalAlignment) {
             Button {
-                selectedAction(item)
+                onSelect(item)
             } label: {
                 ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
             }
@@ -81,7 +81,7 @@ extension LandscapePosterButton where Content == PosterButtonDefaultContentView<
             content: { PosterButtonDefaultContentView(item: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
-            selectedAction: { _ in },
+            onSelect: { _ in },
             singleImage: singleImage
         )
     }
@@ -97,7 +97,7 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
+            onSelect: onSelect,
             singleImage: singleImage
         )
     }
@@ -111,7 +111,7 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
+            onSelect: onSelect,
             singleImage: singleImage
         )
     }
@@ -125,7 +125,7 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
+            onSelect: onSelect,
             singleImage: singleImage
         )
     }
@@ -139,7 +139,7 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
+            onSelect: onSelect,
             singleImage: singleImage
         )
     }
@@ -153,13 +153,13 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
+            onSelect: onSelect,
             singleImage: singleImage
         )
     }
 
     @ViewBuilder
-    func selectedAction(_ action: @escaping (Item) -> Void) -> LandscapePosterButton {
+    func onSelect(_ action: @escaping (Item) -> Void) -> LandscapePosterButton {
         LandscapePosterButton(
             item: item,
             itemScale: itemScale,
@@ -167,7 +167,7 @@ extension LandscapePosterButton {
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: action,
+            onSelect: action,
             singleImage: singleImage
         )
     }

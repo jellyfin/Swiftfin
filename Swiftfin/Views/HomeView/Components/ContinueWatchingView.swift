@@ -19,7 +19,7 @@ struct ContinueWatchingView: View {
     var body: some View {
         PosterHStack(title: "", type: .landscape, items: viewModel.resumeItems)
             .scaleItems(1.5)
-            .selectedAction { item in
+            .onSelect { item in
                 homeRouter.route(to: \.item, item)
             }
             .contextMenu { item in

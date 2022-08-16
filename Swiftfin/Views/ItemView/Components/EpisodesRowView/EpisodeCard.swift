@@ -61,7 +61,7 @@ struct EpisodeCard: View {
                     .multilineTextAlignment(.leading)
                 }
             }
-            .selectedAction { _ in
+            .onSelect { _ in
                 itemRouter.route(to: \.item, episode)
             }
     }

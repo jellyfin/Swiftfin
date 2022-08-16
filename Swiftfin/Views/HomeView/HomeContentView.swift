@@ -38,7 +38,7 @@ extension HomeView {
 
                     if !viewModel.latestAddedItems.isEmpty {
                         PosterHStack(title: L10n.recentlyAdded, type: recentlyAddedPosterType, items: viewModel.latestAddedItems)
-                            .selectedAction { item in
+                            .onSelect { item in
                                 homeRouter.route(to: \.item, item)
                             }
                     }

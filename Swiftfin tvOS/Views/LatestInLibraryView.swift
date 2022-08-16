@@ -49,7 +49,7 @@ struct LatestInLibraryView: View {
             }
             .frame(width: 257, height: 380)
             .buttonStyle(PlainButtonStyle())
-        } selectedAction: { item in
+        } onSelect: { item in
             router.route(to: \.item, item)
         }
     }

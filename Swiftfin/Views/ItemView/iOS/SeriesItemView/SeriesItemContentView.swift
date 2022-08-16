@@ -29,7 +29,7 @@ extension SeriesItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(title: L10n.genres, items: genres).selectedAction { genre in
+                    PillHStack(title: L10n.genres, items: genres).onSelect { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
@@ -42,7 +42,7 @@ extension SeriesItemView {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
-                    ).selectedAction { studio in
+                    ).onSelect { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 
@@ -53,7 +53,7 @@ extension SeriesItemView {
 
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed), !castAndCrew.isEmpty {
                     PosterHStack(title: L10n.castAndCrew, type: .portrait, items: castAndCrew)
-                        .selectedAction { person in
+                        .onSelect { person in
                             itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                         }
 
@@ -64,7 +64,7 @@ extension SeriesItemView {
 
                 if !viewModel.similarItems.isEmpty {
                     PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
-                        .selectedAction { item in
+                        .onSelect { item in
                             itemRouter.route(to: \.item, item)
                         }
 

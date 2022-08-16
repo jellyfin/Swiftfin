@@ -20,7 +20,7 @@ struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, Con
     private let imageOverlay: (Item) -> ImageOverlay
     private let contextMenu: (Item) -> ContextMenu
     private let trailingContent: () -> TrailingContent
-    private let selectedAction: (Item) -> Void
+    private let onSelect: (Item) -> Void
 
     private init(
         title: String,
@@ -30,7 +30,7 @@ struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, Con
         @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
         @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
         @ViewBuilder trailingContent: @escaping () -> TrailingContent,
-        selectedAction: @escaping (Item) -> Void
+        onSelect: @escaping (Item) -> Void
     ) {
         self.title = title
         self.items = items
@@ -39,7 +39,7 @@ struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, Con
         self.imageOverlay = imageOverlay
         self.contextMenu = contextMenu
         self.trailingContent = trailingContent
-        self.selectedAction = selectedAction
+        self.onSelect = onSelect
     }
 
     var body: some View {
@@ -66,7 +66,7 @@ struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, Con
                         PortraitPosterButton(item: item)
                             .scaleItem(itemScale)
                             .imageOverlay(imageOverlay)
-                            .selectedAction(selectedAction)
+                            .onSelect(onSelect)
                     }
                 }
                 .padding(.horizontal)
@@ -95,7 +95,7 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
-            selectedAction: { _ in }
+            onSelect: { _ in }
         )
     }
 }
@@ -111,7 +111,7 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
@@ -126,7 +126,7 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
@@ -141,7 +141,7 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
@@ -156,7 +156,7 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
@@ -171,12 +171,12 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 
     @ViewBuilder
-    func selectedAction(_ selectedAction: @escaping (Item) -> Void) -> PosterHStack {
+    func onSelect(_ onSelect: @escaping (Item) -> Void) -> PosterHStack {
         PosterHStack(
             title: title,
             items: items,
@@ -185,7 +185,7 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 }

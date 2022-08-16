@@ -12,16 +12,16 @@ struct PillHStack<Item: PillStackable>: View {
 
     let title: String
     let items: [Item]
-    let selectedAction: (Item) -> Void
+    let onSelect: (Item) -> Void
 
     private init(
         title: String,
         items: [Item],
-        selectedAction: @escaping (Item) -> Void
+        onSelect: @escaping (Item) -> Void
     ) {
         self.title = title
         self.items = items
-        self.selectedAction = selectedAction
+        self.onSelect = onSelect
     }
 
     var body: some View {
@@ -39,7 +39,7 @@ struct PillHStack<Item: PillStackable>: View {
                 HStack {
                     ForEach(items, id: \.title) { item in
                         Button {
-                            selectedAction(item)
+                            onSelect(item)
                         } label: {
                             Text(item.title)
                                 .font(.caption)
@@ -65,15 +65,15 @@ struct PillHStack<Item: PillStackable>: View {
 extension PillHStack {
 
     init(title: String, items: [Item]) {
-        self.init(title: title, items: items, selectedAction: { _ in })
+        self.init(title: title, items: items, onSelect: { _ in })
     }
 
     @ViewBuilder
-    func selectedAction(_ selectedAction: @escaping (Item) -> Void) -> PillHStack {
+    func onSelect(_ onSelect: @escaping (Item) -> Void) -> PillHStack {
         PillHStack(
             title: title,
             items: items,
-            selectedAction: selectedAction
+            onSelect: onSelect
         )
     }
 }
