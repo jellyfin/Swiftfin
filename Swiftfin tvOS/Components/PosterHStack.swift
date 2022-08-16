@@ -6,14 +6,12 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
-import SwiftUICollection
-import TVUIKit
 
-struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
-
+struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
+    
     private let title: String
+    private let type: PosterType
     private let items: [Item]
     private let itemScale: CGFloat
     private let content: (Item) -> Content
@@ -24,6 +22,7 @@ struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, Con
 
     private init(
         title: String,
+        type: PosterType,
         items: [Item],
         itemScale: CGFloat,
         @ViewBuilder content: @escaping (Item) -> Content,
@@ -33,6 +32,7 @@ struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, Con
         onSelect: @escaping (Item) -> Void
     ) {
         self.title = title
+        self.type = type
         self.items = items
         self.itemScale = itemScale
         self.content = content
@@ -49,32 +49,28 @@ struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, Con
                     .font(.title2)
                     .fontWeight(.semibold)
                     .accessibility(addTraits: [.isHeader])
+                    .padding(.leading, 50)
 
                 Spacer()
-
-                trailingContent()
             }
-
-                .padding(.horizontal)
-                .if(UIDevice.isIPad) { view in
-                    view.padding(.horizontal)
-                }
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 15) {
+                HStack(alignment: .top) {
                     ForEach(items, id: \.hashValue) { item in
-                        PortraitPosterButton(item: item)
+                        PosterButton(item: item, type: type)
                             .scaleItem(itemScale)
                             .imageOverlay(imageOverlay)
+                            .contextMenu(contextMenu)
                             .onSelect(onSelect)
                     }
+                    
+                    trailingContent()
                 }
-                .padding(.horizontal)
-                .if(UIDevice.isIPad) { view in
-                    view.padding(.horizontal)
-                }
+                .padding(.horizontal, 50)
+                .padding2(.vertical)
             }
         }
+        .focusSection()
     }
 }
 
@@ -85,10 +81,12 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
 {
     init(
         title: String,
+        type: PosterType,
         items: [Item]
     ) {
         self.init(
             title: title,
+            type: type,
             items: items,
             itemScale: 1,
             content: { PosterButtonDefaultContentView(item: $0) },
@@ -105,6 +103,7 @@ extension PosterHStack {
     func scaleItems(_ scale: CGFloat) -> PosterHStack {
         PosterHStack(
             title: title,
+            type: type,
             items: items,
             itemScale: scale,
             content: content,
@@ -120,6 +119,7 @@ extension PosterHStack {
     -> PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent> {
         PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent>(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
@@ -135,6 +135,7 @@ extension PosterHStack {
     -> PosterHStack<Item, Content, O, ContextMenu, TrailingContent> {
         PosterHStack<Item, Content, O, ContextMenu, TrailingContent>(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
@@ -150,6 +151,7 @@ extension PosterHStack {
     -> PosterHStack<Item, Content, ImageOverlay, M, TrailingContent> {
         PosterHStack<Item, Content, ImageOverlay, M, TrailingContent>(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
@@ -165,6 +167,7 @@ extension PosterHStack {
     -> PosterHStack<Item, Content, ImageOverlay, ContextMenu, T> {
         PosterHStack<Item, Content, ImageOverlay, ContextMenu, T>(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
@@ -179,6 +182,7 @@ extension PosterHStack {
     func onSelect(_ onSelect: @escaping (Item) -> Void) -> PosterHStack {
         PosterHStack(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,

@@ -45,10 +45,8 @@ extension EpisodeItemView {
                             .foregroundColor(.white)
                     }
 
-                    PosterHStack(
-                        title: L10n.recommended,
-                        items: viewModel.similarItems
-                    ) { item in
+                    PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
+                        .onSelect { item in
                         itemRouter.route(to: \.item, item)
                     }
                     .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")

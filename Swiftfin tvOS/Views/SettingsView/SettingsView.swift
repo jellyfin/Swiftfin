@@ -18,8 +18,6 @@ struct SettingsView: View {
     @ObservedObject
     var viewModel: SettingsViewModel
 
-    @Default(.autoSelectAudioLangCode)
-    var autoSelectAudioLangcode
     @Default(.videoPlayerJumpForward)
     var jumpForwardLength
     @Default(.videoPlayerJumpBackward)
@@ -28,8 +26,6 @@ struct SettingsView: View {
     var downActionShowsMenu
     @Default(.confirmClose)
     var confirmClose
-    @Default(.showPosterLabels)
-    var showPosterLabels
     @Default(.resumeOffset)
     var resumeOffset
     @Default(.subtitleSize)
@@ -128,17 +124,6 @@ struct SettingsView: View {
                         } label: {
                             HStack {
                                 L10n.customize.text
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                            }
-                        }
-
-                        Button {
-                            settingsRouter.route(to: \.missingSettings)
-                        } label: {
-                            HStack {
-                                L10n.missingItems.text
                                     .foregroundColor(.primary)
                                 Spacer()
                                 Image(systemName: "chevron.right")

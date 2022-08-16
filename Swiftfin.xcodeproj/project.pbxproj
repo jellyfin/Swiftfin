@@ -463,9 +463,9 @@
 		E1C926142887565C002A7A66 /* FocusGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C926082887565C002A7A66 /* FocusGuide.swift */; };
 		E1C926152887565C002A7A66 /* EpisodeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C926092887565C002A7A66 /* EpisodeCard.swift */; };
 		E1C926162887565C002A7A66 /* SeriesItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C9260A2887565C002A7A66 /* SeriesItemView.swift */; };
-		E1C9261A288756BD002A7A66 /* PortraitPosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C92617288756BD002A7A66 /* PortraitPosterButton.swift */; };
+		E1C9261A288756BD002A7A66 /* PosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C92617288756BD002A7A66 /* PosterButton.swift */; };
 		E1C9261B288756BD002A7A66 /* DotHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C92618288756BD002A7A66 /* DotHStack.swift */; };
-		E1C9261C288756BD002A7A66 /* PortraitPosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C92619288756BD002A7A66 /* PortraitPosterHStack.swift */; };
+		E1C9261C288756BD002A7A66 /* PosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C92619288756BD002A7A66 /* PosterHStack.swift */; };
 		E1CCF12E28ABF989006CAC9E /* PosterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF12D28ABF989006CAC9E /* PosterType.swift */; };
 		E1CCF12F28ABF989006CAC9E /* PosterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF12D28ABF989006CAC9E /* PosterType.swift */; };
 		E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */; };
@@ -887,9 +887,9 @@
 		E1C926082887565C002A7A66 /* FocusGuide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusGuide.swift; sourceTree = "<group>"; };
 		E1C926092887565C002A7A66 /* EpisodeCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EpisodeCard.swift; sourceTree = "<group>"; };
 		E1C9260A2887565C002A7A66 /* SeriesItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeriesItemView.swift; sourceTree = "<group>"; };
-		E1C92617288756BD002A7A66 /* PortraitPosterButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PortraitPosterButton.swift; sourceTree = "<group>"; };
+		E1C92617288756BD002A7A66 /* PosterButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PosterButton.swift; sourceTree = "<group>"; };
 		E1C92618288756BD002A7A66 /* DotHStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DotHStack.swift; sourceTree = "<group>"; };
-		E1C92619288756BD002A7A66 /* PortraitPosterHStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PortraitPosterHStack.swift; sourceTree = "<group>"; };
+		E1C92619288756BD002A7A66 /* PosterHStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PosterHStack.swift; sourceTree = "<group>"; };
 		E1CCF12D28ABF989006CAC9E /* PosterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterType.swift; sourceTree = "<group>"; };
 		E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterHStack.swift; sourceTree = "<group>"; };
 		E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
@@ -1178,8 +1178,8 @@
 				E103A6A1278A7EB500820EC7 /* HomeCinematicView */,
 				E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */,
 				531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */,
-				E1C92617288756BD002A7A66 /* PortraitPosterButton.swift */,
-				E1C92619288756BD002A7A66 /* PortraitPosterHStack.swift */,
+				E1C92617288756BD002A7A66 /* PosterButton.swift */,
+				E1C92619288756BD002A7A66 /* PosterHStack.swift */,
 				536D3D80267BDFC60004248C /* PortraitItemElement.swift */,
 				E17885A3278105170094FBCF /* SFSymbolButton.swift */,
 			);
@@ -2426,10 +2426,10 @@
 				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
 				E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				62EC3530267666A5000E9F2D /* SessionManager.swift in Sources */,
-				E1C9261C288756BD002A7A66 /* PortraitPosterHStack.swift in Sources */,
+				E1C9261C288756BD002A7A66 /* PosterHStack.swift in Sources */,
 				C453497F279A2DA50045F1E2 /* LiveTVPlayerViewController.swift in Sources */,
 				C4BE078E27298818003F4AD1 /* LiveTVHomeView.swift in Sources */,
-				E1C9261A288756BD002A7A66 /* PortraitPosterButton.swift in Sources */,
+				E1C9261A288756BD002A7A66 /* PosterButton.swift in Sources */,
 				E13DD3E227176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				E11895AA289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
 				E1EF473A289A0F610034046B /* TruncatedTextView.swift in Sources */,

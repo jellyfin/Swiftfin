@@ -53,10 +53,8 @@ extension CollectionItemView {
                             .padding(.top, 5)
                     }
 
-                    PosterHStack(
-                        title: L10n.items,
-                        items: viewModel.collectionItems
-                    ) { item in
+                    PosterHStack(title: L10n.items, type: .portrait, items: viewModel.collectionItems)
+                        .onSelect { item in
                         itemRouter.route(to: \.item, item)
                     }
                     .focusGuide(focusGuide, tag: "items", top: "mediaButtons", bottom: "about")

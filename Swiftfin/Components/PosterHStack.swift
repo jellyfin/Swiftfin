@@ -54,7 +54,6 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
 
                 trailingContent()
             }
-
                 .padding(.horizontal)
                 .if(UIDevice.isIPad) { view in
                     view.padding(.horizontal)

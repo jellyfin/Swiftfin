@@ -10,11 +10,8 @@ import SwiftUI
 
 struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
-    @ScaledMetric(relativeTo: .largeTitle)
-    private var landscapePosterWidth = 200.0
-    
-    @ScaledMetric(relativeTo: .largeTitle)
-    private var portraitPosterWidth = 100.0
+    private let landscapePosterWidth = 490.0
+    private let portraitPosterWidth = 250.0
 
     private let item: Item
     private let type: PosterType
@@ -65,14 +62,16 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                 switch type {
                 case .portrait:
                     ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+                        .poster(type: type, width: itemWidth)
                 case .landscape:
                     ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                        .poster(type: type, width: itemWidth)
                 }
             }
+            .buttonStyle(CardButtonStyle())
             .contextMenu(menuItems: {
                 contextMenu(item)
             })
-            .poster(type: type, width: itemWidth)
             .overlay {
                 imageOverlay(item)
                     .poster(type: type, width: itemWidth)
@@ -80,6 +79,7 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
             .posterShadow()
 
             content(item)
+                .zIndex(-1)
         }
         .frame(width: itemWidth)
     }
