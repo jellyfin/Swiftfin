@@ -14,7 +14,7 @@ struct SeriesItemView: View {
 
     @ObservedObject
     var viewModel: SeriesItemViewModel
-    @Default(.itemViewType)
+    @Default(.Customization.itemViewType)
     private var itemViewType
 
     var body: some View {

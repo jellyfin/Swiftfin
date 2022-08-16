@@ -6,7 +6,10 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
+
+// TODO: figure out cleaning up the portrait/landscape checks
 
 extension HomeView {
 
@@ -16,6 +19,11 @@ extension HomeView {
         private var homeRouter: HomeCoordinator.Router
         @ObservedObject
         var viewModel: HomeViewModel
+        
+        @Default(.Customization.nextUpPosterType)
+        var nextUpPosterType
+        @Default(.Customization.recentlyAddedPosterType)
+        var recentlyAddedPosterType
 
         var body: some View {
             RefreshableScrollView {
@@ -25,23 +33,14 @@ extension HomeView {
                     }
 
                     if !viewModel.nextUpItems.isEmpty {
-                        LandscapePosterHStack(
-                            title: L10n.nextUp,
-                            items: viewModel.nextUpItems
-                        )
-                        .selectedAction { item in
-                            homeRouter.route(to: \.item, item)
-                        }
+                        PosterHStack(title: L10n.nextUp, type: nextUpPosterType, items: viewModel.nextUpItems)
                     }
 
                     if !viewModel.latestAddedItems.isEmpty {
-                        LandscapePosterHStack(
-                            title: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems
-                        )
-                        .selectedAction { item in
-                            homeRouter.route(to: \.item, item)
-                        }
+                        PosterHStack(title: L10n.recentlyAdded, type: recentlyAddedPosterType, items: viewModel.latestAddedItems)
+                            .selectedAction { item in
+                                homeRouter.route(to: \.item, item)
+                            }
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in

@@ -21,7 +21,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.recommendedItems.isEmpty,
                    let items = viewModel.recommendedItems
                 {
-                    PortraitPosterHStack(title: "On Now", items: items)
+                    PosterHStack(title: "On Now", type: .portrait, items: items)
                         .selectedAction { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
@@ -35,7 +35,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.seriesItems.isEmpty,
                    let items = viewModel.seriesItems
                 {
-                    PortraitPosterHStack(title: "Shows", items: items)
+                    PosterHStack(title: "Shows", type: .portrait, items: items)
                         .selectedAction { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
@@ -49,7 +49,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.movieItems.isEmpty,
                    let items = viewModel.movieItems
                 {
-                    PortraitPosterHStack(title: "Movies", items: items)
+                    PosterHStack(title: "Movies", type: .portrait, items: items)
                         .selectedAction { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
@@ -63,7 +63,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.sportsItems.isEmpty,
                    let items = viewModel.sportsItems
                 {
-                    PortraitPosterHStack(title: "Sports", items: items)
+                    PosterHStack(title: "Sports", type: .portrait, items: items)
                         .selectedAction { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
@@ -77,7 +77,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.kidsItems.isEmpty,
                    let items = viewModel.kidsItems
                 {
-                    PortraitPosterHStack(title: "Kids", items: items)
+                    PosterHStack(title: "Kids", type: .portrait, items: items)
                         .selectedAction { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)
@@ -91,7 +91,7 @@ struct LiveTVProgramsView: View {
                 if !viewModel.newsItems.isEmpty,
                    let items = viewModel.newsItems
                 {
-                    PortraitPosterHStack(title: "News", items: items)
+                    PosterHStack(title: "News", type: .portrait, items: items)
                         .selectedAction { item in
                             if let chanId = item.channelId,
                                let chan = viewModel.findChannel(id: chanId)

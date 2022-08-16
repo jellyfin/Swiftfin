@@ -62,7 +62,7 @@ extension SeriesItemView {
                         .frame(height: 0.5)
                         .id("seasonsRecommendedContentDivider")
 
-                    PortraitPosterHStack(
+                    PosterHStack(
                         title: L10n.recommended,
                         items: viewModel.similarItems
                     ) { item in

@@ -35,7 +35,7 @@ struct HomeView: View {
                         )
 
                         if !viewModel.nextUpItems.isEmpty {
-                            PortraitPosterHStack(
+                            PosterHStack(
                                 title: L10n.nextUp,
                                 items: viewModel.nextUpItems
                             ) { item in
@@ -49,7 +49,7 @@ struct HomeView: View {
                         )
 
                         if !viewModel.nextUpItems.isEmpty {
-                            PortraitPosterHStack(
+                            PosterHStack(
                                 title: L10n.nextUp,
                                 items: viewModel.nextUpItems
                             ) { item in
@@ -58,7 +58,7 @@ struct HomeView: View {
                         }
 
                         if !viewModel.latestAddedItems.isEmpty {
-                            PortraitPosterHStack(
+                            PosterHStack(
                                 title: L10n.recentlyAdded,
                                 items: viewModel.latestAddedItems
                             ) { item in

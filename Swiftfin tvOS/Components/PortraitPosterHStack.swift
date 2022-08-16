@@ -11,79 +11,181 @@ import SwiftUI
 import SwiftUICollection
 import TVUIKit
 
-struct PortraitPosterHStack<Item: PortraitPoster, TrailingContent: View>: View {
+struct PosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
 
-    private let loading: Bool
     private let title: String
     private let items: [Item]
-    private let selectedAction: (Item) -> Void
+    private let itemScale: CGFloat
+    private let content: (Item) -> Content
+    private let imageOverlay: (Item) -> ImageOverlay
+    private let contextMenu: (Item) -> ContextMenu
     private let trailingContent: () -> TrailingContent
+    private let selectedAction: (Item) -> Void
 
-    init(
-        loading: Bool = false,
+    private init(
         title: String,
         items: [Item],
+        itemScale: CGFloat,
+        @ViewBuilder content: @escaping (Item) -> Content,
+        @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
+        @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
         @ViewBuilder trailingContent: @escaping () -> TrailingContent,
         selectedAction: @escaping (Item) -> Void
     ) {
-        self.loading = loading
         self.title = title
         self.items = items
+        self.itemScale = itemScale
+        self.content = content
+        self.imageOverlay = imageOverlay
+        self.contextMenu = contextMenu
         self.trailingContent = trailingContent
         self.selectedAction = selectedAction
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading) {
+            HStack {
+                Text(title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .accessibility(addTraits: [.isHeader])
 
-            Text(title)
-                .font(.title3)
-                .fontWeight(.semibold)
-                .padding(.leading, 50)
+                Spacer()
 
-            ScrollView(.horizontal) {
-                HStack(alignment: .top, spacing: 0) {
-                    if loading {
-                        ForEach(0 ..< 10) { _ in
-                            PortraitButton(
-                                item: BaseItemDto.placeHolder,
-                                selectedAction: { _ in }
-                            )
-                            .redacted(reason: .placeholder)
-                        }
-                    } else if items.isEmpty {
-                        PortraitButton(
-                            item: BaseItemDto.noResults,
-                            selectedAction: { _ in }
-                        )
-                    } else {
-                        ForEach(items, id: \.hashValue) { item in
-                            PortraitButton(item: item) { item in
-                                selectedAction(item)
-                            }
-                        }
-                    }
+                trailingContent()
+            }
 
-                    trailingContent()
+                .padding(.horizontal)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.horizontal)
                 }
-                .padding(.horizontal, 50)
-                .padding2(.vertical)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .top, spacing: 15) {
+                    ForEach(items, id: \.hashValue) { item in
+                        PortraitPosterButton(item: item)
+                            .scaleItem(itemScale)
+                            .imageOverlay(imageOverlay)
+                            .selectedAction(selectedAction)
+                    }
+                }
+                .padding(.horizontal)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.horizontal)
+                }
             }
         }
     }
 }
 
-extension PortraitPosterHStack where TrailingContent == EmptyView {
+extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
+    ImageOverlay == EmptyView,
+    ContextMenu == EmptyView,
+    TrailingContent == EmptyView
+{
     init(
-        loading: Bool = false,
         title: String,
-        items: [Item],
-        selectedAction: @escaping (Item) -> Void
+        items: [Item]
     ) {
-        self.loading = loading
-        self.title = title
-        self.items = items
-        self.trailingContent = { EmptyView() }
-        self.selectedAction = selectedAction
+        self.init(
+            title: title,
+            items: items,
+            itemScale: 1,
+            content: { PosterButtonDefaultContentView(item: $0) },
+            imageOverlay: { _ in EmptyView() },
+            contextMenu: { _ in EmptyView() },
+            trailingContent: { EmptyView() },
+            selectedAction: { _ in }
+        )
+    }
+}
+
+extension PosterHStack {
+    @ViewBuilder
+    func scaleItems(_ scale: CGFloat) -> PosterHStack {
+        PosterHStack(
+            title: title,
+            items: items,
+            itemScale: scale,
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            trailingContent: trailingContent,
+            selectedAction: selectedAction
+        )
+    }
+
+    @ViewBuilder
+    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
+    -> PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent> {
+        PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent>(
+            title: title,
+            items: items,
+            itemScale: itemScale,
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            trailingContent: trailingContent,
+            selectedAction: selectedAction
+        )
+    }
+
+    @ViewBuilder
+    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O)
+    -> PosterHStack<Item, Content, O, ContextMenu, TrailingContent> {
+        PosterHStack<Item, Content, O, ContextMenu, TrailingContent>(
+            title: title,
+            items: items,
+            itemScale: itemScale,
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            trailingContent: trailingContent,
+            selectedAction: selectedAction
+        )
+    }
+
+    @ViewBuilder
+    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
+    -> PosterHStack<Item, Content, ImageOverlay, M, TrailingContent> {
+        PosterHStack<Item, Content, ImageOverlay, M, TrailingContent>(
+            title: title,
+            items: items,
+            itemScale: itemScale,
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            trailingContent: trailingContent,
+            selectedAction: selectedAction
+        )
+    }
+
+    @ViewBuilder
+    func trailing<T: View>(@ViewBuilder _ trailingContent: @escaping () -> T)
+    -> PosterHStack<Item, Content, ImageOverlay, ContextMenu, T> {
+        PosterHStack<Item, Content, ImageOverlay, ContextMenu, T>(
+            title: title,
+            items: items,
+            itemScale: itemScale,
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            trailingContent: trailingContent,
+            selectedAction: selectedAction
+        )
+    }
+
+    @ViewBuilder
+    func selectedAction(_ selectedAction: @escaping (Item) -> Void) -> PosterHStack {
+        PosterHStack(
+            title: title,
+            items: items,
+            itemScale: itemScale,
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            trailingContent: trailingContent,
+            selectedAction: selectedAction
+        )
     }
 }

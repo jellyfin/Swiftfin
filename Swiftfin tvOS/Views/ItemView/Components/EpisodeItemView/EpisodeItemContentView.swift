@@ -45,7 +45,7 @@ extension EpisodeItemView {
                             .foregroundColor(.white)
                     }
 
-                    PortraitPosterHStack(
+                    PosterHStack(
                         title: L10n.recommended,
                         items: viewModel.similarItems
                     ) { item in

@@ -53,7 +53,7 @@ extension MovieItemView {
                             .padding(.top, 5)
                     }
 
-                    PortraitPosterHStack(
+                    PosterHStack(
                         title: L10n.recommended,
                         items: viewModel.similarItems
                     ) { item in

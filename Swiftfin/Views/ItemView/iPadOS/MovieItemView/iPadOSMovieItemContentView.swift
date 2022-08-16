@@ -53,7 +53,7 @@ extension iPadOSMovieItemView {
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty
                 {
-                    PortraitPosterHStack(title: L10n.castAndCrew, items: castAndCrew)
+                    PosterHStack(title: L10n.castAndCrew, type: .portrait, items: castAndCrew)
                         .selectedAction { person in
                             itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
                         }
@@ -64,7 +64,7 @@ extension iPadOSMovieItemView {
                 // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
-                    PortraitPosterHStack(title: L10n.recommended, items: viewModel.similarItems)
+                    PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
                         .selectedAction { item in
                             itemRouter.route(to: \.item, item)
                         }

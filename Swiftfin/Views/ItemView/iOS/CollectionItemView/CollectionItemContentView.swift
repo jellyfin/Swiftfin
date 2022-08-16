@@ -49,7 +49,7 @@ extension CollectionItemView {
                 // MARK: Items
 
                 if !viewModel.collectionItems.isEmpty {
-                    PortraitPosterHStack(title: L10n.items, items: viewModel.collectionItems)
+                    PosterHStack(title: L10n.items, type: .portrait, items: viewModel.collectionItems)
                         .selectedAction { item in
                             itemRouter.route(to: \.item, item)
                         }

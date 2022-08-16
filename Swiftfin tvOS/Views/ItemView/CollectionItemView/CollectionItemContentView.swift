@@ -53,7 +53,7 @@ extension CollectionItemView {
                             .padding(.top, 5)
                     }
 
-                    PortraitPosterHStack(
+                    PosterHStack(
                         title: L10n.items,
                         items: viewModel.collectionItems
                     ) { item in

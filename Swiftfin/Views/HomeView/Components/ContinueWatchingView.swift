@@ -17,10 +17,17 @@ struct ContinueWatchingView: View {
     var viewModel: HomeViewModel
 
     var body: some View {
-        LandscapePosterHStack(title: "", items: viewModel.resumeItems)
+        PosterHStack(title: "", type: .landscape, items: viewModel.resumeItems)
             .scaleItems(1.5)
             .selectedAction { item in
                 homeRouter.route(to: \.item, item)
+            }
+            .contextMenu { item in
+                Button(role: .destructive) {
+                    viewModel.removeItemFromResume(item)
+                } label: {
+                    Label(L10n.removeFromResume, systemImage: "minus.circle")
+                }
             }
             .imageOverlay { item in
                 VStack {
@@ -51,13 +58,6 @@ struct ContinueWatchingView: View {
                             }
                         }
                     }
-                }
-            }
-            .contextMenu { item in
-                Button(role: .destructive) {
-                    viewModel.removeItemFromResume(item)
-                } label: {
-                    Label(L10n.removeFromResume, systemImage: "minus.circle")
                 }
             }
     }

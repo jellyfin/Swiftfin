@@ -96,7 +96,7 @@ final class LibraryViewModel: ViewModel {
             genreIDs = filters.withGenres.compactMap(\.id)
         }
         let sortBy = filters.sortBy.map(\.rawValue)
-        let queryRecursive = Defaults[.showFlattenView] || filters.filters.contains(.isFavorite) ||
+        let queryRecursive = Defaults[.Customization.showFlattenView] || filters.filters.contains(.isFavorite) ||
             self.person != nil ||
             self.genre != nil ||
             self.studio != nil
@@ -104,7 +104,7 @@ final class LibraryViewModel: ViewModel {
         if filters.filters.contains(.isFavorite) {
             includeItemTypes = [.movie, .series, .season, .episode, .boxSet]
         } else {
-            includeItemTypes = [.movie, .series, .boxSet] + (Defaults[.showFlattenView] ? [] : [.folder])
+            includeItemTypes = [.movie, .series, .boxSet] + (Defaults[.Customization.showFlattenView] ? [] : [.folder])
         }
 
         ItemsAPI.getItemsByUserId(

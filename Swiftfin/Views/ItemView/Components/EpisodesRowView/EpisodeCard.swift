@@ -21,6 +21,19 @@ struct EpisodeCard: View {
     var body: some View {
         LandscapePosterButton(item: episode, singleImage: true)
             .scaleItem(1.2)
+            .imageOverlay { _ in
+                if episode.userData?.played ?? false {
+                    ZStack(alignment: .bottomTrailing) {
+                        Color.clear
+                        
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30, alignment: .bottomTrailing)
+                            .foregroundColor(.white)
+                            .padding()
+                    }
+                }
+            }
             .content { _ in
                 VStack(alignment: .leading) {
                     Text(episode.episodeLocator ?? L10n.unknown)

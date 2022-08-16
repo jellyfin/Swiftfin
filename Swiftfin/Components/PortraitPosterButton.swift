@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-struct PortraitPosterButton<Item: PortraitPoster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
+struct PortraitPosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     @ScaledMetric(relativeTo: .largeTitle)
-    private var baseImageWidth = 100.0
+    private var baseImageWidth = 110.0
 
     private let item: Item
     private let itemScale: CGFloat

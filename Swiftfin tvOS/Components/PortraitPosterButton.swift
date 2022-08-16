@@ -7,11 +7,12 @@
 //
 
 import SwiftUI
+import SwiftUICollection
 
-struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
+struct PortraitPosterButton<Item: PortraitPoster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     @ScaledMetric(relativeTo: .largeTitle)
-    private var baseImageWidth = 200.0
+    private var baseImageWidth = 100.0
 
     private let item: Item
     private let itemScale: CGFloat
@@ -20,7 +21,6 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
     private let imageOverlay: (Item) -> ImageOverlay
     private let contextMenu: (Item) -> ContextMenu
     private let selectedAction: (Item) -> Void
-    private let singleImage: Bool
 
     private var itemWidth: CGFloat {
         baseImageWidth * itemScale
@@ -33,8 +33,7 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
         @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
         @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
-        selectedAction: @escaping (Item) -> Void,
-        singleImage: Bool
+        selectedAction: @escaping (Item) -> Void
     ) {
         self.item = item
         self.itemScale = itemScale
@@ -43,7 +42,6 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
         self.imageOverlay = imageOverlay
         self.contextMenu = contextMenu
         self.selectedAction = selectedAction
-        self.singleImage = singleImage
     }
 
     var body: some View {
@@ -51,12 +49,12 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
             Button {
                 selectedAction(item)
             } label: {
-                ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
             }
-            .landscapePoster(width: itemWidth)
+            .portraitPoster(width: itemWidth)
             .overlay {
                 imageOverlay(item)
-                    .landscapePoster(width: itemWidth)
+                    .portraitPoster(width: itemWidth)
             }
             .contextMenu(menuItems: {
                 contextMenu(item)
@@ -69,11 +67,11 @@ struct LandscapePosterButton<Item: Poster, Content: View, ImageOverlay: View, Co
     }
 }
 
-extension LandscapePosterButton where Content == PosterButtonDefaultContentView<Item>,
+extension PortraitPosterButton where Content == PosterButtonDefaultContentView<Item>,
     ImageOverlay == EmptyView,
     ContextMenu == EmptyView
 {
-    init(item: Item, singleImage: Bool = false) {
+    init(item: Item) {
         self.init(
             item: item,
             itemScale: 1,
@@ -81,94 +79,87 @@ extension LandscapePosterButton where Content == PosterButtonDefaultContentView<
             content: { PosterButtonDefaultContentView(item: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
-            selectedAction: { _ in },
-            singleImage: singleImage
+            selectedAction: { _ in }
         )
     }
 }
 
-extension LandscapePosterButton {
+extension PortraitPosterButton {
     @ViewBuilder
-    func horizontalAlignment(_ alignment: HorizontalAlignment) -> LandscapePosterButton {
-        LandscapePosterButton(
+    func horizontalAlignment(_ alignment: HorizontalAlignment) -> PortraitPosterButton {
+        PortraitPosterButton(
             item: item,
             itemScale: itemScale,
             horizontalAlignment: alignment,
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
-            singleImage: singleImage
+            selectedAction: selectedAction
         )
     }
 
     @ViewBuilder
-    func scaleItem(_ scale: CGFloat) -> LandscapePosterButton {
-        LandscapePosterButton(
+    func scaleItem(_ scale: CGFloat) -> PortraitPosterButton {
+        PortraitPosterButton(
             item: item,
             itemScale: scale,
             horizontalAlignment: horizontalAlignment,
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
-            singleImage: singleImage
+            selectedAction: selectedAction
         )
     }
 
     @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C) -> LandscapePosterButton<Item, C, ImageOverlay, ContextMenu> {
-        LandscapePosterButton<Item, C, ImageOverlay, ContextMenu>(
+    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C) -> PortraitPosterButton<Item, C, ImageOverlay, ContextMenu> {
+        PortraitPosterButton<Item, C, ImageOverlay, ContextMenu>(
             item: item,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
-            singleImage: singleImage
+            selectedAction: selectedAction
         )
     }
 
     @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O) -> LandscapePosterButton<Item, Content, O, ContextMenu> {
-        LandscapePosterButton<Item, Content, O, ContextMenu>(
+    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O) -> PortraitPosterButton<Item, Content, O, ContextMenu> {
+        PortraitPosterButton<Item, Content, O, ContextMenu>(
             item: item,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
-            singleImage: singleImage
+            selectedAction: selectedAction
         )
     }
 
     @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M) -> LandscapePosterButton<Item, Content, ImageOverlay, M> {
-        LandscapePosterButton<Item, Content, ImageOverlay, M>(
+    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M) -> PortraitPosterButton<Item, Content, ImageOverlay, M> {
+        PortraitPosterButton<Item, Content, ImageOverlay, M>(
             item: item,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: selectedAction,
-            singleImage: singleImage
+            selectedAction: selectedAction
         )
     }
 
     @ViewBuilder
-    func selectedAction(_ action: @escaping (Item) -> Void) -> LandscapePosterButton {
-        LandscapePosterButton(
+    func selectedAction(_ action: @escaping (Item) -> Void) -> PortraitPosterButton {
+        PortraitPosterButton(
             item: item,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
             content: content,
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
-            selectedAction: action,
-            singleImage: singleImage
+            selectedAction: action
         )
     }
 }

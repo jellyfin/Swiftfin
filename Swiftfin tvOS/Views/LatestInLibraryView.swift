@@ -17,7 +17,7 @@ struct LatestInLibraryView: View {
     var viewModel: LatestMediaViewModel
 
     var body: some View {
-        PortraitPosterHStack(
+        PosterHStack(
             title: L10n.latestWithString(viewModel.library.displayName),
             items: viewModel.items
         ) {

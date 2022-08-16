@@ -14,6 +14,9 @@ protocol Poster: Hashable {
     var title: String { get }
     var subtitle: String? { get }
     var showTitle: Bool { get }
+    
+    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
 }
 
 extension Poster {
@@ -23,11 +26,11 @@ extension Poster {
     }
 }
 
-protocol PortraitPoster: Poster {
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
-}
-
-protocol LandscapePoster: Poster {
-    // single is used as a workaround for SeriesEpisode view
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
-}
+//protocol PortraitPoster: Poster {
+//    
+//}
+//
+//protocol LandscapePoster: Poster {
+//    // single is used as a workaround for SeriesEpisode view
+//    
+//}

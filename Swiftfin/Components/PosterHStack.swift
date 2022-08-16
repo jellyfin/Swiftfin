@@ -8,9 +8,10 @@
 
 import SwiftUI
 
-struct PortraitPosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
-
+struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
+    
     private let title: String
+    private let type: PosterType
     private let items: [Item]
     private let itemScale: CGFloat
     private let content: (Item) -> Content
@@ -21,6 +22,7 @@ struct PortraitPosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: V
 
     private init(
         title: String,
+        type: PosterType,
         items: [Item],
         itemScale: CGFloat,
         @ViewBuilder content: @escaping (Item) -> Content,
@@ -30,6 +32,7 @@ struct PortraitPosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: V
         selectedAction: @escaping (Item) -> Void
     ) {
         self.title = title
+        self.type = type
         self.items = items
         self.itemScale = itemScale
         self.content = content
@@ -60,10 +63,20 @@ struct PortraitPosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: V
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
                     ForEach(items, id: \.hashValue) { item in
-                        PortraitPosterButton(item: item)
-                            .scaleItem(itemScale)
-                            .imageOverlay(imageOverlay)
-                            .selectedAction(selectedAction)
+                        switch type {
+                        case .portrait:
+                            PortraitPosterButton(item: item)
+                                .scaleItem(itemScale)
+                                .imageOverlay(imageOverlay)
+                                .contextMenu(contextMenu)
+                                .selectedAction(selectedAction)
+                        case .landscape:
+                            LandscapePosterButton(item: item)
+                                .scaleItem(itemScale)
+                                .imageOverlay(imageOverlay)
+                                .contextMenu(contextMenu)
+                                .selectedAction(selectedAction)
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -75,17 +88,19 @@ struct PortraitPosterHStack<Item: PortraitPoster, Content: View, ImageOverlay: V
     }
 }
 
-extension PortraitPosterHStack where Content == PosterButtonDefaultContentView<Item>,
+extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
     ImageOverlay == EmptyView,
     ContextMenu == EmptyView,
     TrailingContent == EmptyView
 {
     init(
         title: String,
+        type: PosterType,
         items: [Item]
     ) {
         self.init(
             title: title,
+            type: type,
             items: items,
             itemScale: 1,
             content: { PosterButtonDefaultContentView(item: $0) },
@@ -97,11 +112,12 @@ extension PortraitPosterHStack where Content == PosterButtonDefaultContentView<I
     }
 }
 
-extension PortraitPosterHStack {
+extension PosterHStack {
     @ViewBuilder
-    func scaleItems(_ scale: CGFloat) -> PortraitPosterHStack {
-        PortraitPosterHStack(
+    func scaleItems(_ scale: CGFloat) -> PosterHStack {
+        PosterHStack(
             title: title,
+            type: type,
             items: items,
             itemScale: scale,
             content: content,
@@ -114,9 +130,10 @@ extension PortraitPosterHStack {
 
     @ViewBuilder
     func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
-    -> PortraitPosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent> {
-        PortraitPosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent>(
+    -> PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent> {
+        PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent>(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
@@ -129,9 +146,10 @@ extension PortraitPosterHStack {
 
     @ViewBuilder
     func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O)
-    -> PortraitPosterHStack<Item, Content, O, ContextMenu, TrailingContent> {
-        PortraitPosterHStack<Item, Content, O, ContextMenu, TrailingContent>(
+    -> PosterHStack<Item, Content, O, ContextMenu, TrailingContent> {
+        PosterHStack<Item, Content, O, ContextMenu, TrailingContent>(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
@@ -144,9 +162,10 @@ extension PortraitPosterHStack {
 
     @ViewBuilder
     func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
-    -> PortraitPosterHStack<Item, Content, ImageOverlay, M, TrailingContent> {
-        PortraitPosterHStack<Item, Content, ImageOverlay, M, TrailingContent>(
+    -> PosterHStack<Item, Content, ImageOverlay, M, TrailingContent> {
+        PosterHStack<Item, Content, ImageOverlay, M, TrailingContent>(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
@@ -159,9 +178,10 @@ extension PortraitPosterHStack {
 
     @ViewBuilder
     func trailing<T: View>(@ViewBuilder _ trailingContent: @escaping () -> T)
-    -> PortraitPosterHStack<Item, Content, ImageOverlay, ContextMenu, T> {
-        PortraitPosterHStack<Item, Content, ImageOverlay, ContextMenu, T>(
+    -> PosterHStack<Item, Content, ImageOverlay, ContextMenu, T> {
+        PosterHStack<Item, Content, ImageOverlay, ContextMenu, T>(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
@@ -173,9 +193,10 @@ extension PortraitPosterHStack {
     }
 
     @ViewBuilder
-    func selectedAction(_ selectedAction: @escaping (Item) -> Void) -> PortraitPosterHStack {
-        PortraitPosterHStack(
+    func selectedAction(_ selectedAction: @escaping (Item) -> Void) -> PosterHStack {
+        PosterHStack(
             title: title,
+            type: type,
             items: items,
             itemScale: itemScale,
             content: content,
