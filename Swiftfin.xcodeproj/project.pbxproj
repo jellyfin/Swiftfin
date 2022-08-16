@@ -413,7 +413,6 @@
 		E193D5502719430400900D82 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D54F2719430400900D82 /* ServerDetailView.swift */; };
 		E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
 		E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */; };
-		E19AB24E28A70F0C00ACFD9C /* PosterDefaultContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19AB24D28A70F0C00ACFD9C /* PosterDefaultContentView.swift */; };
 		E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */; };
 		E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0428A0B958005C10C8 /* Nuke */; };
 		E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0628A0B958005C10C8 /* NukeUI */; };
@@ -849,7 +848,6 @@
 		E193D54C2719426600900D82 /* LibraryFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilterView.swift; sourceTree = "<group>"; };
 		E193D54F2719430400900D82 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainTabCoordinator.swift; sourceTree = "<group>"; };
-		E19AB24D28A70F0C00ACFD9C /* PosterDefaultContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterDefaultContentView.swift; sourceTree = "<group>"; };
 		E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomEdgeGradientModifier.swift; sourceTree = "<group>"; };
 		E1A16C9C2889AF1E00EA4679 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		E1A16CA0288A7CFD00EA4679 /* AboutViewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewCard.swift; sourceTree = "<group>"; };
@@ -1415,7 +1413,6 @@
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
 				E18E01A5288746AF0022598C /* PillHStack.swift */,
 				E16AA60728A364A6009A983C /* PosterButton.swift */,
-				E19AB24D28A70F0C00ACFD9C /* PosterDefaultContentView.swift */,
 				E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */,
 				E1AA331C2782541500F6439C /* PrimaryButton.swift */,
 				E18E01A4288746AF0022598C /* RefreshableScrollView.swift */,
@@ -2638,7 +2635,6 @@
 				E18E01DA288747230022598C /* iPadOSEpisodeContentView.swift in Sources */,
 				E1047E2327E5880000CB0D4A /* InitialFailureView.swift in Sources */,
 				E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */,
-				E19AB24E28A70F0C00ACFD9C /* PosterDefaultContentView.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
 				E1E5D5492783CDD700692DFE /* OverlaySettingsView.swift in Sources */,
