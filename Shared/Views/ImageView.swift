@@ -70,8 +70,10 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
                     _placeholder(currentSource)
                 } else if let _image = state.image {
                     image(_image.resizingMode(resizingMode))
-                } else {
-                    failure()
+                } else if state.error != nil {
+                    failure().onAppear {
+                        sources.removeFirst()
+                    }
                 }
             }
             .pipeline(ImagePipeline(configuration: .withDataCache))

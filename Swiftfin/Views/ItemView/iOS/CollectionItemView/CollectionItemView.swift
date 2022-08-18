@@ -13,7 +13,7 @@ struct CollectionItemView: View {
 
     @ObservedObject
     var viewModel: CollectionItemViewModel
-    @Default(.itemViewType)
+    @Default(.Customization.itemViewType)
     private var itemViewType
 
     var body: some View {

@@ -53,13 +53,11 @@ extension MovieItemView {
                             .padding(.top, 5)
                     }
 
-                    PortraitPosterHStack(
-                        title: L10n.recommended,
-                        items: viewModel.similarItems
-                    ) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-                    .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
+                    PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
+                        .onSelect { item in
+                            itemRouter.route(to: \.item, item)
+                        }
+                        .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
 
                     ItemView.AboutView(viewModel: viewModel)
                         .focusGuide(focusGuide, tag: "about", top: "recommended")

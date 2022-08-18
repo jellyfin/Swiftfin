@@ -29,10 +29,7 @@ extension SeriesItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(
-                        title: L10n.genres,
-                        items: genres
-                    ) { genre in
+                    PillHStack(title: L10n.genres, items: genres).onSelect { genre in
                         itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
@@ -45,7 +42,7 @@ extension SeriesItemView {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
-                    ) { studio in
+                    ).onSelect { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 
@@ -55,12 +52,10 @@ extension SeriesItemView {
                 // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed), !castAndCrew.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.castAndCrew,
-                        items: castAndCrew
-                    ) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
+                    PosterHStack(title: L10n.castAndCrew, type: .portrait, items: castAndCrew)
+                        .onSelect { person in
+                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                        }
 
                     Divider()
                 }
@@ -68,12 +63,10 @@ extension SeriesItemView {
                 // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.recommended,
-                        items: viewModel.similarItems
-                    ) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
+                    PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
+                        .onSelect { item in
+                            itemRouter.route(to: \.item, item)
+                        }
 
                     Divider()
                 }

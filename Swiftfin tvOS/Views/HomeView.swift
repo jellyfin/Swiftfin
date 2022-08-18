@@ -35,12 +35,10 @@ struct HomeView: View {
                         )
 
                         if !viewModel.nextUpItems.isEmpty {
-                            PortraitPosterHStack(
-                                title: L10n.nextUp,
-                                items: viewModel.nextUpItems
-                            ) { item in
-                                router.route(to: \.item, item)
-                            }
+                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
+                                .onSelect { item in
+                                    router.route(to: \.item, item)
+                                }
                         }
                     } else {
                         HomeCinematicView(
@@ -49,21 +47,17 @@ struct HomeView: View {
                         )
 
                         if !viewModel.nextUpItems.isEmpty {
-                            PortraitPosterHStack(
-                                title: L10n.nextUp,
-                                items: viewModel.nextUpItems
-                            ) { item in
-                                router.route(to: \.item, item)
-                            }
+                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
+                                .onSelect { item in
+                                    router.route(to: \.item, item)
+                                }
                         }
 
                         if !viewModel.latestAddedItems.isEmpty {
-                            PortraitPosterHStack(
-                                title: L10n.recentlyAdded,
-                                items: viewModel.latestAddedItems
-                            ) { item in
-                                router.route(to: \.item, item)
-                            }
+                            PosterHStack(title: L10n.recentlyAdded, type: .portrait, items: viewModel.latestAddedItems)
+                                .onSelect { item in
+                                    router.route(to: \.item, item)
+                                }
                         }
                     }
 

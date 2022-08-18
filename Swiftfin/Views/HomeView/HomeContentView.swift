@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension HomeView {
@@ -17,6 +18,11 @@ extension HomeView {
         @ObservedObject
         var viewModel: HomeViewModel
 
+        @Default(.Customization.nextUpPosterType)
+        var nextUpPosterType
+        @Default(.Customization.recentlyAddedPosterType)
+        var recentlyAddedPosterType
+
         var body: some View {
             RefreshableScrollView {
                 VStack(alignment: .leading, spacing: 20) {
@@ -25,23 +31,17 @@ extension HomeView {
                     }
 
                     if !viewModel.nextUpItems.isEmpty {
-                        PortraitPosterHStack(
-                            title: L10n.nextUp,
-                            items: viewModel.nextUpItems,
-                            itemWidth: UIDevice.isIPad ? 130 : 110
-                        ) { item in
-                            homeRouter.route(to: \.item, item)
-                        }
+                        PosterHStack(title: L10n.nextUp, type: nextUpPosterType, items: viewModel.nextUpItems)
+                            .onSelect { item in
+                                homeRouter.route(to: \.item, item)
+                            }
                     }
 
                     if !viewModel.latestAddedItems.isEmpty {
-                        PortraitPosterHStack(
-                            title: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems,
-                            itemWidth: UIDevice.isIPad ? 130 : 110
-                        ) { item in
-                            homeRouter.route(to: \.item, item)
-                        }
+                        PosterHStack(title: L10n.recentlyAdded, type: recentlyAddedPosterType, items: viewModel.latestAddedItems)
+                            .onSelect { item in
+                                homeRouter.route(to: \.item, item)
+                            }
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in

@@ -38,8 +38,6 @@ struct SettingsView: View {
     var resumeOffset
     @Default(.subtitleSize)
     var subtitleSize
-    @Default(.itemViewType)
-    var itemViewType
     @Default(.subtitleFontName)
     var subtitleFontName
 
@@ -142,24 +140,6 @@ struct SettingsView: View {
                 } label: {
                     HStack {
                         L10n.customize.text
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                    }
-                }
-
-                // Not localized yet. Will be in a settings re-organization
-                Picker("Item View", selection: $itemViewType) {
-                    ForEach(ItemViewType.allCases, id: \.self) { itemViewType in
-                        Text(itemViewType.label).tag(itemViewType.rawValue)
-                    }
-                }
-
-                Button {
-                    settingsRouter.route(to: \.missingSettings)
-                } label: {
-                    HStack {
-                        L10n.missingItems.text
                             .foregroundColor(.primary)
                         Spacer()
                         Image(systemName: "chevron.right")

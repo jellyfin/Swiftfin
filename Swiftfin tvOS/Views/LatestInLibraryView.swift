@@ -17,40 +17,39 @@ struct LatestInLibraryView: View {
     var viewModel: LatestMediaViewModel
 
     var body: some View {
-        PortraitPosterHStack(
-            title: L10n.latestWithString(viewModel.library.displayName),
-            items: viewModel.items
-        ) {
-            Button {
-                router.route(to: \.library, (
-                    viewModel: .init(
-                        parentID: viewModel.library.id!,
-                        filters: LibraryFilters(
-                            filters: [],
-                            sortOrder: [.descending],
-                            sortBy: [.dateAdded]
-                        )
-                    ),
-                    title: viewModel.library.displayName
-                ))
-            } label: {
-                ZStack {
-                    Color(UIColor.darkGray)
-                        .opacity(0.5)
+        PosterHStack(title: L10n.latestWithString(viewModel.library.displayName), type: .portrait, items: viewModel.items)
+            .trailing {
+                Button {
+                    router.route(to: \.library, (
+                        viewModel: .init(
+                            parentID: viewModel.library.id!,
+                            filters: LibraryFilters(
+                                filters: [],
+                                sortOrder: [.descending],
+                                sortBy: [.dateAdded]
+                            )
+                        ),
+                        title: viewModel.library.displayName
+                    ))
+                } label: {
+                    ZStack {
+                        Color(UIColor.darkGray)
+                            .opacity(0.5)
 
-                    VStack(spacing: 20) {
-                        Image(systemName: "chevron.right")
-                            .font(.title)
+                        VStack(spacing: 20) {
+                            Image(systemName: "chevron.right")
+                                .font(.title)
 
-                        L10n.seeAll.text
-                            .font(.title3)
+                            L10n.seeAll.text
+                                .font(.title3)
+                        }
                     }
+                    .poster(type: .portrait, width: 250)
                 }
+                .buttonStyle(PlainButtonStyle())
             }
-            .frame(width: 257, height: 380)
-            .buttonStyle(PlainButtonStyle())
-        } selectedAction: { item in
-            router.route(to: \.item, item)
-        }
+            .onSelect { item in
+                router.route(to: \.item, item)
+            }
     }
 }

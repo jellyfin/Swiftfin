@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -16,24 +17,25 @@ struct LatestInLibraryView: View {
     @ObservedObject
     var viewModel: LatestMediaViewModel
 
+    @Default(.Customization.latestInLibraryPosterType)
+    var latestInLibraryPosterType
+
     var body: some View {
-        PortraitPosterHStack(
-            title: L10n.latestWithString(viewModel.library.displayName),
-            items: viewModel.items,
-            itemWidth: UIDevice.isIPad ? 130 : 110
-        ) {
-            Button {
-                let libraryViewModel = LibraryViewModel(parentID: viewModel.library.id, filters: HomeViewModel.recentFilterSet)
-                homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))
-            } label: {
-                HStack {
-                    L10n.seeAll.text
-                    Image(systemName: "chevron.right")
+        PosterHStack(title: L10n.latestWithString(viewModel.library.displayName), type: latestInLibraryPosterType, items: viewModel.items)
+            .trailing {
+                Button {
+                    let libraryViewModel = LibraryViewModel(parentID: viewModel.library.id, filters: HomeViewModel.recentFilterSet)
+                    homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))
+                } label: {
+                    HStack {
+                        L10n.seeAll.text
+                        Image(systemName: "chevron.right")
+                    }
+                    .font(.subheadline.bold())
                 }
-                .font(.subheadline.bold())
             }
-        } selectedAction: { item in
-            homeRouter.route(to: \.item, item)
-        }
+            .onSelect { item in
+                homeRouter.route(to: \.item, item)
+            }
     }
 }

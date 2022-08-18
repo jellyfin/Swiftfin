@@ -13,7 +13,7 @@ import UIKit
 
 // MARK: PortraitPoster
 
-extension BaseItemDto: PortraitPoster {
+extension BaseItemDto: Poster {
 
     var title: String {
         switch type {
@@ -36,7 +36,7 @@ extension BaseItemDto: PortraitPoster {
     var showTitle: Bool {
         switch type {
         case .episode, .series, .movie, .boxSet:
-            return Defaults[.showPosterLabels]
+            return Defaults[.Customization.showPosterLabels]
         default:
             return true
         }
@@ -50,20 +50,19 @@ extension BaseItemDto: PortraitPoster {
             return imageSource(.primary, maxWidth: maxWidth)
         }
     }
-}
 
-// MARK: LandscapePoster
-
-extension BaseItemDto {
-    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource] {
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool = false) -> [ImageSource] {
         switch type {
         case .episode:
-            // TODO: Set episode image preference based on defaults
-            return [
-                seriesImageSource(.thumb, maxWidth: maxWidth),
-                seriesImageSource(.backdrop, maxWidth: maxWidth),
-                imageSource(.primary, maxWidth: maxWidth),
-            ]
+            if single || Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
+                return [imageSource(.primary, maxWidth: maxWidth)]
+            } else {
+                return [
+                    seriesImageSource(.thumb, maxWidth: maxWidth),
+                    seriesImageSource(.backdrop, maxWidth: maxWidth),
+                    imageSource(.primary, maxWidth: maxWidth),
+                ]
+            }
         default:
             return [
                 imageSource(.thumb, maxWidth: maxWidth),

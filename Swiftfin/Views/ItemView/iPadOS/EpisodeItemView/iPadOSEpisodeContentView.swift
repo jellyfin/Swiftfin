@@ -26,11 +26,10 @@ extension iPadOSEpisodeItemView {
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
                     PillHStack(
                         title: L10n.genres,
-                        items: genres,
-                        selectedAction: { genre in
-                            itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                        }
-                    )
+                        items: genres
+                    ).onSelect { genre in
+                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+                    }
 
                     Divider()
                 }
@@ -39,7 +38,7 @@ extension iPadOSEpisodeItemView {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
-                    ) { studio in
+                    ).onSelect { studio in
                         itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 
@@ -49,13 +48,10 @@ extension iPadOSEpisodeItemView {
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty
                 {
-                    PortraitPosterHStack(
-                        title: L10n.castAndCrew,
-                        items: castAndCrew,
-                        itemWidth: 130
-                    ) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
+                    PosterHStack(title: L10n.castAndCrew, type: .portrait, items: castAndCrew)
+                        .onSelect { person in
+                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
+                        }
 
                     Divider()
                 }

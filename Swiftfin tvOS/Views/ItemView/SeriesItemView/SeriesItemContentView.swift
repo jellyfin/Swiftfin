@@ -62,13 +62,11 @@ extension SeriesItemView {
                         .frame(height: 0.5)
                         .id("seasonsRecommendedContentDivider")
 
-                    PortraitPosterHStack(
-                        title: L10n.recommended,
-                        items: viewModel.similarItems
-                    ) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-                    .focusGuide(focusGuide, tag: "recommended", top: "seasons", bottom: "about")
+                    PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
+                        .onSelect { item in
+                            itemRouter.route(to: \.item, item)
+                        }
+                        .focusGuide(focusGuide, tag: "recommended", top: "seasons", bottom: "about")
 
                     ItemView.AboutView(viewModel: viewModel)
                         .focusGuide(focusGuide, tag: "about", top: "recommended")

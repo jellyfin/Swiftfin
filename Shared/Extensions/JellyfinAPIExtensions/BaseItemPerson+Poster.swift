@@ -12,7 +12,7 @@ import UIKit
 
 // MARK: PortraitImageStackable
 
-extension BaseItemPerson: PortraitPoster {
+extension BaseItemPerson: Poster {
 
     var title: String {
         self.name ?? "--"
@@ -42,5 +42,9 @@ extension BaseItemPerson: PortraitPoster {
         }
 
         return ImageSource(url: url, blurHash: blurHash)
+    }
+
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
+        []
     }
 }

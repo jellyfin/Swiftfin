@@ -14,6 +14,9 @@ protocol Poster: Hashable {
     var title: String { get }
     var subtitle: String? { get }
     var showTitle: Bool { get }
+
+    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
 }
 
 extension Poster {
@@ -21,12 +24,4 @@ extension Poster {
         hasher.combine(title)
         hasher.combine(subtitle)
     }
-}
-
-protocol PortraitPoster: Poster {
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
-}
-
-protocol LandscapePoster: Poster {
-    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource]
 }

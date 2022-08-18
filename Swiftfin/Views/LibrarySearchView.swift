@@ -84,9 +84,10 @@ struct LibrarySearchView: View {
                     if !items.isEmpty {
                         LazyVGrid(columns: tracks) {
                             ForEach(items, id: \.id) { item in
-                                PortraitPosterButton(item: item) { item in
-                                    searchRouter.route(to: \.item, item)
-                                }
+                                PosterButton(item: item, type: .portrait)
+                                    .onSelect { item in
+                                        searchRouter.route(to: \.item, item)
+                                    }
                             }
                         }
                     }
