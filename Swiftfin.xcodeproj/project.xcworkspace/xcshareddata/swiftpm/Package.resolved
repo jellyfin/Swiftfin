@@ -10,15 +10,6 @@
       }
     },
     {
-      "identity" : "anycodable",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Flight-School/AnyCodable",
-      "state" : {
-        "revision" : "f9fda69a7b704d46fb5123005f2f7e43dbb8a0fa",
-        "version" : "0.6.5"
-      }
-    },
-    {
       "identity" : "ascollectionview",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apptekstudios/ASCollectionView",
@@ -73,12 +64,21 @@
       }
     },
     {
+      "identity" : "get",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Get",
+      "state" : {
+        "revision" : "db5248ce985c703c5ea0030b7c4d3f908db304c9",
+        "version" : "1.0.2"
+      }
+    },
+    {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift",
       "state" : {
-        "branch" : "main",
-        "revision" : "9d6e46b94d2178116ee3546b03dfb67e19e3a93a"
+        "revision" : "848cd01551880a7772367559e1212a8cf330a43d",
+        "version" : "0.2.0"
       }
     },
     {
@@ -178,6 +178,15 @@
       "state" : {
         "revision" : "337dd5f158182620b2bb53c6847f8874a0117b2f",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "urlqueryencoder",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CreateAPI/URLQueryEncoder",
+      "state" : {
+        "revision" : "4cc975d4d075d0e62699a796a08284e217d4ee93",
+        "version" : "0.2.0"
       }
     }
   ],

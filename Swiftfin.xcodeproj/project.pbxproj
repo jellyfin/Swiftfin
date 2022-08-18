@@ -3245,8 +3245,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
 			};
 		};
 		E10EAA4B277BB716000269ED /* XCRemoteSwiftPackageReference "swiftui-sliders" */ = {
