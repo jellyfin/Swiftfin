@@ -8,7 +8,7 @@
 
 import Combine
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import UIKit
 
 class ItemViewModel: ViewModel {

@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 struct LatestInLibraryView: View {

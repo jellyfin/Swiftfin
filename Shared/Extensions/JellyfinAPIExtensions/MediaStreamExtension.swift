@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 extension MediaStream {
     func externalURL(base: String) -> URL? {

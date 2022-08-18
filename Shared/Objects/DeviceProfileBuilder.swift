@@ -9,7 +9,7 @@
 // lol can someone buy me a coffee this took forever :|
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 enum CPUModel {
     case A4

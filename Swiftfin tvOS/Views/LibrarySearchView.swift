@@ -7,7 +7,7 @@
 //
 
 import Combine
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 struct LibrarySearchView: View {

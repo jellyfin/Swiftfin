@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 import Introspect
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 struct HomeView: View {

@@ -8,7 +8,7 @@
 
 import CoreStore
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import Stinsen
 
 final class UserSignInViewModel: ViewModel {

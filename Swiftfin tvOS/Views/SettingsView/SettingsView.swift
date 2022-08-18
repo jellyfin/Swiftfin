@@ -8,7 +8,7 @@
 
 import CoreData
 import Defaults
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 struct SettingsView: View {

@@ -11,7 +11,7 @@ import CoreData
 import CoreStore
 import Defaults
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import UIKit
 
 typealias CurrentLogin = (server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User)

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 enum NetworkError: Error {
 

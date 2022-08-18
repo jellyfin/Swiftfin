@@ -8,7 +8,7 @@
 
 import ASCollectionView
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 import SwiftUICollection
 

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 extension NameGuidPair: PillStackable {
     var title: String {

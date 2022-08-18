@@ -9,7 +9,7 @@
 import Combine
 import CombineExt
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 final class LibrarySearchViewModel: ViewModel {

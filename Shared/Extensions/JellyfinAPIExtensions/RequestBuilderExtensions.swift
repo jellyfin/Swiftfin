@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 extension RequestBuilder where T == URL {
     var url: URL {

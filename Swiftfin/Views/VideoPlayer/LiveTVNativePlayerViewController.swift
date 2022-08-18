@@ -8,7 +8,7 @@
 
 import AVKit
 import Combine
-import JellyfinAPI
+import JellyfinAPILegacy
 import UIKit
 
 class LiveTVNativePlayerViewController: AVPlayerViewController {

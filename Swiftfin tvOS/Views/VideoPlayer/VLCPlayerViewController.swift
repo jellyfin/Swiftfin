@@ -10,7 +10,7 @@ import AVFoundation
 import AVKit
 import Combine
 import Defaults
-import JellyfinAPI
+import JellyfinAPILegacy
 import MediaPlayer
 import SwiftUI
 import TVVLCKit

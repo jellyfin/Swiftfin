@@ -8,7 +8,7 @@
 
 import Defaults
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 final class LibraryListViewModel: ViewModel {
 

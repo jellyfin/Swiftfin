@@ -9,7 +9,7 @@
 import ActivityIndicator
 import Combine
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 final class HomeViewModel: ViewModel {
 

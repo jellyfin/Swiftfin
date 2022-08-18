@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUICollection
 
 typealias LiveTVChannelRow = CollectionRow<Int, LiveTVChannelRowCell>

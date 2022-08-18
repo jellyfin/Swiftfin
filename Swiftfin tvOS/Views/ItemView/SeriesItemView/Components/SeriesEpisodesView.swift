@@ -7,7 +7,7 @@
 //
 
 import Introspect
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 struct SeriesEpisodesView: View {

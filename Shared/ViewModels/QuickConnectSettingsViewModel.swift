@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 final class QuickConnectSettingsViewModel: ViewModel {
 
