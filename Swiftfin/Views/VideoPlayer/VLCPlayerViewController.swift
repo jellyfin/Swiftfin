@@ -961,7 +961,7 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
         }
 
         // If needing to fix subtitle streams during playback
-        if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.selectedSubtitleStreamIndex,
+        if vlcMediaPlayer.currentVideoSubTitleIndex != viewModel.videoSubtitleStreamIndex(of: viewModel.selectedSubtitleStreamIndex),
            viewModel.subtitlesEnabled
         {
             didSelectSubtitleStream(index: viewModel.selectedSubtitleStreamIndex)
@@ -997,7 +997,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
     /// Do not call when setting to index -1
     func didSelectSubtitleStream(index: Int) {
         viewModel.subtitlesEnabled = true
-        vlcMediaPlayer.currentVideoSubTitleIndex = Int32(index)
+        vlcMediaPlayer.currentVideoSubTitleIndex = viewModel.videoSubtitleStreamIndex(of: index)
 
         viewModel.sendProgressReport()
 
@@ -1015,7 +1015,7 @@ extension VLCPlayerViewController: PlayerOverlayDelegate {
 
     func didToggleSubtitles(newValue: Bool) {
         if newValue {
-            vlcMediaPlayer.currentVideoSubTitleIndex = Int32(viewModel.selectedSubtitleStreamIndex)
+            vlcMediaPlayer.currentVideoSubTitleIndex = viewModel.videoSubtitleStreamIndex(of: viewModel.selectedSubtitleStreamIndex)
         } else {
             vlcMediaPlayer.currentVideoSubTitleIndex = -1
         }
