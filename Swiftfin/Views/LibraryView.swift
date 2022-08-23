@@ -8,6 +8,7 @@
 
 import Stinsen
 import SwiftUI
+import ASCollectionView
 
 struct LibraryView: View {
 
@@ -15,21 +16,8 @@ struct LibraryView: View {
     private var libraryRouter: LibraryCoordinator.Router
     @StateObject
     var viewModel: LibraryViewModel
-    var title: String
 
-    // MARK: tracks for grid
-
-    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
-
-    @State
-    private var tracks: [GridItem] = Array(
-        repeating: .init(.flexible(), alignment: .top),
-        count: Int(UIScreen.main.bounds.size.width) / 125
-    )
-
-    func recalcTracks() {
-        tracks = Array(repeating: .init(.flexible(), alignment: .top), count: Int(UIScreen.main.bounds.size.width) / 125)
-    }
+    let defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
 
     @ViewBuilder
     private var loadingView: some View {
@@ -43,28 +31,24 @@ struct LibraryView: View {
 
     @ViewBuilder
     private var libraryItemsView: some View {
-        DetectBottomScrollView {
-            VStack {
-                LazyVGrid(columns: tracks) {
-                    ForEach(viewModel.items, id: \.id) { item in
-                        PosterButton(item: item, type: .portrait)
-                            .onSelect { item in
-                                libraryRouter.route(to: \.item, item)
-                            }
-                    }
+        ASCollectionView(data: viewModel.items) { item, _ in
+            PosterButton(item: item, type: .landscape)
+                .onSelect { item in
+                    libraryRouter.route(to: \.item, item)
                 }
-                .ignoresSafeArea()
-                .listRowSeparator(.hidden)
-                .onRotate { _ in
-                    recalcTracks()
+                .scaleItem(0.8)
+        }
+        .layout {
+            .grid(
+                layoutMode: .adaptive(withMinItemSize: 150),
+                itemSpacing: 10,
+                lineSpacing: 10)
+        }
+        .onReachedBoundary { boundary in
+            if boundary == .bottom {
+                if viewModel.hasNextPage {
+                    viewModel.requestNextPageAsync()
                 }
-
-                Spacer()
-                    .frame(height: 30)
-            }
-        } didReachBottom: { newValue in
-            if newValue && viewModel.hasNextPage {
-                viewModel.requestNextPageAsync()
             }
         }
     }
