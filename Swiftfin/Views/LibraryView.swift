@@ -6,18 +6,17 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Stinsen
+import CollectionView
 import SwiftUI
-import ASCollectionView
 
 struct LibraryView: View {
 
     @EnvironmentObject
     private var libraryRouter: LibraryCoordinator.Router
-    @StateObject
+    @ObservedObject
     var viewModel: LibraryViewModel
 
-    let defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
+    private let defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
 
     @ViewBuilder
     private var loadingView: some View {
@@ -31,36 +30,33 @@ struct LibraryView: View {
 
     @ViewBuilder
     private var libraryItemsView: some View {
-        ASCollectionView(data: viewModel.items) { item, _ in
-            PosterButton(item: item, type: .landscape)
+        CollectionView(items: viewModel.items) { _, item in
+            PosterButton(item: item, type: .portrait)
                 .onSelect { item in
                     libraryRouter.route(to: \.item, item)
                 }
-                .scaleItem(0.8)
         }
-        .layout {
-            .grid(
-                layoutMode: .adaptive(withMinItemSize: 150),
-                itemSpacing: 10,
-                lineSpacing: 10)
+        .layout { _, layoutEnvironment in
+                .grid(
+                    layoutEnvironment: layoutEnvironment,
+                    layoutMode: .adaptive(withMinItemSize: PosterButtonWidth.portrait + (UIDevice.isIPad ? 10 : 0)))
         }
-        .onReachedBoundary { boundary in
-            if boundary == .bottom {
-                if viewModel.hasNextPage {
-                    viewModel.requestNextPageAsync()
-                }
+        .onBoundaryReached { boundary in
+            if !viewModel.isLoading && boundary == .bottom {
+                viewModel.requestNextPageAsync()
             }
         }
+        .ignoresSafeArea()
     }
 
     var body: some View {
         Group {
             if viewModel.isLoading && viewModel.items.isEmpty {
-                ProgressView()
-            } else if !viewModel.items.isEmpty {
-                libraryItemsView
-            } else {
+                loadingView
+            } else if viewModel.items.isEmpty {
                 noResultsView
+            } else {
+                libraryItemsView
             }
         }
         .navigationBarTitleDisplayMode(.inline)

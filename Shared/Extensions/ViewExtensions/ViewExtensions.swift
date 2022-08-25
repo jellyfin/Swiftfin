@@ -46,7 +46,7 @@ extension View {
         }
     }
 
-    func poster(type: PosterType, width: CGFloat) -> some View {
+    func posterStyle(type: PosterType, width: CGFloat) -> some View {
         Group {
             switch type {
             case .portrait:
