@@ -646,6 +646,23 @@ extension VideoPlayerViewModel {
     }
 }
 
+// MARK: Subtitle Streams
+
+extension VideoPlayerViewModel {
+    func videoSubtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
+        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
+
+        guard let externalSubtitleStreamIndex = externalSubtitleStreams.firstIndex(where: { $0.index == subtitleStreamIndex }) else {
+            return Int32(subtitleStreamIndex)
+        }
+
+        let embeddedSubtitleStreamCount = subtitleStreams.count - externalSubtitleStreams.count
+        let embeddedStreamCount = 1 + audioStreams.count + embeddedSubtitleStreamCount
+
+        return Int32(embeddedStreamCount + externalSubtitleStreamIndex)
+    }
+}
+
 // MARK: Equatable
 
 extension VideoPlayerViewModel: Equatable {
