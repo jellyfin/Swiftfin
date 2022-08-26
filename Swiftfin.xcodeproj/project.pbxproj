@@ -319,7 +319,8 @@
 		E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */; };
 		E168BD15289A4162001A6922 /* HomeErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0F289A4162001A6922 /* HomeErrorView.swift */; };
 		E16AA60828A364A6009A983C /* PosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16AA60728A364A6009A983C /* PosterButton.swift */; };
-		E16FF53328B93D800046EF53 /* CollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = E16FF53228B93D800046EF53 /* CollectionView */; };
+		E1734D7C28B9577700C66367 /* CollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = E1734D7B28B9577700C66367 /* CollectionView */; };
+		E1734D7E28B9578100C66367 /* CollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = E1734D7D28B9578100C66367 /* CollectionView */; };
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
 		E173DA5226D04AAF00CC4EB7 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
@@ -942,6 +943,7 @@
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
+				E1734D7E28B9578100C66367 /* CollectionView in Frameworks */,
 				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
@@ -964,7 +966,7 @@
 				E13DD3D327168E65009D4DAF /* Defaults in Frameworks */,
 				E1101177281B1E8A006A3584 /* Puppy in Frameworks */,
 				E1002B682793CFBA00E47059 /* Algorithms in Frameworks */,
-				E16FF53328B93D800046EF53 /* CollectionView in Frameworks */,
+				E1734D7C28B9577700C66367 /* CollectionView in Frameworks */,
 				62666E1127E501B900EC0ECD /* UIKit.framework in Frameworks */,
 				62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */,
 				62666E0327E5017100EC0ECD /* CoreMedia.framework in Frameworks */,
@@ -2152,6 +2154,7 @@
 				E13AF3B728A0C598009093AB /* NukeExtensions */,
 				E13AF3B928A0C598009093AB /* NukeUI */,
 				E13AF3BB28A0C59E009093AB /* BlurHashKit */,
+				E1734D7D28B9578100C66367 /* CollectionView */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -2191,7 +2194,7 @@
 				E19E6E0428A0B958005C10C8 /* Nuke */,
 				E19E6E0628A0B958005C10C8 /* NukeUI */,
 				E19E6E0928A0BEFF005C10C8 /* BlurHashKit */,
-				E16FF53228B93D800046EF53 /* CollectionView */,
+				E1734D7B28B9577700C66367 /* CollectionView */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -2257,7 +2260,7 @@
 				C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */,
 				E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */,
 				E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */,
-				E16FF53128B93D800046EF53 /* XCRemoteSwiftPackageReference "CollectionView" */,
+				E1734D7A28B9577700C66367 /* XCRemoteSwiftPackageReference "CollectionView" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3285,12 +3288,12 @@
 				minimumVersion = 6.0.0;
 			};
 		};
-		E16FF53128B93D800046EF53 /* XCRemoteSwiftPackageReference "CollectionView" */ = {
+		E1734D7A28B9577700C66367 /* XCRemoteSwiftPackageReference "CollectionView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/CollectionView";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.2;
+				branch = main;
+				kind = branch;
 			};
 		};
 		E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */ = {
@@ -3445,9 +3448,14 @@
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
-		E16FF53228B93D800046EF53 /* CollectionView */ = {
+		E1734D7B28B9577700C66367 /* CollectionView */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E16FF53128B93D800046EF53 /* XCRemoteSwiftPackageReference "CollectionView" */;
+			package = E1734D7A28B9577700C66367 /* XCRemoteSwiftPackageReference "CollectionView" */;
+			productName = CollectionView;
+		};
+		E1734D7D28B9578100C66367 /* CollectionView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1734D7A28B9577700C66367 /* XCRemoteSwiftPackageReference "CollectionView" */;
 			productName = CollectionView;
 		};
 		E178857C278037FD0094FBCF /* JellyfinAPI */ = {

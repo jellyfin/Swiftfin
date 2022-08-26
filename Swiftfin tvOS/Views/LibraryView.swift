@@ -7,6 +7,7 @@
 //
 
 import CollectionView
+import Defaults
 import Introspect
 import SwiftUI
 
@@ -14,11 +15,13 @@ struct LibraryView: View {
 
     @EnvironmentObject
     private var libraryRouter: LibraryCoordinator.Router
-    @StateObject
+    @ObservedObject
     var viewModel: LibraryViewModel
-
     @State
-    private var introspectScrollView: UIScrollView?
+    private var scrollViewOffset: CGPoint = .zero
+
+    @Default(.Customization.libraryPosterType)
+    var libraryPosterType
 
     @ViewBuilder
     private var loadingView: some View {
@@ -32,13 +35,10 @@ struct LibraryView: View {
 
     @ViewBuilder
     private var libraryItemsView: some View {
-        CollectionView(items: viewModel.items) { _, item in
-            PosterButton(item: item, type: .portrait)
+        CollectionView(items: viewModel.items) { _, item, _ in
+            PosterButton(item: item, type: libraryPosterType)
                 .onSelect { item in
                     libraryRouter.route(to: \.item, item)
-                }
-                .content { _ in
-                    EmptyView()
                 }
         }
         .layout { _, layoutEnvironment in
@@ -48,13 +48,12 @@ struct LibraryView: View {
                 lineSpacing: 50
             )
         }
-        .introspectScrollView { uiScrollView in
-            // TODO: Figure out hiding the tabbar
-            self.introspectScrollView = uiScrollView
+        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
+            if !viewModel.isLoading && edge == .bottom {
+                viewModel.requestNextPageAsync()
+            }
         }
-        .introspectTabBarController { tabBarController in
-            tabBarController.setContentScrollView(introspectScrollView, for: .top)
-        }
+        .scrollViewOffset($scrollViewOffset)
         .ignoresSafeArea()
     }
 
