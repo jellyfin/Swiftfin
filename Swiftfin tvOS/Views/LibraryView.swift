@@ -11,25 +11,25 @@ import Introspect
 import SwiftUI
 
 struct LibraryView: View {
-    
+
     @EnvironmentObject
     private var libraryRouter: LibraryCoordinator.Router
     @StateObject
     var viewModel: LibraryViewModel
-    
+
     @State
     private var introspectScrollView: UIScrollView?
-    
+
     @ViewBuilder
     private var loadingView: some View {
         ProgressView()
     }
-    
+
     @ViewBuilder
     private var noResultsView: some View {
         L10n.noResults.text
     }
-    
+
     @ViewBuilder
     private var libraryItemsView: some View {
         CollectionView(items: viewModel.items) { _, item in
@@ -42,10 +42,11 @@ struct LibraryView: View {
                 }
         }
         .layout { _, layoutEnvironment in
-                return .grid(
-                    layoutEnvironment: layoutEnvironment,
-                    layoutMode: .fixedNumberOfColumns(6),
-                    lineSpacing: 50)
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: .fixedNumberOfColumns(6),
+                lineSpacing: 50
+            )
         }
         .introspectScrollView { uiScrollView in
             // TODO: Figure out hiding the tabbar

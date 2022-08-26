@@ -8,14 +8,6 @@
 
 import SwiftUI
 
-enum PosterButtonWidth {
-    @ScaledMetric(relativeTo: .largeTitle)
-    static var landscape = 200.0
-
-    @ScaledMetric(relativeTo: .largeTitle)
-    static var portrait = 100.0
-}
-
 struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     private let item: Item
@@ -29,12 +21,7 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private let singleImage: Bool
 
     private var itemWidth: CGFloat {
-        switch type {
-        case .portrait:
-            return PosterButtonWidth.portrait * itemScale
-        case .landscape:
-            return PosterButtonWidth.landscape * itemScale
-        }
+        type.width * itemScale
     }
 
     private init(

@@ -8,16 +8,16 @@
 
 import Combine
 import Defaults
-import Foundation
 import JellyfinAPI
-import SwiftUICollection
 import UIKit
 
 final class LibraryViewModel: ViewModel {
 
+    @Default(.Customization.libraryPosterType)
+    var libraryPosterType
+
     @Published
     var items: [BaseItemDto] = []
-
     @Published
     var totalPages = 0
     @Published
@@ -33,7 +33,11 @@ final class LibraryViewModel: ViewModel {
     var person: BaseItemPerson?
     var genre: NameGuidPair?
     var studio: NameGuidPair?
-    private let pageItemSize: Int
+
+    private var pageItemSize: Int {
+        let height = libraryPosterType == .portrait ? libraryPosterType.width * 1.5 : libraryPosterType.width / 1.77
+        return UIScreen.itemsFillableOnScreen(width: libraryPosterType.width, height: height)
+    }
 
     var enabledFilterType: [FilterType] {
         if genre == nil {
@@ -55,9 +59,6 @@ final class LibraryViewModel: ViewModel {
         self.genre = genre
         self.studio = studio
         self.filters = filters
-
-        // Size is typical size of portrait items
-        self.pageItemSize = UIScreen.itemsFillableOnScreen(width: PosterButtonWidth.portrait, height: PosterButtonWidth.portrait * 1.5)
 
         super.init()
 

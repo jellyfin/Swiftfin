@@ -7,6 +7,7 @@
 //
 
 import CollectionView
+import Defaults
 import SwiftUI
 
 struct LibraryView: View {
@@ -16,7 +17,8 @@ struct LibraryView: View {
     @ObservedObject
     var viewModel: LibraryViewModel
 
-    private let defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
+    @Default(.Customization.libraryPosterType)
+    var libraryPosterType
 
     @ViewBuilder
     private var loadingView: some View {
@@ -28,23 +30,36 @@ struct LibraryView: View {
         L10n.noResults.text
     }
 
+    private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
+        if libraryPosterType == .landscape && UIDevice.isPhone {
+            return .fixedNumberOfColumns(2)
+        } else {
+            return .adaptive(withMinItemSize: libraryPosterType.width + (UIDevice.isIPad ? 10 : 0))
+        }
+    }
+
     @ViewBuilder
     private var libraryItemsView: some View {
-        CollectionView(items: viewModel.items) { _, item in
-            PosterButton(item: item, type: .portrait)
+        CollectionView(items: viewModel.items) { _, item, _ in
+            PosterButton(item: item, type: libraryPosterType)
                 .onSelect { item in
                     libraryRouter.route(to: \.item, item)
                 }
+                .scaleItem(libraryPosterType == .landscape && UIDevice.isPhone ? 0.8 : 1)
         }
         .layout { _, layoutEnvironment in
-                .grid(
-                    layoutEnvironment: layoutEnvironment,
-                    layoutMode: .adaptive(withMinItemSize: PosterButtonWidth.portrait + (UIDevice.isIPad ? 10 : 0)))
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: gridLayout
+            )
         }
-        .onBoundaryReached { boundary in
-            if !viewModel.isLoading && boundary == .bottom {
+        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
+            if !viewModel.isLoading && edge == .bottom {
                 viewModel.requestNextPageAsync()
             }
+        }
+        .configure { configuration in
+            configuration.showsVerticalScrollIndicator = false
         }
         .ignoresSafeArea()
     }
@@ -73,7 +88,7 @@ struct LibraryView: View {
                 } label: {
                     Image(systemName: "line.horizontal.3.decrease.circle")
                 }
-                .foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
+                .foregroundColor(viewModel.filters == .default ? .accentColor : Color(UIColor.systemOrange))
 
                 Button {
                     libraryRouter.route(to: \.search, .init(parentID: viewModel.parentID))

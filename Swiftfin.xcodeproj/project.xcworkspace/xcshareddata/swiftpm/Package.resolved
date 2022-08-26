@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "collectionview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/CollectionView",
+      "state" : {
+        "revision" : "ca402f8bbfa8dde057f33efe7b023567bd1679a4",
+        "version" : "0.1.2"
+      }
+    },
+    {
       "identity" : "combineext",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CombineCommunity/CombineExt",

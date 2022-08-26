@@ -31,6 +31,8 @@ struct CustomizeViewsSettings: View {
     var latestInLibraryPosterType
     @Default(.Customization.recommendedPosterType)
     var recommendedPosterType
+    @Default(.Customization.libraryPosterType)
+    var libraryPosterType
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     var useSeriesLandscapeBackdrop
@@ -74,7 +76,7 @@ struct CustomizeViewsSettings: View {
                     }
                 }
 
-                Picker(L10n.library, selection: $latestInLibraryPosterType) {
+                Picker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType) {
                     ForEach(PosterType.allCases, id: \.self) { type in
                         Text(type.localizedName).tag(type.rawValue)
                     }
@@ -87,6 +89,11 @@ struct CustomizeViewsSettings: View {
 //                    }
 //                }
 
+                Picker(L10n.library, selection: $libraryPosterType) {
+                    ForEach(PosterType.allCases, id: \.self) { type in
+                        Text(type.localizedName).tag(type.rawValue)
+                    }
+                }
             } header: {
                 // TODO: localize after organization
                 Text("Posters")
