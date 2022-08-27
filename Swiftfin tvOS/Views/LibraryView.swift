@@ -6,95 +6,65 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
+import CollectionView
+import Defaults
+import Introspect
 import SwiftUI
-import SwiftUICollection
 
 struct LibraryView: View {
+
     @EnvironmentObject
     private var libraryRouter: LibraryCoordinator.Router
-    @StateObject
+    @ObservedObject
     var viewModel: LibraryViewModel
-    var title: String
-
-    // MARK: tracks for grid
-
-    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
-
     @State
-    var isShowingSearchView = false
-    @State
-    var isShowingFilterView = false
+    private var scrollViewOffset: CGPoint = .zero
+
+    @Default(.Customization.libraryPosterType)
+    var libraryPosterType
+
+    @ViewBuilder
+    private var loadingView: some View {
+        ProgressView()
+    }
+
+    @ViewBuilder
+    private var noResultsView: some View {
+        L10n.noResults.text
+    }
+
+    @ViewBuilder
+    private var libraryItemsView: some View {
+        CollectionView(items: viewModel.items) { _, item, _ in
+            PosterButton(item: item, type: libraryPosterType)
+                .onSelect { item in
+                    libraryRouter.route(to: \.item, item)
+                }
+        }
+        .layout { _, layoutEnvironment in
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: .fixedNumberOfColumns(6),
+                lineSpacing: 50
+            )
+        }
+        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
+            if !viewModel.isLoading && edge == .bottom {
+                viewModel.requestNextPageAsync()
+            }
+        }
+        .scrollViewOffset($scrollViewOffset)
+        .ignoresSafeArea()
+    }
 
     var body: some View {
-        if viewModel.rows.isEmpty && viewModel.isLoading == true {
-            ProgressView()
-        } else if !viewModel.rows.isEmpty {
-            CollectionView(rows: viewModel.rows) { _, _ in
-                let itemSize = NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(1),
-                    heightDimension: .fractionalHeight(1)
-                )
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-                let groupSize = NSCollectionLayoutSize(
-                    widthDimension: .absolute(200),
-                    heightDimension: .absolute(300)
-                )
-                let group = NSCollectionLayoutGroup.horizontal(
-                    layoutSize: groupSize,
-                    subitems: [item]
-                )
-
-                let header =
-                    NSCollectionLayoutBoundarySupplementaryItem(
-                        layoutSize: NSCollectionLayoutSize(
-                            widthDimension: .fractionalWidth(1),
-                            heightDimension: .absolute(44)
-                        ),
-                        elementKind: UICollectionView.elementKindSectionHeader,
-                        alignment: .topLeading
-                    )
-
-                let section = NSCollectionLayoutSection(group: group)
-
-                section.contentInsets = NSDirectionalEdgeInsets(top: 30, leading: 0, bottom: 80, trailing: 80)
-                section.interGroupSpacing = 48
-                section.orthogonalScrollingBehavior = .continuous
-                section.boundarySupplementaryItems = [header]
-                return section
-            } cell: { _, cell in
-                GeometryReader { _ in
-                    if let item = cell.item {
-                        Button {
-                            libraryRouter.route(to: \.item, item)
-                        } label: {
-                            PortraitItemElement(item: item)
-                        }
-                        .buttonStyle(PlainNavigationLinkButtonStyle())
-                        .onAppear {
-                            if item == viewModel.items.last && viewModel.hasNextPage {
-                                viewModel.requestNextPageAsync()
-                            }
-                        }
-                    } else if cell.loadingCell {
-                        ProgressView()
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-                    }
-                }
-            } supplementaryView: { _, indexPath in
-                HStack {
-                    Spacer()
-                }.accessibilityIdentifier("\(indexPath.section).\(indexPath.row)")
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .ignoresSafeArea(.all)
-        } else {
-            VStack {
-                L10n.noResults.text
-                Button {} label: {
-                    L10n.refresh.text
-                }
+        Group {
+            if viewModel.isLoading && viewModel.items.isEmpty {
+                loadingView
+            } else if viewModel.items.isEmpty {
+                noResultsView
+            } else {
+                libraryItemsView
             }
         }
     }

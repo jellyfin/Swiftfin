@@ -6,30 +6,19 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Stinsen
+import CollectionView
+import Defaults
 import SwiftUI
 
 struct LibraryView: View {
 
     @EnvironmentObject
     private var libraryRouter: LibraryCoordinator.Router
-    @StateObject
+    @ObservedObject
     var viewModel: LibraryViewModel
-    var title: String
 
-    // MARK: tracks for grid
-
-    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
-
-    @State
-    private var tracks: [GridItem] = Array(
-        repeating: .init(.flexible(), alignment: .top),
-        count: Int(UIScreen.main.bounds.size.width) / 125
-    )
-
-    func recalcTracks() {
-        tracks = Array(repeating: .init(.flexible(), alignment: .top), count: Int(UIScreen.main.bounds.size.width) / 125)
-    }
+    @Default(.Customization.libraryPosterType)
+    var libraryPosterType
 
     @ViewBuilder
     private var loadingView: some View {
@@ -41,42 +30,48 @@ struct LibraryView: View {
         L10n.noResults.text
     }
 
+    private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
+        if libraryPosterType == .landscape && UIDevice.isPhone {
+            return .fixedNumberOfColumns(2)
+        } else {
+            return .adaptive(withMinItemSize: libraryPosterType.width + (UIDevice.isIPad ? 10 : 0))
+        }
+    }
+
     @ViewBuilder
     private var libraryItemsView: some View {
-        DetectBottomScrollView {
-            VStack {
-                LazyVGrid(columns: tracks) {
-                    ForEach(viewModel.items, id: \.id) { item in
-                        PosterButton(item: item, type: .portrait)
-                            .onSelect { item in
-                                libraryRouter.route(to: \.item, item)
-                            }
-                    }
+        CollectionView(items: viewModel.items) { _, item, _ in
+            PosterButton(item: item, type: libraryPosterType)
+                .onSelect { item in
+                    libraryRouter.route(to: \.item, item)
                 }
-                .ignoresSafeArea()
-                .listRowSeparator(.hidden)
-                .onRotate { _ in
-                    recalcTracks()
-                }
-
-                Spacer()
-                    .frame(height: 30)
-            }
-        } didReachBottom: { newValue in
-            if newValue && viewModel.hasNextPage {
+                .scaleItem(libraryPosterType == .landscape && UIDevice.isPhone ? 0.8 : 1)
+        }
+        .layout { _, layoutEnvironment in
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: gridLayout
+            )
+        }
+        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
+            if !viewModel.isLoading && edge == .bottom {
                 viewModel.requestNextPageAsync()
             }
         }
+        .configure { configuration in
+            configuration.showsVerticalScrollIndicator = false
+        }
+        .ignoresSafeArea()
     }
 
     var body: some View {
         Group {
             if viewModel.isLoading && viewModel.items.isEmpty {
-                ProgressView()
-            } else if !viewModel.items.isEmpty {
-                libraryItemsView
-            } else {
+                loadingView
+            } else if viewModel.items.isEmpty {
                 noResultsView
+            } else {
+                libraryItemsView
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -93,7 +88,7 @@ struct LibraryView: View {
                 } label: {
                     Image(systemName: "line.horizontal.3.decrease.circle")
                 }
-                .foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
+                .foregroundColor(viewModel.filters == .default ? .accentColor : Color(UIColor.systemOrange))
 
                 Button {
                     libraryRouter.route(to: \.search, .init(parentID: viewModel.parentID))

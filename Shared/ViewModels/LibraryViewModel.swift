@@ -8,26 +8,16 @@
 
 import Combine
 import Defaults
-import Foundation
 import JellyfinAPI
-import SwiftUICollection
 import UIKit
-
-typealias LibraryRow = CollectionRow<Int, LibraryRowCell>
-
-struct LibraryRowCell: Hashable {
-    let id = UUID()
-    let item: BaseItemDto?
-    var loadingCell: Bool = false
-}
 
 final class LibraryViewModel: ViewModel {
 
+    @Default(.Customization.libraryPosterType)
+    var libraryPosterType
+
     @Published
     var items: [BaseItemDto] = []
-    @Published
-    var rows: [LibraryRow] = []
-
     @Published
     var totalPages = 0
     @Published
@@ -43,8 +33,11 @@ final class LibraryViewModel: ViewModel {
     var person: BaseItemPerson?
     var genre: NameGuidPair?
     var studio: NameGuidPair?
-    private let columns: Int
-    private let pageItemSize: Int
+
+    private var pageItemSize: Int {
+        let height = libraryPosterType == .portrait ? libraryPosterType.width * 1.5 : libraryPosterType.width / 1.77
+        return UIScreen.itemsFillableOnScreen(width: libraryPosterType.width, height: height)
+    }
 
     var enabledFilterType: [FilterType] {
         if genre == nil {
@@ -59,18 +52,13 @@ final class LibraryViewModel: ViewModel {
         person: BaseItemPerson? = nil,
         genre: NameGuidPair? = nil,
         studio: NameGuidPair? = nil,
-        filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name]),
-        columns: Int = 7
+        filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name])
     ) {
         self.parentID = parentID
         self.person = person
         self.genre = genre
         self.studio = studio
         self.filters = filters
-        self.columns = columns
-
-        // Size is typical size of portrait items
-        self.pageItemSize = UIScreen.itemsFillableOnScreen(width: 130, height: 185)
 
         super.init()
 
@@ -137,7 +125,6 @@ final class LibraryViewModel: ViewModel {
             self.totalPages = Int(totalPages)
             self.hasNextPage = self.currentPage < self.totalPages - 1
             self.items.append(contentsOf: response.items ?? [])
-            self.rows = self.calculateRows(for: self.items)
         })
         .store(in: &cancellables)
     }
@@ -146,50 +133,13 @@ final class LibraryViewModel: ViewModel {
         currentPage += 1
         requestItemsAsync(with: filters)
     }
-
-    // tvOS calculations for collection view
-    private func calculateRows(for itemList: [BaseItemDto]) -> [LibraryRow] {
-        guard !itemList.isEmpty else { return [] }
-        let rowCount = itemList.count / columns
-        var calculatedRows = [LibraryRow]()
-        for i in 0 ... rowCount {
-            let firstItemIndex = i * columns
-            var lastItemIndex = firstItemIndex + columns
-            if lastItemIndex > itemList.count {
-                lastItemIndex = itemList.count
-            }
-
-            var rowCells = [LibraryRowCell]()
-            for item in itemList[firstItemIndex ..< lastItemIndex] {
-                let newCell = LibraryRowCell(item: item)
-                rowCells.append(newCell)
-            }
-            if i == rowCount, hasNextPage {
-                var loadingCell = LibraryRowCell(item: nil)
-                loadingCell.loadingCell = true
-                rowCells.append(loadingCell)
-            }
-
-            calculatedRows.append(LibraryRow(
-                section: i,
-                items: rowCells
-            ))
-        }
-        return calculatedRows
-    }
 }
 
 extension UIScreen {
 
     static func itemsFillableOnScreen(width: CGFloat, height: CGFloat) -> Int {
-
         let screenSize = UIScreen.main.bounds.height * UIScreen.main.bounds.width
         let itemSize = width * height
-
-        #if os(tvOS)
-            return Int(screenSize / itemSize) * 2
-        #else
-            return Int(screenSize / itemSize)
-        #endif
+        return Int(screenSize / itemSize)
     }
 }

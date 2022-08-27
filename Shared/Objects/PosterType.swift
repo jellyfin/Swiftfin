@@ -7,11 +7,20 @@
 //
 
 import Defaults
-import Foundation
+import SwiftUI
 
 enum PosterType: String, CaseIterable, Defaults.Serializable {
     case portrait
     case landscape
+
+    var width: CGFloat {
+        switch self {
+        case .portrait:
+            return Width.portrait
+        case .landscape:
+            return Width.landscape
+        }
+    }
 
     var localizedName: String {
         switch self {
@@ -20,5 +29,19 @@ enum PosterType: String, CaseIterable, Defaults.Serializable {
         case .landscape:
             return "Landscape"
         }
+    }
+
+    enum Width {
+        #if os(tvOS)
+            static let portrait = 250.0
+
+            static let landscape = 490.0
+        #else
+            @ScaledMetric(relativeTo: .largeTitle)
+            static var portrait = 100.0
+
+            @ScaledMetric(relativeTo: .largeTitle)
+            static var landscape = 200.0
+        #endif
     }
 }

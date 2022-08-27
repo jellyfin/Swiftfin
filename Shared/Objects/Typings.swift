@@ -12,10 +12,12 @@ import JellyfinAPI
 
 struct LibraryFilters: Codable, Hashable {
     var filters: [ItemFilter] = []
-    var sortOrder: [APISortOrder] = [.descending]
+    var sortOrder: [APISortOrder] = [.ascending]
     var withGenres: [NameGuidPair] = []
     var tags: [String] = []
     var sortBy: [SortBy] = [.name]
+
+    static let `default` = LibraryFilters()
 }
 
 public enum SortBy: String, Codable, CaseIterable {

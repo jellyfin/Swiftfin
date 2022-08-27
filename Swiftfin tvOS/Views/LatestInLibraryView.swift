@@ -44,7 +44,7 @@ struct LatestInLibraryView: View {
                                 .font(.title3)
                         }
                     }
-                    .poster(type: .portrait, width: 250)
+                    .posterStyle(type: .portrait, width: 250)
                 }
                 .buttonStyle(PlainButtonStyle())
             }

@@ -8,10 +8,12 @@
 
 import SwiftUI
 
-struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
+enum PosterButtonWidth {
+    static let landscape = 490.0
+    static let portrait = 250.0
+}
 
-    private let landscapePosterWidth = 490.0
-    private let portraitPosterWidth = 250.0
+struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     private let item: Item
     private let type: PosterType
@@ -26,9 +28,9 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var itemWidth: CGFloat {
         switch type {
         case .portrait:
-            return portraitPosterWidth * itemScale
+            return PosterButtonWidth.portrait * itemScale
         case .landscape:
-            return landscapePosterWidth * itemScale
+            return PosterButtonWidth.landscape * itemScale
         }
     }
 
@@ -62,10 +64,10 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                 switch type {
                 case .portrait:
                     ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                        .poster(type: type, width: itemWidth)
+                        .posterStyle(type: type, width: itemWidth)
                 case .landscape:
                     ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
-                        .poster(type: type, width: itemWidth)
+                        .posterStyle(type: type, width: itemWidth)
                 }
             }
             .buttonStyle(CardButtonStyle())
@@ -74,7 +76,7 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
             })
             .overlay {
                 imageOverlay(item)
-                    .poster(type: type, width: itemWidth)
+                    .posterStyle(type: type, width: itemWidth)
             }
             .posterShadow()
 

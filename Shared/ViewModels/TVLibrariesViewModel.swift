@@ -12,6 +12,14 @@ import JellyfinAPI
 import Stinsen
 import SwiftUICollection
 
+typealias LibraryRow = CollectionRow<Int, LibraryRowCell>
+
+struct LibraryRowCell: Hashable {
+    let id = UUID()
+    let item: BaseItemDto?
+    var loadingCell: Bool = false
+}
+
 final class TVLibrariesViewModel: ViewModel {
 
     @Published
