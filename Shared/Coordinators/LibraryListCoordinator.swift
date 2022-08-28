@@ -17,8 +17,6 @@ final class LibraryListCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
     @Route(.push)
-    var search = makeSearch
-    @Route(.push)
     var library = makeLibrary
     #if os(iOS)
         @Route(.push)
@@ -33,10 +31,6 @@ final class LibraryListCoordinator: NavigationCoordinatable {
 
     func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
         LibraryCoordinator(viewModel: params.viewModel, title: params.title)
-    }
-
-    func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
-        SearchCoordinator(viewModel: viewModel)
     }
 
     #if os(iOS)

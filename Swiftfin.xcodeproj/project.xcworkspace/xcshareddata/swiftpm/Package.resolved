@@ -37,15 +37,6 @@
       }
     },
     {
-      "identity" : "combineext",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CombineCommunity/CombineExt",
-      "state" : {
-        "revision" : "581849239060948b626d1173eb0e5926818e7f8c",
-        "version" : "1.7.0"
-      }
-    },
-    {
       "identity" : "corestore",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
