@@ -31,6 +31,8 @@ struct CustomizeViewsSettings: View {
     var latestInLibraryPosterType
     @Default(.Customization.recommendedPosterType)
     var recommendedPosterType
+    @Default(.Customization.searchPosterType)
+    var searchPosterType
     @Default(.Customization.libraryPosterType)
     var libraryPosterType
 
@@ -88,6 +90,12 @@ struct CustomizeViewsSettings: View {
 //                        Text(type.localizedName).tag(type.rawValue)
 //                    }
 //                }
+
+                Picker(L10n.search, selection: $searchPosterType) {
+                    ForEach(PosterType.allCases, id: \.self) { type in
+                        Text(type.localizedName).tag(type.rawValue)
+                    }
+                }
 
                 Picker(L10n.library, selection: $libraryPosterType) {
                     ForEach(PosterType.allCases, id: \.self) { type in

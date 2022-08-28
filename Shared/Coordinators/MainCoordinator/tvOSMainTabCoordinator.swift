@@ -15,6 +15,7 @@ final class MainTabCoordinator: TabCoordinatable {
         \MainTabCoordinator.home,
         \MainTabCoordinator.tv,
         \MainTabCoordinator.movies,
+        \MainTabCoordinator.search,
         \MainTabCoordinator.other,
         \MainTabCoordinator.settings,
     ])
@@ -25,6 +26,8 @@ final class MainTabCoordinator: TabCoordinatable {
     var tv = makeTv
     @Route(tabItem: makeMoviesTab)
     var movies = makeMovies
+    @Route(tabItem: makeSearchTab)
+    var search = makeSearch
     @Route(tabItem: makeOtherTab)
     var other = makeOther
     @Route(tabItem: makeSettingsTab)
@@ -63,6 +66,18 @@ final class MainTabCoordinator: TabCoordinatable {
         HStack {
             Image(systemName: "film")
             L10n.movies.text
+        }
+    }
+
+    func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
+        NavigationViewCoordinator(SearchCoordinator())
+    }
+
+    @ViewBuilder
+    func makeSearchTab(isActive: Bool) -> some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+            L10n.search.text
         }
     }
 

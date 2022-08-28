@@ -13,11 +13,14 @@ import SwiftUI
 final class MainTabCoordinator: TabCoordinatable {
     var child = TabChild(startingItems: [
         \MainTabCoordinator.home,
+        \MainTabCoordinator.search,
         \MainTabCoordinator.allMedia,
     ])
 
     @Route(tabItem: makeHomeTab, onTapped: onHomeTapped)
     var home = makeHome
+    @Route(tabItem: makeSearchTab, onTapped: onSearchTapped)
+    var search = makeSearch
     @Route(tabItem: makeAllMediaTab, onTapped: onMediaTapped)
     var allMedia = makeAllMedia
 
@@ -35,6 +38,22 @@ final class MainTabCoordinator: TabCoordinatable {
     func makeHomeTab(isActive: Bool) -> some View {
         Image(systemName: "house")
         L10n.home.text
+    }
+
+    func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
+        NavigationViewCoordinator(SearchCoordinator())
+    }
+
+    func onSearchTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<SearchCoordinator>) {
+        if isRepeat {
+            coordinator.child.popToRoot()
+        }
+    }
+
+    @ViewBuilder
+    func makeSearchTab(isActive: Bool) -> some View {
+        Image(systemName: "magnifyingglass")
+        L10n.search.text
     }
 
     func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {

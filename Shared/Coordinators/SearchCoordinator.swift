@@ -17,21 +17,26 @@ final class SearchCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    @Route(.push)
-    var item = makeItem
+    #if os(tvOS)
+        @Route(.modal)
+        var item = makeItem
+    #else
+        @Route(.push)
+        var item = makeItem
+    #endif
 
-    let viewModel: LibrarySearchViewModel
-
-    init(viewModel: LibrarySearchViewModel) {
-        self.viewModel = viewModel
-    }
-
-    func makeItem(item: BaseItemDto) -> ItemCoordinator {
-        ItemCoordinator(item: item)
-    }
+    #if os(tvOS)
+        func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+            NavigationViewCoordinator(ItemCoordinator(item: item))
+        }
+    #else
+        func makeItem(item: BaseItemDto) -> ItemCoordinator {
+            ItemCoordinator(item: item)
+        }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibrarySearchView(viewModel: self.viewModel)
+        SearchView(viewModel: .init())
     }
 }

@@ -11,6 +11,7 @@ import SwiftUI
 import SwiftUICollection
 
 struct MovieLibrariesView: View {
+
     @EnvironmentObject
     private var movieLibrariesRouter: MovieLibrariesCoordinator.Router
     @StateObject

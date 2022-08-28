@@ -19,8 +19,6 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    @Route(.push)
-    var search = makeSearch
     @Route(.modal)
     var filter = makeFilter
 
@@ -43,10 +41,6 @@ final class LibraryCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         LibraryView(viewModel: self.viewModel)
-    }
-
-    func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
-        SearchCoordinator(viewModel: viewModel)
     }
 
     func makeFilter(params: FilterCoordinatorParams) -> NavigationViewCoordinator<FilterCoordinator> {

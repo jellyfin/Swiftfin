@@ -18,7 +18,7 @@ struct LibraryView: View {
     var viewModel: LibraryViewModel
 
     @Default(.Customization.libraryPosterType)
-    var libraryPosterType
+    private var libraryPosterType
 
     @ViewBuilder
     private var loadingView: some View {
@@ -89,12 +89,6 @@ struct LibraryView: View {
                     Image(systemName: "line.horizontal.3.decrease.circle")
                 }
                 .foregroundColor(viewModel.filters == .default ? .accentColor : Color(UIColor.systemOrange))
-
-                Button {
-                    libraryRouter.route(to: \.search, .init(parentID: viewModel.parentID))
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                }
             }
         }
     }

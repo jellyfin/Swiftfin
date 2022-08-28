@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Transition to `PortraitButton`
+// TODO: Transition to PosterButton`
 struct PortraitItemElement: View {
 
     @Environment(\.isFocused)
