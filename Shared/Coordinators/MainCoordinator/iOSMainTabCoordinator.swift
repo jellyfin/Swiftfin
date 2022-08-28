@@ -39,11 +39,11 @@ final class MainTabCoordinator: TabCoordinatable {
         Image(systemName: "house")
         L10n.home.text
     }
-    
+
     func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
         NavigationViewCoordinator(SearchCoordinator())
     }
-    
+
     func onSearchTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<SearchCoordinator>) {
         if isRepeat {
             coordinator.child.popToRoot()

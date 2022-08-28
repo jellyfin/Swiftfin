@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: Replace with `attributeStyle`
 struct AttributeOutlineView: View {
 
     let text: String

@@ -7,24 +7,26 @@
 //
 
 import CollectionView
+import Defaults
 import JellyfinAPI
-import Stinsen
 import SwiftUI
 
 struct SearchView: View {
-    
+
     @EnvironmentObject
     private var router: SearchCoordinator.Router
     @ObservedObject
     var viewModel: SearchViewModel
-    
+
+    @Default(.Customization.searchPosterType)
+    private var searchPosterType
     @State
     private var searchText = ""
-    
+
     @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
-            ForEach(viewModel.genres, id: \.id) { item in
+            ForEach(viewModel.suggestions, id: \.id) { item in
                 Button {
                     searchText = item.displayName
                 } label: {
@@ -34,42 +36,47 @@ struct SearchView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
                 if !viewModel.movies.isEmpty {
-                    itemsSection(title: L10n.movies, keyPath: \.movies)
+                    itemsSection(title: L10n.movies, keyPath: \.movies, posterType: searchPosterType)
                 }
-                
+
                 if !viewModel.collections.isEmpty {
-                    itemsSection(title: "Collections", keyPath: \.collections)
+                    // TODO: Localize after organization
+                    itemsSection(title: "Collections", keyPath: \.collections, posterType: searchPosterType)
                 }
-                
+
                 if !viewModel.series.isEmpty {
-                    itemsSection(title: L10n.tvShows, keyPath: \.series)
+                    itemsSection(title: L10n.tvShows, keyPath: \.series, posterType: searchPosterType)
                 }
-                
+
                 if !viewModel.episodes.isEmpty {
-                    itemsSection(title: L10n.episodes, keyPath: \.episodes)
+                    itemsSection(title: L10n.episodes, keyPath: \.episodes, posterType: searchPosterType)
                 }
-                
+
                 if !viewModel.people.isEmpty {
-                    itemsSection(title: "People", keyPath: \.people)
+                    // TODO: Localize after organization
+                    itemsSection(title: "People", keyPath: \.people, posterType: .portrait)
                 }
             }
         }
     }
-    
+
     @ViewBuilder
     private func itemsSection(
         title: String,
-        keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
+        keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>,
+        posterType: PosterType
     ) -> some View {
-        PosterHStack(title: title,
-                     type: .portrait,
-                     items: viewModel[keyPath: keyPath])
+        PosterHStack(
+            title: title,
+            type: posterType,
+            items: viewModel[keyPath: keyPath]
+        )
         .onSelect { item in
             router.route(to: \.item, item)
         }
@@ -88,7 +95,7 @@ struct SearchView: View {
         .onChange(of: searchText) { newText in
             viewModel.search(with: newText)
         }
-        .searchable(text: $searchText, prompt: L10n.search)
+        .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: L10n.search)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
     }

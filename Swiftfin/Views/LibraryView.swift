@@ -18,7 +18,7 @@ struct LibraryView: View {
     var viewModel: LibraryViewModel
 
     @Default(.Customization.libraryPosterType)
-    var libraryPosterType
+    private var libraryPosterType
 
     @ViewBuilder
     private var loadingView: some View {

@@ -10,15 +10,15 @@ import JellyfinAPI
 import SwiftUI
 
 struct SearchView: View {
-    
+
     @EnvironmentObject
     private var router: SearchCoordinator.Router
     @ObservedObject
     var viewModel: SearchViewModel
-    
+
     @State
     private var searchText = ""
-    
+
     @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
@@ -32,7 +32,7 @@ struct SearchView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
@@ -40,34 +40,39 @@ struct SearchView: View {
                 if !viewModel.movies.isEmpty {
                     itemsSection(title: L10n.movies, keyPath: \.movies)
                 }
-                
+
                 if !viewModel.collections.isEmpty {
+                    // TODO: Localize after organization
                     itemsSection(title: "Collections", keyPath: \.collections)
                 }
-                
+
                 if !viewModel.series.isEmpty {
                     itemsSection(title: L10n.tvShows, keyPath: \.series)
                 }
-                
+
                 if !viewModel.episodes.isEmpty {
                     itemsSection(title: L10n.episodes, keyPath: \.episodes)
                 }
-                
+
                 if !viewModel.people.isEmpty {
+                    // TODO: Localize after organization
                     itemsSection(title: "People", keyPath: \.people)
                 }
             }
         }
+        .ignoresSafeArea()
     }
-    
+
     @ViewBuilder
     private func itemsSection(
         title: String,
         keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
     ) -> some View {
-        PosterHStack(title: title,
-                     type: .portrait,
-                     items: viewModel[keyPath: keyPath])
+        PosterHStack(
+            title: title,
+            type: .portrait,
+            items: viewModel[keyPath: keyPath]
+        )
         .onSelect { item in
             router.route(to: \.item, item)
         }
@@ -76,7 +81,6 @@ struct SearchView: View {
     var body: some View {
         Group {
             if searchText.isEmpty {
-//                suggestionsView
                 EmptyView()
             } else if !viewModel.isLoading && viewModel.noResults {
                 L10n.noResults.text

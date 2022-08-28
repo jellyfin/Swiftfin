@@ -68,11 +68,11 @@ final class MainTabCoordinator: TabCoordinatable {
             L10n.movies.text
         }
     }
-    
+
     func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
         NavigationViewCoordinator(SearchCoordinator())
     }
-    
+
     @ViewBuilder
     func makeSearchTab(isActive: Bool) -> some View {
         HStack {

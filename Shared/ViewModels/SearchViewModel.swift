@@ -13,6 +13,8 @@ import SwiftUI
 
 final class SearchViewModel: ViewModel {
 
+    private var searchCancellables = Set<AnyCancellable>()
+
     @Published
     var movies: [BaseItemDto] = []
     @Published
@@ -25,36 +27,39 @@ final class SearchViewModel: ViewModel {
     var people: [BaseItemDto] = []
     @Published
     var suggestions: [BaseItemDto] = []
-    @Published
-    var genres: [BaseItemDto] = []
-    
+
     var noResults: Bool {
         movies.isEmpty &&
-        collections.isEmpty &&
-        series.isEmpty &&
-        episodes.isEmpty &&
-        people.isEmpty
+            collections.isEmpty &&
+            series.isEmpty &&
+            episodes.isEmpty &&
+            people.isEmpty
     }
 
     private var searchTextSubject = CurrentValueSubject<String, Never>("")
 
     override init() {
         super.init()
-        
+
         getSuggestions()
-        getGenres()
 
         searchTextSubject
+            .handleEvents(receiveOutput: { _ in self.cancelPreviousSearch() })
             .filter { !$0.isEmpty }
             .debounce(for: 0.25, scheduler: DispatchQueue.main)
             .sink(receiveValue: _search)
             .store(in: &cancellables)
     }
-    
+
+    private func cancelPreviousSearch() {
+        searchCancellables.forEach { $0.cancel() }
+        print(searchCancellables.count)
+    }
+
     func search(with query: String) {
         searchTextSubject.send(query)
     }
-    
+
     private func _search(with query: String) {
         getItems(with: query, for: .movie, keyPath: \.movies)
         getItems(with: query, for: .boxSet, keyPath: \.collections)
@@ -62,16 +67,19 @@ final class SearchViewModel: ViewModel {
         getItems(with: query, for: .episode, keyPath: \.episodes)
         getPeople(with: query)
     }
-    
-    private func getItems(with query: String, for itemType: BaseItemKind, keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>) {
-        
+
+    private func getItems(
+        with query: String,
+        for itemType: BaseItemKind,
+        keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
+    ) {
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
             limit: 20,
             recursive: true,
             searchTerm: query,
             sortOrder: [.ascending],
-            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+            fields: ItemFields.allCases,
             includeItemTypes: [itemType],
             sortBy: ["SortName"],
             enableUserData: true,
@@ -83,22 +91,23 @@ final class SearchViewModel: ViewModel {
         }, receiveValue: { [weak self] response in
             self?[keyPath: keyPath] = response.items ?? []
         })
-        .store(in: &cancellables)
+        .store(in: &searchCancellables)
     }
-    
+
     private func getPeople(with query: String) {
         PersonsAPI.getPersons(
             limit: 20,
-            searchTerm: query)
+            searchTerm: query
+        )
         .trackActivity(loading)
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         }, receiveValue: { [weak self] response in
             self?.people = response.items ?? []
         })
-        .store(in: &cancellables)
+        .store(in: &searchCancellables)
     }
-    
+
     private func getSuggestions() {
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
@@ -116,15 +125,5 @@ final class SearchViewModel: ViewModel {
             self?.suggestions = response.items ?? []
         })
         .store(in: &cancellables)
-    }
-    
-    private func getGenres() {
-        GenresAPI.getGenres()
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
-                self?.genres = response.items ?? []
-            })
-            .store(in: &cancellables)
     }
 }

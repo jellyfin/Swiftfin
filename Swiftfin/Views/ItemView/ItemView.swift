@@ -42,6 +42,8 @@ struct ItemView: View {
                 } else {
                     CollectionItemView(viewModel: .init(item: item))
                 }
+            case .person:
+                LibraryView(viewModel: .init(person: .init(id: item.id)))
             default:
                 Text(L10n.notImplementedYetWithType(item.type ?? "--"))
             }
