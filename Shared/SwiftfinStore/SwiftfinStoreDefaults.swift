@@ -37,10 +37,14 @@ extension Defaults.Keys {
         static let latestInLibraryPosterType = Key<PosterType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
         static let recommendedPosterType = Key<PosterType>("recommendedPosterType", default: .portrait, suite: .generalSuite)
         static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
-        static let libraryPosterType = Key<PosterType>("libraryPosterType", default: .portrait, suite: .generalSuite)
 
         enum Episodes {
             static let useSeriesLandscapeBackdrop = Key<Bool>("useSeriesBackdrop", default: true, suite: .generalSuite)
+        }
+
+        enum Library {
+            static let viewType = Key<LibraryViewType>("Customization.Library.viewType", default: .grid, suite: .generalSuite)
+            static let gridPosterType = Key<PosterType>("Customization.Library.gridPosterType", default: .portrait, suite: .generalSuite)
         }
     }
 

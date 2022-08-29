@@ -13,8 +13,8 @@ import UIKit
 
 final class LibraryViewModel: ViewModel {
 
-    @Default(.Customization.libraryPosterType)
-    var libraryPosterType
+    @Default(.Customization.Library.gridPosterType)
+    var libraryGridPosterType
 
     @Published
     var items: [BaseItemDto] = []
@@ -35,8 +35,8 @@ final class LibraryViewModel: ViewModel {
     var studio: NameGuidPair?
 
     private var pageItemSize: Int {
-        let height = libraryPosterType == .portrait ? libraryPosterType.width * 1.5 : libraryPosterType.width / 1.77
-        return UIScreen.itemsFillableOnScreen(width: libraryPosterType.width, height: height)
+        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
+        return UIScreen.itemsFillableOnScreen(width: libraryGridPosterType.width, height: height)
     }
 
     var enabledFilterType: [FilterType] {
