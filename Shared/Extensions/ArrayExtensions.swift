@@ -12,7 +12,7 @@ extension Array {
     func appending(_ element: Element) -> [Element] {
         self + [element]
     }
-    
+
     func appending(_ element: Element, if condition: Bool) -> [Element] {
         if condition {
             return self + [element]
@@ -20,7 +20,7 @@ extension Array {
             return self
         }
     }
-    
+
     func appending(_ contents: [Element]) -> [Element] {
         self + contents
     }

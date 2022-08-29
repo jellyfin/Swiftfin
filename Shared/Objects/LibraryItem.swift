@@ -10,7 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 struct LibraryItem: Equatable, Poster {
-    
+
     var library: BaseItemDto
     var viewModel: MediaViewModel
     var title: String = ""
@@ -20,13 +20,13 @@ struct LibraryItem: Equatable, Poster {
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
         .init()
     }
-    
+
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
-        return viewModel.libraryImages[library.id ?? ""] ?? []
+        viewModel.libraryImages[library.id ?? ""] ?? []
     }
-    
+
     static func == (lhs: LibraryItem, rhs: LibraryItem) -> Bool {
-        return lhs.library == rhs.library &&
-        lhs.viewModel.libraryImages[lhs.library.id ?? ""] == rhs.viewModel.libraryImages[rhs.library.id ?? ""]
+        lhs.library == rhs.library &&
+            lhs.viewModel.libraryImages[lhs.library.id ?? ""] == rhs.viewModel.libraryImages[rhs.library.id ?? ""]
     }
 }

@@ -13,20 +13,20 @@ import Stinsen
 import SwiftUI
 
 struct MediaView: View {
-    
+
     @EnvironmentObject
     private var router: MediaCoordinator.Router
     @ObservedObject
     var viewModel: MediaViewModel
     @Default(.Experimental.liveTVAlphaEnabled)
     var liveTVEnabled
-    
+
     private var libraryItems: [LibraryItem] {
         [LibraryItem(library: .init(name: L10n.favorites, id: "favorites"), viewModel: viewModel)]
             .appending(.init(library: .init(name: "LiveTV", id: "liveTV"), viewModel: viewModel), if: liveTVEnabled)
             .appending(viewModel.libraries.map { LibraryItem(library: $0, viewModel: viewModel) })
     }
-    
+
     private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
         if UIDevice.isPhone {
             return .fixedNumberOfColumns(2)
@@ -34,7 +34,7 @@ struct MediaView: View {
             return .adaptive(withMinItemSize: PosterType.landscape.width)
         }
     }
-    
+
     var body: some View {
         CollectionView(items: libraryItems) { _, item, _ in
             PosterButton(item: item, type: .landscape)
@@ -52,7 +52,7 @@ struct MediaView: View {
                     ZStack {
                         Color.black
                             .opacity(0.5)
-                        
+
                         Text(item.library.displayName)
                             .foregroundColor(.white)
                             .font(.title2)

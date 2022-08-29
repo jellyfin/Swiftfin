@@ -12,15 +12,15 @@ import Stinsen
 import SwiftUI
 
 struct MediaView: View {
-    
+
     @EnvironmentObject
     private var router: MediaCoordinator.Router
     @ObservedObject
     var viewModel: MediaViewModel
-    
+
     private var libraryItems: [LibraryItem] {
         [LibraryItem(library: .init(name: L10n.favorites, id: "favorites"), viewModel: viewModel)] +
-        viewModel.libraries.map { LibraryItem(library: $0, viewModel: viewModel) }
+            viewModel.libraries.map { LibraryItem(library: $0, viewModel: viewModel) }
     }
 
     var body: some View {
@@ -38,7 +38,7 @@ struct MediaView: View {
                     ZStack {
                         Color.black
                             .opacity(0.5)
-                        
+
                         Text(item.library.displayName)
                             .foregroundColor(.white)
                             .font(.title2)

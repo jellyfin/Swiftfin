@@ -16,7 +16,7 @@ final class MediaViewModel: ViewModel {
     var libraries: [BaseItemDto] = []
     @Published
     var libraryImages: [String: [ImageSource]] = [:]
-    
+
     private var supportedLibraries: [String] {
         ["movies", "tvshows", "unknown"]
             .appending("livetv", if: Defaults[.Experimental.liveTVAlphaEnabled])
@@ -43,7 +43,7 @@ final class MediaViewModel: ViewModel {
             })
             .store(in: &cancellables)
     }
-    
+
     private func getRandomItemImageSource(with filters: [ItemFilter]?, id: String?, key: String) {
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
