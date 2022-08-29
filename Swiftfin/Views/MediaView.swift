@@ -27,7 +27,7 @@ struct MediaView: View {
         if UIDevice.isPhone {
             return .fixedNumberOfColumns(2)
         } else {
-            return .adaptive(withMinItemSize: PosterType.landscape.width + 10)
+            return .adaptive(withMinItemSize: PosterType.landscape.width)
         }
     }
     
