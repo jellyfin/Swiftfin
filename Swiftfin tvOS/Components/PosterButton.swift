@@ -61,12 +61,18 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
             Button {
                 onSelect(item)
             } label: {
-                switch type {
-                case .portrait:
-                    ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                        .posterStyle(type: type, width: itemWidth)
-                case .landscape:
-                    ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                Group {
+                    switch type {
+                    case .portrait:
+                        ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+                            .posterStyle(type: type, width: itemWidth)
+                    case .landscape:
+                        ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                            .posterStyle(type: type, width: itemWidth)
+                    }
+                }
+                .overlay {
+                    imageOverlay(item)
                         .posterStyle(type: type, width: itemWidth)
                 }
             }
@@ -74,10 +80,6 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
             .contextMenu(menuItems: {
                 contextMenu(item)
             })
-            .overlay {
-                imageOverlay(item)
-                    .posterStyle(type: type, width: itemWidth)
-            }
             .posterShadow()
 
             content(item)

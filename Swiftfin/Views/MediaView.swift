@@ -11,12 +11,12 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-struct LibraryListView: View {
+struct MediaView: View {
     
     @EnvironmentObject
-    private var router: LibraryListCoordinator.Router
+    private var router: MediaCoordinator.Router
     @ObservedObject
-    var viewModel: LibraryListViewModel
+    var viewModel: MediaViewModel
     
     private var libraryItems: [LibraryItem] {
         [LibraryItem(library: .init(name: L10n.favorites, id: "favorites"), viewModel: viewModel)] +
@@ -34,6 +34,7 @@ struct LibraryListView: View {
     var body: some View {
         CollectionView(items: libraryItems) { _, item, _ in
             PosterButton(item: item, type: .landscape)
+                .scaleItem(UIDevice.isPhone ? 0.9 : 1)
                 .onSelect { _ in
                     if item.library.id == "favorites" {
                         router.route(to: \.library, (viewModel: .init(filters: .favorites), title: ""))
@@ -55,7 +56,6 @@ struct LibraryListView: View {
                             .frame(alignment: .center)
                     }
                 }
-                .scaleItem(UIDevice.isPhone ? 0.9 : 1)
         }
         .layout { _, layoutEnvironment in
             .grid(
@@ -69,27 +69,5 @@ struct LibraryListView: View {
         }
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
-    }
-    
-    struct LibraryItem: Equatable, Poster {
-        
-        var library: BaseItemDto
-        var viewModel: LibraryListViewModel
-        var title: String = ""
-        var subtitle: String?
-        var showTitle: Bool = false
-
-        func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-            .init()
-        }
-        
-        func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
-            return viewModel.libraryImages[library.id ?? ""] ?? []
-        }
-        
-        static func == (lhs: LibraryListView.LibraryItem, rhs: LibraryListView.LibraryItem) -> Bool {
-            return lhs.library == rhs.library &&
-            lhs.viewModel.libraryImages[lhs.library.id ?? ""] == rhs.viewModel.libraryImages[rhs.library.id ?? ""]
-        }
     }
 }

@@ -10,31 +10,39 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class LibraryListCoordinator: NavigationCoordinatable {
+final class MediaCoordinator: NavigationCoordinatable {
 
-    let stack = NavigationStack(initial: \LibraryListCoordinator.start)
+    let stack = NavigationStack(initial: \MediaCoordinator.start)
 
     @Root
     var start = makeStart
+    #if os(tvOS)
+    @Route(.modal)
+    var library = makeLibrary
+    #else
     @Route(.push)
     var library = makeLibrary
-    #if os(iOS)
-        @Route(.push)
-        var liveTV = makeLiveTV
+    @Route(.push)
+    var liveTV = makeLiveTV
     #endif
 
+    #if os(tvOS)
+    func makeLibrary(params: LibraryCoordinatorParams) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(viewModel: params.viewModel, title: params.title))
+    }
+
+    #else
     func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
         LibraryCoordinator(viewModel: params.viewModel, title: params.title)
     }
-
-    #if os(iOS)
-        func makeLiveTV() -> LiveTVCoordinator {
-            LiveTVCoordinator()
-        }
+    
+    func makeLiveTV() -> LiveTVCoordinator {
+        LiveTVCoordinator()
+    }
     #endif
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryListView(viewModel: .init())
+        MediaView(viewModel: .init())
     }
 }

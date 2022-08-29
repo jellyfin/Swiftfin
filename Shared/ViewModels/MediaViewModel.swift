@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-final class LibraryListViewModel: ViewModel {
+final class MediaViewModel: ViewModel {
 
     @Published
     var libraries: [BaseItemDto] = []
