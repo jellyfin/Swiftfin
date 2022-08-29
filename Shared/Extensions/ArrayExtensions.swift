@@ -20,4 +20,8 @@ extension Array {
             return self
         }
     }
+    
+    func appending(_ contents: [Element]) -> [Element] {
+        self + contents
+    }
 }

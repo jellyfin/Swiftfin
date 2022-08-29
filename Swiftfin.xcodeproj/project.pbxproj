@@ -1428,8 +1428,8 @@
 		621338912660106C00A81A2A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				E1A2C157279A7D76005EC829 /* BundleExtensions.swift */,
 				E1E1644028BB301900323B0A /* ArrayExtensions.swift */,
+				E1A2C157279A7D76005EC829 /* BundleExtensions.swift */,
 				E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */,
 				6267B3D526710B8900A7371D /* CollectionExtensions.swift */,
 				E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */,

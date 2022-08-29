@@ -7,6 +7,7 @@
 //
 
 import CollectionView
+import Defaults
 import JellyfinAPI
 import Stinsen
 import SwiftUI
@@ -17,10 +18,13 @@ struct MediaView: View {
     private var router: MediaCoordinator.Router
     @ObservedObject
     var viewModel: MediaViewModel
+    @Default(.Experimental.liveTVAlphaEnabled)
+    var liveTVEnabled
     
     private var libraryItems: [LibraryItem] {
-        [LibraryItem(library: .init(name: L10n.favorites, id: "favorites"), viewModel: viewModel)] +
-        viewModel.libraries.map { LibraryItem(library: $0, viewModel: viewModel) }
+        [LibraryItem(library: .init(name: L10n.favorites, id: "favorites"), viewModel: viewModel)]
+            .appending(.init(library: .init(name: "LiveTV", id: "liveTV"), viewModel: viewModel), if: liveTVEnabled)
+            .appending(viewModel.libraries.map { LibraryItem(library: $0, viewModel: viewModel) })
     }
     
     private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
@@ -38,6 +42,8 @@ struct MediaView: View {
                 .onSelect { _ in
                     if item.library.id == "favorites" {
                         router.route(to: \.library, (viewModel: .init(filters: .favorites), title: ""))
+                    } else if item.library.id == "liveTV" {
+                        router.route(to: \.liveTV)
                     } else {
                         router.route(to: \.library, (viewModel: .init(parentID: item.library.id), title: ""))
                     }
