@@ -23,12 +23,6 @@ final class LibraryListCoordinator: NavigationCoordinatable {
         var liveTV = makeLiveTV
     #endif
 
-    let viewModel: LibraryListViewModel
-
-    init(viewModel: LibraryListViewModel) {
-        self.viewModel = viewModel
-    }
-
     func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
         LibraryCoordinator(viewModel: params.viewModel, title: params.title)
     }
@@ -41,6 +35,6 @@ final class LibraryListCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryListView(viewModel: self.viewModel)
+        LibraryListView(viewModel: .init())
     }
 }

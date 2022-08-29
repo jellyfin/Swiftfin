@@ -6,88 +6,90 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import CollectionView
 import JellyfinAPI
 import Stinsen
 import SwiftUI
 
 struct LibraryListView: View {
+    
     @EnvironmentObject
-    private var libraryListRouter: LibraryListCoordinator.Router
-    @StateObject
-    var viewModel = LibraryListViewModel()
-
-    var body: some View {
-        ScrollView {
-            LazyVStack {
-                Button {
-                    libraryListRouter.route(
-                        to: \.library,
-                        (viewModel: LibraryViewModel(filters: viewModel.withFavorites), title: L10n.favorites)
-                    )
-                } label: {
-                    ZStack {
-                        HStack {
-                            Spacer()
-                            L10n.yourFavorites.text
-                                .foregroundColor(.black)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                            Spacer()
-                        }
-                    }
-                    .padding(16)
-                    .background(Color.white)
-                    .frame(minWidth: 100, maxWidth: .infinity)
-                }
-                .cornerRadius(10)
-                .shadow(radius: 5)
-                .padding(.bottom, 5)
-
-                if !viewModel.isLoading {
-                    ForEach(viewModel.filteredLibraries, id: \.id) { library in
-                        Button {
-                            if library.collectionType == "livetv" {
-                                libraryListRouter.route(to: \.liveTV)
-                            } else {
-                                libraryListRouter.route(
-                                    to: \.library,
-                                    (
-                                        viewModel: LibraryViewModel(parentID: library.id),
-                                        title: library.name ?? ""
-                                    )
-                                )
-                            }
-                        } label: {
-                            ZStack {
-                                ImageView(library.imageSource(.primary, maxWidth: 500))
-                                    .opacity(0.4)
-                                    .accessibilityIgnoresInvertColors()
-                                HStack {
-                                    Spacer()
-                                    VStack {
-                                        Text(library.name ?? "")
-                                            .foregroundColor(.white)
-                                            .font(.title2)
-                                            .fontWeight(.semibold)
-                                    }
-                                    Spacer()
-                                }.padding(32)
-                            }.background(Color.black)
-                                .frame(minWidth: 100, maxWidth: .infinity)
-                                .frame(height: 100)
-                        }
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
-                        .padding(.bottom, 5)
-                    }
-                } else {
-                    ProgressView()
-                }
-            }.padding(.leading, 16)
-                .padding(.trailing, 16)
-                .padding(.top, 8)
+    private var router: LibraryListCoordinator.Router
+    @ObservedObject
+    var viewModel: LibraryListViewModel
+    
+    private var libraryItems: [LibraryItem] {
+        [LibraryItem(library: .init(name: L10n.favorites, id: "favorites"), viewModel: viewModel)] +
+        viewModel.libraries.map { LibraryItem(library: $0, viewModel: viewModel) }
+    }
+    
+    private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
+        if UIDevice.isPhone {
+            return .fixedNumberOfColumns(2)
+        } else {
+            return .adaptive(withMinItemSize: PosterType.landscape.width + 10)
         }
+    }
+    
+    var body: some View {
+        CollectionView(items: libraryItems) { _, item, _ in
+            PosterButton(item: item, type: .landscape)
+                .onSelect { _ in
+                    if item.library.id == "favorites" {
+                        router.route(to: \.library, (viewModel: .init(filters: .favorites), title: ""))
+                    } else {
+                        router.route(to: \.library, (viewModel: .init(parentID: item.library.id), title: ""))
+                    }
+                }
+                .imageOverlay { _ in
+                    ZStack {
+                        Color.black
+                            .opacity(0.5)
+                        
+                        Text(item.library.displayName)
+                            .foregroundColor(.white)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                            .frame(alignment: .center)
+                    }
+                }
+                .scaleItem(UIDevice.isPhone ? 0.9 : 1)
+        }
+        .layout { _, layoutEnvironment in
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: gridLayout,
+                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+            )
+        }
+        .configure { configuration in
+            configuration.showsVerticalScrollIndicator = false
+        }
+        .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
+    }
+    
+    struct LibraryItem: Equatable, Poster {
+        
+        var library: BaseItemDto
+        var viewModel: LibraryListViewModel
+        var title: String = ""
+        var subtitle: String?
+        var showTitle: Bool = false
+
+        func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
+            .init()
+        }
+        
+        func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
+            return viewModel.libraryImages[library.id ?? ""] ?? []
+        }
+        
+        static func == (lhs: LibraryListView.LibraryItem, rhs: LibraryListView.LibraryItem) -> Bool {
+            return lhs.library == rhs.library &&
+            lhs.viewModel.libraryImages[lhs.library.id ?? ""] == rhs.viewModel.libraryImages[rhs.library.id ?? ""]
+        }
     }
 }

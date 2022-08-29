@@ -57,7 +57,7 @@ final class MainTabCoordinator: TabCoordinatable {
     }
 
     func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
-        NavigationViewCoordinator(LibraryListCoordinator(viewModel: LibraryListViewModel()))
+        NavigationViewCoordinator(LibraryListCoordinator())
     }
 
     func onMediaTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<LibraryListCoordinator>) {

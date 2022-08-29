@@ -14,24 +14,19 @@ final class LibraryListViewModel: ViewModel {
 
     @Published
     var libraries: [BaseItemDto] = []
-
-    var filteredLibraries: [BaseItemDto] {
-        var supportedLibraries = ["movies", "tvshows", "unknown"]
-
-        if Defaults[.Experimental.liveTVAlphaEnabled] {
-            supportedLibraries.append("livetv")
-        }
-
-        return libraries.filter { supportedLibraries.contains($0.collectionType ?? "unknown") }
+    @Published
+    var libraryImages: [String: [ImageSource]] = [:]
+    
+    private var supportedLibraries: [String] {
+        ["movies", "tvshows", "unknown"]
+            .appending("livetv", if: Defaults[.Experimental.liveTVAlphaEnabled])
     }
-
-    // temp
-    let withFavorites = LibraryFilters(filters: [.isFavorite], sortOrder: [], withGenres: [], sortBy: [])
 
     override init() {
         super.init()
 
         requestLibraries()
+        getRandomItemImageSource(with: [.isFavorite], id: nil, key: "favorites")
     }
 
     func requestLibraries() {
@@ -40,8 +35,32 @@ final class LibraryListViewModel: ViewModel {
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
-                self.libraries = response.items ?? []
+                guard let items = response.items else { return }
+                self.libraries = items.filter { self.supportedLibraries.contains($0.collectionType ?? "unknown") }
+                self.libraries.forEach {
+                    self.getRandomItemImageSource(with: nil, id: $0.id, key: $0.id ?? "")
+                }
             })
             .store(in: &cancellables)
+    }
+    
+    private func getRandomItemImageSource(with filters: [ItemFilter]?, id: String?, key: String) {
+        ItemsAPI.getItemsByUserId(
+            userId: SessionManager.main.currentLogin.user.id,
+            limit: 3,
+            recursive: true,
+            parentId: id,
+            includeItemTypes: [.movie, .series],
+            filters: filters,
+            sortBy: ["Random"]
+        )
+        .sink(receiveCompletion: { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        }, receiveValue: { [weak self] response in
+            guard let items = response.items else { return }
+            let imageSources = items.map { $0.imageSource(.backdrop, maxWidth: 500) }
+            self?.libraryImages[key] = imageSources
+        })
+        .store(in: &cancellables)
     }
 }

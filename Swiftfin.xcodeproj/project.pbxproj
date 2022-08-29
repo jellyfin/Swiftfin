@@ -478,6 +478,8 @@
 		E1E1643A28BAC2EF00323B0A /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643928BAC2EF00323B0A /* SearchView.swift */; };
 		E1E1643E28BB074000323B0A /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643D28BB074000323B0A /* MultiSelectorView.swift */; };
 		E1E1643F28BB075C00323B0A /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643D28BB074000323B0A /* MultiSelectorView.swift */; };
+		E1E1644128BB301900323B0A /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1644028BB301900323B0A /* ArrayExtensions.swift */; };
+		E1E1644228BB301900323B0A /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1644028BB301900323B0A /* ArrayExtensions.swift */; };
 		E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */; };
 		E1E5D5442783BB5100692DFE /* ItemDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */; };
 		E1E5D5492783CDD700692DFE /* OverlaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */; };
@@ -891,6 +893,7 @@
 		E1E00A34278628A40022235B /* DoubleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		E1E1643928BAC2EF00323B0A /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		E1E1643D28BB074000323B0A /* MultiSelectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiSelectorView.swift; sourceTree = "<group>"; };
+		E1E1644028BB301900323B0A /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshHelper.swift; sourceTree = "<group>"; };
 		E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailsView.swift; sourceTree = "<group>"; };
 		E1E5D5472783CCF900692DFE /* OverlaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySettingsView.swift; sourceTree = "<group>"; };
@@ -1422,6 +1425,7 @@
 			isa = PBXGroup;
 			children = (
 				E1A2C157279A7D76005EC829 /* BundleExtensions.swift */,
+				E1E1644028BB301900323B0A /* ArrayExtensions.swift */,
 				E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */,
 				6267B3D526710B8900A7371D /* CollectionExtensions.swift */,
 				E173DA5126D04AAF00CC4EB7 /* ColorExtension.swift */,
@@ -2498,6 +2502,7 @@
 				E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */,
 				E1E1643A28BAC2EF00323B0A /* SearchView.swift in Sources */,
 				E1FA2F7427818A8800B4C270 /* SmallMenuOverlay.swift in Sources */,
+				E1E1644228BB301900323B0A /* ArrayExtensions.swift in Sources */,
 				E193D53C27193F9500900D82 /* UserListCoordinator.swift in Sources */,
 				E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E18CE0B528A22EDD0092E7F1 /* RepeatingTimer.swift in Sources */,
@@ -2579,6 +2584,7 @@
 				62C29EA126D102A500C1D2E7 /* iOSMainTabCoordinator.swift in Sources */,
 				E18E01E8288747230022598C /* SeriesItemContentView.swift in Sources */,
 				E16AA60828A364A6009A983C /* PosterButton.swift in Sources */,
+				E1E1644128BB301900323B0A /* ArrayExtensions.swift in Sources */,
 				E18CE0AF28A222240092E7F1 /* PublicUserSignInView.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
 				E1C812C0277A8E5D00918266 /* VLCPlayerView.swift in Sources */,
