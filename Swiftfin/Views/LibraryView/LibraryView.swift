@@ -13,12 +13,14 @@ import SwiftUI
 struct LibraryView: View {
 
     @EnvironmentObject
-    private var libraryRouter: LibraryCoordinator.Router
+    private var router: LibraryCoordinator.Router
     @ObservedObject
     var viewModel: LibraryViewModel
 
-    @Default(.Customization.libraryPosterType)
-    private var libraryPosterType
+    @Default(.Customization.Library.gridPosterType)
+    private var libraryGridPosterType
+    @Default(.Customization.Library.viewType)
+    private var libraryViewType
 
     @ViewBuilder
     private var loadingView: some View {
@@ -31,21 +33,41 @@ struct LibraryView: View {
     }
 
     private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
-        if libraryPosterType == .landscape && UIDevice.isPhone {
+        if libraryGridPosterType == .landscape && UIDevice.isPhone {
             return .fixedNumberOfColumns(2)
         } else {
-            return .adaptive(withMinItemSize: libraryPosterType.width + (UIDevice.isIPad ? 10 : 0))
+            return .adaptive(withMinItemSize: libraryGridPosterType.width + (UIDevice.isIPad ? 10 : 0))
         }
     }
 
     @ViewBuilder
-    private var libraryItemsView: some View {
+    private var libraryListView: some View {
         CollectionView(items: viewModel.items) { _, item, _ in
-            PosterButton(item: item, type: libraryPosterType)
+            LibraryItemRow(item: item)
+                .padding()
+        }
+        .layout { _, layoutEnvironment in
+            .list(using: .init(appearance: .plain), layoutEnvironment: layoutEnvironment)
+        }
+        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
+            if !viewModel.isLoading && edge == .bottom {
+                viewModel.requestNextPageAsync()
+            }
+        }
+        .configure { configuration in
+            configuration.showsVerticalScrollIndicator = false
+        }
+        .ignoresSafeArea()
+    }
+
+    @ViewBuilder
+    private var libraryGridView: some View {
+        CollectionView(items: viewModel.items) { _, item, _ in
+            PosterButton(item: item, type: libraryGridPosterType)
                 .onSelect { item in
-                    libraryRouter.route(to: \.item, item)
+                    router.route(to: \.item, item)
                 }
-                .scaleItem(libraryPosterType == .landscape && UIDevice.isPhone ? 0.8 : 1)
+                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.8 : 1)
         }
         .layout { _, layoutEnvironment in
             .grid(
@@ -71,15 +93,35 @@ struct LibraryView: View {
             } else if viewModel.items.isEmpty {
                 noResultsView
             } else {
-                libraryItemsView
+                switch libraryViewType {
+                case .grid:
+                    libraryGridView
+                case .list:
+                    libraryListView
+                }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button {
+                    switch libraryViewType {
+                    case .grid:
+                        libraryViewType = .list
+                    case .list:
+                        libraryViewType = .grid
+                    }
+                } label: {
+                    switch libraryViewType {
+                    case .grid:
+                        Image(systemName: "list.dash")
+                    case .list:
+                        Image(systemName: "square.grid.2x2")
+                    }
+                }
 
                 Button {
-                    libraryRouter
+                    router
                         .route(to: \.filter, (
                             filters: $viewModel.filters,
                             enabledFilterType: viewModel.enabledFilterType,

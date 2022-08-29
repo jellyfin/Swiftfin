@@ -33,11 +33,14 @@ struct CustomizeViewsSettings: View {
     var recommendedPosterType
     @Default(.Customization.searchPosterType)
     var searchPosterType
-    @Default(.Customization.libraryPosterType)
-    var libraryPosterType
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     var useSeriesLandscapeBackdrop
+
+    @Default(.Customization.Library.gridPosterType)
+    var libraryGridPosterType
+    @Default(.Customization.Library.viewType)
+    var libraryViewType
 
     var body: some View {
         List {
@@ -96,12 +99,6 @@ struct CustomizeViewsSettings: View {
                         Text(type.localizedName).tag(type.rawValue)
                     }
                 }
-
-                Picker(L10n.library, selection: $libraryPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
             } header: {
                 // TODO: localize after organization
                 Text("Posters")
@@ -113,6 +110,23 @@ struct CustomizeViewsSettings: View {
                 // TODO: think of a better name
                 // TODO: localize after organization
                 Text("Episode Landscape Poster")
+            }
+
+            Section {
+                Picker(L10n.library, selection: $libraryGridPosterType) {
+                    ForEach(PosterType.allCases, id: \.self) { type in
+                        Text(type.localizedName).tag(type.rawValue)
+                    }
+                }
+
+                Picker(L10n.items, selection: $libraryViewType) {
+                    ForEach(LibraryViewType.allCases, id: \.self) { type in
+                        Text(type.localizedName).tag(type.rawValue)
+                    }
+                }
+            } header: {
+                // TODO: localize after organization
+                Text("Library")
             }
         }
         .navigationTitle(L10n.customize)

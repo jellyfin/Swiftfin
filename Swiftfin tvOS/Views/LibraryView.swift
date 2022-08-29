@@ -20,7 +20,7 @@ struct LibraryView: View {
     @State
     private var scrollViewOffset: CGPoint = .zero
 
-    @Default(.Customization.libraryPosterType)
+    @Default(.Customization.Library.gridPosterType)
     var libraryPosterType
 
     @ViewBuilder
