@@ -1711,7 +1711,7 @@
 		E13F05EE28BC9016003499D2 /* LibraryView */ = {
 			isa = PBXGroup;
 			children = (
-				E13F05EF28BC9016003499D2 /* LibraryItemRow.swift */,
+				E1C55AB228BD051700A9AD88 /* Components */,
 				E13F05F028BC9016003499D2 /* LibraryView.swift */,
 			);
 			path = LibraryView;
@@ -2023,6 +2023,14 @@
 				531690EB267ABF46005D8AB9 /* ContinueWatchingView.swift */,
 			);
 			path = ContinueWatchingView;
+			sourceTree = "<group>";
+		};
+		E1C55AB228BD051700A9AD88 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E13F05EF28BC9016003499D2 /* LibraryItemRow.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		E1C812CF277AE4C700918266 /* VideoPlayerCoordinator */ = {

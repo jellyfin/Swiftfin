@@ -41,6 +41,10 @@ struct LibraryItemRow: View {
                         if let runtime = item.getItemRuntime() {
                             Text(runtime)
                         }
+
+                        if let officialRating = item.officialRating {
+                            Text(officialRating)
+                        }
                     }
                     .font(.caption)
                     .foregroundColor(Color(UIColor.lightGray))
