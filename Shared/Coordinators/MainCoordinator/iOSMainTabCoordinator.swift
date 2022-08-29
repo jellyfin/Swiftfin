@@ -14,15 +14,15 @@ final class MainTabCoordinator: TabCoordinatable {
     var child = TabChild(startingItems: [
         \MainTabCoordinator.home,
         \MainTabCoordinator.search,
-        \MainTabCoordinator.allMedia,
+        \MainTabCoordinator.media,
     ])
 
     @Route(tabItem: makeHomeTab, onTapped: onHomeTapped)
     var home = makeHome
     @Route(tabItem: makeSearchTab, onTapped: onSearchTapped)
     var search = makeSearch
-    @Route(tabItem: makeAllMediaTab, onTapped: onMediaTapped)
-    var allMedia = makeAllMedia
+    @Route(tabItem: makeMediaTab, onTapped: onMediaTapped)
+    var media = makeMedia
 
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
         NavigationViewCoordinator(HomeCoordinator())
@@ -56,20 +56,20 @@ final class MainTabCoordinator: TabCoordinatable {
         L10n.search.text
     }
 
-    func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
-        NavigationViewCoordinator(LibraryListCoordinator(viewModel: LibraryListViewModel()))
+    func makeMedia() -> NavigationViewCoordinator<MediaCoordinator> {
+        NavigationViewCoordinator(MediaCoordinator())
     }
 
-    func onMediaTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<LibraryListCoordinator>) {
+    func onMediaTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<MediaCoordinator>) {
         if isRepeat {
             coordinator.child.popToRoot()
         }
     }
 
     @ViewBuilder
-    func makeAllMediaTab(isActive: Bool) -> some View {
-        Image(systemName: "folder")
-        L10n.allMedia.text
+    func makeMediaTab(isActive: Bool) -> some View {
+        Image(systemName: "rectangle.stack.fill")
+        L10n.media.text
     }
 
     @ViewBuilder

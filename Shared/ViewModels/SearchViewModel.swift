@@ -53,7 +53,6 @@ final class SearchViewModel: ViewModel {
 
     private func cancelPreviousSearch() {
         searchCancellables.forEach { $0.cancel() }
-        print(searchCancellables.count)
     }
 
     func search(with query: String) {

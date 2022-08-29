@@ -18,6 +18,7 @@ struct LibraryFilters: Codable, Hashable {
     var sortBy: [SortBy] = [.name]
 
     static let `default` = LibraryFilters()
+    static let favorites: LibraryFilters = .init(filters: [.isFavorite], sortOrder: [.ascending], sortBy: [.name])
 }
 
 public enum SortBy: String, Codable, CaseIterable {
