@@ -21,17 +21,8 @@ struct MediaView: View {
     @ObservedObject
     var viewModel: MediaViewModel
 
-    @Default(.Experimental.liveTVAlphaEnabled)
-    var liveTVEnabled
-
-    private var libraryItems: [LibraryItem] {
-        [.init(library: .init(name: L10n.favorites, collectionType: "favorites"), viewModel: viewModel)]
-            .appending(.init(library: .init(name: "LiveTV", collectionType: "liveTV"), viewModel: viewModel), if: liveTVEnabled)
-            .appending(viewModel.libraries)
-    }
-
     var body: some View {
-        CollectionView(items: libraryItems) { _, item, _ in
+        CollectionView(items: viewModel.libraryItems) { _, item, _ in
             PosterButton(item: item, type: .landscape)
                 .scaleItem(0.8)
                 .onSelect { _ in
