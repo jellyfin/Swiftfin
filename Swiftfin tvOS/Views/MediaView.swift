@@ -7,6 +7,7 @@
 //
 
 import CollectionView
+import Defaults
 import JellyfinAPI
 import Stinsen
 import SwiftUI
@@ -14,13 +15,19 @@ import SwiftUI
 struct MediaView: View {
 
     @EnvironmentObject
+    private var tabRouter: MainCoordinator.Router
+    @EnvironmentObject
     private var router: MediaCoordinator.Router
     @ObservedObject
     var viewModel: MediaViewModel
 
+    @Default(.Experimental.liveTVAlphaEnabled)
+    var liveTVEnabled
+
     private var libraryItems: [LibraryItem] {
-        [LibraryItem(library: .init(name: L10n.favorites, id: "favorites"), viewModel: viewModel)] +
-            viewModel.libraries.map { LibraryItem(library: $0, viewModel: viewModel) }
+        [.init(library: .init(name: L10n.favorites, collectionType: "favorites"), viewModel: viewModel)]
+            .appending(.init(library: .init(name: "LiveTV", collectionType: "liveTV"), viewModel: viewModel), if: liveTVEnabled)
+            .appending(viewModel.libraries)
     }
 
     var body: some View {
@@ -28,10 +35,13 @@ struct MediaView: View {
             PosterButton(item: item, type: .landscape)
                 .scaleItem(0.8)
                 .onSelect { _ in
-                    if item.library.id == "favorites" {
+                    switch item.library.collectionType {
+                    case "favorites":
                         router.route(to: \.library, (viewModel: .init(filters: .favorites), title: ""))
-                    } else {
-                        router.route(to: \.library, (viewModel: .init(parentID: item.library.id), title: ""))
+                    case "liveTV":
+                        tabRouter.root(\.liveTV)
+                    default:
+                        router.route(to: \.library, (viewModel: .init(library: item.library), title: ""))
                     }
                 }
                 .imageOverlay { _ in

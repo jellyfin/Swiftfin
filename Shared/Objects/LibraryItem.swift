@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: Look at something better that possibly doesn't depend on the viewmodel
+//       and accomodates favorites and liveTV better
 struct LibraryItem: Equatable, Poster {
 
     var library: BaseItemDto
@@ -28,5 +30,13 @@ struct LibraryItem: Equatable, Poster {
     static func == (lhs: LibraryItem, rhs: LibraryItem) -> Bool {
         lhs.library == rhs.library &&
             lhs.viewModel.libraryImages[lhs.library.id ?? ""] == rhs.viewModel.libraryImages[rhs.library.id ?? ""]
+    }
+
+    static func favorites(viewModel: MediaViewModel) -> LibraryItem {
+        .init(library: .init(name: L10n.favorites, collectionType: "favorites"), viewModel: viewModel)
+    }
+
+    static func liveTV(viewModel: MediaViewModel) -> LibraryItem {
+        .init(library: .init(name: "LiveTV", collectionType: "liveTV"), viewModel: viewModel)
     }
 }

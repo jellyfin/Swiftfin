@@ -36,10 +36,10 @@ final class TVLibrariesCoordinator: NavigationCoordinatable {
     }
 
     func makeLibrary(library: BaseItemDto) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
+        LibraryCoordinator(viewModel: LibraryViewModel(library: library), title: library.title)
     }
 
     func makeRootLibrary(library: BaseItemDto) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: LibraryViewModel(parentID: library.id), title: library.title)
+        LibraryCoordinator(viewModel: LibraryViewModel(library: library), title: library.title)
     }
 }

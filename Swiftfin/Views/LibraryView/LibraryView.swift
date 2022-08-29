@@ -125,7 +125,7 @@ struct LibraryView: View {
                         .route(to: \.filter, (
                             filters: $viewModel.filters,
                             enabledFilterType: viewModel.enabledFilterType,
-                            parentId: viewModel.parentID ?? ""
+                            parentId: viewModel.library?.id ?? ""
                         ))
                 } label: {
                     Image(systemName: "line.horizontal.3.decrease.circle")

@@ -11,8 +11,6 @@ import SwiftUI
 
 struct CustomizeViewsSettings: View {
 
-    @Default(.Customization.showFlattenView)
-    var showFlattenView
     @Default(.Customization.itemViewType)
     var itemViewType
 
@@ -45,9 +43,6 @@ struct CustomizeViewsSettings: View {
     var body: some View {
         List {
             Section {
-
-                Toggle(L10n.showFlattenView, isOn: $showFlattenView)
-
                 Picker(L10n.items, selection: $itemViewType) {
                     ForEach(ItemViewType.allCases, id: \.self) { type in
                         Text(type.localizedName).tag(type.rawValue)

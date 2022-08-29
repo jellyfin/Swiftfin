@@ -13,14 +13,11 @@ import JellyfinAPI
 final class MediaViewModel: ViewModel {
 
     @Published
-    var libraries: [BaseItemDto] = []
+    var libraries: [LibraryItem] = []
     @Published
     var libraryImages: [String: [ImageSource]] = [:]
 
-    private var supportedLibraries: [String] {
-        ["movies", "tvshows", "unknown"]
-            .appending("livetv", if: Defaults[.Experimental.liveTVAlphaEnabled])
-    }
+    private static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "unknown"]
 
     override init() {
         super.init()
@@ -31,15 +28,16 @@ final class MediaViewModel: ViewModel {
 
     func requestLibraries() {
         UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
-            .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
                 guard let items = response.items else { return }
-                self.libraries = items.filter { self.supportedLibraries.contains($0.collectionType ?? "unknown") }
-                self.libraries.forEach {
+                let filteredLibraries = items.filter { Self.supportedCollectionTypes.contains($0.collectionType ?? "unknown") }
+                filteredLibraries.forEach {
                     self.getRandomItemImageSource(with: nil, id: $0.id, key: $0.id ?? "")
                 }
+
+                self.libraries = filteredLibraries.map { .init(library: $0, viewModel: self) }
             })
             .store(in: &cancellables)
     }
