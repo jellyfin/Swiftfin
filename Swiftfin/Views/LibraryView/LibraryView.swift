@@ -10,6 +10,38 @@ import CollectionView
 import Defaults
 import SwiftUI
 
+struct NavBarDrawerButton: View {
+    
+    @EnvironmentObject
+    private var router: LibraryCoordinator.Router
+
+    let activated: Bool
+    let title: String
+
+    var body: some View {
+        Button {
+            router.route(to: \.filter)
+        } label: {
+            HStack(spacing: 2) {
+                Text(title)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                
+                Image(systemName: "chevron.down")
+                    .font(.caption)
+            }
+            .foregroundColor(.primary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background {
+                Capsule()
+                    .foregroundColor(activated ? .jellyfinPurple : Color(UIColor.secondarySystemFill))
+                    .opacity(0.5)
+            }
+        }
+    }
+}
+
 struct LibraryView: View {
 
     @EnvironmentObject
@@ -103,6 +135,11 @@ struct LibraryView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navBarDrawerButtons {
+            NavBarDrawerButton(activated: false, title: "Genres")
+            
+            NavBarDrawerButton(activated: true, title: "Tags")
+        }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
@@ -120,18 +157,6 @@ struct LibraryView: View {
                         Image(systemName: "square.grid.2x2")
                     }
                 }
-
-                Button {
-                    router
-                        .route(to: \.filter, (
-                            filters: $viewModel.filters,
-                            enabledFilterType: viewModel.enabledFilterType,
-                            parentId: viewModel.library?.id ?? ""
-                        ))
-                } label: {
-                    Image(systemName: "line.horizontal.3.decrease.circle")
-                }
-                .foregroundColor(viewModel.filters == .default ? .accentColor : Color(UIColor.systemOrange))
             }
         }
     }

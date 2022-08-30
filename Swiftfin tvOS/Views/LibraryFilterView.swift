@@ -39,7 +39,7 @@ struct LibraryFilterView: View {
                             label: L10n.genres,
                             options: viewModel.possibleGenres,
                             optionToString: { $0.name ?? "" },
-                            selected: $viewModel.modifiedFilters.withGenres
+                            selected: $viewModel.modifiedFilters.genres
                         )
                     }
                     if viewModel.enabledFilterType.contains(.filter) {

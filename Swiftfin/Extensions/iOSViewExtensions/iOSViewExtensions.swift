@@ -12,4 +12,8 @@ extension View {
     func navBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
         self.modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
+
+    func navBarDrawerButtons<Buttons: View>(@ViewBuilder _ buttons: @escaping () -> Buttons) -> some View {
+        self.modifier(NavBarDrawerButtonsModifier(buttons: buttons))
+    }
 }

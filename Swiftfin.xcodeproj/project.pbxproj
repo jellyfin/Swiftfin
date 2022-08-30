@@ -244,6 +244,9 @@
 		E10EAA53277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */; };
 		E10EAA54277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */; };
 		E1101177281B1E8A006A3584 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = E1101176281B1E8A006A3584 /* Puppy */; };
+		E113132B28BDB4B500930F75 /* NavBarDrawerButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113132A28BDB4B500930F75 /* NavBarDrawerButtonsView.swift */; };
+		E113132F28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113132E28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift */; };
+		E113133228BDC72000930F75 /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113133128BDC72000930F75 /* FilterView.swift */; };
 		E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */; };
 		E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
 		E118959E289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
@@ -738,6 +741,9 @@
 		E10D87E127852FD000BD264C /* EpisodesRowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesRowManager.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtensions.swift; sourceTree = "<group>"; };
 		E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+VideoPlayerViewModel.swift"; sourceTree = "<group>"; };
+		E113132A28BDB4B500930F75 /* NavBarDrawerButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarDrawerButtonsView.swift; sourceTree = "<group>"; };
+		E113132E28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarDrawerButtonsModifier.swift; sourceTree = "<group>"; };
+		E113133128BDC72000930F75 /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
 		E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectView.swift; sourceTree = "<group>"; };
 		E118959C289312020042947B /* BaseItemPerson+Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemPerson+Poster.swift"; sourceTree = "<group>"; };
 		E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewOffsetModifier.swift; sourceTree = "<group>"; };
@@ -1556,6 +1562,15 @@
 			path = ItemViewModel;
 			sourceTree = "<group>";
 		};
+		E113133028BDB6D600930F75 /* NavBarDrawerButtons */ = {
+			isa = PBXGroup;
+			children = (
+				E113132E28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift */,
+				E113132A28BDB4B500930F75 /* NavBarDrawerButtonsView.swift */,
+			);
+			path = NavBarDrawerButtons;
+			sourceTree = "<group>";
+		};
 		E1171A1A28A2215800FA1AF5 /* UserSignInView */ = {
 			isa = PBXGroup;
 			children = (
@@ -1576,13 +1591,13 @@
 			path = ViewExtensions;
 			sourceTree = "<group>";
 		};
-		E11895B12893842D0042947B /* NavBarOffsetModifier */ = {
+		E11895B12893842D0042947B /* NavBarOffset */ = {
 			isa = PBXGroup;
 			children = (
 				E11895AB289383EE0042947B /* NavBarOffsetModifier.swift */,
 				E11895AE2893840F0042947B /* NavBarOffsetView.swift */,
 			);
-			path = NavBarOffsetModifier;
+			path = NavBarOffset;
 			sourceTree = "<group>";
 		};
 		E11CEB85289984F5003E74C7 /* Extensions */ = {
@@ -1596,8 +1611,9 @@
 		E11CEB8828998522003E74C7 /* iOSViewExtensions */ = {
 			isa = PBXGroup;
 			children = (
-				E11895B12893842D0042947B /* NavBarOffsetModifier */,
 				E11CEB8A28998552003E74C7 /* iOSViewExtensions.swift */,
+				E113133028BDB6D600930F75 /* NavBarDrawerButtons */,
+				E11895B12893842D0042947B /* NavBarOffset */,
 			);
 			path = iOSViewExtensions;
 			sourceTree = "<group>";
@@ -1688,6 +1704,7 @@
 				E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */,
 				E14F7D0A26DB3714007C3AE6 /* ItemView */,
 				53E4E646263F6CF100F67C6B /* LibraryFilterView.swift */,
+				E113133128BDC72000930F75 /* FilterView.swift */,
 				E13F05EE28BC9016003499D2 /* LibraryView */,
 				C4E5598828124C10003DECA5 /* LiveTVChannelItemElement.swift */,
 				C400DB6C27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift */,
@@ -2639,6 +2656,7 @@
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				E13AD72E2798BC8D00FDCEE8 /* NativePlayerViewController.swift in Sources */,
 				E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */,
+				E113132B28BDB4B500930F75 /* NavBarDrawerButtonsView.swift in Sources */,
 				C45942CB27F6984100C54FE7 /* LiveTVPlayerViewController.swift in Sources */,
 				E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */,
 				E19169CE272514760085832A /* HTTPScheme.swift in Sources */,
@@ -2701,6 +2719,7 @@
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				E1937A3B288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				62E632E9267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
+				E113133228BDC72000930F75 /* FilterView.swift in Sources */,
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E11895AC289383EE0042947B /* NavBarOffsetModifier.swift in Sources */,
 				E13DD3FC2717EAE8009D4DAF /* UserListView.swift in Sources */,
@@ -2725,6 +2744,7 @@
 				E13DD3E927177ED6009D4DAF /* ServerListCoordinator.swift in Sources */,
 				E1CCF12E28ABF989006CAC9E /* PosterType.swift in Sources */,
 				E1C812BD277A8E5D00918266 /* PlayerOverlayDelegate.swift in Sources */,
+				E113132F28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift in Sources */,
 				C45942C527F67DA400C54FE7 /* LiveTVCoordinator.swift in Sources */,
 				E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */,
 				E18E01EE288747230022598C /* AboutView.swift in Sources */,

@@ -48,7 +48,7 @@ final class LibraryViewModel: ViewModel {
         person: BaseItemPerson? = nil,
         genre: NameGuidPair? = nil,
         studio: NameGuidPair? = nil,
-        filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name])
+        filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], genres: [], sortBy: [.name])
     ) {
         self.library = library
         self.person = person
@@ -77,10 +77,10 @@ final class LibraryViewModel: ViewModel {
         let studioIDs: [String] = [studio].compactMap(\.?.id)
         let genreIDs: [String]
 
-        if filters.withGenres.isEmpty {
+        if filters.genres.isEmpty {
             genreIDs = [genre].compactMap(\.?.id)
         } else {
-            genreIDs = filters.withGenres.compactMap(\.id)
+            genreIDs = filters.genres.compactMap(\.id)
         }
 
         let sortBy = filters.sortBy.map(\.rawValue)

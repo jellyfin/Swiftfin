@@ -48,7 +48,7 @@ final class LibraryFilterViewModel: ViewModel {
     }
 
     func resetFilters() {
-        modifiedFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
+        modifiedFilters = LibraryFilters(filters: [], sortOrder: [.ascending], genres: [], tags: [], sortBy: [.name])
     }
 
     init(

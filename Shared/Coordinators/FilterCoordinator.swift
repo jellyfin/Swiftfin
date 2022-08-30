@@ -19,19 +19,20 @@ final class FilterCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    @Binding
-    var filters: LibraryFilters
-    var enabledFilterType: [FilterType]
-    var parentId: String = ""
-
-    init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String) {
-        _filters = filters
-        self.enabledFilterType = enabledFilterType
-        self.parentId = parentId
-    }
+//    @Binding
+//    var filters: LibraryFilters
+//    var enabledFilterType: [FilterType]
+//    var parentId: String = ""
+//
+//    init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String) {
+//        _filters = filters
+//        self.enabledFilterType = enabledFilterType
+//        self.parentId = parentId
+//    }
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryFilterView(filters: $filters, enabledFilterType: enabledFilterType, parentId: parentId)
+        FilterView()
+//        LibraryFilterView(filters: $filters, enabledFilterType: enabledFilterType, parentId: parentId)
     }
 }

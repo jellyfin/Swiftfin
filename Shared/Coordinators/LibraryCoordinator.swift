@@ -19,8 +19,6 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    @Route(.modal)
-    var filter = makeFilter
 
     #if os(tvOS)
         @Route(.modal)
@@ -28,6 +26,8 @@ final class LibraryCoordinator: NavigationCoordinatable {
     #else
         @Route(.push)
         var item = makeItem
+    @Route(.modal)
+    var filter = makeFilter
     #endif
 
     let viewModel: LibraryViewModel
@@ -40,19 +40,23 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryView(viewModel: self.viewModel)
+        LibraryView(viewModel: viewModel)
     }
 
-    func makeFilter(params: FilterCoordinatorParams) -> NavigationViewCoordinator<FilterCoordinator> {
-        NavigationViewCoordinator(FilterCoordinator(
-            filters: params.filters,
-            enabledFilterType: params.enabledFilterType,
-            parentId: params.parentId
-        ))
-    }
+//    func makeFilter(params: FilterCoordinatorParams) -> NavigationViewCoordinator<FilterCoordinator> {
+//        NavigationViewCoordinator(FilterCoordinator(
+//            filters: params.filters,
+//            enabledFilterType: params.enabledFilterType,
+//            parentId: params.parentId
+//        ))
+//    }
 
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
+    }
+    
+    func makeFilter() -> NavigationViewCoordinator<FilterCoordinator> {
+        NavigationViewCoordinator(FilterCoordinator())
     }
 
     func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
