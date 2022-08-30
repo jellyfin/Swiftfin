@@ -69,6 +69,8 @@ final class LibraryViewModel: ViewModel {
 
         if replaceCurrentItems {
             self.items = []
+            self.currentPage = 0
+            self.hasNextPage = true
         }
 
         let personIDs: [String] = [person].compactMap(\.?.id)
@@ -93,8 +95,17 @@ final class LibraryViewModel: ViewModel {
             includeItemTypes = [.movie, .series, .boxSet]
         }
 
+        let excludedIDs: [String]?
+
+        if filters.sortBy == [.random] {
+            excludedIDs = items.compactMap(\.id)
+        } else {
+            excludedIDs = nil
+        }
+
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
+            excludeItemIds: excludedIDs,
             startIndex: currentPage * pageItemSize,
             limit: pageItemSize,
             recursive: true,
@@ -121,7 +132,20 @@ final class LibraryViewModel: ViewModel {
                 return
             }
 
-            self?.items.append(contentsOf: response.items ?? [])
+            let items: [BaseItemDto]
+
+            // There is a bug either with the request construction or the server when using
+            // "Random" sort which causes duplicate items to be sent even though we send the
+            // excluded ids. This causes shorter item additions when using "Random" over
+            // consecutive calls. Investigation needs to be done to find the root of the problem.
+            // Only filter for "Random" as an optimization.
+            if filters.sortBy == [.random] {
+                items = response.items?.filter { !(self?.items.contains($0) ?? true) } ?? []
+            } else {
+                items = response.items ?? []
+            }
+
+            self?.items.append(contentsOf: items)
         })
         .store(in: &cancellables)
     }
