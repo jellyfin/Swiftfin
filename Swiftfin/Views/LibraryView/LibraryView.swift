@@ -64,15 +64,16 @@ struct LibraryView: View {
     private var libraryGridView: some View {
         CollectionView(items: viewModel.items) { _, item, _ in
             PosterButton(item: item, type: libraryGridPosterType)
+                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
                 .onSelect { item in
                     router.route(to: \.item, item)
                 }
-                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.8 : 1)
         }
         .layout { _, layoutEnvironment in
             .grid(
                 layoutEnvironment: layoutEnvironment,
-                layoutMode: gridLayout
+                layoutMode: gridLayout,
+                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
             )
         }
         .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in

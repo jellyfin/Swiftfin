@@ -29,7 +29,7 @@ struct MediaView: View {
     var body: some View {
         CollectionView(items: viewModel.libraryItems) { _, item, _ in
             PosterButton(item: item, type: .landscape)
-                .scaleItem(UIDevice.isPhone ? 0.9 : 1)
+                .scaleItem(UIDevice.isPhone ? 0.85 : 1)
                 .onSelect { _ in
                     switch item.library.collectionType {
                     case "favorites":
