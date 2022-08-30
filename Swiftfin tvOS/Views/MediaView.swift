@@ -14,24 +14,24 @@ import SwiftUI
 struct MediaView: View {
 
     @EnvironmentObject
+    private var tabRouter: MainCoordinator.Router
+    @EnvironmentObject
     private var router: MediaCoordinator.Router
     @ObservedObject
     var viewModel: MediaViewModel
 
-    private var libraryItems: [LibraryItem] {
-        [LibraryItem(library: .init(name: L10n.favorites, id: "favorites"), viewModel: viewModel)] +
-            viewModel.libraries.map { LibraryItem(library: $0, viewModel: viewModel) }
-    }
-
     var body: some View {
-        CollectionView(items: libraryItems) { _, item, _ in
+        CollectionView(items: viewModel.libraryItems) { _, item, _ in
             PosterButton(item: item, type: .landscape)
                 .scaleItem(0.8)
                 .onSelect { _ in
-                    if item.library.id == "favorites" {
+                    switch item.library.collectionType {
+                    case "favorites":
                         router.route(to: \.library, (viewModel: .init(filters: .favorites), title: ""))
-                    } else {
-                        router.route(to: \.library, (viewModel: .init(parentID: item.library.id), title: ""))
+                    case "liveTV":
+                        tabRouter.root(\.liveTV)
+                    default:
+                        router.route(to: \.library, (viewModel: .init(library: item.library), title: ""))
                     }
                 }
                 .imageOverlay { _ in

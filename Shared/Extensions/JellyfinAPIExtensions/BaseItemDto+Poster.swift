@@ -35,7 +35,7 @@ extension BaseItemDto: Poster {
 
     var showTitle: Bool {
         switch type {
-        case .episode, .series, .movie, .boxSet:
+        case .episode, .series, .movie, .boxSet, .collectionFolder:
             return Defaults[.Customization.showPosterLabels]
         default:
             return true

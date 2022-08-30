@@ -13,16 +13,12 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.showPosterLabels)
     var showPosterLabels
-    @Default(.Customization.showFlattenView)
-    var showFlattenView
 
     var body: some View {
         Form {
             Section {
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
-
-                Toggle(L10n.showFlattenView, isOn: $showFlattenView)
 
             } header: {
                 L10n.customize.text

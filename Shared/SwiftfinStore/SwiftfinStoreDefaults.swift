@@ -28,7 +28,6 @@ extension Defaults.Keys {
     static let outOfNetworkBandwidth = Key<Int>("OutOfNetworkBandwidth", default: 40_000_000, suite: .generalSuite)
 
     enum Customization {
-        static let showFlattenView = Key<Bool>("showFlattenView", default: true, suite: .generalSuite)
         static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactLogo, suite: .generalSuite)
 
         static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: .generalSuite)
