@@ -10,7 +10,7 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-typealias FilterCoordinatorParams = (filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String)
+typealias FilterCoordinatorParams = (filters: Binding<ItemFilters>, enabledFilterType: [FilterType], parentId: String)
 
 final class FilterCoordinator: NavigationCoordinatable {
 
@@ -20,11 +20,11 @@ final class FilterCoordinator: NavigationCoordinatable {
     var start = makeStart
 
 //    @Binding
-//    var filters: LibraryFilters
+//    var filters: ItemFilters
 //    var enabledFilterType: [FilterType]
 //    var parentId: String = ""
 //
-//    init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String) {
+//    init(filters: Binding<ItemFilters>, enabledFilterType: [FilterType], parentId: String) {
 //        _filters = filters
 //        self.enabledFilterType = enabledFilterType
 //        self.parentId = parentId

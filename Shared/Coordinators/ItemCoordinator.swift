@@ -32,8 +32,8 @@ final class ItemCoordinator: NavigationCoordinatable {
         self.itemDto = item
     }
 
-    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters)
     }
 
     func makeItem(item: BaseItemDto) -> ItemCoordinator {

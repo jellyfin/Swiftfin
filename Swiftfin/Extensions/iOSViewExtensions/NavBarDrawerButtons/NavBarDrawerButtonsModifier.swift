@@ -23,6 +23,7 @@ struct NavBarDrawerButtonsModifier<Buttons: View>: ViewModifier {
                     buttons()
                 }
                 .padding(.horizontal)
+                .padding(.vertical, 1)
             }
             .ignoresSafeArea()
         } content: {

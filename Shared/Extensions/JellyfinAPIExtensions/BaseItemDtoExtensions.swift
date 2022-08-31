@@ -247,3 +247,5 @@ extension BaseItemDtoImageBlurHashes {
         }
     }
 }
+
+extension BaseItemDto: LibraryParent { }

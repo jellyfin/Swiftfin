@@ -22,9 +22,9 @@ final class HomeCoordinator: NavigationCoordinatable {
 
     #if os(tvOS)
         @Route(.modal)
-        var item = makeModalItem
+        var item = makeItem
         @Route(.modal)
-        var library = makeModalLibrary
+        var library = makeLibrary
     #else
         @Route(.push)
         var item = makeItem
@@ -36,21 +36,23 @@ final class HomeCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(SettingsCoordinator())
     }
 
-    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
+#if os(tvOS)
+    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        NavigationViewCoordinator(ItemCoordinator(item: item))
     }
-
+    
+    func makeLibrary(params: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters))
+    }
+#else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
-
-    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        NavigationViewCoordinator(ItemCoordinator(item: item))
+    
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters)
     }
-
-    func makeModalLibrary(params: LibraryCoordinatorParams) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(viewModel: params.viewModel, title: params.title))
-    }
+#endif
 
     @ViewBuilder
     func makeStart() -> some View {

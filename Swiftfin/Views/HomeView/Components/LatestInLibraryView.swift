@@ -24,8 +24,8 @@ struct LatestInLibraryView: View {
         PosterHStack(title: L10n.latestWithString(viewModel.library.displayName), type: latestInLibraryPosterType, items: viewModel.items)
             .trailing {
                 Button {
-                    let libraryViewModel = LibraryViewModel(library: viewModel.library, filters: HomeViewModel.recentFilterSet)
-                    homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))
+//                    let libraryViewModel = LibraryViewModel(library: viewModel.library, filters: HomeViewModel.recentFilterSet)
+//                    homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))
                 } label: {
                     HStack {
                         L10n.seeAll.text

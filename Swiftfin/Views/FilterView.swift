@@ -13,6 +13,8 @@ struct FilterView: View {
     @EnvironmentObject
     private var router: FilterCoordinator.Router
     
+    
+    
     var body: some View {
         
         Text("Hello there")

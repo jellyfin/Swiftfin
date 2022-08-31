@@ -10,16 +10,28 @@ import Combine
 import Foundation
 import JellyfinAPI
 
+enum FilterType: CaseIterable {
+    case tag
+    case sortOrder
+    case sortBy
+    case filter
+}
+
 // TODO: Look at refactoring everything in this file, probably move to JellyfinAPI
-struct LibraryFilters: Codable, Hashable {
-    var filters: [ItemFilter] = []
-    var sortOrder: [APISortOrder] = [.ascending]
+struct ItemFilters: Codable, Hashable {
+    
     var genres: [NameGuidPair] = []
     var tags: [String] = []
+    var filters: [ItemFilter] = []
+    var sortOrder: APISortOrder = .ascending
     var sortBy: [SortBy] = [.name]
 
-    static let `default` = LibraryFilters()
-    static let favorites: LibraryFilters = .init(filters: [.isFavorite], sortOrder: [.ascending], sortBy: [.name])
+    static let `default` = ItemFilters()
+    static let favorites: ItemFilters = .init(filters: [.isFavorite])
+    
+    var hasFilters: Bool {
+        self != .default
+    }
 }
 
 public enum SortBy: String, Codable, CaseIterable {
@@ -47,7 +59,7 @@ extension SortBy {
 
 extension ItemFilter {
     static var supportedTypes: [ItemFilter] {
-        [.isUnplayed, isPlayed, .isFavorite, .likes]
+        [.isUnplayed, .isPlayed, .isFavorite, .likes]
     }
 
     // TODO: Localize

@@ -27,13 +27,13 @@ final class MediaCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-        func makeLibrary(params: LibraryCoordinatorParams) -> NavigationViewCoordinator<LibraryCoordinator> {
-            NavigationViewCoordinator(LibraryCoordinator(viewModel: params.viewModel, title: params.title))
+        func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+            NavigationViewCoordinator(LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters))
         }
 
     #else
-        func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
-            LibraryCoordinator(viewModel: params.viewModel, title: params.title)
+        func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+            LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters)
         }
 
         func makeLiveTV() -> LiveTVCoordinator {

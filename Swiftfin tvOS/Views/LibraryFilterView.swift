@@ -15,13 +15,13 @@ struct LibraryFilterView: View {
     @EnvironmentObject
     private var filterRouter: FilterCoordinator.Router
     @Binding
-    var filters: LibraryFilters
+    var filters: ItemFilters
     var parentId: String = ""
 
     @StateObject
     var viewModel: LibraryFilterViewModel
 
-    init(filters: Binding<LibraryFilters>, enabledFilterType: [FilterType], parentId: String) {
+    init(filters: Binding<ItemFilters>, enabledFilterType: [FilterType], parentId: String) {
         _filters = filters
         self.parentId = parentId
         _viewModel =

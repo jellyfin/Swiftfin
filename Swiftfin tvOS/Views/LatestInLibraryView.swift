@@ -23,7 +23,7 @@ struct LatestInLibraryView: View {
                     router.route(to: \.library, (
                         viewModel: .init(
                             library: viewModel.library,
-                            filters: LibraryFilters(
+                            filters: ItemFilters(
                                 filters: [],
                                 sortOrder: [.descending],
                                 sortBy: [.dateAdded]

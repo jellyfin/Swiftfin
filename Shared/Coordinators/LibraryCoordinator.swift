@@ -11,9 +11,13 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-typealias LibraryCoordinatorParams = (viewModel: LibraryViewModel, title: String)
-
 final class LibraryCoordinator: NavigationCoordinatable {
+    
+    struct Parameters {
+        let parent: LibraryParent
+        let type: LibraryParentType
+        let filters: ItemFilters
+    }
 
     let stack = NavigationStack(initial: \LibraryCoordinator.start)
 
@@ -22,35 +26,36 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
     #if os(tvOS)
         @Route(.modal)
-        var item = makeModalItem
+        var item = makeItem
     #else
         @Route(.push)
         var item = makeItem
-    @Route(.modal)
-    var filter = makeFilter
+        @Route(.modal)
+        var filter = makeFilter
     #endif
-
-    let viewModel: LibraryViewModel
-    let title: String
-
-    init(viewModel: LibraryViewModel, title: String) {
-        self.viewModel = viewModel
-        self.title = title
+    
+    let parent: LibraryParent
+    let type: LibraryParentType
+    let filters: ItemFilters
+    
+    init(parent: LibraryParent,
+         type: LibraryParentType,
+         filters: ItemFilters = .default) {
+        self.parent = parent
+        self.type = type
+        self.filters = filters
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryView(viewModel: viewModel)
+        LibraryView(viewModel: .init(parent: parent, type: type, filters: filters))
     }
 
-//    func makeFilter(params: FilterCoordinatorParams) -> NavigationViewCoordinator<FilterCoordinator> {
-//        NavigationViewCoordinator(FilterCoordinator(
-//            filters: params.filters,
-//            enabledFilterType: params.enabledFilterType,
-//            parentId: params.parentId
-//        ))
-//    }
-
+#if os(tvOS)
+    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        NavigationViewCoordinator(ItemCoordinator(item: item))
+    }
+#else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
@@ -58,8 +63,5 @@ final class LibraryCoordinator: NavigationCoordinatable {
     func makeFilter() -> NavigationViewCoordinator<FilterCoordinator> {
         NavigationViewCoordinator(FilterCoordinator())
     }
-
-    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        NavigationViewCoordinator(ItemCoordinator(item: item))
-    }
+#endif
 }

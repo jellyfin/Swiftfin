@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+private let drawerHeight: CGFloat = 36
+
 struct NavBarDrawerButtonsView<Buttons: View, Content: View>: UIViewControllerRepresentable {
 
     private let buttons: () -> Buttons
@@ -83,8 +85,8 @@ class UINavBarButtonsHostingController<Buttons: View, Content: View>: UIViewCont
         drawerButtonsView.didMove(toParent: self)
 
         NSLayoutConstraint.activate([
-            drawerButtonsView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -40),
-            drawerButtonsView.view.heightAnchor.constraint(equalToConstant: 40),
+            drawerButtonsView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -drawerHeight),
+            drawerButtonsView.view.heightAnchor.constraint(equalToConstant: drawerHeight),
             drawerButtonsView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             drawerButtonsView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
@@ -116,10 +118,10 @@ class UINavBarButtonsHostingController<Buttons: View, Content: View>: UIViewCont
 
     override var additionalSafeAreaInsets: UIEdgeInsets {
         get {
-            .init(top: 40, left: 0, bottom: 0, right: 0)
+            .init(top: drawerHeight, left: 0, bottom: 0, right: 0)
         }
         set {
-            super.additionalSafeAreaInsets = .init(top: 40, left: 0, bottom: 0, right: 0)
+            super.additionalSafeAreaInsets = .init(top: drawerHeight, left: 0, bottom: 0, right: 0)
         }
     }
 }

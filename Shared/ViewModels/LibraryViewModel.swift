@@ -13,51 +13,29 @@ import UIKit
 
 // TODO: Look at refactoring
 final class LibraryViewModel: ViewModel {
+    
+    @Default(.Customization.Library.gridPosterType)
+    private var libraryGridPosterType
 
     @Published
     var items: [BaseItemDto] = []
     @Published
+    var filters: ItemFilters
+    @Published
     private var currentPage = 0
     private var hasNextPage = true
-    @Published
-    var filters: LibraryFilters
-
-    @Default(.Customization.Library.gridPosterType)
-    private var libraryGridPosterType
-
-    let library: BaseItemDto?
-    let person: BaseItemPerson?
-    let genre: NameGuidPair?
-    let studio: NameGuidPair?
-
-    private var pageItemSize: Int {
-        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
-        return UIScreen.itemsFillableOnScreen(width: libraryGridPosterType.width, height: height)
-    }
-
-    var enabledFilterType: [FilterType] {
-        if genre == nil {
-            return [.tag, .genre, .sortBy, .sortOrder, .filter]
-        } else {
-            return [.tag, .sortBy, .sortOrder, .filter]
-        }
-    }
-
-    init(
-        library: BaseItemDto? = nil,
-        person: BaseItemPerson? = nil,
-        genre: NameGuidPair? = nil,
-        studio: NameGuidPair? = nil,
-        filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], genres: [], sortBy: [.name])
-    ) {
-        self.library = library
-        self.person = person
-        self.genre = genre
-        self.studio = studio
+    
+    let parent: LibraryParent
+    let type: LibraryParentType
+    
+    init(parent: LibraryParent,
+         type: LibraryParentType,
+         filters: ItemFilters) {
+        self.parent = parent
+        self.type = type
         self.filters = filters
-
         super.init()
-
+        
         $filters
             .sink(receiveValue: { newFilters in
                 self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
@@ -65,23 +43,33 @@ final class LibraryViewModel: ViewModel {
             .store(in: &cancellables)
     }
 
-    func requestItemsAsync(with filters: LibraryFilters, replaceCurrentItems: Bool = false) {
+    private var pageItemSize: Int {
+        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
+        return UIScreen.itemsFillableOnScreen(width: libraryGridPosterType.width, height: height)
+    }
+
+    func requestItemsAsync(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
 
         if replaceCurrentItems {
             self.items = []
             self.currentPage = 0
             self.hasNextPage = true
         }
-
-        let personIDs: [String] = [person].compactMap(\.?.id)
-        let studioIDs: [String] = [studio].compactMap(\.?.id)
-        let genreIDs: [String]
-
-        if filters.genres.isEmpty {
-            genreIDs = [genre].compactMap(\.?.id)
-        } else {
-            genreIDs = filters.genres.compactMap(\.id)
+        
+        var libraryID: String?
+        var personIDs: [String]?
+        var studioIDs: [String]?
+        
+        switch type {
+        case .library, .folders:
+            libraryID = parent.id
+        case .person:
+            personIDs = [parent].compactMap(\.id)
+        case .studio:
+            studioIDs = [parent].compactMap(\.id)
         }
+        
+        let genreIDs = filters.genres.compactMap(\.id)
 
         let sortBy = filters.sortBy.map(\.rawValue)
 
@@ -89,7 +77,7 @@ final class LibraryViewModel: ViewModel {
 
         if filters.filters.contains(.isFavorite) {
             includeItemTypes = [.movie, .boxSet, .series, .season, .episode]
-        } else if library?.collectionType == "folders" {
+        } else if type == .folders {
             includeItemTypes = [.collectionFolder]
         } else {
             includeItemTypes = [.movie, .series, .boxSet]
@@ -102,6 +90,8 @@ final class LibraryViewModel: ViewModel {
         } else {
             excludedIDs = nil
         }
+        
+        let sortOrder = [SortOrder(rawValue: filters.sortOrder.rawValue) ?? .ascending]
 
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
@@ -109,9 +99,8 @@ final class LibraryViewModel: ViewModel {
             startIndex: currentPage * pageItemSize,
             limit: pageItemSize,
             recursive: true,
-            searchTerm: nil,
-            sortOrder: filters.sortOrder.compactMap { SortOrder(rawValue: $0.rawValue) },
-            parentId: library?.id,
+            sortOrder: sortOrder,
+            parentId: libraryID,
             fields: ItemFields.allCases,
             includeItemTypes: includeItemTypes,
             filters: filters.filters,
@@ -155,6 +144,21 @@ final class LibraryViewModel: ViewModel {
         currentPage += 1
         requestItemsAsync(with: filters)
     }
+    
+//    private func requestQueryFilters() {
+//        FilterAPI.getQueryFilters(
+//            userId: SessionManager.main.currentLogin.user.id,
+//            parentId: self.parentId
+//        )
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] queryFilters in
+//            guard let self = self else { return }
+//            self.possibleGenres = queryFilters.genres ?? []
+//            self.possibleTags = queryFilters.tags ?? []
+//        })
+//        .store(in: &cancellables)
+//    }
 }
 
 extension UIScreen {

@@ -27,7 +27,7 @@ extension CollectionItemView {
                         title: L10n.genres,
                         items: genres
                     ).onSelect { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
+//                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
                     Divider()
@@ -40,7 +40,7 @@ extension CollectionItemView {
                         title: L10n.studios,
                         items: studios
                     ).onSelect { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
+//                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 
                     Divider()
