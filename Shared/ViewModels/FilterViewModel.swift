@@ -20,8 +20,8 @@ final class FilterViewModel: ViewModel {
     let parent: LibraryParent?
 
     init(
-        parent: LibraryParent? = nil,
-        currentFilters: ItemFilters = .init()
+        parent: LibraryParent?,
+        currentFilters: ItemFilters
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
@@ -38,9 +38,8 @@ final class FilterViewModel: ViewModel {
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         }, receiveValue: { [weak self] queryFilters in
-            self?.allFilters.genres = queryFilters.genres?
-                .compactMap { .init(displayName: $0.displayName, id: $0.id, filterName: $0.title) } ?? []
-            self?.allFilters.tags = queryFilters.tags?.compactMap { .init(displayName: $0.displayName, id: nil, filterName: $0) } ?? []
+            self?.allFilters.genres = queryFilters.genres?.map(\.filter) ?? []
+            self?.allFilters.tags = queryFilters.tags?.map(\.filter) ?? []
         })
         .store(in: &cancellables)
     }

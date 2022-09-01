@@ -33,7 +33,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     }
 
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
-        LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters)
+        LibraryCoordinator(parameters: parameters)
     }
 
     func makeItem(item: BaseItemDto) -> ItemCoordinator {

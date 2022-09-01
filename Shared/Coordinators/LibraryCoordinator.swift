@@ -14,9 +14,23 @@ import SwiftUI
 final class LibraryCoordinator: NavigationCoordinatable {
 
     struct Parameters {
-        let parent: LibraryParent
+        let parent: LibraryParent?
         let type: LibraryParentType
         let filters: ItemFilters
+        
+        init(parent: LibraryParent,
+             type: LibraryParentType,
+             filters: ItemFilters) {
+            self.parent = parent
+            self.type = type
+            self.filters = filters
+        }
+        
+        init(filters: ItemFilters) {
+            self.parent = nil
+            self.type = .library
+            self.filters = filters
+        }
     }
 
     let stack = NavigationStack(initial: \LibraryCoordinator.start)
@@ -34,23 +48,19 @@ final class LibraryCoordinator: NavigationCoordinatable {
         var filter = makeFilter
     #endif
 
-    let parent: LibraryParent
-    let type: LibraryParentType
-    let filters: ItemFilters
+    private let parameters: Parameters
 
-    init(
-        parent: LibraryParent,
-        type: LibraryParentType,
-        filters: ItemFilters
-    ) {
-        self.parent = parent
-        self.type = type
-        self.filters = filters
+    init(parameters: Parameters) {
+        self.parameters = parameters
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryView(viewModel: .init(parent: parent, type: type, filters: filters))
+        if let parent = parameters.parent {
+            LibraryView(viewModel: .init(parent: parent, type: parameters.type, filters: parameters.filters))
+        } else {
+            LibraryView(viewModel: .init(filters: parameters.filters))
+        }
     }
 
     #if os(tvOS)
@@ -62,20 +72,8 @@ final class LibraryCoordinator: NavigationCoordinatable {
             ItemCoordinator(item: item)
         }
 
-        func makeFilter(parameters: FilterParameters) -> NavigationViewCoordinator<FilterCoordinator> {
-            NavigationViewCoordinator(FilterCoordinator(
-                title: parameters.title,
-                viewModel: parameters.viewModel,
-                filter: parameters.filter,
-                singleSelect: parameters.singleSelect
-            ))
+    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
+            NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
         }
     #endif
-
-    struct FilterParameters {
-        let title: String
-        let viewModel: FilterViewModel
-        let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
-        let singleSelect: Bool
-    }
 }

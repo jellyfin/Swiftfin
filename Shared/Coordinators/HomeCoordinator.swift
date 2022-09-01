@@ -50,7 +50,7 @@ final class HomeCoordinator: NavigationCoordinatable {
         }
 
         func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
-            LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters)
+            LibraryCoordinator(parameters: parameters)
         }
     #endif
 

@@ -14,10 +14,6 @@ import UIKit
 
 extension BaseItemPerson: Poster {
 
-    var title: String {
-        self.name ?? "--"
-    }
-
     var subtitle: String? {
         self.firstRole
     }

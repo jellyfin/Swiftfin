@@ -8,28 +8,29 @@
 
 import SwiftUI
 
-protocol Displayable {
-    var displayName: String { get }
-}
-
 struct SelectorView<Item: Displayable>: View {
 
     private let allItems: [Item]
     @Binding
     private var selectedItems: [Item]
-    private let singleSelect: Bool
+    private let type: SelectorType
 
-    init(allItems: [Item], selectedItems: Binding<[Item]>, singleSelect: Bool = false) {
+    init(type: SelectorType, allItems: [Item], selectedItems: Binding<[Item]>) {
+        self.type = type
         self.allItems = allItems
         self._selectedItems = selectedItems
-        self.singleSelect = singleSelect
     }
 
     var body: some View {
         List {
             ForEach(allItems, id: \.displayName) { item in
                 Button {
-                    singleSelect ? handleSingleSelect(with: item) : handleMultiSelect(with: item)
+                    switch type {
+                    case .single:
+                        handleSingleSelect(with: item)
+                    case .multi:
+                        handleMultiSelect(with: item)
+                    }
                 } label: {
                     HStack {
                         Text(item.displayName)

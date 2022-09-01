@@ -12,36 +12,32 @@ import Stinsen
 import SwiftUI
 
 final class FilterCoordinator: NavigationCoordinatable {
+    
+    struct Parameters {
+        let title: String
+        let viewModel: FilterViewModel
+        let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
+        let selectorType: SelectorType
+    }
 
     let stack = NavigationStack(initial: \FilterCoordinator.start)
 
     @Root
     var start = makeStart
+    
+    private let parameters: Parameters
 
-    private let title: String
-    private var viewModel: FilterViewModel
-    private let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
-    private let singleSelect: Bool
-
-    init(
-        title: String,
-        viewModel: FilterViewModel,
-        filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>,
-        singleSelect: Bool
-    ) {
-        self.title = title
-        self.viewModel = viewModel
-        self.filter = filter
-        self.singleSelect = singleSelect
+    init(parameters: Parameters) {
+        self.parameters = parameters
     }
 
     @ViewBuilder
     func makeStart() -> some View {
         FilterView(
-            title: title,
-            viewModel: viewModel,
-            filter: filter,
-            singleSelect: singleSelect
+            title: parameters.title,
+            viewModel: parameters.viewModel,
+            filter: parameters.filter,
+            selectorType: parameters.selectorType
         )
     }
 }

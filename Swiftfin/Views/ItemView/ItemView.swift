@@ -43,12 +43,9 @@ struct ItemView: View {
                     CollectionItemView(viewModel: .init(item: item))
                 }
             case .person:
-//                LibraryView(viewModel: .init(person: .init(id: item.id)))
-//                LibraryView(viewModel: .init(parent: item, type: .person))
-                Text("")
+                LibraryView(viewModel: .init(parent: item, type: .person))
             case .collectionFolder:
-//                LibraryView(viewModel: .init(library: item))
-                Text("")
+                LibraryView(viewModel: .init(parent: item, type: .folders))
             default:
                 Text(L10n.notImplementedYetWithType(item.type ?? "--"))
             }

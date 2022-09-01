@@ -22,7 +22,7 @@ struct FilterDrawerHStack: View {
             if viewModel.currentFilters.hasFilters {
                 Menu {
                     Button(role: .destructive) {
-                        viewModel.currentFilters = .default
+                        viewModel.currentFilters = .init()
                     } label: {
                         L10n.reset.text
                     }
@@ -37,7 +37,7 @@ struct FilterDrawerHStack: View {
                         title: "Genres",
                         viewModel: viewModel,
                         filter: \.genres,
-                        singleSelect: false
+                        selectorType: .multi
                     ))
                 }
 
@@ -47,7 +47,7 @@ struct FilterDrawerHStack: View {
                         title: "Tags",
                         viewModel: viewModel,
                         filter: \.tags,
-                        singleSelect: false
+                        selectorType: .multi
                     ))
                 }
 
@@ -57,7 +57,7 @@ struct FilterDrawerHStack: View {
                         title: "Filters",
                         viewModel: viewModel,
                         filter: \.filters,
-                        singleSelect: false
+                        selectorType: .multi
                     ))
                 }
 
@@ -67,7 +67,7 @@ struct FilterDrawerHStack: View {
                         title: "Order",
                         viewModel: viewModel,
                         filter: \.sortOrder,
-                        singleSelect: true
+                        selectorType: .single
                     ))
                 }
 
@@ -77,7 +77,7 @@ struct FilterDrawerHStack: View {
                         title: "Sort",
                         viewModel: viewModel,
                         filter: \.sortBy,
-                        singleSelect: true
+                        selectorType: .single
                     ))
                 }
         }

@@ -25,8 +25,21 @@ final class LibraryViewModel: ViewModel {
     private var currentPage = 0
     private var hasNextPage = true
 
-    let parent: LibraryParent
+    let parent: LibraryParent?
     let type: LibraryParentType
+    
+    init(filters: ItemFilters) {
+        self.parent = nil
+        self.type = .library
+        self.filterViewModel = .init(parent: nil, currentFilters: filters)
+        super.init()
+        
+        filterViewModel.$currentFilters
+            .sink { newFilters in
+                self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
+            }
+            .store(in: &cancellables)
+    }
 
     init(
         parent: LibraryParent,
@@ -61,14 +74,16 @@ final class LibraryViewModel: ViewModel {
         var libraryID: String?
         var personIDs: [String]?
         var studioIDs: [String]?
-
-        switch type {
-        case .library, .folders:
-            libraryID = parent.id
-        case .person:
-            personIDs = [parent].compactMap(\.id)
-        case .studio:
-            studioIDs = [parent].compactMap(\.id)
+        
+        if let parent = parent {
+            switch type {
+            case .library, .folders:
+                libraryID = parent.id
+            case .person:
+                personIDs = [parent].compactMap(\.id)
+            case .studio:
+                studioIDs = [parent].compactMap(\.id)
+            }
         }
 
         let includeItemTypes: [BaseItemKind]

@@ -8,11 +8,11 @@
 
 import SwiftUI
 
-struct PillHStack<Item: PillStackable>: View {
+struct PillHStack<Item: Displayable>: View {
 
-    let title: String
-    let items: [Item]
-    let onSelect: (Item) -> Void
+    private var title: String
+    private var items: [Item]
+    private var onSelect: (Item) -> Void
 
     private init(
         title: String,
@@ -37,11 +37,11 @@ struct PillHStack<Item: PillStackable>: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(items, id: \.title) { item in
+                    ForEach(items, id: \.displayName) { item in
                         Button {
                             onSelect(item)
                         } label: {
-                            Text(item.title)
+                            Text(item.displayName)
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
@@ -68,12 +68,9 @@ extension PillHStack {
         self.init(title: title, items: items, onSelect: { _ in })
     }
 
-    @ViewBuilder
-    func onSelect(_ onSelect: @escaping (Item) -> Void) -> PillHStack {
-        PillHStack(
-            title: title,
-            items: items,
-            onSelect: onSelect
-        )
+    func onSelect(_ onSelect: @escaping (Item) -> Void) -> Self {
+        var copy = self
+        copy.onSelect = onSelect
+        return copy
     }
 }

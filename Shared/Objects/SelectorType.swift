@@ -8,6 +8,7 @@
 
 import Foundation
 
-protocol PillStackable {
-    var title: String { get }
+enum SelectorType {
+    case single
+    case multi
 }

@@ -20,18 +20,18 @@ struct FilterView: View {
     private let title: String
     private let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
     private let selectedFiltersBinding: Binding<[ItemFilters.Filter]>
-    private let singleSelect: Bool
+    private let selectorType: SelectorType
 
     init(
         title: String,
         viewModel: FilterViewModel,
         filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>,
-        singleSelect: Bool
+        selectorType: SelectorType
     ) {
         self.title = title
         self.viewModel = viewModel
         self.filter = filter
-        self.singleSelect = singleSelect
+        self.selectorType = selectorType
 
         self.selectedFiltersBinding = Binding(get: {
             viewModel.currentFilters[keyPath: filter]
@@ -44,9 +44,9 @@ struct FilterView: View {
 
         VStack {
             SelectorView(
+                type: selectorType,
                 allItems: viewModel.allFilters[keyPath: filter],
-                selectedItems: selectedFiltersBinding,
-                singleSelect: singleSelect
+                selectedItems: selectedFiltersBinding
             )
         }
         .navigationTitle(title)

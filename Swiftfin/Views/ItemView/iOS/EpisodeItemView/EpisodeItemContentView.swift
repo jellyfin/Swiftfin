@@ -45,34 +45,25 @@ extension EpisodeItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(
-                        title: L10n.genres,
-                        items: genres
-                    ).onSelect { _ in
-//                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
+                    ItemView.GenresHStack(genres: genres)
 
                     Divider()
                 }
+
+                // MARK: Studios
 
                 if let studios = viewModel.item.studios, !studios.isEmpty {
-                    PillHStack(
-                        title: L10n.studios,
-                        items: studios
-                    ).onSelect { _ in
-//                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
+                    ItemView.StudiosHStack(studios: studios)
 
                     Divider()
                 }
+
+                // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty
                 {
-                    PosterHStack(title: L10n.castAndCrew, type: .portrait, items: castAndCrew)
-                        .onSelect { _ in
-//                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                        }
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
 
                     Divider()
                 }

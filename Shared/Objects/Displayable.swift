@@ -8,14 +8,6 @@
 
 import Foundation
 
-protocol LibraryParent: Displayable {
-    var id: String? { get }
-}
-
-// TODO: Remove so multiple people/studios can be used
-enum LibraryParentType {
-    case library
-    case folders
-    case person
-    case studio
+protocol Displayable {
+    var displayName: String { get }
 }

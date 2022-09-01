@@ -35,11 +35,11 @@ struct MediaView: View {
                     case "favorites":
                         router.route(to: \.library, .init(parent: item.library, type: .library, filters: .favorites))
                     case "folders":
-                        router.route(to: \.library, .init(parent: item.library, type: .folders, filters: .default))
+                        router.route(to: \.library, .init(parent: item.library, type: .folders, filters: .init()))
                     case "liveTV":
                         router.route(to: \.liveTV)
                     default: ()
-                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .default))
+                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .init()))
                     }
                 }
                 .imageOverlay { _ in

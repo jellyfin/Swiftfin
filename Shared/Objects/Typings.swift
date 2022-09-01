@@ -10,12 +10,6 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-extension NameGuidPair: Displayable {
-    var displayName: String {
-        title
-    }
-}
-
 extension ItemFilter: Displayable {
     var displayName: String {
         localized
@@ -37,16 +31,16 @@ struct ItemFilters: Hashable {
     var sortOrder: [Filter] = [APISortOrder.ascending.filter]
     var sortBy: [Filter] = [SortBy.name.filter]
 
-    static let all = ItemFilters(
+    static let all: ItemFilters = .init(
         filters: ItemFilter.supportedCases.map(\.filter),
         sortOrder: APISortOrder.allCases.map(\.filter),
         sortBy: SortBy.allCases.map(\.filter)
     )
-    static let `default` = ItemFilters()
     static let favorites: ItemFilters = .init(filters: [ItemFilter.isFavorite.filter])
+    static let recent: ItemFilters = .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
 
     var hasFilters: Bool {
-        self != .default
+        self != .init()
     }
 
     // Type-erased object for use with FilterView and WritableKeyPath

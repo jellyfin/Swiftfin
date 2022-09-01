@@ -24,9 +24,6 @@ final class HomeViewModel: ViewModel {
     @Published
     var libraries: [BaseItemDto] = []
 
-    // temp
-//    static let recentFilterSet = ItemFilters(filters: [], sortOrder: [.descending], sortBy: [.dateAdded])
-
     override init() {
         super.init()
         refresh()
