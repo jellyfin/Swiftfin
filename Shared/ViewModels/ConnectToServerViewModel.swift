@@ -47,10 +47,10 @@ final class ConnectToServerViewModel: ViewModel {
     func connectToServer(uri: String, redirectCount: Int = 0) {
 
         #if targetEnvironment(simulator)
-            var uri = uri
-            if uri == "http://localhost" || uri == "localhost" {
-                uri = "http://localhost:8096"
-            }
+        var uri = uri
+        if uri == "http://localhost" || uri == "localhost" {
+            uri = "http://localhost:8096"
+        }
         #endif
 
         let trimmedURI = uri.trimmingCharacters(in: .whitespaces)

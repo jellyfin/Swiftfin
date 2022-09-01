@@ -17,28 +17,28 @@ final class MediaCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
     #if os(tvOS)
-        @Route(.modal)
-        var library = makeLibrary
+    @Route(.modal)
+    var library = makeLibrary
     #else
-        @Route(.push)
-        var library = makeLibrary
-        @Route(.push)
-        var liveTV = makeLiveTV
+    @Route(.push)
+    var library = makeLibrary
+    @Route(.push)
+    var liveTV = makeLiveTV
     #endif
 
     #if os(tvOS)
-        func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
-            NavigationViewCoordinator(LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters))
-        }
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters))
+    }
 
     #else
-        func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
-            LibraryCoordinator(parameters: parameters)
-        }
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parameters: parameters)
+    }
 
-        func makeLiveTV() -> LiveTVCoordinator {
-            LiveTVCoordinator()
-        }
+    func makeLiveTV() -> LiveTVCoordinator {
+        LiveTVCoordinator()
+    }
     #endif
 
     @ViewBuilder

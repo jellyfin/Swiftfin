@@ -33,15 +33,15 @@ enum PosterType: String, CaseIterable, Defaults.Serializable {
 
     enum Width {
         #if os(tvOS)
-            static let portrait = 250.0
+        static let portrait = 250.0
 
-            static let landscape = 490.0
+        static let landscape = 490.0
         #else
-            @ScaledMetric(relativeTo: .largeTitle)
-            static var portrait = 100.0
+        @ScaledMetric(relativeTo: .largeTitle)
+        static var portrait = 100.0
 
-            @ScaledMetric(relativeTo: .largeTitle)
-            static var landscape = 200.0
+        @ScaledMetric(relativeTo: .largeTitle)
+        static var landscape = 200.0
         #endif
     }
 }

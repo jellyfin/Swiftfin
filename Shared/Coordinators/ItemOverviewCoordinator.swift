@@ -26,9 +26,9 @@ final class ItemOverviewCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         #if os(tvOS)
-            EmptyView()
+        EmptyView()
         #else
-            ItemOverviewView(item: item)
+        ItemOverviewView(item: item)
         #endif
     }
 }
