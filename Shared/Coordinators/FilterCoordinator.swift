@@ -33,11 +33,15 @@ final class FilterCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
+        #if os(tvOS)
+        Text("--")
+        #else
         FilterView(
             title: parameters.title,
             viewModel: parameters.viewModel,
             filter: parameters.filter,
             selectorType: parameters.selectorType
         )
+        #endif
     }
 }

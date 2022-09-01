@@ -58,4 +58,6 @@ extension String {
     var filter: ItemFilters.Filter {
         .init(displayName: self, id: self, filterName: self)
     }
+    
+    static var emptyDash = "--"
 }
