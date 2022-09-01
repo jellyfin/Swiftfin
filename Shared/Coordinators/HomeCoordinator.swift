@@ -41,8 +41,8 @@ final class HomeCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(ItemCoordinator(item: item))
     }
 
-    func makeLibrary(params: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters))
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
     }
     #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {

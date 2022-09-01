@@ -21,7 +21,7 @@ struct LibraryView: View {
     private var scrollViewOffset: CGPoint = .zero
 
     @Default(.Customization.Library.gridPosterType)
-    var libraryPosterType
+    private var libraryPosterType
 
     @ViewBuilder
     private var loadingView: some View {

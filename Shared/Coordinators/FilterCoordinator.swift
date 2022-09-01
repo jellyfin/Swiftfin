@@ -34,7 +34,7 @@ final class FilterCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         #if os(tvOS)
-        Text(.emptyDash)
+        Text(verbatim: .emptyDash)
         #else
         FilterView(
             title: parameters.title,

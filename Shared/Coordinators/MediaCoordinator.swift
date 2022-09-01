@@ -28,7 +28,7 @@ final class MediaCoordinator: NavigationCoordinatable {
 
     #if os(tvOS)
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters))
+        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
     }
 
     #else
