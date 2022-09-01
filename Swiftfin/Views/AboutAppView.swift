@@ -37,7 +37,7 @@ struct AboutAppView: View {
                 HStack {
                     L10n.about.text
                     Spacer()
-                    Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
+                    Text("\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))")
                         .foregroundColor(.secondary)
                 }
 

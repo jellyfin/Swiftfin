@@ -53,7 +53,7 @@ extension BaseItemPerson {
 
 extension BaseItemPerson: Displayable {
     var displayName: String {
-        self.name ?? "--"
+        self.name ?? .emptyDash
     }
 }
 

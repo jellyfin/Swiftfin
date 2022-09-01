@@ -86,7 +86,7 @@ extension BaseItemDto {
     }
 
     var displayName: String {
-        name ?? "--"
+        name ?? .emptyDash
     }
 
     // MARK: ItemDetail

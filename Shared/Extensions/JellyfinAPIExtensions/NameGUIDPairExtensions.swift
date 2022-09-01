@@ -17,7 +17,7 @@ extension NameGuidPair {
 
 extension NameGuidPair: Displayable {
     var displayName: String {
-        self.name ?? "--"
+        self.name ?? .emptyDash
     }
 }
 

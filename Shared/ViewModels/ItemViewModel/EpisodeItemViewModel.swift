@@ -69,7 +69,7 @@ final class EpisodeItemViewModel: ItemViewModel {
                 .joined(separator: ", ")
 
             let currentMediaItems: [BaseItemDto.ItemDetail] = [
-                .init(title: "File", content: viewModel.filename ?? "--"),
+                .init(title: "File", content: viewModel.filename ?? .emptyDash),
                 .init(title: "Audio", content: audioStreams),
                 .init(title: "Subtitles", content: subtitleStreams),
             ]

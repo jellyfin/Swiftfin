@@ -351,7 +351,7 @@ struct VLCPlayerOverlayView: View {
                             viewModel.playerOverlayDelegate?.didSelectChapters()
                         } label: {
                             HStack {
-                                Text(currentChapter.name ?? "--")
+                                Text(currentChapter.name ?? .emptyDash)
                                 Image(systemName: "chevron.right")
                             }
                             .font(.system(size: 16, weight: .semibold, design: .default))

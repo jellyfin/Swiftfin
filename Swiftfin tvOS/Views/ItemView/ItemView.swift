@@ -32,7 +32,7 @@ struct ItemView: View {
         case .person:
             LibraryView(viewModel: .init(person: .init(id: item.id)))
         default:
-            Text(L10n.notImplementedYetWithType(item.type ?? "--"))
+            Text(L10n.notImplementedYetWithType(item.type ?? .emptyDash))
         }
     }
 }

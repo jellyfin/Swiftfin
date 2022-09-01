@@ -25,7 +25,7 @@ extension UserSignInView {
             DisclosureGroup {
                 SecureField(L10n.password, text: $enteredPassword)
                 Button {
-                    viewModel.signIn(username: publicUser.name ?? "--", password: enteredPassword)
+                    viewModel.signIn(username: publicUser.name ?? .emptyDash, password: enteredPassword)
                 } label: {
                     L10n.signIn.text
                 }
@@ -39,7 +39,7 @@ extension UserSignInView {
                         .frame(width: 50, height: 50)
                         .clipShape(Circle())
 
-                    Text(publicUser.name ?? "--")
+                    Text(publicUser.name ?? .emptyDash)
                     Spacer()
                 }
             }

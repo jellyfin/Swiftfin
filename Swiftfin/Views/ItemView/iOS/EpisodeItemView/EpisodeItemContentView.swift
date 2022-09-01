@@ -90,7 +90,7 @@ extension EpisodeItemView.ContentView {
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                Text(viewModel.item.seriesName ?? "--")
+                Text(viewModel.item.seriesName ?? .emptyDash)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .multilineTextAlignment(.center)

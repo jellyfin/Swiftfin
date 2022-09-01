@@ -476,11 +476,11 @@ extension LiveTVPlayerViewController {
         viewModel = newViewModel
 
         if viewModel.streamType == .direct {
-            LogManager.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? "--")")
+            LogManager.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? .emptyDash)")
         } else if viewModel.streamType == .transcode && Defaults[.Experimental.forceDirectPlay] {
-            LogManager.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? "--")")
+            LogManager.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? .emptyDash)")
         } else {
-            LogManager.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? "--")")
+            LogManager.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? .emptyDash)")
         }
     }
 
