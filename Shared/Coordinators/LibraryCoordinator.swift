@@ -17,15 +17,17 @@ final class LibraryCoordinator: NavigationCoordinatable {
         let parent: LibraryParent?
         let type: LibraryParentType
         let filters: ItemFilters
-        
-        init(parent: LibraryParent,
-             type: LibraryParentType,
-             filters: ItemFilters) {
+
+        init(
+            parent: LibraryParent,
+            type: LibraryParentType,
+            filters: ItemFilters
+        ) {
             self.parent = parent
             self.type = type
             self.filters = filters
         }
-        
+
         init(filters: ItemFilters) {
             self.parent = nil
             self.type = .library
@@ -72,7 +74,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
             ItemCoordinator(item: item)
         }
 
-    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
+        func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
             NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
         }
     #endif

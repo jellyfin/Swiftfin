@@ -6,16 +6,16 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 extension ItemView {
     struct GenresHStack: View {
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
         let genres: [NameGuidPair]
-        
+
         var body: some View {
             PillHStack(
                 title: L10n.genres,

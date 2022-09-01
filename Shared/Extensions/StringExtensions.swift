@@ -54,7 +54,7 @@ extension String {
         let textSize = self.size(withAttributes: fontAttributes)
         return textSize.width
     }
-    
+
     var filter: ItemFilters.Filter {
         .init(displayName: self, id: self, filterName: self)
     }

@@ -27,13 +27,13 @@ final class LibraryViewModel: ViewModel {
 
     let parent: LibraryParent?
     let type: LibraryParentType
-    
+
     init(filters: ItemFilters) {
         self.parent = nil
         self.type = .library
         self.filterViewModel = .init(parent: nil, currentFilters: filters)
         super.init()
-        
+
         filterViewModel.$currentFilters
             .sink { newFilters in
                 self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
@@ -74,7 +74,7 @@ final class LibraryViewModel: ViewModel {
         var libraryID: String?
         var personIDs: [String]?
         var studioIDs: [String]?
-        
+
         if let parent = parent {
             switch type {
             case .library, .folders:

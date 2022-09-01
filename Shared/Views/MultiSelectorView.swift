@@ -34,11 +34,12 @@ struct SelectorView<Item: Displayable>: View {
                 } label: {
                     HStack {
                         Text(item.displayName)
+                            .foregroundColor(.primary)
 
                         Spacer()
 
                         if selectedItems.contains { $0.displayName == item.displayName } {
-                            Image(systemName: "checkmark")
+                            Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.jellyfinPurple)
                         }
                     }

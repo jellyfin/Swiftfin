@@ -6,23 +6,25 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 extension ItemView {
     struct CastAndCrewHStack: View {
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
         let people: [BaseItemPerson]
-        
+
         var body: some View {
-            PosterHStack(title: L10n.castAndCrew,
-                         type: .portrait,
-                         items: people)
-                .onSelect { person in
-                    router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
-                }
+            PosterHStack(
+                title: L10n.castAndCrew,
+                type: .portrait,
+                items: people
+            )
+            .onSelect { person in
+                router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+            }
         }
     }
 }

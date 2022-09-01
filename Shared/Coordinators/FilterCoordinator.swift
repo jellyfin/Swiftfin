@@ -12,7 +12,7 @@ import Stinsen
 import SwiftUI
 
 final class FilterCoordinator: NavigationCoordinatable {
-    
+
     struct Parameters {
         let title: String
         let viewModel: FilterViewModel
@@ -24,7 +24,7 @@ final class FilterCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    
+
     private let parameters: Parameters
 
     init(parameters: Parameters) {

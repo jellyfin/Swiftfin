@@ -11,11 +11,9 @@ import SwiftUI
 
 struct FilterDrawerHStack: View {
 
-    @EnvironmentObject
-    private var router: LibraryCoordinator.Router
-
     @ObservedObject
     var viewModel: FilterViewModel
+    private var onSelect: (FilterCoordinator.Parameters) -> Void
 
     var body: some View {
         HStack {
@@ -33,7 +31,7 @@ struct FilterDrawerHStack: View {
 
             FilterDrawerButton(title: "Genres", activated: viewModel.currentFilters.genres != [])
                 .onSelect {
-                    router.route(to: \.filter, .init(
+                    onSelect(.init(
                         title: "Genres",
                         viewModel: viewModel,
                         filter: \.genres,
@@ -43,7 +41,7 @@ struct FilterDrawerHStack: View {
 
             FilterDrawerButton(title: "Tags", activated: viewModel.currentFilters.tags != [])
                 .onSelect {
-                    router.route(to: \.filter, .init(
+                    onSelect(.init(
                         title: "Tags",
                         viewModel: viewModel,
                         filter: \.tags,
@@ -53,7 +51,7 @@ struct FilterDrawerHStack: View {
 
             FilterDrawerButton(title: "Filters", activated: viewModel.currentFilters.filters != [])
                 .onSelect {
-                    router.route(to: \.filter, .init(
+                    onSelect(.init(
                         title: "Filters",
                         viewModel: viewModel,
                         filter: \.filters,
@@ -63,7 +61,7 @@ struct FilterDrawerHStack: View {
 
             FilterDrawerButton(title: "Order", activated: viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter])
                 .onSelect {
-                    router.route(to: \.filter, .init(
+                    onSelect(.init(
                         title: "Order",
                         viewModel: viewModel,
                         filter: \.sortOrder,
@@ -73,7 +71,7 @@ struct FilterDrawerHStack: View {
 
             FilterDrawerButton(title: "Sort", activated: viewModel.currentFilters.sortBy != [SortBy.name.filter])
                 .onSelect {
-                    router.route(to: \.filter, .init(
+                    onSelect(.init(
                         title: "Sort",
                         viewModel: viewModel,
                         filter: \.sortBy,
@@ -81,5 +79,18 @@ struct FilterDrawerHStack: View {
                     ))
                 }
         }
+    }
+}
+
+extension FilterDrawerHStack {
+    init(viewModel: FilterViewModel) {
+        self.viewModel = viewModel
+        self.onSelect = { _ in }
+    }
+
+    func onSelect(_ onSelect: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
+        var copy = self
+        copy.onSelect = onSelect
+        return copy
     }
 }

@@ -105,6 +105,9 @@ struct LibraryView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navBarDrawerButtons {
             FilterDrawerHStack(viewModel: viewModel.filterViewModel)
+                .onSelect { filterCoordinatorParameters in
+                    router.route(to: \.filter, filterCoordinatorParameters)
+                }
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {

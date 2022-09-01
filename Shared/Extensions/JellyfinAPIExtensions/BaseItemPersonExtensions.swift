@@ -57,4 +57,4 @@ extension BaseItemPerson: Displayable {
     }
 }
 
-extension BaseItemPerson: LibraryParent { }
+extension BaseItemPerson: LibraryParent {}

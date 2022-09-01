@@ -21,6 +21,4 @@ extension NameGuidPair: Displayable {
     }
 }
 
-extension NameGuidPair: LibraryParent {
-    
-}
+extension NameGuidPair: LibraryParent {}

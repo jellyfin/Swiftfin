@@ -6,23 +6,25 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 extension ItemView {
     struct SimilarItemsHStack: View {
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
         let items: [BaseItemDto]
-        
+
         var body: some View {
-            PosterHStack(title: L10n.recommended,
-                         type: .portrait,
-                         items: items)
-                .onSelect { item in
-                    router.route(to: \.item, item)
-                }
+            PosterHStack(
+                title: L10n.recommended,
+                type: .portrait,
+                items: items
+            )
+            .onSelect { item in
+                router.route(to: \.item, item)
+            }
         }
     }
 }
