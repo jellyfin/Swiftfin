@@ -22,6 +22,7 @@ enum PosterType: String, CaseIterable, Defaults.Serializable {
         }
     }
 
+    // TODO: localize
     var localizedName: String {
         switch self {
         case .portrait:
