@@ -26,7 +26,7 @@ extension CollectionItemView {
                     PillHStack(
                         title: L10n.genres,
                         items: genres
-                    ).onSelect { genre in
+                    ).onSelect { _ in
 //                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
                     }
 
@@ -39,7 +39,7 @@ extension CollectionItemView {
                     PillHStack(
                         title: L10n.studios,
                         items: studios
-                    ).onSelect { studio in
+                    ).onSelect { _ in
 //                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
                     }
 

@@ -36,23 +36,23 @@ final class HomeCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(SettingsCoordinator())
     }
 
-#if os(tvOS)
-    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        NavigationViewCoordinator(ItemCoordinator(item: item))
-    }
-    
-    func makeLibrary(params: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters))
-    }
-#else
-    func makeItem(item: BaseItemDto) -> ItemCoordinator {
-        ItemCoordinator(item: item)
-    }
-    
-    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
-        LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters)
-    }
-#endif
+    #if os(tvOS)
+        func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+            NavigationViewCoordinator(ItemCoordinator(item: item))
+        }
+
+        func makeLibrary(params: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+            NavigationViewCoordinator(LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters))
+        }
+    #else
+        func makeItem(item: BaseItemDto) -> ItemCoordinator {
+            ItemCoordinator(item: item)
+        }
+
+        func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+            LibraryCoordinator(parent: parameters.parent, type: parameters.type, filters: parameters.filters)
+        }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {

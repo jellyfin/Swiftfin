@@ -11,23 +11,25 @@ import JellyfinAPI
 import SwiftUI
 
 final class FilterViewModel: ViewModel {
-    
+
     @Published
     var allFilters: ItemFilters = .all
     @Published
     var currentFilters: ItemFilters
-    
+
     let parent: LibraryParent?
-    
-    init(parent: LibraryParent? = nil,
-         currentFilters: ItemFilters = .init()) {
+
+    init(
+        parent: LibraryParent? = nil,
+        currentFilters: ItemFilters = .init()
+    ) {
         self.parent = parent
         self.currentFilters = currentFilters
         super.init()
-        
+
         getQueryFilters()
     }
-    
+
     private func getQueryFilters() {
         FilterAPI.getQueryFilters(
             userId: SessionManager.main.currentLogin.user.id,
@@ -36,7 +38,8 @@ final class FilterViewModel: ViewModel {
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         }, receiveValue: { [weak self] queryFilters in
-            self?.allFilters.genres = queryFilters.genres?.compactMap { .init(displayName: $0.displayName, id: $0.id, filterName: $0.title) } ?? []
+            self?.allFilters.genres = queryFilters.genres?
+                .compactMap { .init(displayName: $0.displayName, id: $0.id, filterName: $0.title) } ?? []
             self?.allFilters.tags = queryFilters.tags?.compactMap { .init(displayName: $0.displayName, id: nil, filterName: $0) } ?? []
         })
         .store(in: &cancellables)

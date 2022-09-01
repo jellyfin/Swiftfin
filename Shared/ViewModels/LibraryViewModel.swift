@@ -9,12 +9,12 @@
 import Combine
 import Defaults
 import JellyfinAPI
-import UIKit
 import SwiftUI
+import UIKit
 
 // TODO: Look at refactoring
 final class LibraryViewModel: ViewModel {
-    
+
     @Default(.Customization.Library.gridPosterType)
     private var libraryGridPosterType
 
@@ -24,18 +24,20 @@ final class LibraryViewModel: ViewModel {
     let filterViewModel: FilterViewModel
     private var currentPage = 0
     private var hasNextPage = true
-    
+
     let parent: LibraryParent
     let type: LibraryParentType
-    
-    init(parent: LibraryParent,
-         type: LibraryParentType,
-         filters: ItemFilters = .init()) {
+
+    init(
+        parent: LibraryParent,
+        type: LibraryParentType,
+        filters: ItemFilters = .init()
+    ) {
         self.parent = parent
         self.type = type
         self.filterViewModel = .init(parent: parent, currentFilters: filters)
         super.init()
-        
+
         filterViewModel.$currentFilters
             .sink { newFilters in
                 self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
@@ -55,11 +57,11 @@ final class LibraryViewModel: ViewModel {
             self.currentPage = 0
             self.hasNextPage = true
         }
-        
+
         var libraryID: String?
         var personIDs: [String]?
         var studioIDs: [String]?
-        
+
         switch type {
         case .library, .folders:
             libraryID = parent.id
@@ -86,7 +88,7 @@ final class LibraryViewModel: ViewModel {
         } else {
             excludedIDs = nil
         }
-        
+
         let genreIDs = filters.genres.compactMap(\.id)
         let sortBy: [String] = filters.sortBy.map(\.filterName)
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }

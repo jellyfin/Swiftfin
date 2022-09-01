@@ -10,16 +10,18 @@ import SwiftUI
 
 extension FilterDrawerHStack {
     struct FilterDrawerButton: View {
-        
+
         private let systemName: String?
         private let title: String
         private let activated: Bool
         private var onSelect: () -> Void
-        
-        private init(systemName: String?,
-                     title: String,
-                     activated: Bool,
-                     onSelect: @escaping () -> Void) {
+
+        private init(
+            systemName: String?,
+            title: String,
+            activated: Bool,
+            onSelect: @escaping () -> Void
+        ) {
             self.systemName = systemName
             self.title = title
             self.activated = activated
@@ -39,7 +41,7 @@ extension FilterDrawerHStack {
                         }
                     }
                     .font(.footnote.weight(.semibold))
-                    
+
                     Image(systemName: "chevron.down")
                         .font(.caption)
                 }
@@ -66,17 +68,19 @@ extension FilterDrawerHStack.FilterDrawerButton {
             systemName: nil,
             title: title,
             activated: activated,
-            onSelect: { })
+            onSelect: {}
+        )
     }
-    
+
     init(systemName: String, activated: Bool) {
         self.init(
             systemName: systemName,
             title: "",
             activated: activated,
-            onSelect: { })
+            onSelect: {}
+        )
     }
-    
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
         var copy = self
         copy.onSelect = action

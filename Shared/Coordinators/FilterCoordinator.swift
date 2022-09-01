@@ -17,16 +17,18 @@ final class FilterCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    
+
     private let title: String
     private var viewModel: FilterViewModel
     private let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
     private let singleSelect: Bool
 
-    init(title: String,
-         viewModel: FilterViewModel,
-         filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>,
-         singleSelect: Bool) {
+    init(
+        title: String,
+        viewModel: FilterViewModel,
+        filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>,
+        singleSelect: Bool
+    ) {
         self.title = title
         self.viewModel = viewModel
         self.filter = filter
@@ -35,10 +37,11 @@ final class FilterCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        FilterView(title: title,
-                   viewModel: viewModel,
-                   filter: filter,
-                   singleSelect: singleSelect
+        FilterView(
+            title: title,
+            viewModel: viewModel,
+            filter: filter,
+            singleSelect: singleSelect
         )
     }
 }

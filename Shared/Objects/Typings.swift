@@ -30,23 +30,25 @@ extension String: Displayable {
 
 // TODO: Look at refactoring everything in this file, probably move to JellyfinAPI
 struct ItemFilters: Hashable {
-    
+
     var genres: [Filter] = []
     var tags: [Filter] = []
     var filters: [Filter] = []
     var sortOrder: [Filter] = [APISortOrder.ascending.filter]
     var sortBy: [Filter] = [SortBy.name.filter]
 
-    static let all = ItemFilters(filters: ItemFilter.supportedCases.map(\.filter),
-                                 sortOrder: APISortOrder.allCases.map(\.filter),
-                                 sortBy: SortBy.allCases.map(\.filter))
+    static let all = ItemFilters(
+        filters: ItemFilter.supportedCases.map(\.filter),
+        sortOrder: APISortOrder.allCases.map(\.filter),
+        sortBy: SortBy.allCases.map(\.filter)
+    )
     static let `default` = ItemFilters()
     static let favorites: ItemFilters = .init(filters: [ItemFilter.isFavorite.filter])
-    
+
     var hasFilters: Bool {
         self != .default
     }
-    
+
     // Type-erased object for use with FilterView and WritableKeyPath
     struct Filter: Displayable, Hashable, Identifiable {
         var displayName: String
@@ -74,7 +76,7 @@ public enum SortBy: String, Codable, CaseIterable {
             return "Random"
         }
     }
-    
+
     var filter: ItemFilters.Filter {
         .init(displayName: localized, filterName: rawValue)
     }
@@ -100,7 +102,7 @@ extension ItemFilter {
             return ""
         }
     }
-    
+
     var filter: ItemFilters.Filter {
         .init(displayName: localized, filterName: rawValue)
     }
@@ -116,7 +118,7 @@ extension APISortOrder {
             return "Descending"
         }
     }
-    
+
     var filter: ItemFilters.Filter {
         .init(displayName: localized, filterName: rawValue)
     }

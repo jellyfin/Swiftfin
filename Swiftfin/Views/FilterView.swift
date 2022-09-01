@@ -10,40 +10,44 @@ import JellyfinAPI
 import SwiftUI
 
 struct FilterView: View {
-    
+
     @EnvironmentObject
     private var router: FilterCoordinator.Router
-    
+
     @ObservedObject
     private var viewModel: FilterViewModel
-    
+
     private let title: String
     private let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
     private let selectedFiltersBinding: Binding<[ItemFilters.Filter]>
     private let singleSelect: Bool
-    
-    init(title: String,
-         viewModel: FilterViewModel,
-         filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>,
-         singleSelect: Bool) {
+
+    init(
+        title: String,
+        viewModel: FilterViewModel,
+        filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>,
+        singleSelect: Bool
+    ) {
         self.title = title
         self.viewModel = viewModel
         self.filter = filter
         self.singleSelect = singleSelect
-        
+
         self.selectedFiltersBinding = Binding(get: {
             viewModel.currentFilters[keyPath: filter]
         }, set: { newValue, _ in
             viewModel.currentFilters[keyPath: filter] = newValue
         })
     }
-    
+
     var body: some View {
-        
+
         VStack {
-            SelectorView(allItems: viewModel.allFilters[keyPath: filter],
-                         selectedItems: selectedFiltersBinding,
-                         singleSelect: singleSelect)
+            SelectorView(
+                allItems: viewModel.allFilters[keyPath: filter],
+                selectedItems: selectedFiltersBinding,
+                singleSelect: singleSelect
+            )
         }
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
