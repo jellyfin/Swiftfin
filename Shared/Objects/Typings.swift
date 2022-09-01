@@ -10,27 +10,48 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-enum FilterType: CaseIterable {
-    case tag
-    case sortOrder
-    case sortBy
-    case filter
+extension NameGuidPair: Displayable {
+    var displayName: String {
+        title
+    }
+}
+
+extension ItemFilter: Displayable {
+    var displayName: String {
+        localized
+    }
+}
+
+extension String: Displayable {
+    var displayName: String {
+        self
+    }
 }
 
 // TODO: Look at refactoring everything in this file, probably move to JellyfinAPI
-struct ItemFilters: Codable, Hashable {
+struct ItemFilters: Hashable {
     
-    var genres: [NameGuidPair] = []
-    var tags: [String] = []
-    var filters: [ItemFilter] = []
-    var sortOrder: APISortOrder = .ascending
-    var sortBy: [SortBy] = [.name]
+    var genres: [Filter] = []
+    var tags: [Filter] = []
+    var filters: [Filter] = []
+    var sortOrder: [Filter] = [APISortOrder.ascending.filter]
+    var sortBy: [Filter] = [SortBy.name.filter]
 
+    static let all = ItemFilters(filters: ItemFilter.supportedCases.map(\.filter),
+                                 sortOrder: APISortOrder.allCases.map(\.filter),
+                                 sortBy: SortBy.allCases.map(\.filter))
     static let `default` = ItemFilters()
-    static let favorites: ItemFilters = .init(filters: [.isFavorite])
+    static let favorites: ItemFilters = .init(filters: [ItemFilter.isFavorite.filter])
     
     var hasFilters: Bool {
         self != .default
+    }
+    
+    // Type-erased object for use with FilterView and WritableKeyPath
+    struct Filter: Displayable, Hashable, Identifiable {
+        var displayName: String
+        var id: String?
+        var filterName: String
     }
 }
 
@@ -39,9 +60,7 @@ public enum SortBy: String, Codable, CaseIterable {
     case name = "SortName"
     case dateAdded = "DateCreated"
     case random = "Random"
-}
 
-extension SortBy {
     // TODO: Localize
     var localized: String {
         switch self {
@@ -55,10 +74,14 @@ extension SortBy {
             return "Random"
         }
     }
+    
+    var filter: ItemFilters.Filter {
+        .init(displayName: localized, filterName: rawValue)
+    }
 }
 
 extension ItemFilter {
-    static var supportedTypes: [ItemFilter] {
+    static var supportedCases: [ItemFilter] {
         [.isUnplayed, .isPlayed, .isFavorite, .likes]
     }
 
@@ -77,6 +100,10 @@ extension ItemFilter {
             return ""
         }
     }
+    
+    var filter: ItemFilters.Filter {
+        .init(displayName: localized, filterName: rawValue)
+    }
 }
 
 extension APISortOrder {
@@ -88,6 +115,10 @@ extension APISortOrder {
         case .descending:
             return "Descending"
         }
+    }
+    
+    var filter: ItemFilters.Filter {
+        .init(displayName: localized, filterName: rawValue)
     }
 }
 

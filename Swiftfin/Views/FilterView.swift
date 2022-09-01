@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct FilterView: View {
@@ -13,28 +14,47 @@ struct FilterView: View {
     @EnvironmentObject
     private var router: FilterCoordinator.Router
     
+    @ObservedObject
+    private var viewModel: FilterViewModel
     
+    private let title: String
+    private let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
+    private let selectedFiltersBinding: Binding<[ItemFilters.Filter]>
+    private let singleSelect: Bool
+    
+    init(title: String,
+         viewModel: FilterViewModel,
+         filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>,
+         singleSelect: Bool) {
+        self.title = title
+        self.viewModel = viewModel
+        self.filter = filter
+        self.singleSelect = singleSelect
+        
+        self.selectedFiltersBinding = Binding(get: {
+            viewModel.currentFilters[keyPath: filter]
+        }, set: { newValue, _ in
+            viewModel.currentFilters[keyPath: filter] = newValue
+        })
+    }
     
     var body: some View {
         
-        Text("Hello there")
-            .navigationTitle("Filters")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Button {
-                        router.dismissCoordinator()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                    }
+        VStack {
+            SelectorView(allItems: viewModel.allFilters[keyPath: filter],
+                         selectedItems: selectedFiltersBinding,
+                         singleSelect: singleSelect)
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
+                Button {
+                    router.dismissCoordinator()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
                 }
             }
-        
-//        MultiSelector(
-//            label: L10n.genres,
-//            options: ,
-//            optionToString: { $0.name ?? "" },
-//            selected: $viewModel.modifiedFilters.genres
-//        )
+        }
     }
 }

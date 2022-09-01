@@ -8,52 +8,71 @@
 
 import SwiftUI
 
-struct FilterDrawerButton: View {
-    
-    private let title: String
-    private let activated: Bool
-    private var onSelect: () -> Void
-    
-    private init(title: String,
-                 activated: Bool,
-                 onSelect: @escaping () -> Void) {
-        self.title = title
-        self.activated = activated
-        self.onSelect = onSelect
-    }
+extension FilterDrawerHStack {
+    struct FilterDrawerButton: View {
+        
+        private let systemName: String?
+        private let title: String
+        private let activated: Bool
+        private var onSelect: () -> Void
+        
+        private init(systemName: String?,
+                     title: String,
+                     activated: Bool,
+                     onSelect: @escaping () -> Void) {
+            self.systemName = systemName
+            self.title = title
+            self.activated = activated
+            self.onSelect = onSelect
+        }
 
-    var body: some View {
-        Button {
-            onSelect()
-        } label: {
-            HStack(spacing: 2) {
-                Text(title)
-                    .font(.footnote)
-                    .fontWeight(.semibold)
-                
-                Image(systemName: "chevron.down")
-                    .font(.caption)
+        var body: some View {
+            Button {
+                onSelect()
+            } label: {
+                HStack(spacing: 2) {
+                    Group {
+                        if let systemName = systemName {
+                            Image(systemName: systemName)
+                        } else {
+                            Text(title)
+                        }
+                    }
+                    .font(.footnote.weight(.semibold))
+                    
+                    Image(systemName: "chevron.down")
+                        .font(.caption)
+                }
+                .foregroundColor(.primary)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background {
+                    Capsule()
+                        .foregroundColor(activated ? .jellyfinPurple : Color(UIColor.secondarySystemFill))
+                        .opacity(0.5)
+                }
+                .overlay(
+                    Capsule()
+                        .stroke(activated ? .purple : Color(UIColor.secondarySystemFill), lineWidth: 1)
+                )
             }
-            .foregroundColor(.primary)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background {
-                Capsule()
-                    .foregroundColor(activated ? .jellyfinPurple : Color(UIColor.secondarySystemFill))
-                    .opacity(0.5)
-            }
-            .overlay(
-                Capsule()
-                    .stroke(activated ? .purple : Color(UIColor.secondarySystemFill), lineWidth: 1)
-            )
         }
     }
 }
 
-extension FilterDrawerButton {
+extension FilterDrawerHStack.FilterDrawerButton {
     init(title: String, activated: Bool) {
         self.init(
+            systemName: nil,
             title: title,
+            activated: activated,
+            onSelect: { })
+    }
+    
+    init(systemName: String, activated: Bool) {
+        self.init(
+            systemName: systemName,
+            title: "",
             activated: activated,
             onSelect: { })
     }

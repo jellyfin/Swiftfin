@@ -40,7 +40,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
     
     init(parent: LibraryParent,
          type: LibraryParentType,
-         filters: ItemFilters = .default) {
+         filters: ItemFilters) {
         self.parent = parent
         self.type = type
         self.filters = filters
@@ -60,8 +60,18 @@ final class LibraryCoordinator: NavigationCoordinatable {
         ItemCoordinator(item: item)
     }
     
-    func makeFilter() -> NavigationViewCoordinator<FilterCoordinator> {
-        NavigationViewCoordinator(FilterCoordinator())
+    func makeFilter(parameters: FilterParameters) -> NavigationViewCoordinator<FilterCoordinator> {
+        NavigationViewCoordinator(FilterCoordinator(title: parameters.title,
+                                                    viewModel: parameters.viewModel,
+                                                    filter: parameters.filter,
+                                                    singleSelect: parameters.singleSelect))
     }
 #endif
+    
+    struct FilterParameters {
+        let title: String
+        let viewModel: FilterViewModel
+        let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
+        let singleSelect: Bool
+    }
 }

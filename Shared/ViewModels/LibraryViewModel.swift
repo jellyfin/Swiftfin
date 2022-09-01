@@ -10,6 +10,7 @@ import Combine
 import Defaults
 import JellyfinAPI
 import UIKit
+import SwiftUI
 
 // TODO: Look at refactoring
 final class LibraryViewModel: ViewModel {
@@ -19,9 +20,8 @@ final class LibraryViewModel: ViewModel {
 
     @Published
     var items: [BaseItemDto] = []
-    @Published
-    var filters: ItemFilters
-    @Published
+
+    let filterViewModel: FilterViewModel
     private var currentPage = 0
     private var hasNextPage = true
     
@@ -30,16 +30,16 @@ final class LibraryViewModel: ViewModel {
     
     init(parent: LibraryParent,
          type: LibraryParentType,
-         filters: ItemFilters) {
+         filters: ItemFilters = .init()) {
         self.parent = parent
         self.type = type
-        self.filters = filters
+        self.filterViewModel = .init(parent: parent, currentFilters: filters)
         super.init()
         
-        $filters
-            .sink(receiveValue: { newFilters in
+        filterViewModel.$currentFilters
+            .sink { newFilters in
                 self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
-            })
+            }
             .store(in: &cancellables)
     }
 
@@ -68,14 +68,10 @@ final class LibraryViewModel: ViewModel {
         case .studio:
             studioIDs = [parent].compactMap(\.id)
         }
-        
-        let genreIDs = filters.genres.compactMap(\.id)
-
-        let sortBy = filters.sortBy.map(\.rawValue)
 
         let includeItemTypes: [BaseItemKind]
 
-        if filters.filters.contains(.isFavorite) {
+        if filters.filters.contains(ItemFilter.isFavorite.filter) {
             includeItemTypes = [.movie, .boxSet, .series, .season, .episode]
         } else if type == .folders {
             includeItemTypes = [.collectionFolder]
@@ -85,13 +81,17 @@ final class LibraryViewModel: ViewModel {
 
         let excludedIDs: [String]?
 
-        if filters.sortBy == [.random] {
+        if filters.sortBy.first == SortBy.random.filter {
             excludedIDs = items.compactMap(\.id)
         } else {
             excludedIDs = nil
         }
         
-        let sortOrder = [SortOrder(rawValue: filters.sortOrder.rawValue) ?? .ascending]
+        let genreIDs = filters.genres.compactMap(\.id)
+        let sortBy: [String] = filters.sortBy.map(\.filterName)
+        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+        let tags: [String] = filters.tags.map(\.filterName)
 
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
@@ -103,9 +103,9 @@ final class LibraryViewModel: ViewModel {
             parentId: libraryID,
             fields: ItemFields.allCases,
             includeItemTypes: includeItemTypes,
-            filters: filters.filters,
+            filters: itemFilters,
             sortBy: sortBy,
-            tags: filters.tags,
+            tags: tags,
             enableUserData: true,
             personIds: personIDs,
             studioIds: studioIDs,
@@ -128,7 +128,7 @@ final class LibraryViewModel: ViewModel {
             // excluded ids. This causes shorter item additions when using "Random" over
             // consecutive calls. Investigation needs to be done to find the root of the problem.
             // Only filter for "Random" as an optimization.
-            if filters.sortBy == [.random] {
+            if filters.sortBy.first == SortBy.random.filter {
                 items = response.items?.filter { !(self?.items.contains($0) ?? true) } ?? []
             } else {
                 items = response.items ?? []
@@ -142,23 +142,8 @@ final class LibraryViewModel: ViewModel {
     func requestNextPageAsync() {
         guard hasNextPage else { return }
         currentPage += 1
-        requestItemsAsync(with: filters)
+        requestItemsAsync(with: filterViewModel.currentFilters)
     }
-    
-//    private func requestQueryFilters() {
-//        FilterAPI.getQueryFilters(
-//            userId: SessionManager.main.currentLogin.user.id,
-//            parentId: self.parentId
-//        )
-//        .sink(receiveCompletion: { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        }, receiveValue: { [weak self] queryFilters in
-//            guard let self = self else { return }
-//            self.possibleGenres = queryFilters.genres ?? []
-//            self.possibleTags = queryFilters.tags ?? []
-//        })
-//        .store(in: &cancellables)
-//    }
 }
 
 extension UIScreen {

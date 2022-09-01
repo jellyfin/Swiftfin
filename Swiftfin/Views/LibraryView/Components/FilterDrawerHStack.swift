@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import JellyfinAPI
 
 struct FilterDrawerHStack: View {
     
@@ -14,32 +15,60 @@ struct FilterDrawerHStack: View {
     private var router: LibraryCoordinator.Router
     
     @ObservedObject
-    var viewModel: LibraryViewModel
+    var viewModel: FilterViewModel
     
     var body: some View {
         HStack {
-            if viewModel.filters.hasFilters {
+            if viewModel.currentFilters.hasFilters {
                 Menu {
-                    Text("Filters applied")
-                    
                     Button(role: .destructive) {
-                        print("reset")
+                        viewModel.currentFilters = .default
                     } label: {
-                        Text("Reset")
+                        L10n.reset.text
                     }
                 } label: {
-                    FilterDrawerButton(title: "a", activated: true)
+                    FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle", activated: true)
                 }
             }
             
-            FilterDrawerButton(title: "Genres", activated: false)
+            FilterDrawerButton(title: "Genres", activated: viewModel.currentFilters.genres != [])
                 .onSelect {
-                    router.route(to: \.filter)
+                    router.route(to: \.filter, .init(title: "Genres",
+                                                     viewModel: viewModel,
+                                                     filter: \.genres,
+                                                     singleSelect: false))
                 }
             
-            FilterDrawerButton(title: "Tags", activated: false)
+            FilterDrawerButton(title: "Tags", activated: viewModel.currentFilters.tags != [])
                 .onSelect {
-                    router.route(to: \.filter)
+                    router.route(to: \.filter, .init(title: "Tags",
+                                                     viewModel: viewModel,
+                                                     filter: \.tags,
+                                                     singleSelect: false))
+                }
+            
+            FilterDrawerButton(title: "Filters", activated: viewModel.currentFilters.filters != [])
+                .onSelect {
+                    router.route(to: \.filter, .init(title: "Filters",
+                                                     viewModel: viewModel,
+                                                     filter: \.filters,
+                                                     singleSelect: false))
+                }
+            
+            FilterDrawerButton(title: "Order", activated: viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter])
+                .onSelect {
+                    router.route(to: \.filter, .init(title: "Order",
+                                                     viewModel: viewModel,
+                                                     filter: \.sortOrder,
+                                                     singleSelect: true))
+                }
+            
+            FilterDrawerButton(title: "Sort", activated: viewModel.currentFilters.sortBy != [SortBy.name.filter])
+                .onSelect {
+                    router.route(to: \.filter, .init(title: "Sort",
+                                                     viewModel: viewModel,
+                                                     filter: \.sortBy,
+                                                     singleSelect: true))
                 }
         }
     }
