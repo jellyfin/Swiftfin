@@ -196,7 +196,7 @@ struct PosterButtonDefaultContentView<Item: Poster>: View {
     var body: some View {
         VStack(alignment: .leading) {
             if item.showTitle {
-                Text(item.title)
+                Text(item.displayName)
                     .font(.footnote)
                     .fontWeight(.regular)
                     .foregroundColor(.primary)

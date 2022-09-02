@@ -9,63 +9,61 @@
 import Combine
 import Defaults
 import JellyfinAPI
+import SwiftUI
 import UIKit
 
 // TODO: Look at refactoring
 final class LibraryViewModel: ViewModel {
 
-    @Published
-    var items: [BaseItemDto] = []
-    @Published
-    private var currentPage = 0
-    private var hasNextPage = true
-    @Published
-    var filters: LibraryFilters
-
     @Default(.Customization.Library.gridPosterType)
     private var libraryGridPosterType
 
-    let library: BaseItemDto?
-    let person: BaseItemPerson?
-    let genre: NameGuidPair?
-    let studio: NameGuidPair?
+    @Published
+    var items: [BaseItemDto] = []
+
+    let filterViewModel: FilterViewModel
+    private var currentPage = 0
+    private var hasNextPage = true
+
+    let parent: LibraryParent?
+    let type: LibraryParentType
+
+    init(filters: ItemFilters) {
+        self.parent = nil
+        self.type = .library
+        self.filterViewModel = .init(parent: nil, currentFilters: filters)
+        super.init()
+
+        filterViewModel.$currentFilters
+            .sink { newFilters in
+                self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
+            }
+            .store(in: &cancellables)
+    }
+
+    init(
+        parent: LibraryParent,
+        type: LibraryParentType,
+        filters: ItemFilters = .init()
+    ) {
+        self.parent = parent
+        self.type = type
+        self.filterViewModel = .init(parent: parent, currentFilters: filters)
+        super.init()
+
+        filterViewModel.$currentFilters
+            .sink { newFilters in
+                self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
+            }
+            .store(in: &cancellables)
+    }
 
     private var pageItemSize: Int {
         let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
         return UIScreen.itemsFillableOnScreen(width: libraryGridPosterType.width, height: height)
     }
 
-    var enabledFilterType: [FilterType] {
-        if genre == nil {
-            return [.tag, .genre, .sortBy, .sortOrder, .filter]
-        } else {
-            return [.tag, .sortBy, .sortOrder, .filter]
-        }
-    }
-
-    init(
-        library: BaseItemDto? = nil,
-        person: BaseItemPerson? = nil,
-        genre: NameGuidPair? = nil,
-        studio: NameGuidPair? = nil,
-        filters: LibraryFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], sortBy: [.name])
-    ) {
-        self.library = library
-        self.person = person
-        self.genre = genre
-        self.studio = studio
-        self.filters = filters
-
-        super.init()
-
-        $filters
-            .sink(receiveValue: { newFilters in
-                self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
-            })
-            .store(in: &cancellables)
-    }
-
-    func requestItemsAsync(with filters: LibraryFilters, replaceCurrentItems: Bool = false) {
+    func requestItemsAsync(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
 
         if replaceCurrentItems {
             self.items = []
@@ -73,23 +71,26 @@ final class LibraryViewModel: ViewModel {
             self.hasNextPage = true
         }
 
-        let personIDs: [String] = [person].compactMap(\.?.id)
-        let studioIDs: [String] = [studio].compactMap(\.?.id)
-        let genreIDs: [String]
+        var libraryID: String?
+        var personIDs: [String]?
+        var studioIDs: [String]?
 
-        if filters.withGenres.isEmpty {
-            genreIDs = [genre].compactMap(\.?.id)
-        } else {
-            genreIDs = filters.withGenres.compactMap(\.id)
+        if let parent = parent {
+            switch type {
+            case .library, .folders:
+                libraryID = parent.id
+            case .person:
+                personIDs = [parent].compactMap(\.id)
+            case .studio:
+                studioIDs = [parent].compactMap(\.id)
+            }
         }
-
-        let sortBy = filters.sortBy.map(\.rawValue)
 
         let includeItemTypes: [BaseItemKind]
 
-        if filters.filters.contains(.isFavorite) {
+        if filters.filters.contains(ItemFilter.isFavorite.filter) {
             includeItemTypes = [.movie, .boxSet, .series, .season, .episode]
-        } else if library?.collectionType == "folders" {
+        } else if type == .folders {
             includeItemTypes = [.collectionFolder]
         } else {
             includeItemTypes = [.movie, .series, .boxSet]
@@ -97,11 +98,17 @@ final class LibraryViewModel: ViewModel {
 
         let excludedIDs: [String]?
 
-        if filters.sortBy == [.random] {
+        if filters.sortBy.first == SortBy.random.filter {
             excludedIDs = items.compactMap(\.id)
         } else {
             excludedIDs = nil
         }
+
+        let genreIDs = filters.genres.compactMap(\.id)
+        let sortBy: [String] = filters.sortBy.map(\.filterName)
+        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+        let tags: [String] = filters.tags.map(\.filterName)
 
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
@@ -109,14 +116,13 @@ final class LibraryViewModel: ViewModel {
             startIndex: currentPage * pageItemSize,
             limit: pageItemSize,
             recursive: true,
-            searchTerm: nil,
-            sortOrder: filters.sortOrder.compactMap { SortOrder(rawValue: $0.rawValue) },
-            parentId: library?.id,
+            sortOrder: sortOrder,
+            parentId: libraryID,
             fields: ItemFields.allCases,
             includeItemTypes: includeItemTypes,
-            filters: filters.filters,
+            filters: itemFilters,
             sortBy: sortBy,
-            tags: filters.tags,
+            tags: tags,
             enableUserData: true,
             personIds: personIDs,
             studioIds: studioIDs,
@@ -139,7 +145,7 @@ final class LibraryViewModel: ViewModel {
             // excluded ids. This causes shorter item additions when using "Random" over
             // consecutive calls. Investigation needs to be done to find the root of the problem.
             // Only filter for "Random" as an optimization.
-            if filters.sortBy == [.random] {
+            if filters.sortBy.first == SortBy.random.filter {
                 items = response.items?.filter { !(self?.items.contains($0) ?? true) } ?? []
             } else {
                 items = response.items ?? []
@@ -153,7 +159,7 @@ final class LibraryViewModel: ViewModel {
     func requestNextPageAsync() {
         guard hasNextPage else { return }
         currentPage += 1
-        requestItemsAsync(with: filters)
+        requestItemsAsync(with: filterViewModel.currentFilters)
     }
 }
 

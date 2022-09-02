@@ -21,36 +21,38 @@ final class HomeCoordinator: NavigationCoordinatable {
     var settings = makeSettings
 
     #if os(tvOS)
-        @Route(.modal)
-        var item = makeModalItem
-        @Route(.modal)
-        var library = makeModalLibrary
+    @Route(.modal)
+    var item = makeItem
+    @Route(.modal)
+    var library = makeLibrary
     #else
-        @Route(.push)
-        var item = makeItem
-        @Route(.push)
-        var library = makeLibrary
+    @Route(.push)
+    var item = makeItem
+    @Route(.push)
+    var library = makeLibrary
     #endif
 
     func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
         NavigationViewCoordinator(SettingsCoordinator())
     }
 
-    func makeLibrary(params: LibraryCoordinatorParams) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: params.viewModel, title: params.title)
+    #if os(tvOS)
+    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        NavigationViewCoordinator(ItemCoordinator(item: item))
     }
 
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
+    }
+    #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
 
-    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        NavigationViewCoordinator(ItemCoordinator(item: item))
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parameters: parameters)
     }
-
-    func makeModalLibrary(params: LibraryCoordinatorParams) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(viewModel: params.viewModel, title: params.title))
-    }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {

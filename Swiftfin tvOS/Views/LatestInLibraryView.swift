@@ -20,17 +20,7 @@ struct LatestInLibraryView: View {
         PosterHStack(title: L10n.latestWithString(viewModel.library.displayName), type: .portrait, items: viewModel.items)
             .trailing {
                 Button {
-                    router.route(to: \.library, (
-                        viewModel: .init(
-                            library: viewModel.library,
-                            filters: LibraryFilters(
-                                filters: [],
-                                sortOrder: [.descending],
-                                sortBy: [.dateAdded]
-                            )
-                        ),
-                        title: viewModel.library.displayName
-                    ))
+                    router.route(to: \.library, .init(parent: viewModel.library, type: .library, filters: .recent))
                 } label: {
                     ZStack {
                         Color(UIColor.darkGray)

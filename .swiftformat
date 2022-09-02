@@ -17,6 +17,7 @@
 --varattributes prev-line
 --trailingclosures
 --shortoptionals "always"
+--ifdef no-indent 
 
 --enable isEmpty,           \
     leadingDelimiters,      \

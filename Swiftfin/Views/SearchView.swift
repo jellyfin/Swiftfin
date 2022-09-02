@@ -95,8 +95,18 @@ struct SearchView: View {
         .onChange(of: searchText) { newText in
             viewModel.search(with: newText)
         }
-        .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: L10n.search)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
+        .navBarDrawer {
+            ScrollView(.horizontal, showsIndicators: false) {
+                FilterDrawerHStack(viewModel: viewModel.filterViewModel)
+                    .onSelect { filterCoordinatorParameters in
+                        router.route(to: \.filter, filterCoordinatorParameters)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 1)
+            }
+        }
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: L10n.search)
     }
 }

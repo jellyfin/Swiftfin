@@ -23,25 +23,15 @@ extension iPadOSCollectionItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(
-                        title: L10n.genres,
-                        items: genres
-                    ).onSelect { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
+                    ItemView.GenresHStack(genres: genres)
 
                     Divider()
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios {
-                    PillHStack(
-                        title: L10n.studios,
-                        items: studios
-                    ).onSelect { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
+                if let studios = viewModel.item.studios, !studios.isEmpty {
+                    ItemView.StudiosHStack(studios: studios)
 
                     Divider()
                 }

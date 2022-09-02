@@ -28,12 +28,7 @@ extension iPadOSSeriesItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(
-                        title: L10n.genres,
-                        items: genres
-                    ).onSelect { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
+                    ItemView.GenresHStack(genres: genres)
 
                     Divider()
                 }
@@ -41,12 +36,7 @@ extension iPadOSSeriesItemView {
                 // MARK: Studios
 
                 if let studios = viewModel.item.studios, !studios.isEmpty {
-                    PillHStack(
-                        title: L10n.studios,
-                        items: studios
-                    ).onSelect { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
+                    ItemView.StudiosHStack(studios: studios)
 
                     Divider()
                 }
@@ -56,10 +46,7 @@ extension iPadOSSeriesItemView {
                 if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
                    !castAndCrew.isEmpty
                 {
-                    PosterHStack(title: L10n.castAndCrew, type: .portrait, items: castAndCrew)
-                        .onSelect { person in
-                            itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                        }
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
 
                     Divider()
                 }

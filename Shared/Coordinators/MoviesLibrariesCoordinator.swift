@@ -36,10 +36,10 @@ final class MovieLibrariesCoordinator: NavigationCoordinatable {
     }
 
     func makeLibrary(library: BaseItemDto) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: LibraryViewModel(library: library), title: library.title)
+        LibraryCoordinator(parameters: .init(parent: library, type: .library, filters: .init()))
     }
 
     func makeRootLibrary(library: BaseItemDto) -> LibraryCoordinator {
-        LibraryCoordinator(viewModel: LibraryViewModel(library: library), title: library.title)
+        LibraryCoordinator(parameters: .init(parent: library, type: .library, filters: .init()))
     }
 }

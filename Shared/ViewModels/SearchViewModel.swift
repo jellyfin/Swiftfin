@@ -13,8 +13,6 @@ import SwiftUI
 
 final class SearchViewModel: ViewModel {
 
-    private var searchCancellables = Set<AnyCancellable>()
-
     @Published
     var movies: [BaseItemDto] = []
     @Published
@@ -28,6 +26,10 @@ final class SearchViewModel: ViewModel {
     @Published
     var suggestions: [BaseItemDto] = []
 
+    let filterViewModel: FilterViewModel
+    private var searchTextSubject = CurrentValueSubject<String, Never>("")
+    private var searchCancellables = Set<AnyCancellable>()
+
     var noResults: Bool {
         movies.isEmpty &&
             collections.isEmpty &&
@@ -36,9 +38,8 @@ final class SearchViewModel: ViewModel {
             people.isEmpty
     }
 
-    private var searchTextSubject = CurrentValueSubject<String, Never>("")
-
     override init() {
+        self.filterViewModel = .init(parent: nil, currentFilters: .init())
         super.init()
 
         getSuggestions()
@@ -47,7 +48,15 @@ final class SearchViewModel: ViewModel {
             .handleEvents(receiveOutput: { _ in self.cancelPreviousSearch() })
             .filter { !$0.isEmpty }
             .debounce(for: 0.25, scheduler: DispatchQueue.main)
-            .sink(receiveValue: _search)
+            .sink { newSearch in
+                self._search(with: newSearch, filters: self.filterViewModel.currentFilters)
+            }
+            .store(in: &cancellables)
+
+        filterViewModel.$currentFilters
+            .sink { newFilters in
+                self._search(with: self.searchTextSubject.value, filters: newFilters)
+            }
             .store(in: &cancellables)
     }
 
@@ -59,29 +68,39 @@ final class SearchViewModel: ViewModel {
         searchTextSubject.send(query)
     }
 
-    private func _search(with query: String) {
-        getItems(with: query, for: .movie, keyPath: \.movies)
-        getItems(with: query, for: .boxSet, keyPath: \.collections)
-        getItems(with: query, for: .series, keyPath: \.series)
-        getItems(with: query, for: .episode, keyPath: \.episodes)
-        getPeople(with: query)
+    private func _search(with query: String, filters: ItemFilters) {
+        getItems(for: query, with: filters, type: .movie, keyPath: \.movies)
+        getItems(for: query, with: filters, type: .boxSet, keyPath: \.collections)
+        getItems(for: query, with: filters, type: .series, keyPath: \.series)
+        getItems(for: query, with: filters, type: .episode, keyPath: \.episodes)
+        getPeople(for: query, with: filters)
     }
 
     private func getItems(
-        with query: String,
-        for itemType: BaseItemKind,
+        for query: String,
+        with filters: ItemFilters,
+        type itemType: BaseItemKind,
         keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
     ) {
+        let genreIDs = filters.genres.compactMap(\.id)
+        let sortBy: [String] = filters.sortBy.map(\.filterName)
+        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+        let tags: [String] = filters.tags.map(\.filterName)
+
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
             limit: 20,
             recursive: true,
             searchTerm: query,
-            sortOrder: [.ascending],
+            sortOrder: sortOrder,
             fields: ItemFields.allCases,
             includeItemTypes: [itemType],
-            sortBy: ["SortName"],
+            filters: itemFilters,
+            sortBy: sortBy,
+            tags: tags,
             enableUserData: true,
+            genreIds: genreIDs,
             enableImages: true
         )
         .trackActivity(loading)
@@ -93,7 +112,12 @@ final class SearchViewModel: ViewModel {
         .store(in: &searchCancellables)
     }
 
-    private func getPeople(with query: String) {
+    private func getPeople(for query: String?, with filters: ItemFilters) {
+        guard !filters.hasFilters else {
+            self.people = []
+            return
+        }
+
         PersonsAPI.getPersons(
             limit: 20,
             searchTerm: query

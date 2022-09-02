@@ -15,7 +15,7 @@ struct LibraryItem: Equatable, Poster {
 
     var library: BaseItemDto
     var viewModel: MediaViewModel
-    var title: String = ""
+    var displayName: String = ""
     var subtitle: String?
     var showTitle: Bool = false
 

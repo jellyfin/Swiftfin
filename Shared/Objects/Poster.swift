@@ -10,8 +10,7 @@ import Defaults
 import Foundation
 import SwiftUI
 
-protocol Poster: Hashable {
-    var title: String { get }
+protocol Poster: Displayable, Hashable {
     var subtitle: String? { get }
     var showTitle: Bool { get }
 
@@ -21,7 +20,7 @@ protocol Poster: Hashable {
 
 extension Poster {
     func hash(into hasher: inout Hasher) {
-        hasher.combine(title)
+        hasher.combine(displayName)
         hasher.combine(subtitle)
     }
 }

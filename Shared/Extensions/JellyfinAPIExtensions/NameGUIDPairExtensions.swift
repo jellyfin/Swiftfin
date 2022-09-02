@@ -9,8 +9,16 @@
 import Foundation
 import JellyfinAPI
 
-extension NameGuidPair: PillStackable {
-    var title: String {
-        self.name ?? ""
+extension NameGuidPair {
+    var filter: ItemFilters.Filter {
+        .init(displayName: displayName, id: id, filterName: displayName)
     }
 }
+
+extension NameGuidPair: Displayable {
+    var displayName: String {
+        self.name ?? .emptyDash
+    }
+}
+
+extension NameGuidPair: LibraryParent {}

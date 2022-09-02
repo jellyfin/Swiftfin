@@ -302,9 +302,9 @@ final class SessionManager {
 
         let platform: String
         #if os(tvOS)
-            platform = "tvOS"
+        platform = "tvOS"
         #else
-            platform = "iOS"
+        platform = "iOS"
         #endif
 
         var header = "MediaBrowser "

@@ -70,7 +70,7 @@ struct ContinueWatchingCard: View {
                     .frame(width: 500, alignment: .leading)
 
                 if item.type == .episode {
-                    Text(item.episodeLocator ?? "--")
+                    Text(item.episodeLocator ?? .emptyDash)
                         .font(.callout)
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)

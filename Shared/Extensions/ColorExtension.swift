@@ -13,15 +13,15 @@ public extension Color {
     internal static let jellyfinPurple = Color(uiColor: .jellyfinPurple)
 
     #if os(tvOS) // tvOS doesn't have these
-        static let systemFill = Color(UIColor.white)
-        static let secondarySystemFill = Color(UIColor.gray)
-        static let tertiarySystemFill = Color(UIColor.black)
-        static let lightGray = Color(UIColor.lightGray)
+    static let systemFill = Color(UIColor.white)
+    static let secondarySystemFill = Color(UIColor.gray)
+    static let tertiarySystemFill = Color(UIColor.black)
+    static let lightGray = Color(UIColor.lightGray)
     #else
-        static let systemFill = Color(UIColor.systemFill)
-        static let systemBackground = Color(UIColor.systemBackground)
-        static let secondarySystemFill = Color(UIColor.secondarySystemFill)
-        static let tertiarySystemFill = Color(UIColor.tertiarySystemFill)
+    static let systemFill = Color(UIColor.systemFill)
+    static let systemBackground = Color(UIColor.systemBackground)
+    static let secondarySystemFill = Color(UIColor.secondarySystemFill)
+    static let tertiarySystemFill = Color(UIColor.tertiarySystemFill)
     #endif
 }
 

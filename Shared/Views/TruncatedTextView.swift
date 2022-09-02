@@ -59,17 +59,17 @@ struct TruncatedTextView: View {
 
             if truncated {
                 #if os(tvOS)
+                Text(seeMoreText)
+                    .font(font)
+                    .foregroundColor(.purple)
+                #else
+                Button {
+                    seeMoreAction()
+                } label: {
                     Text(seeMoreText)
                         .font(font)
                         .foregroundColor(.purple)
-                #else
-                    Button {
-                        seeMoreAction()
-                    } label: {
-                        Text(seeMoreText)
-                            .font(font)
-                            .foregroundColor(.purple)
-                    }
+                }
                 #endif
             }
         }

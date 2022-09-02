@@ -86,7 +86,7 @@ extension BaseItemDto {
     }
 
     var displayName: String {
-        name ?? "--"
+        name ?? .emptyDash
     }
 
     // MARK: ItemDetail
@@ -247,3 +247,5 @@ extension BaseItemDtoImageBlurHashes {
         }
     }
 }
+
+extension BaseItemDto: LibraryParent {}

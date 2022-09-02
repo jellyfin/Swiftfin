@@ -11,51 +11,71 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-typealias LibraryCoordinatorParams = (viewModel: LibraryViewModel, title: String)
-
 final class LibraryCoordinator: NavigationCoordinatable {
+
+    struct Parameters {
+        let parent: LibraryParent?
+        let type: LibraryParentType
+        let filters: ItemFilters
+
+        init(
+            parent: LibraryParent,
+            type: LibraryParentType,
+            filters: ItemFilters
+        ) {
+            self.parent = parent
+            self.type = type
+            self.filters = filters
+        }
+
+        init(filters: ItemFilters) {
+            self.parent = nil
+            self.type = .library
+            self.filters = filters
+        }
+    }
 
     let stack = NavigationStack(initial: \LibraryCoordinator.start)
 
     @Root
     var start = makeStart
-    @Route(.modal)
-    var filter = makeFilter
 
     #if os(tvOS)
-        @Route(.modal)
-        var item = makeModalItem
+    @Route(.modal)
+    var item = makeItem
     #else
-        @Route(.push)
-        var item = makeItem
+    @Route(.push)
+    var item = makeItem
+    @Route(.modal)
+    var filter = makeFilter
     #endif
 
-    let viewModel: LibraryViewModel
-    let title: String
+    private let parameters: Parameters
 
-    init(viewModel: LibraryViewModel, title: String) {
-        self.viewModel = viewModel
-        self.title = title
+    init(parameters: Parameters) {
+        self.parameters = parameters
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryView(viewModel: self.viewModel)
+        if let parent = parameters.parent {
+            LibraryView(viewModel: .init(parent: parent, type: parameters.type, filters: parameters.filters))
+        } else {
+            LibraryView(viewModel: .init(filters: parameters.filters))
+        }
     }
 
-    func makeFilter(params: FilterCoordinatorParams) -> NavigationViewCoordinator<FilterCoordinator> {
-        NavigationViewCoordinator(FilterCoordinator(
-            filters: params.filters,
-            enabledFilterType: params.enabledFilterType,
-            parentId: params.parentId
-        ))
+    #if os(tvOS)
+    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        NavigationViewCoordinator(ItemCoordinator(item: item))
     }
-
+    #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
 
-    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        NavigationViewCoordinator(ItemCoordinator(item: item))
+    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
+        NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
     }
+    #endif
 }

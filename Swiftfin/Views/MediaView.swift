@@ -33,11 +33,13 @@ struct MediaView: View {
                 .onSelect { _ in
                     switch item.library.collectionType {
                     case "favorites":
-                        router.route(to: \.library, (viewModel: .init(filters: .favorites), title: ""))
+                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .favorites))
+                    case "folders":
+                        router.route(to: \.library, .init(parent: item.library, type: .folders, filters: .init()))
                     case "liveTV":
                         router.route(to: \.liveTV)
                     default:
-                        router.route(to: \.library, (viewModel: .init(library: item.library), title: ""))
+                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .init()))
                     }
                 }
                 .imageOverlay { _ in

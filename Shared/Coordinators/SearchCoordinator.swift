@@ -18,21 +18,27 @@ final class SearchCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
     #if os(tvOS)
-        @Route(.modal)
-        var item = makeItem
+    @Route(.modal)
+    var item = makeItem
     #else
-        @Route(.push)
-        var item = makeItem
+    @Route(.push)
+    var item = makeItem
+    @Route(.modal)
+    var filter = makeFilter
     #endif
 
     #if os(tvOS)
-        func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-            NavigationViewCoordinator(ItemCoordinator(item: item))
-        }
+    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        NavigationViewCoordinator(ItemCoordinator(item: item))
+    }
     #else
-        func makeItem(item: BaseItemDto) -> ItemCoordinator {
-            ItemCoordinator(item: item)
-        }
+    func makeItem(item: BaseItemDto) -> ItemCoordinator {
+        ItemCoordinator(item: item)
+    }
+
+    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
+        NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
+    }
     #endif
 
     @ViewBuilder

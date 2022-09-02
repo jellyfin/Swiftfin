@@ -8,6 +8,14 @@
 
 import Foundation
 
-protocol PillStackable {
-    var title: String { get }
+protocol LibraryParent: Displayable {
+    var id: String? { get }
+}
+
+// TODO: Remove so multiple people/studios can be used
+enum LibraryParentType {
+    case library
+    case folders
+    case person
+    case studio
 }

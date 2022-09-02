@@ -27,10 +27,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var about = makeAbout
 
     #if !os(tvOS)
-        @Route(.push)
-        var quickConnect = makeQuickConnectSettings
-        @Route(.push)
-        var fontPicker = makeFontPicker
+    @Route(.push)
+    var quickConnect = makeQuickConnectSettings
+    @Route(.push)
+    var fontPicker = makeFontPicker
     #endif
 
     @ViewBuilder
@@ -59,17 +59,17 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     #if !os(tvOS)
-        @ViewBuilder
-        func makeQuickConnectSettings() -> some View {
-            let viewModel = QuickConnectSettingsViewModel()
-            QuickConnectSettingsView(viewModel: viewModel)
-        }
+    @ViewBuilder
+    func makeQuickConnectSettings() -> some View {
+        let viewModel = QuickConnectSettingsViewModel()
+        QuickConnectSettingsView(viewModel: viewModel)
+    }
 
-        @ViewBuilder
-        func makeFontPicker() -> some View {
-            FontPickerView()
-                .navigationTitle(L10n.subtitleFont)
-        }
+    @ViewBuilder
+    func makeFontPicker() -> some View {
+        FontPickerView()
+            .navigationTitle(L10n.subtitleFont)
+    }
     #endif
 
     @ViewBuilder

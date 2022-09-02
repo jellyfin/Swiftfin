@@ -99,7 +99,7 @@ final class UserSignInViewModel: ViewModel {
 
                 self.quickConnectSecret = response.secret
                 self.quickConnectCode = response.code
-                LogManager.log.debug("QuickConnect code: \(response.code ?? "--")")
+                LogManager.log.debug("QuickConnect code: \(response.code ?? .emptyDash)")
 
                 self.quickConnectTimer = RepeatingTimer(interval: 5) {
                     self.checkAuthStatus(onSuccess)

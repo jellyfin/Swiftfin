@@ -50,3 +50,11 @@ extension BaseItemPerson {
         return DisplayedType(rawValue: type) != nil
     }
 }
+
+extension BaseItemPerson: Displayable {
+    var displayName: String {
+        self.name ?? .emptyDash
+    }
+}
+
+extension BaseItemPerson: LibraryParent {}

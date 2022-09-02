@@ -14,9 +14,9 @@ import JellyfinAPI
 import UIKit
 
 #if os(tvOS)
-    import TVVLCKit
+import TVVLCKit
 #else
-    import MobileVLCKit
+import MobileVLCKit
 #endif
 
 final class VideoPlayerViewModel: ViewModel {

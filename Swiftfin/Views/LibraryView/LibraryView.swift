@@ -102,7 +102,18 @@ struct LibraryView: View {
                 }
             }
         }
+        .navigationTitle(viewModel.parent?.displayName ?? "")
         .navigationBarTitleDisplayMode(.inline)
+        .navBarDrawer {
+            ScrollView(.horizontal, showsIndicators: false) {
+                FilterDrawerHStack(viewModel: viewModel.filterViewModel)
+                    .onSelect { filterCoordinatorParameters in
+                        router.route(to: \.filter, filterCoordinatorParameters)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 1)
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
@@ -120,18 +131,6 @@ struct LibraryView: View {
                         Image(systemName: "square.grid.2x2")
                     }
                 }
-
-                Button {
-                    router
-                        .route(to: \.filter, (
-                            filters: $viewModel.filters,
-                            enabledFilterType: viewModel.enabledFilterType,
-                            parentId: viewModel.library?.id ?? ""
-                        ))
-                } label: {
-                    Image(systemName: "line.horizontal.3.decrease.circle")
-                }
-                .foregroundColor(viewModel.filters == .default ? .accentColor : Color(UIColor.systemOrange))
             }
         }
     }
