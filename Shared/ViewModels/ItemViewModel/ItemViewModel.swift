@@ -93,7 +93,7 @@ class ItemViewModel: ViewModel {
             return L10n.missing
         }
 
-        if let itemProgressString = item.getItemProgressString() {
+        if let itemProgressString = item.progress {
             return itemProgressString
         }
 

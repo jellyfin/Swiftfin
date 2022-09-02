@@ -131,6 +131,7 @@ extension EpisodeItemView.ContentView {
                 ItemView.ActionButtonHStack(viewModel: viewModel)
                     .font(.title)
                     .frame(maxWidth: 300)
+                    .foregroundStyle(.primary)
             }
         }
     }

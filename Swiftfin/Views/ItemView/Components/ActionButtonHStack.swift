@@ -36,7 +36,7 @@ extension ItemView {
                             )
                     } else {
                         Image(systemName: "checkmark.circle")
-                            .foregroundStyle(.white)
+//                            .foregroundStyle(.white)
                     }
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -54,7 +54,7 @@ extension ItemView {
                             .foregroundStyle(Color.red)
                     } else {
                         Image(systemName: "heart")
-                            .foregroundStyle(.white)
+//                            .foregroundStyle(.white)
                     }
                 }
                 .buttonStyle(PlainButtonStyle())

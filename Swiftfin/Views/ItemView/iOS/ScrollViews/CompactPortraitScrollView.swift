@@ -197,6 +197,7 @@ extension ItemView.CompactPosterScrollView {
 
                     ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
                         .font(.title2)
+                        .foregroundColor(.white)
                 }
             }
         }

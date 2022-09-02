@@ -23,7 +23,11 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
         PosterButton(item: episode, type: .landscape, singleImage: true)
             .scaleItem(1.2)
             .imageOverlay { _ in
-                if episode.userData?.played ?? false {
+                if let progress = episode.progress {
+                    LandscapePosterProgressBar(
+                        title: progress,
+                        progress: (episode.userData?.playedPercentage ?? 0) / 100)
+                } else if episode.userData?.played ?? false {
                     ZStack(alignment: .bottomTrailing) {
                         Color.clear
 
@@ -33,10 +37,6 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                             .foregroundColor(.white)
                             .padding()
                     }
-                } else {
-                    LandscapePosterProgressBar(
-                        title: episode.getItemProgressString() ?? .emptyDash,
-                        progress: (episode.userData?.playedPercentage ?? 0) / 100)
                 }
             }
             .content { _ in
@@ -53,6 +53,7 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                             .foregroundColor(.primary)
                             .padding(.bottom, 1)
                             .lineLimit(2)
+                            .multilineTextAlignment(.leading)
 
                         ZStack(alignment: .topLeading) {
                             Color.clear
@@ -70,7 +71,7 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                         .multilineTextAlignment(.leading)
                         
                         L10n.seeMore.text
-                            .font(.caption)
+                            .font(.footnote)
                             .fontWeight(.medium)
                             .foregroundColor(.jellyfinPurple)
                     }

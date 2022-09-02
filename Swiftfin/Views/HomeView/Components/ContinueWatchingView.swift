@@ -31,7 +31,7 @@ struct ContinueWatchingView: View {
             }
             .imageOverlay { item in
                 LandscapePosterProgressBar(
-                    title: item.getItemProgressString() ?? L10n.continue,
+                    title: item.progress ?? L10n.continue,
                     progress: (item.userData?.playedPercentage ?? 0) / 100)
             }
     }
