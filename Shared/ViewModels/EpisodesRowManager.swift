@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -63,9 +64,10 @@ extension EpisodesRowManager {
         TvShowsAPI.getEpisodes(
             seriesId: item.id ?? "",
             userId: SessionManager.main.currentLogin.user.id,
-            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+            fields: [.overview, .seasonUserData],
             seasonId: seasonID,
-            isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false
+            isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
+            enableUserData: true
         )
         .trackActivity(loading)
         .sink { completion in
