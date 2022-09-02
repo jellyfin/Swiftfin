@@ -29,36 +29,37 @@ struct FilterDrawerHStack: View {
                 }
             }
 
-            FilterDrawerButton(title: "Genres", activated: viewModel.currentFilters.genres != [])
+            FilterDrawerButton(title: L10n.genres, activated: viewModel.currentFilters.genres != [])
                 .onSelect {
                     onSelect(.init(
-                        title: "Genres",
+                        title: L10n.genres,
                         viewModel: viewModel,
                         filter: \.genres,
                         selectorType: .multi
                     ))
                 }
 
-            FilterDrawerButton(title: "Tags", activated: viewModel.currentFilters.tags != [])
+            FilterDrawerButton(title: L10n.tags, activated: viewModel.currentFilters.tags != [])
                 .onSelect {
                     onSelect(.init(
-                        title: "Tags",
+                        title: L10n.tags,
                         viewModel: viewModel,
                         filter: \.tags,
                         selectorType: .multi
                     ))
                 }
 
-            FilterDrawerButton(title: "Filters", activated: viewModel.currentFilters.filters != [])
+            FilterDrawerButton(title: L10n.filters, activated: viewModel.currentFilters.filters != [])
                 .onSelect {
                     onSelect(.init(
-                        title: "Filters",
+                        title: L10n.filters,
                         viewModel: viewModel,
                         filter: \.filters,
                         selectorType: .multi
                     ))
                 }
 
+            // TODO: Localize
             FilterDrawerButton(title: "Order", activated: viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter])
                 .onSelect {
                     onSelect(.init(
@@ -69,6 +70,7 @@ struct FilterDrawerHStack: View {
                     ))
                 }
 
+            // TODO: Localize
             FilterDrawerButton(title: "Sort", activated: viewModel.currentFilters.sortBy != [SortBy.name.filter])
                 .onSelect {
                     onSelect(.init(
