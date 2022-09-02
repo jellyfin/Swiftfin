@@ -10,7 +10,7 @@ import SwiftUI
 
 private let drawerHeight: CGFloat = 36
 
-struct NavBarDrawerButtonsView<Buttons: View, Content: View>: UIViewControllerRepresentable {
+struct NavBarDrawerView<Buttons: View, Content: View>: UIViewControllerRepresentable {
 
     private let buttons: () -> Buttons
     private let content: () -> Content
@@ -23,14 +23,14 @@ struct NavBarDrawerButtonsView<Buttons: View, Content: View>: UIViewControllerRe
         self.content = content
     }
 
-    func makeUIViewController(context: Context) -> UINavBarButtonsHostingController<Buttons, Content> {
-        UINavBarButtonsHostingController(buttons: buttons, content: content)
+    func makeUIViewController(context: Context) -> UINavBarDrawerHostingController<Buttons, Content> {
+        UINavBarDrawerHostingController(buttons: buttons, content: content)
     }
 
-    func updateUIViewController(_ uiViewController: UINavBarButtonsHostingController<Buttons, Content>, context: Context) {}
+    func updateUIViewController(_ uiViewController: UINavBarDrawerHostingController<Buttons, Content>, context: Context) {}
 }
 
-class UINavBarButtonsHostingController<Buttons: View, Content: View>: UIViewController {
+class UINavBarDrawerHostingController<Buttons: View, Content: View>: UIViewController {
 
     private let buttons: () -> Buttons
     private let content: () -> Content

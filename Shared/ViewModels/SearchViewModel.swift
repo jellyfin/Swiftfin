@@ -112,13 +112,15 @@ final class SearchViewModel: ViewModel {
         .store(in: &searchCancellables)
     }
 
-    private func getPeople(for query: String, with filters: ItemFilters) {
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+    private func getPeople(for query: String?, with filters: ItemFilters) {
+        guard !filters.hasFilters else {
+            self.people = []
+            return
+        }
 
         PersonsAPI.getPersons(
             limit: 20,
-            searchTerm: query,
-            filters: itemFilters
+            searchTerm: query
         )
         .trackActivity(loading)
         .sink(receiveCompletion: { [weak self] completion in

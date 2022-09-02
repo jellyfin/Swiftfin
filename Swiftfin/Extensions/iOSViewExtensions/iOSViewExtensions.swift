@@ -13,7 +13,7 @@ extension View {
         self.modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
 
-    func navBarDrawerButtons<Buttons: View>(@ViewBuilder _ buttons: @escaping () -> Buttons) -> some View {
-        self.modifier(NavBarDrawerButtonsModifier(buttons: buttons))
+    func navBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
+        self.modifier(NavBarDrawerModifier(drawer: drawer))
     }
 }

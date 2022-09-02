@@ -240,8 +240,8 @@
 		E10EAA53277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */; };
 		E10EAA54277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */; };
 		E1101177281B1E8A006A3584 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = E1101176281B1E8A006A3584 /* Puppy */; };
-		E113132B28BDB4B500930F75 /* NavBarDrawerButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113132A28BDB4B500930F75 /* NavBarDrawerButtonsView.swift */; };
-		E113132F28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113132E28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift */; };
+		E113132B28BDB4B500930F75 /* NavBarDrawerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113132A28BDB4B500930F75 /* NavBarDrawerView.swift */; };
+		E113132F28BDB66A00930F75 /* NavBarDrawerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113132E28BDB66A00930F75 /* NavBarDrawerModifier.swift */; };
 		E113133228BDC72000930F75 /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113133128BDC72000930F75 /* FilterView.swift */; };
 		E113133428BE988200930F75 /* FilterDrawerHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113133328BE988200930F75 /* FilterDrawerHStack.swift */; };
 		E113133628BE98AA00930F75 /* FilterDrawerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113133528BE98AA00930F75 /* FilterDrawerButton.swift */; };
@@ -752,8 +752,8 @@
 		E10D87E127852FD000BD264C /* EpisodesRowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesRowManager.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtensions.swift; sourceTree = "<group>"; };
 		E10EAA52277BBD17000269ED /* BaseItemDto+VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+VideoPlayerViewModel.swift"; sourceTree = "<group>"; };
-		E113132A28BDB4B500930F75 /* NavBarDrawerButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarDrawerButtonsView.swift; sourceTree = "<group>"; };
-		E113132E28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarDrawerButtonsModifier.swift; sourceTree = "<group>"; };
+		E113132A28BDB4B500930F75 /* NavBarDrawerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarDrawerView.swift; sourceTree = "<group>"; };
+		E113132E28BDB66A00930F75 /* NavBarDrawerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarDrawerModifier.swift; sourceTree = "<group>"; };
 		E113133128BDC72000930F75 /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
 		E113133328BE988200930F75 /* FilterDrawerHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterDrawerHStack.swift; sourceTree = "<group>"; };
 		E113133528BE98AA00930F75 /* FilterDrawerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterDrawerButton.swift; sourceTree = "<group>"; };
@@ -1589,8 +1589,8 @@
 		E113133028BDB6D600930F75 /* NavBarDrawerButtons */ = {
 			isa = PBXGroup;
 			children = (
-				E113132E28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift */,
-				E113132A28BDB4B500930F75 /* NavBarDrawerButtonsView.swift */,
+				E113132E28BDB66A00930F75 /* NavBarDrawerModifier.swift */,
+				E113132A28BDB4B500930F75 /* NavBarDrawerView.swift */,
 			);
 			path = NavBarDrawerButtons;
 			sourceTree = "<group>";
@@ -2696,7 +2696,7 @@
 				E17FB55228C119D400311DFE /* Displayable.swift in Sources */,
 				E13AD72E2798BC8D00FDCEE8 /* NativePlayerViewController.swift in Sources */,
 				E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */,
-				E113132B28BDB4B500930F75 /* NavBarDrawerButtonsView.swift in Sources */,
+				E113132B28BDB4B500930F75 /* NavBarDrawerView.swift in Sources */,
 				C45942CB27F6984100C54FE7 /* LiveTVPlayerViewController.swift in Sources */,
 				E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */,
 				E19169CE272514760085832A /* HTTPScheme.swift in Sources */,
@@ -2787,7 +2787,7 @@
 				E13DD3E927177ED6009D4DAF /* ServerListCoordinator.swift in Sources */,
 				E1CCF12E28ABF989006CAC9E /* PosterType.swift in Sources */,
 				E1C812BD277A8E5D00918266 /* PlayerOverlayDelegate.swift in Sources */,
-				E113132F28BDB66A00930F75 /* NavBarDrawerButtonsModifier.swift in Sources */,
+				E113132F28BDB66A00930F75 /* NavBarDrawerModifier.swift in Sources */,
 				C45942C527F67DA400C54FE7 /* LiveTVCoordinator.swift in Sources */,
 				E113133A28BEB71D00930F75 /* FilterViewModel.swift in Sources */,
 				E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */,

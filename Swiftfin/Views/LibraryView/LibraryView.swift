@@ -102,12 +102,17 @@ struct LibraryView: View {
                 }
             }
         }
+        .navigationTitle(viewModel.parent?.displayName ?? "")
         .navigationBarTitleDisplayMode(.inline)
-        .navBarDrawerButtons {
-            FilterDrawerHStack(viewModel: viewModel.filterViewModel)
-                .onSelect { filterCoordinatorParameters in
-                    router.route(to: \.filter, filterCoordinatorParameters)
-                }
+        .navBarDrawer {
+            ScrollView(.horizontal, showsIndicators: false) {
+                FilterDrawerHStack(viewModel: viewModel.filterViewModel)
+                    .onSelect { filterCoordinatorParameters in
+                        router.route(to: \.filter, filterCoordinatorParameters)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 1)
+            }
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
