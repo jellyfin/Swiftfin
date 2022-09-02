@@ -55,3 +55,7 @@ extension String {
         return textSize.width
     }
 }
+
+public extension CharacterSet {
+    static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
+}
