@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: Implement different behavior types, where selected/unselected
+//       items appear in different sections
 struct SelectorView<Item: Displayable>: View {
 
     private let allItems: [Item]

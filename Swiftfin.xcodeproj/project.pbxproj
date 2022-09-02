@@ -497,8 +497,8 @@
 		E1E00A35278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E00A34278628A40022235B /* DoubleExtensions.swift */; };
 		E1E1643A28BAC2EF00323B0A /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643928BAC2EF00323B0A /* SearchView.swift */; };
-		E1E1643E28BB074000323B0A /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643D28BB074000323B0A /* MultiSelectorView.swift */; };
-		E1E1643F28BB075C00323B0A /* MultiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643D28BB074000323B0A /* MultiSelectorView.swift */; };
+		E1E1643E28BB074000323B0A /* SelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643D28BB074000323B0A /* SelectorView.swift */; };
+		E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643D28BB074000323B0A /* SelectorView.swift */; };
 		E1E1644128BB301900323B0A /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1644028BB301900323B0A /* ArrayExtensions.swift */; };
 		E1E1644228BB301900323B0A /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1644028BB301900323B0A /* ArrayExtensions.swift */; };
 		E1E1644428BC60C600323B0A /* LibraryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1644328BC60C600323B0A /* LibraryItem.swift */; };
@@ -928,7 +928,7 @@
 		E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
 		E1E00A34278628A40022235B /* DoubleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		E1E1643928BAC2EF00323B0A /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
-		E1E1643D28BB074000323B0A /* MultiSelectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiSelectorView.swift; sourceTree = "<group>"; };
+		E1E1643D28BB074000323B0A /* SelectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectorView.swift; sourceTree = "<group>"; };
 		E1E1644028BB301900323B0A /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		E1E1644328BC60C600323B0A /* LibraryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryItem.swift; sourceTree = "<group>"; };
 		E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshHelper.swift; sourceTree = "<group>"; };
@@ -2053,8 +2053,8 @@
 				E18E01FF288749200022598C /* Divider.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				E1047E2227E5880000CB0D4A /* InitialFailureView.swift */,
-				E1E1643D28BB074000323B0A /* MultiSelectorView.swift */,
 				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
+				E1E1643D28BB074000323B0A /* SelectorView.swift */,
 				E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */,
 			);
 			path = Views;
@@ -2453,7 +2453,7 @@
 				E1937A3F288F0D3D00CB80AA /* UIScreenExtensions.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				E17FB55328C119D400311DFE /* Displayable.swift in Sources */,
-				E1E1643E28BB074000323B0A /* MultiSelectorView.swift in Sources */,
+				E1E1643E28BB074000323B0A /* SelectorView.swift in Sources */,
 				E11D224327378428003F9CB3 /* ServerDetailCoordinator.swift in Sources */,
 				5D32EA12278C95E30020E292 /* VLCPlayer+subtitles.swift in Sources */,
 				E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
@@ -2663,7 +2663,7 @@
 				E18E01AA288746AF0022598C /* RefreshableScrollView.swift in Sources */,
 				E18E0208288749200022598C /* BlurView.swift in Sources */,
 				E18E01E7288747230022598C /* CollectionItemContentView.swift in Sources */,
-				E1E1643F28BB075C00323B0A /* MultiSelectorView.swift in Sources */,
+				E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */,
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
 				C45942CD27F6994A00C54FE7 /* LiveTVPlayerView.swift in Sources */,
