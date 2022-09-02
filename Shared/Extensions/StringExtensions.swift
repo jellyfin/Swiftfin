@@ -61,3 +61,7 @@ extension String {
 
     static var emptyDash = "--"
 }
+
+public extension CharacterSet {
+    static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
+}
