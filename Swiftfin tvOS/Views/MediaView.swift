@@ -32,7 +32,7 @@ struct MediaView: View {
                         router.route(to: \.library, .init(parent: item.library, type: .folders, filters: .init()))
                     case "liveTV":
                         tabRouter.root(\.liveTV)
-                    default: ()
+                    default:
                         router.route(to: \.library, .init(parent: item.library, type: .library, filters: .init()))
                     }
                 }
