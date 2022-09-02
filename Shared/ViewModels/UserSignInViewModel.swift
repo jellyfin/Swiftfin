@@ -48,6 +48,11 @@ final class UserSignInViewModel: ViewModel {
     func signIn(username: String, password: String) {
         LogManager.log.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
 
+        let username = username.trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: .objectReplacement)
+        let password = password.trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: .objectReplacement)
+
         SessionManager.main.signInUser(server: server, username: username, password: password)
             .trackActivity(loading)
             .sink { completion in
