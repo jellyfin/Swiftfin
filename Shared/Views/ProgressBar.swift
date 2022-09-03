@@ -13,18 +13,16 @@ struct ProgressBar: View {
     let progress: CGFloat
     
     var body: some View {
-        GeometryReader { reader in
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .foregroundColor(.white)
-                    .opacity(0.2)
-                
-                Capsule()
-                    .foregroundColor(.jellyfinPurple)
-                    .frame(width: reader.size.width * progress)
-            }
-            .frame(maxWidth: .infinity)
+        ZStack(alignment: .leading) {
+            Capsule()
+                .foregroundColor(.white)
+                .opacity(0.2)
+            
+            Capsule()
+                .foregroundColor(.jellyfinPurple)
+                .scaleEffect(x: progress, y: 1, anchor: .leading)
         }
+        .frame(maxWidth: .infinity)
         .frame(height: 3)
     }
 }
