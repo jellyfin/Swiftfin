@@ -26,7 +26,8 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                 if let progress = episode.progress {
                     LandscapePosterProgressBar(
                         title: progress,
-                        progress: (episode.userData?.playedPercentage ?? 0) / 100)
+                        progress: (episode.userData?.playedPercentage ?? 0) / 100
+                    )
                 } else if episode.userData?.played ?? false {
                     ZStack(alignment: .bottomTrailing) {
                         Color.clear
@@ -69,7 +70,7 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                         .foregroundColor(.secondary)
                         .lineLimit(4)
                         .multilineTextAlignment(.leading)
-                        
+
                         L10n.seeMore.text
                             .font(.footnote)
                             .fontWeight(.medium)

@@ -47,13 +47,13 @@ extension BaseItemDto {
               let totalTicks = runTimeTicks,
               playbackPositionTicks != 0,
               totalTicks != 0 else { return nil }
-        
+
         let remainingSeconds = (totalTicks - playbackPositionTicks) / 10_000_000
-        
+
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .abbreviated
-        
+
         return formatter.string(from: .init(remainingSeconds))
     }
 

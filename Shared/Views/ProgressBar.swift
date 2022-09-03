@@ -9,15 +9,15 @@
 import SwiftUI
 
 struct ProgressBar: View {
-    
+
     let progress: CGFloat
-    
+
     var body: some View {
         ZStack(alignment: .leading) {
             Capsule()
                 .foregroundColor(.white)
                 .opacity(0.2)
-            
+
             Capsule()
                 .foregroundColor(.jellyfinPurple)
                 .scaleEffect(x: progress, y: 1, anchor: .leading)

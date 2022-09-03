@@ -9,14 +9,14 @@
 import SwiftUI
 
 struct LandscapePosterProgressBar: View {
-    
+
     let title: String
     let progress: CGFloat
-    
+
     // Scale padding depending on view width
     @State
     private var paddingScale: CGFloat = 1.0
-    
+
     var body: some View {
         GeometryReader { reader in
             ZStack(alignment: .bottom) {
@@ -26,17 +26,18 @@ struct LandscapePosterProgressBar: View {
                         .init(color: .black.opacity(0.7), location: 1),
                     ],
                     startPoint: .top,
-                    endPoint: .bottom)
+                    endPoint: .bottom
+                )
                 .frame(height: 40)
-                
+
                 VStack(alignment: .leading, spacing: 3 * paddingScale) {
-                    
+
                     Spacer()
-                    
+
                     Text(title)
                         .font(.subheadline)
                         .foregroundColor(.white)
-                    
+
                     ProgressBar(progress: progress)
                 }
                 .padding(.horizontal, 5 * paddingScale)

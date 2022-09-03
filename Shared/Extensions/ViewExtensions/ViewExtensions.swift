@@ -59,7 +59,7 @@ extension View {
             }
         }
     }
-    
+
     func posterStyle(type: PosterType, height: CGFloat) -> some View {
         Group {
             switch type {
@@ -80,11 +80,11 @@ extension View {
         self.frame(width: width, height: width / 1.77)
             .cornerRadius(width / 30)
     }
-    
+
     private func portraitPoster(height: CGFloat) -> some View {
         self.portraitPoster(width: height / 1.5)
     }
-    
+
     private func landscapePoster(height: CGFloat) -> some View {
         self.landscapePoster(width: height * 1.77)
     }

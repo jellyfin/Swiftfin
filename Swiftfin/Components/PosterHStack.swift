@@ -104,7 +104,7 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
 }
 
 extension PosterHStack {
-    
+
     func scaleItems(_ scale: CGFloat) -> Self {
         var copy = self
         copy.itemScale = scale

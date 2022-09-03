@@ -60,7 +60,7 @@ extension EpisodesRowManager {
 
     func getEpisodesForSeason(_ season: BaseItemDto) {
         guard let seasonID = season.id else { return }
-        
+
         TvShowsAPI.getEpisodes(
             seriesId: item.id ?? "",
             userId: SessionManager.main.currentLogin.user.id,
