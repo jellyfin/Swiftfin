@@ -23,7 +23,7 @@ struct LandscapePosterProgressBar: View {
                 LinearGradient(
                     stops: [
                         .init(color: .clear, location: 0),
-                        .init(color: .black, location: 1),
+                        .init(color: .black.opacity(0.7), location: 1),
                     ],
                     startPoint: .top,
                     endPoint: .bottom)
@@ -40,7 +40,7 @@ struct LandscapePosterProgressBar: View {
                     ProgressBar(progress: progress)
                 }
                 .padding(.horizontal, 5 * paddingScale)
-                .padding(.bottom)
+                .padding(.bottom, 7 * paddingScale)
                 .onAppear {
                     paddingScale = reader.size.width / 300
                 }

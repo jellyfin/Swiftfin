@@ -53,10 +53,10 @@ extension FilterDrawerHStack {
                         .foregroundColor(activated ? .jellyfinPurple : Color(UIColor.secondarySystemFill))
                         .opacity(0.5)
                 }
-                .overlay(
+                .overlay {
                     Capsule()
                         .stroke(activated ? .purple : Color(UIColor.secondarySystemFill), lineWidth: 1)
-                )
+                }
             }
         }
     }
