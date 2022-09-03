@@ -10,15 +10,15 @@ import SwiftUI
 
 struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
-    private let item: Item
-    private let type: PosterType
-    private let itemScale: CGFloat
-    private let horizontalAlignment: HorizontalAlignment
-    private let content: (Item) -> Content
-    private let imageOverlay: (Item) -> ImageOverlay
-    private let contextMenu: (Item) -> ContextMenu
-    private let onSelect: (Item) -> Void
-    private let singleImage: Bool
+    private var item: Item
+    private var type: PosterType
+    private var itemScale: CGFloat
+    private var horizontalAlignment: HorizontalAlignment
+    private var content: (Item) -> Content
+    private var imageOverlay: (Item) -> ImageOverlay
+    private var contextMenu: (Item) -> ContextMenu
+    private var onSelect: (Item) -> Void
+    private var singleImage: Bool
 
     private var itemWidth: CGFloat {
         type.width * itemScale
@@ -96,34 +96,16 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
 }
 
 extension PosterButton {
-    @ViewBuilder
-    func horizontalAlignment(_ alignment: HorizontalAlignment) -> PosterButton {
-        PosterButton(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: alignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            singleImage: singleImage
-        )
+    func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
+        var copy = self
+        copy.horizontalAlignment = alignment
+        return copy
     }
 
-    @ViewBuilder
-    func scaleItem(_ scale: CGFloat) -> PosterButton {
-        PosterButton(
-            item: item,
-            type: type,
-            itemScale: scale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            singleImage: singleImage
-        )
+    func scaleItem(_ scale: CGFloat) -> Self {
+        var copy = self
+        copy.itemScale = scale
+        return copy
     }
 
     @ViewBuilder
@@ -171,19 +153,10 @@ extension PosterButton {
         )
     }
 
-    @ViewBuilder
-    func onSelect(_ action: @escaping (Item) -> Void) -> PosterButton {
-        PosterButton(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: action,
-            singleImage: singleImage
-        )
+    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
+        var copy = self
+        copy.onSelect = action
+        return copy
     }
 }
 

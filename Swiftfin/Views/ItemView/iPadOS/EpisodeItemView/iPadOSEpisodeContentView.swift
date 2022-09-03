@@ -14,7 +14,7 @@ extension iPadOSEpisodeItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 
@@ -45,6 +45,15 @@ extension iPadOSEpisodeItemView {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
 
                     Divider()
+                }
+
+                // MARK: Series
+
+                if let seriesItem = viewModel.seriesItem {
+                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
+                        .onSelect { item in
+                            router.route(to: \.item, item)
+                        }
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

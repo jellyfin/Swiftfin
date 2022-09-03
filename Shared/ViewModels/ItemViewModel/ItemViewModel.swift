@@ -70,8 +70,8 @@ class ItemViewModel: ViewModel {
     }
 
     func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
-        guard item.type == .episode || item.type == .movie else { return }
-        guard !item.missing, !item.unaired else { return }
+        guard item.type == .episode || item.type == .movie,
+              !item.missing else { return }
 
         item.createVideoPlayerViewModel()
             .sink { completion in
@@ -93,7 +93,7 @@ class ItemViewModel: ViewModel {
             return L10n.missing
         }
 
-        if let itemProgressString = item.getItemProgressString() {
+        if let itemProgressString = item.progress {
             return itemProgressString
         }
 

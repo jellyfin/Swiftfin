@@ -41,7 +41,7 @@ extension ItemView {
                         .failure {
                             InitialFailureView(viewModel.item.title.initials)
                         }
-                        .portraitPoster(width: 270)
+                        .posterStyle(type: .portrait, width: 270)
 
                         AboutViewCard(
                             isShowingAlert: $presentOverviewAlert,

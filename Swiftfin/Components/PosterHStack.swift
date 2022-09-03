@@ -6,19 +6,20 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
 import SwiftUI
 
 struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
 
-    private let title: String
-    private let type: PosterType
-    private let items: [Item]
-    private let itemScale: CGFloat
-    private let content: (Item) -> Content
-    private let imageOverlay: (Item) -> ImageOverlay
-    private let contextMenu: (Item) -> ContextMenu
-    private let trailingContent: () -> TrailingContent
-    private let onSelect: (Item) -> Void
+    private var title: String
+    private var type: PosterType
+    private var items: [Item]
+    private var itemScale: CGFloat
+    private var content: (Item) -> Content
+    private var imageOverlay: (Item) -> ImageOverlay
+    private var contextMenu: (Item) -> ContextMenu
+    private var trailingContent: () -> TrailingContent
+    private var onSelect: (Item) -> Void
 
     private init(
         title: String,
@@ -103,19 +104,11 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
 }
 
 extension PosterHStack {
-    @ViewBuilder
-    func scaleItems(_ scale: CGFloat) -> PosterHStack {
-        PosterHStack(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: scale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+
+    func scaleItems(_ scale: CGFloat) -> Self {
+        var copy = self
+        copy.itemScale = scale
+        return copy
     }
 
     @ViewBuilder
@@ -182,18 +175,9 @@ extension PosterHStack {
         )
     }
 
-    @ViewBuilder
-    func onSelect(_ onSelect: @escaping (Item) -> Void) -> PosterHStack {
-        PosterHStack(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
+        var copy = self
+        copy.onSelect = action
+        return copy
     }
 }

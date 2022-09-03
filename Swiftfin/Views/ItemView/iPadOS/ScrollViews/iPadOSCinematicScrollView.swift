@@ -159,6 +159,7 @@ extension ItemView.iPadOSCinematicScrollView {
 
                     ItemView.ActionButtonHStack(viewModel: viewModel)
                         .font(.title)
+                        .foregroundColor(.white)
                 }
                 .frame(width: 250)
             }
