@@ -48,6 +48,8 @@ final class LibraryCoordinator: NavigationCoordinatable {
     var item = makeItem
     @Route(.modal)
     var filter = makeFilter
+    @Route(.push)
+    var library = makeLibrary
     #endif
 
     private let parameters: Parameters
@@ -76,6 +78,10 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
     func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
         NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
+    }
+
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parameters: parameters)
     }
     #endif
 }
