@@ -116,6 +116,11 @@ struct LibraryView: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
+
+                if viewModel.isLoading && !viewModel.items.isEmpty {
+                    ProgressView()
+                }
+
                 Button {
                     switch libraryViewType {
                     case .grid:
