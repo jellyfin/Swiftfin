@@ -69,5 +69,12 @@ struct MediaView: View {
         }
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+            }
+        }
     }
 }

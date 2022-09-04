@@ -37,6 +37,7 @@ final class MediaViewModel: ViewModel {
 
     func requestLibraries() {
         UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
+            .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
             }, receiveValue: { response in
