@@ -14,7 +14,7 @@ extension EpisodeItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 
@@ -35,7 +35,7 @@ extension EpisodeItemView {
 
                 if let itemOverview = viewModel.item.overview {
                     TruncatedTextView(text: itemOverview) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
+                        router.route(to: \.itemOverview, viewModel.item)
                     }
                     .font(.footnote)
                     .lineLimit(5)
@@ -66,6 +66,15 @@ extension EpisodeItemView {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
 
                     Divider()
+                }
+
+                // MARK: Series
+
+                if let seriesItem = viewModel.seriesItem {
+                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
+                        .onSelect { item in
+                            router.route(to: \.item, item)
+                        }
                 }
 
                 // MARK: Details
@@ -131,6 +140,7 @@ extension EpisodeItemView.ContentView {
                 ItemView.ActionButtonHStack(viewModel: viewModel)
                     .font(.title)
                     .frame(maxWidth: 300)
+                    .foregroundStyle(.primary)
             }
         }
     }

@@ -34,7 +34,7 @@ struct ContinueWatchingCard: View {
                     }
 
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(item.getItemProgressString() ?? "")
+                        Text(item.progress ?? "")
                             .font(.subheadline)
                             .padding(.vertical, 5)
                             .padding(.leading, 10)

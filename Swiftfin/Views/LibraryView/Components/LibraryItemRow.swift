@@ -22,9 +22,8 @@ struct LibraryItemRow: View {
             onSelect()
         } label: {
             HStack(alignment: .bottom) {
-                PosterButton(item: item, type: .portrait)
-                    .scaleItem(0.6)
-                    .content { _ in }
+                ImageView(item.portraitPosterImageSource(maxWidth: 60))
+                    .posterStyle(type: .portrait, width: 60)
 
                 VStack(alignment: .leading) {
                     Text(item.displayName)

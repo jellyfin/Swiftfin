@@ -42,19 +42,19 @@ extension BaseItemDto {
         return text
     }
 
-    func getItemProgressString() -> String? {
-        if userData?.playbackPositionTicks == nil || userData?.playbackPositionTicks == 0 {
-            return nil
-        }
+    var progress: String? {
+        guard let playbackPositionTicks = userData?.playbackPositionTicks,
+              let totalTicks = runTimeTicks,
+              playbackPositionTicks != 0,
+              totalTicks != 0 else { return nil }
 
-        let remainingSecs = ((runTimeTicks ?? 0) - (userData?.playbackPositionTicks ?? 0)) / 10_000_000
-        let proghours = Int(remainingSecs / 3600)
-        let progminutes = Int((Int(remainingSecs) - (proghours * 3600)) / 60)
-        if proghours != 0 {
-            return "\(proghours)h \(String(progminutes).leftPad(toWidth: 2, withString: "0"))m"
-        } else {
-            return "\(String(progminutes))m"
-        }
+        let remainingSeconds = (totalTicks - playbackPositionTicks) / 10_000_000
+
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+
+        return formatter.string(from: .init(remainingSeconds))
     }
 
     func getLiveStartTimeString(formatter: DateFormatter) -> String {

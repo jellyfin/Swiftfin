@@ -179,7 +179,7 @@ extension ItemView.CompactPosterScrollView {
                     // MARK: Portrait Image
 
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
-                        .portraitPoster(width: 130)
+                        .posterStyle(type: .portrait, width: 130)
                         .accessibilityIgnoresInvertColors()
 
                     rightShelfView
@@ -197,6 +197,7 @@ extension ItemView.CompactPosterScrollView {
 
                     ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
                         .font(.title2)
+                        .foregroundColor(.white)
                 }
             }
         }

@@ -525,6 +525,10 @@
 		E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
 		E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
+		E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A628C29B720021BC93 /* ProgressBar.swift */; };
+		E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A628C29B720021BC93 /* ProgressBar.swift */; };
+		E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */; };
+		E1FE69AB28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -949,6 +953,8 @@
 		E1FA891D289A305D00176FEB /* iPadOSCollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSCollectionItemContentView.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
+		E1FE69A628C29B720021BC93 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
+		E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterProgressBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1446,6 +1452,7 @@
 			isa = PBXGroup;
 			children = (
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
+				E1FE69AF28C2DA4A0021BC93 /* FilterDrawerHStack */,
 				E18E01A5288746AF0022598C /* PillHStack.swift */,
 				E16AA60728A364A6009A983C /* PosterButton.swift */,
 				E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */,
@@ -2055,7 +2062,9 @@
 				E18E01FF288749200022598C /* Divider.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				E1047E2227E5880000CB0D4A /* InitialFailureView.swift */,
+				E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */,
 				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
+				E1FE69A628C29B720021BC93 /* ProgressBar.swift */,
 				E1E1643D28BB074000323B0A /* SelectorView.swift */,
 				E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */,
 			);
@@ -2074,8 +2083,6 @@
 		E1C55AB228BD051700A9AD88 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E113133528BE98AA00930F75 /* FilterDrawerButton.swift */,
-				E113133328BE988200930F75 /* FilterDrawerHStack.swift */,
 				E13F05EF28BC9016003499D2 /* LibraryItemRow.swift */,
 			);
 			path = Components;
@@ -2188,6 +2195,15 @@
 				E1FCD08726C35A0D007C8DCF /* NetworkError.swift */,
 			);
 			path = Errors;
+			sourceTree = "<group>";
+		};
+		E1FE69AF28C2DA4A0021BC93 /* FilterDrawerHStack */ = {
+			isa = PBXGroup;
+			children = (
+				E113133528BE98AA00930F75 /* FilterDrawerButton.swift */,
+				E113133328BE988200930F75 /* FilterDrawerHStack.swift */,
+			);
+			path = FilterDrawerHStack;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2484,6 +2500,7 @@
 				E18E021A2887492B0022598C /* AppIcon.swift in Sources */,
 				E10EAA50277BBCC4000269ED /* CGSizeExtensions.swift in Sources */,
 				E126F742278A656C00A522BF /* ServerStreamType.swift in Sources */,
+				E1FE69AB28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */,
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				531690ED267ABF46005D8AB9 /* ContinueWatchingView.swift in Sources */,
 				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
@@ -2623,6 +2640,7 @@
 				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
 				E1A2C160279A7DCA005EC829 /* AboutAppView.swift in Sources */,
 				C4BE076A271FC164003F4AD1 /* TVLibrariesView.swift in Sources */,
+				E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E1A16C9D2889AF1E00EA4679 /* AboutView.swift in Sources */,
 				E11CEB8E28999B4A003E74C7 /* FontExtensions.swift in Sources */,
 				C4BE077A2726EE82003F4AD1 /* LiveTVTabCoordinator.swift in Sources */,
@@ -2763,6 +2781,7 @@
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				E1937A3B288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				62E632E9267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
+				E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E113133228BDC72000930F75 /* FilterView.swift in Sources */,
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E11895AC289383EE0042947B /* NavBarOffsetModifier.swift in Sources */,
@@ -2803,6 +2822,7 @@
 				E18E01DD288747230022598C /* iPadOSSeriesItemContentView.swift in Sources */,
 				C4E5598928124C10003DECA5 /* LiveTVChannelItemElement.swift in Sources */,
 				E184C160288C5C08000B25BA /* RequestBuilderExtensions.swift in Sources */,
+				E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */,
 				E1C925F72887504B002A7A66 /* PanDirectionGestureRecognizer.swift in Sources */,
 				E18E01E9288747230022598C /* SeriesItemView.swift in Sources */,
 				E18E023A288749540022598C /* UIScrollViewExtensions.swift in Sources */,

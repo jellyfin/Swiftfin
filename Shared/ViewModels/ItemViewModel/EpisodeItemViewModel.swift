@@ -13,20 +13,13 @@ import Stinsen
 
 final class EpisodeItemViewModel: ItemViewModel {
 
-    @RouterObject
-    private var itemRouter: ItemCoordinator.Router?
     @Published
-    var playButtonText: String = ""
-    @Published
-    var mediaDetailItems: [[BaseItemDto.ItemDetail]] = []
+    var seriesItem: BaseItemDto?
 
     override init(item: BaseItemDto) {
         super.init(item: item)
 
-        $videoPlayerViewModels.sink(receiveValue: { newValue in
-            self.mediaDetailItems = self.createMediaDetailItems(viewModels: newValue)
-        })
-        .store(in: &cancellables)
+        getSeriesItem()
     }
 
     override func updateItem() {
@@ -56,29 +49,23 @@ final class EpisodeItemViewModel: ItemViewModel {
         .store(in: &cancellables)
     }
 
-    private func createMediaDetailItems(viewModels: [VideoPlayerViewModel]) -> [[BaseItemDto.ItemDetail]] {
-        var fileMediaItems: [[BaseItemDto.ItemDetail]] = []
+    private func getSeriesItem() {
+        guard let seriesID = item.seriesId else { return }
 
-        for viewModel in viewModels {
-
-            let audioStreams = viewModel.audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                .joined(separator: ", ")
-
-            let subtitleStreams = viewModel.subtitleStreams
-                .compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                .joined(separator: ", ")
-
-            let currentMediaItems: [BaseItemDto.ItemDetail] = [
-                .init(title: "File", content: viewModel.filename ?? .emptyDash),
-                .init(title: "Audio", content: audioStreams),
-                .init(title: "Subtitles", content: subtitleStreams),
-            ]
-
-            fileMediaItems.append(currentMediaItems)
-        }
-
-        //        print(fileMediaItems)
-
-        return fileMediaItems
+        ItemsAPI.getItems(
+            userId: SessionManager.main.currentLogin.user.id,
+            limit: 1,
+            fields: ItemFields.allCases,
+            enableUserData: true,
+            ids: [seriesID]
+        )
+        .trackActivity(loading)
+        .sink(receiveCompletion: { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        }, receiveValue: { [weak self] response in
+            guard let firstItem = response.items?.first else { return }
+            self?.seriesItem = firstItem
+        })
+        .store(in: &cancellables)
     }
 }
