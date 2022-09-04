@@ -98,12 +98,10 @@ final class LibraryViewModel: ViewModel {
             includeItemTypes = [.movie, .boxSet, .series]
         }
 
-        let excludedIDs: [String]?
+        var excludedIDs: [String]?
 
         if filters.sortBy.first == SortBy.random.filter {
             excludedIDs = items.compactMap(\.id)
-        } else {
-            excludedIDs = nil
         }
 
         let genreIDs = filters.genres.compactMap(\.id)
