@@ -22,7 +22,7 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
     var body: some View {
         PosterButton(item: episode, type: .landscape, singleImage: true)
             .scaleItem(1.2)
-            .imageOverlay { _ in
+            .imageOverlay {
                 if let progress = episode.progress {
                     LandscapePosterProgressBar(
                         title: progress,
@@ -40,7 +40,7 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                     }
                 }
             }
-            .content { _ in
+            .content {
                 Button {
                     router.route(to: \.item, episode)
                 } label: {
@@ -78,7 +78,7 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                     }
                 }
             }
-            .onSelect { _ in
+            .onSelect {
                 episode.createVideoPlayerViewModel()
                     .sink { completion in
                         self.viewModel.handleAPIRequestError(completion: completion)

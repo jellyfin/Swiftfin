@@ -15,10 +15,11 @@ struct LibraryItemRow: View {
     private var router: LibraryCoordinator.Router
 
     let item: BaseItemDto
+    private var onSelect: () -> Void
 
     var body: some View {
         Button {
-            router.route(to: \.item, item)
+            onSelect()
         } label: {
             HStack(alignment: .bottom) {
                 ImageView(item.portraitPosterImageSource(maxWidth: 60))
@@ -53,5 +54,18 @@ struct LibraryItemRow: View {
                 Spacer()
             }
         }
+    }
+}
+
+extension LibraryItemRow {
+    init(item: BaseItemDto) {
+        self.item = item
+        self.onSelect = {}
+    }
+
+    func onSelect(_ action: @escaping () -> Void) -> Self {
+        var copy = self
+        copy.onSelect = action
+        return copy
     }
 }

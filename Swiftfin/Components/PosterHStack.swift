@@ -65,9 +65,9 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                     ForEach(items, id: \.hashValue) { item in
                         PosterButton(item: item, type: type)
                             .scaleItem(itemScale)
-                            .imageOverlay(imageOverlay)
-                            .contextMenu(contextMenu)
-                            .onSelect(onSelect)
+                            .imageOverlay { imageOverlay(item) }
+                            .contextMenu { contextMenu(item) }
+                            .onSelect { onSelect(item) }
                     }
                 }
                 .padding(.horizontal)

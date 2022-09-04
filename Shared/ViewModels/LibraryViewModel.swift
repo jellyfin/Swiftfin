@@ -86,26 +86,26 @@ final class LibraryViewModel: ViewModel {
             }
         }
 
+        var recursive = true
         let includeItemTypes: [BaseItemKind]
 
         if filters.filters.contains(ItemFilter.isFavorite.filter) {
             includeItemTypes = [.movie, .boxSet, .series, .season, .episode]
         } else if type == .folders {
-            includeItemTypes = [.collectionFolder]
+            recursive = false
+            includeItemTypes = [.movie, .boxSet, .series, .folder, .collectionFolder]
         } else {
-            includeItemTypes = [.movie, .series, .boxSet]
+            includeItemTypes = [.movie, .boxSet, .series]
         }
 
-        let excludedIDs: [String]?
+        var excludedIDs: [String]?
 
         if filters.sortBy.first == SortBy.random.filter {
             excludedIDs = items.compactMap(\.id)
-        } else {
-            excludedIDs = nil
         }
 
         let genreIDs = filters.genres.compactMap(\.id)
-        let sortBy: [String] = filters.sortBy.map(\.filterName)
+        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
         let tags: [String] = filters.tags.map(\.filterName)
@@ -115,7 +115,7 @@ final class LibraryViewModel: ViewModel {
             excludeItemIds: excludedIDs,
             startIndex: currentPage * pageItemSize,
             limit: pageItemSize,
-            recursive: true,
+            recursive: recursive,
             sortOrder: sortOrder,
             parentId: libraryID,
             fields: ItemFields.allCases,

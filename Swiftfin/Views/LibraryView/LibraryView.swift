@@ -8,6 +8,7 @@
 
 import CollectionView
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct LibraryView: View {
@@ -40,10 +41,27 @@ struct LibraryView: View {
         }
     }
 
+    private func baseItemOnSelect(_ item: BaseItemDto) {
+        if let baseParent = viewModel.parent as? BaseItemDto {
+            if baseParent.collectionType == "folders" {
+                router.route(to: \.library, .init(parent: item, type: .folders, filters: .init()))
+            } else if item.type == .folder {
+                router.route(to: \.library, .init(parent: item, type: .library, filters: .init()))
+            } else {
+                router.route(to: \.item, item)
+            }
+        } else {
+            router.route(to: \.item, item)
+        }
+    }
+
     @ViewBuilder
     private var libraryListView: some View {
         CollectionView(items: viewModel.items) { _, item, _ in
             LibraryItemRow(item: item)
+                .onSelect {
+                    baseItemOnSelect(item)
+                }
                 .padding()
         }
         .layout { _, layoutEnvironment in
@@ -65,8 +83,8 @@ struct LibraryView: View {
         CollectionView(items: viewModel.items) { _, item, _ in
             PosterButton(item: item, type: libraryGridPosterType)
                 .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
-                .onSelect { item in
-                    router.route(to: \.item, item)
+                .onSelect {
+                    baseItemOnSelect(item)
                 }
         }
         .layout { _, layoutEnvironment in
