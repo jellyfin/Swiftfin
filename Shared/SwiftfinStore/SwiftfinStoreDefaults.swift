@@ -34,7 +34,7 @@ extension Defaults.Keys {
         static let nextUpPosterType = Key<PosterType>("nextUpPosterType", default: .portrait, suite: .generalSuite)
         static let recentlyAddedPosterType = Key<PosterType>("recentlyAddedPosterType", default: .portrait, suite: .generalSuite)
         static let latestInLibraryPosterType = Key<PosterType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
-        static let recommendedPosterType = Key<PosterType>("recommendedPosterType", default: .portrait, suite: .generalSuite)
+        static let similarPosterType = Key<PosterType>("similarPosterType", default: .portrait, suite: .generalSuite)
         static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
 
         enum Episodes {

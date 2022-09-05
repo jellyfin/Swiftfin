@@ -55,8 +55,14 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                     switch type {
                     case .portrait:
                         ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+                            .failure {
+                                InitialFailureView(item.displayName.initials)
+                            }
                     case .landscape:
                         ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                            .failure {
+                                InitialFailureView(item.displayName.initials)
+                            }
                     }
                 }
                 .overlay {

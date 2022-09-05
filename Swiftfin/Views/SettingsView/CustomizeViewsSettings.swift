@@ -27,8 +27,8 @@ struct CustomizeViewsSettings: View {
     var recentlyAddedPosterType
     @Default(.Customization.latestInLibraryPosterType)
     var latestInLibraryPosterType
-    @Default(.Customization.recommendedPosterType)
-    var recommendedPosterType
+    @Default(.Customization.similarPosterType)
+    var similarPosterType
     @Default(.Customization.searchPosterType)
     var searchPosterType
     @Default(.Customization.Library.gridPosterType)
@@ -79,12 +79,11 @@ struct CustomizeViewsSettings: View {
                     }
                 }
 
-                // TODO: Take time to do this for a lot of views
-//                Picker(L10n.recommended, selection: $recommendedPosterType) {
-//                    ForEach(PosterType.allCases, id: \.self) { type in
-//                        Text(type.localizedName).tag(type.rawValue)
-//                    }
-//                }
+                Picker(L10n.recommended, selection: $similarPosterType) {
+                    ForEach(PosterType.allCases, id: \.self) { type in
+                        Text(type.localizedName).tag(type.rawValue)
+                    }
+                }
 
                 Picker(L10n.search, selection: $searchPosterType) {
                     ForEach(PosterType.allCases, id: \.self) { type in
