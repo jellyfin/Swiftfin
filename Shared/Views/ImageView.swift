@@ -59,7 +59,8 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
         } else if let blurHash = currentSource.blurHash {
             BlurHashView(blurHash: blurHash, size: .Circle(radius: 16))
         } else {
-            EmptyView()
+            Color.secondarySystemFill
+                .opacity(0.5)
         }
     }
 

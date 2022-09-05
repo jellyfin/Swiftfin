@@ -6,11 +6,15 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
     struct SimilarItemsHStack: View {
+
+        @Default(.Customization.similarPosterType)
+        private var similarPosterType
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -19,7 +23,7 @@ extension ItemView {
         var body: some View {
             PosterHStack(
                 title: L10n.recommended,
-                type: .portrait,
+                type: similarPosterType,
                 items: items
             )
             .onSelect { item in

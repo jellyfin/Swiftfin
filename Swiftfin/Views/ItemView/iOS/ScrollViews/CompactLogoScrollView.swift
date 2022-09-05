@@ -147,6 +147,9 @@ extension ItemView.CompactLogoScrollView {
             VStack(alignment: .center, spacing: 10) {
                 ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width, maxHeight: 100))
                     .resizingMode(.aspectFit)
+                    .placeholder {
+                        EmptyView()
+                    }
                     .failure {
                         Text(viewModel.item.displayName)
                             .font(.largeTitle)
