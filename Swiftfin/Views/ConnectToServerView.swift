@@ -43,9 +43,17 @@ struct ConnectToServerView: View {
                     Button {
                         viewModel.connectToServer(uri: uri)
                     } label: {
-                        L10n.connect.text
+                        HStack {
+                            L10n.connect.text
+
+                            Spacer()
+
+                            if viewModel.isLoading {
+                                ProgressView()
+                            }
+                        }
                     }
-                    .disabled(uri.isEmpty)
+                    .disabled(uri.isEmpty || viewModel.isLoading)
                 }
             } header: {
                 L10n.connectToJellyfinServer.text

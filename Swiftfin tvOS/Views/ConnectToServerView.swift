@@ -22,11 +22,11 @@ struct ConnectToServerView: View {
     
     @ViewBuilder
     private var searchingDiscoverServers: some View {
-        HStack(alignment: .center, spacing: 5) {
-            Spacer()
+        HStack(spacing: 5) {
+            ProgressView()
+            
             L10n.searchingDots.text
                 .foregroundColor(.secondary)
-            Spacer()
         }
     }
     
