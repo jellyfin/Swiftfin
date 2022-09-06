@@ -12,68 +12,121 @@ import SwiftUI
 
 struct ConnectToServerView: View {
 
-    @StateObject
+    @ObservedObject
     var viewModel: ConnectToServerViewModel
     @State
-    var uri = ""
+    private var uri = ""
 
     @Default(.defaultHTTPScheme)
-    var defaultHTTPScheme
-
-    var body: some View {
-        List {
-            Section {
-                TextField(L10n.serverURL, text: $uri)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .keyboardType(.URL)
-                    .onAppear {
-                        if uri == "" {
-                            uri = "\(defaultHTTPScheme.rawValue)://"
-                        }
-                    }
-
-                Button {
-                    viewModel.connectToServer(uri: uri)
-                } label: {
-                    HStack {
-                        L10n.connect.text
-                        Spacer()
-                        if viewModel.isLoading {
-                            ProgressView()
-                        }
-                    }
+    private var defaultHTTPScheme
+    
+    @ViewBuilder
+    private var searchingDiscoverServers: some View {
+        HStack(alignment: .center, spacing: 5) {
+            Spacer()
+            L10n.searchingDots.text
+                .foregroundColor(.secondary)
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder
+    private var noLocalServersFound: some View {
+        HStack(alignment: .center) {
+            Spacer()
+            L10n.noLocalServersFound.text
+                .font(.callout)
+                .foregroundColor(.secondary)
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder
+    private var localServers: some View {
+        VStack(alignment: .center) {
+            
+            HStack {
+                L10n.localServers.text
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                
+                SFSymbolButton(systemName: "arrow.clockwise") {
+                    viewModel.discoverServers()
                 }
-                .disabled(viewModel.isLoading || uri.isEmpty)
-            } header: {
-                L10n.connectToJellyfinServer.text
+                .frame(width: 30, height: 30)
+                .disabled(viewModel.searching || viewModel.isLoading)
             }
-
-            Section(header: L10n.localServers.text) {
-                if viewModel.searching {
-                    ProgressView()
-                }
-                ForEach(viewModel.discoveredServers.sorted(by: { $0.name < $1.name }), id: \.id) { discoveredServer in
-                    Button(action: {
-                        viewModel.connectToServer(uri: discoveredServer.url.absoluteString)
-                    }, label: {
-                        HStack {
-                            Text(discoveredServer.name)
-                                .font(.headline)
-                            Text("• \(discoveredServer.host)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            if viewModel.isLoading {
-                                ProgressView()
+            
+            if viewModel.searching {
+                searchingDiscoverServers
+                    .frame(maxHeight: .infinity)
+            } else {
+                if viewModel.discoveredServers.isEmpty {
+                    noLocalServersFound
+                        .frame(maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(viewModel.discoveredServers, id: \.self) { server in
+                                ServerButton(server: server)
+                                    .onSelect {
+                                        viewModel.connectToServer(uri: server.currentURI)
+                                    }
                             }
                         }
-
-                    })
+                        .padding()
+                    }
                 }
             }
-            .onAppear(perform: self.viewModel.discoverServers)
-            .headerProminence(.increased)
+        }
+    }
+
+    var body: some View {
+        VStack {
+            
+            L10n.connect.text
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            HStack {
+                List {
+                    Section {
+                        TextField(L10n.serverURL, text: $uri)
+                            .disableAutocorrection(true)
+                            .autocapitalization(.none)
+                            .keyboardType(.URL)
+                            .onAppear {
+                                if uri == "" {
+                                    uri = "\(defaultHTTPScheme.rawValue)://"
+                                }
+                            }
+
+                        Button {
+                            viewModel.connectToServer(uri: uri)
+                        } label: {
+                            HStack {
+                                L10n.connect.text
+                                
+                                Spacer()
+                                
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                }
+                            }
+                        }
+                        .disabled(viewModel.isLoading || uri.isEmpty)
+                    } header: {
+                        L10n.connectToJellyfinServer.text
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                
+                localServers
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .onAppear {
+            viewModel.discoverServers()
         }
         .alert(item: $viewModel.errorMessage) { _ in
             Alert(
@@ -82,6 +135,11 @@ struct ConnectToServerView: View {
                 dismissButton: .cancel()
             )
         }
-        .navigationTitle(L10n.connect)
+        .alert(item: $viewModel.addServerURIPayload) { _ in
+            Alert(
+                title: L10n.existingServer.text,
+                message: L10n.serverAlreadyExistsPrompt(viewModel.addServerURIPayload?.server.name ?? .emptyDash).text,
+                dismissButton: .cancel())
+        }
     }
 }

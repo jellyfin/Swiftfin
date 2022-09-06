@@ -6,15 +6,10 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
-import UIKit
+import Foundation
 
-@main
-struct JellyfinPlayer_tvOSApp: App {
-
-    var body: some Scene {
-        WindowGroup {
-            MainCoordinator().view()
-        }
-    }
+extension SwiftfinStore.State.Server {
+    
+    
+    
 }

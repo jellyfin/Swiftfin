@@ -73,7 +73,6 @@ struct UserSignInView: View {
                         dismissButton: .cancel()
                     )
                 }
-                .navigationTitle(L10n.signIn)
 
                 if viewModel.quickConnectEnabled {
                     VStack(alignment: .center) {
@@ -106,11 +105,6 @@ struct UserSignInView: View {
                 }
             }
         }
+        .navigationTitle(L10n.signIn)
     }
 }
-
-// struct UserSignInView_Preivews: PreviewProvider {
-//    static var previews: some View {
-//        UserSignInView(viewModel: .init(server: .sample))
-//    }
-// }

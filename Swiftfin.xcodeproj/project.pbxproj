@@ -509,6 +509,9 @@
 		E1E5D54F2783E67100692DFE /* OverlaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54E2783E67100692DFE /* OverlaySettingsView.swift */; };
 		E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */; };
 		E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */; };
+		E1E9EFE728C6B32200CC1F8B /* SwiftfinStoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9EFE628C6B32200CC1F8B /* SwiftfinStoreExtensions.swift */; };
+		E1E9EFE828C6B32200CC1F8B /* SwiftfinStoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9EFE628C6B32200CC1F8B /* SwiftfinStoreExtensions.swift */; };
+		E1E9EFEA28C6B96500CC1F8B /* ServerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */; };
 		E1EBCB42278BD174009FE6E9 /* TruncatedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */; };
 		E1EBCB44278BD1CE009FE6E9 /* ItemOverviewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB43278BD1CE009FE6E9 /* ItemOverviewCoordinator.swift */; };
 		E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */; };
@@ -944,6 +947,8 @@
 		E1E5D54E2783E67100692DFE /* OverlaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySettingsView.swift; sourceTree = "<group>"; };
 		E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCloseOverlay.swift; sourceTree = "<group>"; };
+		E1E9EFE628C6B32200CC1F8B /* SwiftfinStoreExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinStoreExtensions.swift; sourceTree = "<group>"; };
+		E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerButton.swift; sourceTree = "<group>"; };
 		E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TruncatedTextView.swift; sourceTree = "<group>"; };
 		E1EBCB43278BD1CE009FE6E9 /* ItemOverviewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOverviewCoordinator.swift; sourceTree = "<group>"; };
 		E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOverviewView.swift; sourceTree = "<group>"; };
@@ -1218,9 +1223,10 @@
 				E103A6A1278A7EB500820EC7 /* HomeCinematicView */,
 				E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */,
 				531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */,
+				536D3D80267BDFC60004248C /* PortraitItemElement.swift */,
 				E1C92617288756BD002A7A66 /* PosterButton.swift */,
 				E1C92619288756BD002A7A66 /* PosterHStack.swift */,
-				536D3D80267BDFC60004248C /* PortraitItemElement.swift */,
+				E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */,
 				E17885A3278105170094FBCF /* SFSymbolButton.swift */,
 			);
 			path = Components;
@@ -1489,6 +1495,7 @@
 				E1937A3D288F0D3D00CB80AA /* UIScreenExtensions.swift */,
 				E18E0239288749540022598C /* UIScrollViewExtensions.swift */,
 				E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */,
+				E1E9EFE628C6B32200CC1F8B /* SwiftfinStoreExtensions.swift */,
 				62E1DCC2273CE19800C9AE76 /* URLExtensions.swift */,
 				E11895A22893409D0042947B /* ViewExtensions */,
 				5D160402278A41FD00D22B99 /* VLCPlayer+subtitles.swift */,
@@ -2592,6 +2599,7 @@
 				E1D4BF822719D22800A11E64 /* AppAppearance.swift in Sources */,
 				E1C926132887565C002A7A66 /* SeriesEpisodesView.swift in Sources */,
 				C40CD923271F8CD8000FB198 /* MoviesLibrariesCoordinator.swift in Sources */,
+				E1E9EFE828C6B32200CC1F8B /* SwiftfinStoreExtensions.swift in Sources */,
 				E13AD7302798C60F00FDCEE8 /* NativePlayerViewController.swift in Sources */,
 				E18E02232887492B0022598C /* ImageView.swift in Sources */,
 				E1E5D54F2783E67100692DFE /* OverlaySettingsView.swift in Sources */,
@@ -2618,6 +2626,7 @@
 				E1C9260D2887565C002A7A66 /* CinematicScrollView.swift in Sources */,
 				6264E88D273850380081A12A /* Strings.swift in Sources */,
 				E1C926102887565C002A7A66 /* PlayButton.swift in Sources */,
+				E1E9EFEA28C6B96500CC1F8B /* ServerButton.swift in Sources */,
 				E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */,
 				C4E5081B2703F82A0045C9AB /* MediaView.swift in Sources */,
 				E193D53B27193F9200900D82 /* SettingsCoordinator.swift in Sources */,
@@ -2755,6 +2764,7 @@
 				E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
 				E1C812C3277A8E5D00918266 /* VLCPlayerOverlayView.swift in Sources */,
 				E18CE0B228A229E70092E7F1 /* UserDtoExtensions.swift in Sources */,
+				E1E9EFE728C6B32200CC1F8B /* SwiftfinStoreExtensions.swift in Sources */,
 				E18E01F0288747230022598C /* AttributeHStack.swift in Sources */,
 				6334175B287DDFB9000603CE /* QuickConnectSettingsView.swift in Sources */,
 				E17FB54F28C1197700311DFE /* SelectorType.swift in Sources */,
