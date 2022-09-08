@@ -59,7 +59,7 @@ extension SeriesEpisodesView {
                                         .foregroundColor(.black)
                                 }
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .buttonStyle(.plain)
                         .id(season)
                         .focused($focusedSeason, equals: season)
                     }

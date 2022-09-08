@@ -26,7 +26,7 @@ final class ConnectToServerViewModel: ViewModel {
     @RouterObject
     var router: ConnectToServerCoodinator.Router?
     @Published
-    var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
+    var discoveredServers: [SwiftfinStore.State.Server] = []
     @Published
     var searching = false
     @Published
@@ -102,15 +102,26 @@ final class ConnectToServerViewModel: ViewModel {
         discoveredServers.removeAll()
         searching = true
 
+        var _discoveredServers: Set<SwiftfinStore.State.Server> = []
+
+        discovery.locateServer { server in
+            if let server = server {
+                _discoveredServers.insert(.init(
+                    uris: [],
+                    currentURI: server.url.absoluteString,
+                    name: server.name,
+                    id: server.id,
+                    os: "",
+                    version: "",
+                    usersIDs: []
+                ))
+            }
+        }
+
         // Timeout after 3 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.searching = false
-        }
-
-        discovery.locateServer { [self] server in
-            if let server = server {
-                discoveredServers.insert(server)
-            }
+            self.discoveredServers = _discoveredServers.sorted(by: { $0.name < $1.name })
         }
     }
 

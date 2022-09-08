@@ -62,7 +62,7 @@ struct CinematicNextUpCardView: View {
                 }
                 .frame(width: 350, height: 210)
             }
-            .buttonStyle(CardButtonStyle())
+            .buttonStyle(.card)
             .padding(.top)
         }
         .padding(.vertical)

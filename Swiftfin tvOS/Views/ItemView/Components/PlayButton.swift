@@ -47,7 +47,7 @@ extension ItemView {
                 .cornerRadius(10)
             }
             .focused($isFocused)
-            .buttonStyle(CardButtonStyle())
+            .buttonStyle(.card)
             .contextMenu {
                 if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
                     Button {

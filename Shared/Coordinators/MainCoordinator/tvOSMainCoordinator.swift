@@ -21,14 +21,6 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var liveTV = makeLiveTV
 
-    @ViewBuilder
-    func customize(_ view: AnyView) -> some View {
-        view.background {
-            Color.black
-                .ignoresSafeArea()
-        }
-    }
-
     init() {
         if SessionManager.main.currentLogin != nil {
             self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
@@ -38,6 +30,8 @@ final class MainCoordinator: NavigationCoordinatable {
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
+
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
 
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))

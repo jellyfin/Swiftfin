@@ -36,7 +36,7 @@ struct LatestInLibraryView: View {
                     }
                     .posterStyle(type: .portrait, width: 250)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
             .onSelect { item in
                 router.route(to: \.item, item)

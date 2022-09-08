@@ -58,7 +58,7 @@ struct ContinueWatchingCard: View {
                 }
                 .frame(width: 500, height: 281.25)
             }
-            .buttonStyle(CardButtonStyle())
+            .buttonStyle(.card)
             .padding(.top)
 
             VStack(alignment: .leading) {

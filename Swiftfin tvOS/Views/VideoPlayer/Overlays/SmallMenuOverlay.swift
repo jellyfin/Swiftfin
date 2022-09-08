@@ -97,7 +97,7 @@ struct SmallMediaStreamSelectionView: View {
                             .padding()
                         }
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                     .background(Color.clear)
                     .focused($focusedLayer, equals: .subtitles)
                     .focused($subtitlesFocused)
@@ -129,7 +129,7 @@ struct SmallMediaStreamSelectionView: View {
                             .padding()
                         }
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                     .background(Color.clear)
                     .focused($focusedLayer, equals: .audio)
                     .focused($audioFocused)
@@ -161,7 +161,7 @@ struct SmallMediaStreamSelectionView: View {
                             .padding()
                         }
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                     .background(Color.clear)
                     .focused($focusedLayer, equals: .playbackSpeed)
                     .focused($playbackSpeedFocused)
@@ -194,7 +194,7 @@ struct SmallMediaStreamSelectionView: View {
                                 .padding()
                             }
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .buttonStyle(.plain)
                         .background(Color.clear)
                         .focused($focusedLayer, equals: .chapters)
                         .focused($chaptersFocused)
@@ -335,7 +335,7 @@ struct SmallMediaStreamSelectionView: View {
                                     .cornerRadius(10)
                                     .frame(width: 350, height: 210)
                             }
-                            .buttonStyle(CardButtonStyle())
+                            .buttonStyle(.card)
 
                             VStack(alignment: .leading, spacing: 5) {
 

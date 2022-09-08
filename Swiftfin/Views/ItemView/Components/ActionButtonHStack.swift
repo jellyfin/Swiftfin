@@ -39,7 +39,7 @@ extension ItemView {
 //                            .foregroundStyle(.white)
                     }
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -57,7 +57,7 @@ extension ItemView {
 //                            .foregroundStyle(.white)
                     }
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }

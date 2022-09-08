@@ -37,7 +37,7 @@ extension ItemView.AboutView {
                 .padding2()
                 .frame(width: 700, height: 405)
             }
-            .buttonStyle(CardButtonStyle())
+            .buttonStyle(.card)
         }
     }
 }

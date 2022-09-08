@@ -68,7 +68,7 @@ extension ItemView {
                             }
                             .frame(width: 330, height: 195)
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .buttonStyle(.plain)
                     }
                     .padding(.horizontal)
                     .if(UIDevice.isIPad) { view in
