@@ -6,7 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import CoreStore
+import CollectionView
 import SwiftUI
 
 struct ServerListView: View {
@@ -39,30 +39,25 @@ struct ServerListView: View {
         }
         .padding(.top, 50)
     }
-    
-    @ViewBuilder
-    private var connectToServerButton: some View {
-        Button {
-            router.route(to: \.connectToServer)
-        } label: {
-            L10n.connect.text
-                .bold()
-                .font(.callout)
-                .frame(width: 300, height: 100)
-                .background(Color.jellyfinPurple)
-        }
-        .buttonStyle(CardButtonStyle())
-    }
 
     @ViewBuilder
     private var noServerView: some View {
         VStack(spacing: 50) {
             L10n.connectToJellyfinServerStart.text
-                .frame(minWidth: 50, maxWidth: 500)
+                .frame(maxWidth: 500)
                 .multilineTextAlignment(.center)
                 .font(.body)
 
-            connectToServerButton
+            Button {
+                router.route(to: \.connectToServer)
+            } label: {
+                L10n.connect.text
+                    .bold()
+                    .font(.callout)
+                    .frame(width: 400, height: 75)
+                    .background(Color.jellyfinPurple)
+            }
+            .buttonStyle(.card)
         }
     }
 

@@ -66,7 +66,7 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                         .posterStyle(type: type, width: itemWidth)
                 }
             }
-            .buttonStyle(CardButtonStyle())
+            .buttonStyle(.card)
             .contextMenu(menuItems: {
                 contextMenu(item)
             })

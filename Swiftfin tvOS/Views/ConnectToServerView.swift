@@ -21,6 +21,44 @@ struct ConnectToServerView: View {
     private var defaultHTTPScheme
     
     @ViewBuilder
+    private var connectForm: some View {
+        VStack(alignment: .leading) {
+            Section {
+                TextField(L10n.serverURL, text: $uri)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
+                    .keyboardType(.URL)
+                    .onAppear {
+                        if uri == "" {
+                            uri = "\(defaultHTTPScheme.rawValue)://"
+                        }
+                    }
+
+                Button {
+                    viewModel.connectToServer(uri: uri)
+                } label: {
+                    HStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                        }
+                        
+                        L10n.connect.text
+                            .bold()
+                            .font(.callout)
+                    }
+                    .frame(height: 75)
+                    .frame(maxWidth: .infinity)
+                    .background(viewModel.isLoading || uri.isEmpty ? .secondary : Color.jellyfinPurple)
+                }
+                .disabled(viewModel.isLoading || uri.isEmpty)
+                .buttonStyle(.plain)
+            } header: {
+                L10n.connectToJellyfinServer.text
+            }
+        }
+    }
+    
+    @ViewBuilder
     private var searchingDiscoverServers: some View {
         HStack(spacing: 5) {
             ProgressView()
@@ -32,13 +70,9 @@ struct ConnectToServerView: View {
     
     @ViewBuilder
     private var noLocalServersFound: some View {
-        HStack(alignment: .center) {
-            Spacer()
             L10n.noLocalServersFound.text
                 .font(.callout)
                 .foregroundColor(.secondary)
-            Spacer()
-        }
     }
     
     @ViewBuilder
@@ -82,49 +116,14 @@ struct ConnectToServerView: View {
     }
 
     var body: some View {
-        VStack {
-            
-            L10n.connect.text
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            
-            HStack {
-                List {
-                    Section {
-                        TextField(L10n.serverURL, text: $uri)
-                            .disableAutocorrection(true)
-                            .autocapitalization(.none)
-                            .keyboardType(.URL)
-                            .onAppear {
-                                if uri == "" {
-                                    uri = "\(defaultHTTPScheme.rawValue)://"
-                                }
-                            }
-
-                        Button {
-                            viewModel.connectToServer(uri: uri)
-                        } label: {
-                            HStack {
-                                L10n.connect.text
-                                
-                                Spacer()
-                                
-                                if viewModel.isLoading {
-                                    ProgressView()
-                                }
-                            }
-                        }
-                        .disabled(viewModel.isLoading || uri.isEmpty)
-                    } header: {
-                        L10n.connectToJellyfinServer.text
-                    }
-                }
+        HStack(alignment: .top) {
+            connectForm
                 .frame(maxWidth: .infinity)
-                
-                localServers
-                    .frame(maxWidth: .infinity)
-            }
+            
+            localServers
+                .frame(maxWidth: .infinity)
         }
+        .navigationTitle(L10n.connect.text)
         .onAppear {
             viewModel.discoverServers()
         }

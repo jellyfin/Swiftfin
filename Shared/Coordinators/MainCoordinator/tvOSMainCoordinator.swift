@@ -38,6 +38,8 @@ final class MainCoordinator: NavigationCoordinatable {
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
+        
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
 
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))

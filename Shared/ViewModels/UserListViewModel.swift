@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 import SwiftUI
 
 class UserListViewModel: ViewModel {
@@ -21,6 +22,7 @@ class UserListViewModel: ViewModel {
 
         super.init()
 
+        JellyfinAPIAPI.basePath = server.currentURI
         Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
     }
 

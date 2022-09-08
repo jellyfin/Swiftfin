@@ -38,7 +38,7 @@ struct EpisodeCard: View {
                 }
                 .frame(width: 550, height: 308)
             }
-            .buttonStyle(CardButtonStyle())
+            .buttonStyle(.card)
 
             Button {
                 router.route(to: \.item, episode)
@@ -79,7 +79,7 @@ struct EpisodeCard: View {
                 .frame(width: 510, height: 220)
                 .padding()
             }
-            .buttonStyle(CardButtonStyle())
+            .buttonStyle(.card)
         }
     }
 }
