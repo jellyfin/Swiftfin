@@ -21,14 +21,6 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var liveTV = makeLiveTV
 
-//    @ViewBuilder
-//    func customize(_ view: AnyView) -> some View {
-//        view.background {
-//            Color.black
-//                .ignoresSafeArea()
-//        }
-//    }
-
     init() {
         if SessionManager.main.currentLogin != nil {
             self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
