@@ -26,44 +26,35 @@ struct HomeView: View {
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading) {
+                    
+                    CinematicItemSelector(items: viewModel.latestAddedItems)
 
-                    if viewModel.resumeItems.isEmpty {
-                        HomeCinematicView(
-                            viewModel: viewModel,
-                            items: viewModel.latestAddedItems.map { .init(item: $0, type: .plain) },
-                            forcedItemSubtitle: L10n.recentlyAdded
-                        )
-
-                        if !viewModel.nextUpItems.isEmpty {
-                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
-                                .onSelect { item in
-                                    router.route(to: \.item, item)
-                                }
-                        }
-                    } else {
-                        HomeCinematicView(
-                            viewModel: viewModel,
-                            items: viewModel.resumeItems.map { .init(item: $0, type: .resume) }
-                        )
-
-                        if !viewModel.nextUpItems.isEmpty {
-                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
-                                .onSelect { item in
-                                    router.route(to: \.item, item)
-                                }
-                        }
-
-                        if !viewModel.latestAddedItems.isEmpty {
-                            PosterHStack(title: L10n.recentlyAdded, type: .portrait, items: viewModel.latestAddedItems)
-                                .onSelect { item in
-                                    router.route(to: \.item, item)
-                                }
-                        }
-                    }
-
-                    ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
-                    }
+//                    if viewModel.resumeItems.isEmpty {
+//                        if !viewModel.nextUpItems.isEmpty {
+//                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
+//                                .onSelect { item in
+//                                    router.route(to: \.item, item)
+//                                }
+//                        }
+//                    } else {
+//                        if !viewModel.nextUpItems.isEmpty {
+//                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
+//                                .onSelect { item in
+//                                    router.route(to: \.item, item)
+//                                }
+//                        }
+//
+//                        if !viewModel.latestAddedItems.isEmpty {
+//                            PosterHStack(title: L10n.recentlyAdded, type: .portrait, items: viewModel.latestAddedItems)
+//                                .onSelect { item in
+//                                    router.route(to: \.item, item)
+//                                }
+//                        }
+//                    }
+//
+//                    ForEach(viewModel.libraries, id: \.self) { library in
+//                        LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
+//                    }
                 }
             }
             .edgesIgnoringSafeArea(.top)

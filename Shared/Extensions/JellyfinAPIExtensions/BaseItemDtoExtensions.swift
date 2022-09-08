@@ -11,6 +11,7 @@ import JellyfinAPI
 import UIKit
 
 extension BaseItemDto: Identifiable {}
+extension BaseItemDto: LibraryParent {}
 
 extension BaseItemDto {
 
@@ -247,5 +248,3 @@ extension BaseItemDtoImageBlurHashes {
         }
     }
 }
-
-extension BaseItemDto: LibraryParent {}
