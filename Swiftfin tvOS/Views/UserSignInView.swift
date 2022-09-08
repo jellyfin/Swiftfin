@@ -12,7 +12,7 @@ import Stinsen
 import SwiftUI
 
 struct UserSignInView: View {
-    
+
     enum FocusedField {
         case username
         case password
@@ -26,10 +26,10 @@ struct UserSignInView: View {
     private var password: String = ""
     @State
     private var presentQuickConnect: Bool = false
-    
+
     @FocusState
     private var focusedField: FocusedField?
-    
+
     @ViewBuilder
     private var signInForm: some View {
         VStack(alignment: .leading) {
@@ -51,7 +51,7 @@ struct UserSignInView: View {
                         if viewModel.isLoading {
                             ProgressView()
                         }
-                        
+
                         L10n.connect.text
                             .bold()
                             .font(.callout)
@@ -62,7 +62,7 @@ struct UserSignInView: View {
                 }
                 .disabled(viewModel.isLoading || username.isEmpty)
                 .buttonStyle(.plain)
-                
+
                 Button {
                     presentQuickConnect = true
                 } label: {
@@ -77,7 +77,7 @@ struct UserSignInView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private var publicUsersGrid: some View {
         VStack {
@@ -85,7 +85,7 @@ struct UserSignInView: View {
                 .font(.title3)
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity)
-            
+
             if viewModel.publicUsers.isEmpty {
                 L10n.noPublicUsers.text
                     .font(.callout)
@@ -101,23 +101,25 @@ struct UserSignInView: View {
                         }
                 }
                 .layout { _, layoutEnvironment in
-                        .grid(layoutEnvironment: layoutEnvironment,
-                              layoutMode: .adaptive(withMinItemSize: 250),
-                              itemSpacing: 20,
-                              lineSpacing: 20,
-                              sectionInsets: .init(top: 20, leading: 20, bottom: 20, trailing: 20))
+                    .grid(
+                        layoutEnvironment: layoutEnvironment,
+                        layoutMode: .adaptive(withMinItemSize: 250),
+                        itemSpacing: 20,
+                        lineSpacing: 20,
+                        sectionInsets: .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+                    )
                 }
             }
         }
     }
-    
+
     @ViewBuilder
     private var quickConnect: some View {
         ZStack {
-            
+
             BlurView()
                 .ignoresSafeArea()
-            
+
             VStack(alignment: .center) {
                 L10n.quickConnect.text
                     .font(.title3)
@@ -137,7 +139,7 @@ struct UserSignInView: View {
                     .font(.title)
                     .monospacedDigit()
                     .frame(maxWidth: .infinity)
-                
+
                 Button {
                     presentQuickConnect = false
                 } label: {

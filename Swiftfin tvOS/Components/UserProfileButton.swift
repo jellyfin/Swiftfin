@@ -10,22 +10,22 @@ import JellyfinAPI
 import SwiftUI
 
 struct UserProfileButton: View {
-    
+
     @FocusState
     private var isFocused: Bool
-    
+
     let user: UserDto
     private var action: () -> Void
-    
+
     init(user: UserDto) {
         self.user = user
-        self.action = { }
+        self.action = {}
     }
-    
+
     init(user: SwiftfinStore.State.User) {
-        self.init(user: .init(name: user.username))
+        self.init(user: .init(name: user.username, id: user.id))
     }
-    
+
     var body: some View {
         VStack(alignment: .center) {
             Button {
@@ -41,7 +41,7 @@ struct UserProfileButton: View {
             }
             .buttonStyle(.card)
             .focused($isFocused)
-            
+
             Text(user.name ?? .emptyDash)
                 .foregroundColor(isFocused ? .primary : .secondary)
         }

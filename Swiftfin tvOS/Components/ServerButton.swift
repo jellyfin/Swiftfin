@@ -9,10 +9,10 @@
 import SwiftUI
 
 struct ServerButton: View {
-    
+
     let server: SwiftfinStore.State.Server
     private var onSelect: () -> Void
-    
+
     var body: some View {
         Button {
             onSelect()
@@ -42,9 +42,9 @@ struct ServerButton: View {
 extension ServerButton {
     init(server: SwiftfinStore.State.Server) {
         self.server = server
-        self.onSelect = { }
+        self.onSelect = {}
     }
-    
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
         var copy = self
         copy.onSelect = action

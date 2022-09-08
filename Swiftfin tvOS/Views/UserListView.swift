@@ -7,6 +7,7 @@
 //
 
 import CollectionView
+import JellyfinAPI
 import SwiftUI
 
 struct UserListView: View {
@@ -15,7 +16,7 @@ struct UserListView: View {
     private var userListRouter: UserListCoordinator.Router
     @ObservedObject
     var viewModel: UserListViewModel
-    
+
     @State
     private var longPressedUser: SwiftfinStore.State.User?
 
@@ -31,10 +32,13 @@ struct UserListView: View {
                 }
         }
         .layout { _, layoutEnvironment in
-                .grid(layoutEnvironment: layoutEnvironment,
-                      layoutMode: .adaptive(withMinItemSize: 350),
-                      itemSpacing: 20,
-                      sectionInsets: .init(top: 20, leading: 20, bottom: 20, trailing: 20))
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: .adaptive(withMinItemSize: 250),
+                itemSpacing: 20,
+                lineSpacing: 20,
+                sectionInsets: .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+            )
         }
         .padding(50)
     }
@@ -46,7 +50,7 @@ struct UserListView: View {
                 .frame(maxWidth: 500)
                 .multilineTextAlignment(.center)
                 .font(.body)
-            
+
             Button {
                 userListRouter.route(to: \.userSignIn, viewModel.server)
             } label: {
@@ -60,46 +64,44 @@ struct UserListView: View {
         }
     }
 
-    @ViewBuilder
-    private var innerBody: some View {
-        if viewModel.users.isEmpty {
-            noUserView
-                .offset(y: -50)
-        } else {
-            listView
-        }
-    }
-
-    @ViewBuilder
-    private var toolbarContent: some View {
-        if viewModel.users.isEmpty {
-            EmptyView()
-        } else {
-            HStack {
-                Button {
-                    userListRouter.route(to: \.userSignIn, viewModel.server)
-                } label: {
-                    Image(systemName: "person.crop.circle.fill.badge.plus")
-                }
-            }
-        }
-    }
-
     var body: some View {
-        innerBody
-            .navigationTitle(viewModel.server.name)
-            .toolbar {
+        ZStack {
+            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
+                .ignoresSafeArea()
+
+            Color.black
+                .opacity(0.9)
+                .ignoresSafeArea()
+
+            if viewModel.users.isEmpty {
+                noUserView
+                    .offset(y: -50)
+            } else {
+                listView
+            }
+        }
+        .navigationTitle(viewModel.server.name)
+        .if(!viewModel.users.isEmpty) { view in
+            view.toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    toolbarContent
+                    Button {
+                        userListRouter.route(to: \.userSignIn, viewModel.server)
+                    } label: {
+                        Image(systemName: "person.crop.circle.fill.badge.plus")
+                    }
                 }
             }
-            .alert(item: $longPressedUser) { user in
-                Alert(title: Text(user.username),
-                      primaryButton: .destructive(L10n.remove.text, action: { viewModel.remove(user: user) }),
-                      secondaryButton: .cancel())
-            }
-            .onAppear {
-                viewModel.fetchUsers()
-            }
+        }
+
+        .alert(item: $longPressedUser) { user in
+            Alert(
+                title: Text(user.username),
+                primaryButton: .destructive(L10n.remove.text, action: { viewModel.remove(user: user) }),
+                secondaryButton: .cancel()
+            )
+        }
+        .onAppear {
+            viewModel.fetchUsers()
+        }
     }
 }

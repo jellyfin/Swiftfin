@@ -101,21 +101,23 @@ final class ConnectToServerViewModel: ViewModel {
     func discoverServers() {
         discoveredServers.removeAll()
         searching = true
-        
+
         var _discoveredServers: Set<SwiftfinStore.State.Server> = []
 
         discovery.locateServer { server in
             if let server = server {
-                _discoveredServers.insert(.init(uris: [],
-                                                currentURI: server.url.absoluteString,
-                                                name: server.name,
-                                                id: server.id,
-                                                os: "",
-                                                version: "",
-                                                usersIDs: []))
+                _discoveredServers.insert(.init(
+                    uris: [],
+                    currentURI: server.url.absoluteString,
+                    name: server.name,
+                    id: server.id,
+                    os: "",
+                    version: "",
+                    usersIDs: []
+                ))
             }
         }
-        
+
         // Timeout after 3 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.searching = false

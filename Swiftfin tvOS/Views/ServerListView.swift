@@ -16,6 +16,9 @@ struct ServerListView: View {
     @ObservedObject
     var viewModel: ServerListViewModel
 
+    @State
+    private var longPressedServer: SwiftfinStore.State.Server?
+
     @ViewBuilder
     private var listView: some View {
         ScrollView {
@@ -25,14 +28,10 @@ struct ServerListView: View {
                         .onSelect {
                             router.route(to: \.userList, server)
                         }
-                        .padding(.horizontal, 100)
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                viewModel.remove(server: server)
-                            } label: {
-                                Label(L10n.remove, systemImage: "trash")
-                            }
+                        .onLongPressGesture {
+                            longPressedServer = server
                         }
+                        .padding(.horizontal, 100)
                 }
             }
             .padding(.top, 50)
@@ -91,6 +90,13 @@ struct ServerListView: View {
                         }
                     }
                 }
+            }
+            .alert(item: $longPressedServer) { server in
+                Alert(
+                    title: Text(server.name),
+                    primaryButton: .destructive(L10n.remove.text, action: { viewModel.remove(server: server) }),
+                    secondaryButton: .cancel()
+                )
             }
             .onAppear {
                 viewModel.fetchServers()

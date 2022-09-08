@@ -8,8 +8,4 @@
 
 import Foundation
 
-extension SwiftfinStore.State.Server {
-    
-    
-    
-}
+extension SwiftfinStore.State.Server {}

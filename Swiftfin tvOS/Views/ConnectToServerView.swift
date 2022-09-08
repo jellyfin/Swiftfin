@@ -19,7 +19,7 @@ struct ConnectToServerView: View {
 
     @Default(.defaultHTTPScheme)
     private var defaultHTTPScheme
-    
+
     @ViewBuilder
     private var connectForm: some View {
         VStack(alignment: .leading) {
@@ -41,7 +41,7 @@ struct ConnectToServerView: View {
                         if viewModel.isLoading {
                             ProgressView()
                         }
-                        
+
                         L10n.connect.text
                             .bold()
                             .font(.callout)
@@ -57,40 +57,40 @@ struct ConnectToServerView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private var searchingDiscoverServers: some View {
         HStack(spacing: 5) {
             ProgressView()
-            
+
             L10n.searchingDots.text
                 .foregroundColor(.secondary)
         }
     }
-    
+
     @ViewBuilder
     private var noLocalServersFound: some View {
-            L10n.noLocalServersFound.text
-                .font(.callout)
-                .foregroundColor(.secondary)
+        L10n.noLocalServersFound.text
+            .font(.callout)
+            .foregroundColor(.secondary)
     }
-    
+
     @ViewBuilder
     private var localServers: some View {
         VStack(alignment: .center) {
-            
+
             HStack {
                 L10n.localServers.text
                     .font(.title3)
                     .fontWeight(.semibold)
-                
+
                 SFSymbolButton(systemName: "arrow.clockwise") {
                     viewModel.discoverServers()
                 }
                 .frame(width: 30, height: 30)
                 .disabled(viewModel.searching || viewModel.isLoading)
             }
-            
+
             if viewModel.searching {
                 searchingDiscoverServers
                     .frame(maxHeight: .infinity)
@@ -119,7 +119,7 @@ struct ConnectToServerView: View {
         HStack(alignment: .top) {
             connectForm
                 .frame(maxWidth: .infinity)
-            
+
             localServers
                 .frame(maxWidth: .infinity)
         }
@@ -138,7 +138,8 @@ struct ConnectToServerView: View {
             Alert(
                 title: L10n.existingServer.text,
                 message: L10n.serverAlreadyExistsPrompt(viewModel.addServerURIPayload?.server.name ?? .emptyDash).text,
-                dismissButton: .cancel())
+                dismissButton: .cancel()
+            )
         }
     }
 }
