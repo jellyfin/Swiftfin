@@ -13,12 +13,8 @@ struct LandscapePosterProgressBar: View {
     let title: String
     let progress: CGFloat
 
-    // Scale padding depending on view width
-    @State
-    private var paddingScale: CGFloat = 1.0
-
     var body: some View {
-        GeometryReader { reader in
+        GeometryReader { _ in
             ZStack(alignment: .bottom) {
                 LinearGradient(
                     stops: [
@@ -28,9 +24,9 @@ struct LandscapePosterProgressBar: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: 40)
+                .frame(height: 60)
 
-                VStack(alignment: .leading, spacing: 3 * paddingScale) {
+                VStack(alignment: .leading, spacing: 3) {
 
                     Spacer()
 
@@ -39,12 +35,10 @@ struct LandscapePosterProgressBar: View {
                         .foregroundColor(.white)
 
                     ProgressBar(progress: progress)
+                        .frame(height: 5)
                 }
-                .padding(.horizontal, 5 * paddingScale)
-                .padding(.bottom, 7 * paddingScale)
-                .onAppear {
-                    paddingScale = reader.size.width / 300
-                }
+                .padding(.horizontal, 5)
+                .padding(.bottom, 7)
             }
         }
     }

@@ -11,42 +11,57 @@ import JellyfinAPI
 import Nuke
 import SwiftUI
 
-struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
-    
+struct CinematicItemSelector<Item: Poster, TopContent: View, ItemContent: View, ItemImageOverlay: View, ItemContextMenu: View>: View {
+
     @ObservedObject
     private var viewModel: CinematicBackgroundView.ViewModel = .init()
-    
-    private var content: (Item) -> Content
-    private var imageOverlay: (Item) -> ImageOverlay
-    private var contextMenu: (Item) -> ContextMenu
+
+    private var topContent: (Item) -> TopContent
+    private var itemContent: (Item) -> ItemContent
+    private var itemImageOverlay: (Item) -> ItemImageOverlay
+    private var itemContextMenu: (Item) -> ItemContextMenu
     private var onSelect: (Item) -> Void
 
     let items: [Item]
-    
+
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            
-            CinematicBackgroundView(viewModel: viewModel)
-                .ignoresSafeArea()
-                .mask {
-                    LinearGradient(
-                        stops: [
-                            .init(color: .white, location: 0.9),
-                            .init(color: .clear, location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom)
-                }
-            
-            VStack(alignment: .leading) {
+
+            ZStack {
+                CinematicBackgroundView(viewModel: viewModel, initialItem: items.first)
+                    .ignoresSafeArea()
+
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0.5),
+                        .init(color: .black.opacity(0.4), location: 0.6),
+                        .init(color: .black, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            .mask {
+                LinearGradient(
+                    stops: [
+                        .init(color: .white, location: 0.9),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
                 if let currentItem = viewModel.currentItem {
-                    Text(currentItem.displayName)
+                    topContent(currentItem)
+                        .id(currentItem.displayName)
                 }
-                
+
                 PosterHStack(type: .landscape, items: items)
-                    .content(content)
-                    .imageOverlay(imageOverlay)
-                    .contextMenu(contextMenu)
+                    .content(itemContent)
+                    .imageOverlay(itemImageOverlay)
+                    .contextMenu(itemContextMenu)
                     .onSelect(onSelect)
                     .onFocus { item in
                         viewModel.select(item: item)
@@ -56,19 +71,20 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
         .frame(height: UIScreen.main.bounds.height - 75)
         .frame(maxWidth: .infinity)
     }
-    
+
     struct CinematicBackgroundView: UIViewRepresentable {
 
         @ObservedObject
         var viewModel: ViewModel
-        
+        var initialItem: Item?
+
         @ViewBuilder
         private func imageView(for item: Item?) -> some View {
             ImageView(item?.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width, single: false) ?? [])
         }
 
         func makeUIView(context: Context) -> UIRotateImageView {
-            let hostingController = UIHostingController(rootView: imageView(for: viewModel.currentItem), ignoreSafeArea: true)
+            let hostingController = UIHostingController(rootView: imageView(for: initialItem), ignoreSafeArea: true)
             return UIRotateImageView(initialView: hostingController.view)
         }
 
@@ -76,15 +92,15 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
             let hostingController = UIHostingController(rootView: imageView(for: viewModel.currentItem), ignoreSafeArea: true)
             uiView.update(with: hostingController.view)
         }
-        
+
         class ViewModel: ObservableObject {
-            
+
             @Published
             var currentItem: Item?
             private var cancellables = Set<AnyCancellable>()
-            
+
             private var currentItemSubject = CurrentValueSubject<Item?, Never>(nil)
-            
+
             init() {
                 currentItemSubject
                     .debounce(for: 0.5, scheduler: DispatchQueue.main)
@@ -93,14 +109,14 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
                     }
                     .store(in: &cancellables)
             }
-            
+
             func select(item: Item) {
                 guard currentItem != item else { return }
                 currentItemSubject.send(item)
             }
         }
     }
-    
+
     class UIRotateImageView: UIView {
 
         private var currentView: UIView?
@@ -150,53 +166,77 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
     }
 }
 
-extension CinematicItemSelector where Content == EmptyView,
-                                      ImageOverlay == EmptyView,
-                                      ContextMenu == EmptyView {
+extension CinematicItemSelector where TopContent == EmptyView,
+    ItemContent == EmptyView,
+    ItemImageOverlay == EmptyView,
+    ItemContextMenu == EmptyView
+{
     init(items: [Item]) {
-        self.init(content: { _ in EmptyView() },
-                  imageOverlay: { _ in EmptyView() },
-                  contextMenu: { _ in EmptyView() },
-                  onSelect: { _ in },
-                  items: items)
-        
-        if let firstItem = items.first {
-            viewModel.select(item: firstItem)
-        }
+        self.init(
+            topContent: { _ in EmptyView() },
+            itemContent: { _ in EmptyView() },
+            itemImageOverlay: { _ in EmptyView() },
+            itemContextMenu: { _ in EmptyView() },
+            onSelect: { _ in },
+            items: items
+        )
     }
 }
 
 extension CinematicItemSelector {
+
     @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C) -> CinematicItemSelector<Item, C, ImageOverlay, ContextMenu> {
-        CinematicItemSelector<Item, C, ImageOverlay, ContextMenu>(
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
+    func topContent<T: View>(@ViewBuilder _ content: @escaping (Item) -> T)
+    -> CinematicItemSelector<Item, T, ItemContent, ItemImageOverlay, ItemContextMenu> {
+        CinematicItemSelector<Item, T, ItemContent, ItemImageOverlay, ItemContextMenu>(
+            topContent: content,
+            itemContent: itemContent,
+            itemImageOverlay: itemImageOverlay,
+            itemContextMenu: itemContextMenu,
             onSelect: onSelect,
-            items: items)
+            items: items
+        )
     }
-    
+
     @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O) -> CinematicItemSelector<Item, Content, O, ContextMenu> {
-        CinematicItemSelector<Item, Content, O, ContextMenu>(
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
+    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
+    -> CinematicItemSelector<Item, TopContent, C, ItemImageOverlay, ItemContextMenu> {
+        CinematicItemSelector<Item, TopContent, C, ItemImageOverlay, ItemContextMenu>(
+            topContent: topContent,
+            itemContent: content,
+            itemImageOverlay: itemImageOverlay,
+            itemContextMenu: itemContextMenu,
             onSelect: onSelect,
-            items: items)
+            items: items
+        )
     }
-    
+
     @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M) -> CinematicItemSelector<Item, Content, ImageOverlay, M> {
-        CinematicItemSelector<Item, Content, ImageOverlay, M>(
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
+    func itemImageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O)
+    -> CinematicItemSelector<Item, TopContent, ItemContent, O, ItemContextMenu> {
+        CinematicItemSelector<Item, TopContent, ItemContent, O, ItemContextMenu>(
+            topContent: topContent,
+            itemContent: itemContent,
+            itemImageOverlay: imageOverlay,
+            itemContextMenu: itemContextMenu,
             onSelect: onSelect,
-            items: items)
+            items: items
+        )
     }
-    
+
+    @ViewBuilder
+    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
+    -> CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, M> {
+        CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, M>(
+            topContent: topContent,
+            itemContent: itemContent,
+            itemImageOverlay: itemImageOverlay,
+            itemContextMenu: contextMenu,
+            onSelect: onSelect,
+            items: items
+        )
+    }
+
     func onSelect(_ action: @escaping (Item) -> Void) -> Self {
         var copy = self
         copy.onSelect = action

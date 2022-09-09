@@ -23,7 +23,7 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
 
     var body: some View {
         VStack(alignment: .leading) {
-            
+
             if let title = title {
                 HStack {
                     Text(title)
@@ -163,7 +163,7 @@ extension PosterHStack {
         copy.onSelect = action
         return copy
     }
-    
+
     func onFocus(_ action: @escaping (Item) -> Void) -> Self {
         var copy = self
         copy.onFocus = action

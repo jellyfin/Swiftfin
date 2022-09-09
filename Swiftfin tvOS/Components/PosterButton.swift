@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
-    
+
     @FocusState
     private var isFocused: Bool
 
@@ -80,7 +80,7 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             onSelect: { _ in },
-            onFocus: { },
+            onFocus: {},
             singleImage: singleImage
         )
     }
@@ -152,7 +152,7 @@ extension PosterButton {
         copy.onSelect = action
         return copy
     }
-    
+
     func onFocus(_ action: @escaping () -> Void) -> Self {
         var copy = self
         copy.onFocus = action
