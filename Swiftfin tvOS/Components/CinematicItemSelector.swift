@@ -11,13 +11,17 @@ import JellyfinAPI
 import Nuke
 import SwiftUI
 
-struct CinematicItemSelector: View {
+struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
     
     @ObservedObject
     private var viewModel: CinematicBackgroundView.ViewModel = .init()
     
-    private var onSelect: (BaseItemDto) -> Void
-    let items: [BaseItemDto]
+    private var content: (Item) -> Content
+    private var imageOverlay: (Item) -> ImageOverlay
+    private var contextMenu: (Item) -> ContextMenu
+    private var onSelect: (Item) -> Void
+
+    let items: [Item]
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -31,12 +35,12 @@ struct CinematicItemSelector: View {
                 }
                 
                 PosterHStack(type: .landscape, items: items)
+                    .content(content)
+                    .imageOverlay(imageOverlay)
+                    .contextMenu(contextMenu)
                     .onSelect(onSelect)
                     .onFocus { item in
-                        self.viewModel.select(item: item)
-                    }
-                    .content { _ in
-                        EmptyView()
+//                        self.viewModel.select(item: item)
                     }
             }
         }
@@ -146,17 +150,54 @@ struct CinematicItemSelector: View {
     }
 }
 
-extension CinematicItemSelector {
-    init(items: [BaseItemDto]) {
-        self.items = items
-        self.onSelect = { _ in }
+extension CinematicItemSelector where Content == EmptyView,
+                                      ImageOverlay == EmptyView,
+                                      ContextMenu == EmptyView {
+    init(items: [Item]) {
+        self.init(content: { _ in EmptyView() },
+                  imageOverlay: { _ in EmptyView() },
+                  contextMenu: { _ in EmptyView() },
+                  onSelect: { _ in },
+                  items: items)
         
-        if let firstItem = items.first {
-            viewModel.select(item: firstItem)
-        }
+//        if let firstItem = items.first {
+//            viewModel.select(item: firstItem)
+//        }
+    }
+}
+
+extension CinematicItemSelector {
+    @ViewBuilder
+    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C) -> CinematicItemSelector<Item, C, ImageOverlay, ContextMenu> {
+        CinematicItemSelector<Item, C, ImageOverlay, ContextMenu>(
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            onSelect: onSelect,
+            items: items)
     }
     
-    func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {
+    @ViewBuilder
+    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O) -> CinematicItemSelector<Item, Content, O, ContextMenu> {
+        CinematicItemSelector<Item, Content, O, ContextMenu>(
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            onSelect: onSelect,
+            items: items)
+    }
+    
+    @ViewBuilder
+    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M) -> CinematicItemSelector<Item, Content, ImageOverlay, M> {
+        CinematicItemSelector<Item, Content, ImageOverlay, M>(
+            content: content,
+            imageOverlay: imageOverlay,
+            contextMenu: contextMenu,
+            onSelect: onSelect,
+            items: items)
+    }
+    
+    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
         var copy = self
         copy.onSelect = action
         return copy

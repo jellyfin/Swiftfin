@@ -32,6 +32,12 @@ struct HomeView: View {
                             }
                     } else {
                         CinematicItemSelector(items: viewModel.resumeItems)
+                            .imageOverlay { item in
+                                LandscapePosterProgressBar(
+                                    title: item.progress ?? L10n.continue,
+                                    progress: (item.userData?.playedPercentage ?? 0) / 100
+                                )
+                            }
                             .onSelect { item in
                                 router.route(to: \.item, item)
                             }

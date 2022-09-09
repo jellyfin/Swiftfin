@@ -1211,8 +1211,8 @@
 		536D3D77267BB9650004248C /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
-				E103A6A1278A7EB500820EC7 /* CinematicItemSelector */,
 				E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */,
 				E1CCC3D128C858A50020ED54 /* UserProfileButton.swift */,
 				531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */,
@@ -1567,14 +1567,6 @@
 				E1002B5E2793C3BE00E47059 /* VLCPlayerChapterOverlayView.swift */,
 			);
 			path = Overlays;
-			sourceTree = "<group>";
-		};
-		E103A6A1278A7EB500820EC7 /* CinematicItemSelector */ = {
-			isa = PBXGroup;
-			children = (
-				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
-			);
-			path = CinematicItemSelector;
 			sourceTree = "<group>";
 		};
 		E107BB9127880A4000354E07 /* ItemViewModel */ = {
