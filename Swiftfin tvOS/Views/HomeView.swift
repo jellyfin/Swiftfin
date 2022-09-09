@@ -22,39 +22,31 @@ struct HomeView: View {
     var body: some View {
         if viewModel.isLoading {
             ProgressView()
-                .scaleEffect(2)
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading) {
+                    if viewModel.resumeItems.isEmpty {
+                        CinematicItemSelector(items: viewModel.nextUpItems)
+                            .onSelect { item in
+                                router.route(to: \.item, item)
+                            }
+                    } else {
+                        CinematicItemSelector(items: viewModel.resumeItems)
+                            .onSelect { item in
+                                router.route(to: \.item, item)
+                            }
+                    }
                     
-                    CinematicItemSelector(items: viewModel.latestAddedItems)
+                    if !viewModel.latestAddedItems.isEmpty {
+                        PosterHStack(title: L10n.recentlyAdded, type: .portrait, items: viewModel.latestAddedItems)
+                            .onSelect { item in
+                                router.route(to: \.item, item)
+                            }
+                    }
 
-//                    if viewModel.resumeItems.isEmpty {
-//                        if !viewModel.nextUpItems.isEmpty {
-//                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
-//                                .onSelect { item in
-//                                    router.route(to: \.item, item)
-//                                }
-//                        }
-//                    } else {
-//                        if !viewModel.nextUpItems.isEmpty {
-//                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
-//                                .onSelect { item in
-//                                    router.route(to: \.item, item)
-//                                }
-//                        }
-//
-//                        if !viewModel.latestAddedItems.isEmpty {
-//                            PosterHStack(title: L10n.recentlyAdded, type: .portrait, items: viewModel.latestAddedItems)
-//                                .onSelect { item in
-//                                    router.route(to: \.item, item)
-//                                }
-//                        }
-//                    }
-//
-//                    ForEach(viewModel.libraries, id: \.self) { library in
-//                        LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
-//                    }
+                    ForEach(viewModel.libraries, id: \.self) { library in
+                        LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
+                    }
                 }
             }
             .edgesIgnoringSafeArea(.top)
