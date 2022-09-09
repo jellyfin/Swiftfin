@@ -37,7 +37,7 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top) {
+                HStack(alignment: .top, spacing: 30) {
                     ForEach(items, id: \.hashValue) { item in
                         PosterButton(item: item, type: type)
                             .scaleItem(itemScale)

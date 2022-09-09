@@ -28,6 +28,15 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
             
             CinematicBackgroundView(viewModel: viewModel)
                 .ignoresSafeArea()
+                .mask {
+                    LinearGradient(
+                        stops: [
+                            .init(color: .white, location: 0.9),
+                            .init(color: .clear, location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom)
+                }
             
             VStack(alignment: .leading) {
                 if let currentItem = viewModel.currentItem {
@@ -40,21 +49,12 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
                     .contextMenu(contextMenu)
                     .onSelect(onSelect)
                     .onFocus { item in
-//                        self.viewModel.select(item: item)
+                        viewModel.select(item: item)
                     }
             }
         }
-        .frame(height: UIScreen.main.bounds.height - 100)
+        .frame(height: UIScreen.main.bounds.height - 75)
         .frame(maxWidth: .infinity)
-        .mask {
-            LinearGradient(
-                stops: [
-                    .init(color: .white, location: 0.9),
-                    .init(color: .clear, location: 1)
-                ],
-                startPoint: .top,
-                endPoint: .bottom)
-        }
     }
     
     struct CinematicBackgroundView: UIViewRepresentable {
@@ -63,8 +63,8 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
         var viewModel: ViewModel
         
         @ViewBuilder
-        private func imageView(for item: BaseItemDto?) -> some View {
-            ImageView(item?.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width) ?? [])
+        private func imageView(for item: Item?) -> some View {
+            ImageView(item?.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width, single: false) ?? [])
         }
 
         func makeUIView(context: Context) -> UIRotateImageView {
@@ -80,10 +80,10 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
         class ViewModel: ObservableObject {
             
             @Published
-            var currentItem: BaseItemDto?
+            var currentItem: Item?
             private var cancellables = Set<AnyCancellable>()
             
-            private var currentItemSubject = CurrentValueSubject<BaseItemDto?, Never>(nil)
+            private var currentItemSubject = CurrentValueSubject<Item?, Never>(nil)
             
             init() {
                 currentItemSubject
@@ -94,7 +94,7 @@ struct CinematicItemSelector<Item: Poster, Content: View, ImageOverlay: View, Co
                     .store(in: &cancellables)
             }
             
-            func select(item: BaseItemDto) {
+            func select(item: Item) {
                 guard currentItem != item else { return }
                 currentItemSubject.send(item)
             }
@@ -160,9 +160,9 @@ extension CinematicItemSelector where Content == EmptyView,
                   onSelect: { _ in },
                   items: items)
         
-//        if let firstItem = items.first {
-//            viewModel.select(item: firstItem)
-//        }
+        if let firstItem = items.first {
+            viewModel.select(item: firstItem)
+        }
     }
 }
 
