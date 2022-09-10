@@ -39,6 +39,7 @@ struct LandscapePosterProgressBar: View {
                         .foregroundColor(.white)
 
                     ProgressBar(progress: progress)
+                        .frame(height: 3)
                 }
                 .padding(.horizontal, 5 * paddingScale)
                 .padding(.bottom, 7 * paddingScale)

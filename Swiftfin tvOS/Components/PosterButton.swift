@@ -10,40 +10,22 @@ import SwiftUI
 
 struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
-    private let item: Item
-    private let type: PosterType
-    private let itemScale: CGFloat
-    private let horizontalAlignment: HorizontalAlignment
-    private let content: (Item) -> Content
-    private let imageOverlay: (Item) -> ImageOverlay
-    private let contextMenu: (Item) -> ContextMenu
-    private let onSelect: (Item) -> Void
-    private let singleImage: Bool
+    @FocusState
+    private var isFocused: Bool
+
+    private var item: Item
+    private var type: PosterType
+    private var itemScale: CGFloat
+    private var horizontalAlignment: HorizontalAlignment
+    private var content: (Item) -> Content
+    private var imageOverlay: (Item) -> ImageOverlay
+    private var contextMenu: (Item) -> ContextMenu
+    private var onSelect: (Item) -> Void
+    private var onFocus: () -> Void
+    private var singleImage: Bool
 
     private var itemWidth: CGFloat {
         type.width * itemScale
-    }
-
-    private init(
-        item: Item,
-        type: PosterType,
-        itemScale: CGFloat,
-        horizontalAlignment: HorizontalAlignment,
-        @ViewBuilder content: @escaping (Item) -> Content,
-        @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
-        @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
-        onSelect: @escaping (Item) -> Void,
-        singleImage: Bool
-    ) {
-        self.item = item
-        self.type = type
-        self.itemScale = itemScale
-        self.horizontalAlignment = horizontalAlignment
-        self.content = content
-        self.imageOverlay = imageOverlay
-        self.contextMenu = contextMenu
-        self.onSelect = onSelect
-        self.singleImage = singleImage
     }
 
     var body: some View {
@@ -71,11 +53,16 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                 contextMenu(item)
             })
             .posterShadow()
+            .focused($isFocused)
 
             content(item)
                 .zIndex(-1)
         }
         .frame(width: itemWidth)
+        .onChange(of: isFocused) { newValue in
+            guard newValue else { return }
+            onFocus()
+        }
     }
 }
 
@@ -93,40 +80,23 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             onSelect: { _ in },
+            onFocus: {},
             singleImage: singleImage
         )
     }
 }
 
 extension PosterButton {
-    @ViewBuilder
-    func horizontalAlignment(_ alignment: HorizontalAlignment) -> PosterButton {
-        PosterButton(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: alignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            singleImage: singleImage
-        )
+    func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
+        var copy = self
+        copy.horizontalAlignment = alignment
+        return copy
     }
 
-    @ViewBuilder
-    func scaleItem(_ scale: CGFloat) -> PosterButton {
-        PosterButton(
-            item: item,
-            type: type,
-            itemScale: scale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            singleImage: singleImage
-        )
+    func scaleItem(_ scale: CGFloat) -> Self {
+        var copy = self
+        copy.itemScale = scale
+        return copy
     }
 
     @ViewBuilder
@@ -140,6 +110,7 @@ extension PosterButton {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             onSelect: onSelect,
+            onFocus: onFocus,
             singleImage: singleImage
         )
     }
@@ -155,6 +126,7 @@ extension PosterButton {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             onSelect: onSelect,
+            onFocus: onFocus,
             singleImage: singleImage
         )
     }
@@ -170,23 +142,21 @@ extension PosterButton {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             onSelect: onSelect,
+            onFocus: onFocus,
             singleImage: singleImage
         )
     }
 
-    @ViewBuilder
-    func onSelect(_ action: @escaping (Item) -> Void) -> PosterButton {
-        PosterButton(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: action,
-            singleImage: singleImage
-        )
+    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
+        var copy = self
+        copy.onSelect = action
+        return copy
+    }
+
+    func onFocus(_ action: @escaping () -> Void) -> Self {
+        var copy = self
+        copy.onFocus = action
+        return copy
     }
 }
 

@@ -44,7 +44,7 @@ struct LibraryView: View {
         .layout { _, layoutEnvironment in
             .grid(
                 layoutEnvironment: layoutEnvironment,
-                layoutMode: .fixedNumberOfColumns(6),
+                layoutMode: .fixedNumberOfColumns(7),
                 lineSpacing: 50
             )
         }

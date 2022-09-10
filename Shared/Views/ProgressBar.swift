@@ -23,6 +23,5 @@ struct ProgressBar: View {
                 .scaleEffect(x: progress, y: 1, anchor: .leading)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 3)
     }
 }

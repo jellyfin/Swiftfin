@@ -56,14 +56,16 @@ extension BaseItemDto {
     }
 
     func seriesImageURL(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> URL {
-        let maxWidth = maxWidth != nil ? Int(maxWidth!) : nil
-        let maxHeight = maxHeight != nil ? Int(maxHeight!) : nil
-        return _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
+        _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: seriesId ?? "")
     }
 
     func seriesImageSource(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> ImageSource {
         let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
         return ImageSource(url: url, blurHash: nil)
+    }
+
+    func seriesImageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> ImageSource {
+        seriesImageSource(type, maxWidth: Int(maxWidth), maxHeight: Int(maxWidth))
     }
 
     func seriesImageSource(_ type: ImageType, maxWidth: CGFloat) -> ImageSource {

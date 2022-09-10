@@ -10,58 +10,42 @@ import SwiftUI
 
 struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
 
-    private let title: String
-    private let type: PosterType
-    private let items: [Item]
-    private let itemScale: CGFloat
-    private let content: (Item) -> Content
-    private let imageOverlay: (Item) -> ImageOverlay
-    private let contextMenu: (Item) -> ContextMenu
-    private let trailingContent: () -> TrailingContent
-    private let onSelect: (Item) -> Void
-
-    private init(
-        title: String,
-        type: PosterType,
-        items: [Item],
-        itemScale: CGFloat,
-        @ViewBuilder content: @escaping (Item) -> Content,
-        @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
-        @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
-        @ViewBuilder trailingContent: @escaping () -> TrailingContent,
-        onSelect: @escaping (Item) -> Void
-    ) {
-        self.title = title
-        self.type = type
-        self.items = items
-        self.itemScale = itemScale
-        self.content = content
-        self.imageOverlay = imageOverlay
-        self.contextMenu = contextMenu
-        self.trailingContent = trailingContent
-        self.onSelect = onSelect
-    }
+    private var title: String?
+    private var type: PosterType
+    private var items: [Item]
+    private var itemScale: CGFloat
+    private var content: (Item) -> Content
+    private var imageOverlay: (Item) -> ImageOverlay
+    private var contextMenu: (Item) -> ContextMenu
+    private var trailingContent: () -> TrailingContent
+    private var onSelect: (Item) -> Void
+    private var onFocus: (Item) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text(title)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .accessibility(addTraits: [.isHeader])
-                    .padding(.leading, 50)
 
-                Spacer()
+            if let title = title {
+                HStack {
+                    Text(title)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .accessibility(addTraits: [.isHeader])
+                        .padding(.leading, 50)
+
+                    Spacer()
+                }
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top) {
+                HStack(alignment: .top, spacing: 30) {
                     ForEach(items, id: \.hashValue) { item in
                         PosterButton(item: item, type: type)
                             .scaleItem(itemScale)
+                            .content(content)
                             .imageOverlay(imageOverlay)
                             .contextMenu(contextMenu)
                             .onSelect(onSelect)
+                            .onFocus { onFocus(item) }
                     }
 
                     trailingContent()
@@ -80,7 +64,7 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
     TrailingContent == EmptyView
 {
     init(
-        title: String,
+        title: String? = nil,
         type: PosterType,
         items: [Item]
     ) {
@@ -93,25 +77,17 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
-            onSelect: { _ in }
+            onSelect: { _ in },
+            onFocus: { _ in }
         )
     }
 }
 
 extension PosterHStack {
-    @ViewBuilder
-    func scaleItems(_ scale: CGFloat) -> PosterHStack {
-        PosterHStack(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: scale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func scaleItems(_ scale: CGFloat) -> Self {
+        var copy = self
+        copy.itemScale = scale
+        return copy
     }
 
     @ViewBuilder
@@ -126,7 +102,8 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            onSelect: onSelect
+            onSelect: onSelect,
+            onFocus: onFocus
         )
     }
 
@@ -142,7 +119,8 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            onSelect: onSelect
+            onSelect: onSelect,
+            onFocus: onFocus
         )
     }
 
@@ -158,7 +136,8 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            onSelect: onSelect
+            onSelect: onSelect,
+            onFocus: onFocus
         )
     }
 
@@ -174,22 +153,20 @@ extension PosterHStack {
             imageOverlay: imageOverlay,
             contextMenu: contextMenu,
             trailingContent: trailingContent,
-            onSelect: onSelect
+            onSelect: onSelect,
+            onFocus: onFocus
         )
     }
 
-    @ViewBuilder
-    func onSelect(_ onSelect: @escaping (Item) -> Void) -> PosterHStack {
-        PosterHStack(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
+        var copy = self
+        copy.onSelect = action
+        return copy
+    }
+
+    func onFocus(_ action: @escaping (Item) -> Void) -> Self {
+        var copy = self
+        copy.onFocus = action
+        return copy
     }
 }
