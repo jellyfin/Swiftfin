@@ -14,32 +14,27 @@ struct LandscapePosterProgressBar: View {
     let progress: CGFloat
 
     var body: some View {
-        GeometryReader { _ in
-            ZStack(alignment: .bottom) {
-                LinearGradient(
-                    stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .black.opacity(0.7), location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 60)
+        ZStack(alignment: .bottom) {
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0.7),
+                    .init(color: .black.opacity(0.7), location: 1),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
 
-                VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 3) {
 
-                    Spacer()
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
 
-                    Text(title)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-
-                    ProgressBar(progress: progress)
-                        .frame(height: 5)
-                }
-                .padding(.horizontal, 5)
-                .padding(.bottom, 7)
+                ProgressBar(progress: progress)
+                    .frame(height: 5)
             }
+            .padding(.horizontal, 5)
+            .padding(.bottom, 7)
         }
     }
 }
