@@ -6,10 +6,10 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
 import Foundation
 import JellyfinAPI
 import SwiftUI
-import SwiftUICollection
 
 typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 

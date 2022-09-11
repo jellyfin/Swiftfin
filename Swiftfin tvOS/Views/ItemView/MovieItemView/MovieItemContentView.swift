@@ -19,16 +19,11 @@ extension MovieItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
-        @ObservedObject
-        private var focusGuide = FocusGuide()
-        @State
-        private var showLogo: Bool = false
 
         var body: some View {
             VStack(spacing: 0) {
 
                 ItemView.CinematicHeaderView(viewModel: viewModel)
-                    .focusGuide(focusGuide, tag: "mediaButtons")
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
