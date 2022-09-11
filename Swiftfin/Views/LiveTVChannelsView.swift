@@ -6,10 +6,10 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
 import Foundation
 import JellyfinAPI
 import SwiftUI
-import SwiftUICollection
 
 typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 
@@ -36,30 +36,30 @@ struct LiveTVChannelsView: View {
         if viewModel.isLoading == true {
             ProgressView()
         } else if !viewModel.channelPrograms.isEmpty {
-            Text("nothing")
-//            ASCollectionView(data: viewModel.channelPrograms, dataID: \.self) { channelProgram, _ in
-//                makeCellView(channelProgram)
-//            }
-//            .layout {
-//                .grid(
-//                    layoutMode: .fixedNumberOfColumns(columns),
-//                    itemSpacing: 16,
-//                    lineSpacing: 4,
-//                    itemSize: .absolute(144)
-//                )
-//            }
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            .ignoresSafeArea()
-//            .onAppear {
-//                viewModel.startScheduleCheckTimer()
-//                self.checkOrientation()
-//            }
-//            .onDisappear {
-//                viewModel.stopScheduleCheckTimer()
-//            }
-//            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-//                self.checkOrientation()
-//            }
+            CollectionView(items: viewModel.channelPrograms) { _, program, _ in
+                makeCellView(program)
+            }
+            .layout { _, layoutEnvironment in
+                .grid(
+                    layoutEnvironment: layoutEnvironment,
+                    layoutMode: .adaptive(withMinItemSize: 144),
+                    itemSpacing: 16,
+                    lineSpacing: 4,
+                    itemSize: .absolute(144)
+                )
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea()
+            .onAppear {
+                viewModel.startScheduleCheckTimer()
+                self.checkOrientation()
+            }
+            .onDisappear {
+                viewModel.stopScheduleCheckTimer()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                self.checkOrientation()
+            }
         } else {
             VStack {
                 Text("No results.")
