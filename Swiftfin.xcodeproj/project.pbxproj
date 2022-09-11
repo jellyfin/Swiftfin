@@ -344,6 +344,8 @@
 		E17FB55B28C1266400311DFE /* GenresHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55A28C1266400311DFE /* GenresHStack.swift */; };
 		E184C160288C5C08000B25BA /* RequestBuilderExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E184C15F288C5C08000B25BA /* RequestBuilderExtensions.swift */; };
 		E184C161288C5C08000B25BA /* RequestBuilderExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E184C15F288C5C08000B25BA /* RequestBuilderExtensions.swift */; };
+		E185920628CDAA6400326F80 /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */; };
+		E185920828CDAAA200326F80 /* SimilarItemsHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */; };
 		E18845F526DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Poster.swift */; };
 		E18845F626DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Poster.swift */; };
 		E18CE0AF28A222240092E7F1 /* PublicUserSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0AE28A222240092E7F1 /* PublicUserSignInView.swift */; };
@@ -821,6 +823,8 @@
 		E17FB55828C125E900311DFE /* StudiosHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudiosHStack.swift; sourceTree = "<group>"; };
 		E17FB55A28C1266400311DFE /* GenresHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresHStack.swift; sourceTree = "<group>"; };
 		E184C15F288C5C08000B25BA /* RequestBuilderExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestBuilderExtensions.swift; sourceTree = "<group>"; };
+		E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
+		E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
 		E18845F426DD631E00B0C5B7 /* BaseItemDto+Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+Poster.swift"; sourceTree = "<group>"; };
 		E18CE0AE28A222240092E7F1 /* PublicUserSignInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicUserSignInView.swift; sourceTree = "<group>"; };
 		E18CE0B128A229E70092E7F1 /* UserDtoExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDtoExtensions.swift; sourceTree = "<group>"; };
@@ -2108,10 +2112,12 @@
 		E1C925FF2887565C002A7A66 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E11CEB9228999D8D003E74C7 /* EpisodeItemView */,
 				E1A16CA2288A7D0000EA4679 /* AboutView */,
 				E1C926032887565C002A7A66 /* ActionButtonHStack.swift */,
 				E1C926012887565C002A7A66 /* AttributeHStack.swift */,
+				E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */,
+				E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */,
+				E11CEB9228999D8D003E74C7 /* EpisodeItemView */,
 				E1C926022887565C002A7A66 /* PlayButton.swift */,
 			);
 			path = Components;
@@ -2478,6 +2484,7 @@
 				E1E9EFEB28C7EA2C00CC1F8B /* UserDtoExtensions.swift in Sources */,
 				62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				E1546777289AF46E00087E35 /* CollectionItemView.swift in Sources */,
+				E185920628CDAA6400326F80 /* CastAndCrewHStack.swift in Sources */,
 				E1C812CC277AE40A00918266 /* VideoPlayerView.swift in Sources */,
 				E1A42E4F28CBD3E100A14DCB /* HomeErrorView.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
@@ -2526,6 +2533,7 @@
 				E11CEB9428999D9E003E74C7 /* EpisodeItemContentView.swift in Sources */,
 				E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */,
 				E148128328C1443D003B8787 /* NameGUIDPairExtensions.swift in Sources */,
+				E185920828CDAAA200326F80 /* SimilarItemsHStack.swift in Sources */,
 				E1BDE359278E9ED2004E4022 /* MissingItemsSettingsView.swift in Sources */,
 				C4BE07892728448B003F4AD1 /* LiveTVChannelsCoordinator.swift in Sources */,
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,

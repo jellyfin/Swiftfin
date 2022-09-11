@@ -50,8 +50,6 @@ extension ItemView {
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
-        @EnvironmentObject
-        var focusGuide: FocusGuide
         @FocusState
         private var focusedLayer: CinematicHeaderFocusLayer?
 
@@ -72,6 +70,9 @@ extension ItemView {
                             maxHeight: 250
                         ))
                         .resizingMode(.bottomLeft)
+                        .placeholder {
+                            EmptyView()
+                        }
                         .failure {
                             Text(viewModel.item.displayName)
                                 .font(.largeTitle)
