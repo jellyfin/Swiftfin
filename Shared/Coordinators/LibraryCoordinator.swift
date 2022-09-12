@@ -43,6 +43,8 @@ final class LibraryCoordinator: NavigationCoordinatable {
     #if os(tvOS)
     @Route(.modal)
     var item = makeItem
+    @Route(.push)
+    var library = makeLibrary
     #else
     @Route(.push)
     var item = makeItem
@@ -70,6 +72,10 @@ final class LibraryCoordinator: NavigationCoordinatable {
     #if os(tvOS)
     func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
         NavigationViewCoordinator(ItemCoordinator(item: item))
+    }
+
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
     }
     #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {

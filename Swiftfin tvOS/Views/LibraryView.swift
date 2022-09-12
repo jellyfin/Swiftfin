@@ -9,12 +9,13 @@
 import CollectionView
 import Defaults
 import Introspect
+import JellyfinAPI
 import SwiftUI
 
 struct LibraryView: View {
 
     @EnvironmentObject
-    private var libraryRouter: LibraryCoordinator.Router
+    private var router: LibraryCoordinator.Router
     @ObservedObject
     var viewModel: LibraryViewModel
     @State
@@ -33,12 +34,26 @@ struct LibraryView: View {
         L10n.noResults.text
     }
 
+    private func baseItemOnSelect(_ item: BaseItemDto) {
+        if let baseParent = viewModel.parent as? BaseItemDto {
+            if baseParent.collectionType == "folders" {
+                router.route(to: \.library, .init(parent: item, type: .folders, filters: .init()))
+            } else if item.type == .folder {
+                router.route(to: \.library, .init(parent: item, type: .library, filters: .init()))
+            } else {
+                router.route(to: \.item, item)
+            }
+        } else {
+            router.route(to: \.item, item)
+        }
+    }
+
     @ViewBuilder
     private var libraryItemsView: some View {
         CollectionView(items: viewModel.items) { _, item, _ in
             PosterButton(item: item, type: libraryPosterType)
                 .onSelect { item in
-                    libraryRouter.route(to: \.item, item)
+                    baseItemOnSelect(item)
                 }
         }
         .layout { _, layoutEnvironment in
