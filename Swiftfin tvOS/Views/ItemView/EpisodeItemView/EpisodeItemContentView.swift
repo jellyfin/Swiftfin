@@ -14,80 +14,47 @@ extension EpisodeItemView {
 
         @ObservedObject
         var viewModel: EpisodeItemViewModel
-        @State
-        var scrollViewProxy: ScrollViewProxy
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        private var focusGuide = FocusGuide()
-        @State
-        private var showName: Bool = false
+        private var router: ItemCoordinator.Router
 
         var body: some View {
-            VStack {
+            VStack(spacing: 0) {
+
                 Self.EpisodeCinematicHeaderView(viewModel: viewModel)
-                    .focusGuide(focusGuide, tag: "mediaButtons", bottom: "recommended")
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                VStack(spacing: 0) {
+                ItemView.CastAndCrewHStack(people: viewModel.item.people?.filter(\.isDisplayed) ?? [])
 
-                    Color.clear
-                        .frame(height: 0.5)
-                        .id("topContentDivider")
-
-                    if showName {
-                        Text(viewModel.item.displayName)
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .lineLimit(1)
-                            .foregroundColor(.white)
-                    }
-
-                    PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
+                if let seriesItem = viewModel.seriesItem {
+                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
                         .onSelect { item in
-                            itemRouter.route(to: \.item, item)
+                            router.route(to: \.item, item)
                         }
-                        .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
-
-                    ItemView.AboutView(viewModel: viewModel)
-                        .focusGuide(focusGuide, tag: "about", top: "recommended")
-
-                    Spacer()
                 }
-                .frame(minHeight: UIScreen.main.bounds.height)
+
+                ItemView.AboutView(viewModel: viewModel)
             }
             .background {
-                BlurView()
+                BlurView(style: .dark)
                     .mask {
                         VStack(spacing: 0) {
-                            LinearGradient(gradient: Gradient(stops: [
-                                .init(color: .white, location: 0),
-                                .init(color: .white.opacity(0.5), location: 0.6),
-                                .init(color: .white.opacity(0), location: 1),
-                            ]), startPoint: .bottom, endPoint: .top)
-                                .frame(height: UIScreen.main.bounds.height - 150)
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .clear, location: 0.5),
+                                    .init(color: .white.opacity(0.8), location: 0.7),
+                                    .init(color: .white.opacity(0.8), location: 0.95),
+                                    .init(color: .white, location: 1),
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(height: UIScreen.main.bounds.height - 150)
 
                             Color.white
                         }
                     }
-            }
-            .onChange(of: focusGuide.focusedTag) { newTag in
-                if newTag == "recommended" && !showName {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        withAnimation(.easeIn(duration: 0.35)) {
-                            scrollViewProxy.scrollTo("topContentDivider")
-                        }
-                    }
-                    withAnimation {
-                        self.showName = true
-                    }
-                } else if newTag == "mediaButtons" {
-                    withAnimation {
-                        self.showName = false
-                    }
-                }
             }
         }
     }
@@ -106,8 +73,6 @@ extension EpisodeItemView.ContentView {
         private var itemRouter: ItemCoordinator.Router
         @FocusState
         private var focusedLayer: CinematicHeaderFocusLayer?
-        @EnvironmentObject
-        private var focusGuide: FocusGuide
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 

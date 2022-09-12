@@ -23,7 +23,7 @@ extension ItemView {
         var body: some View {
             PosterHStack(
                 title: L10n.recommended,
-                type: .landscape,
+                type: similarPosterType,
                 items: items
             )
             .onSelect { item in

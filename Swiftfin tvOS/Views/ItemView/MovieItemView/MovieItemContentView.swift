@@ -14,8 +14,6 @@ extension MovieItemView {
 
         @ObservedObject
         var viewModel: MovieItemViewModel
-        @State
-        var scrollViewProxy: ScrollViewProxy
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -28,7 +26,7 @@ extension MovieItemView {
                     .padding(.bottom, 50)
 
                 ItemView.CastAndCrewHStack(people: viewModel.item.people?.filter(\.isDisplayed) ?? [])
-                
+
                 ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 
                 ItemView.AboutView(viewModel: viewModel)

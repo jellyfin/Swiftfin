@@ -70,6 +70,7 @@ extension ItemView {
                     .padding(.bottom, 100)
                 }
             }
+            .focusSection()
             .alert(viewModel.item.displayName, isPresented: $presentOverviewAlert) {
                 Button {
                     presentOverviewAlert = false
