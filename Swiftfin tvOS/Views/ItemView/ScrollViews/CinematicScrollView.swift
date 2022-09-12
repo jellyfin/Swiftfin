@@ -16,7 +16,7 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        let content: (ScrollViewProxy) -> Content
+        let content: () -> Content
 
         var body: some View {
             ZStack {
@@ -27,9 +27,7 @@ extension ItemView {
                 }
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    ScrollViewReader { scrollViewProxy in
-                        content(scrollViewProxy)
-                    }
+                    content()
                 }
             }
             .ignoresSafeArea()
@@ -50,8 +48,6 @@ extension ItemView {
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
-        @EnvironmentObject
-        var focusGuide: FocusGuide
         @FocusState
         private var focusedLayer: CinematicHeaderFocusLayer?
 
@@ -72,6 +68,9 @@ extension ItemView {
                             maxHeight: 250
                         ))
                         .resizingMode(.bottomLeft)
+                        .placeholder {
+                            EmptyView()
+                        }
                         .failure {
                             Text(viewModel.item.displayName)
                                 .font(.largeTitle)

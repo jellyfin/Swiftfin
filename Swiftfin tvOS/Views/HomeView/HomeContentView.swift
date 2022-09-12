@@ -93,7 +93,7 @@ extension HomeView {
 
         var body: some View {
             ScrollView {
-                LazyVStack(alignment: .leading) {
+                LazyVStack(alignment: .leading, spacing: 0) {
                     if viewModel.resumeItems.isEmpty {
                         cinematicLatestAddedItems
 

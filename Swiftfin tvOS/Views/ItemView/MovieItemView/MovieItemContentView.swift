@@ -14,57 +14,22 @@ extension MovieItemView {
 
         @ObservedObject
         var viewModel: MovieItemViewModel
-        @State
-        var scrollViewProxy: ScrollViewProxy
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
-        @ObservedObject
-        private var focusGuide = FocusGuide()
-        @State
-        private var showLogo: Bool = false
+        private var router: ItemCoordinator.Router
 
         var body: some View {
             VStack(spacing: 0) {
 
                 ItemView.CinematicHeaderView(viewModel: viewModel)
-                    .focusGuide(focusGuide, tag: "mediaButtons", bottom: "recommended")
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                VStack(spacing: 0) {
+                ItemView.CastAndCrewHStack(people: viewModel.item.people?.filter(\.isDisplayed) ?? [])
 
-                    Color.clear
-                        .frame(height: 0.5)
-                        .id("topContentDivider")
+                ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 
-                    if showLogo {
-                        ImageView(viewModel.item.imageSource(.logo, maxWidth: 500, maxHeight: 150))
-                            .resizingMode(.aspectFit)
-                            .failure {
-                                Text(viewModel.item.displayName)
-                                    .font(.largeTitle)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
-                                    .foregroundColor(.white)
-                            }
-                            .frame(width: 500, height: 150)
-                            .padding(.top, 5)
-                    }
-
-                    PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
-                        .onSelect { item in
-                            itemRouter.route(to: \.item, item)
-                        }
-                        .focusGuide(focusGuide, tag: "recommended", top: "mediaButtons", bottom: "about")
-
-                    ItemView.AboutView(viewModel: viewModel)
-                        .focusGuide(focusGuide, tag: "about", top: "recommended")
-
-                    Spacer()
-                }
-                .frame(minHeight: UIScreen.main.bounds.height)
+                ItemView.AboutView(viewModel: viewModel)
             }
             .background {
                 BlurView(style: .dark)
@@ -85,22 +50,6 @@ extension MovieItemView {
                             Color.white
                         }
                     }
-            }
-            .onChange(of: focusGuide.focusedTag) { newTag in
-                if newTag == "recommended" && !showLogo {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        withAnimation(.easeIn(duration: 0.35)) {
-                            scrollViewProxy.scrollTo("topContentDivider")
-                        }
-                    }
-                    withAnimation {
-                        self.showLogo = true
-                    }
-                } else if newTag == "mediaButtons" {
-                    withAnimation {
-                        self.showLogo = false
-                    }
-                }
             }
         }
     }

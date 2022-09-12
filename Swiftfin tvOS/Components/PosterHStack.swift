@@ -22,7 +22,7 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var onFocus: (Item) -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
 
             if let title = title {
                 HStack {
@@ -50,11 +50,25 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
 
                     trailingContent()
                 }
-                .padding(.horizontal, 50)
-                .padding2(.vertical)
+                .padding(50)
             }
         }
         .focusSection()
+        .mask {
+            VStack(spacing: 0) {
+                Color.white
+
+                LinearGradient(
+                    stops: [
+                        .init(color: .white, location: 0),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 20)
+            }
+        }
     }
 }
 
