@@ -17,14 +17,11 @@ final class SearchCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    #if os(tvOS)
     @Route(.modal)
-    var item = makeItem
-    #else
-    @Route(.push)
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
+    #if !os(tvOS)
     @Route(.modal)
     var filter = makeFilter
     #endif
@@ -32,6 +29,10 @@ final class SearchCoordinator: NavigationCoordinatable {
     #if os(tvOS)
     func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
         NavigationViewCoordinator(ItemCoordinator(item: item))
+    }
+
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
     }
     #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
