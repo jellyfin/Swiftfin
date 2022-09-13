@@ -151,9 +151,7 @@ final class LibraryViewModel: PagingLibraryViewModel {
         .store(in: &cancellables)
     }
 
-    func requestNextPage() {
-        guard hasNextPage else { return }
-        currentPage += 1
+    override func _requestNextPage() {
         requestItems(with: filterViewModel.currentFilters)
     }
 }

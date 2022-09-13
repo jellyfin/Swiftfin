@@ -25,7 +25,7 @@ final class MoviesLibraryViewModel: PagingLibraryViewModel {
     
     private var pageItemSize: Int {
         let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
-        return UIScreen.itemsFillableOnScreen(width: libraryGridPosterType.width, height: height)
+        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
     }
 
     override func _requestNextPage() {
@@ -34,9 +34,10 @@ final class MoviesLibraryViewModel: PagingLibraryViewModel {
             startIndex: currentPage * pageItemSize,
             limit: pageItemSize,
             recursive: true,
-            searchTerm: "",
+            sortOrder: [.ascending],
             fields: ItemFields.allCases,
             includeItemTypes: [.movie],
+            sortBy: [SortBy.name.rawValue],
             enableUserData: true,
             enableImages: true
         )

@@ -44,22 +44,9 @@ struct LibraryView: View {
 
     @ViewBuilder
     private var libraryItemsView: some View {
-        CollectionView(items: viewModel.items) { _, item, _ in
-            PosterButton(item: item, type: libraryPosterType)
-                .onSelect { item in
-                    baseItemOnSelect(item)
-                }
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .fixedNumberOfColumns(7),
-                lineSpacing: 50
-            )
-        }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
-            if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPage()
+        PagingLibraryView(viewModel: viewModel)
+            .onSelect { item in
+                baseItemOnSelect(item)
             }
             .ignoresSafeArea()
     }
