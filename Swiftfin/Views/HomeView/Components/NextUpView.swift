@@ -10,9 +10,9 @@ import Defaults
 import SwiftUI
 
 extension HomeView {
-    
+
     struct NextUpView: View {
-        
+
         @EnvironmentObject
         private var router: HomeCoordinator.Router
         @ObservedObject
@@ -20,25 +20,27 @@ extension HomeView {
 
         @Default(.Customization.nextUpPosterType)
         private var nextUpPosterType
-        
+
         var body: some View {
-            PosterHStack(title: L10n.nextUp,
-                         type: nextUpPosterType,
-                         items: viewModel.items.prefix(20).asArray)
-                .trailing {
-                    Button {
-                        router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
-                    } label: {
-                        HStack {
-                            L10n.seeAll.text
-                            Image(systemName: "chevron.right")
-                        }
-                        .font(.subheadline.bold())
+            PosterHStack(
+                title: L10n.nextUp,
+                type: nextUpPosterType,
+                items: viewModel.items.prefix(20).asArray
+            )
+            .trailing {
+                Button {
+                    router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
+                } label: {
+                    HStack {
+                        L10n.seeAll.text
+                        Image(systemName: "chevron.right")
                     }
+                    .font(.subheadline.bold())
                 }
-                .onSelect { item in
-                    router.route(to: \.item, item)
-                }
+            }
+            .onSelect { item in
+                router.route(to: \.item, item)
+            }
         }
     }
 }

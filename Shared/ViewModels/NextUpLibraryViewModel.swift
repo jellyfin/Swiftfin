@@ -11,15 +11,15 @@ import Foundation
 import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel {
-    
+
     override init() {
         super.init()
-        
+
         _requestNextPage()
     }
-    
+
     override func _requestNextPage() {
-        
+
         TvShowsAPI.getNextUp(
             userId: SessionManager.main.currentLogin.user.id,
             startIndex: currentPage * pageItemSize,
@@ -43,7 +43,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel {
                 self?.hasNextPage = false
                 return
             }
-            
+
             self?.items.append(contentsOf: items)
         }
         .store(in: &cancellables)

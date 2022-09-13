@@ -11,7 +11,14 @@ import JellyfinAPI
 import Nuke
 import SwiftUI
 
-struct CinematicItemSelector<Item: Poster, TopContent: View, ItemContent: View, ItemImageOverlay: View, ItemContextMenu: View>: View {
+struct CinematicItemSelector<
+    Item: Poster,
+    TopContent: View,
+    ItemContent: View,
+    ItemImageOverlay: View,
+    ItemContextMenu: View,
+    TrailingContent: View
+>: View {
 
     @ObservedObject
     private var viewModel: CinematicBackgroundView.ViewModel = .init()
@@ -20,6 +27,7 @@ struct CinematicItemSelector<Item: Poster, TopContent: View, ItemContent: View, 
     private var itemContent: (Item) -> ItemContent
     private var itemImageOverlay: (Item) -> ItemImageOverlay
     private var itemContextMenu: (Item) -> ItemContextMenu
+    private var trailingContent: () -> TrailingContent
     private var onSelect: (Item) -> Void
 
     let items: [Item]
@@ -62,6 +70,7 @@ struct CinematicItemSelector<Item: Poster, TopContent: View, ItemContent: View, 
                     .content(itemContent)
                     .imageOverlay(itemImageOverlay)
                     .contextMenu(itemContextMenu)
+                    .trailing(trailingContent)
                     .onSelect(onSelect)
                     .onFocus { item in
                         viewModel.select(item: item)
@@ -169,7 +178,8 @@ struct CinematicItemSelector<Item: Poster, TopContent: View, ItemContent: View, 
 extension CinematicItemSelector where TopContent == EmptyView,
     ItemContent == EmptyView,
     ItemImageOverlay == EmptyView,
-    ItemContextMenu == EmptyView
+    ItemContextMenu == EmptyView,
+    TrailingContent == EmptyView
 {
     init(items: [Item]) {
         self.init(
@@ -177,6 +187,7 @@ extension CinematicItemSelector where TopContent == EmptyView,
             itemContent: { _ in EmptyView() },
             itemImageOverlay: { _ in EmptyView() },
             itemContextMenu: { _ in EmptyView() },
+            trailingContent: { EmptyView() },
             onSelect: { _ in },
             items: items
         )
@@ -187,12 +198,13 @@ extension CinematicItemSelector {
 
     @ViewBuilder
     func topContent<T: View>(@ViewBuilder _ content: @escaping (Item) -> T)
-    -> CinematicItemSelector<Item, T, ItemContent, ItemImageOverlay, ItemContextMenu> {
-        CinematicItemSelector<Item, T, ItemContent, ItemImageOverlay, ItemContextMenu>(
+    -> CinematicItemSelector<Item, T, ItemContent, ItemImageOverlay, ItemContextMenu, TrailingContent> {
+        CinematicItemSelector<Item, T, ItemContent, ItemImageOverlay, ItemContextMenu, TrailingContent>(
             topContent: content,
             itemContent: itemContent,
             itemImageOverlay: itemImageOverlay,
             itemContextMenu: itemContextMenu,
+            trailingContent: trailingContent,
             onSelect: onSelect,
             items: items
         )
@@ -200,12 +212,13 @@ extension CinematicItemSelector {
 
     @ViewBuilder
     func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
-    -> CinematicItemSelector<Item, TopContent, C, ItemImageOverlay, ItemContextMenu> {
-        CinematicItemSelector<Item, TopContent, C, ItemImageOverlay, ItemContextMenu>(
+    -> CinematicItemSelector<Item, TopContent, C, ItemImageOverlay, ItemContextMenu, TrailingContent> {
+        CinematicItemSelector<Item, TopContent, C, ItemImageOverlay, ItemContextMenu, TrailingContent>(
             topContent: topContent,
             itemContent: content,
             itemImageOverlay: itemImageOverlay,
             itemContextMenu: itemContextMenu,
+            trailingContent: trailingContent,
             onSelect: onSelect,
             items: items
         )
@@ -213,12 +226,13 @@ extension CinematicItemSelector {
 
     @ViewBuilder
     func itemImageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O)
-    -> CinematicItemSelector<Item, TopContent, ItemContent, O, ItemContextMenu> {
-        CinematicItemSelector<Item, TopContent, ItemContent, O, ItemContextMenu>(
+    -> CinematicItemSelector<Item, TopContent, ItemContent, O, ItemContextMenu, TrailingContent> {
+        CinematicItemSelector<Item, TopContent, ItemContent, O, ItemContextMenu, TrailingContent>(
             topContent: topContent,
             itemContent: itemContent,
             itemImageOverlay: imageOverlay,
             itemContextMenu: itemContextMenu,
+            trailingContent: trailingContent,
             onSelect: onSelect,
             items: items
         )
@@ -226,12 +240,27 @@ extension CinematicItemSelector {
 
     @ViewBuilder
     func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
-    -> CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, M> {
-        CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, M>(
+    -> CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, M, TrailingContent> {
+        CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, M, TrailingContent>(
             topContent: topContent,
             itemContent: itemContent,
             itemImageOverlay: itemImageOverlay,
             itemContextMenu: contextMenu,
+            trailingContent: trailingContent,
+            onSelect: onSelect,
+            items: items
+        )
+    }
+
+    @ViewBuilder
+    func trailingContent<T: View>(@ViewBuilder _ content: @escaping () -> T)
+    -> CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, ItemContextMenu, T> {
+        CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, ItemContextMenu, T>(
+            topContent: topContent,
+            itemContent: itemContent,
+            itemImageOverlay: itemImageOverlay,
+            itemContextMenu: itemContextMenu,
+            trailingContent: content,
             onSelect: onSelect,
             items: items
         )

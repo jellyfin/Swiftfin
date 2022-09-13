@@ -85,7 +85,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
         LibraryCoordinator(parameters: parameters)
     }
-    
+
     func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
         NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
     }

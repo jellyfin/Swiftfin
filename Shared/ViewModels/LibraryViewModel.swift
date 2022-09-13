@@ -18,7 +18,7 @@ final class LibraryViewModel: PagingLibraryViewModel {
 
     let parent: LibraryParent?
     let type: LibraryParentType
-    
+
     var libraryCoordinatorParameters: LibraryCoordinator.Parameters {
         if let parent = parent {
             return .init(parent: parent, type: type, filters: filterViewModel.currentFilters)

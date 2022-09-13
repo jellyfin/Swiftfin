@@ -27,19 +27,14 @@ extension HomeView {
                 type: recentlyAddedPosterType,
                 items: viewModel.items.prefix(20).asArray
             )
-            .trailing {
-                Button {
-                    router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
-                } label: {
-                    HStack {
-                        L10n.seeAll.text
-                        Image(systemName: "chevron.right")
-                    }
-                    .font(.subheadline.bold())
-                }
-            }
             .onSelect { item in
                 router.route(to: \.item, item)
+            }
+            .trailing {
+                SeeAllPoster(type: recentlyAddedPosterType)
+                    .onSelect {
+                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
+                    }
             }
         }
     }

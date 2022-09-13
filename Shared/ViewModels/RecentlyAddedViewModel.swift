@@ -11,13 +11,13 @@ import Foundation
 import JellyfinAPI
 
 final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel {
-    
+
     override init() {
         super.init()
-        
+
         _requestNextPage()
     }
-    
+
     override func _requestNextPage() {
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,

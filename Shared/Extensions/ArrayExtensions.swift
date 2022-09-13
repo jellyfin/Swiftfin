@@ -27,7 +27,7 @@ extension Array {
 }
 
 extension ArraySlice {
-    var asArray: Array<Element> {
+    var asArray: [Element] {
         Array(self)
     }
 }

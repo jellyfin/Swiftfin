@@ -8,8 +8,8 @@
 
 import CollectionView
 import Defaults
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 extension HomeView {
 
@@ -40,7 +40,9 @@ extension HomeView {
                         RecentlyAddedView(
                             viewModel: .init(
                                 itemTypes: [.movie, .series],
-                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])))
+                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
+                            )
+                        )
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in

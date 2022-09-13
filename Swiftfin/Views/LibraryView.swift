@@ -44,7 +44,7 @@ struct LibraryView: View {
             router.route(to: \.item, item)
         }
     }
-    
+
     @ViewBuilder
     private var libraryItemsView: some View {
         PagingLibraryView(viewModel: viewModel)

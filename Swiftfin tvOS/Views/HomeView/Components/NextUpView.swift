@@ -11,25 +11,25 @@ import SwiftUI
 
 extension HomeView {
 
-    struct LatestInLibraryView: View {
+    struct NextUpView: View {
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
         @ObservedObject
-        var viewModel: LibraryViewModel
+        var viewModel: NextUpLibraryViewModel
 
-        @Default(.Customization.latestInLibraryPosterType)
-        var latestInLibraryPosterType
+        @Default(.Customization.nextUpPosterType)
+        private var nextUpPosterType
 
         var body: some View {
             PosterHStack(
-                title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash),
-                type: latestInLibraryPosterType,
+                title: L10n.nextUp,
+                type: nextUpPosterType,
                 items: viewModel.items.prefix(20).asArray
             )
             .trailing {
                 Button {
-                    router.route(to: \.library, viewModel.libraryCoordinatorParameters)
+                    router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
                 } label: {
                     HStack {
                         L10n.seeAll.text
@@ -40,6 +40,12 @@ extension HomeView {
             }
             .onSelect { item in
                 router.route(to: \.item, item)
+            }
+            .trailing {
+                SeeAllPoster(type: nextUpPosterType)
+                    .onSelect {
+                        router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
+                    }
             }
         }
     }
