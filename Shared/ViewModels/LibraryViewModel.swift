@@ -36,7 +36,7 @@ final class LibraryViewModel: ViewModel {
 
         filterViewModel.$currentFilters
             .sink { newFilters in
-                self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
+                self.requestItems(with: newFilters, replaceCurrentItems: true)
             }
             .store(in: &cancellables)
     }
@@ -53,17 +53,17 @@ final class LibraryViewModel: ViewModel {
 
         filterViewModel.$currentFilters
             .sink { newFilters in
-                self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
+                self.requestItems(with: newFilters, replaceCurrentItems: true)
             }
             .store(in: &cancellables)
     }
 
     private var pageItemSize: Int {
         let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
-        return UIScreen.itemsFillableOnScreen(width: libraryGridPosterType.width, height: height)
+        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
     }
 
-    func requestItemsAsync(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
+    private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
 
         if replaceCurrentItems {
             self.items = []
@@ -156,18 +156,9 @@ final class LibraryViewModel: ViewModel {
         .store(in: &cancellables)
     }
 
-    func requestNextPageAsync() {
+    func requestNextPage() {
         guard hasNextPage else { return }
         currentPage += 1
-        requestItemsAsync(with: filterViewModel.currentFilters)
-    }
-}
-
-extension UIScreen {
-
-    static func itemsFillableOnScreen(width: CGFloat, height: CGFloat) -> Int {
-        let screenSize = UIScreen.main.bounds.height * UIScreen.main.bounds.width
-        let itemSize = width * height
-        return Int(screenSize / itemSize)
+        requestItems(with: filterViewModel.currentFilters)
     }
 }

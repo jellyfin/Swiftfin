@@ -15,19 +15,22 @@ extension SeriesItemView {
     struct ContentView: View {
 
         @ObservedObject
+        private var focusGuide = FocusGuide()
+        @ObservedObject
         var viewModel: SeriesItemViewModel
-
-        @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
 
         var body: some View {
             VStack(spacing: 0) {
 
                 ItemView.CinematicHeaderView(viewModel: viewModel)
+                    .focusGuide(focusGuide, tag: "top", bottom: "seasons")
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
                 SeriesEpisodesView(viewModel: viewModel)
+                    .environmentObject(focusGuide)
+
+                ItemView.CastAndCrewHStack(people: viewModel.item.people?.filter(\.isDisplayed) ?? [])
 
                 ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 

@@ -23,6 +23,8 @@ final class SearchCoordinator: NavigationCoordinatable {
     #else
     @Route(.push)
     var item = makeItem
+    @Route(.push)
+    var library = makeLibrary
     @Route(.modal)
     var filter = makeFilter
     #endif
@@ -34,6 +36,10 @@ final class SearchCoordinator: NavigationCoordinatable {
     #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
+    }
+
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parameters: parameters)
     }
 
     func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
