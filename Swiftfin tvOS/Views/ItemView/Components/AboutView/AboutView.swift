@@ -12,17 +12,8 @@ extension ItemView {
 
     struct AboutView: View {
 
-        @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
-
-        @State
-        private var presentOverviewAlert = false
-        @State
-        private var presentSubtitlesAlert = false
-        @State
-        private var presentAudioAlert = false
 
         var body: some View {
             VStack(alignment: .leading) {
@@ -33,7 +24,7 @@ extension ItemView {
                     .padding(.leading, 50)
 
                 ScrollView(.horizontal) {
-                    HStack {
+                    HStack(spacing: 30) {
                         ImageView(
                             viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel.item
                                 .imageSource(.primary, maxWidth: 300)
@@ -43,26 +34,20 @@ extension ItemView {
                         }
                         .posterStyle(type: .portrait, width: 270)
 
-                        AboutViewCard(
-                            isShowingAlert: $presentOverviewAlert,
+                        InformationCard(
                             title: viewModel.item.displayName,
-                            text: viewModel.item.overview ?? L10n.noOverviewAvailable
+                            content: viewModel.item.overview ?? L10n.noOverviewAvailable
                         )
 
                         if let subtitleStreams = viewModel.playButtonItem?.subtitleStreams, !subtitleStreams.isEmpty {
-                            AboutViewCard(
-                                isShowingAlert: $presentSubtitlesAlert,
+                            InformationCard(
                                 title: L10n.subtitles,
-                                text: subtitleStreams.compactMap(\.displayTitle).joined(separator: ", ")
+                                content: subtitleStreams.compactMap(\.displayTitle).joined(separator: ", ")
                             )
                         }
 
                         if let audioStreams = viewModel.playButtonItem?.audioStreams, !audioStreams.isEmpty {
-                            AboutViewCard(
-                                isShowingAlert: $presentAudioAlert,
-                                title: L10n.audio,
-                                text: audioStreams.compactMap(\.displayTitle).joined(separator: ", ")
-                            )
+                            InformationCard(title: L10n.audio, content: audioStreams.compactMap(\.displayTitle).joined(separator: ", "))
                         }
                     }
                     .padding(.horizontal, 50)
@@ -71,39 +56,6 @@ extension ItemView {
                 }
             }
             .focusSection()
-            .alert(viewModel.item.displayName, isPresented: $presentOverviewAlert) {
-                Button {
-                    presentOverviewAlert = false
-                } label: {
-                    L10n.close.text
-                }
-            } message: {
-                if let overview = viewModel.item.overview {
-                    overview.text
-                } else {
-                    L10n.noOverviewAvailable.text
-                }
-            }
-            .alert(L10n.subtitles, isPresented: $presentSubtitlesAlert) {
-                Button {
-                    presentSubtitlesAlert = false
-                } label: {
-                    L10n.close.text
-                }
-            } message: {
-                viewModel.item.subtitleStreams.compactMap(\.displayTitle).joined(separator: ", ")
-                    .text
-            }
-            .alert(L10n.audio, isPresented: $presentAudioAlert) {
-                Button {
-                    presentAudioAlert = false
-                } label: {
-                    L10n.close.text
-                }
-            } message: {
-                viewModel.item.audioStreams.compactMap(\.displayTitle).joined(separator: ", ")
-                    .text
-            }
         }
     }
 }

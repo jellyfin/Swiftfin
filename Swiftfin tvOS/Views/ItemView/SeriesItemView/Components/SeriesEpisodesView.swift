@@ -14,8 +14,6 @@ struct SeriesEpisodesView: View {
 
     @ObservedObject
     var viewModel: SeriesItemViewModel
-    @FocusState
-    private var isFocused: Bool
     @EnvironmentObject
     private var parentFocusGuide: FocusGuide
 
@@ -68,7 +66,7 @@ extension SeriesEpisodesView {
                     focusGuide,
                     tag: "seasons",
                     onContentFocus: { focusedSeason = viewModel.selectedSeason },
-                    top: "mediaButtons",
+                    top: "top",
                     bottom: "episodes"
                 )
                 .frame(height: 70)
@@ -124,14 +122,28 @@ extension SeriesEpisodesView {
                 .padding(.bottom, 50)
                 .padding(.top)
             }
+            .mask {
+                VStack(spacing: 0) {
+                    Color.white
+
+                    LinearGradient(
+                        stops: [
+                            .init(color: .white, location: 0),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 20)
+                }
+            }
+            .transition(.opacity)
             .focusGuide(
                 focusGuide,
                 tag: "episodes",
                 onContentFocus: { focusedEpisodeID = lastFocusedEpisodeID },
-                top: "seasons",
-                bottom: "recommended"
+                top: "seasons"
             )
-            .transition(.opacity)
             .introspectScrollView { scrollView in
                 wrappedScrollView = scrollView
             }
