@@ -13,17 +13,12 @@ import SwiftUI
 import UIKit
 
 // TODO: Look at refactoring
-final class LibraryViewModel: ViewModel {
+final class LibraryViewModel: PagingLibraryViewModel {
 
     @Default(.Customization.Library.gridPosterType)
     private var libraryGridPosterType
 
-    @Published
-    var items: [BaseItemDto] = []
-
     let filterViewModel: FilterViewModel
-    private var currentPage = 0
-    private var hasNextPage = true
 
     let parent: LibraryParent?
     let type: LibraryParentType
@@ -53,6 +48,7 @@ final class LibraryViewModel: ViewModel {
 
         filterViewModel.$currentFilters
             .sink { newFilters in
+                print("filters filters filters")
                 self.requestItemsAsync(with: newFilters, replaceCurrentItems: true)
             }
             .store(in: &cancellables)
@@ -156,9 +152,7 @@ final class LibraryViewModel: ViewModel {
         .store(in: &cancellables)
     }
 
-    func requestNextPageAsync() {
-        guard hasNextPage else { return }
-        currentPage += 1
+    override func _requestNextPage() {
         requestItemsAsync(with: filterViewModel.currentFilters)
     }
 }

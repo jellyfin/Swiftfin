@@ -18,8 +18,6 @@ struct LibraryView: View {
     @ObservedObject
     var viewModel: LibraryViewModel
 
-    @Default(.Customization.Library.gridPosterType)
-    private var libraryGridPosterType
     @Default(.Customization.Library.viewType)
     private var libraryViewType
 
@@ -31,14 +29,6 @@ struct LibraryView: View {
     @ViewBuilder
     private var noResultsView: some View {
         L10n.noResults.text
-    }
-
-    private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
-        if libraryGridPosterType == .landscape && UIDevice.isPhone {
-            return .fixedNumberOfColumns(2)
-        } else {
-            return .adaptive(withMinItemSize: libraryGridPosterType.width + (UIDevice.isIPad ? 10 : 0))
-        }
     }
 
     private func baseItemOnSelect(_ item: BaseItemDto) {
@@ -55,56 +45,6 @@ struct LibraryView: View {
         }
     }
 
-    @ViewBuilder
-    private var libraryListView: some View {
-        CollectionView(items: viewModel.items) { _, item, _ in
-            LibraryItemRow(item: item)
-                .onSelect {
-                    baseItemOnSelect(item)
-                }
-                .padding()
-        }
-        .layout { _, layoutEnvironment in
-            .list(using: .init(appearance: .plain), layoutEnvironment: layoutEnvironment)
-        }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
-            if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPageAsync()
-            }
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
-        }
-        .ignoresSafeArea()
-    }
-
-    @ViewBuilder
-    private var libraryGridView: some View {
-        CollectionView(items: viewModel.items) { _, item, _ in
-            PosterButton(item: item, type: libraryGridPosterType)
-                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
-                .onSelect {
-                    baseItemOnSelect(item)
-                }
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: gridLayout,
-                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
-            )
-        }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
-            if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPageAsync()
-            }
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
-        }
-        .ignoresSafeArea()
-    }
-
     var body: some View {
         Group {
             if viewModel.isLoading && viewModel.items.isEmpty {
@@ -112,12 +52,11 @@ struct LibraryView: View {
             } else if viewModel.items.isEmpty {
                 noResultsView
             } else {
-                switch libraryViewType {
-                case .grid:
-                    libraryGridView
-                case .list:
-                    libraryListView
-                }
+                PagingLibraryView(viewModel: viewModel)
+                    .onSelect { item in
+                        baseItemOnSelect(item)
+                    }
+                    .ignoresSafeArea()
             }
         }
         .navigationTitle(viewModel.parent?.displayName ?? "")

@@ -57,8 +57,8 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeMovies() -> NavigationViewCoordinator<MovieLibrariesCoordinator> {
-        NavigationViewCoordinator(MovieLibrariesCoordinator(viewModel: MovieLibrariesViewModel(), title: L10n.movies))
+    func makeMovies() -> NavigationViewCoordinator<MoviesLibraryCoordinator> {
+        NavigationViewCoordinator(MoviesLibraryCoordinator())
     }
 
     @ViewBuilder

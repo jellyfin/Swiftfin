@@ -7,88 +7,51 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
-import Stinsen
-import SwiftUICollection
+import UIKit
 
-final class MovieLibrariesViewModel: ViewModel {
-
-    @Published
-    var rows = [LibraryRow]()
-    @Published
-    var totalPages = 0
-    @Published
-    var currentPage = 0
-    @Published
-    var hasNextPage = false
-    @Published
-    var hasPreviousPage = false
-
-    private var libraries = [BaseItemDto]()
-    private let columns: Int
-
-    @RouterObject
-    private var router: MovieLibrariesCoordinator.Router?
-
-    init(columns: Int = 7) {
-        self.columns = columns
+final class MoviesLibraryViewModel: PagingLibraryViewModel {
+    
+    @Default(.Customization.Library.gridPosterType)
+    private var libraryGridPosterType
+    
+    override init() {
         super.init()
-
-        requestLibraries()
+        
+        _requestNextPage()
+    }
+    
+    private var pageItemSize: Int {
+        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
+        return UIScreen.itemsFillableOnScreen(width: libraryGridPosterType.width, height: height)
     }
 
-    func requestLibraries() {
-
-        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(completion: completion)
-            }, receiveValue: { response in
-                if let responseItems = response.items {
-                    self.libraries = []
-                    for library in responseItems {
-                        if library.collectionType == "movies" {
-                            self.libraries.append(library)
-                        }
-                    }
-                    self.rows = self.calculateRows()
-                    if self.libraries.count == 1, let library = self.libraries.first {
-                        // make this library the root of this stack
-                        self.router?.coordinator.root(\.rootLibrary, library)
-                    }
-                }
-            })
-            .store(in: &cancellables)
-    }
-
-    private func calculateRows() -> [LibraryRow] {
-        guard !libraries.isEmpty else { return [] }
-        let rowCount = libraries.count / columns
-        var calculatedRows = [LibraryRow]()
-        for i in 0 ... rowCount {
-            let firstItemIndex = i * columns
-            var lastItemIndex = firstItemIndex + columns
-            if lastItemIndex > libraries.count {
-                lastItemIndex = libraries.count
+    override func _requestNextPage() {
+        ItemsAPI.getItemsByUserId(
+            userId: SessionManager.main.currentLogin.user.id,
+            startIndex: currentPage * pageItemSize,
+            limit: pageItemSize,
+            recursive: true,
+            searchTerm: "",
+            fields: ItemFields.allCases,
+            includeItemTypes: [.movie],
+            enableUserData: true,
+            enableImages: true
+        )
+        .trackActivity(loading)
+        .sink { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        } receiveValue: { [weak self] response in
+            guard let items = response.items else { return }
+            guard !items.isEmpty else {
+                self?.hasNextPage = false
+                return
             }
-
-            var rowCells = [LibraryRowCell]()
-            for item in libraries[firstItemIndex ..< lastItemIndex] {
-                let newCell = LibraryRowCell(item: item)
-                rowCells.append(newCell)
-            }
-            if i == rowCount && hasNextPage {
-                var loadingCell = LibraryRowCell(item: nil)
-                loadingCell.loadingCell = true
-                rowCells.append(loadingCell)
-            }
-
-            calculatedRows.append(LibraryRow(
-                section: i,
-                items: rowCells
-            ))
+            
+            self?.items.append(contentsOf: items)
         }
-        return calculatedRows
+        .store(in: &cancellables)
     }
 }

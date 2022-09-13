@@ -10,82 +10,35 @@ import JellyfinAPI
 import SwiftUI
 import SwiftUICollection
 
-struct MovieLibrariesView: View {
+struct MoviesLibraryView: View {
+    
+    @ObservedObject
+    var viewModel: MoviesLibraryViewModel
+    
+    @ViewBuilder
+    private var loadingView: some View {
+        ProgressView()
+    }
 
-    @EnvironmentObject
-    private var movieLibrariesRouter: MovieLibrariesCoordinator.Router
-    @StateObject
-    var viewModel: MovieLibrariesViewModel
-    var title: String
+    @ViewBuilder
+    private var noResultsView: some View {
+        L10n.noResults.text
+    }
+    
+    @ViewBuilder
+    private var libraryItemsView: some View {
+        PagingLibraryView(viewModel: viewModel)
+            .ignoresSafeArea()
+    }
 
     var body: some View {
-        if viewModel.isLoading == true {
-            ProgressView()
-        } else if !viewModel.rows.isEmpty {
-            CollectionView(rows: viewModel.rows) { _, _ in
-                let itemSize = NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(1),
-                    heightDimension: .fractionalHeight(1)
-                )
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-                let groupSize = NSCollectionLayoutSize(
-                    widthDimension: .absolute(200),
-                    heightDimension: .absolute(300)
-                )
-                let group = NSCollectionLayoutGroup.horizontal(
-                    layoutSize: groupSize,
-                    subitems: [item]
-                )
-
-                let header =
-                    NSCollectionLayoutBoundarySupplementaryItem(
-                        layoutSize: NSCollectionLayoutSize(
-                            widthDimension: .fractionalWidth(1),
-                            heightDimension: .absolute(44)
-                        ),
-                        elementKind: UICollectionView.elementKindSectionHeader,
-                        alignment: .topLeading
-                    )
-
-                let section = NSCollectionLayoutSection(group: group)
-
-                section.contentInsets = NSDirectionalEdgeInsets(top: 30, leading: 0, bottom: 80, trailing: 80)
-                section.interGroupSpacing = 48
-                section.orthogonalScrollingBehavior = .continuous
-                section.boundarySupplementaryItems = [header]
-                return section
-            } cell: { _, cell in
-                GeometryReader { _ in
-                    if let item = cell.item {
-                        if item.type != .folder {
-                            Button {
-                                self.movieLibrariesRouter.route(to: \.library, item)
-                            } label: {
-                                PortraitItemElement(item: item)
-                            }
-                            .buttonStyle(PlainNavigationLinkButtonStyle())
-                        }
-                    } else if cell.loadingCell {
-                        ProgressView()
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-                    }
-                }
-            } supplementaryView: { _, indexPath in
-                HStack {
-                    Spacer()
-                }.accessibilityIdentifier("\(indexPath.section).\(indexPath.row)")
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .ignoresSafeArea(.all)
-        } else {
-            VStack {
-                L10n.noResults.text
-                Button {
-                    print("movieLibraries reload")
-                } label: {
-                    L10n.refresh.text
-                }
+        Group {
+            if viewModel.isLoading && viewModel.items.isEmpty {
+                loadingView
+            } else if viewModel.items.isEmpty {
+                noResultsView
+            } else {
+                libraryItemsView
             }
         }
     }
