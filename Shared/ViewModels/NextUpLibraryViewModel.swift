@@ -7,15 +7,10 @@
 //
 
 import Combine
-import Defaults
 import Foundation
 import JellyfinAPI
-import UIKit
 
-final class MoviesLibraryViewModel: PagingLibraryViewModel {
-    
-    @Default(.Customization.Library.gridPosterType)
-    private var libraryGridPosterType
+final class NextUpLibraryViewModel: PagingLibraryViewModel {
     
     override init() {
         super.init()
@@ -23,30 +18,28 @@ final class MoviesLibraryViewModel: PagingLibraryViewModel {
         _requestNextPage()
     }
     
-    private var pageItemSize: Int {
-        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
-        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
-    }
-
     override func _requestNextPage() {
-        ItemsAPI.getItemsByUserId(
+        
+        TvShowsAPI.getNextUp(
             userId: SessionManager.main.currentLogin.user.id,
             startIndex: currentPage * pageItemSize,
             limit: pageItemSize,
-            recursive: true,
-            sortOrder: [.ascending],
-            fields: ItemFields.allCases,
-            includeItemTypes: [.movie],
-            sortBy: [SortBy.name.rawValue],
-            enableUserData: true,
-            enableImages: true
+            fields: [
+                .primaryImageAspectRatio,
+                .seriesPrimaryImage,
+                .seasonUserData,
+                .overview,
+                .genres,
+                .people,
+                .chapters,
+            ],
+            enableUserData: true
         )
         .trackActivity(loading)
         .sink { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         } receiveValue: { [weak self] response in
-            guard let items = response.items else { return }
-            guard !items.isEmpty else {
+            guard let items = response.items, !items.isEmpty else {
                 self?.hasNextPage = false
                 return
             }

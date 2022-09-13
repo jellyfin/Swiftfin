@@ -70,59 +70,60 @@ extension HomeView {
                 }
         }
 
-        @ViewBuilder
-        private var cinematicLatestAddedItems: some View {
-            CinematicItemSelector(items: viewModel.latestAddedItems)
-                .topContent { item in
-                    ImageView(itemSelectorImageSource(for: item))
-                        .resizingMode(.bottomLeft)
-                        .placeholder {
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(item.displayName)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                        }
-                        .padding2(.leading)
-                }
-                .onSelect { item in
-                    router.route(to: \.item, item)
-                }
-        }
+//        @ViewBuilder
+//        private var cinematicLatestAddedItems: some View {
+//            CinematicItemSelector(items: viewModel.latestAddedItems)
+//                .topContent { item in
+//                    ImageView(itemSelectorImageSource(for: item))
+//                        .resizingMode(.bottomLeft)
+//                        .placeholder {
+//                            EmptyView()
+//                        }
+//                        .failure {
+//                            Text(item.displayName)
+//                                .font(.largeTitle)
+//                                .fontWeight(.semibold)
+//                        }
+//                        .padding2(.leading)
+//                }
+//                .onSelect { item in
+//                    router.route(to: \.item, item)
+//                }
+//        }
 
         var body: some View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    if viewModel.resumeItems.isEmpty {
-                        cinematicLatestAddedItems
-
-                        if !viewModel.nextUpItems.isEmpty {
-                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
-                                .onSelect { item in
-                                    router.route(to: \.item, item)
-                                }
-                        }
-                    } else {
-                        cinematicResumeItems
-
-                        if !viewModel.nextUpItems.isEmpty {
-                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
-                                .onSelect { item in
-                                    router.route(to: \.item, item)
-                                }
-                        }
-
-                        if !viewModel.latestAddedItems.isEmpty {
-                            PosterHStack(title: L10n.recentlyAdded, type: .portrait, items: viewModel.latestAddedItems)
-                                .onSelect { item in
-                                    router.route(to: \.item, item)
-                                }
-                        }
-                    }
+//                    if viewModel.resumeItems.isEmpty {
+////                        cinematicLatestAddedItems
+//
+//                        if !viewModel.nextUpItems.isEmpty {
+//                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
+//                                .onSelect { item in
+//                                    router.route(to: \.item, item)
+//                                }
+//                        }
+//                    } else {
+//                        cinematicResumeItems
+//
+//                        if !viewModel.nextUpItems.isEmpty {
+//                            PosterHStack(title: L10n.nextUp, type: .portrait, items: viewModel.nextUpItems)
+//                                .onSelect { item in
+//                                    router.route(to: \.item, item)
+//                                }
+//                        }
+//
+//                        if !viewModel.latestAddedItems.isEmpty {
+//                            PosterHStack(title: L10n.recentlyAdded, type: .portrait, items: viewModel.latestAddedItems)
+//                                .onSelect { item in
+//                                    router.route(to: \.item, item)
+//                                }
+//                        }
+//                    }
 
                     ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
+                        LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
+//                        LatestInLibraryView(viewModel: LatestMediaViewModel(library: library))
                     }
                 }
             }

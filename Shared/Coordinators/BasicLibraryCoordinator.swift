@@ -11,20 +11,34 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class MoviesLibraryCoordinator: NavigationCoordinatable {
+final class BasicLibraryCoordinator: NavigationCoordinatable {
     
-    let stack = NavigationStack(initial: \MoviesLibraryCoordinator.start)
+    struct Parameters {
+        let title: String?
+        let viewModel: PagingLibraryViewModel
+    }
+    
+    let stack = NavigationStack(initial: \BasicLibraryCoordinator.start)
     
     @Root
     var start = makeStart
-    @Route(.modal)
+    @Route(.push)
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
     
+    private let parameters: Parameters
+    
+    init(parameters: Parameters) {
+        self.parameters = parameters
+    }
+    
     @ViewBuilder
     func makeStart() -> some View {
-        MoviesLibraryView(viewModel: .init())
+        BasicLibraryView(viewModel: parameters.viewModel)
+            .if(parameters.title != nil) { view in
+                view.navigationTitle(parameters.title ?? .emptyDash)
+            }
     }
     
     func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {

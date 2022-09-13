@@ -14,13 +14,13 @@ struct LatestInLibraryView: View {
     @EnvironmentObject
     private var router: HomeCoordinator.Router
     @StateObject
-    var viewModel: LatestMediaViewModel
+    var viewModel: LibraryViewModel
 
     var body: some View {
-        PosterHStack(title: L10n.latestWithString(viewModel.library.displayName), type: .portrait, items: viewModel.items)
+        PosterHStack(title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash), type: .portrait, items: viewModel.items)
             .trailing {
                 Button {
-                    router.route(to: \.library, .init(parent: viewModel.library, type: .library, filters: .recent))
+                    router.route(to: \.library, viewModel.libraryCoordinatorParameters)
                 } label: {
                     ZStack {
                         Color(UIColor.darkGray)

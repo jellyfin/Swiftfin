@@ -29,6 +29,8 @@ final class HomeCoordinator: NavigationCoordinatable {
     @Route(.push)
     var item = makeItem
     @Route(.push)
+    var basicLibrary = makeBasicLibrary
+    @Route(.push)
     var library = makeLibrary
     #endif
 
@@ -47,6 +49,10 @@ final class HomeCoordinator: NavigationCoordinatable {
     #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
+    }
+    
+    func makeBasicLibrary(parameters: BasicLibraryCoordinator.Parameters) -> BasicLibraryCoordinator {
+        BasicLibraryCoordinator(parameters: parameters)
     }
 
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {

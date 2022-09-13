@@ -25,3 +25,9 @@ extension Array {
         self + contents
     }
 }
+
+extension ArraySlice {
+    var asArray: Array<Element> {
+        Array(self)
+    }
+}

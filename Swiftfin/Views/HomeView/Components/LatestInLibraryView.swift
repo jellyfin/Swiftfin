@@ -13,18 +13,20 @@ import SwiftUI
 struct LatestInLibraryView: View {
 
     @EnvironmentObject
-    private var homeRouter: HomeCoordinator.Router
+    private var router: HomeCoordinator.Router
     @ObservedObject
-    var viewModel: LatestMediaViewModel
+    var viewModel: LibraryViewModel
 
     @Default(.Customization.latestInLibraryPosterType)
     var latestInLibraryPosterType
 
     var body: some View {
-        PosterHStack(title: L10n.latestWithString(viewModel.library.displayName), type: latestInLibraryPosterType, items: viewModel.items)
+        PosterHStack(title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash),
+                     type: latestInLibraryPosterType,
+                     items: viewModel.items.prefix(20).asArray)
             .trailing {
                 Button {
-                    homeRouter.route(to: \.library, .init(parent: viewModel.library, type: .library, filters: .recent))
+                    router.route(to: \.library, viewModel.libraryCoordinatorParameters)
                 } label: {
                     HStack {
                         L10n.seeAll.text
@@ -34,7 +36,7 @@ struct LatestInLibraryView: View {
                 }
             }
             .onSelect { item in
-                homeRouter.route(to: \.item, item)
+                router.route(to: \.item, item)
             }
     }
 }

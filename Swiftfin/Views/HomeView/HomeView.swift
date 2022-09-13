@@ -12,7 +12,7 @@ import SwiftUI
 struct HomeView: View {
 
     @EnvironmentObject
-    private var homeRouter: HomeCoordinator.Router
+    private var router: HomeCoordinator.Router
     @ObservedObject
     var viewModel: HomeViewModel
 
@@ -30,7 +30,7 @@ struct HomeView: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
-                    homeRouter.route(to: \.settings)
+                    router.route(to: \.settings)
                 } label: {
                     Image(systemName: "gearshape.fill")
                         .accessibilityLabel(L10n.settings)

@@ -9,14 +9,23 @@
 import Defaults
 import Foundation
 import JellyfinAPI
+import UIKit
 
 class PagingLibraryViewModel: ViewModel {
+    
+    @Default(.Customization.Library.gridPosterType)
+    private var libraryGridPosterType
 
     @Published
     var items: [BaseItemDto] = []
 
     var currentPage = 0
     var hasNextPage = true
+    
+    var pageItemSize: Int {
+        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
+        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
+    }
 
     func requestNextPage() {
         guard hasNextPage else { return }

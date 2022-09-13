@@ -13,7 +13,7 @@ import SwiftUI
 final class MainTabCoordinator: TabCoordinatable {
     var child = TabChild(startingItems: [
         \MainTabCoordinator.home,
-        \MainTabCoordinator.tv,
+        \MainTabCoordinator.tvShows,
         \MainTabCoordinator.movies,
         \MainTabCoordinator.search,
         \MainTabCoordinator.media,
@@ -23,7 +23,7 @@ final class MainTabCoordinator: TabCoordinatable {
     @Route(tabItem: makeHomeTab)
     var home = makeHome
     @Route(tabItem: makeTvTab)
-    var tv = makeTv
+    var tvShows = makeTVShows
     @Route(tabItem: makeMoviesTab)
     var movies = makeMovies
     @Route(tabItem: makeSearchTab)
@@ -45,8 +45,9 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeTv() -> NavigationViewCoordinator<TVLibrariesCoordinator> {
-        NavigationViewCoordinator(TVLibrariesCoordinator(viewModel: TVLibrariesViewModel(), title: L10n.tvShows))
+    func makeTVShows() -> NavigationViewCoordinator<BasicLibraryCoordinator> {
+        let parameters = BasicLibraryCoordinator.Parameters(title: nil, viewModel: ItemTypeLibraryViewModel(itemTypes: [.series], filters: .init()))
+        return NavigationViewCoordinator(BasicLibraryCoordinator(parameters: parameters))
     }
 
     @ViewBuilder
@@ -57,8 +58,9 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeMovies() -> NavigationViewCoordinator<MoviesLibraryCoordinator> {
-        NavigationViewCoordinator(MoviesLibraryCoordinator())
+    func makeMovies() -> NavigationViewCoordinator<BasicLibraryCoordinator> {
+        let parameters = BasicLibraryCoordinator.Parameters(title: nil, viewModel: ItemTypeLibraryViewModel(itemTypes: [.movie], filters: .init()))
+        return NavigationViewCoordinator(BasicLibraryCoordinator(parameters: parameters))
     }
 
     @ViewBuilder

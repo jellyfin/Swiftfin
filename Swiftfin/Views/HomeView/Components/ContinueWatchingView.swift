@@ -12,7 +12,7 @@ import SwiftUI
 struct ContinueWatchingView: View {
 
     @EnvironmentObject
-    private var homeRouter: HomeCoordinator.Router
+    private var router: HomeCoordinator.Router
     @ObservedObject
     var viewModel: HomeViewModel
 
@@ -20,7 +20,7 @@ struct ContinueWatchingView: View {
         PosterHStack(title: "", type: .landscape, items: viewModel.resumeItems)
             .scaleItems(1.5)
             .onSelect { item in
-                homeRouter.route(to: \.item, item)
+                router.route(to: \.item, item)
             }
             .contextMenu { item in
                 Button(role: .destructive) {

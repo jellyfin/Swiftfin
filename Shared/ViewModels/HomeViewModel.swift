@@ -14,11 +14,11 @@ import JellyfinAPI
 final class HomeViewModel: ViewModel {
 
     @Published
-    var latestAddedItems: [BaseItemDto] = []
-    @Published
     var resumeItems: [BaseItemDto] = []
     @Published
-    var nextUpItems: [BaseItemDto] = []
+    var hasNextUp: Bool = false
+    @Published
+    var hasLatestAdded: Bool = false
     @Published
     var librariesShowRecentlyAddedIDs: [String] = []
     @Published
@@ -44,7 +44,6 @@ final class HomeViewModel: ViewModel {
         librariesShowRecentlyAddedIDs = []
         libraries = []
         resumeItems = []
-        nextUpItems = []
 
         refresh()
     }
@@ -124,31 +123,18 @@ final class HomeViewModel: ViewModel {
     private func refreshLatestAddedItems() {
         UserLibraryAPI.getLatestMedia(
             userId: SessionManager.main.currentLogin.user.id,
-            fields: [
-                .primaryImageAspectRatio,
-                .seriesPrimaryImage,
-                .seasonUserData,
-                .overview,
-                .genres,
-                .people,
-                .chapters,
-            ],
             includeItemTypes: [.movie, .series],
-            enableImageTypes: [.primary, .backdrop, .thumb],
-            enableUserData: true,
-            limit: 20
+            limit: 1
         )
         .sink { completion in
             switch completion {
             case .finished: ()
             case .failure:
-                self.nextUpItems = []
+                self.hasLatestAdded = false
                 self.handleAPIRequestError(completion: completion)
             }
         } receiveValue: { items in
-            LogManager.log.debug("Retrieved \(String(items.count)) resume items")
-
-            self.latestAddedItems = items
+            self.hasLatestAdded = items.count > 0
         }
         .store(in: &cancellables)
     }
@@ -207,30 +193,18 @@ final class HomeViewModel: ViewModel {
     private func refreshNextUpItems() {
         TvShowsAPI.getNextUp(
             userId: SessionManager.main.currentLogin.user.id,
-            limit: 20,
-            fields: [
-                .primaryImageAspectRatio,
-                .seriesPrimaryImage,
-                .seasonUserData,
-                .overview,
-                .genres,
-                .people,
-                .chapters,
-            ],
-            enableUserData: true
+            limit: 1
         )
         .trackActivity(loading)
         .sink(receiveCompletion: { completion in
             switch completion {
             case .finished: ()
             case .failure:
-                self.nextUpItems = []
+                self.hasNextUp = false
                 self.handleAPIRequestError(completion: completion)
             }
         }, receiveValue: { response in
-            LogManager.log.debug("Retrieved \(String(response.items!.count)) nextup items")
-
-            self.nextUpItems = response.items ?? []
+            self.hasNextUp = (response.items ?? []).count > 0
         })
         .store(in: &cancellables)
     }

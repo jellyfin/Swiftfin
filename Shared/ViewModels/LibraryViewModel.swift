@@ -7,7 +7,6 @@
 //
 
 import Combine
-import Defaults
 import JellyfinAPI
 import SwiftUI
 import UIKit
@@ -15,13 +14,18 @@ import UIKit
 // TODO: Look at refactoring
 final class LibraryViewModel: PagingLibraryViewModel {
 
-    @Default(.Customization.Library.gridPosterType)
-    private var libraryGridPosterType
-
     let filterViewModel: FilterViewModel
 
     let parent: LibraryParent?
     let type: LibraryParentType
+    
+    var libraryCoordinatorParameters: LibraryCoordinator.Parameters {
+        if let parent = parent {
+            return .init(parent: parent, type: type, filters: filterViewModel.currentFilters)
+        } else {
+            return .init(filters: filterViewModel.currentFilters)
+        }
+    }
 
     init(filters: ItemFilters) {
         self.parent = nil
@@ -51,11 +55,6 @@ final class LibraryViewModel: PagingLibraryViewModel {
                 self.requestItems(with: newFilters, replaceCurrentItems: true)
             }
             .store(in: &cancellables)
-    }
-
-    private var pageItemSize: Int {
-        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
-        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
     }
 
     private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {

@@ -6,15 +6,18 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
+import Defaults
 import JellyfinAPI
 import SwiftUI
-import SwiftUICollection
 
-struct MoviesLibraryView: View {
-    
+struct BasicLibraryView: View {
+
+    @EnvironmentObject
+    private var router: BasicLibraryCoordinator.Router
     @ObservedObject
-    var viewModel: MoviesLibraryViewModel
-    
+    var viewModel: PagingLibraryViewModel
+
     @ViewBuilder
     private var loadingView: some View {
         ProgressView()
@@ -24,10 +27,13 @@ struct MoviesLibraryView: View {
     private var noResultsView: some View {
         L10n.noResults.text
     }
-    
+
     @ViewBuilder
     private var libraryItemsView: some View {
         PagingLibraryView(viewModel: viewModel)
+            .onSelect { item in
+                router.route(to: \.item, item)
+            }
             .ignoresSafeArea()
     }
 

@@ -47,6 +47,11 @@ struct PagingLibraryView: View {
                 viewModel.requestNextPage()
             }
         }
+        .onEdgeReached { edge in
+            if viewModel.hasNextPage, !viewModel.isLoading, edge == .bottom {
+                viewModel.requestNextPage()
+            }
+        }
         .configure { configuration in
             configuration.showsVerticalScrollIndicator = false
         }
@@ -70,6 +75,11 @@ struct PagingLibraryView: View {
         }
         .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
             if !viewModel.isLoading && edge == .bottom {
+                viewModel.requestNextPage()
+            }
+        }
+        .onEdgeReached { edge in
+            if viewModel.hasNextPage, !viewModel.isLoading, edge == .bottom {
                 viewModel.requestNextPage()
             }
         }

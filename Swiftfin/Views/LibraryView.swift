@@ -44,55 +44,14 @@ struct LibraryView: View {
             router.route(to: \.item, item)
         }
     }
-
+    
     @ViewBuilder
-    private var libraryListView: some View {
-        CollectionView(items: viewModel.items) { _, item, _ in
-            LibraryItemRow(item: item)
-                .onSelect {
-                    baseItemOnSelect(item)
-                }
-                .padding()
-        }
-        .layout { _, layoutEnvironment in
-            .list(using: .init(appearance: .plain), layoutEnvironment: layoutEnvironment)
-        }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
-            if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPage()
+    private var libraryItemsView: some View {
+        PagingLibraryView(viewModel: viewModel)
+            .onSelect { item in
+                baseItemOnSelect(item)
             }
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
-        }
-        .ignoresSafeArea()
-    }
-
-    @ViewBuilder
-    private var libraryGridView: some View {
-        CollectionView(items: viewModel.items) { _, item, _ in
-            PosterButton(item: item, type: libraryGridPosterType)
-                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
-                .onSelect {
-                    baseItemOnSelect(item)
-                }
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: gridLayout,
-                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
-            )
-        }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
-            if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPage()
-            }
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
-        }
-        .ignoresSafeArea()
+            .ignoresSafeArea()
     }
 
     var body: some View {
@@ -102,11 +61,7 @@ struct LibraryView: View {
             } else if viewModel.items.isEmpty {
                 noResultsView
             } else {
-                PagingLibraryView(viewModel: viewModel)
-                    .onSelect { item in
-                        baseItemOnSelect(item)
-                    }
-                    .ignoresSafeArea()
+                libraryItemsView
             }
         }
         .navigationTitle(viewModel.parent?.displayName ?? "")
