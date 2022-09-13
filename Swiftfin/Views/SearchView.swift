@@ -66,6 +66,14 @@ struct SearchView: View {
         }
     }
 
+    private func baseItemOnSelect(_ item: BaseItemDto) {
+        if item.type == .person {
+            router.route(to: \.library, .init(parent: item, type: .person, filters: .init()))
+        } else {
+            router.route(to: \.item, item)
+        }
+    }
+
     @ViewBuilder
     private func itemsSection(
         title: String,
@@ -78,7 +86,7 @@ struct SearchView: View {
             items: viewModel[keyPath: keyPath]
         )
         .onSelect { item in
-            router.route(to: \.item, item)
+            baseItemOnSelect(item)
         }
     }
 

@@ -65,7 +65,7 @@ struct LibraryView: View {
         }
         .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
             if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPageAsync()
+                viewModel.requestNextPage()
             }
         }
         .scrollViewOffset($scrollViewOffset)
