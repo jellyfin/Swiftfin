@@ -1098,11 +1098,13 @@
 			children = (
 				53913BDA26D323FE00EB3286 /* de.lproj */,
 				53913BE326D323FE00EB3286 /* el.lproj */,
+				534D4FE626A7D7CC000A7A48 /* en.lproj */,
 				53913BE026D323FE00EB3286 /* es.lproj */,
 				53913BC826D323FE00EB3286 /* fr.lproj */,
 				53913BE626D323FE00EB3286 /* he.lproj */,
 				53913BCE26D323FE00EB3286 /* it.lproj */,
 				53913BEC26D323FE00EB3286 /* kk.lproj */,
+				534D4FEA26A7D7CC000A7A48 /* ko.lproj */,
 				53913BCB26D323FE00EB3286 /* ru.lproj */,
 				53913BE926D323FE00EB3286 /* sk.lproj */,
 				53913BD726D323FE00EB3286 /* sl.lproj */,
@@ -1110,8 +1112,6 @@
 				53913BDD26D323FE00EB3286 /* ta.lproj */,
 				53913BD126D323FE00EB3286 /* vi.lproj */,
 				534D4FED26A7D7CC000A7A48 /* zh-Hans.lproj */,
-				534D4FE626A7D7CC000A7A48 /* en.lproj */,
-				534D4FEA26A7D7CC000A7A48 /* ko.lproj */,
 			);
 			path = Translations;
 			sourceTree = "<group>";
