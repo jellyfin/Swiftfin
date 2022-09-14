@@ -23,6 +23,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     var basicLibrary = makeBasicLibrary
     @Route(.push)
     var library = makeLibrary
+    @Route(.push)
+    var castAndCrew = makeCastAndCrew
     @Route(.modal)
     var itemOverview = makeItemOverview
     @Route(.fullScreen)
@@ -44,6 +46,10 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
         LibraryCoordinator(parameters: parameters)
+    }
+
+    func makeCastAndCrew(people: [BaseItemPerson]) -> CastAndCrewLibraryCoordinator {
+        CastAndCrewLibraryCoordinator(people: people)
     }
 
     func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {

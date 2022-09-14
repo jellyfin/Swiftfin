@@ -34,7 +34,9 @@ struct LibraryItemRow: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     DotHStack {
-                        if let premiereYear = item.premiereDateYear {
+                        if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLocator {
+                            Text(seasonEpisodeLocator)
+                        } else if let premiereYear = item.premiereDateYear {
                             Text(premiereYear)
                         }
 

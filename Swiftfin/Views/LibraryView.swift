@@ -83,21 +83,7 @@ struct LibraryView: View {
                     ProgressView()
                 }
 
-                Button {
-                    switch libraryViewType {
-                    case .grid:
-                        libraryViewType = .list
-                    case .list:
-                        libraryViewType = .grid
-                    }
-                } label: {
-                    switch libraryViewType {
-                    case .grid:
-                        Image(systemName: "list.dash")
-                    case .list:
-                        Image(systemName: "square.grid.2x2")
-                    }
-                }
+                LibraryViewTypeToggle(libraryViewType: $libraryViewType)
             }
         }
     }

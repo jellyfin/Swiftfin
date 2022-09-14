@@ -30,7 +30,7 @@ extension SeriesItemView {
                 SeriesEpisodesView(viewModel: viewModel)
                     .environmentObject(focusGuide)
 
-                ItemView.CastAndCrewHStack(people: viewModel.item.people?.filter(\.isDisplayed) ?? [])
+                ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
 
                 ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 

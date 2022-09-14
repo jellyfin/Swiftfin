@@ -21,8 +21,14 @@ extension ItemView {
             PosterHStack(
                 title: L10n.castAndCrew,
                 type: .portrait,
-                items: people
+                items: people.filter(\.isDisplayed).prefix(20).asArray
             )
+            .trailing {
+                SeeAllButton()
+                    .onSelect {
+                        router.route(to: \.castAndCrew, people)
+                    }
+            }
             .onSelect { person in
                 router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
             }

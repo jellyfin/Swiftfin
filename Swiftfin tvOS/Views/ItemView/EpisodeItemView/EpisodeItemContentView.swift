@@ -25,7 +25,7 @@ extension EpisodeItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                ItemView.CastAndCrewHStack(people: viewModel.item.people?.filter(\.isDisplayed) ?? [])
+                ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
 
                 if let seriesItem = viewModel.seriesItem {
                     PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])

@@ -24,7 +24,7 @@ struct MediaView: View {
         CollectionView(items: viewModel.libraryItems) { _, item, _ in
             PosterButton(item: item, type: .landscape)
                 .scaleItem(1.12)
-                .onSelect { _ in
+                .onSelect {
                     switch item.library.collectionType {
                     case "favorites":
                         router.route(to: \.library, .init(parent: item.library, type: .library, filters: .favorites))
@@ -36,7 +36,7 @@ struct MediaView: View {
                         router.route(to: \.library, .init(parent: item.library, type: .library, filters: .init()))
                     }
                 }
-                .imageOverlay { _ in
+                .imageOverlay {
                     ZStack {
                         Color.black
                             .opacity(0.5)

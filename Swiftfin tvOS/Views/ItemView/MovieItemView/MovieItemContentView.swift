@@ -25,7 +25,7 @@ extension MovieItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                ItemView.CastAndCrewHStack(people: viewModel.item.people?.filter(\.isDisplayed) ?? [])
+                ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
 
                 ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 

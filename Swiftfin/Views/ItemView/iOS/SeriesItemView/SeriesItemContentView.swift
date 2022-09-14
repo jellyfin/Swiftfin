@@ -44,7 +44,7 @@ extension SeriesItemView {
 
                 // MARK: Cast and Crew
 
-                if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
+                if let castAndCrew = viewModel.item.people,
                    !castAndCrew.isEmpty
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
