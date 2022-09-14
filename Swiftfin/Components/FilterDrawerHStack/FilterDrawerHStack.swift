@@ -39,16 +39,6 @@ struct FilterDrawerHStack: View {
                     ))
                 }
 
-            FilterDrawerButton(title: L10n.tags, activated: viewModel.currentFilters.tags != [])
-                .onSelect {
-                    onSelect(.init(
-                        title: L10n.tags,
-                        viewModel: viewModel,
-                        filter: \.tags,
-                        selectorType: .multi
-                    ))
-                }
-
             FilterDrawerButton(title: L10n.filters, activated: viewModel.currentFilters.filters != [])
                 .onSelect {
                     onSelect(.init(

@@ -7,13 +7,13 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 
-struct ItemFilters: Hashable {
+struct ItemFilters: Codable, Defaults.Serializable, Hashable {
 
     var genres: [Filter] = []
-    var tags: [Filter] = []
     var filters: [Filter] = []
     var sortOrder: [Filter] = [APISortOrder.ascending.filter]
     var sortBy: [Filter] = [SortBy.name.filter]
@@ -31,7 +31,7 @@ struct ItemFilters: Hashable {
     }
 
     // Type-erased object for use with WritableKeyPath
-    struct Filter: Displayable, Hashable, Identifiable {
+    struct Filter: Codable, Defaults.Serializable, Displayable, Hashable, Identifiable {
         var displayName: String
         var id: String?
         var filterName: String

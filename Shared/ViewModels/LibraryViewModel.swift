@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import JellyfinAPI
 import SwiftUI
 import UIKit
@@ -18,6 +19,7 @@ final class LibraryViewModel: PagingLibraryViewModel {
 
     let parent: LibraryParent?
     let type: LibraryParentType
+    private let saveFilters: Bool
 
     var libraryCoordinatorParameters: LibraryCoordinator.Parameters {
         if let parent = parent {
@@ -27,32 +29,29 @@ final class LibraryViewModel: PagingLibraryViewModel {
         }
     }
 
-    init(filters: ItemFilters) {
-        self.parent = nil
-        self.type = .library
-        self.filterViewModel = .init(parent: nil, currentFilters: filters)
-        super.init()
-
-        filterViewModel.$currentFilters
-            .sink { newFilters in
-                self.requestItems(with: newFilters, replaceCurrentItems: true)
-            }
-            .store(in: &cancellables)
+    convenience init(filters: ItemFilters, saveFilters: Bool = false) {
+        self.init(parent: nil, type: .library, filters: filters, saveFilters: saveFilters)
     }
 
     init(
-        parent: LibraryParent,
+        parent: LibraryParent?,
         type: LibraryParentType,
-        filters: ItemFilters = .init()
+        filters: ItemFilters = .init(),
+        saveFilters: Bool = false
     ) {
         self.parent = parent
         self.type = type
         self.filterViewModel = .init(parent: parent, currentFilters: filters)
+        self.saveFilters = saveFilters
         super.init()
 
         filterViewModel.$currentFilters
             .sink { newFilters in
                 self.requestItems(with: newFilters, replaceCurrentItems: true)
+
+                if self.saveFilters, let id = self.parent?.id {
+                    Defaults[.libraryFilterStore][id] = newFilters
+                }
             }
             .store(in: &cancellables)
     }
@@ -102,7 +101,6 @@ final class LibraryViewModel: PagingLibraryViewModel {
         let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-        let tags: [String] = filters.tags.map(\.filterName)
 
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
@@ -116,7 +114,6 @@ final class LibraryViewModel: PagingLibraryViewModel {
             includeItemTypes: includeItemTypes,
             filters: itemFilters,
             sortBy: sortBy,
-            tags: tags,
             enableUserData: true,
             personIds: personIDs,
             studioIds: studioIDs,
