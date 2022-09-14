@@ -28,15 +28,10 @@ extension HomeView {
                 items: viewModel.items.prefix(20).asArray
             )
             .trailing {
-                Button {
-                    router.route(to: \.library, viewModel.libraryCoordinatorParameters)
-                } label: {
-                    HStack {
-                        L10n.seeAll.text
-                        Image(systemName: "chevron.right")
+                SeeAllButton()
+                    .onSelect {
+                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
                     }
-                    .font(.subheadline.bold())
-                }
             }
             .onSelect { item in
                 router.route(to: \.item, item)

@@ -10,6 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension HomeView {
+    
     struct CinematicRecentlyAddedView: View {
 
         @EnvironmentObject

@@ -28,6 +28,8 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             return seasonEpisodeLocator
+        case .person:
+            return nil
         default:
             return nil
         }

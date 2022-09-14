@@ -6,37 +6,22 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
-import SwiftUI
+import Foundation
+import UIKit
 
-// TODO: Look at something better that possibly doesn't depend on the viewmodel
-//       and accomodates favorites and liveTV better
-struct LibraryItem: Equatable, Poster {
-
-    var library: BaseItemDto
-    var viewModel: MediaViewModel
-    var displayName: String = ""
-    var subtitle: String?
-    var showTitle: Bool = false
-
+struct LibraryItem: Poster {
+    
+    let displayName: String
+    let subtitle: String?
+    let showTitle: Bool = true
+    let portraitPosterImageSource: ImageSource
+    let landscapePosterImageSources: [ImageSource]
+    
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-        .init()
+        portraitPosterImageSource
     }
-
+    
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
-        viewModel.libraryImages[library.id ?? ""] ?? []
-    }
-
-    static func == (lhs: LibraryItem, rhs: LibraryItem) -> Bool {
-        lhs.library == rhs.library &&
-            lhs.viewModel.libraryImages[lhs.library.id ?? ""] == rhs.viewModel.libraryImages[rhs.library.id ?? ""]
-    }
-
-    static func favorites(viewModel: MediaViewModel) -> LibraryItem {
-        .init(library: .init(name: L10n.favorites, collectionType: "favorites"), viewModel: viewModel)
-    }
-
-    static func liveTV(viewModel: MediaViewModel) -> LibraryItem {
-        .init(library: .init(name: "LiveTV", collectionType: "liveTV"), viewModel: viewModel)
+        landscapePosterImageSources
     }
 }

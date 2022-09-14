@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
+    
     struct SimilarItemsHStack: View {
 
         @Default(.Customization.similarPosterType)

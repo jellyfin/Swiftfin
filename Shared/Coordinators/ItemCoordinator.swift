@@ -20,6 +20,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     @Route(.push)
     var item = makeItem
     @Route(.push)
+    var basicLibrary = makeBasicLibrary
+    @Route(.push)
     var library = makeLibrary
     @Route(.modal)
     var itemOverview = makeItemOverview
@@ -31,21 +33,21 @@ final class ItemCoordinator: NavigationCoordinatable {
     init(item: BaseItemDto) {
         self.itemDto = item
     }
+    
+    func makeItem(item: BaseItemDto) -> ItemCoordinator {
+        ItemCoordinator(item: item)
+    }
+    
+    func makeBasicLibrary(parameters: BasicLibraryCoordinator.Parameters) -> BasicLibraryCoordinator {
+        BasicLibraryCoordinator(parameters: parameters)
+    }
 
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
         LibraryCoordinator(parameters: parameters)
     }
 
-    func makeItem(item: BaseItemDto) -> ItemCoordinator {
-        ItemCoordinator(item: item)
-    }
-
     func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
-    }
-
-    func makeSeason(item: BaseItemDto) -> ItemCoordinator {
-        ItemCoordinator(item: item)
     }
 
     func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {

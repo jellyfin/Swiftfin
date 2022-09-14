@@ -13,14 +13,14 @@ import JellyfinAPI
 final class MediaViewModel: ViewModel {
 
     @Published
-    private var libraries: [LibraryItem] = []
+    private var libraries: [MediaLibraryItem] = []
     @Published
     var libraryImages: [String: [ImageSource]] = [:]
 
     @Default(.Experimental.liveTVAlphaEnabled)
     private var liveTVEnabled
 
-    var libraryItems: [LibraryItem] {
+    var libraryItems: [MediaLibraryItem] {
         [.init(library: .init(name: L10n.favorites, collectionType: "favorites"), viewModel: self)]
             .appending(.init(library: .init(name: "LiveTV", collectionType: "liveTV"), viewModel: self), if: liveTVEnabled)
             .appending(libraries)
