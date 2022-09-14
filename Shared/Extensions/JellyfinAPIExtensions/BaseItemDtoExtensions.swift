@@ -10,6 +10,12 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+extension BaseItemDto: Displayable {
+    var displayName: String {
+        name ?? .emptyDash
+    }
+}
+
 extension BaseItemDto: Identifiable {}
 extension BaseItemDto: LibraryParent {}
 
@@ -84,10 +90,6 @@ extension BaseItemDto {
             return progress / length
         }
         return 0
-    }
-
-    var displayName: String {
-        name ?? .emptyDash
     }
 
     // MARK: ItemDetail

@@ -11,7 +11,7 @@ import SwiftUI
 
 // TODO: Look at something better that possibly doesn't depend on the viewmodel
 //       and accomodates favorites and liveTV better
-struct LibraryItem: Equatable, Poster {
+struct MediaLibraryItem: Equatable, Poster {
 
     var library: BaseItemDto
     var viewModel: MediaViewModel
@@ -27,16 +27,16 @@ struct LibraryItem: Equatable, Poster {
         viewModel.libraryImages[library.id ?? ""] ?? []
     }
 
-    static func == (lhs: LibraryItem, rhs: LibraryItem) -> Bool {
+    static func == (lhs: MediaLibraryItem, rhs: MediaLibraryItem) -> Bool {
         lhs.library == rhs.library &&
             lhs.viewModel.libraryImages[lhs.library.id ?? ""] == rhs.viewModel.libraryImages[rhs.library.id ?? ""]
     }
 
-    static func favorites(viewModel: MediaViewModel) -> LibraryItem {
+    static func favorites(viewModel: MediaViewModel) -> MediaLibraryItem {
         .init(library: .init(name: L10n.favorites, collectionType: "favorites"), viewModel: viewModel)
     }
 
-    static func liveTV(viewModel: MediaViewModel) -> LibraryItem {
+    static func liveTV(viewModel: MediaViewModel) -> MediaLibraryItem {
         .init(library: .init(name: "LiveTV", collectionType: "liveTV"), viewModel: viewModel)
     }
 }

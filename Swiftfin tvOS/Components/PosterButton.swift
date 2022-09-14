@@ -17,10 +17,10 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var type: PosterType
     private var itemScale: CGFloat
     private var horizontalAlignment: HorizontalAlignment
-    private var content: (Item) -> Content
-    private var imageOverlay: (Item) -> ImageOverlay
-    private var contextMenu: (Item) -> ContextMenu
-    private var onSelect: (Item) -> Void
+    private var content: () -> Content
+    private var imageOverlay: () -> ImageOverlay
+    private var contextMenu: () -> ContextMenu
+    private var onSelect: () -> Void
     private var onFocus: () -> Void
     private var singleImage: Bool
 
@@ -31,31 +31,37 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     var body: some View {
         VStack(alignment: horizontalAlignment) {
             Button {
-                onSelect(item)
+                onSelect()
             } label: {
                 Group {
                     switch type {
                     case .portrait:
                         ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+                            .failure {
+                                InitialFailureView(item.displayName.initials)
+                            }
                             .posterStyle(type: type, width: itemWidth)
                     case .landscape:
                         ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                            .failure {
+                                InitialFailureView(item.displayName.initials)
+                            }
                             .posterStyle(type: type, width: itemWidth)
                     }
                 }
                 .overlay {
-                    imageOverlay(item)
+                    imageOverlay()
                         .posterStyle(type: type, width: itemWidth)
                 }
             }
             .buttonStyle(.card)
             .contextMenu(menuItems: {
-                contextMenu(item)
+                contextMenu()
             })
             .posterShadow()
             .focused($isFocused)
 
-            content(item)
+            content()
                 .zIndex(-1)
         }
         .frame(width: itemWidth)
@@ -76,10 +82,10 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
             type: type,
             itemScale: 1,
             horizontalAlignment: .leading,
-            content: { PosterButtonDefaultContentView(item: $0) },
-            imageOverlay: { _ in EmptyView() },
-            contextMenu: { _ in EmptyView() },
-            onSelect: { _ in },
+            content: { PosterButtonDefaultContentView(item: item) },
+            imageOverlay: { EmptyView() },
+            contextMenu: { EmptyView() },
+            onSelect: {},
             onFocus: {},
             singleImage: singleImage
         )
@@ -100,7 +106,7 @@ extension PosterButton {
     }
 
     @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C) -> PosterButton<Item, C, ImageOverlay, ContextMenu> {
+    func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> PosterButton<Item, C, ImageOverlay, ContextMenu> {
         PosterButton<Item, C, ImageOverlay, ContextMenu>(
             item: item,
             type: type,
@@ -116,7 +122,7 @@ extension PosterButton {
     }
 
     @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O) -> PosterButton<Item, Content, O, ContextMenu> {
+    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping () -> O) -> PosterButton<Item, Content, O, ContextMenu> {
         PosterButton<Item, Content, O, ContextMenu>(
             item: item,
             type: type,
@@ -132,7 +138,7 @@ extension PosterButton {
     }
 
     @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M) -> PosterButton<Item, Content, ImageOverlay, M> {
+    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping () -> M) -> PosterButton<Item, Content, ImageOverlay, M> {
         PosterButton<Item, Content, ImageOverlay, M>(
             item: item,
             type: type,
@@ -147,7 +153,7 @@ extension PosterButton {
         )
     }
 
-    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
+    func onSelect(_ action: @escaping () -> Void) -> Self {
         var copy = self
         copy.onSelect = action
         return copy

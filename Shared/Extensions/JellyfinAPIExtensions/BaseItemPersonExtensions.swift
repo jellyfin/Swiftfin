@@ -10,6 +10,14 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+extension BaseItemPerson: Displayable {
+    var displayName: String {
+        self.name ?? .emptyDash
+    }
+}
+
+extension BaseItemPerson: LibraryParent {}
+
 extension BaseItemPerson {
 
     // MARK: First Role
@@ -50,11 +58,3 @@ extension BaseItemPerson {
         return DisplayedType(rawValue: type) != nil
     }
 }
-
-extension BaseItemPerson: Displayable {
-    var displayName: String {
-        self.name ?? .emptyDash
-    }
-}
-
-extension BaseItemPerson: LibraryParent {}

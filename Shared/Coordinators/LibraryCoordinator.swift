@@ -48,10 +48,10 @@ final class LibraryCoordinator: NavigationCoordinatable {
     #else
     @Route(.push)
     var item = makeItem
-    @Route(.modal)
-    var filter = makeFilter
     @Route(.push)
     var library = makeLibrary
+    @Route(.modal)
+    var filter = makeFilter
     #endif
 
     private let parameters: Parameters
@@ -63,9 +63,9 @@ final class LibraryCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         if let parent = parameters.parent {
-            LibraryView(viewModel: .init(parent: parent, type: parameters.type, filters: parameters.filters))
+            LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: parameters.filters))
         } else {
-            LibraryView(viewModel: .init(filters: parameters.filters))
+            LibraryView(viewModel: LibraryViewModel(filters: parameters.filters))
         }
     }
 
@@ -82,12 +82,12 @@ final class LibraryCoordinator: NavigationCoordinatable {
         ItemCoordinator(item: item)
     }
 
-    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
-        NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
-    }
-
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
         LibraryCoordinator(parameters: parameters)
+    }
+
+    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
+        NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
     }
     #endif
 }

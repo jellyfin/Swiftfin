@@ -7,34 +7,35 @@
 //
 
 import Defaults
-import JellyfinAPI
 import SwiftUI
 
-struct LatestInLibraryView: View {
+extension HomeView {
 
-    @EnvironmentObject
-    private var homeRouter: HomeCoordinator.Router
-    @ObservedObject
-    var viewModel: LatestMediaViewModel
+    struct LatestInLibraryView: View {
 
-    @Default(.Customization.latestInLibraryPosterType)
-    var latestInLibraryPosterType
+        @EnvironmentObject
+        private var router: HomeCoordinator.Router
+        @ObservedObject
+        var viewModel: LibraryViewModel
 
-    var body: some View {
-        PosterHStack(title: L10n.latestWithString(viewModel.library.displayName), type: latestInLibraryPosterType, items: viewModel.items)
+        @Default(.Customization.latestInLibraryPosterType)
+        var latestInLibraryPosterType
+
+        var body: some View {
+            PosterHStack(
+                title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash),
+                type: latestInLibraryPosterType,
+                items: viewModel.items.prefix(20).asArray
+            )
             .trailing {
-                Button {
-                    homeRouter.route(to: \.library, .init(parent: viewModel.library, type: .library, filters: .recent))
-                } label: {
-                    HStack {
-                        L10n.seeAll.text
-                        Image(systemName: "chevron.right")
+                SeeAllButton()
+                    .onSelect {
+                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
                     }
-                    .font(.subheadline.bold())
-                }
             }
             .onSelect { item in
-                homeRouter.route(to: \.item, item)
+                router.route(to: \.item, item)
             }
+        }
     }
 }
