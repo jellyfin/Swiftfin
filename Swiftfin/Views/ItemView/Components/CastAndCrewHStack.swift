@@ -10,7 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
-    
+
     struct CastAndCrewHStack: View {
 
         @EnvironmentObject
@@ -23,13 +23,6 @@ extension ItemView {
                 type: .portrait,
                 items: people
             )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-//                        let people = people.map { BaseItemDto( }
-//                        router.route(to: \.basicLibrary, .init(title: L10n.castAndCrew, viewModel: StaticLibraryViewModel(items: people)))
-                    }
-            }
             .onSelect { person in
                 router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
             }

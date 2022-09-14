@@ -10,7 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
-    
+
     struct StudiosHStack: View {
 
         @EnvironmentObject

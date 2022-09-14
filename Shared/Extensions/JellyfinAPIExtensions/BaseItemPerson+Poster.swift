@@ -10,8 +10,6 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-// MARK: PortraitImageStackable
-
 extension BaseItemPerson: Poster {
 
     var subtitle: String? {

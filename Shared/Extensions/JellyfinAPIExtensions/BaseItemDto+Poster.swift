@@ -24,12 +24,13 @@ extension BaseItemDto: Poster {
         }
     }
 
+    // For .person, use the parentLogoImageTag to hold the role
     var subtitle: String? {
         switch type {
         case .episode:
             return seasonEpisodeLocator
         case .person:
-            return nil
+            return parentLogoImageTag
         default:
             return nil
         }

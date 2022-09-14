@@ -33,11 +33,11 @@ final class ItemCoordinator: NavigationCoordinatable {
     init(item: BaseItemDto) {
         self.itemDto = item
     }
-    
+
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
-    
+
     func makeBasicLibrary(parameters: BasicLibraryCoordinator.Parameters) -> BasicLibraryCoordinator {
         BasicLibraryCoordinator(parameters: parameters)
     }
