@@ -18,7 +18,7 @@ final class HomeViewModel: ViewModel {
     @Published
     var hasNextUp: Bool = false
     @Published
-    var hasLatestAdded: Bool = false
+    var hasRecentlyAdded: Bool = false
     @Published
     var librariesShowRecentlyAddedIDs: [String] = []
     @Published
@@ -118,7 +118,7 @@ final class HomeViewModel: ViewModel {
             .store(in: &cancellables)
     }
 
-    // MARK: Latest Added Items
+    // MARK: Recently Added Items
 
     private func refreshLatestAddedItems() {
         UserLibraryAPI.getLatestMedia(
@@ -130,11 +130,11 @@ final class HomeViewModel: ViewModel {
             switch completion {
             case .finished: ()
             case .failure:
-                self.hasLatestAdded = false
+                self.hasRecentlyAdded = false
                 self.handleAPIRequestError(completion: completion)
             }
         } receiveValue: { items in
-            self.hasLatestAdded = items.count > 0
+            self.hasRecentlyAdded = items.count > 0
         }
         .store(in: &cancellables)
     }

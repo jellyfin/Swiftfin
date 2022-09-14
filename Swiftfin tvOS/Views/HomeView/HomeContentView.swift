@@ -28,16 +28,22 @@ extension HomeView {
                             filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
                         ))
 
-                        NextUpView(viewModel: .init())
+                        if viewModel.hasNextUp {
+                            NextUpView(viewModel: .init())
+                        }
                     } else {
                         CinematicResumeView(viewModel: viewModel)
 
-                        NextUpView(viewModel: .init())
+                        if viewModel.hasNextUp {
+                            NextUpView(viewModel: .init())
+                        }
 
-                        RecentlyAddedView(viewModel: .init(
-                            itemTypes: [.movie, .series],
-                            filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-                        ))
+                        if viewModel.hasRecentlyAdded {
+                            RecentlyAddedView(viewModel: .init(
+                                itemTypes: [.movie, .series],
+                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
+                            ))
+                        }
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in

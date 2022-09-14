@@ -36,7 +36,7 @@ extension HomeView {
                         NextUpView(viewModel: .init())
                     }
 
-                    if viewModel.hasLatestAdded {
+                    if viewModel.hasRecentlyAdded {
                         RecentlyAddedView(
                             viewModel: .init(
                                 itemTypes: [.movie, .series],
