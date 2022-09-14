@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
 import SwiftUI
 
 struct UserListView: View {
@@ -14,44 +15,6 @@ struct UserListView: View {
     private var userListRouter: UserListCoordinator.Router
     @ObservedObject
     var viewModel: UserListViewModel
-
-    private var listView: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(viewModel.users, id: \.id) { user in
-                    Button {
-                        viewModel.signIn(user: user)
-                    } label: {
-                        ZStack(alignment: Alignment.leading) {
-                            Rectangle()
-                                .foregroundColor(Color(UIColor.secondarySystemFill))
-                                .frame(height: 50)
-                                .cornerRadius(10)
-
-                            HStack {
-                                Text(user.username)
-                                    .font(.title2)
-
-                                Spacer()
-
-                                if viewModel.isLoading {
-                                    ProgressView()
-                                }
-                            }.padding(.leading)
-                        }
-                        .padding()
-                    }
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            viewModel.remove(user: user)
-                        } label: {
-                            Label(L10n.remove, systemImage: "trash")
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private var noUserView: some View {
         VStack {
@@ -68,44 +31,59 @@ struct UserListView: View {
     }
 
     @ViewBuilder
-    private var innerBody: some View {
-        if viewModel.users.isEmpty {
-            noUserView
-                .offset(y: -50)
-        } else {
-            listView
-        }
-    }
-
-    @ViewBuilder
-    private var toolbarContent: some View {
-        HStack {
-            Button {
-                userListRouter.route(to: \.serverDetail, viewModel.server)
-            } label: {
-                Image(systemName: "info.circle.fill")
-            }
-
-            if !viewModel.users.isEmpty {
-                Button {
-                    userListRouter.route(to: \.userSignIn, viewModel.server)
-                } label: {
-                    Image(systemName: "person.crop.circle.fill.badge.plus")
+    private var gridView: some View {
+        CollectionView(items: viewModel.users) { _, user, _ in
+            UserProfileButton(user: user)
+                .onSelect {
+                    viewModel.signIn(user: user)
                 }
-            }
+                .contextMenu {
+                    Button(role: .destructive) {
+                        viewModel.remove(user: user)
+                    } label: {
+                        Label(L10n.remove, systemImage: "trash")
+                    }
+                }
+        }
+        .layout { _, layoutEnvironment in
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: .adaptive(withMinItemSize: 120),
+                itemSpacing: 30,
+                lineSpacing: 30
+            )
         }
     }
 
     var body: some View {
-        innerBody
-            .navigationTitle(viewModel.server.name)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    toolbarContent
+        Group {
+            if viewModel.users.isEmpty {
+                noUserView
+                    .offset(y: -50)
+            } else {
+                gridView
+            }
+        }
+        .navigationTitle(viewModel.server.name)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if !viewModel.users.isEmpty {
+                    Button {
+                        userListRouter.route(to: \.userSignIn, viewModel.server)
+                    } label: {
+                        Image(systemName: "person.crop.circle.fill.badge.plus")
+                    }
+                }
+
+                Button {
+                    userListRouter.route(to: \.serverDetail, viewModel.server)
+                } label: {
+                    Image(systemName: "info.circle.fill")
                 }
             }
-            .onAppear {
-                viewModel.fetchUsers()
-            }
+        }
+        .onAppear {
+            viewModel.fetchUsers()
+        }
     }
 }
