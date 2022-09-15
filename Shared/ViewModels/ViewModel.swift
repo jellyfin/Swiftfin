@@ -8,11 +8,14 @@
 
 import ActivityIndicator
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 
 class ViewModel: ObservableObject {
 
+    @Injected(LogManager.service)
+    var logger
     @Published
     var isLoading = false
     @Published
@@ -39,18 +42,18 @@ class ViewModel: ObservableObject {
                 case .error(-1, _, _, _):
                     networkError = .URLError(response: errorResponse, displayMessage: displayMessage)
                     // Use the errorResponse description for debugging, rather than the user-facing friendly description which may not be implemented
-                    LogManager.log
+                    logger
                         .error(
                             "Request failed: URL request failed with error \(networkError.errorMessage.code): \(errorResponse.localizedDescription)"
                         )
                 case .error(-2, _, _, _):
                     networkError = .HTTPURLError(response: errorResponse, displayMessage: displayMessage)
-                    LogManager.log
+                    logger
                         .error("Request failed: HTTP URL request failed with description: \(errorResponse.localizedDescription)")
                 default:
                     networkError = .JellyfinError(response: errorResponse, displayMessage: displayMessage)
                     // Able to use user-facing friendly description here since just HTTP status codes
-                    LogManager.log
+                    logger
                         .error(
                             "Request failed: \(networkError.errorMessage.code) - \(networkError.errorMessage.title): \(networkError.errorMessage.message)\n\(error.localizedDescription)"
                         )
@@ -66,7 +69,7 @@ class ViewModel: ObservableObject {
                     message: swiftfinError.errorDescription ?? ""
                 )
                 self.errorMessage = errorMessage
-                LogManager.log.error("Request failed: \(swiftfinError.errorDescription ?? "")")
+                logger.error("Request failed: \(swiftfinError.errorDescription ?? "")")
 
             default:
                 let genericErrorMessage = ErrorMessage(
@@ -75,7 +78,7 @@ class ViewModel: ObservableObject {
                     message: error.localizedDescription
                 )
                 self.errorMessage = genericErrorMessage
-                LogManager.log.error("Request failed: Generic error - \(error.localizedDescription)")
+                logger.error("Request failed: Generic error - \(error.localizedDescription)")
             }
         }
     }

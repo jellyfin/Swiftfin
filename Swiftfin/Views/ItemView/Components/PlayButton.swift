@@ -6,12 +6,15 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import SwiftUI
 
 extension ItemView {
 
     struct PlayButton: View {
 
+        @Injected(LogManager.service)
+        private var logger
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
@@ -22,7 +25,7 @@ extension ItemView {
                 if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
                     itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
                 } else {
-                    LogManager.log.error("Attempted to play item but no playback information available")
+                    logger.error("Attempted to play item but no playback information available")
                 }
             } label: {
                 ZStack {
@@ -47,7 +50,7 @@ extension ItemView {
                             selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
                             itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
                         } else {
-                            LogManager.log.error("Attempted to play item but no playback information available")
+                            logger.error("Attempted to play item but no playback information available")
                         }
                     } label: {
                         Label(L10n.playFromBeginning, systemImage: "gobackward")

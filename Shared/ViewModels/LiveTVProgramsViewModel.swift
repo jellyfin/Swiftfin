@@ -49,7 +49,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         }, receiveValue: { [weak self] response in
-            LogManager.log.debug("Received \(response.items?.count ?? 0) Channels")
+            self?.logger.debug("Received \(response.items?.count ?? 0) Channels")
             guard let self = self else { return }
             if let chans = response.items {
                 for chan in chans {
@@ -82,7 +82,7 @@ final class LiveTVProgramsViewModel: ViewModel {
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         }, receiveValue: { [weak self] response in
-            LogManager.log.debug("Received \(String(response.items?.count ?? 0)) Recommended Programs")
+            self?.logger.debug("Received \(String(response.items?.count ?? 0)) Recommended Programs")
             guard let self = self else { return }
             self.recommendedItems = response.items ?? []
         })
@@ -109,7 +109,7 @@ final class LiveTVProgramsViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
-                LogManager.log.debug("Received \(String(response.items?.count ?? 0)) Series Items")
+                self?.logger.debug("Received \(String(response.items?.count ?? 0)) Series Items")
                 guard let self = self else { return }
                 self.seriesItems = response.items ?? []
             })
@@ -136,7 +136,7 @@ final class LiveTVProgramsViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
-                LogManager.log.debug("Received \(String(response.items?.count ?? 0)) Movie Items")
+                self?.logger.debug("Received \(String(response.items?.count ?? 0)) Movie Items")
                 guard let self = self else { return }
                 self.movieItems = response.items ?? []
             })
@@ -159,7 +159,7 @@ final class LiveTVProgramsViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
-                LogManager.log.debug("Received \(String(response.items?.count ?? 0)) Sports Items")
+                self?.logger.debug("Received \(String(response.items?.count ?? 0)) Sports Items")
                 guard let self = self else { return }
                 self.sportsItems = response.items ?? []
             })
@@ -182,7 +182,7 @@ final class LiveTVProgramsViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
-                LogManager.log.debug("Received \(String(response.items?.count ?? 0)) Kids Items")
+                self?.logger.debug("Received \(String(response.items?.count ?? 0)) Kids Items")
                 guard let self = self else { return }
                 self.kidsItems = response.items ?? []
             })
@@ -205,7 +205,7 @@ final class LiveTVProgramsViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
-                LogManager.log.debug("Received \(String(response.items?.count ?? 0)) News Items")
+                self?.logger.debug("Received \(String(response.items?.count ?? 0)) News Items")
                 guard let self = self else { return }
                 self.newsItems = response.items ?? []
             })

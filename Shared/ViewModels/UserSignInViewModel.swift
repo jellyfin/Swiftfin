@@ -46,7 +46,7 @@ final class UserSignInViewModel: ViewModel {
     }
 
     func signIn(username: String, password: String) {
-        LogManager.log.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
+        logger.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
 
         let username = username.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
@@ -99,7 +99,7 @@ final class UserSignInViewModel: ViewModel {
 
                 self.quickConnectSecret = response.secret
                 self.quickConnectCode = response.code
-                LogManager.log.debug("QuickConnect code: \(response.code ?? .emptyDash)")
+                self.logger.debug("QuickConnect code: \(response.code ?? .emptyDash)")
 
                 self.quickConnectTimer = RepeatingTimer(interval: 5) {
                     self.checkAuthStatus(onSuccess)
@@ -120,7 +120,7 @@ final class UserSignInViewModel: ViewModel {
                 // this is a repeated call
             }, receiveValue: { value in
                 guard let authenticated = value.authenticated, authenticated else {
-                    LogManager.log.debug("QuickConnect not authenticated yet")
+                    self.logger.debug("QuickConnect not authenticated yet")
                     return
                 }
 

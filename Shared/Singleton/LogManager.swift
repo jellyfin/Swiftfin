@@ -6,16 +6,40 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import Puppy
 
 class LogManager {
 
-    static let log = Puppy()
+    static let service = Factory<Puppy>(scope: .singleton) {
+        Puppy.swiftfinInstance()
+    }
 
-    static func setup() {
+//    static let log = Puppy()
+}
 
-        let logsDirectory = getDocumentsDirectory().appendingPathComponent("logs", isDirectory: true)
+class LogFormatter: LogFormattable {
+    func formatMessage(
+        _ level: LogLevel,
+        message: String,
+        tag: String,
+        function: String,
+        file: String,
+        line: UInt,
+        swiftLogInfo: [String: String],
+        label: String,
+        date: Date,
+        threadID: UInt64
+    ) -> String {
+        let file = shortFileName(file).replacingOccurrences(of: ".swift", with: "")
+        return " [\(level.emoji) \(level)] \(file)#\(line):\(function) \(message)"
+    }
+}
+
+private extension Puppy {
+    static func swiftfinInstance() -> Puppy {
+        let logsDirectory = URL.documents.appendingPathComponent("logs", isDirectory: true)
 
         do {
             try FileManager.default.createDirectory(
@@ -38,33 +62,9 @@ class LogManager {
         let consoleLogger = ConsoleLogger("org.jellyfin.swiftfin.logger.console")
         consoleLogger.format = LogFormatter()
 
-        log.add(fileRotationLogger, withLevel: .debug)
-        log.add(consoleLogger, withLevel: .debug)
-    }
-
-    private static func getDocumentsDirectory() -> URL {
-        // find all possible documents directories for this user
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-
-        // just send back the first one, which ought to be the only one
-        return paths[0]
-    }
-}
-
-class LogFormatter: LogFormattable {
-    func formatMessage(
-        _ level: LogLevel,
-        message: String,
-        tag: String,
-        function: String,
-        file: String,
-        line: UInt,
-        swiftLogInfo: [String: String],
-        label: String,
-        date: Date,
-        threadID: UInt64
-    ) -> String {
-        let file = shortFileName(file).replacingOccurrences(of: ".swift", with: "")
-        return " [\(level.emoji) \(level)] \(file)#\(line):\(function) \(message)"
+        let logger = Puppy()
+        logger.add(fileRotationLogger, withLevel: .debug)
+        logger.add(consoleLogger, withLevel: .debug)
+        return logger
     }
 }
