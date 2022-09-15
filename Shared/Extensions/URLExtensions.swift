@@ -22,4 +22,8 @@ public extension URL {
 
         return items
     }
+
+    static var documents: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    }
 }

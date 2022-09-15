@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import Factory
 import Foundation
 import Nuke
 import Stinsen
@@ -15,6 +16,10 @@ import SwiftUI
 import WidgetKit
 
 final class MainCoordinator: NavigationCoordinatable {
+
+    @Injected(LogManager.service)
+    private var logger
+
     var stack: NavigationStack<MainCoordinator>
 
     @Root
@@ -60,13 +65,13 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @objc
     func didSignIn() {
-        LogManager.log.info("Received `didSignIn` from SwiftfinNotificationCenter.")
+        logger.info("Received `didSignIn` from SwiftfinNotificationCenter.")
         root(\.mainTab)
     }
 
     @objc
     func didSignOut() {
-        LogManager.log.info("Received `didSignOut` from SwiftfinNotificationCenter.")
+        logger.info("Received `didSignOut` from SwiftfinNotificationCenter.")
         root(\.serverList)
     }
 

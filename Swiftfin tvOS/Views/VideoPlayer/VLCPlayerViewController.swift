@@ -10,6 +10,7 @@ import AVFoundation
 import AVKit
 import Combine
 import Defaults
+import Factory
 import JellyfinAPI
 import MediaPlayer
 import SwiftUI
@@ -19,6 +20,9 @@ import UIKit
 // TODO: Look at making the VLC player layer a view
 
 class VLCPlayerViewController: UIViewController {
+
+    @Injected(LogManager.service)
+    private var logger
 
     // MARK: variables
 
@@ -476,11 +480,11 @@ extension VLCPlayerViewController {
         viewModel = newViewModel
 
         if viewModel.streamType == .direct {
-            LogManager.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? .emptyDash)")
+            logger.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? .emptyDash)")
         } else if viewModel.streamType == .transcode && Defaults[.Experimental.forceDirectPlay] {
-            LogManager.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? .emptyDash)")
+            logger.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? .emptyDash)")
         } else {
-            LogManager.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? .emptyDash)")
+            logger.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? .emptyDash)")
         }
     }
 

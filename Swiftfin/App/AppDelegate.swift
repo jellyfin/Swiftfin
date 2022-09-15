@@ -20,7 +20,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // Lazily initialize datastack
         _ = SwiftfinStore.dataStack
-        LogManager.setup()
 
         let audioSession = AVAudioSession.sharedInstance()
         do {

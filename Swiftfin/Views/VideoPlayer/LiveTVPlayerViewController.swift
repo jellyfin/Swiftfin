@@ -10,6 +10,7 @@ import AVFoundation
 import AVKit
 import Combine
 import Defaults
+import Factory
 import JellyfinAPI
 import MediaPlayer
 import MobileVLCKit
@@ -19,6 +20,10 @@ import UIKit
 // TODO: Look at making the VLC player layer a view
 
 class LiveTVPlayerViewController: UIViewController {
+
+    @Injected(LogManager.service)
+    private var logger
+
     // MARK: variables
 
     private var viewModel: VideoPlayerViewModel
@@ -532,11 +537,11 @@ extension LiveTVPlayerViewController {
         viewModel = newViewModel
 
         if viewModel.streamType == .direct {
-            LogManager.log.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? .emptyDash)")
+            logger.debug("Player set up with direct play stream for item: \(viewModel.item.id ?? .emptyDash)")
         } else if viewModel.streamType == .transcode && Defaults[.Experimental.forceDirectPlay] {
-            LogManager.log.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? .emptyDash)")
+            logger.debug("Player set up with forced direct stream for item: \(viewModel.item.id ?? .emptyDash)")
         } else {
-            LogManager.log.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? .emptyDash)")
+            logger.debug("Player set up with transcoded stream for item: \(viewModel.item.id ?? .emptyDash)")
         }
     }
 

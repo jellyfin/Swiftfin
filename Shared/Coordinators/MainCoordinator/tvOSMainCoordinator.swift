@@ -6,12 +6,17 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import Nuke
 import Stinsen
 import SwiftUI
 
 final class MainCoordinator: NavigationCoordinatable {
+
+    @Injected(LogManager.service)
+    private var logger
+
     var stack = NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
 
     @Root
@@ -40,13 +45,13 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @objc
     func didSignIn() {
-        LogManager.log.info("Received `didSignIn` from NSNotificationCenter.")
+        logger.info("Received `didSignIn` from NSNotificationCenter.")
         root(\.mainTab)
     }
 
     @objc
     func didSignOut() {
-        LogManager.log.info("Received `didSignOut` from NSNotificationCenter.")
+        logger.info("Received `didSignOut` from NSNotificationCenter.")
         root(\.serverList)
     }
 

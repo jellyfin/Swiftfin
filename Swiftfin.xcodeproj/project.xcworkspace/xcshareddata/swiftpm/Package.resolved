@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "factory",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hmlongco/Factory",
+      "state" : {
+        "revision" : "8557426f3286e20b631ecdac8115242f888656e0",
+        "version" : "1.2.8"
+      }
+    },
+    {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift",

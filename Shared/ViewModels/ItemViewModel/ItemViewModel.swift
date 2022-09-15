@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -65,7 +66,7 @@ class ItemViewModel: ViewModel {
         } else {
             // Remove if necessary. Note that this cannot be in deinit as
             // holding as an observer won't allow the object to be deinit-ed
-            Notifications.unsubscribe(self)
+            Notifications[.didSendStopReport].unsubscribe(self)
         }
     }
 

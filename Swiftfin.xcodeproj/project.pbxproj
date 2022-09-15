@@ -410,6 +410,8 @@
 		E19169CE272514760085832A /* HTTPScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19169CD272514760085832A /* HTTPScheme.swift */; };
 		E19169CF272514760085832A /* HTTPScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19169CD272514760085832A /* HTTPScheme.swift */; };
 		E192608028D28AAD002314B4 /* UserProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E192607F28D28AAD002314B4 /* UserProfileButton.swift */; };
+		E192608328D2D0DB002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608228D2D0DB002314B4 /* Factory */; };
+		E192608828D2E5F0002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608728D2E5F0002314B4 /* Factory */; };
 		E1937A3B288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1937A3A288E54AD00CB80AA /* BaseItemDto+Images.swift */; };
 		E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1937A3A288E54AD00CB80AA /* BaseItemDto+Images.swift */; };
 		E1937A3E288F0D3D00CB80AA /* UIScreenExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1937A3D288F0D3D00CB80AA /* UIScreenExtensions.swift */; };
@@ -1027,6 +1029,7 @@
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				E1347DB6279E3CA500BC6161 /* Puppy in Frameworks */,
 				53ABFDED26799D7700886593 /* ActivityIndicator in Frameworks */,
+				E192608828D2E5F0002314B4 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1045,6 +1048,7 @@
 				62666E0327E5017100EC0ECD /* CoreMedia.framework in Frameworks */,
 				62666E0627E5017A00EC0ECD /* CoreVideo.framework in Frameworks */,
 				E10EAA4D277BB716000269ED /* Sliders in Frameworks */,
+				E192608328D2D0DB002314B4 /* Factory in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				62666E0227E5016D00EC0ECD /* CoreGraphics.framework in Frameworks */,
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
@@ -2269,6 +2273,7 @@
 				E13AF3B928A0C598009093AB /* NukeUI */,
 				E13AF3BB28A0C59E009093AB /* BlurHashKit */,
 				E1734D7D28B9578100C66367 /* CollectionView */,
+				E192608728D2E5F0002314B4 /* Factory */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -2308,6 +2313,7 @@
 				E19E6E0628A0B958005C10C8 /* NukeUI */,
 				E19E6E0928A0BEFF005C10C8 /* BlurHashKit */,
 				E1734D7B28B9577700C66367 /* CollectionView */,
+				E192608228D2D0DB002314B4 /* Factory */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -2373,6 +2379,7 @@
 				E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */,
 				E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */,
 				E1734D7A28B9577700C66367 /* XCRemoteSwiftPackageReference "CollectionView" */,
+				E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3447,6 +3454,14 @@
 				kind = branch;
 			};
 		};
+		E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
@@ -3608,6 +3623,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E10EAA43277BB646000269ED /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
 			productName = JellyfinAPI;
+		};
+		E192608228D2D0DB002314B4 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		E192608728D2E5F0002314B4 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
 		};
 		E19E6E0428A0B958005C10C8 /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

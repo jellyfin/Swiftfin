@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -49,7 +50,7 @@ final class ConnectToServerViewModel: ViewModel {
         let uri = uri.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
 
-        LogManager.log.debug("Attempting to connect to server at \"\(uri)\"", tag: "connectToServer")
+        logger.debug("Attempting to connect to server at \"\(uri)\"", tag: "connectToServer")
         SessionManager.main.connectToServer(with: uri)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
@@ -92,7 +93,7 @@ final class ConnectToServerViewModel: ViewModel {
                     }
                 }
             }, receiveValue: { server in
-                LogManager.log.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
+                self.logger.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
                 self.router?.route(to: \.userSignIn, server)
             })
             .store(in: &cancellables)
