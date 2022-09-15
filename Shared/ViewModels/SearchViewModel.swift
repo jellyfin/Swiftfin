@@ -86,7 +86,6 @@ final class SearchViewModel: ViewModel {
         let sortBy: [String] = filters.sortBy.map(\.filterName)
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-        let tags: [String] = filters.tags.map(\.filterName)
 
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
@@ -98,7 +97,6 @@ final class SearchViewModel: ViewModel {
             includeItemTypes: [itemType],
             filters: itemFilters,
             sortBy: sortBy,
-            tags: tags,
             enableUserData: true,
             genreIds: genreIDs,
             enableImages: true

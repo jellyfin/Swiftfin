@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -63,9 +64,18 @@ final class LibraryCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         if let parent = parameters.parent {
-            LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: parameters.filters))
+            if parameters.filters == .init(), let id = parent.id, let storedFilters = Defaults[.libraryFilterStore][id] {
+                LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters, saveFilters: true))
+            } else {
+                LibraryView(viewModel: LibraryViewModel(
+                    parent: parent,
+                    type: parameters.type,
+                    filters: parameters.filters,
+                    saveFilters: false
+                ))
+            }
         } else {
-            LibraryView(viewModel: LibraryViewModel(filters: parameters.filters))
+            LibraryView(viewModel: LibraryViewModel(filters: parameters.filters, saveFilters: false))
         }
     }
 

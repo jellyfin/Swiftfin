@@ -39,7 +39,6 @@ final class FilterViewModel: ViewModel {
             self?.handleAPIRequestError(completion: completion)
         }, receiveValue: { [weak self] queryFilters in
             self?.allFilters.genres = queryFilters.genres?.map(\.filter) ?? []
-            self?.allFilters.tags = queryFilters.tags?.map(\.filter) ?? []
         })
         .store(in: &cancellables)
     }

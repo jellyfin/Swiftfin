@@ -26,6 +26,7 @@ extension Defaults.Keys {
     static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .generalSuite)
     static let inNetworkBandwidth = Key<Int>("InNetworkBandwidth", default: 40_000_000, suite: .generalSuite)
     static let outOfNetworkBandwidth = Key<Int>("OutOfNetworkBandwidth", default: 40_000_000, suite: .generalSuite)
+    static let libraryFilterStore = Key<[String: ItemFilters]>("libraryFilterStore", default: [:], suite: .generalSuite)
 
     enum Customization {
         static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactLogo, suite: .generalSuite)
