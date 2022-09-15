@@ -6,12 +6,17 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import Nuke
 import Stinsen
 import SwiftUI
 
 final class MainCoordinator: NavigationCoordinatable {
+
+    @Injected(LogManager.service)
+    private var logger
+
     var stack = NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
 
     @Root

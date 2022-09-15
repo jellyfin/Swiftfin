@@ -10,6 +10,7 @@ import AVFoundation
 import AVKit
 import Combine
 import Defaults
+import Factory
 import JellyfinAPI
 import MediaPlayer
 import SwiftUI
@@ -19,6 +20,9 @@ import UIKit
 // TODO: Look at making the VLC player layer a view
 
 class LiveTVPlayerViewController: UIViewController {
+
+    @Injected(LogManager.service)
+    private var logger
 
     // MARK: variables
 

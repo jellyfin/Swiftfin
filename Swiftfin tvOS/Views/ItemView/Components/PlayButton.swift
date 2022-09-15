@@ -6,12 +6,15 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import SwiftUI
 
 extension ItemView {
 
     struct PlayButton: View {
 
+        @Injected(LogManager.service)
+        private var logger
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
