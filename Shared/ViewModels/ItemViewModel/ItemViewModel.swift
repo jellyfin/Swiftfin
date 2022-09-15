@@ -14,9 +14,6 @@ import UIKit
 
 class ItemViewModel: ViewModel {
 
-    @Injected(Notifications.service)
-    private var notificationService
-
     @Published
     var item: BaseItemDto
     @Published
