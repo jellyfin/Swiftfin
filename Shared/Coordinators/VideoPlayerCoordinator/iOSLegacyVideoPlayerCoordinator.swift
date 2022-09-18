@@ -12,16 +12,16 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class VideoPlayerCoordinator: NavigationCoordinatable {
+final class LegacyVideoPlayerCoordinator: NavigationCoordinatable {
 
-    let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
+    let stack = NavigationStack(initial: \LegacyVideoPlayerCoordinator.start)
 
     @Root
     var start = makeStart
 
-    let viewModel: VideoPlayerViewModel
+    let viewModel: LegacyVideoPlayerViewModel
 
-    init(viewModel: VideoPlayerViewModel) {
+    init(viewModel: LegacyVideoPlayerViewModel) {
         self.viewModel = viewModel
     }
 
@@ -36,7 +36,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
                     .prefersHomeIndicatorAutoHidden(true)
                     .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
             } else {
-                VLCPlayerView(viewModel: self.viewModel)
+                LegacyVLCPlayerView(viewModel: self.viewModel)
                     .navigationBarHidden(true)
                     .statusBar(hidden: true)
                     .ignoresSafeArea()

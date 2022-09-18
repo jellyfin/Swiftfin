@@ -12,10 +12,10 @@ import SwiftUI
 struct VLCPlayerChapterOverlayView: View {
 
     @ObservedObject
-    var viewModel: VideoPlayerViewModel
+    var viewModel: LegacyVideoPlayerViewModel
     private let chapterImages: [URL]
 
-    init(viewModel: VideoPlayerViewModel) {
+    init(viewModel: LegacyVideoPlayerViewModel) {
         self.viewModel = viewModel
         self.chapterImages = viewModel.item.getChapterImage(maxWidth: 500)
     }

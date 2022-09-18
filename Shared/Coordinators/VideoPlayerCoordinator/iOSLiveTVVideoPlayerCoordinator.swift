@@ -19,9 +19,9 @@ final class LiveTVVideoPlayerCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    let viewModel: VideoPlayerViewModel
+    let viewModel: LegacyVideoPlayerViewModel
 
-    init(viewModel: VideoPlayerViewModel) {
+    init(viewModel: LegacyVideoPlayerViewModel) {
         self.viewModel = viewModel
     }
 

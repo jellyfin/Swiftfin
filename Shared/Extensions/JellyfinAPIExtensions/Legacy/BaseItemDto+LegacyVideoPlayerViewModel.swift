@@ -12,7 +12,7 @@ import JellyfinAPI
 import UIKit
 
 extension BaseItemDto {
-    func createVideoPlayerViewModel() -> AnyPublisher<[VideoPlayerViewModel], Error> {
+    func createLegacyVideoPlayerViewModel() -> AnyPublisher<[LegacyVideoPlayerViewModel], Error> {
 
         LogManager.service().debug("Creating video player view model for item: \(id ?? "")")
 
@@ -38,10 +38,10 @@ extension BaseItemDto {
             autoOpenLiveStream: true,
             getPostedPlaybackInfoRequest: getPostedPlaybackInfoRequest
         )
-        .map { response -> [VideoPlayerViewModel] in
+        .map { response -> [LegacyVideoPlayerViewModel] in
             let mediaSources = response.mediaSources!
 
-            var viewModels: [VideoPlayerViewModel] = []
+            var viewModels: [LegacyVideoPlayerViewModel] = []
 
             for currentMediaSource in mediaSources {
                 let videoStream = currentMediaSource.mediaStreams?.filter { $0.type == .video }.first
@@ -146,7 +146,7 @@ extension BaseItemDto {
                     fileName = String(lastInPath)
                 }
 
-                let videoPlayerViewModel = VideoPlayerViewModel(
+                let videoPlayerViewModel = LegacyVideoPlayerViewModel(
                     item: modifiedSelfItem,
                     title: modifiedSelfItem.name ?? "",
                     subtitle: subtitle,
@@ -180,7 +180,7 @@ extension BaseItemDto {
         .eraseToAnyPublisher()
     }
 
-    func createLiveTVVideoPlayerViewModel() -> AnyPublisher<[VideoPlayerViewModel], Error> {
+    func createLegacyLiveTVVideoPlayerViewModel() -> AnyPublisher<[LegacyVideoPlayerViewModel], Error> {
 
         LogManager.service().debug("Creating liveTV video player view model for item: \(id ?? "")")
 
@@ -206,10 +206,10 @@ extension BaseItemDto {
             autoOpenLiveStream: true,
             getPostedPlaybackInfoRequest: getPostedPlaybackInfoRequest
         )
-        .map { response -> [VideoPlayerViewModel] in
+        .map { response -> [LegacyVideoPlayerViewModel] in
             let mediaSources = response.mediaSources!
 
-            var viewModels: [VideoPlayerViewModel] = []
+            var viewModels: [LegacyVideoPlayerViewModel] = []
 
             for currentMediaSource in mediaSources {
                 let videoStream = currentMediaSource.mediaStreams?.filter { $0.type == .video }.first
@@ -314,7 +314,7 @@ extension BaseItemDto {
                     fileName = String(lastInPath)
                 }
 
-                let videoPlayerViewModel = VideoPlayerViewModel(
+                let videoPlayerViewModel = LegacyVideoPlayerViewModel(
                     item: modifiedSelfItem,
                     title: modifiedSelfItem.name ?? "",
                     subtitle: subtitle,

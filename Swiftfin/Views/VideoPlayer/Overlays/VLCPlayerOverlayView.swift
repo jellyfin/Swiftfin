@@ -15,7 +15,7 @@ import SwiftUI
 
 struct VLCPlayerOverlayView: View {
     @ObservedObject
-    var viewModel: VideoPlayerViewModel
+    var viewModel: LegacyVideoPlayerViewModel
 
     @ViewBuilder
     private var mainButtonView: some View {
@@ -478,7 +478,7 @@ struct VLCPlayerOverlayView: View {
 }
 
 struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
-    static let videoPlayerViewModel = VideoPlayerViewModel(
+    static let videoPlayerViewModel = LegacyVideoPlayerViewModel(
         item: BaseItemDto(),
         title: "Glorious Purpose",
         subtitle: "Loki - S1E1",

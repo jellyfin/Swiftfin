@@ -17,31 +17,31 @@ extension ItemView {
 
         var body: some View {
             HStack {
-                if let officialRating = viewModel.item.officialRating {
-                    AttributeOutlineView(text: officialRating)
-                }
-
-                if let selectedPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                    if selectedPlayerViewModel.item.isHD ?? false {
-                        AttributeFillView(text: "HD")
-                    }
-
-                    if (selectedPlayerViewModel.videoStream.width ?? 0) > 3800 {
-                        AttributeFillView(text: "4K")
-                    }
-
-                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "5.1" }) {
-                        AttributeFillView(text: "5.1")
-                    }
-
-                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "7.1" }) {
-                        AttributeFillView(text: "7.1")
-                    }
-
-                    if !selectedPlayerViewModel.subtitleStreams.isEmpty {
-                        AttributeOutlineView(text: "CC")
-                    }
-                }
+//                if let officialRating = viewModel.item.officialRating {
+//                    AttributeOutlineView(text: officialRating)
+//                }
+//
+//                if let selectedPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+//                    if selectedPlayerViewModel.item.isHD ?? false {
+//                        AttributeFillView(text: "HD")
+//                    }
+//
+//                    if (selectedPlayerViewModel.videoStream.width ?? 0) > 3800 {
+//                        AttributeFillView(text: "4K")
+//                    }
+//
+//                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "5.1" }) {
+//                        AttributeFillView(text: "5.1")
+//                    }
+//
+//                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "7.1" }) {
+//                        AttributeFillView(text: "7.1")
+//                    }
+//
+//                    if !selectedPlayerViewModel.subtitleStreams.isEmpty {
+//                        AttributeOutlineView(text: "CC")
+//                    }
+//                }
             }
             .foregroundColor(Color(UIColor.darkGray))
         }

@@ -31,10 +31,17 @@ class ItemViewModel: ViewModel {
     var isWatched = false
     @Published
     var isFavorited = false
+    
     @Published
-    var selectedVideoPlayerViewModel: VideoPlayerViewModel?
+    var selectedVideoPlayerViewModel: ItemVideoPlayerViewModel?
     @Published
-    var videoPlayerViewModels: [VideoPlayerViewModel] = []
+    var videoPlayerViewModels: [ItemVideoPlayerViewModel] = []
+    
+    
+    @Published
+    var legacyselectedVideoPlayerViewModel: LegacyVideoPlayerViewModel?
+    @Published
+    var legacyvideoPlayerViewModels: [LegacyVideoPlayerViewModel] = []
 
     init(item: BaseItemDto) {
         self.item = item
@@ -73,8 +80,8 @@ class ItemViewModel: ViewModel {
     func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
         guard item.type == .episode || item.type == .movie,
               !item.missing else { return }
-
-        item.createVideoPlayerViewModel()
+        
+        item.createItemVideoPlayerViewModel()
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { viewModels in
@@ -82,6 +89,16 @@ class ItemViewModel: ViewModel {
                 self.selectedVideoPlayerViewModel = viewModels.first
             }
             .store(in: &cancellables)
+
+
+//        item.createLegacyVideoPlayerViewModel()
+//            .sink { completion in
+//                self.handleAPIRequestError(completion: completion)
+//            } receiveValue: { viewModels in
+//                self.legacyvideoPlayerViewModels = viewModels
+//                self.legacyselectedVideoPlayerViewModel = viewModels.first
+//            }
+//            .store(in: &cancellables)
     }
 
     func playButtonText() -> String {

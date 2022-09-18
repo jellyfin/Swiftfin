@@ -19,7 +19,7 @@ import TVVLCKit
 import MobileVLCKit
 #endif
 
-final class VideoPlayerViewModel: ViewModel {
+final class LegacyVideoPlayerViewModel: ViewModel {
     // MARK: Published
 
     // Manually kept state because VLCKit doesn't properly set "played"
@@ -57,9 +57,9 @@ final class VideoPlayerViewModel: ViewModel {
     }
 
     @Published
-    var previousItemVideoPlayerViewModel: VideoPlayerViewModel?
+    var previousItemVideoPlayerViewModel: LegacyVideoPlayerViewModel?
     @Published
-    var nextItemVideoPlayerViewModel: VideoPlayerViewModel?
+    var nextItemVideoPlayerViewModel: LegacyVideoPlayerViewModel?
     @Published
     var jumpBackwardLength: VideoPlayerJumpLength {
         willSet {
@@ -203,7 +203,7 @@ final class VideoPlayerViewModel: ViewModel {
     }
 
     // Necessary PassthroughSubject to capture manual scrubbing from sliders
-    let sliderScrubbingSubject = PassthroughSubject<VideoPlayerViewModel, Never>()
+    let sliderScrubbingSubject = PassthroughSubject<LegacyVideoPlayerViewModel, Never>()
 
     // During scrubbing, many progress reports were spammed
     // Send only the current report after a delay
@@ -320,7 +320,7 @@ final class VideoPlayerViewModel: ViewModel {
 
 // MARK: Injected Values
 
-extension VideoPlayerViewModel {
+extension LegacyVideoPlayerViewModel {
     // Injects custom values that override certain settings
     func injectCustomValues(startFromBeginning: Bool = false) {
         if startFromBeginning {
@@ -334,7 +334,7 @@ extension VideoPlayerViewModel {
 
 // MARK: Adjacent Items
 
-extension VideoPlayerViewModel {
+extension LegacyVideoPlayerViewModel {
     func getAdjacentEpisodes() {
         guard let seriesID = item.seriesId, item.type == .episode else { return }
 
@@ -363,7 +363,7 @@ extension VideoPlayerViewModel {
                     // State 2
                     let nextItem = items[1]
 
-                    nextItem.createVideoPlayerViewModel()
+                    nextItem.createLegacyVideoPlayerViewModel()
                         .sink { completion in
                             self.handleAPIRequestError(completion: completion)
                         } receiveValue: { viewModels in
@@ -379,7 +379,7 @@ extension VideoPlayerViewModel {
                     // State 3
                     let previousItem = items[0]
 
-                    previousItem.createVideoPlayerViewModel()
+                    previousItem.createLegacyVideoPlayerViewModel()
                         .sink { completion in
                             self.handleAPIRequestError(completion: completion)
                         } receiveValue: { viewModels in
@@ -398,7 +398,7 @@ extension VideoPlayerViewModel {
                 let previousItem = items[0]
                 let nextItem = items[2]
 
-                previousItem.createVideoPlayerViewModel()
+                previousItem.createLegacyVideoPlayerViewModel()
                     .sink { completion in
                         self.handleAPIRequestError(completion: completion)
                     } receiveValue: { viewModels in
@@ -411,7 +411,7 @@ extension VideoPlayerViewModel {
                     }
                     .store(in: &self.cancellables)
 
-                nextItem.createVideoPlayerViewModel()
+                nextItem.createLegacyVideoPlayerViewModel()
                     .sink { completion in
                         self.handleAPIRequestError(completion: completion)
                     } receiveValue: { viewModels in
@@ -431,7 +431,7 @@ extension VideoPlayerViewModel {
     // Potential for experimental feature of syncing subtitle states among adjacent episodes
     // when using previous & next item buttons and auto-play
 
-    private func matchSubtitleStream(with masterViewModel: VideoPlayerViewModel) {
+    private func matchSubtitleStream(with masterViewModel: LegacyVideoPlayerViewModel) {
         if !masterViewModel.subtitlesEnabled {
             matchSubtitlesEnabled(with: masterViewModel)
         }
@@ -444,14 +444,14 @@ extension VideoPlayerViewModel {
         selectedSubtitleStreamIndex = matchingSubtitleStreamIndex
     }
 
-    private func matchAudioStream(with masterViewModel: VideoPlayerViewModel) {
+    private func matchAudioStream(with masterViewModel: LegacyVideoPlayerViewModel) {
         guard let currentAudioStream = masterViewModel.audioStreams.first(where: { $0.index == masterViewModel.selectedAudioStreamIndex }),
               let matchingAudioStream = audioStreams.first(where: { mediaStreamAboutEqual($0, currentAudioStream) }) else { return }
 
         selectedAudioStreamIndex = matchingAudioStream.index ?? -1
     }
 
-    private func matchSubtitlesEnabled(with masterViewModel: VideoPlayerViewModel) {
+    private func matchSubtitlesEnabled(with masterViewModel: LegacyVideoPlayerViewModel) {
         subtitlesEnabled = masterViewModel.subtitlesEnabled
     }
 
@@ -462,7 +462,7 @@ extension VideoPlayerViewModel {
 
 // MARK: Progress Report Timer
 
-extension VideoPlayerViewModel {
+extension LegacyVideoPlayerViewModel {
     private func sendNewProgressReportWithTimer() {
         progressReportTimer?.invalidate()
         progressReportTimer = Timer.scheduledTimer(
@@ -477,7 +477,7 @@ extension VideoPlayerViewModel {
 
 // MARK: Updates
 
-extension VideoPlayerViewModel {
+extension LegacyVideoPlayerViewModel {
     // MARK: sendPlayReport
 
     func sendPlayReport() {
@@ -626,29 +626,9 @@ extension VideoPlayerViewModel {
     }
 }
 
-// MARK: Embedded/Normal Subtitle Streams
-
-extension VideoPlayerViewModel {
-    func createEmbeddedSubtitleStream(with subtitleStream: MediaStream) -> URL {
-        guard let baseURL = URLComponents(url: directStreamURL, resolvingAgainstBaseURL: false) else { fatalError() }
-        guard let queryItems = baseURL.queryItems else { fatalError() }
-
-        var newURL = baseURL
-        var newQueryItems = queryItems
-
-        newQueryItems.removeAll(where: { $0.name == "SubtitleStreamIndex" })
-        newQueryItems.removeAll(where: { $0.name == "SubtitleMethod" })
-
-        newURL.addQueryItem(name: "SubtitleMethod", value: "Encode")
-        newURL.addQueryItem(name: "SubtitleStreamIndex", value: "\(subtitleStream.index ?? -1)")
-
-        return newURL.url!
-    }
-}
-
 // MARK: Subtitle Streams
 
-extension VideoPlayerViewModel {
+extension LegacyVideoPlayerViewModel {
     func videoSubtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
         let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
 
@@ -665,8 +645,8 @@ extension VideoPlayerViewModel {
 
 // MARK: Equatable
 
-extension VideoPlayerViewModel: Equatable {
-    static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
+extension LegacyVideoPlayerViewModel: Equatable {
+    static func == (lhs: LegacyVideoPlayerViewModel, rhs: LegacyVideoPlayerViewModel) -> Bool {
         lhs.item.id == rhs.item.id &&
             lhs.item.userData?.playbackPositionTicks == rhs.item.userData?.playbackPositionTicks
     }
@@ -674,7 +654,7 @@ extension VideoPlayerViewModel: Equatable {
 
 // MARK: Hashable
 
-extension VideoPlayerViewModel: Hashable {
+extension LegacyVideoPlayerViewModel: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(item)
         hasher.combine(directStreamURL)

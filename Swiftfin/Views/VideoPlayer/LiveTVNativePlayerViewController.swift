@@ -13,7 +13,7 @@ import UIKit
 
 class LiveTVNativePlayerViewController: AVPlayerViewController {
 
-    let viewModel: VideoPlayerViewModel
+    let viewModel: LegacyVideoPlayerViewModel
 
     var timeObserverToken: Any?
 
@@ -21,7 +21,7 @@ class LiveTVNativePlayerViewController: AVPlayerViewController {
 
     private var cancellables = Set<AnyCancellable>()
 
-    init(viewModel: VideoPlayerViewModel) {
+    init(viewModel: LegacyVideoPlayerViewModel) {
 
         self.viewModel = viewModel
 

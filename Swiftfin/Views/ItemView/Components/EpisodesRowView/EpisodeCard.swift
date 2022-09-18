@@ -79,12 +79,12 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                 }
             }
             .onSelect {
-                episode.createVideoPlayerViewModel()
+                episode.createLegacyVideoPlayerViewModel()
                     .sink { completion in
                         self.viewModel.handleAPIRequestError(completion: completion)
                     } receiveValue: { viewModels in
                         if let episodeViewModel = viewModels.first {
-                            router.route(to: \.videoPlayer, episodeViewModel)
+//                            router.route(to: \.videoPlayer, episodeViewModel)
                         }
                     }
                     .store(in: &viewModel.cancellables)

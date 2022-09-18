@@ -26,7 +26,7 @@ class LiveTVPlayerViewController: UIViewController {
 
     // MARK: variables
 
-    private var viewModel: VideoPlayerViewModel
+    private var viewModel: LegacyVideoPlayerViewModel
     private var vlcMediaPlayer: VLCMediaPlayer
     private var lastPlayerTicks: Int64 = 0
     private var lastProgressReportTicks: Int64 = 0
@@ -109,7 +109,7 @@ class LiveTVPlayerViewController: UIViewController {
 
     // MARK: init
 
-    init(viewModel: VideoPlayerViewModel) {
+    init(viewModel: LegacyVideoPlayerViewModel) {
         self.viewModel = viewModel
         self.vlcMediaPlayer = VLCMediaPlayer()
 
@@ -338,7 +338,7 @@ class LiveTVPlayerViewController: UIViewController {
 
     // MARK: setupOverlayHostingController
 
-    private func setupOverlayHostingController(viewModel: VideoPlayerViewModel) {
+    private func setupOverlayHostingController(viewModel: LegacyVideoPlayerViewModel) {
         // TODO: Look at injecting viewModel into the environment so it updates the current overlay
         if let currentOverlayHostingController = currentOverlayHostingController {
             // UX fade-out
@@ -471,7 +471,7 @@ extension LiveTVPlayerViewController {
     /// and also takes the role of setting the 'viewModel' property with the given viewModel
     ///
     /// Use case for this is setting new media within the same VLCPlayerViewController
-    func setupMediaPlayer(newViewModel: VideoPlayerViewModel) {
+    func setupMediaPlayer(newViewModel: LegacyVideoPlayerViewModel) {
         // remove old player
 
         if vlcMediaPlayer.media != nil {
@@ -566,7 +566,7 @@ extension LiveTVPlayerViewController {
 
     // MARK: setupViewModelListeners
 
-    private func setupViewModelListeners(viewModel: VideoPlayerViewModel) {
+    private func setupViewModelListeners(viewModel: LegacyVideoPlayerViewModel) {
         viewModel.$playbackSpeed.sink { newSpeed in
             self.vlcMediaPlayer.rate = Float(newSpeed.rawValue)
         }.store(in: &viewModelListeners)

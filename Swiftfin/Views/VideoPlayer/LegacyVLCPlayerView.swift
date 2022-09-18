@@ -6,12 +6,14 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import SwiftUI
 import UIKit
+import VLCUI
 
 struct NativePlayerView: UIViewControllerRepresentable {
 
-    let viewModel: VideoPlayerViewModel
+    let viewModel: LegacyVideoPlayerViewModel
 
     typealias UIViewControllerType = NativePlayerViewController
 
@@ -23,14 +25,13 @@ struct NativePlayerView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: NativePlayerViewController, context: Context) {}
 }
 
-struct VLCPlayerView: UIViewControllerRepresentable {
+struct LegacyVLCPlayerView: UIViewControllerRepresentable {
 
-    let viewModel: VideoPlayerViewModel
+    let viewModel: LegacyVideoPlayerViewModel
 
     typealias UIViewControllerType = VLCPlayerViewController
 
     func makeUIViewController(context: Context) -> VLCPlayerViewController {
-
         VLCPlayerViewController(viewModel: viewModel)
     }
 

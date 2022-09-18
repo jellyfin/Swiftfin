@@ -27,6 +27,12 @@ extension ItemView {
                 } else {
                     logger.error("Attempted to play item but no playback information available")
                 }
+                
+//                if let selectedVideoPlayerViewModel = viewModel.legacyselectedVideoPlayerViewModel {
+//                    itemRouter.route(to: \.legacyVideoPlayer, selectedVideoPlayerViewModel)
+//                } else {
+//                    logger.error("Attempted to play item but no playback information available")
+//                }
             } label: {
                 ZStack {
                     Rectangle()
@@ -46,9 +52,9 @@ extension ItemView {
             .contextMenu {
                 if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
                     Button {
-                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+                        if let selectedVideoPlayerViewModel = viewModel.legacyselectedVideoPlayerViewModel {
                             selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-                            itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+                            itemRouter.route(to: \.legacyVideoPlayer, selectedVideoPlayerViewModel)
                         } else {
                             logger.error("Attempted to play item but no playback information available")
                         }

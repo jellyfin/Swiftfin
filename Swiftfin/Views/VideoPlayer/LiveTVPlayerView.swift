@@ -11,7 +11,7 @@ import UIKit
 
 struct LiveTVNativePlayerView: UIViewControllerRepresentable {
 
-    let viewModel: VideoPlayerViewModel
+    let viewModel: LegacyVideoPlayerViewModel
 
     typealias UIViewControllerType = LiveTVNativePlayerViewController
 
@@ -25,7 +25,7 @@ struct LiveTVNativePlayerView: UIViewControllerRepresentable {
 
 struct LiveTVPlayerView: UIViewControllerRepresentable {
 
-    let viewModel: VideoPlayerViewModel
+    let viewModel: LegacyVideoPlayerViewModel
 
     typealias UIViewControllerType = LiveTVPlayerViewController
 

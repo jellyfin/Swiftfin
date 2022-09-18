@@ -1,0 +1,25 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+//
+
+import Foundation
+import JellyfinAPI
+
+extension MediaSourceInfo {
+    
+    func itemVideoPlayerViewModel(with item: BaseItemDto, playSessionID: String) -> ItemVideoPlayerViewModel {
+        let directStreamURL = VideosAPI.getVideoStreamWithRequestBuilder(
+            itemId: item.id!,
+            _static: true,
+            tag: item.etag,
+            playSessionId: playSessionID,
+            mediaSourceId: self.id
+        ).url
+        
+        return ItemVideoPlayerViewModel(playbackURL: directStreamURL, item: item)
+    }
+}
