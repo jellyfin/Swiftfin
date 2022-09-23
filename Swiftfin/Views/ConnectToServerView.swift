@@ -60,51 +60,47 @@ struct ConnectToServerView: View {
             }
 
             Section {
-                if viewModel.searching {
-                    HStack(alignment: .center, spacing: 5) {
+                if viewModel.discoveredServers.isEmpty {
+                    HStack(alignment: .center) {
                         Spacer()
-                        L10n.searchingDots.text
+                        L10n.noLocalServersFound.text
+                            .font(.callout)
                             .foregroundColor(.secondary)
                         Spacer()
                     }
                 } else {
-                    if viewModel.discoveredServers.isEmpty {
-                        HStack(alignment: .center) {
-                            Spacer()
-                            L10n.noLocalServersFound.text
-                                .font(.callout)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                        }
-                    } else {
-                        ForEach(viewModel.discoveredServers, id: \.id) { server in
-                            Button {
-                                uri = server.currentURI
-                                viewModel.connectToServer(uri: server.currentURI)
-                            } label: {
-                                VStack(alignment: .leading, spacing: 5) {
-                                    Text(server.name)
-                                        .font(.title3)
-                                    Text(server.currentURI)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
+                    ForEach(viewModel.discoveredServers.sorted(by: { $0.name < $1.name }), id: \.id) { server in
+                        Button {
+                            uri = server.currentURI
+                            viewModel.connectToServer(uri: server.currentURI)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(server.name)
+                                    .font(.title3)
+                                Text(server.currentURI)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
                             }
-                            .disabled(viewModel.isLoading)
                         }
+                        .disabled(viewModel.isLoading)
                     }
                 }
             } header: {
                 HStack {
                     L10n.localServers.text
+                    
                     Spacer()
 
-                    Button {
-                        viewModel.discoverServers()
-                    } label: {
-                        Image(systemName: "arrow.clockwise.circle.fill")
+                    if viewModel.searching {
+                        ProgressView()
+                    } else {
+                        Button {
+                            viewModel.discoverServers()
+                        } label: {
+                            Image(systemName: "arrow.clockwise.circle.fill")
+                        }
+                        .disabled(viewModel.searching || viewModel.isLoading)
                     }
-                    .disabled(viewModel.searching || viewModel.isLoading)
                 }
             }
             .headerProminence(.increased)
@@ -130,6 +126,9 @@ struct ConnectToServerView: View {
         .onAppear {
             viewModel.discoverServers()
             AppURLHandler.shared.appURLState = .allowedInLogin
+        }
+        .onDisappear {
+            
         }
         .navigationBarBackButtonHidden(viewModel.isLoading)
     }

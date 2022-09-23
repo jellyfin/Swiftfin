@@ -9,7 +9,7 @@
 import Factory
 import Foundation
 
-class SwiftfinNotification {
+class InternalNotification {
 
     @Injected(Notifications.service)
     private var notificationService
@@ -35,21 +35,23 @@ class SwiftfinNotification {
 
 enum Notifications {
 
-    static let service = Factory(scope: .singleton) { NotificationCenter() }
+    static let service = Factory(scope: .singleton) {
+        NotificationCenter()
+    }
 
     final class Key {
         public typealias NotificationKey = Notifications.Key
 
         public let key: String
-        public let underlyingNotification: SwiftfinNotification
+        public let underlyingNotification: InternalNotification
 
         public init(_ key: String) {
             self.key = key
-            self.underlyingNotification = SwiftfinNotification(Notification.Name(key))
+            self.underlyingNotification = InternalNotification(Notification.Name(key))
         }
     }
 
-    static subscript(key: Key) -> SwiftfinNotification {
+    static subscript(key: Key) -> InternalNotification {
         key.underlyingNotification
     }
 }

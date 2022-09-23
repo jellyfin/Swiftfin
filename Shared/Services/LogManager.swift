@@ -15,8 +15,6 @@ class LogManager {
     static let service = Factory<Puppy>(scope: .singleton) {
         Puppy.swiftfinInstance()
     }
-
-//    static let log = Puppy()
 }
 
 class LogFormatter: LogFormattable {

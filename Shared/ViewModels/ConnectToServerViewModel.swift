@@ -23,18 +23,19 @@ struct AddServerURIPayload: Identifiable {
 }
 
 final class ConnectToServerViewModel: ViewModel {
+    
+    @Injected(WebSockets.service)
+    private var webSocketService
 
     @RouterObject
     var router: ConnectToServerCoodinator.Router?
     @Published
-    var discoveredServers: [SwiftfinStore.State.Server] = []
+    var discoveredServers: Set<SwiftfinStore.State.Server> = []
     @Published
     var searching = false
     @Published
     var addServerURIPayload: AddServerURIPayload?
     var backAddServerURIPayload: AddServerURIPayload?
-
-    private let discovery = ServerDiscovery()
 
     var alertTitle: String {
         var message: String = ""
@@ -102,27 +103,22 @@ final class ConnectToServerViewModel: ViewModel {
     func discoverServers() {
         discoveredServers.removeAll()
         searching = true
-
-        var _discoveredServers: Set<SwiftfinStore.State.Server> = []
-
-        discovery.locateServer { server in
-            if let server = server {
-                _discoveredServers.insert(.init(
-                    uris: [],
-                    currentURI: server.url.absoluteString,
-                    name: server.name,
-                    id: server.id,
-                    os: "",
-                    version: "",
-                    usersIDs: []
-                ))
+        
+        webSocketService.searchLocalServers()
+            .receive(on: RunLoop.main)
+            .sink { completion in
+                if case let Subscribers.Completion.failure(error) = completion {
+                    self.logger.error(error.localizedDescription)
+                }
+            } receiveValue: { response in
+                print("Discovered server: \(response.name)")
+                self.discoveredServers.insert(response.asStateServer)
             }
-        }
-
-        // Timeout after 3 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            .store(in: &cancellables)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             self.searching = false
-            self.discoveredServers = _discoveredServers.sorted(by: { $0.name < $1.name })
+            self.webSocketService.cancelLocalServerSearch()
         }
     }
 
