@@ -11,32 +11,56 @@ import SwiftUI
 import VLCUI
 
 struct ItemVideoPlayer: View {
-    
+
     @ObservedObject
     var viewModel: ItemVideoPlayerViewModel
     
-    var body: some View {
-        PreferenceUIHostingControllerView {
-            ZStack {
-                VLCVideoPlayer(url: viewModel.playbackURL)
-                    .delegate(viewModel)
-                    .configure { configuration in
-                        configuration.autoPlay = true
-                    }
-                
-                Button {
-                    viewModel.jump(to: 2146000)
-                } label: {
-                    Text("Resume")
-                        .padding()
-                        .background(Color.blue.opacity(0.5))
-                        .cornerRadius(10)
-                }
+    @State
+    private var showOverlay: Bool = false
+    
+    @ViewBuilder
+    private var contentView: some View {
+        ZStack(alignment: .bottom) {
+            VLCVideoPlayer {
+                let configuration = VLCVideoPlayer.Configuration(url: viewModel.playbackURL)
+                configuration.autoPlay = true
+                configuration.startTime = .seconds(Int32(viewModel.item.startTimeSeconds))
+                configuration.playbackChildren = viewModel.subtitleStreams
+                    .compactMap { $0.asPlaybackChild }
+                return configuration
             }
-            .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
-            .navigationBarHidden(true)
-            .statusBar(hidden: true)
+            .delegate(viewModel)
+            
+            Color.red
+                .opacity(0.2)
+                .onTapGesture {
+                    showOverlay.toggle()
+                    print("Gesture view was tapped: \(showOverlay)")
+                }
+            
+            if showOverlay {
+                Overlay.MovieOverlay(viewModel: viewModel)
+                    .transition(.opacity.animation(.linear(duration: 0.2)))
+                    .zIndex(10)
+            }
+            
+            Text(showOverlay ? "Should show" : "Don't show")
         }
+    }
+
+    var body: some View {
+//        PreferenceUIHostingControllerView {
+            contentView
+                .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+                .prefersHomeIndicatorAutoHidden(true)
+                .navigationBarHidden(true)
+                .statusBar(hidden: true)
+//        }
         .ignoresSafeArea()
     }
+}
+
+extension ItemVideoPlayer {
+    
+    enum Overlay {}
 }

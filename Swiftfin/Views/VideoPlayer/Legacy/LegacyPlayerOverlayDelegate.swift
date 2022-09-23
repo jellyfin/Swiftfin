@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-protocol PlayerOverlayDelegate {
+protocol LegacyPlayerOverlayDelegate {
 
     func didSelectClose()
     func didSelectMenu()

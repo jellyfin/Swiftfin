@@ -115,4 +115,8 @@ extension View {
     func posterShadow() -> some View {
         self.shadow(radius: 4, y: 2)
     }
+    
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
 }

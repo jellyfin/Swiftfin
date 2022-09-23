@@ -61,7 +61,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     func makeLegacyVideoPlayer(viewModel: LegacyVideoPlayerViewModel) -> NavigationViewCoordinator<LegacyVideoPlayerCoordinator> {
         NavigationViewCoordinator(LegacyVideoPlayerCoordinator(viewModel: viewModel))
     }
-    
+
     func makeVideoPlayer(viewModel: ItemVideoPlayerViewModel) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
         NavigationViewCoordinator(ItemVideoPlayerCoordinator(viewModel: viewModel))
     }

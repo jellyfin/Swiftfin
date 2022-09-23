@@ -29,4 +29,3 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
         ItemVideoPlayer(viewModel: viewModel)
     }
 }
-

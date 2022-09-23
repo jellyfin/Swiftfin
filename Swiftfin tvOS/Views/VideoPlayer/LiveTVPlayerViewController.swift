@@ -779,7 +779,7 @@ extension LiveTVPlayerViewController: VLCMediaPlayerDelegate {
     }
 }
 
-// MARK: PlayerOverlayDelegate
+// MARK: LegacyPlayerOverlayDelegate
 
 extension LiveTVPlayerViewController: PlayerOverlayDelegate {
 

@@ -13,7 +13,8 @@ import MobileVLCKit
 import Sliders
 import SwiftUI
 
-struct VLCPlayerOverlayView: View {
+struct LegacyVLCPlayerOverlayView: View {
+    
     @ObservedObject
     var viewModel: LegacyVideoPlayerViewModel
 
@@ -477,43 +478,43 @@ struct VLCPlayerOverlayView: View {
     }
 }
 
-struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
-    static let videoPlayerViewModel = LegacyVideoPlayerViewModel(
-        item: BaseItemDto(),
-        title: "Glorious Purpose",
-        subtitle: "Loki - S1E1",
-        directStreamURL: URL(string: "www.apple.com")!,
-        transcodedStreamURL: nil,
-        hlsStreamURL: URL(string: "www.apple.com")!,
-        streamType: .direct,
-        response: PlaybackInfoResponse(),
-        videoStream: MediaStream(),
-        audioStreams: [MediaStream(displayTitle: "English", index: -1)],
-        subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
-        chapters: [],
-        selectedAudioStreamIndex: -1,
-        selectedSubtitleStreamIndex: -1,
-        subtitlesEnabled: true,
-        autoplayEnabled: false,
-        overlayType: .compact,
-        shouldShowPlayPreviousItem: true,
-        shouldShowPlayNextItem: true,
-        shouldShowAutoPlay: true,
-        container: "",
-        filename: nil,
-        versionName: nil
-    )
-
-    static var previews: some View {
-        ZStack {
-            Color.red
-                .ignoresSafeArea()
-
-            VLCPlayerOverlayView(viewModel: videoPlayerViewModel)
-        }
-        .previewInterfaceOrientation(.landscapeLeft)
-    }
-}
+//struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
+//    static let videoPlayerViewModel = LegacyVideoPlayerViewModel(
+//        item: BaseItemDto(),
+//        title: "Glorious Purpose",
+//        subtitle: "Loki - S1E1",
+//        directStreamURL: URL(string: "www.apple.com")!,
+//        transcodedStreamURL: nil,
+//        hlsStreamURL: URL(string: "www.apple.com")!,
+//        streamType: .direct,
+//        response: PlaybackInfoResponse(),
+//        videoStream: MediaStream(),
+//        audioStreams: [MediaStream(displayTitle: "English", index: -1)],
+//        subtitleStreams: [MediaStream(displayTitle: "None", index: -1)],
+//        chapters: [],
+//        selectedAudioStreamIndex: -1,
+//        selectedSubtitleStreamIndex: -1,
+//        subtitlesEnabled: true,
+//        autoplayEnabled: false,
+//        overlayType: .compact,
+//        shouldShowPlayPreviousItem: true,
+//        shouldShowPlayNextItem: true,
+//        shouldShowAutoPlay: true,
+//        container: "",
+//        filename: nil,
+//        versionName: nil
+//    )
+//
+//    static var previews: some View {
+//        ZStack {
+//            Color.red
+//                .ignoresSafeArea()
+//
+//            VLCPlayerOverlayView(viewModel: videoPlayerViewModel)
+//        }
+//        .previewInterfaceOrientation(.landscapeLeft)
+//    }
+//}
 
 // MARK: TitleSubtitleAlignment
 

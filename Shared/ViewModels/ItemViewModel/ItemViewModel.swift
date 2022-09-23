@@ -31,13 +31,12 @@ class ItemViewModel: ViewModel {
     var isWatched = false
     @Published
     var isFavorited = false
-    
+
     @Published
     var selectedVideoPlayerViewModel: ItemVideoPlayerViewModel?
     @Published
     var videoPlayerViewModels: [ItemVideoPlayerViewModel] = []
-    
-    
+
     @Published
     var legacyselectedVideoPlayerViewModel: LegacyVideoPlayerViewModel?
     @Published
@@ -80,7 +79,7 @@ class ItemViewModel: ViewModel {
     func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
         guard item.type == .episode || item.type == .movie,
               !item.missing else { return }
-        
+
         item.createItemVideoPlayerViewModel()
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
@@ -89,7 +88,6 @@ class ItemViewModel: ViewModel {
                 self.selectedVideoPlayerViewModel = viewModels.first
             }
             .store(in: &cancellables)
-
 
 //        item.createLegacyVideoPlayerViewModel()
 //            .sink { completion in

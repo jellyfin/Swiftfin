@@ -24,28 +24,6 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
         type.width * itemScale
     }
 
-    private init(
-        item: Item,
-        type: PosterType,
-        itemScale: CGFloat,
-        horizontalAlignment: HorizontalAlignment,
-        @ViewBuilder content: @escaping () -> Content,
-        @ViewBuilder imageOverlay: @escaping () -> ImageOverlay,
-        @ViewBuilder contextMenu: @escaping () -> ContextMenu,
-        onSelect: @escaping () -> Void,
-        singleImage: Bool
-    ) {
-        self.item = item
-        self.type = type
-        self.itemScale = itemScale
-        self.horizontalAlignment = horizontalAlignment
-        self.content = content
-        self.imageOverlay = imageOverlay
-        self.contextMenu = contextMenu
-        self.onSelect = onSelect
-        self.singleImage = singleImage
-    }
-
     var body: some View {
         VStack(alignment: horizontalAlignment) {
             Button {

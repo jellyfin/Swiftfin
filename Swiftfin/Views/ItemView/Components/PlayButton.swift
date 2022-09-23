@@ -27,7 +27,7 @@ extension ItemView {
                 } else {
                     logger.error("Attempted to play item but no playback information available")
                 }
-                
+
 //                if let selectedVideoPlayerViewModel = viewModel.legacyselectedVideoPlayerViewModel {
 //                    itemRouter.route(to: \.legacyVideoPlayer, selectedVideoPlayerViewModel)
 //                } else {

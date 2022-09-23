@@ -150,7 +150,7 @@ final class LegacyVideoPlayerViewModel: ViewModel {
     // Full response kept for convenience
     let response: PlaybackInfoResponse
 
-    var playerOverlayDelegate: PlayerOverlayDelegate?
+    var playerOverlayDelegate: LegacyPlayerOverlayDelegate?
 
     // Ticks of the time the media began playing
     private var startTimeTicks: Int64 = 0

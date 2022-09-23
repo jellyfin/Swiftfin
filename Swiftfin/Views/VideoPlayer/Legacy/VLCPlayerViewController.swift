@@ -19,7 +19,7 @@ import UIKit
 
 // TODO: Look at making the VLC player layer a view
 
-class LiveTVPlayerViewController: UIViewController {
+class VLCPlayerViewController: UIViewController {
 
     @Injected(LogManager.service)
     private var logger
@@ -33,6 +33,7 @@ class LiveTVPlayerViewController: UIViewController {
     private var viewModelListeners = Set<AnyCancellable>()
     private var overlayDismissTimer: Timer?
     private var isScreenFilled: Bool = false
+    private var isGesturesLocked = false
     private var pinchScale: CGFloat = 1
 
     private var currentPlayerTicks: Int64 {
@@ -49,13 +50,19 @@ class LiveTVPlayerViewController: UIViewController {
 
     private var panBeganBrightness = CGFloat.zero
     private var panBeganVolumeValue = Float.zero
+    private var panBeganSliderPercentage: Double = 0
     private var panBeganPoint = CGPoint.zero
+    private var tapLocationStack = [CGPoint]()
+    private var isJumping = false
+    private var jumpingCompletionWork: DispatchWorkItem?
+    private var isTapWhenJumping = false
 
     private lazy var videoContentView = makeVideoContentView()
     private lazy var mainGestureView = makeMainGestureView()
     private lazy var systemControlOverlayLabel = makeSystemControlOverlayLabel()
-    private var currentOverlayHostingController: UIHostingController<VLCPlayerOverlayView>?
-    private var currentChapterOverlayHostingController: UIHostingController<VLCPlayerChapterOverlayView>?
+    private lazy var lockedOverlayView = makeGestureLockedOverlayView()
+    private var currentOverlayHostingController: UIHostingController<LegacyVLCPlayerOverlayView>?
+    private var currentChapterOverlayHostingController: UIHostingController<LegacyVLCPlayerChapterOverlayView>?
     private var currentJumpBackwardOverlayView: UIImageView?
     private var currentJumpForwardOverlayView: UIImageView?
     private var volumeView = MPVolumeView()
@@ -127,6 +134,7 @@ class LiveTVPlayerViewController: UIViewController {
         view.addSubview(videoContentView)
         view.addSubview(mainGestureView)
         view.addSubview(systemControlOverlayLabel)
+        view.addSubview(lockedOverlayView)
     }
 
     private func setupConstraints() {
@@ -145,6 +153,12 @@ class LiveTVPlayerViewController: UIViewController {
         NSLayoutConstraint.activate([
             systemControlOverlayLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             systemControlOverlayLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
+        NSLayoutConstraint.activate([
+            lockedOverlayView.topAnchor.constraint(equalTo: view.topAnchor),
+            lockedOverlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            lockedOverlayView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            lockedOverlayView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
 
@@ -242,26 +256,26 @@ class LiveTVPlayerViewController: UIViewController {
 
         let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
 
-        let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didRightSwipe))
-        rightSwipeGesture.direction = .right
-
-        let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didLeftSwipe))
-        leftSwipeGesture.direction = .left
-
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPinch(_:)))
 
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
+        let verticalGesture = PanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(didVerticalPan(_:)))
+        let horizontalGesture = PanDirectionGestureRecognizer(direction: .horizontal, target: self, action: #selector(didHorizontalPan(_:)))
+
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
 
         view.addGestureRecognizer(singleTapGesture)
         view.addGestureRecognizer(pinchGesture)
 
-        if viewModel.jumpGesturesEnabled {
-            view.addGestureRecognizer(rightSwipeGesture)
-            view.addGestureRecognizer(leftSwipeGesture)
+        if viewModel.playerGesturesLockGestureEnabled {
+            view.addGestureRecognizer(longPressGesture)
         }
 
         if viewModel.systemControlGesturesEnabled {
-            view.addGestureRecognizer(panGesture)
+            view.addGestureRecognizer(verticalGesture)
+        }
+
+        if viewModel.seekSlideGestureEnabled {
+            view.addGestureRecognizer(horizontalGesture)
         }
 
         return view
@@ -274,26 +288,56 @@ class LiveTVPlayerViewController: UIViewController {
         label.alpha = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 48)
+        label.layer.zPosition = 1
         return label
     }
 
-    @objc
-    private func didTap() {
-        didGenerallyTap(point: nil)
+    // MARK: GestureLockedOverlayView
+
+    private func makeGestureLockedOverlayView() -> UIView {
+        let backgroundView = UIView()
+        backgroundView.layer.zPosition = 1
+        backgroundView.alpha = 0
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        let button = UIButton(type: .custom, primaryAction: UIAction(handler: { [weak self] _ in
+            self?.isGesturesLocked = false
+            self?.hideLockedOverlay()
+            self?.didGenerallyTap()
+        }))
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(
+            UIImage(systemName: "lock.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 48))?
+                .withTintColor(.white),
+            for: .normal
+        )
+        backgroundView.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
+        ])
+
+        let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        backgroundView.addGestureRecognizer(singleTapGesture)
+
+        return backgroundView
     }
 
     @objc
-    private func didRightSwipe() {
-        didSelectForward()
+    private func didTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        didGenerallyTap(point: gestureRecognizer.location(in: mainGestureView))
     }
 
     @objc
-    private func didLeftSwipe() {
-        didSelectBackward()
+    func didLongPress() {
+        guard !isGesturesLocked else { return }
+        isGesturesLocked = true
+        didGenerallyTap()
     }
 
     @objc
     private func didPinch(_ gestureRecognizer: UIPinchGestureRecognizer) {
+        guard !isGesturesLocked else { return }
         if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
             pinchScale = gestureRecognizer.scale
         } else {
@@ -308,7 +352,8 @@ class LiveTVPlayerViewController: UIViewController {
     }
 
     @objc
-    private func didPan(_ gestureRecognizer: UIPanGestureRecognizer) {
+    private func didVerticalPan(_ gestureRecognizer: UIPanGestureRecognizer) {
+        guard !isGesturesLocked else { return }
         switch gestureRecognizer.state {
         case .began:
             panBeganBrightness = UIScreen.main.brightness
@@ -336,6 +381,30 @@ class LiveTVPlayerViewController: UIViewController {
         }
     }
 
+    @objc
+    private func didHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer) {
+        guard !isGesturesLocked else { return }
+        switch gestureRecognizer.state {
+        case .began:
+            exchangeOverlayView(isBringToFrontThanGestureView: false)
+            panBeganPoint = gestureRecognizer.location(in: mainGestureView)
+            panBeganSliderPercentage = viewModel.sliderPercentage
+            viewModel.sliderIsScrubbing = true
+        case .changed:
+            let pos = gestureRecognizer.location(in: mainGestureView)
+            let moveDelta = panBeganPoint.x - pos.x
+            let changedValue = (moveDelta / mainGestureView.frame.width)
+
+            viewModel.sliderPercentage = min(max(0, panBeganSliderPercentage - changedValue), 1)
+            showSliderOverlay()
+            showOverlay()
+        default:
+            viewModel.sliderIsScrubbing = false
+            hideOverlay()
+            hideSystemControlOverlay()
+        }
+    }
+
     // MARK: setupOverlayHostingController
 
     private func setupOverlayHostingController(viewModel: LegacyVideoPlayerViewModel) {
@@ -352,7 +421,7 @@ class LiveTVPlayerViewController: UIViewController {
             }
         }
 
-        let newOverlayView = VLCPlayerOverlayView(viewModel: viewModel)
+        let newOverlayView = LegacyVLCPlayerOverlayView(viewModel: viewModel)
         let newOverlayHostingController = UIHostingController(rootView: newOverlayView)
 
         newOverlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -390,7 +459,7 @@ class LiveTVPlayerViewController: UIViewController {
             }
         }
 
-        let newChapterOverlayView = VLCPlayerChapterOverlayView(viewModel: viewModel)
+        let newChapterOverlayView = LegacyVLCPlayerChapterOverlayView(viewModel: viewModel)
         let newChapterOverlayHostingController = UIHostingController(rootView: newChapterOverlayView)
 
         newChapterOverlayHostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -462,11 +531,24 @@ class LiveTVPlayerViewController: UIViewController {
 
         currentJumpForwardOverlayView = newJumpForwardImageView
     }
+
+    private var isOverlayViewBringToFrontThanGestureView = true
+    private func exchangeOverlayView(isBringToFrontThanGestureView: Bool) {
+        guard isBringToFrontThanGestureView != isOverlayViewBringToFrontThanGestureView,
+              let currentOverlayView = currentOverlayHostingController?.view,
+              let mainGestureViewIndex = view.subviews.firstIndex(of: mainGestureView),
+              let currentOVerlayViewIndex = view.subviews.firstIndex(of: currentOverlayView) else { return }
+        isOverlayViewBringToFrontThanGestureView = isBringToFrontThanGestureView
+        view.exchangeSubview(
+            at: mainGestureViewIndex,
+            withSubviewAt: currentOVerlayViewIndex
+        )
+    }
 }
 
 // MARK: setupMediaPlayer
 
-extension LiveTVPlayerViewController {
+extension VLCPlayerViewController {
     /// Main function that handles setting up the media player with the current VideoPlayerViewModel
     /// and also takes the role of setting the 'viewModel' property with the given viewModel
     ///
@@ -491,6 +573,7 @@ extension LiveTVPlayerViewController {
         vlcMediaPlayer.delegate = self
         vlcMediaPlayer.drawable = videoContentView
 
+        vlcMediaPlayer.setSubtitleFont(fontName: Defaults[.subtitleFontName])
         vlcMediaPlayer.setSubtitleSize(Defaults[.subtitleSize])
 
         stopOverlayDismissTimer()
@@ -619,14 +702,15 @@ extension LiveTVPlayerViewController {
 
 // MARK: Show/Hide Overlay
 
-extension LiveTVPlayerViewController {
+extension VLCPlayerViewController {
     private func showOverlay() {
         guard let overlayHostingController = currentOverlayHostingController else { return }
 
         guard overlayHostingController.view.alpha != 1 else { return }
+        overlayHostingController.view.alpha = 1
 
-        UIView.animate(withDuration: 0.2) {
-            overlayHostingController.view.alpha = 1
+        withAnimation(.easeInOut(duration: 0.2)) { [weak self] in
+            self?.viewModel.isHiddenOverlay = false
         }
     }
 
@@ -637,15 +721,19 @@ extension LiveTVPlayerViewController {
 
         guard overlayHostingController.view.alpha != 0 else { return }
 
-        UIView.animate(withDuration: 0.2) {
+        // for gestures UX
+        exchangeOverlayView(isBringToFrontThanGestureView: false)
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
             overlayHostingController.view.alpha = 0
+        } completion: { [weak self] _ in
+            guard let self = self else { return }
+            self.exchangeOverlayView(isBringToFrontThanGestureView: true)
+            self.viewModel.isHiddenOverlay = true
         }
     }
 
     private func toggleOverlay() {
-        guard let overlayHostingController = currentOverlayHostingController else { return }
-
-        if overlayHostingController.view.alpha < 1 {
+        if viewModel.isHiddenOverlay {
             showOverlay()
         } else {
             hideOverlay()
@@ -653,9 +741,39 @@ extension LiveTVPlayerViewController {
     }
 }
 
+// MARK: Show/Hide Locked Overlay
+
+extension VLCPlayerViewController {
+    private func showLockedOverlay() {
+        guard lockedOverlayView.alpha != 1 else { return }
+
+        UIView.animate(withDuration: 0.2) {
+            self.lockedOverlayView.alpha = 1
+        }
+    }
+
+    private func hideLockedOverlay() {
+        guard !UIAccessibility.isVoiceOverRunning else { return }
+
+        guard lockedOverlayView.alpha != 0 else { return }
+
+        UIView.animate(withDuration: 0.2) {
+            self.lockedOverlayView.alpha = 0
+        }
+    }
+
+    private func toggleLockedOverlay() {
+        if lockedOverlayView.alpha < 1 {
+            showLockedOverlay()
+        } else {
+            hideLockedOverlay()
+        }
+    }
+}
+
 // MARK: Show/Hide System Control
 
-extension LiveTVPlayerViewController {
+extension VLCPlayerViewController {
     private func showBrightnessOverlay() {
         guard !displayingOverlay else { return }
 
@@ -693,6 +811,25 @@ extension LiveTVPlayerViewController {
         }
     }
 
+    private func showSliderOverlay() {
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = UIImage(
+            systemName: "clock.arrow.circlepath",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 48)
+        )?
+            .withTintColor(.white)
+
+        let attributedString = NSMutableAttributedString()
+        attributedString.append(.init(attachment: imageAttachment))
+        attributedString.append(.init(string: " \(viewModel.scrubbingTimeLabelText) (\(viewModel.leftLabelText))"))
+        systemControlOverlayLabel.attributedText = attributedString
+        systemControlOverlayLabel.layer.removeAllAnimations()
+
+        UIView.animate(withDuration: 0.1) {
+            self.systemControlOverlayLabel.alpha = 1
+        }
+    }
+
     private func hideSystemControlOverlay() {
         UIView.animate(withDuration: 0.75) {
             self.systemControlOverlayLabel.alpha = 0
@@ -702,7 +839,7 @@ extension LiveTVPlayerViewController {
 
 // MARK: Show/Hide Jump
 
-extension LiveTVPlayerViewController {
+extension VLCPlayerViewController {
     private func flashJumpBackwardOverlay() {
         guard !displayingOverlay, let currentJumpBackwardOverlayView = currentJumpBackwardOverlayView else { return }
 
@@ -746,7 +883,7 @@ extension LiveTVPlayerViewController {
 
 // MARK: Hide/Show Chapters
 
-extension LiveTVPlayerViewController {
+extension VLCPlayerViewController {
     private func showChaptersOverlay() {
         guard let overlayHostingController = currentChapterOverlayHostingController else { return }
 
@@ -770,7 +907,7 @@ extension LiveTVPlayerViewController {
 
 // MARK: OverlayTimer
 
-extension LiveTVPlayerViewController {
+extension VLCPlayerViewController {
     private func restartOverlayDismissTimer(interval: Double = 3) {
         overlayDismissTimer?.invalidate()
         overlayDismissTimer = Timer.scheduledTimer(
@@ -785,6 +922,7 @@ extension LiveTVPlayerViewController {
     @objc
     private func dismissTimerFired() {
         hideOverlay()
+        hideLockedOverlay()
     }
 
     private func stopOverlayDismissTimer() {
@@ -794,7 +932,7 @@ extension LiveTVPlayerViewController {
 
 // MARK: VLCMediaPlayerDelegate
 
-extension LiveTVPlayerViewController: VLCMediaPlayerDelegate {
+extension VLCPlayerViewController: VLCMediaPlayerDelegate {
     // MARK: mediaPlayerStateChanged
 
     func mediaPlayerStateChanged(_ aNotification: Notification) {
@@ -850,9 +988,9 @@ extension LiveTVPlayerViewController: VLCMediaPlayerDelegate {
     }
 }
 
-// MARK: PlayerOverlayDelegate and more
+// MARK: LegacyPlayerOverlayDelegate and more
 
-extension LiveTVPlayerViewController: PlayerOverlayDelegate {
+extension VLCPlayerViewController: LegacyPlayerOverlayDelegate {
     func didSelectAudioStream(index: Int) {
         vlcMediaPlayer.currentAudioTrackIndex = Int32(index)
 
@@ -946,13 +1084,64 @@ extension LiveTVPlayerViewController: PlayerOverlayDelegate {
         }
     }
 
-    func didGenerallyTap(point: CGPoint?) {
-        toggleOverlay()
+    func didGenerallyTap(point: CGPoint? = nil) {
+        if isGesturesLocked {
+            toggleLockedOverlay()
+        } else {
+            if viewModel.jumpGesturesEnabled,
+               let point = point
+            {
+                let tempStack = tapLocationStack
+                tapLocationStack.append(point)
+
+                if isSameLocationWithLast(point: point, in: tempStack) {
+                    isTapWhenJumping = false
+                    isJumping = true
+                    tapLocationStack.removeAll()
+                    jumpingCompletionWork?.cancel()
+                    jumpingCompletionWork = DispatchWorkItem(block: { [weak self] in
+                        guard let self = self else { return }
+                        self.isJumping = false
+                        guard self.isTapWhenJumping else { return }
+                        self.isTapWhenJumping = false
+                        self.toggleOverlay()
+                    })
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: jumpingCompletionWork!)
+
+                    hideOverlay()
+                    if point.x > (mainGestureView.frame.width / 2) {
+                        didSelectForward()
+                    } else {
+                        didSelectBackward()
+                    }
+                    return
+                } else {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) { [weak self] in
+                        guard let self = self else { return }
+                        guard !self.tapLocationStack.isEmpty else { return }
+                        self.tapLocationStack.removeFirst()
+                    }
+                }
+            }
+            guard !isJumping else {
+                isTapWhenJumping = true
+                return
+            }
+
+            toggleOverlay()
+        }
 
         restartOverlayDismissTimer(interval: 5)
     }
 
-    func didLongPress() {}
+    private func isSameLocationWithLast(point: CGPoint, in stack: [CGPoint]) -> Bool {
+        guard let last = stack.last else { return false }
+        if last.x > (mainGestureView.frame.width / 2) {
+            return point.x > (mainGestureView.frame.width / 2)
+        } else {
+            return point.x <= (mainGestureView.frame.width / 2)
+        }
+    }
 
     func didBeginScrubbing() {
         stopOverlayDismissTimer()

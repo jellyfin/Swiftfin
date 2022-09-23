@@ -779,7 +779,7 @@ extension VLCPlayerViewController: VLCMediaPlayerDelegate {
     }
 }
 
-// MARK: PlayerOverlayDelegate
+// MARK: LegacyPlayerOverlayDelegate
 
 extension VLCPlayerViewController: PlayerOverlayDelegate {
 

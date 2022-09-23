@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct VLCPlayerChapterOverlayView: View {
+struct LegacyVLCPlayerChapterOverlayView: View {
 
     @ObservedObject
     var viewModel: LegacyVideoPlayerViewModel
