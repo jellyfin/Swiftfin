@@ -3435,7 +3435,7 @@
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.1.0;
+				minimumVersion = 9.0.0;
 			};
 		};
 		E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */ = {
