@@ -10,11 +10,11 @@ import Combine
 import Factory
 import Foundation
 import JellyfinAPI
+import SwiftUI
 import VLCUI
 
-class ItemVideoPlayerViewModel: ObservableObject, VLCVideoPlayerDelegate {
+class ItemVideoPlayerViewModel: ObservableObject {
 
-    @Published
     var currentSeconds: Int = 0
     @Published
     var state: VLCVideoPlayer.State = .opening
@@ -59,26 +59,29 @@ class ItemVideoPlayerViewModel: ObservableObject, VLCVideoPlayerDelegate {
     func jump(to ticks: Int32) {
         eventSubject.send(.setTime(.ticks(ticks)))
     }
-
-    func vlcVideoPlayer(didUpdateTicks ticks: Int32, with playbackInformation: VLCVideoPlayer.PlaybackInformation) {
+    
+    func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         self.currentSeconds = Int(ticks / 1000)
         
-        if selectedSubtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
-            lastPositiveSubtitleTrackIndex = max(selectedSubtitleTrackIndex, playbackInformation.currentSubtitleTrack.index)
-            selectedSubtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
-            subtitlesEnabled = lastPositiveSubtitleTrackIndex != -1
-        }
+//        if selectedSubtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
+//            lastPositiveSubtitleTrackIndex = max(selectedSubtitleTrackIndex, playbackInformation.currentSubtitleTrack.index)
+//            selectedSubtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
+//            subtitlesEnabled = lastPositiveSubtitleTrackIndex != -1
+//        }
         
         if playerSubtitleTracks != playbackInformation.subtitleTracks {
-            playerSubtitleTracks = playbackInformation.subtitleTracks
+            print("Updating subtitle tracks")
+             playerSubtitleTracks = playbackInformation.subtitleTracks
         }
         
         if playerAudioTracks != playbackInformation.audioTracks {
+            print("Updating audio tracks")
             playerAudioTracks = playbackInformation.audioTracks
         }
     }
-
-    func vlcVideoPlayer(didUpdateState state: VLCVideoPlayer.State, with playbackInformation: VLCVideoPlayer.PlaybackInformation) {
+    
+    func onStateUpdated(state: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
+        guard self.state != state else { return }
         self.state = state
     }
     

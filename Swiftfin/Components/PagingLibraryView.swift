@@ -105,8 +105,6 @@ extension PagingLibraryView {
     }
 
     func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 }

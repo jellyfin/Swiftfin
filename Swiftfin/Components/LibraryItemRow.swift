@@ -66,8 +66,6 @@ extension LibraryItemRow {
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 }

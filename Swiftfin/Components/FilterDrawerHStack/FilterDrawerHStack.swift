@@ -80,9 +80,7 @@ extension FilterDrawerHStack {
         self.onSelect = { _ in }
     }
 
-    func onSelect(_ onSelect: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = onSelect
-        return copy
+    func onSelect(_ action: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

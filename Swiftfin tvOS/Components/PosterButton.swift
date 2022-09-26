@@ -94,15 +94,11 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
 
 extension PosterButton {
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
-        var copy = self
-        copy.horizontalAlignment = alignment
-        return copy
+        copy(modifying: \.horizontalAlignment, with: alignment)
     }
 
     func scaleItem(_ scale: CGFloat) -> Self {
-        var copy = self
-        copy.itemScale = scale
-        return copy
+        copy(modifying: \.itemScale, with: scale)
     }
 
     @ViewBuilder
@@ -154,15 +150,11 @@ extension PosterButton {
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 
     func onFocus(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.onFocus = action
-        return copy
+        copy(modifying: \.onFocus, with: action)
     }
 }
 

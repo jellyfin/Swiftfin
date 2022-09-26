@@ -12,11 +12,11 @@ import SwiftUI
 struct UserProfileButton: View {
 
     let user: UserDto
-    private var action: () -> Void
+    private var onSelect: () -> Void
 
     init(user: UserDto) {
         self.user = user
-        self.action = {}
+        self.onSelect = {}
     }
 
     init(user: SwiftfinStore.State.User) {
@@ -26,7 +26,7 @@ struct UserProfileButton: View {
     var body: some View {
         VStack(alignment: .center) {
             Button {
-                action()
+                onSelect()
             } label: {
                 ImageView(user.profileImageSource(maxWidth: 120, maxHeight: 120))
                     .failure {
@@ -50,8 +50,6 @@ struct UserProfileButton: View {
 
 extension UserProfileButton {
     func onSelect(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.action = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 }

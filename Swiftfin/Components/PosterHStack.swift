@@ -107,9 +107,7 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
 extension PosterHStack {
 
     func scaleItems(_ scale: CGFloat) -> Self {
-        var copy = self
-        copy.itemScale = scale
-        return copy
+        copy(modifying: \.itemScale, with: scale)
     }
 
     @ViewBuilder
@@ -177,8 +175,6 @@ extension PosterHStack {
     }
 
     func onSelect(_ action: @escaping (Item) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 }

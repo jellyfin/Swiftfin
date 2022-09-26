@@ -267,8 +267,6 @@ extension CinematicItemSelector {
     }
 
     func onSelect(_ action: @escaping (Item) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 }

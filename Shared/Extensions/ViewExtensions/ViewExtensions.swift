@@ -119,4 +119,40 @@ extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
+    
+    func onFrameChanged(_ onChange: @escaping (CGRect) -> Void) -> some View {
+        background {
+            GeometryReader { reader in
+                Color.clear
+                    .preference(key: FramePreferenceKey.self, value: reader.frame(in: .global))
+            }
+        }
+        .onPreferenceChange(FramePreferenceKey.self, perform: onChange)
+    }
+    
+    func onLocationChanged(_ onChange: @escaping (CGPoint) -> Void) -> some View {
+        background {
+            GeometryReader { reader in
+                Color.clear
+                    .preference(key: LocationPreferenceKey.self, value: CGPoint(x: reader.frame(in: .global).midX, y: reader.frame(in: .global).midY))
+            }
+        }
+        .onPreferenceChange(LocationPreferenceKey.self, perform: onChange)
+    }
+    
+    func onSizeChanged(_ onChange: @escaping (CGSize) -> Void) -> some View {
+        background{
+            GeometryReader { reader in
+                Color.clear
+                    .preference(key: SizePreferenceKey.self, value: reader.size)
+            }
+        }
+        .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+    }
+    
+    func copy<Value>(modifying keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
+        var copy = self
+        copy[keyPath: keyPath] = newValue
+        return copy
+    }
 }

@@ -29,7 +29,9 @@ struct ItemVideoPlayer: View {
                     .compactMap { $0.asPlaybackChild }
                 return configuration
             }
-            .delegate(viewModel)
+            .eventSubject(viewModel.eventSubject)
+            .onTicksUpdated(viewModel.onTicksUpdated(ticks:playbackInformation:))
+            .onStateUpdated(viewModel.onStateUpdated(state:playbackInformation:))
             
             Color.red
                 .opacity(0.2)
@@ -39,9 +41,8 @@ struct ItemVideoPlayer: View {
                 }
             
             if showOverlay {
-                Overlay.MovieOverlay(viewModel: viewModel)
+                Overlay(viewModel: viewModel)
                     .transition(.opacity.animation(.linear(duration: 0.2)))
-                    .zIndex(10)
             }
             
             Text(showOverlay ? "Should show" : "Don't show")
@@ -58,9 +59,4 @@ struct ItemVideoPlayer: View {
 //        }
         .ignoresSafeArea()
     }
-}
-
-extension ItemVideoPlayer {
-    
-    enum Overlay {}
 }

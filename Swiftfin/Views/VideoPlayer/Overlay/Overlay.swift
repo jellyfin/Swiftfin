@@ -9,9 +9,9 @@
 import Sliders
 import SwiftUI
 
-extension ItemVideoPlayer.Overlay {
+extension ItemVideoPlayer {
     
-    struct MovieOverlay: View {
+    struct Overlay: View {
         
         @ObservedObject
         var viewModel: ItemVideoPlayerViewModel
@@ -38,5 +38,24 @@ extension ItemVideoPlayer.Overlay {
                     }
             }
         }
+    }
+}
+
+extension ItemVideoPlayer {
+    
+    struct GestureHandler: UIViewRepresentable {
+        
+        func makeUIView(context: Context) -> some UIView {
+            UIView()
+        }
+        
+        func updateUIView(_ uiView: UIViewType, context: Context) {
+            
+        }
+    }
+    
+    class UIGestureHandler: UIView {
+        
+        
     }
 }

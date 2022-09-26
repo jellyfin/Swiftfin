@@ -16,39 +16,26 @@ extension ItemVideoPlayer.Overlay {
         
         @Default(.videoPlayerJumpBackward)
         private var jumpBackwardLength
-        
         @Default(.videoPlayerJumpBackward)
         private var jumpForwardLength
         
         @ObservedObject
-        var viewModel: ItemVideoPlayerViewModel
+        private var viewModel: ItemVideoPlayerViewModel
         
         @State
         private var currentSeconds: Int = 0
         @State
         private var isScrubbing: Bool = false
+        @State
+        private var progress: CGFloat = 0
         
-        @ViewBuilder
-        private var valueTrackView: some View {
-            ZStack {
-                Color.clear
-                
-                Capsule()
-                    .foregroundColor(.jellyfinPurple)
-                    .frame(height: isScrubbing ? 20 : 10)
-            }
-        }
-        
-        @ViewBuilder
-        private var valueTrack: some View {
-            HorizontalValueTrack(view: valueTrackView)
-                .background {
-                    Capsule()
-                        .foregroundColor(Color.gray)
-                        .opacity(0.5)
-                        .frame(height: isScrubbing ? 20 : 10)
-                }
-                .contentShape(Rectangle())
+        init(viewModel: ItemVideoPlayerViewModel) {
+            self.viewModel = viewModel
+            
+            self.currentSeconds = viewModel.currentSeconds
+            self.progress = CGFloat(viewModel.currentSeconds) / CGFloat(viewModel.item.runTimeSeconds)
+            
+            print("bottom bar init-ed")
         }
         
         var body: some View {
@@ -96,16 +83,10 @@ extension ItemVideoPlayer.Overlay {
                     .font(.system(size: 18, weight: .semibold, design: .default))
                     .frame(minWidth: 70, maxWidth: 70)
                 
-                ValueSlider(value: $currentSeconds,
-                            in: 0...viewModel.item.runTimeSeconds,
-                            step: 1) { isEditing in
-                    isScrubbing = isEditing
-                }
-                .valueSliderStyle(HorizontalValueSliderStyle.init(
-                    track: valueTrack,
-                    thumbSize: .zero,
-                    thumbInteractiveSize: CGSize.Circle(radius: 100),
-                    options: .interactiveTrack))
+                CapsuleSlider(progress: $progress)
+                    .onEditingChanged { isEditing in
+                        isScrubbing = isEditing
+                    }
                 
                 Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
                     .font(.system(size: 18, weight: .semibold, design: .default))
@@ -114,13 +95,17 @@ extension ItemVideoPlayer.Overlay {
             .onChange(of: viewModel.currentSeconds, perform: { newValue in
                 guard !isScrubbing else { return }
                 self.currentSeconds = newValue
+                self.progress = CGFloat(newValue) / CGFloat(viewModel.item.runTimeSeconds)
             })
             .onChange(of: isScrubbing) { newValue in
                 guard !newValue else { return }
-                viewModel.eventSubject.send(.setTime(.seconds(Int32(currentSeconds))))
+                let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
+                viewModel.eventSubject.send(.setTime(.seconds(Int32(scrubbedSeconds))))
             }
-            .onAppear {
-                self.currentSeconds = viewModel.item.startTimeSeconds
+            .onChange(of: progress){ newValue in
+                guard isScrubbing else { return }
+                let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
+                self.currentSeconds = scrubbedSeconds
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
         }

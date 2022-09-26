@@ -68,9 +68,7 @@ extension PillHStack {
         self.init(title: title, items: items, onSelect: { _ in })
     }
 
-    func onSelect(_ onSelect: @escaping (Item) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = onSelect
-        return copy
+    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }
