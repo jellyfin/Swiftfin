@@ -23,11 +23,11 @@ extension ItemVideoPlayer.Overlay {
         private var viewModel: ItemVideoPlayerViewModel
         
         @State
-        private var currentSeconds: Int = 0
+        private var currentSeconds: Int
         @State
         private var isScrubbing: Bool = false
         @State
-        private var progress: CGFloat = 0
+        private var progress: CGFloat
         
         init(viewModel: ItemVideoPlayerViewModel) {
             self.viewModel = viewModel

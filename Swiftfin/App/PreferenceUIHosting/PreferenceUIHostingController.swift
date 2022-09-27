@@ -95,6 +95,7 @@ struct ViewPreferenceKey: PreferenceKey {
 
 struct SupportedOrientationsPreferenceKey: PreferenceKey {
     typealias Value = UIInterfaceOrientationMask
+    
     static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
 
     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
@@ -106,18 +107,16 @@ struct SupportedOrientationsPreferenceKey: PreferenceKey {
 // MARK: Preference Key View Extension
 
 extension View {
-    // Controls the application's preferred home indicator auto-hiding when this view is shown.
+    
     func prefersHomeIndicatorAutoHidden(_ value: Bool) -> some View {
         preference(key: PrefersHomeIndicatorAutoHiddenPreferenceKey.self, value: value)
     }
 
     func supportedOrientations(_ supportedOrientations: UIInterfaceOrientationMask) -> some View {
-        // When rendered, export the requested orientations upward to Root
         preference(key: SupportedOrientationsPreferenceKey.self, value: supportedOrientations)
     }
 
     func overrideViewPreference(_ viewPreference: UIUserInterfaceStyle) -> some View {
-        // When rendered, export the requested orientations upward to Root
         preference(key: ViewPreferenceKey.self, value: viewPreference)
     }
 }

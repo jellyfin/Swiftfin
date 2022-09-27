@@ -27,5 +27,6 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         ItemVideoPlayer(viewModel: viewModel)
+            .prefersHomeIndicatorAutoHidden(true)
     }
 }

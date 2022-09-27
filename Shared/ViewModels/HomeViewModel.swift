@@ -10,6 +10,7 @@ import ActivityIndicator
 import Combine
 import Foundation
 import JellyfinAPI
+import UIKit
 
 final class HomeViewModel: ViewModel {
 
@@ -207,5 +208,16 @@ final class HomeViewModel: ViewModel {
             self.hasNextUp = (response.items ?? []).count > 0
         })
         .store(in: &cancellables)
+    }
+    
+    @objc
+    func hitPCommand() {
+        print("Hit p")
+    }
+    
+    var keyCommands: [UIKeyCommand] {
+        let command = UIKeyCommand(title: "Test", action: #selector(hitPCommand), input: "p")
+        command.wantsPriorityOverSystemBehavior = true
+        return [command]
     }
 }

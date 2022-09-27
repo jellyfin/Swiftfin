@@ -6,17 +6,18 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import UIKit.UIGestureRecognizerSubclass
-
-enum PanDirection {
-    case vertical
-    case horizontal
-}
+import UIKit
 
 class PanDirectionGestureRecognizer: UIPanGestureRecognizer {
-    let direction: PanDirection
+    
+    enum Direction {
+        case vertical
+        case horizontal
+    }
+    
+    private let direction: Direction
 
-    init(direction: PanDirection, target: AnyObject, action: Selector) {
+    init(direction: Direction, target: AnyObject, action: Selector) {
         self.direction = direction
         super.init(target: target, action: action)
     }

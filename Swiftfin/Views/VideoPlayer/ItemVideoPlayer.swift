@@ -7,6 +7,7 @@
 //
 
 import Combine
+import MediaPlayer
 import SwiftUI
 import VLCUI
 
@@ -33,30 +34,146 @@ struct ItemVideoPlayer: View {
             .onTicksUpdated(viewModel.onTicksUpdated(ticks:playbackInformation:))
             .onStateUpdated(viewModel.onStateUpdated(state:playbackInformation:))
             
-            Color.red
-                .opacity(0.2)
-                .onTapGesture {
+            GestureView()
+                .onPinch { state, scale in
+                    guard state == .began || state == .changed else { return }
+                    if scale > 1, !viewModel.isAspectFilled {
+                        print("increasing")
+                        viewModel.isAspectFilled.toggle()
+                        UIView.animate(withDuration: 0.2) {
+                            viewModel.eventSubject.send(.aspectFill(1))
+                        }
+                    } else if scale < 1, viewModel.isAspectFilled {
+                        print("shrinking")
+                        viewModel.isAspectFilled.toggle()
+                        UIView.animate(withDuration: 0.2) {
+                            viewModel.eventSubject.send(.aspectFill(0))
+                        }
+                    }
+                }
+                .onTap {
                     showOverlay.toggle()
-                    print("Gesture view was tapped: \(showOverlay)")
+                }
+                .onVerticalPan { _, translation in
+                    MPVolumeView.setVolume(Float(abs(translation.y)) / 500)
                 }
             
-            if showOverlay {
-                Overlay(viewModel: viewModel)
-                    .transition(.opacity.animation(.linear(duration: 0.2)))
-            }
+            Overlay(viewModel: viewModel)
+                .opacity(showOverlay ? 1 : 0)
             
             Text(showOverlay ? "Should show" : "Don't show")
         }
+        .onTapGesture {
+            print("Parent got tap gesture")
+        }
+        .animation(.linear(duration: 0.1), value: showOverlay)
     }
 
     var body: some View {
-//        PreferenceUIHostingControllerView {
-            contentView
-                .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
-                .prefersHomeIndicatorAutoHidden(true)
-                .navigationBarHidden(true)
-                .statusBar(hidden: true)
-//        }
-        .ignoresSafeArea()
+        contentView
+            .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+            .navigationBarHidden(true)
+            .statusBar(hidden: true)
+            .ignoresSafeArea()
+    }
+}
+
+struct GestureView: UIViewRepresentable {
+    
+    private var onPinch: (UIGestureRecognizer.State, CGFloat) -> Void
+    private var onTap: () -> Void
+    private var onVerticalPan: (CGPoint, CGPoint) -> Void
+    
+    func makeUIView(context: Context) -> UIGestureView {
+        UIGestureView(
+            onPinch: onPinch,
+            onTap: onTap,
+            onVerticalPan: onVerticalPan
+        )
+    }
+    
+    func updateUIView(_ uiView: UIGestureView, context: Context) {
+        
+    }
+}
+
+extension GestureView {
+    
+    init() {
+        self.onPinch = { _, _ in }
+        self.onTap = { }
+        self.onVerticalPan = { _, _ in }
+    }
+    
+    func onPinch(_ action: @escaping (UIGestureRecognizer.State, CGFloat) -> Void) -> Self {
+        copy(modifying: \.onPinch, with: action)
+    }
+    
+    func onTap(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onTap, with: action)
+    }
+    
+    func onVerticalPan(_ action: @escaping (CGPoint, CGPoint) -> Void) -> Self {
+        copy(modifying: \.onVerticalPan, with: action)
+    }
+}
+
+class UIGestureView: UIView {
+    
+    private let onPinch: (UIGestureRecognizer.State, CGFloat) -> Void
+    private let onTap: () -> Void
+    private let onVerticalPan: (CGPoint, CGPoint) -> Void
+    
+    init(
+        onPinch: @escaping (UIGestureRecognizer.State, CGFloat) -> Void,
+        onTap: @escaping () -> Void,
+        onVerticalPan: @escaping (CGPoint, CGPoint) -> Void
+    ) {
+        self.onPinch = onPinch
+        self.onTap = onTap
+        self.onVerticalPan = onVerticalPan
+        super.init(frame: .zero)
+        
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPerformPinch(_:)))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap(_:)))
+        let panGesture = PanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(didPerformVerticalPan(_:)))
+        
+        addGestureRecognizer(pinchGesture)
+        addGestureRecognizer(tapGesture)
+        addGestureRecognizer(panGesture)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc
+    private func didPerformPinch(_ gestureRecognizer: UIPinchGestureRecognizer) {
+        onPinch(gestureRecognizer.state, gestureRecognizer.scale)
+    }
+    
+    @objc
+    private func didPerformTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        onTap()
+    }
+    
+    @objc
+    private func didPerformVerticalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
+        let location = gestureRecognizer.location(in: self)
+        let translation = gestureRecognizer.translation(in: self)
+        print("Location: \(location)")
+        print("Translation: \(translation)")
+        onVerticalPan(location, translation)
+    }
+}
+
+extension MPVolumeView {
+    static func setVolume(_ volume: Float) {
+        let volumeView = MPVolumeView()
+        let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+            slider?.value = volume
+        }
     }
 }
