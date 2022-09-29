@@ -16,14 +16,14 @@ extension ItemView {
         @Injected(LogManager.service)
         private var logger
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var mainRouter: MainCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 
         var body: some View {
             Button {
                 if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                    itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+                    mainRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
                 } else {
                     logger.error("Attempted to play item but no playback information available")
                 }
@@ -49,20 +49,20 @@ extension ItemView {
                     .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
                 }
             }
-            .contextMenu {
-                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-                    Button {
-                        if let selectedVideoPlayerViewModel = viewModel.legacyselectedVideoPlayerViewModel {
-                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-                            itemRouter.route(to: \.legacyVideoPlayer, selectedVideoPlayerViewModel)
-                        } else {
-                            logger.error("Attempted to play item but no playback information available")
-                        }
-                    } label: {
-                        Label(L10n.playFromBeginning, systemImage: "gobackward")
-                    }
-                }
-            }
+//            .contextMenu {
+//                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+//                    Button {
+//                        if let selectedVideoPlayerViewModel = viewModel.legacyselectedVideoPlayerViewModel {
+//                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+//                            itemRouter.route(to: \.legacyVideoPlayer, selectedVideoPlayerViewModel)
+//                        } else {
+//                            logger.error("Attempted to play item but no playback information available")
+//                        }
+//                    } label: {
+//                        Label(L10n.playFromBeginning, systemImage: "gobackward")
+//                    }
+//                }
+//            }
         }
     }
 }

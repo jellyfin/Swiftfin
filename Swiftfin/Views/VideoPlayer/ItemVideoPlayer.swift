@@ -7,20 +7,41 @@
 //
 
 import Combine
+import JellyfinAPI
 import MediaPlayer
 import SwiftUI
 import VLCUI
 
+class ItemVideoPlayerManager: ViewModel {
+    
+    @Published
+    var currentViewModel: ItemVideoPlayerViewModel?
+    
+    init(viewModel: ItemVideoPlayerViewModel) {
+        self.currentViewModel = viewModel
+    }
+    
+    init(item: BaseItemDto) {
+        item.createItemVideoPlayerViewModel()
+            .sink { completion in
+                self.handleAPIRequestError(completion: completion)
+            } receiveValue: { viewModels in
+                self.currentViewModel = viewModels[0]
+            }
+            .store(in: &cancellables)
+    }
+}
+
 struct ItemVideoPlayer: View {
 
     @ObservedObject
-    var viewModel: ItemVideoPlayerViewModel
+    var viewModel: ItemVideoPlayerManager
     
     @State
     private var showOverlay: Bool = false
     
     @ViewBuilder
-    private var contentView: some View {
+    func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
         ZStack(alignment: .bottom) {
             VLCVideoPlayer {
                 let configuration = VLCVideoPlayer.Configuration(url: viewModel.playbackURL)
@@ -38,13 +59,11 @@ struct ItemVideoPlayer: View {
                 .onPinch { state, scale in
                     guard state == .began || state == .changed else { return }
                     if scale > 1, !viewModel.isAspectFilled {
-                        print("increasing")
                         viewModel.isAspectFilled.toggle()
                         UIView.animate(withDuration: 0.2) {
                             viewModel.eventSubject.send(.aspectFill(1))
                         }
                     } else if scale < 1, viewModel.isAspectFilled {
-                        print("shrinking")
                         viewModel.isAspectFilled.toggle()
                         UIView.animate(withDuration: 0.2) {
                             viewModel.eventSubject.send(.aspectFill(0))
@@ -68,13 +87,28 @@ struct ItemVideoPlayer: View {
         }
         .animation(.linear(duration: 0.1), value: showOverlay)
     }
+    
+    @ViewBuilder
+    private var loadingView: some View {
+        VStack {
+            ProgressView()
+            
+            Text("Retrieving media...")
+        }
+    }
 
     var body: some View {
-        contentView
-            .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
-            .navigationBarHidden(true)
-            .statusBar(hidden: true)
-            .ignoresSafeArea()
+        Group {
+            if let viewModel = viewModel {
+                playerView(with: viewModel)
+            } else {
+                loadingView
+            }
+        }
+        .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
+        .navigationBarHidden(true)
+        .statusBar(hidden: true)
+        .ignoresSafeArea()
     }
 }
 
@@ -105,6 +139,7 @@ extension GestureView {
         self.onPinch = { _, _ in }
         self.onTap = { }
         self.onVerticalPan = { _, _ in }
+        self.onHorizontalPan = { _, _ in }
     }
     
     func onPinch(_ action: @escaping (UIGestureRecognizer.State, CGFloat) -> Void) -> Self {

@@ -29,8 +29,6 @@ final class ItemCoordinator: NavigationCoordinatable {
     var itemOverview = makeItemOverview
     @Route(.fullScreen)
     var legacyVideoPlayer = makeLegacyVideoPlayer
-    @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
 
     let itemDto: BaseItemDto
 
@@ -60,10 +58,6 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     func makeLegacyVideoPlayer(viewModel: LegacyVideoPlayerViewModel) -> NavigationViewCoordinator<LegacyVideoPlayerCoordinator> {
         NavigationViewCoordinator(LegacyVideoPlayerCoordinator(viewModel: viewModel))
-    }
-
-    func makeVideoPlayer(viewModel: ItemVideoPlayerViewModel) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
-        NavigationViewCoordinator(ItemVideoPlayerCoordinator(viewModel: viewModel))
     }
 
     @ViewBuilder

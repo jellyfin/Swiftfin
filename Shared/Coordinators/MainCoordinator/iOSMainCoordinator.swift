@@ -20,12 +20,14 @@ final class MainCoordinator: NavigationCoordinatable {
     @Injected(LogManager.service)
     private var logger
 
-    var stack: NavigationStack<MainCoordinator>
+    var stack: Stinsen.NavigationStack<MainCoordinator>
 
     @Root
     var mainTab = makeMainTab
     @Root
     var serverList = makeServerList
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -105,5 +107,9 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
         NavigationViewCoordinator(ServerListCoordinator())
+    }
+    
+    func makeVideoPlayer(viewModel: ItemVideoPlayerViewModel) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
+        NavigationViewCoordinator(ItemVideoPlayerCoordinator(viewModel: viewModel))
     }
 }

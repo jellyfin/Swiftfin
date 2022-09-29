@@ -47,6 +47,18 @@ extension MovieItemView {
 
                     Divider()
                 }
+                
+                if let extras = viewModel.specialFeatures["Interview"], !extras.isEmpty {
+                    ItemView.ExtrasHStack(
+                        title: "Interviews",
+                        items: extras)
+                }
+                
+                if let extras = viewModel.specialFeatures["BehindTheScenes"], !extras.isEmpty {
+                    ItemView.ExtrasHStack(
+                        title: "Behind the Scenes",
+                        items: extras)
+                }
 
                 // MARK: Similar
 

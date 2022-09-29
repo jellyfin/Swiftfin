@@ -28,6 +28,8 @@ class ItemViewModel: ViewModel {
     @Published
     var similarItems: [BaseItemDto] = []
     @Published
+    var specialFeatures: [String: [BaseItemDto]] = [:]
+    @Published
     var isWatched = false
     @Published
     var isFavorited = false
@@ -58,6 +60,7 @@ class ItemViewModel: ViewModel {
         isWatched = item.userData?.played ?? false
 
         getSimilarItems()
+        getSpecialFeatures()
         refreshItemVideoPlayerViewModel(for: item)
 
         Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
@@ -129,6 +132,20 @@ class ItemViewModel: ViewModel {
         }, receiveValue: { [weak self] response in
             self?.similarItems = response.items ?? []
         })
+        .store(in: &cancellables)
+    }
+    
+    func getSpecialFeatures() {
+        UserLibraryAPI.getSpecialFeatures(
+            userId: SessionManager.main.currentLogin.user.id,
+            itemId: item.id!)
+        .sink { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        } receiveValue: { [weak self] items in
+            self?.specialFeatures = Dictionary(grouping: items) { item in
+                item.extraType ?? "Unknown"
+            }
+        }
         .store(in: &cancellables)
     }
 

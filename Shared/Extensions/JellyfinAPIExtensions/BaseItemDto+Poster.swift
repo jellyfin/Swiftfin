@@ -63,6 +63,8 @@ extension BaseItemDto: Poster {
                     imageSource(.primary, maxWidth: maxWidth),
                 ]
             }
+        case .video:
+            return [imageSource(.primary, maxWidth: maxWidth)]
         default:
             return [
                 imageSource(.thumb, maxWidth: maxWidth),

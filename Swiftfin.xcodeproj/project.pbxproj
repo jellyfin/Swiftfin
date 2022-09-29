@@ -420,6 +420,7 @@
 		E18E023C288749540022598C /* UIScrollViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E0239288749540022598C /* UIScrollViewExtensions.swift */; };
 		E19169CE272514760085832A /* HTTPScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19169CD272514760085832A /* HTTPScheme.swift */; };
 		E19169CF272514760085832A /* HTTPScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19169CD272514760085832A /* HTTPScheme.swift */; };
+		E1921B7428E61914003A5238 /* SpecialFeatureHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1921B7328E61914003A5238 /* SpecialFeatureHStack.swift */; };
 		E192608028D28AAD002314B4 /* UserProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E192607F28D28AAD002314B4 /* UserProfileButton.swift */; };
 		E192608328D2D0DB002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608228D2D0DB002314B4 /* Factory */; };
 		E192608828D2E5F0002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608728D2E5F0002314B4 /* Factory */; };
@@ -923,6 +924,7 @@
 		E18E0203288749200022598C /* BlurView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
 		E18E0239288749540022598C /* UIScrollViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIScrollViewExtensions.swift; sourceTree = "<group>"; };
 		E19169CD272514760085832A /* HTTPScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPScheme.swift; sourceTree = "<group>"; };
+		E1921B7328E61914003A5238 /* SpecialFeatureHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialFeatureHStack.swift; sourceTree = "<group>"; };
 		E192607F28D28AAD002314B4 /* UserProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileButton.swift; sourceTree = "<group>"; };
 		E1937A3A288E54AD00CB80AA /* BaseItemDto+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+Images.swift"; sourceTree = "<group>"; };
 		E1937A3D288F0D3D00CB80AA /* UIScreenExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreenExtensions.swift; sourceTree = "<group>"; };
@@ -2086,6 +2088,7 @@
 				E18E01D6288747230022598C /* ListDetailsView.swift */,
 				E18E01D8288747230022598C /* PlayButton.swift */,
 				E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */,
+				E1921B7328E61914003A5238 /* SpecialFeatureHStack.swift */,
 				E17FB55828C125E900311DFE /* StudiosHStack.swift */,
 			);
 			path = Components;
@@ -2896,6 +2899,7 @@
 				E18E01EF288747230022598C /* ListDetailsView.swift in Sources */,
 				E173DA5226D04AAF00CC4EB7 /* ColorExtensions.swift in Sources */,
 				E12CC1B928D11A1D00678D5D /* BasicLibraryView.swift in Sources */,
+				E1921B7428E61914003A5238 /* SpecialFeatureHStack.swift in Sources */,
 				E1399474289B1EA900401ABC /* Defaults+Workaround.swift in Sources */,
 				C45942D027F69C2400C54FE7 /* LiveTVChannelsCoordinator.swift in Sources */,
 				E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */,
@@ -3551,7 +3555,7 @@
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.1.0;
+				minimumVersion = 9.0.0;
 			};
 		};
 		E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */ = {
