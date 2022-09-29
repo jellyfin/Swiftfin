@@ -12,6 +12,8 @@ import SwiftUI
 struct EpisodeCard<RowManager: EpisodesRowManager>: View {
 
     @EnvironmentObject
+    private var mainRouter: MainCoordinator.Router
+    @EnvironmentObject
     private var router: ItemCoordinator.Router
     @ScaledMetric
     private var staticOverviewHeight: CGFloat = 50
@@ -79,15 +81,7 @@ struct EpisodeCard<RowManager: EpisodesRowManager>: View {
                 }
             }
             .onSelect {
-                episode.createLegacyVideoPlayerViewModel()
-                    .sink { completion in
-                        self.viewModel.handleAPIRequestError(completion: completion)
-                    } receiveValue: { viewModels in
-                        if let episodeViewModel = viewModels.first {
-//                            router.route(to: \.videoPlayer, episodeViewModel)
-                        }
-                    }
-                    .store(in: &viewModel.cancellables)
+                mainRouter.route(to: \.videoPlayer, .init(item: episode))
             }
     }
 }

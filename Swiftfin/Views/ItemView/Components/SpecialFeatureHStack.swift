@@ -13,6 +13,9 @@ extension ItemView {
     
     struct ExtrasHStack: View {
         
+        @EnvironmentObject
+        private var router: MainCoordinator.Router
+        
         let title: String
         let items: [BaseItemDto]
         
@@ -20,6 +23,9 @@ extension ItemView {
             PosterHStack(title: title,
                          type: .landscape,
                          items: items)
+            .onSelect { item in
+                router.route(to: \.videoPlayer, .init(item: item))
+            }
             
             Divider()
         }

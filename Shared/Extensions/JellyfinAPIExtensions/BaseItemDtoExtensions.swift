@@ -22,8 +22,9 @@ extension BaseItemDto: LibraryParent {}
 extension BaseItemDto {
 
     var episodeLocator: String? {
-        guard let episodeNo = indexNumber else { return nil }
-        return L10n.episodeNumber(episodeNo)
+        return "crash!?!?"
+//        guard let episodeNo = indexNumber else { return nil }
+//        return L10n.episodeNumber(episodeNo)
     }
     
     var runTimeSeconds: Int {

@@ -109,7 +109,7 @@ final class MainCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(ServerListCoordinator())
     }
     
-    func makeVideoPlayer(viewModel: ItemVideoPlayerViewModel) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
-        NavigationViewCoordinator(ItemVideoPlayerCoordinator(viewModel: viewModel))
+    func makeVideoPlayer(parameters: ItemVideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
+        NavigationViewCoordinator(ItemVideoPlayerCoordinator(parameters: parameters))
     }
 }

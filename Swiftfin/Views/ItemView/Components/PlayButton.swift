@@ -23,7 +23,7 @@ extension ItemView {
         var body: some View {
             Button {
                 if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                    mainRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+                    mainRouter.route(to: \.videoPlayer, .init(viewModel: selectedVideoPlayerViewModel))
                 } else {
                     logger.error("Attempted to play item but no playback information available")
                 }

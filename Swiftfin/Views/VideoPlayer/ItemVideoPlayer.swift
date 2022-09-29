@@ -19,9 +19,11 @@ class ItemVideoPlayerManager: ViewModel {
     
     init(viewModel: ItemVideoPlayerViewModel) {
         self.currentViewModel = viewModel
+        super.init()
     }
     
     init(item: BaseItemDto) {
+        super.init()
         item.createItemVideoPlayerViewModel()
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
@@ -88,18 +90,20 @@ struct ItemVideoPlayer: View {
         .animation(.linear(duration: 0.1), value: showOverlay)
     }
     
+    // TODO: Better and localize
     @ViewBuilder
     private var loadingView: some View {
         VStack {
             ProgressView()
-            
+
             Text("Retrieving media...")
+                .foregroundColor(.white)
         }
     }
 
     var body: some View {
         Group {
-            if let viewModel = viewModel {
+            if let viewModel = viewModel.currentViewModel {
                 playerView(with: viewModel)
             } else {
                 loadingView

@@ -12,21 +12,41 @@ import Stinsen
 import SwiftUI
 
 final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
+    
+    struct Parameters {
+        let item: BaseItemDto?
+        let viewModel: ItemVideoPlayerViewModel?
+        
+        init(item: BaseItemDto) {
+            self.item = item
+            self.viewModel = nil
+        }
+        
+        init(viewModel: ItemVideoPlayerViewModel) {
+            self.item = nil
+            self.viewModel = viewModel
+        }
+    }
 
     let stack = NavigationStack(initial: \ItemVideoPlayerCoordinator.start)
 
     @Root
     var start = makeStart
 
-    let viewModel: ItemVideoPlayerViewModel
+    let parameters: Parameters
 
-    init(viewModel: ItemVideoPlayerViewModel) {
-        self.viewModel = viewModel
+    init(parameters: Parameters) {
+        self.parameters = parameters
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        ItemVideoPlayer(viewModel: viewModel)
-            .prefersHomeIndicatorAutoHidden(true)
+        if let item = parameters.item {
+            ItemVideoPlayer(viewModel: .init(item: item))
+        } else if let viewModel = parameters.viewModel {
+            ItemVideoPlayer(viewModel: .init(viewModel: viewModel))
+        } else {
+            EmptyView()
+        }
     }
 }
