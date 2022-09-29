@@ -609,14 +609,14 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		628B95312670CABE0091AF3B /* Embed App Extensions */ = {
+		628B95312670CABE0091AF3B /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -2387,7 +2387,7 @@
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
 				5302F8322658B74800647A2E /* CopyFiles */,
-				628B95312670CABE0091AF3B /* Embed App Extensions */,
+				628B95312670CABE0091AF3B /* Embed Foundation Extensions */,
 				62666DF927E5012C00EC0ECD /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -2429,7 +2429,7 @@
 					New,
 				);
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1320;
+				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					5358705F2669D21600D05A09 = {
 						CreatedOnToolsVersion = 12.5;
