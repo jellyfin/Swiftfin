@@ -42,6 +42,7 @@ extension ItemVideoPlayer.Overlay {
                     Spacer()
                     
                     ItemVideoPlayer.Overlay.ActionButtons(viewModel: viewModel)
+                        .padding(.leading, 100)
                 }
                 .font(.system(size: 24))
                 .tint(Color.white)

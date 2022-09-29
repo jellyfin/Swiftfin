@@ -40,22 +40,3 @@ extension ItemVideoPlayer {
         }
     }
 }
-
-extension ItemVideoPlayer {
-    
-    struct GestureHandler: UIViewRepresentable {
-        
-        func makeUIView(context: Context) -> some UIView {
-            UIView()
-        }
-        
-        func updateUIView(_ uiView: UIViewType, context: Context) {
-            
-        }
-    }
-    
-    class UIGestureHandler: UIView {
-        
-        
-    }
-}
