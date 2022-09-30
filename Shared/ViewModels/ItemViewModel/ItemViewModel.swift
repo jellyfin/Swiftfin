@@ -28,7 +28,7 @@ class ItemViewModel: ViewModel {
     @Published
     var similarItems: [BaseItemDto] = []
     @Published
-    var specialFeatures: [String: [BaseItemDto]] = [:]
+    var specialFeatures: [SpecialFeatureType: [BaseItemDto]] = [:]
     @Published
     var isWatched = false
     @Published
@@ -142,8 +142,9 @@ class ItemViewModel: ViewModel {
         .sink { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         } receiveValue: { [weak self] items in
-            self?.specialFeatures = Dictionary(grouping: items) { item in
-                item.extraType ?? "Unknown"
+            let videoItems = items.filter { $0.specialFeatureType?.isVideo ?? false }
+            self?.specialFeatures = Dictionary(grouping: videoItems) { item in
+                item.specialFeatureType ?? .unknown
             }
         }
         .store(in: &cancellables)

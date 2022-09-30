@@ -9,6 +9,12 @@
 import Foundation
 import SwiftUI
 
+extension String: Displayable {
+    var displayName: String {
+        self
+    }
+}
+
 extension String {
     func removeRegexMatches(pattern: String, replaceWith: String = "") -> String {
         do {

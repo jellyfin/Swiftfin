@@ -20,6 +20,11 @@ extension BaseItemDto: Identifiable {}
 extension BaseItemDto: LibraryParent {}
 
 extension BaseItemDto {
+    
+    var specialFeatureType: SpecialFeatureType? {
+        guard let extraType = extraType else { return nil }
+        return SpecialFeatureType(rawValue: extraType)
+    }
 
     var episodeLocator: String? {
         return "crash!?!?"

@@ -48,8 +48,8 @@ extension ItemVideoPlayer.Overlay {
                 .tint(Color.white)
                 .foregroundColor(Color.white)
                 
-                if let seriesName = viewModel.item.seriesName {
-                    Text(seriesName)
+                if let subtitle = viewModel.item.subtitle {
+                    Text(subtitle)
                         .font(.subheadline)
                         .foregroundColor(Color.gray)
                         .alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in

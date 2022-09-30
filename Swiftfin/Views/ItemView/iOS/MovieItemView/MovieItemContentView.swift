@@ -15,7 +15,7 @@ extension MovieItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var mainRouter: MainCoordinator.Router
         @ObservedObject
         var viewModel: MovieItemViewModel
 
@@ -48,16 +48,17 @@ extension MovieItemView {
                     Divider()
                 }
                 
-                if let extras = viewModel.specialFeatures["Interview"], !extras.isEmpty {
-                    ItemView.ExtrasHStack(
-                        title: "Interviews",
-                        items: extras)
-                }
-                
-                if let extras = viewModel.specialFeatures["BehindTheScenes"], !extras.isEmpty {
-                    ItemView.ExtrasHStack(
-                        title: "Behind the Scenes",
-                        items: extras)
+                if !viewModel.specialFeatures.keys.isEmpty {
+                    ItemHStackSwitcher(
+                        type: .landscape,
+                        manager: SpecialFeaturesViewModel(
+                            sections: viewModel.specialFeatures)
+                    )
+                    .onSelect { item in
+                        mainRouter.route(to: \.videoPlayer, .init(item: item))
+                    }
+                    
+                    Divider()
                 }
 
                 // MARK: Similar
