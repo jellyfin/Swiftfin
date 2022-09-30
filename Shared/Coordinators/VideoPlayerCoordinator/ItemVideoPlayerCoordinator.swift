@@ -12,16 +12,16 @@ import Stinsen
 import SwiftUI
 
 final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
-    
+
     struct Parameters {
         let item: BaseItemDto?
         let viewModel: ItemVideoPlayerViewModel?
-        
+
         init(item: BaseItemDto) {
             self.item = item
             self.viewModel = nil
         }
-        
+
         init(viewModel: ItemVideoPlayerViewModel) {
             self.item = nil
             self.viewModel = viewModel

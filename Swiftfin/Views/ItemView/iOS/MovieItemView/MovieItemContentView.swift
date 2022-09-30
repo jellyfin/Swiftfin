@@ -47,17 +47,18 @@ extension MovieItemView {
 
                     Divider()
                 }
-                
+
                 if !viewModel.specialFeatures.keys.isEmpty {
                     ItemHStackSwitcher(
                         type: .landscape,
                         manager: SpecialFeaturesViewModel(
-                            sections: viewModel.specialFeatures)
+                            sections: viewModel.specialFeatures
+                        )
                     )
                     .onSelect { item in
                         mainRouter.route(to: \.videoPlayer, .init(item: item))
                     }
-                    
+
                     Divider()
                 }
 

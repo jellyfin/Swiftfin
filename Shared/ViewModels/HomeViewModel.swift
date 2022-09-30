@@ -209,12 +209,12 @@ final class HomeViewModel: ViewModel {
         })
         .store(in: &cancellables)
     }
-    
+
     @objc
     func hitPCommand() {
         print("Hit p")
     }
-    
+
     var keyCommands: [UIKeyCommand] {
         let command = UIKeyCommand(title: "Test", action: #selector(hitPCommand), input: "p")
         command.wantsPriorityOverSystemBehavior = true

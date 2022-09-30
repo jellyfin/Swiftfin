@@ -14,7 +14,7 @@ import Sliders
 import SwiftUI
 
 struct LegacyVLCPlayerOverlayView: View {
-    
+
     @ObservedObject
     var viewModel: LegacyVideoPlayerViewModel
 
@@ -478,7 +478,7 @@ struct LegacyVLCPlayerOverlayView: View {
     }
 }
 
-//struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
+// struct VLCPlayerCompactOverlayView_Previews: PreviewProvider {
 //    static let videoPlayerViewModel = LegacyVideoPlayerViewModel(
 //        item: BaseItemDto(),
 //        title: "Glorious Purpose",
@@ -514,7 +514,7 @@ struct LegacyVLCPlayerOverlayView: View {
 //        }
 //        .previewInterfaceOrientation(.landscapeLeft)
 //    }
-//}
+// }
 
 // MARK: TitleSubtitleAlignment
 

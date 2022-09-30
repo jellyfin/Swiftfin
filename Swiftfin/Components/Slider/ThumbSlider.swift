@@ -9,13 +9,13 @@
 import SwiftUI
 
 struct ThumbSlider: View {
-    
+
     @Binding
     private var progress: CGFloat
     @State
     private var isEditing: Bool = false
     private var onEditingChanged: (Bool) -> Void
-    
+
     var body: some View {
         Slider(progress: $progress)
             .gestureBehavior(.thumb)
@@ -30,21 +30,21 @@ struct ThumbSlider: View {
                 self.isEditing = isEditing
                 onEditingChanged(isEditing)
             }
-            .track { _, progress in
+            .track { _, _ in
                 Color.purple
                     .frame(height: 5)
                     .clipShape(Capsule())
             }
-            .trackBackground { _, progress in
+            .trackBackground { _, _ in
                 Color.gray
                     .opacity(0.5)
                     .frame(height: 5)
                     .clipShape(Capsule())
             }
-            .thumb { isEditing, progress in
+            .thumb { isEditing, _ in
                 ZStack {
                     Color.clear
-                    
+
                     Circle()
                         .foregroundColor(Color.purple)
                         .frame(width: isEditing ? 25 : 20)
@@ -58,12 +58,12 @@ struct ThumbSlider: View {
 }
 
 extension ThumbSlider {
-    
+
     init(progress: Binding<CGFloat>) {
         self._progress = progress
         self.onEditingChanged = { _ in }
     }
-    
+
     func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
     }

@@ -9,12 +9,12 @@
 import UIKit
 
 class PanDirectionGestureRecognizer: UIPanGestureRecognizer {
-    
+
     enum Direction {
         case vertical
         case horizontal
     }
-    
+
     private let direction: Direction
 
     init(direction: Direction, target: AnyObject, action: Selector) {

@@ -115,11 +115,11 @@ extension View {
     func posterShadow() -> some View {
         self.shadow(radius: 4, y: 2)
     }
-    
+
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
-    
+
     func onFrameChanged(_ onChange: @escaping (CGRect) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -129,19 +129,22 @@ extension View {
         }
         .onPreferenceChange(FramePreferenceKey.self, perform: onChange)
     }
-    
+
     func onLocationChanged(_ onChange: @escaping (CGPoint) -> Void) -> some View {
         background {
             GeometryReader { reader in
                 Color.clear
-                    .preference(key: LocationPreferenceKey.self, value: CGPoint(x: reader.frame(in: .global).midX, y: reader.frame(in: .global).midY))
+                    .preference(
+                        key: LocationPreferenceKey.self,
+                        value: CGPoint(x: reader.frame(in: .global).midX, y: reader.frame(in: .global).midY)
+                    )
             }
         }
         .onPreferenceChange(LocationPreferenceKey.self, perform: onChange)
     }
-    
+
     func onSizeChanged(_ onChange: @escaping (CGSize) -> Void) -> some View {
-        background{
+        background {
             GeometryReader { reader in
                 Color.clear
                     .preference(key: SizePreferenceKey.self, value: reader.size)
@@ -149,7 +152,7 @@ extension View {
         }
         .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
     }
-    
+
     func copy<Value>(modifying keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
         var copy = self
         copy[keyPath: keyPath] = newValue

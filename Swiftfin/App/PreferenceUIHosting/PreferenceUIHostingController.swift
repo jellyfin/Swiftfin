@@ -95,7 +95,7 @@ struct ViewPreferenceKey: PreferenceKey {
 
 struct SupportedOrientationsPreferenceKey: PreferenceKey {
     typealias Value = UIInterfaceOrientationMask
-    
+
     static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
 
     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
@@ -107,7 +107,7 @@ struct SupportedOrientationsPreferenceKey: PreferenceKey {
 // MARK: Preference Key View Extension
 
 extension View {
-    
+
     func prefersHomeIndicatorAutoHidden(_ value: Bool) -> some View {
         preference(key: PrefersHomeIndicatorAutoHiddenPreferenceKey.self, value: value)
     }

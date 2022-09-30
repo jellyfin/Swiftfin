@@ -15,6 +15,7 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
     private var title: String?
     private var type: PosterType
     private var items: [Item]
+    private var singleImage: Bool
     private var itemScale: CGFloat
     private var content: (Item) -> Content
     private var imageOverlay: (Item) -> ImageOverlay
@@ -24,7 +25,7 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
 
     var body: some View {
         VStack(alignment: .leading) {
-            
+
             HStack {
                 if header() is EmptyView {
                     if let title = title {
@@ -49,12 +50,16 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
                     ForEach(items, id: \.hashValue) { item in
-                        PosterButton(item: item, type: type)
-                            .scaleItem(itemScale)
-                            .content { content(item) }
-                            .imageOverlay { imageOverlay(item) }
-                            .contextMenu { contextMenu(item) }
-                            .onSelect { onSelect(item) }
+                        PosterButton(
+                            item: item,
+                            type: type,
+                            singleImage: singleImage
+                        )
+                        .scaleItem(itemScale)
+                        .content { content(item) }
+                        .imageOverlay { imageOverlay(item) }
+                        .contextMenu { contextMenu(item) }
+                        .onSelect { onSelect(item) }
                     }
                 }
                 .padding(.horizontal)
@@ -74,13 +79,15 @@ extension PosterHStack where Header == EmptyView,
 {
     init(
         type: PosterType,
-        items: [Item]
+        items: [Item],
+        singleImage: Bool = false
     ) {
         self.init(
             header: { EmptyView() },
             title: nil,
             type: type,
             items: items,
+            singleImage: singleImage,
             itemScale: 1,
             content: { PosterButtonDefaultContentView(item: $0) },
             imageOverlay: { _ in EmptyView() },
@@ -89,17 +96,19 @@ extension PosterHStack where Header == EmptyView,
             onSelect: { _ in }
         )
     }
-    
+
     init(
         title: String,
         type: PosterType,
-        items: [Item]
+        items: [Item],
+        singleImage: Bool = false
     ) {
         self.init(
             header: { EmptyView() },
             title: title,
             type: type,
             items: items,
+            singleImage: singleImage,
             itemScale: 1,
             content: { PosterButtonDefaultContentView(item: $0) },
             imageOverlay: { _ in EmptyView() },
@@ -111,7 +120,7 @@ extension PosterHStack where Header == EmptyView,
 }
 
 extension PosterHStack {
-    
+
     @ViewBuilder
     func header<H: View>(@ViewBuilder _ header: @escaping () -> H)
     -> PosterHStack<H, Item, Content, ImageOverlay, ContextMenu, TrailingContent> {
@@ -120,6 +129,7 @@ extension PosterHStack {
             title: title,
             type: type,
             items: items,
+            singleImage: singleImage,
             itemScale: itemScale,
             content: content,
             imageOverlay: imageOverlay,
@@ -141,6 +151,7 @@ extension PosterHStack {
             title: title,
             type: type,
             items: items,
+            singleImage: singleImage,
             itemScale: itemScale,
             content: content,
             imageOverlay: imageOverlay,
@@ -158,6 +169,7 @@ extension PosterHStack {
             title: title,
             type: type,
             items: items,
+            singleImage: singleImage,
             itemScale: itemScale,
             content: content,
             imageOverlay: imageOverlay,
@@ -175,6 +187,7 @@ extension PosterHStack {
             title: title,
             type: type,
             items: items,
+            singleImage: singleImage,
             itemScale: itemScale,
             content: content,
             imageOverlay: imageOverlay,
@@ -192,6 +205,7 @@ extension PosterHStack {
             title: title,
             type: type,
             items: items,
+            singleImage: singleImage,
             itemScale: itemScale,
             content: content,
             imageOverlay: imageOverlay,

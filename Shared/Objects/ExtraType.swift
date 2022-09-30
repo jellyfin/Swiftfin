@@ -21,7 +21,7 @@ enum SpecialFeatureType: String, Displayable, CaseIterable {
     case sample = "Sample"
     case themeSong = "ThemeSong"
     case themeVideo = "ThemeVideo"
-    
+
     // TODO: localize
     var displayName: String {
         switch self {
@@ -47,7 +47,7 @@ enum SpecialFeatureType: String, Displayable, CaseIterable {
             return "Theme Video"
         }
     }
-    
+
     var isVideo: Bool {
         self != .themeSong
     }

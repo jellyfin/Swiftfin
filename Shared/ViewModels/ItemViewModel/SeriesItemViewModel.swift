@@ -11,14 +11,18 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
+final class SeriesItemViewModel: ItemViewModel, ItemHStackSwitcherManager {
 
     @Published
-    var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
+    var selection: BaseItemDto?
     @Published
-    var selectedSeason: BaseItemDto?
+    var sections: [BaseItemDto: [BaseItemDto]]
+    var sectionMenuSort: (BaseItemDto, BaseItemDto) -> Bool
 
     override init(item: BaseItemDto) {
+        self.sections = [:]
+        self.sectionMenuSort = { i, j in i.indexNumber ?? -1 < j.indexNumber ?? -1 }
+
         super.init(item: item)
 
         getSeasons()
@@ -61,10 +65,6 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
         }, receiveValue: { [weak self] response in
             if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
                 self?.playButtonItem = nextUpItem
-
-                if let seasonID = nextUpItem.seasonId {
-                    self?.select(seasonID: seasonID)
-                }
             }
         })
         .store(in: &cancellables)
@@ -82,10 +82,6 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
         } receiveValue: { [weak self] response in
             if let firstItem = response.items?.first {
                 self?.playButtonItem = firstItem
-
-                if let seasonID = firstItem.seasonId {
-                    self?.select(seasonID: seasonID)
-                }
             }
         }
         .store(in: &cancellables)
@@ -108,10 +104,6 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
                 if self?.playButtonItem == nil {
                     // If other calls finish after this, it will be overwritten
                     self?.playButtonItem = firstItem
-
-                    if let seasonID = firstItem.seasonId {
-                        self?.select(seasonID: seasonID)
-                    }
                 }
             }
         }
@@ -134,5 +126,61 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
         }
 
         return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
+    }
+
+    func select(section: BaseItemDto) {
+        self.selection = section
+
+        if let episodes = sections[section] {
+            if episodes.isEmpty {
+                getEpisodesForSeason(section)
+            }
+        } else {
+            sections[section] = []
+            getEpisodesForSeason(section)
+        }
+    }
+
+    func getSeasons() {
+        TvShowsAPI.getSeasons(
+            seriesId: item.id ?? "",
+            userId: SessionManager.main.currentLogin.user.id,
+            isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false
+        )
+        .sink { completion in
+            self.handleAPIRequestError(completion: completion)
+        } receiveValue: { response in
+            let seasons = response.items ?? []
+
+            seasons.forEach { season in
+                self.sections[season] = []
+            }
+
+            if let firstSeason = seasons.first {
+                self.selection = firstSeason
+                self.getEpisodesForSeason(firstSeason)
+            }
+        }
+        .store(in: &cancellables)
+    }
+
+    func getEpisodesForSeason(_ season: BaseItemDto) {
+        guard let seasonID = season.id else { return }
+
+        TvShowsAPI.getEpisodes(
+            seriesId: item.id ?? "",
+            userId: SessionManager.main.currentLogin.user.id,
+            fields: [.overview, .seasonUserData],
+            seasonId: seasonID,
+            isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
+            enableUserData: true
+        )
+        .trackActivity(loading)
+        .sink { completion in
+            self.handleAPIRequestError(completion: completion)
+        } receiveValue: { response in
+            self.sections[season] = response.items ?? []
+        }
+        .store(in: &cancellables)
     }
 }

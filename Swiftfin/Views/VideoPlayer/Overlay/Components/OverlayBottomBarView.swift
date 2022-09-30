@@ -11,33 +11,33 @@ import Sliders
 import SwiftUI
 
 extension ItemVideoPlayer.Overlay {
-    
+
     struct BottomBarView: View {
-        
+
         @Default(.videoPlayerJumpBackward)
         private var jumpBackwardLength
         @Default(.videoPlayerJumpBackward)
         private var jumpForwardLength
-        
+
         @ObservedObject
         private var viewModel: ItemVideoPlayerViewModel
-        
+
         @State
         private var currentSeconds: Int
         @State
         private var isScrubbing: Bool = false
         @State
         private var progress: CGFloat
-        
+
         init(viewModel: ItemVideoPlayerViewModel) {
             self.viewModel = viewModel
-            
+
             self.currentSeconds = viewModel.currentSeconds
             self.progress = CGFloat(viewModel.currentSeconds) / CGFloat(viewModel.item.runTimeSeconds)
-            
+
             print("bottom bar init-ed")
         }
-        
+
         var body: some View {
             HStack {
                 HStack(spacing: 20) {
@@ -78,16 +78,16 @@ extension ItemVideoPlayer.Overlay {
                 }
                 .tint(Color.white)
                 .foregroundColor(Color.white)
-                
+
                 Text(Double(currentSeconds).timeLabel)
                     .font(.system(size: 18, weight: .semibold, design: .default))
                     .frame(minWidth: 70, maxWidth: 70)
-                
+
                 CapsuleSlider(progress: $progress)
                     .onEditingChanged { isEditing in
                         isScrubbing = isEditing
                     }
-                
+
                 Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
                     .font(.system(size: 18, weight: .semibold, design: .default))
                     .frame(minWidth: 70, maxWidth: 70)
@@ -102,7 +102,7 @@ extension ItemVideoPlayer.Overlay {
                 let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
                 viewModel.eventSubject.send(.setTime(.seconds(Int32(scrubbedSeconds))))
             }
-            .onChange(of: progress){ newValue in
+            .onChange(of: progress) { _ in
                 guard isScrubbing else { return }
                 let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
                 self.currentSeconds = scrubbedSeconds

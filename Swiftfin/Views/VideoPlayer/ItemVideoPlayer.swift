@@ -13,15 +13,15 @@ import SwiftUI
 import VLCUI
 
 class ItemVideoPlayerManager: ViewModel {
-    
+
     @Published
     var currentViewModel: ItemVideoPlayerViewModel?
-    
+
     init(viewModel: ItemVideoPlayerViewModel) {
         self.currentViewModel = viewModel
         super.init()
     }
-    
+
     init(item: BaseItemDto) {
         super.init()
         item.createItemVideoPlayerViewModel()
@@ -35,12 +35,12 @@ class ItemVideoPlayerManager: ViewModel {
 }
 
 struct ItemVideoPlayer: View {
-    
+
     @ObservedObject
     var viewModel: ItemVideoPlayerManager
     @State
     private var showOverlay: Bool = false
-    
+
     @ViewBuilder
     func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
         ZStack(alignment: .bottom) {
@@ -49,13 +49,13 @@ struct ItemVideoPlayer: View {
                 configuration.autoPlay = true
                 configuration.startTime = .seconds(Int32(viewModel.item.startTimeSeconds))
                 configuration.playbackChildren = viewModel.subtitleStreams
-                    .compactMap { $0.asPlaybackChild }
+                    .compactMap(\.asPlaybackChild)
                 return configuration
             }
             .eventSubject(viewModel.eventSubject)
             .onTicksUpdated(viewModel.onTicksUpdated(ticks:playbackInformation:))
             .onStateUpdated(viewModel.onStateUpdated(state:playbackInformation:))
-            
+
             GestureView()
                 .onPinch { state, scale in
                     guard state == .began || state == .changed else { return }
@@ -74,7 +74,7 @@ struct ItemVideoPlayer: View {
                 .onTap {
                     showOverlay.toggle()
                 }
-            
+
             Overlay(viewModel: viewModel)
                 .opacity(showOverlay ? 1 : 0)
         }
@@ -83,7 +83,7 @@ struct ItemVideoPlayer: View {
         }
         .animation(.linear(duration: 0.1), value: showOverlay)
     }
-    
+
     // TODO: Better and localize
     @ViewBuilder
     private var loadingView: some View {

@@ -10,23 +10,25 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
-    
+
     struct ExtrasHStack: View {
-        
+
         @EnvironmentObject
         private var router: MainCoordinator.Router
-        
+
         let title: String
         let items: [BaseItemDto]
-        
+
         var body: some View {
-            PosterHStack(title: title,
-                         type: .landscape,
-                         items: items)
+            PosterHStack(
+                title: title,
+                type: .landscape,
+                items: items
+            )
             .onSelect { item in
                 router.route(to: \.videoPlayer, .init(item: item))
             }
-            
+
             Divider()
         }
     }

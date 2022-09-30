@@ -9,12 +9,12 @@
 import SwiftUI
 
 extension ItemVideoPlayer.Overlay {
-    
+
     struct ActionButtons: View {
-        
+
         @ObservedObject
         var viewModel: ItemVideoPlayerViewModel
-        
+
         var body: some View {
             HStack(spacing: 20) {
                 if !viewModel.subtitleStreams.isEmpty {
@@ -30,7 +30,7 @@ extension ItemVideoPlayer.Overlay {
                     .disabled(viewModel.selectedSubtitleTrackIndex == -1)
                     .foregroundColor(viewModel.selectedSubtitleTrackIndex == -1 ? .gray : .white)
                 }
-                
+
                 Button {
                     if viewModel.isAspectFilled {
                         viewModel.isAspectFilled.toggle()
@@ -50,7 +50,7 @@ extension ItemVideoPlayer.Overlay {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
                 }
-                
+
                 Menu {
                     Menu {
                         ForEach(viewModel.playerSubtitleTracks.keys.sorted(), id: \.self) { subtitleStreamIndex in
@@ -70,7 +70,7 @@ extension ItemVideoPlayer.Overlay {
                             L10n.subtitles.text
                         }
                     }
-                    
+
                     Menu {
                         ForEach(viewModel.playerAudioTracks.keys.sorted(), id: \.self) { audioStreamIndex in
                             Button {
@@ -85,7 +85,7 @@ extension ItemVideoPlayer.Overlay {
                             L10n.audio.text
                         }
                     }
-                    
+
                     Menu {
                         ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
                             Button {

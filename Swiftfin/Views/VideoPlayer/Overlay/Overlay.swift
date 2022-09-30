@@ -10,12 +10,12 @@ import Sliders
 import SwiftUI
 
 extension ItemVideoPlayer {
-    
+
     struct Overlay: View {
-        
+
         @ObservedObject
         var viewModel: ItemVideoPlayerViewModel
-        
+
         var body: some View {
             VStack {
                 TopBarView(viewModel: viewModel)
@@ -25,10 +25,10 @@ extension ItemVideoPlayer {
                         Color.black
                             .opacity(0.5)
                     }
-                
+
                 Spacer()
                     .allowsHitTesting(false)
-                
+
                 BottomBarView(viewModel: viewModel)
                     .frame(height: 50)
                     .padding()

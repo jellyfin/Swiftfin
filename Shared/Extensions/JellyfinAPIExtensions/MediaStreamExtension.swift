@@ -11,7 +11,7 @@ import JellyfinAPI
 import VLCUI
 
 extension MediaStream {
-    
+
     func externalURL(base: String) -> URL? {
         var base = base
         while base.last == Character("/") {
@@ -20,12 +20,13 @@ extension MediaStream {
         guard let deliveryURL = deliveryUrl else { return nil }
         return URL(string: base + deliveryURL)
     }
-    
+
     var asPlaybackChild: VLCVideoPlayer.PlaybackChild? {
         guard let url = externalURL(base: SessionManager.main.currentLogin.server.currentURI) else { return nil }
         return .init(
             url: url,
             type: .subtitle,
-            enforce: false)
+            enforce: false
+        )
     }
 }

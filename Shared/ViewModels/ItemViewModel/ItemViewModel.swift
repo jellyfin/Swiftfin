@@ -134,11 +134,12 @@ class ItemViewModel: ViewModel {
         })
         .store(in: &cancellables)
     }
-    
+
     func getSpecialFeatures() {
         UserLibraryAPI.getSpecialFeatures(
             userId: SessionManager.main.currentLogin.user.id,
-            itemId: item.id!)
+            itemId: item.id!
+        )
         .sink { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         } receiveValue: { [weak self] items in

@@ -23,7 +23,7 @@ extension iPadOSSeriesItemView {
 
                 // MARK: Episodes
 
-                SeriesEpisodesView(viewModel: viewModel)
+//                SeriesEpisodesView(viewModel: viewModel)
 
                 // MARK: Genres
 

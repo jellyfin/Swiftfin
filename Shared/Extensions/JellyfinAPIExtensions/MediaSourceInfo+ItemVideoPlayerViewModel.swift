@@ -19,7 +19,7 @@ extension MediaSourceInfo {
             playSessionId: playSessionID,
             mediaSourceId: self.id
         ).url
-        
+
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
 

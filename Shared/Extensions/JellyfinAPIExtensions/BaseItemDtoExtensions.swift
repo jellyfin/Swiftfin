@@ -20,18 +20,18 @@ extension BaseItemDto: Identifiable {}
 extension BaseItemDto: LibraryParent {}
 
 extension BaseItemDto {
-    
+
     var specialFeatureType: SpecialFeatureType? {
         guard let extraType = extraType else { return nil }
         return SpecialFeatureType(rawValue: extraType)
     }
 
     var episodeLocator: String? {
-        return "crash!?!?"
+        "crash!?!?"
 //        guard let episodeNo = indexNumber else { return nil }
 //        return L10n.episodeNumber(episodeNo)
     }
-    
+
     var runTimeSeconds: Int {
         let playbackPositionTicks = runTimeTicks ?? 0
         return Int(playbackPositionTicks / 10_000_000)
@@ -43,7 +43,7 @@ extension BaseItemDto {
         }
         return nil
     }
-    
+
     var startTimeSeconds: Int {
         let playbackPositionTicks = userData?.playbackPositionTicks ?? 0
         return Int(playbackPositionTicks / 10_000_000)

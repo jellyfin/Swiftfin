@@ -25,6 +25,7 @@ class ItemVideoPlayerViewModel: ObservableObject {
             eventSubject.send(.setSubtitleTrack(.absolute(trackIndex)))
         }
     }
+
     @Published
     var selectedSubtitleTrackIndex: Int32 = -1
     var lastPositiveSubtitleTrackIndex: Int32 = -1
@@ -59,32 +60,32 @@ class ItemVideoPlayerViewModel: ObservableObject {
     func jump(to ticks: Int32) {
         eventSubject.send(.setTime(.ticks(ticks)))
     }
-    
+
     func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         self.currentSeconds = Int(ticks / 1000)
-        
+
 //        if selectedSubtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
 //            lastPositiveSubtitleTrackIndex = max(selectedSubtitleTrackIndex, playbackInformation.currentSubtitleTrack.index)
 //            selectedSubtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
 //            subtitlesEnabled = lastPositiveSubtitleTrackIndex != -1
 //        }
-        
+
         if playerSubtitleTracks != playbackInformation.subtitleTracks {
             print("Updating subtitle tracks")
-             playerSubtitleTracks = playbackInformation.subtitleTracks
+            playerSubtitleTracks = playbackInformation.subtitleTracks
         }
-        
+
         if playerAudioTracks != playbackInformation.audioTracks {
             print("Updating audio tracks")
             playerAudioTracks = playbackInformation.audioTracks
         }
     }
-    
+
     func onStateUpdated(state: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         guard self.state != state else { return }
         self.state = state
     }
-    
+
     func videoSubtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
         let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
 

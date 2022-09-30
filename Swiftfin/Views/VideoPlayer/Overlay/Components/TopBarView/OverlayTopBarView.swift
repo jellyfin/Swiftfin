@@ -10,15 +10,15 @@ import Stinsen
 import SwiftUI
 
 extension ItemVideoPlayer.Overlay {
-    
+
     struct TopBarView: View {
-        
+
         @EnvironmentObject
         private var router: ItemVideoPlayerCoordinator.Router
-        
+
         @ObservedObject
         var viewModel: ItemVideoPlayerViewModel
-        
+
         var body: some View {
             VStack(alignment: .EpisodeSeriesAlignmentGuide) {
                 HStack(alignment: .center) {
@@ -30,7 +30,7 @@ extension ItemVideoPlayer.Overlay {
                             .padding()
                             .padding(.trailing, -10)
                     }
-                    
+
                     Text(viewModel.item.displayName)
                         .font(.title3)
                         .fontWeight(.bold)
@@ -38,16 +38,16 @@ extension ItemVideoPlayer.Overlay {
                         .alignmentGuide(.EpisodeSeriesAlignmentGuide) { context in
                             context[.leading]
                         }
-                    
+
                     Spacer()
-                    
+
                     ItemVideoPlayer.Overlay.ActionButtons(viewModel: viewModel)
                         .padding(.leading, 100)
                 }
                 .font(.system(size: 24))
                 .tint(Color.white)
                 .foregroundColor(Color.white)
-                
+
                 if let subtitle = viewModel.item.subtitle {
                     Text(subtitle)
                         .font(.subheadline)
