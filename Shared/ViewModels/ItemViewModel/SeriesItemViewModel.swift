@@ -11,12 +11,12 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-final class SeriesItemViewModel: ItemViewModel, ItemHStackSwitcherManager {
+final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
     @Published
     var selection: BaseItemDto?
     @Published
-    var sections: [BaseItemDto: [BaseItemDto]]
+    var sections: [BaseItemDto: PosterHStackState<BaseItemDto>]
     var sectionMenuSort: (BaseItemDto, BaseItemDto) -> Bool
 
     override init(item: BaseItemDto) {
@@ -132,11 +132,13 @@ final class SeriesItemViewModel: ItemViewModel, ItemHStackSwitcherManager {
         self.selection = section
 
         if let episodes = sections[section] {
-            if episodes.isEmpty {
+            switch episodes {
+            case .loading, .noResults:
                 getEpisodesForSeason(section)
+            default: ()
             }
         } else {
-            sections[section] = []
+            sections[section] = .loading
             getEpisodesForSeason(section)
         }
     }
@@ -153,7 +155,7 @@ final class SeriesItemViewModel: ItemViewModel, ItemHStackSwitcherManager {
             let seasons = response.items ?? []
 
             seasons.forEach { season in
-                self.sections[season] = []
+                self.sections[season] = .loading
             }
 
             if let firstSeason = seasons.first {
@@ -179,7 +181,11 @@ final class SeriesItemViewModel: ItemViewModel, ItemHStackSwitcherManager {
         .sink { completion in
             self.handleAPIRequestError(completion: completion)
         } receiveValue: { response in
-            self.sections[season] = response.items ?? []
+            if let items = response.items {
+                self.sections[season] = .items(items)
+            } else {
+                self.sections[season] = .noResults
+            }
         }
         .store(in: &cancellables)
     }

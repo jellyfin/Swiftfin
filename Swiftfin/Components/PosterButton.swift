@@ -8,9 +8,15 @@
 
 import SwiftUI
 
+enum PosterButtonState<Item: Poster> {
+    case loading
+    case noResult
+    case item(Item)
+}
+
 struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
-    private var item: Item
+    private var state: PosterButtonState<Item>
     private var type: PosterType
     private var itemScale: CGFloat
     private var horizontalAlignment: HorizontalAlignment
@@ -23,40 +29,54 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var itemWidth: CGFloat {
         type.width * itemScale
     }
-
-    var body: some View {
+    
+    @ViewBuilder
+    private func _posterVStack(for state: PosterButtonState<Item>) -> some View {
         VStack(alignment: horizontalAlignment) {
-            Button {
-                onSelect()
-            } label: {
-                Group {
-                    switch type {
-                    case .portrait:
-                        ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                            .failure {
-                                InitialFailureView(item.displayName.initials)
-                            }
-                    case .landscape:
-                        ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
-                            .failure {
-                                InitialFailureView(item.displayName.initials)
-                            }
+            switch state {
+            case .loading:
+                Color.red
+                    .posterStyle(type: type, width: itemWidth)
+                
+                Text("Loading...")
+            case .noResult: EmptyView()
+            case let .item(item):
+                Button {
+                    onSelect()
+                } label: {
+                    Group {
+                        switch type {
+                        case .portrait:
+                            ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+                                .failure {
+                                    InitialFailureView(item.displayName.initials)
+                                }
+                        case .landscape:
+                            ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                                .failure {
+                                    InitialFailureView(item.displayName.initials)
+                                }
+                        }
+                    }
+                    .overlay {
+                        imageOverlay()
+                            .posterStyle(type: type, width: itemWidth)
                     }
                 }
-                .overlay {
-                    imageOverlay()
-                        .posterStyle(type: type, width: itemWidth)
-                }
-            }
-            .contextMenu(menuItems: {
-                contextMenu()
-            })
-            .posterStyle(type: type, width: itemWidth)
-            .posterShadow()
+                .contextMenu(menuItems: {
+                    contextMenu()
+                })
+                .posterStyle(type: type, width: itemWidth)
+                .posterShadow()
 
-            content()
+                content()
+            }
         }
-        .frame(width: itemWidth)
+    }
+
+    var body: some View {
+        _posterVStack(for: state)
+            .frame(width: itemWidth)
     }
 }
 
@@ -66,11 +86,25 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
 {
     init(item: Item, type: PosterType, singleImage: Bool = false) {
         self.init(
-            item: item,
+            state: .item(item),
             type: type,
             itemScale: 1,
             horizontalAlignment: .leading,
-            content: { PosterButtonDefaultContentView(item: item) },
+            content: { PosterButtonDefaultContentView(state: .item(item)) },
+            imageOverlay: { EmptyView() },
+            contextMenu: { EmptyView() },
+            onSelect: {},
+            singleImage: singleImage
+        )
+    }
+    
+    init(state: PosterButtonState<Item>, type: PosterType, singleImage: Bool = false) {
+        self.init(
+            state: state,
+            type: type,
+            itemScale: 1,
+            horizontalAlignment: .leading,
+            content: { PosterButtonDefaultContentView(state: state) },
             imageOverlay: { EmptyView() },
             contextMenu: { EmptyView() },
             onSelect: {},
@@ -91,7 +125,7 @@ extension PosterButton {
     @ViewBuilder
     func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> PosterButton<Item, C, ImageOverlay, ContextMenu> {
         PosterButton<Item, C, ImageOverlay, ContextMenu>(
-            item: item,
+            state: state,
             type: type,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
@@ -106,7 +140,7 @@ extension PosterButton {
     @ViewBuilder
     func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping () -> O) -> PosterButton<Item, Content, O, ContextMenu> {
         PosterButton<Item, Content, O, ContextMenu>(
-            item: item,
+            state: state,
             type: type,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
@@ -121,7 +155,7 @@ extension PosterButton {
     @ViewBuilder
     func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping () -> M) -> PosterButton<Item, Content, ImageOverlay, M> {
         PosterButton<Item, Content, ImageOverlay, M>(
-            item: item,
+            state: state,
             type: type,
             itemScale: itemScale,
             horizontalAlignment: horizontalAlignment,
@@ -142,24 +176,50 @@ extension PosterButton {
 
 struct PosterButtonDefaultContentView<Item: Poster>: View {
 
-    let item: Item
+    let state: PosterButtonState<Item>
+    
+    @ViewBuilder
+    private var loadingContent: some View {
+        Text("Loading...")
+    }
+    
+    @ViewBuilder
+    private var noResultsContent: some View {
+        Text("No Results")
+            .font(.footnote)
+            .fontWeight(.regular)
+            .foregroundColor(.primary)
+            .lineLimit(2)
+    }
+    
+    @ViewBuilder
+    private func itemContent(from item: Item) -> some View {
+        if item.showTitle {
+            Text(item.displayName)
+                .font(.footnote)
+                .fontWeight(.regular)
+                .foregroundColor(.primary)
+                .lineLimit(2)
+        }
+
+        if let description = item.subtitle {
+            Text(description)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.secondary)
+                .lineLimit(2)
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
-            if item.showTitle {
-                Text(item.displayName)
-                    .font(.footnote)
-                    .fontWeight(.regular)
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
-            }
-
-            if let description = item.subtitle {
-                Text(description)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
+            switch state {
+            case .loading:
+                loadingContent
+            case .noResult:
+                noResultsContent
+            case let .item(item):
+                itemContent(from: item)
             }
         }
     }
