@@ -28,7 +28,7 @@ struct MediaView: View {
 
     var body: some View {
         CollectionView(items: viewModel.libraryItems) { _, item, _ in
-            PosterButton(item: item, type: .landscape)
+            PosterButton(state: .item(item), type: .landscape)
                 .scaleItem(UIDevice.isPhone ? 0.85 : 1)
                 .onSelect {
                     switch item.library.collectionType {

@@ -83,7 +83,7 @@ struct SearchView: View {
         PosterHStack(
             title: title,
             type: posterType,
-            items: viewModel[keyPath: keyPath]
+            state: .items(viewModel[keyPath: keyPath])
         )
         .onSelect { item in
             baseItemOnSelect(item)

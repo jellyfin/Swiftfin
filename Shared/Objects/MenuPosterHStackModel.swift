@@ -12,9 +12,9 @@ protocol MenuPosterHStackModel: ObservableObject {
     associatedtype Section: Hashable, Displayable
     associatedtype Item: Poster
 
-    var selection: Section? { get }
-    var sections: [Section: PosterHStackState<Item>] { get set }
-    var sectionMenuSort: (Section, Section) -> Bool { get }
+    var menuSelection: Section? { get }
+    var menuSections: [Section: PosterHStackState<Item>] { get set }
+    var menuSectionSort: (Section, Section) -> Bool { get }
 
     func select(section: Section)
 }

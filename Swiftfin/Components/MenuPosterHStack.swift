@@ -9,12 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-enum PosterHStackState<Item: Poster> {
-    case loading
-    case noResults
-    case items([Item])
-}
-
 struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     @ObservedObject
@@ -27,15 +21,15 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
     private var imageOverlay: (Model.Item) -> ImageOverlay
     private var contextMenu: (Model.Item) -> ContextMenu
     private var onSelect: (Model.Item) -> Void
-    
+
     @ViewBuilder
     private var selectorMenu: some View {
         Menu {
-            ForEach(manager.sections.keys.sorted(by: { manager.sectionMenuSort($0, $1) }), id: \.displayName) { section in
+            ForEach(manager.menuSections.keys.sorted(by: { manager.menuSectionSort($0, $1) }), id: \.displayName) { section in
                 Button {
                     manager.select(section: section)
                 } label: {
-                    if section == manager.selection {
+                    if section == manager.menuSelection {
                         Label(section.displayName, systemImage: "checkmark")
                     } else {
                         Text(section.displayName)
@@ -45,7 +39,7 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
         } label: {
             HStack(spacing: 5) {
                 Group {
-                    Text(manager.selection?.displayName ?? .emptyDash)
+                    Text(manager.menuSelection?.displayName ?? .emptyDash)
                         .fixedSize()
                     Image(systemName: "chevron.down")
                 }
@@ -54,41 +48,61 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
         }
     }
 
+    @ViewBuilder
+    private var loadingHStack: some View {
+        PosterHStack(
+            type: type,
+            state: PosterHStackState<Model.Item>.loading
+        )
+        .scaleItems(itemScale)
+        .header {
+            selectorMenu
+        }
+    }
+
+    @ViewBuilder
+    private var noResultsHStack: some View {
+        PosterHStack(
+            type: type,
+            state: PosterHStackState<Model.Item>.noResults
+        )
+        .scaleItems(itemScale)
+        .header {
+            selectorMenu
+        }
+    }
+
+    @ViewBuilder
+    private func itemsHStack(from items: [Model.Item]) -> some View {
+        PosterHStack(
+            type: type,
+            state: .items(items),
+            singleImage: singleImage
+        )
+        .scaleItems(itemScale)
+        .header {
+            selectorMenu
+        }
+        .content(content)
+        .imageOverlay(imageOverlay)
+        .contextMenu(contextMenu)
+        .onSelect { item in
+            onSelect(item)
+        }
+    }
+
     var body: some View {
-        if let selection = manager.selection, let section = manager.sections[selection] {
+        if let selection = manager.menuSelection, let section = manager.menuSections[selection] {
             switch section {
             case .loading:
-                PosterHStack(
-                    type: type,
-                    state: PosterHStackState<Model.Item>.loading)
-                .scaleItems(itemScale)
-                .header {
-                    selectorMenu
-                }
+                loadingHStack
             case .noResults:
-                Text("No Results")
+                noResultsHStack
             case let .items(items):
-                PosterHStack(
-                    type: type,
-                    items: items,
-                    singleImage: singleImage
-                )
-                .scaleItems(itemScale)
-                .header {
-                    selectorMenu
-                }
-                .content(content)
-                .imageOverlay(imageOverlay)
-                .contextMenu(contextMenu)
-                .onSelect { item in
-                    onSelect(item)
-                }
+                itemsHStack(from: items)
             }
         } else {
-            PosterHStack(
-                type: type,
-                items: [BaseItemDto.noResults]
-            )
+            noResultsHStack
         }
     }
 }
@@ -117,7 +131,7 @@ extension MenuPosterHStack where Content == PosterButtonDefaultContentView<Model
 }
 
 extension MenuPosterHStack {
-    
+
     func scaleItems(_ scale: CGFloat) -> Self {
         copy(modifying: \.itemScale, with: scale)
     }
@@ -135,7 +149,7 @@ extension MenuPosterHStack {
             onSelect: onSelect
         )
     }
-    
+
     func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Model.Item) -> O)
     -> MenuPosterHStack<Model, Content, O, ContextMenu> {
         .init(
@@ -149,7 +163,7 @@ extension MenuPosterHStack {
             onSelect: onSelect
         )
     }
-    
+
     func contextMenu<C: View>(@ViewBuilder _ contextMenu: @escaping (Model.Item) -> C)
     -> MenuPosterHStack<Model, Content, ImageOverlay, C> {
         .init(

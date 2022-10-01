@@ -8,12 +8,6 @@
 
 import SwiftUI
 
-enum PosterButtonState<Item: Poster> {
-    case loading
-    case noResult
-    case item(Item)
-}
-
 struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     private var state: PosterButtonState<Item>
@@ -29,54 +23,75 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var itemWidth: CGFloat {
         type.width * itemScale
     }
-    
+
     @ViewBuilder
-    private func _posterVStack(for state: PosterButtonState<Item>) -> some View {
+    private var loadingPoster: some View {
         VStack(alignment: horizontalAlignment) {
-            switch state {
-            case .loading:
-                Color.red
-                    .posterStyle(type: type, width: itemWidth)
-                
-                Text("Loading...")
-            case .noResult: EmptyView()
-            case let .item(item):
-                Button {
-                    onSelect()
-                } label: {
-                    Group {
-                        switch type {
-                        case .portrait:
-                            ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                                .failure {
-                                    InitialFailureView(item.displayName.initials)
-                                }
-                        case .landscape:
-                            ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
-                                .failure {
-                                    InitialFailureView(item.displayName.initials)
-                                }
-                        }
-                    }
-                    .overlay {
-                        imageOverlay()
-                            .posterStyle(type: type, width: itemWidth)
+            Color.secondarySystemFill
+                .posterStyle(type: type, width: itemWidth)
+
+            PosterButtonDefaultContentView(state: PosterButtonState<Item>.loading)
+        }
+        .redacted(reason: .placeholder)
+    }
+
+    @ViewBuilder
+    private var noResultsPoster: some View {
+        VStack(alignment: horizontalAlignment) {
+            Color.red
+                .posterStyle(type: type, width: itemWidth)
+
+            PosterButtonDefaultContentView(state: PosterButtonState<Item>.noResult)
+        }
+    }
+
+    @ViewBuilder
+    private func poster(from item: Item) -> some View {
+        VStack(alignment: horizontalAlignment) {
+            Button {
+                onSelect()
+            } label: {
+                Group {
+                    switch type {
+                    case .portrait:
+                        ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+                            .failure {
+                                InitialFailureView(item.displayName.initials)
+                            }
+                    case .landscape:
+                        ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                            .failure {
+                                InitialFailureView(item.displayName.initials)
+                            }
                     }
                 }
-                .contextMenu(menuItems: {
-                    contextMenu()
-                })
-                .posterStyle(type: type, width: itemWidth)
-                .posterShadow()
-
-                content()
+                .overlay {
+                    imageOverlay()
+                        .posterStyle(type: type, width: itemWidth)
+                }
             }
+            .contextMenu(menuItems: {
+                contextMenu()
+            })
+            .posterStyle(type: type, width: itemWidth)
+            .posterShadow()
+
+            content()
         }
     }
 
     var body: some View {
-        _posterVStack(for: state)
-            .frame(width: itemWidth)
+        Group {
+            switch state {
+            case .loading:
+                loadingPoster
+            case .noResult:
+                noResultsPoster
+            case let .item(item):
+                poster(from: item)
+            }
+        }
+        .frame(width: itemWidth)
     }
 }
 
@@ -84,20 +99,7 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
     ImageOverlay == EmptyView,
     ContextMenu == EmptyView
 {
-    init(item: Item, type: PosterType, singleImage: Bool = false) {
-        self.init(
-            state: .item(item),
-            type: type,
-            itemScale: 1,
-            horizontalAlignment: .leading,
-            content: { PosterButtonDefaultContentView(state: .item(item)) },
-            imageOverlay: { EmptyView() },
-            contextMenu: { EmptyView() },
-            onSelect: {},
-            singleImage: singleImage
-        )
-    }
-    
+
     init(state: PosterButtonState<Item>, type: PosterType, singleImage: Bool = false) {
         self.init(
             state: state,
@@ -177,21 +179,25 @@ extension PosterButton {
 struct PosterButtonDefaultContentView<Item: Poster>: View {
 
     let state: PosterButtonState<Item>
-    
+
     @ViewBuilder
     private var loadingContent: some View {
-        Text("Loading...")
+        String(repeating: "a", count: Int.random(in: 5 ..< 8)).text
+            .font(.footnote)
+            .fontWeight(.regular)
+            .foregroundColor(.primary)
+            .redacted(reason: .placeholder)
     }
-    
+
     @ViewBuilder
     private var noResultsContent: some View {
-        Text("No Results")
+        L10n.noResults.text
             .font(.footnote)
             .fontWeight(.regular)
             .foregroundColor(.primary)
             .lineLimit(2)
     }
-    
+
     @ViewBuilder
     private func itemContent(from item: Item) -> some View {
         if item.showTitle {

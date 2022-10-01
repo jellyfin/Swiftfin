@@ -10,12 +10,12 @@ import JellyfinAPI
 import SwiftUI
 
 struct SeriesEpisodeSelector: View {
-    
+
     @EnvironmentObject
     private var mainRouter: MainCoordinator.Router
     @ObservedObject
     var viewModel: SeriesItemViewModel
-    
+
     var body: some View {
         MenuPosterHStack(
             type: .landscape,
@@ -36,11 +36,11 @@ struct SeriesEpisodeSelector: View {
 }
 
 extension SeriesEpisodeSelector {
-    
+
     struct EpisodeOverlay: View {
-        
+
         let episode: BaseItemDto
-        
+
         var body: some View {
             if let progress = episode.progress {
                 LandscapePosterProgressBar(
@@ -60,16 +60,16 @@ extension SeriesEpisodeSelector {
             }
         }
     }
-    
+
     struct EpisodeContent: View {
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
         @ScaledMetric
         private var staticOverviewHeight: CGFloat = 50
-        
+
         let episode: BaseItemDto
-        
+
         var body: some View {
             Button {
                 router.route(to: \.item, episode)

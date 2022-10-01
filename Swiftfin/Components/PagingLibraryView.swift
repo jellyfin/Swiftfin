@@ -60,7 +60,7 @@ struct PagingLibraryView: View {
     @ViewBuilder
     private var libraryGridView: some View {
         CollectionView(items: viewModel.items) { _, item, _ in
-            PosterButton(item: item, type: libraryGridPosterType)
+            PosterButton(state: .item(item), type: libraryGridPosterType)
                 .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
                 .onSelect {
                     onSelect(item)

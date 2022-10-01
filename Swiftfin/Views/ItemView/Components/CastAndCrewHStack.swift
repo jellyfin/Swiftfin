@@ -21,7 +21,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.castAndCrew,
                 type: .portrait,
-                items: people.filter(\.isDisplayed).prefix(20).asArray
+                state: .items(people.filter(\.isDisplayed).prefix(20).asArray)
             )
             .trailing {
                 SeeAllButton()

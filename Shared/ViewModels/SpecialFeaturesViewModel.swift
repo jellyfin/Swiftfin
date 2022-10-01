@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-//class SpecialFeaturesViewModel: ViewModel, MenuPosterHStackModel {
+// class SpecialFeaturesViewModel: ViewModel, MenuPosterHStackModel {
 //
 //    @Published
 //    var selection: SpecialFeatureType?
@@ -27,4 +27,4 @@ import JellyfinAPI
 //    func select(section: SpecialFeatureType) {
 //        self.selection = section
 //    }
-//}
+// }

@@ -25,7 +25,7 @@ extension HomeView {
             PosterHStack(
                 title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash),
                 type: latestInLibraryPosterType,
-                items: viewModel.items.prefix(20).asArray
+                state: viewModel.isLoading ? .loading : .items(viewModel.items.prefix(20).asArray)
             )
             .trailing {
                 SeeAllButton()

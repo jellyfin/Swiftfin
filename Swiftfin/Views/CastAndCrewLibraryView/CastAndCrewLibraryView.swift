@@ -45,7 +45,7 @@ struct CastAndCrewLibraryView: View {
     @ViewBuilder
     private var libraryGridView: some View {
         CollectionView(items: people) { _, person, _ in
-            PosterButton(item: person, type: .portrait)
+            PosterButton(state: .item(person), type: .portrait)
                 .onSelect {
                     router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
                 }

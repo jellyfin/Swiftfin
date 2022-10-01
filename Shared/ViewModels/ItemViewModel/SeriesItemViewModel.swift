@@ -14,14 +14,14 @@ import JellyfinAPI
 final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
     @Published
-    var selection: BaseItemDto?
+    var menuSelection: BaseItemDto?
     @Published
-    var sections: [BaseItemDto: PosterHStackState<BaseItemDto>]
-    var sectionMenuSort: (BaseItemDto, BaseItemDto) -> Bool
+    var menuSections: [BaseItemDto: PosterHStackState<BaseItemDto>]
+    var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
     override init(item: BaseItemDto) {
-        self.sections = [:]
-        self.sectionMenuSort = { i, j in i.indexNumber ?? -1 < j.indexNumber ?? -1 }
+        self.menuSections = [:]
+        self.menuSectionSort = { i, j in i.indexNumber ?? -1 < j.indexNumber ?? -1 }
 
         super.init(item: item)
 
@@ -129,16 +129,16 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     }
 
     func select(section: BaseItemDto) {
-        self.selection = section
+        self.menuSelection = section
 
-        if let episodes = sections[section] {
+        if let episodes = menuSections[section] {
             switch episodes {
             case .loading, .noResults:
                 getEpisodesForSeason(section)
             default: ()
             }
         } else {
-            sections[section] = .loading
+            menuSections[section] = .loading
             getEpisodesForSeason(section)
         }
     }
@@ -155,11 +155,11 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             let seasons = response.items ?? []
 
             seasons.forEach { season in
-                self.sections[season] = .loading
+                self.menuSections[season] = .loading
             }
 
             if let firstSeason = seasons.first {
-                self.selection = firstSeason
+                self.menuSelection = firstSeason
                 self.getEpisodesForSeason(firstSeason)
             }
         }
@@ -182,9 +182,9 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             self.handleAPIRequestError(completion: completion)
         } receiveValue: { response in
             if let items = response.items {
-                self.sections[season] = .items(items)
+                self.menuSections[season] = .items(items)
             } else {
-                self.sections[season] = .noResults
+                self.menuSections[season] = .noResults
             }
         }
         .store(in: &cancellables)
