@@ -9,6 +9,8 @@
 import CollectionView
 import SwiftUI
 
+// TODO: Remove `Header` and `TrailingContent` and create `HeaderPosterHStack`
+
 struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
 
     private var header: () -> Header
