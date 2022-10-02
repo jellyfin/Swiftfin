@@ -16,7 +16,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     @Published
     var menuSelection: BaseItemDto?
     @Published
-    var menuSections: [BaseItemDto: PosterHStackState<BaseItemDto>]
+    var menuSections: [BaseItemDto: [PosterButtonType<BaseItemDto>]]
     var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
     override init(item: BaseItemDto) {
@@ -131,14 +131,14 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     func select(section: BaseItemDto) {
         self.menuSelection = section
 
-        if let episodes = menuSections[section] {
-            switch episodes {
-            case .loading, .noResults:
+        if let existingItems = menuSections[section] {
+            if existingItems.allSatisfy({ $0 == .loading }) {
                 getEpisodesForSeason(section)
-            default: ()
+            } else if existingItems.allSatisfy({ $0 == .noResult }) {
+                menuSections[section] = Array(repeating: .loading, count: Int.random(in: 3 ..< 8))
+                getEpisodesForSeason(section)
             }
         } else {
-            menuSections[section] = .loading
             getEpisodesForSeason(section)
         }
     }
@@ -152,10 +152,10 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         .sink { completion in
             self.handleAPIRequestError(completion: completion)
         } receiveValue: { response in
-            let seasons = response.items ?? []
+            guard let seasons = response.items else { return }
 
             seasons.forEach { season in
-                self.menuSections[season] = .loading
+                self.menuSections[season] = Array(repeating: .loading, count: Int.random(in: 3 ..< 8))
             }
 
             if let firstSeason = seasons.first {
@@ -182,9 +182,9 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             self.handleAPIRequestError(completion: completion)
         } receiveValue: { response in
             if let items = response.items {
-                self.menuSections[season] = .items(items)
+                self.menuSections[season] = items.map { .item($0) }
             } else {
-                self.menuSections[season] = .noResults
+                self.menuSections[season] = [.noResult]
             }
         }
         .store(in: &cancellables)

@@ -49,16 +49,16 @@ extension iPadOSEpisodeItemView {
 
                 // MARK: Series
 
-                if let seriesItem = viewModel.seriesItem {
-                    PosterHStack(
-                        title: L10n.series,
-                        type: .portrait,
-                        state: .items([seriesItem])
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
-                }
+//                if let seriesItem = viewModel.seriesItem {
+//                    PosterHStack(
+//                        title: L10n.series,
+//                        type: .portrait,
+//                        state: .items([seriesItem])
+//                    )
+//                    .onSelect { item in
+//                        router.route(to: \.item, item)
+//                    }
+//                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

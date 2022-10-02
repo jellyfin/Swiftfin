@@ -24,6 +24,14 @@ extension Array {
     func appending(_ contents: [Element]) -> [Element] {
         self + contents
     }
+
+    // There are instances where `removeFirst()` is called on an empty
+    // collection even with a count check and causes a crash
+    @discardableResult
+    mutating func removeFirstSafe() -> Element? {
+        guard count > 0 else { return nil }
+        return removeFirst()
+    }
 }
 
 extension ArraySlice {

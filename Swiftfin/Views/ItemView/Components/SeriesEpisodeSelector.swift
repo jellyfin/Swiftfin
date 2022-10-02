@@ -23,11 +23,11 @@ struct SeriesEpisodeSelector: View {
             singleImage: true
         )
         .scaleItems(1.2)
-        .imageOverlay { episode in
-            EpisodeOverlay(episode: episode)
+        .imageOverlay { type in
+            EpisodeOverlay(type: type)
         }
-        .content { episode in
-            EpisodeContent(episode: episode)
+        .content { type in
+            EpisodeContent(type: type)
         }
         .onSelect { item in
             mainRouter.route(to: \.videoPlayer, .init(item: item))
@@ -39,24 +39,28 @@ extension SeriesEpisodeSelector {
 
     struct EpisodeOverlay: View {
 
-        let episode: BaseItemDto
+        let type: PosterButtonType<BaseItemDto>
 
         var body: some View {
-            if let progress = episode.progress {
-                LandscapePosterProgressBar(
-                    title: progress,
-                    progress: (episode.userData?.playedPercentage ?? 0) / 100
-                )
-            } else if episode.userData?.played ?? false {
-                ZStack(alignment: .bottomTrailing) {
-                    Color.clear
+            if case let PosterButtonType.item(episode) = type {
+                if let progress = episode.progress {
+                    LandscapePosterProgressBar(
+                        title: progress,
+                        progress: (episode.userData?.playedPercentage ?? 0) / 100
+                    )
+                } else if episode.userData?.played ?? false {
+                    ZStack(alignment: .bottomTrailing) {
+                        Color.clear
 
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                        .foregroundColor(.white)
-                        .padding()
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30, alignment: .bottomTrailing)
+                            .foregroundColor(.white)
+                            .padding()
+                    }
                 }
+            } else {
+                EmptyView()
             }
         }
     }
@@ -68,24 +72,55 @@ extension SeriesEpisodeSelector {
         @ScaledMetric
         private var staticOverviewHeight: CGFloat = 50
 
-        let episode: BaseItemDto
+        let type: PosterButtonType<BaseItemDto>
 
-        var body: some View {
-            Button {
-                router.route(to: \.item, episode)
-            } label: {
-                VStack(alignment: .leading) {
+        @ViewBuilder
+        private var subHeader: some View {
+            Group {
+                switch type {
+                case .loading:
+                    String(repeating: "a", count: 5).text
+                        .redacted(reason: .placeholder)
+                case .noResult:
+                    String.emptyDash.text
+                case let .item(episode):
                     Text(episode.episodeLocator ?? L10n.unknown)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+                }
+            }
+            .font(.footnote)
+            .foregroundColor(.secondary)
+        }
 
+        @ViewBuilder
+        private var header: some View {
+            Group {
+                switch type {
+                case .loading:
+                    String(repeating: "a", count: Int.random(in: 8 ..< 18)).text
+                        .redacted(reason: .placeholder)
+                case .noResult:
+                    L10n.noResults.text
+                case let .item(episode):
                     Text(episode.displayName)
-                        .font(.body)
-                        .foregroundColor(.primary)
-                        .padding(.bottom, 1)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+                }
+            }
+            .font(.body)
+            .foregroundColor(.primary)
+            .padding(.bottom, 1)
+            .lineLimit(2)
+            .multilineTextAlignment(.leading)
+        }
 
+        @ViewBuilder
+        private var content: some View {
+            Group {
+                switch type {
+                case .loading:
+                    String(repeating: "a", count: Int.random(in: 50 ..< 100)).text
+                        .redacted(reason: .placeholder)
+                case .noResult:
+                    L10n.noOverviewAvailable.text
+                case let .item(episode):
                     ZStack(alignment: .topLeading) {
                         Color.clear
                             .frame(height: staticOverviewHeight)
@@ -96,15 +131,31 @@ extension SeriesEpisodeSelector {
                             Text(episode.overview ?? L10n.noOverviewAvailable)
                         }
                     }
-                    .font(.caption.weight(.light))
-                    .foregroundColor(.secondary)
-                    .lineLimit(4)
-                    .multilineTextAlignment(.leading)
 
                     L10n.seeMore.text
                         .font(.footnote)
                         .fontWeight(.medium)
                         .foregroundColor(.jellyfinPurple)
+                }
+            }
+            .font(.caption.weight(.light))
+            .foregroundColor(.secondary)
+            .lineLimit(4)
+            .multilineTextAlignment(.leading)
+        }
+
+        var body: some View {
+            Button {
+                if case let PosterButtonType.item(item) = type {
+                    router.route(to: \.item, item)
+                }
+            } label: {
+                VStack(alignment: .leading) {
+                    subHeader
+
+                    header
+
+                    content
                 }
             }
         }

@@ -344,10 +344,8 @@
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
 		E173DA5226D04AAF00CC4EB7 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* ColorExtensions.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
-		E17665D628E80D9200130507 /* PosterHStackState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D528E80D9200130507 /* PosterHStackState.swift */; };
-		E17665D728E80D9200130507 /* PosterHStackState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D528E80D9200130507 /* PosterHStackState.swift */; };
-		E17665D928E80F0F00130507 /* PosterButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonState.swift */; };
-		E17665DA28E80F0F00130507 /* PosterButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonState.swift */; };
+		E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonType.swift */; };
+		E17665DA28E80F0F00130507 /* PosterButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonType.swift */; };
 		E178857D278037FD0094FBCF /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E178857C278037FD0094FBCF /* JellyfinAPI */; };
 		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
@@ -879,8 +877,7 @@
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
-		E17665D528E80D9200130507 /* PosterHStackState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterHStackState.swift; sourceTree = "<group>"; };
-		E17665D828E80F0F00130507 /* PosterButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterButtonState.swift; sourceTree = "<group>"; };
+		E17665D828E80F0F00130507 /* PosterButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterButtonType.swift; sourceTree = "<group>"; };
 		E178859A2780F1F40094FBCF /* tvOSSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSSlider.swift; sourceTree = "<group>"; };
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVLCOverlay.swift; sourceTree = "<group>"; };
@@ -1298,8 +1295,7 @@
 				E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */,
 				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
 				E1937A60288F32DB00CB80AA /* Poster.swift */,
-				E17665D828E80F0F00130507 /* PosterButtonState.swift */,
-				E17665D528E80D9200130507 /* PosterHStackState.swift */,
+				E17665D828E80F0F00130507 /* PosterButtonType.swift */,
 				E1CCF12D28ABF989006CAC9E /* PosterType.swift */,
 				E18CE0B328A22EDA0092E7F1 /* RepeatingTimer.swift */,
 				E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */,
@@ -2747,7 +2743,6 @@
 				E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */,
 				E13DD3D6271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
 				E193D549271941CC00900D82 /* UserSignInView.swift in Sources */,
-				E17665D728E80D9200130507 /* PosterHStackState.swift in Sources */,
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
 				E184C161288C5C08000B25BA /* RequestBuilderExtensions.swift in Sources */,
 				E19169CF272514760085832A /* HTTPScheme.swift in Sources */,
@@ -2756,7 +2751,7 @@
 				E1E1E24E28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
 				E13849452780370B0024FB48 /* PlaybackSpeed.swift in Sources */,
 				E1C812CD277AE40A00918266 /* LegacyVideoPlayerViewModel.swift in Sources */,
-				E17665DA28E80F0F00130507 /* PosterButtonState.swift in Sources */,
+				E17665DA28E80F0F00130507 /* PosterButtonType.swift in Sources */,
 				C45B29BB26FAC5B600CEF5E0 /* ColorExtensions.swift in Sources */,
 				E1D4BF822719D22800A11E64 /* AppAppearance.swift in Sources */,
 				E1C926132887565C002A7A66 /* SeriesEpisodesView.swift in Sources */,
@@ -2861,7 +2856,7 @@
 				E18E0208288749200022598C /* BlurView.swift in Sources */,
 				E18E01E7288747230022598C /* CollectionItemContentView.swift in Sources */,
 				E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */,
-				E17665D928E80F0F00130507 /* PosterButtonState.swift in Sources */,
+				E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */,
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
 				C45942CD27F6994A00C54FE7 /* LiveTVPlayerView.swift in Sources */,
@@ -3014,7 +3009,6 @@
 				E1DA654C28E69B0500592A73 /* ExtraType.swift in Sources */,
 				E11CEB8B28998552003E74C7 /* iOSViewExtensions.swift in Sources */,
 				E1E1644428BC60C600323B0A /* MediaLibraryItem.swift in Sources */,
-				E17665D628E80D9200130507 /* PosterHStackState.swift in Sources */,
 				E18E0206288749200022598C /* AttributeFillView.swift in Sources */,
 				E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */,
 				E1A2C154279A7D5A005EC829 /* UIApplicationExtensions.swift in Sources */,

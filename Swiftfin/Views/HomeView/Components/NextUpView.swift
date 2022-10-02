@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 extension HomeView {
@@ -21,11 +22,19 @@ extension HomeView {
         @Default(.Customization.nextUpPosterType)
         private var nextUpPosterType
 
+        private var items: [PosterButtonType<BaseItemDto>] {
+            if viewModel.isLoading {
+                return Array(repeating: .loading, count: Int.random(in: 3 ..< 8))
+            } else {
+                return viewModel.items.prefix(20).asArray.map { .item($0) }
+            }
+        }
+
         var body: some View {
             PosterHStack(
                 title: L10n.nextUp,
                 type: nextUpPosterType,
-                state: viewModel.isLoading ? .loading : .items(viewModel.items.prefix(20).asArray)
+                items: items
             )
             .trailing {
                 SeeAllButton()

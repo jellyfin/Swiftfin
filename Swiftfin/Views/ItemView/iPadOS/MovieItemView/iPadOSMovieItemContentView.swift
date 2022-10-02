@@ -49,18 +49,18 @@ extension iPadOSMovieItemView {
 
                 // MARK: Similar
 
-                if !viewModel.similarItems.isEmpty {
-                    PosterHStack(
-                        title: L10n.recommended,
-                        type: .portrait,
-                        state: .items(viewModel.similarItems)
-                    )
-                    .onSelect { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-
-                    Divider()
-                }
+//                if !viewModel.similarItems.isEmpty {
+//                    PosterHStack(
+//                        title: L10n.recommended,
+//                        type: .portrait,
+//                        state: .items(viewModel.similarItems)
+//                    )
+//                    .onSelect { item in
+//                        itemRouter.route(to: \.item, item)
+//                    }
+//
+//                    Divider()
+//                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

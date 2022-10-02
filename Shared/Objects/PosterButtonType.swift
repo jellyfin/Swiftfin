@@ -8,8 +8,19 @@
 
 import Foundation
 
-enum PosterButtonState<Item: Poster> {
+enum PosterButtonType<Item: Poster>: Hashable, Identifiable {
     case loading
     case noResult
     case item(Item)
+
+    var id: Int {
+        switch self {
+        case .loading:
+            return UUID().hashValue
+        case .noResult:
+            return UUID().hashValue
+        case let .item(item):
+            return item.hashValue
+        }
+    }
 }

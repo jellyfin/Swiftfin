@@ -42,7 +42,7 @@ struct MediaView: View {
                         router.route(to: \.library, .init(parent: item.library, type: .library, filters: .init()))
                     }
                 }
-                .imageOverlay {
+                .imageOverlay { _ in
                     ZStack {
                         Color.black
                             .opacity(0.5)

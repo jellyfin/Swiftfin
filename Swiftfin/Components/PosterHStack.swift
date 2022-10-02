@@ -14,50 +14,14 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
     private var header: () -> Header
     private var title: String?
     private var type: PosterType
-    private var state: PosterHStackState<Item>
+    private var items: [PosterButtonType<Item>]
     private var singleImage: Bool
     private var itemScale: CGFloat
-    private var content: (Item) -> Content
-    private var imageOverlay: (Item) -> ImageOverlay
-    private var contextMenu: (Item) -> ContextMenu
+    private var content: (PosterButtonType<Item>) -> Content
+    private var imageOverlay: (PosterButtonType<Item>) -> ImageOverlay
+    private var contextMenu: (PosterButtonType<Item>) -> ContextMenu
     private var trailingContent: () -> TrailingContent
     private var onSelect: (Item) -> Void
-
-    @ViewBuilder
-    private var loadingContent: some View {
-        ForEach(0 ..< Int.random(in: 4 ... 7), id: \.self) { _ in
-            PosterButton(
-                state: PosterButtonState<Item>.loading,
-                type: type
-            )
-            .scaleItem(itemScale)
-        }
-    }
-
-    @ViewBuilder
-    private var noResultsContent: some View {
-        PosterButton(
-            state: PosterButtonState<Item>.noResult,
-            type: type
-        )
-        .scaleItem(itemScale)
-    }
-
-    @ViewBuilder
-    private func itemsContent(from items: [Item]) -> some View {
-        ForEach(items, id: \.hashValue) { item in
-            PosterButton(
-                state: .item(item),
-                type: type,
-                singleImage: singleImage
-            )
-            .scaleItem(itemScale)
-            .content { content(item) }
-            .imageOverlay { imageOverlay(item) }
-            .contextMenu { contextMenu(item) }
-            .onSelect { onSelect(item) }
-        }
-    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -85,13 +49,21 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
-                    switch state {
-                    case .loading:
-                        loadingContent
-                    case .noResults:
-                        noResultsContent
-                    case let .items(items):
-                        itemsContent(from: items)
+                    ForEach(items, id: \.id) { item in
+                        PosterButton(
+                            state: item,
+                            type: type,
+                            singleImage: singleImage
+                        )
+                        .scaleItem(itemScale)
+                        .content { content($0) }
+                        .imageOverlay { imageOverlay($0) }
+                        .contextMenu { contextMenu($0) }
+                        .onSelect {
+                            if case let PosterButtonType.item(item) = item {
+                                onSelect(item)
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -121,10 +93,10 @@ extension PosterHStack where Header == EmptyView,
             header: { EmptyView() },
             title: title,
             type: type,
-            state: .items(items),
+            items: items.map { PosterButtonType.item($0) },
             singleImage: singleImage,
             itemScale: 1,
-            content: { PosterButtonDefaultContentView(state: .item($0)) },
+            content: { PosterButtonDefaultContentView(state: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -135,26 +107,17 @@ extension PosterHStack where Header == EmptyView,
     init(
         title: String,
         type: PosterType,
-        state: PosterHStackState<Item>,
+        items: [PosterButtonType<Item>],
         singleImage: Bool = false
     ) {
         self.init(
             header: { EmptyView() },
             title: title,
             type: type,
-            state: state,
+            items: items,
             singleImage: singleImage,
             itemScale: 1,
-            content: {
-                switch state {
-                case .loading:
-                    return PosterButtonDefaultContentView(state: PosterButtonState<Item>.loading)
-                case .noResults:
-                    return PosterButtonDefaultContentView(state: PosterButtonState<Item>.noResult)
-                case .items:
-                    return PosterButtonDefaultContentView(state: PosterButtonState<Item>.item($0))
-                }
-            },
+            content: { PosterButtonDefaultContentView(state: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -164,26 +127,17 @@ extension PosterHStack where Header == EmptyView,
 
     init(
         type: PosterType,
-        state: PosterHStackState<Item>,
+        items: [PosterButtonType<Item>],
         singleImage: Bool = false
     ) {
         self.init(
             header: { EmptyView() },
             title: nil,
             type: type,
-            state: state,
+            items: items,
             singleImage: singleImage,
             itemScale: 1,
-            content: {
-                switch state {
-                case .loading:
-                    return PosterButtonDefaultContentView(state: PosterButtonState<Item>.loading)
-                case .noResults:
-                    return PosterButtonDefaultContentView(state: PosterButtonState<Item>.noResult)
-                case .items:
-                    return PosterButtonDefaultContentView(state: PosterButtonState<Item>.item($0))
-                }
-            },
+            content: { PosterButtonDefaultContentView(state: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -201,7 +155,7 @@ extension PosterHStack {
             header: header,
             title: title,
             type: type,
-            state: state,
+            items: items,
             singleImage: singleImage,
             itemScale: itemScale,
             content: content,
@@ -217,13 +171,13 @@ extension PosterHStack {
     }
 
     @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
+    func content<C: View>(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> C)
     -> PosterHStack<Header, Item, C, ImageOverlay, ContextMenu, TrailingContent> {
         PosterHStack<Header, Item, C, ImageOverlay, ContextMenu, TrailingContent>(
             header: header,
             title: title,
             type: type,
-            state: state,
+            items: items,
             singleImage: singleImage,
             itemScale: itemScale,
             content: content,
@@ -235,13 +189,13 @@ extension PosterHStack {
     }
 
     @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O)
+    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (PosterButtonType<Item>) -> O)
     -> PosterHStack<Header, Item, Content, O, ContextMenu, TrailingContent> {
         PosterHStack<Header, Item, Content, O, ContextMenu, TrailingContent>(
             header: header,
             title: title,
             type: type,
-            state: state,
+            items: items,
             singleImage: singleImage,
             itemScale: itemScale,
             content: content,
@@ -253,13 +207,13 @@ extension PosterHStack {
     }
 
     @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
+    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (PosterButtonType<Item>) -> M)
     -> PosterHStack<Header, Item, Content, ImageOverlay, M, TrailingContent> {
         PosterHStack<Header, Item, Content, ImageOverlay, M, TrailingContent>(
             header: header,
             title: title,
             type: type,
-            state: state,
+            items: items,
             singleImage: singleImage,
             itemScale: itemScale,
             content: content,
@@ -277,7 +231,7 @@ extension PosterHStack {
             header: header,
             title: title,
             type: type,
-            state: state,
+            items: items,
             singleImage: singleImage,
             itemScale: itemScale,
             content: content,

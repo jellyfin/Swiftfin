@@ -17,9 +17,9 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
     private let type: PosterType
     private var itemScale: CGFloat
     private let singleImage: Bool
-    private var content: (Model.Item) -> Content
-    private var imageOverlay: (Model.Item) -> ImageOverlay
-    private var contextMenu: (Model.Item) -> ContextMenu
+    private var content: (PosterButtonType<Model.Item>) -> Content
+    private var imageOverlay: (PosterButtonType<Model.Item>) -> ImageOverlay
+    private var contextMenu: (PosterButtonType<Model.Item>) -> ContextMenu
     private var onSelect: (Model.Item) -> Void
 
     @ViewBuilder
@@ -48,61 +48,31 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
         }
     }
 
-    @ViewBuilder
-    private var loadingHStack: some View {
-        PosterHStack(
-            type: type,
-            state: PosterHStackState<Model.Item>.loading
-        )
-        .scaleItems(itemScale)
-        .header {
-            selectorMenu
-        }
-    }
-
-    @ViewBuilder
-    private var noResultsHStack: some View {
-        PosterHStack(
-            type: type,
-            state: PosterHStackState<Model.Item>.noResults
-        )
-        .scaleItems(itemScale)
-        .header {
-            selectorMenu
-        }
-    }
-
-    @ViewBuilder
-    private func itemsHStack(from items: [Model.Item]) -> some View {
-        PosterHStack(
-            type: type,
-            state: .items(items),
-            singleImage: singleImage
-        )
-        .scaleItems(itemScale)
-        .header {
-            selectorMenu
-        }
-        .content(content)
-        .imageOverlay(imageOverlay)
-        .contextMenu(contextMenu)
-        .onSelect { item in
-            onSelect(item)
-        }
-    }
-
     var body: some View {
-        if let selection = manager.menuSelection, let section = manager.menuSections[selection] {
-            switch section {
-            case .loading:
-                loadingHStack
-            case .noResults:
-                noResultsHStack
-            case let .items(items):
-                itemsHStack(from: items)
+        if let selection = manager.menuSelection, let items = manager.menuSections[selection] {
+            PosterHStack(
+                type: type,
+                items: items,
+                singleImage: singleImage
+            )
+            .header {
+                selectorMenu
+            }
+            .scaleItems(itemScale)
+            .content(content)
+            .imageOverlay(imageOverlay)
+            .contextMenu(contextMenu)
+            .onSelect { item in
+                onSelect(item)
             }
         } else {
-            noResultsHStack
+            PosterHStack(
+                type: type,
+                items: [PosterButtonType<Model.Item>.noResult]
+            )
+            .header {
+                selectorMenu
+            }
         }
     }
 }
@@ -122,7 +92,7 @@ extension MenuPosterHStack where Content == PosterButtonDefaultContentView<Model
             type: type,
             itemScale: 1,
             singleImage: singleImage,
-            content: { PosterButtonDefaultContentView(state: .item($0)) },
+            content: { PosterButtonDefaultContentView(state: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             onSelect: { _ in }
@@ -136,7 +106,7 @@ extension MenuPosterHStack {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    func content<C: View>(@ViewBuilder _ content: @escaping (Model.Item) -> C)
+    func content<C: View>(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> C)
     -> MenuPosterHStack<Model, C, ImageOverlay, ContextMenu> {
         .init(
             manager: manager,
@@ -150,7 +120,7 @@ extension MenuPosterHStack {
         )
     }
 
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Model.Item) -> O)
+    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (PosterButtonType<Model.Item>) -> O)
     -> MenuPosterHStack<Model, Content, O, ContextMenu> {
         .init(
             manager: manager,
@@ -164,7 +134,7 @@ extension MenuPosterHStack {
         )
     }
 
-    func contextMenu<C: View>(@ViewBuilder _ contextMenu: @escaping (Model.Item) -> C)
+    func contextMenu<C: View>(@ViewBuilder _ contextMenu: @escaping (PosterButtonType<Model.Item>) -> C)
     -> MenuPosterHStack<Model, Content, ImageOverlay, C> {
         .init(
             manager: manager,

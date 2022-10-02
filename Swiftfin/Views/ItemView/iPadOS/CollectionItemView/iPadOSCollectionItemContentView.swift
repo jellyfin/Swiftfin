@@ -38,16 +38,16 @@ extension iPadOSCollectionItemView {
 
                 // MARK: Items
 
-                if !viewModel.collectionItems.isEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        state: viewModel.isLoading ? .loading : .items(viewModel.collectionItems)
-                    )
-                    .onSelect { item in
-                        itemRouter.route(to: \.item, item)
-                    }
-                }
+//                if !viewModel.collectionItems.isEmpty {
+//                    PosterHStack(
+//                        title: L10n.items,
+//                        type: .portrait,
+//                        state: viewModel.isLoading ? .loading : .items(viewModel.collectionItems)
+//                    )
+//                    .onSelect { item in
+//                        itemRouter.route(to: \.item, item)
+//                    }
+//                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

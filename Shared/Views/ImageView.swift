@@ -73,7 +73,7 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
                     image(_image.resizingMode(resizingMode))
                 } else if state.error != nil {
                     failure().onAppear {
-                        sources.removeFirst()
+                        sources.removeFirstSafe()
                     }
                 }
             }

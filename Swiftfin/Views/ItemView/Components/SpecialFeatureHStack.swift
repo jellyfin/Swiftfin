@@ -23,7 +23,7 @@ extension ItemView {
             PosterHStack(
                 title: title,
                 type: .landscape,
-                state: .items(items)
+                items: items.map { .item($0) }
             )
             .onSelect { item in
                 router.route(to: \.videoPlayer, .init(item: item))

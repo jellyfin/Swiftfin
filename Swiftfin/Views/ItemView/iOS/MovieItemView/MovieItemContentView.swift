@@ -48,19 +48,19 @@ extension MovieItemView {
                     Divider()
                 }
 
-//                if !viewModel.specialFeatures.keys.isEmpty {
-//                    MenuPosterHStack(
-//                        type: .landscape,
-//                        manager: SpecialFeaturesViewModel(
-//                            sections: viewModel.specialFeatures
-//                        )
-//                    )
-//                    .onSelect { item in
-//                        mainRouter.route(to: \.videoPlayer, .init(item: item))
-//                    }
-//
-//                    Divider()
-//                }
+                if !viewModel.specialFeatures.keys.isEmpty {
+                    MenuPosterHStack(
+                        type: .landscape,
+                        manager: SpecialFeaturesViewModel(
+                            sections: viewModel.specialFeatures.mapValues { $0.map { .item($0) } }
+                        )
+                    )
+                    .onSelect { item in
+                        mainRouter.route(to: \.videoPlayer, .init(item: item))
+                    }
+
+                    Divider()
+                }
 
                 // MARK: Similar
 
