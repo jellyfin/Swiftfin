@@ -48,10 +48,10 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
         }
         .padding(.bottom)
     }
-    
+
     private var items: [PosterButtonType<Model.Item>] {
         guard let selection = manager.menuSelection,
-                let items = manager.menuSections[selection] else { return [.noResult] }
+              let items = manager.menuSections[selection] else { return [.noResult] }
         return items
     }
 

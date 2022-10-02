@@ -17,11 +17,16 @@ final class SearchCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
+    #if os(tvOS)
     @Route(.modal)
+    var item = makeItem
+    @Route(.modal)
+    var library = makeLibrary
+    #else
+    @Route(.push)
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
-    #if !os(tvOS)
     @Route(.modal)
     var filter = makeFilter
     #endif
