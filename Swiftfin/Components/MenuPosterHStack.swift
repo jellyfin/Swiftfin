@@ -46,33 +46,30 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
                 .font(.title3.weight(.semibold))
             }
         }
+        .padding(.bottom)
+    }
+    
+    private var items: [PosterButtonType<Model.Item>] {
+        guard let selection = manager.menuSelection,
+                let items = manager.menuSections[selection] else { return [.noResult] }
+        return items
     }
 
     var body: some View {
-        if let selection = manager.menuSelection, let items = manager.menuSections[selection] {
-            PosterHStack(
-                type: type,
-                items: items,
-                singleImage: singleImage
-            )
-            .header {
-                selectorMenu
-            }
-            .scaleItems(itemScale)
-            .content(content)
-            .imageOverlay(imageOverlay)
-            .contextMenu(contextMenu)
-            .onSelect { item in
-                onSelect(item)
-            }
-        } else {
-            PosterHStack(
-                type: type,
-                items: [PosterButtonType<Model.Item>.noResult]
-            )
-            .header {
-                selectorMenu
-            }
+        PosterHStack(
+            type: type,
+            items: items,
+            singleImage: singleImage
+        )
+        .header {
+            selectorMenu
+        }
+        .scaleItems(itemScale)
+        .content(content)
+        .imageOverlay(imageOverlay)
+        .contextMenu(contextMenu)
+        .onSelect { item in
+            onSelect(item)
         }
     }
 }
