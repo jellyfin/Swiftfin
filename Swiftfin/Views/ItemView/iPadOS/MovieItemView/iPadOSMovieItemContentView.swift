@@ -47,23 +47,26 @@ extension iPadOSMovieItemView {
                     Divider()
                 }
 
+                // MARK: Special Features
+
+                if !viewModel.specialFeatures.isEmpty {
+                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
+
+                    Divider()
+                }
+
                 // MARK: Similar
 
-//                if !viewModel.similarItems.isEmpty {
-//                    PosterHStack(
-//                        title: L10n.recommended,
-//                        type: .portrait,
-//                        state: .items(viewModel.similarItems)
-//                    )
-//                    .onSelect { item in
-//                        itemRouter.route(to: \.item, item)
-//                    }
-//
-//                    Divider()
-//                }
+                if !viewModel.similarItems.isEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+
+                    Divider()
+                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }
         }
     }
 }
+
+//

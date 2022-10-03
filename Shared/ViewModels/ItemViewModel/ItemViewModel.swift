@@ -28,7 +28,7 @@ class ItemViewModel: ViewModel {
     @Published
     var similarItems: [BaseItemDto] = []
     @Published
-    var specialFeatures: [SpecialFeatureType: [BaseItemDto]] = [:]
+    var specialFeatures: [BaseItemDto] = []
     @Published
     var isWatched = false
     @Published
@@ -91,15 +91,6 @@ class ItemViewModel: ViewModel {
                 self.selectedVideoPlayerViewModel = viewModels.first
             }
             .store(in: &cancellables)
-
-//        item.createLegacyVideoPlayerViewModel()
-//            .sink { completion in
-//                self.handleAPIRequestError(completion: completion)
-//            } receiveValue: { viewModels in
-//                self.legacyvideoPlayerViewModels = viewModels
-//                self.legacyselectedVideoPlayerViewModel = viewModels.first
-//            }
-//            .store(in: &cancellables)
     }
 
     func playButtonText() -> String {
@@ -143,10 +134,7 @@ class ItemViewModel: ViewModel {
         .sink { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         } receiveValue: { [weak self] items in
-            let videoItems = items.filter { $0.specialFeatureType?.isVideo ?? false }
-            self?.specialFeatures = Dictionary(grouping: videoItems) { item in
-                item.specialFeatureType ?? .unknown
-            }
+            self?.specialFeatures = items.filter { $0.specialFeatureType?.isVideo ?? false }
         }
         .store(in: &cancellables)
     }

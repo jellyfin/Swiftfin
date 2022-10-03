@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 extension iPadOSCollectionItemView {
@@ -16,6 +17,14 @@ extension iPadOSCollectionItemView {
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: CollectionItemViewModel
+
+        private var items: [PosterButtonType<BaseItemDto>] {
+            if viewModel.isLoading {
+                return Array(repeating: .loading, count: Int.random(in: 3 ..< 8))
+            } else {
+                return viewModel.collectionItems.map { .item($0) }
+            }
+        }
 
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
@@ -38,16 +47,14 @@ extension iPadOSCollectionItemView {
 
                 // MARK: Items
 
-//                if !viewModel.collectionItems.isEmpty {
-//                    PosterHStack(
-//                        title: L10n.items,
-//                        type: .portrait,
-//                        state: viewModel.isLoading ? .loading : .items(viewModel.collectionItems)
-//                    )
-//                    .onSelect { item in
-//                        itemRouter.route(to: \.item, item)
-//                    }
-//                }
+                PosterHStack(
+                    title: L10n.items,
+                    type: .portrait,
+                    items: items
+                )
+                .onSelect { item in
+                    itemRouter.route(to: \.item, item)
+                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

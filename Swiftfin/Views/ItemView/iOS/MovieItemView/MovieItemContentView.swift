@@ -48,16 +48,10 @@ extension MovieItemView {
                     Divider()
                 }
 
-                if !viewModel.specialFeatures.keys.isEmpty {
-                    MenuPosterHStack(
-                        type: .landscape,
-                        manager: SpecialFeaturesViewModel(
-                            sections: viewModel.specialFeatures.mapValues { $0.map { .item($0) } }
-                        )
-                    )
-                    .onSelect { item in
-                        mainRouter.route(to: \.videoPlayer, .init(item: item))
-                    }
+                // MARK: Special Features
+
+                if !viewModel.specialFeatures.isEmpty {
+                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
 
                     Divider()
                 }
@@ -71,11 +65,6 @@ extension MovieItemView {
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
-
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
             }
         }
     }

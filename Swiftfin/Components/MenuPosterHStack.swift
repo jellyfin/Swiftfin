@@ -39,7 +39,7 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
         } label: {
             HStack(spacing: 5) {
                 Group {
-                    Text(manager.menuSelection?.displayName ?? .emptyDash)
+                    Text(manager.menuSelection?.displayName ?? L10n.unknown)
                         .fixedSize()
                     Image(systemName: "chevron.down")
                 }
@@ -47,6 +47,7 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
             }
         }
         .padding(.bottom)
+        .fixedSize()
     }
 
     private var items: [PosterButtonType<Model.Item>] {

@@ -23,7 +23,7 @@ extension iPadOSSeriesItemView {
 
                 // MARK: Episodes
 
-//                SeriesEpisodesView(viewModel: viewModel)
+                SeriesEpisodeSelector(viewModel: viewModel)
 
                 // MARK: Genres
 
@@ -53,18 +53,11 @@ extension iPadOSSeriesItemView {
 
                 // MARK: Similar
 
-//                if !viewModel.similarItems.isEmpty {
-//                    PosterHStack(
-//                        title: L10n.recommended,
-//                        type: .portrait,
-//                        state: .items(viewModel.similarItems)
-//                    )
-//                    .onSelect { item in
-//                        itemRouter.route(to: \.item, item)
-//                    }
-//
-//                    Divider()
-//                }
+                if !viewModel.similarItems.isEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+
+                    Divider()
+                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

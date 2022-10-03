@@ -114,6 +114,9 @@ extension ItemView.iPadOSCinematicScrollView {
                         maxHeight: 150
                     ))
                     .resizingMode(.bottomLeft)
+                    .placeholder {
+                        EmptyView()
+                    }
                     .failure {
                         Text(viewModel.item.displayName)
                             .font(.largeTitle)

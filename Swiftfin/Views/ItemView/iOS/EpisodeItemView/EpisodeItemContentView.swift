@@ -76,13 +76,6 @@ extension EpisodeItemView {
                             router.route(to: \.item, item)
                         }
                 }
-
-                // MARK: Details
-
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
             }
         }
     }

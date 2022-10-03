@@ -11,25 +11,22 @@ import SwiftUI
 
 extension ItemView {
 
-    struct ExtrasHStack: View {
+    struct SpecialFeaturesHStack: View {
 
         @EnvironmentObject
         private var router: MainCoordinator.Router
 
-        let title: String
         let items: [BaseItemDto]
 
         var body: some View {
             PosterHStack(
-                title: title,
+                title: "Special Features",
                 type: .landscape,
                 items: items.map { .item($0) }
             )
             .onSelect { item in
                 router.route(to: \.videoPlayer, .init(item: item))
             }
-
-            Divider()
         }
     }
 }
