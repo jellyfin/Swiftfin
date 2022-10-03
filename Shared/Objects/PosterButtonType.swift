@@ -15,9 +15,7 @@ enum PosterButtonType<Item: Poster>: Hashable, Identifiable {
 
     var id: Int {
         switch self {
-        case .loading:
-            return UUID().hashValue
-        case .noResult:
+        case .loading, .noResult:
             return UUID().hashValue
         case let .item(item):
             return item.hashValue

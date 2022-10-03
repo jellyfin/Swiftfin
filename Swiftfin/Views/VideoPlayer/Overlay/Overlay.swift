@@ -6,36 +6,38 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Sliders
 import SwiftUI
+import VLCUI
 
 extension ItemVideoPlayer {
 
     struct Overlay: View {
 
-        @ObservedObject
-        var viewModel: ItemVideoPlayerViewModel
-
         var body: some View {
-            VStack {
-                TopBarView(viewModel: viewModel)
-                    .frame(height: 50)
-                    .padding()
-                    .background {
-                        Color.black
-                            .opacity(0.5)
-                    }
+            ZStack {
+                VStack {
+                    TopBarView()
+                        .frame(height: 50)
+                        .padding(.horizontal, 50)
+                        .padding(.top)
 
-                Spacer()
+                    Spacer()
+                        .allowsHitTesting(false)
+
+                    BottomBarView()
+                        .frame(height: 50)
+                        .padding(.horizontal, 50)
+                        .padding(.bottom)
+                }
+                
+                LargePlaybackButtons()
+            }
+            .background {
+                Color.black
+                    .opacity(0.5)
                     .allowsHitTesting(false)
-
-                BottomBarView(viewModel: viewModel)
-                    .frame(height: 50)
-                    .padding()
-                    .background {
-                        Color.black
-                            .opacity(0.5)
-                    }
             }
         }
     }

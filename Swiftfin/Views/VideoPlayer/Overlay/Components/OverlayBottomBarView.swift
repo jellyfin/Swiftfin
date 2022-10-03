@@ -19,84 +19,52 @@ extension ItemVideoPlayer.Overlay {
         @Default(.videoPlayerJumpBackward)
         private var jumpForwardLength
 
-        @ObservedObject
+        @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
+        @EnvironmentObject
+        private var currentSecondsHandler: CurrentSecondsHandler
 
         @State
-        private var currentSeconds: Int
+        private var currentSeconds: Int = 0
         @State
         private var isScrubbing: Bool = false
         @State
-        private var progress: CGFloat
+        private var progress: CGFloat = 0
 
-        init(viewModel: ItemVideoPlayerViewModel) {
-            self.viewModel = viewModel
-
-            self.currentSeconds = viewModel.currentSeconds
-            self.progress = CGFloat(viewModel.currentSeconds) / CGFloat(viewModel.item.runTimeSeconds)
+        init() {
+//            self.currentSeconds = viewModel.currentSeconds
+//            self.progress = CGFloat(viewModel.currentSeconds) / CGFloat(viewModel.item.runTimeSeconds)
 
             print("bottom bar init-ed")
         }
 
         var body: some View {
-            HStack {
-                HStack(spacing: 20) {
-                    Button {
-                        viewModel.eventSubject.send(.jumpBackward(jumpBackwardLength.rawValue))
-                    } label: {
-                        Image(systemName: jumpBackwardLength.backwardImageLabel)
-                            .font(.system(size: 24, weight: .heavy, design: .default))
-                    }
+            HStack(spacing: 20) {
 
-                    Button {
-                        switch viewModel.state {
-                        case .playing:
-                            viewModel.eventSubject.send(.pause)
-                        default:
-                            viewModel.eventSubject.send(.play)
-                        }
-                    } label: {
-                        Group {
-                            switch viewModel.state {
-                            case .stopped, .paused:
-                                Image(systemName: "play.fill")
-                            case .playing:
-                                Image(systemName: "pause")
-                            default:
-                                ProgressView()
-                            }
-                        }
-                        .font(.system(size: 28, weight: .heavy, design: .default))
-                    }
-
-                    Button {
-                        viewModel.eventSubject.send(.jumpForward(jumpForwardLength.rawValue))
-                    } label: {
-                        Image(systemName: jumpForwardLength.forwardImageLabel)
-                            .font(.system(size: 24, weight: .heavy, design: .default))
-                    }
-                }
-                .tint(Color.white)
-                .foregroundColor(Color.white)
-
-                Text(Double(currentSeconds).timeLabel)
-                    .font(.system(size: 18, weight: .semibold, design: .default))
-                    .frame(minWidth: 70, maxWidth: 70)
-
+                
+//                    HStack(spacing: 1) {
+//
+//                        Text(Double(currentSeconds).timeLabel)
+//
+//                        Text("/")
+//
+//                        Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
+//                    }
+//                    .font(.subheadline)
+//                    .foregroundColor(.gray)
+                    
                 CapsuleSlider(progress: $progress)
                     .onEditingChanged { isEditing in
                         isScrubbing = isEditing
                     }
-
-                Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
-                    .font(.system(size: 18, weight: .semibold, design: .default))
-                    .frame(minWidth: 70, maxWidth: 70)
+                    .frame(height: 50)
             }
-            .onChange(of: viewModel.currentSeconds, perform: { newValue in
+            .padding(.horizontal, 50)
+            .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
                 guard !isScrubbing else { return }
                 self.currentSeconds = newValue
                 self.progress = CGFloat(newValue) / CGFloat(viewModel.item.runTimeSeconds)
-            })
+            }
             .onChange(of: isScrubbing) { newValue in
                 guard !newValue else { return }
                 let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
@@ -111,3 +79,27 @@ extension ItemVideoPlayer.Overlay {
         }
     }
 }
+
+//struct BottomBarView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ZStack {
+//            Color.red
+//                .opacity(0.2)
+//
+//            VStack {
+//                Spacer()
+//
+//                ItemVideoPlayer.Overlay.BottomBarView(viewModel: .init(
+//                    playbackURL: URL(string: "https://apple.com")!,
+//                    item: .placeHolder,
+//                    audioStreams: [],
+//                    subtitleStreams: []))
+//                .padding(.horizontal, 50)
+//                .padding(.bottom)
+//            }
+//        }
+//        .ignoresSafeArea()
+//        .preferredColorScheme(.dark)
+//        .previewInterfaceOrientation(.landscapeRight)
+//    }
+//}

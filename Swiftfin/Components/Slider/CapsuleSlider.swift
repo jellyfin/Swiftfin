@@ -42,7 +42,6 @@ struct CapsuleSlider: View {
                     .clipShape(Capsule())
             }
             .frame(height: 50)
-            .padding()
             .animation(.linear(duration: 0.1), value: isEditing)
     }
 }

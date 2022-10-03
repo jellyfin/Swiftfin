@@ -13,9 +13,21 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
+class CurrentSecondsHandler: ObservableObject {
+    
+    @Published
+    var currentSeconds: Int = 0
+    
+    func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
+        self.currentSeconds = Int(ticks / 1000)
+    }
+}
+
 class ItemVideoPlayerViewModel: ObservableObject {
 
-    var currentSeconds: Int = 0
+//    @Published
+//    var currentSeconds: Int = 0
+    
     @Published
     var state: VLCVideoPlayer.State = .opening
     @Published
@@ -28,7 +40,6 @@ class ItemVideoPlayerViewModel: ObservableObject {
 
     @Published
     var selectedSubtitleTrackIndex: Int32 = -1
-    var lastPositiveSubtitleTrackIndex: Int32 = -1
     @Published
     var playerSubtitleTracks: [Int32: String] = [:]
     @Published
@@ -37,8 +48,20 @@ class ItemVideoPlayerViewModel: ObservableObject {
     var playerPlaybackSpeed: PlaybackSpeed = .one
     @Published
     var isAspectFilled: Bool = false
+    @Published
+    var presentSettings: Bool = false
 
     var eventSubject: CurrentValueSubject<VLCVideoPlayer.Event?, Never> = .init(nil)
+    
+    var configuration: VLCVideoPlayer.Configuration {
+        let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
+        configuration.autoPlay = true
+        configuration.startTime = .seconds(Int32(item.startTimeSeconds))
+        configuration.playbackChildren = subtitleStreams
+            .filter { $0.deliveryMethod == .external }
+            .compactMap(\.asPlaybackChild)
+        return configuration
+    }
 
     let playbackURL: URL
     let item: BaseItemDto
@@ -62,7 +85,8 @@ class ItemVideoPlayerViewModel: ObservableObject {
     }
 
     func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-        self.currentSeconds = Int(ticks / 1000)
+//        self.currentSecondsHandler.currentSeconds = Int(ticks / 1000)
+//        self.currentSeconds = Int(ticks / 1000)
 
 //        if selectedSubtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
 //            lastPositiveSubtitleTrackIndex = max(selectedSubtitleTrackIndex, playbackInformation.currentSubtitleTrack.index)

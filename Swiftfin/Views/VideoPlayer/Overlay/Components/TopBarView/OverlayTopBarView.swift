@@ -6,8 +6,11 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
+import JellyfinAPI
 import Stinsen
 import SwiftUI
+import VLCUI
 
 extension ItemVideoPlayer.Overlay {
 
@@ -15,9 +18,26 @@ extension ItemVideoPlayer.Overlay {
 
         @EnvironmentObject
         private var router: ItemVideoPlayerCoordinator.Router
+        
+        @EnvironmentObject
+        private var viewModel: ItemVideoPlayerViewModel
+        
+        init() {
+            print("Top bar init-ed")
+        }
 
-        @ObservedObject
-        var viewModel: ItemVideoPlayerViewModel
+//        let item: BaseItemDto
+//        let eventSubject: CurrentValueSubject<VLCVideoPlayer.Event?, Never>
+        
+//        init(item: BaseItemDto, eventSubject: CurrentValueSubject<VLCVideoPlayer.Event?, Never>) {
+//            self.item = item
+//            self.eventSubject = eventSubject
+//
+//            print("top bar init-ed")
+//        }
+        
+//        let item: BaseItemDto
+//        let eventSubject: CurrentValueSubject<VLCVideoPlayer.Event?, Never>
 
         var body: some View {
             VStack(alignment: .EpisodeSeriesAlignmentGuide) {
@@ -26,7 +46,7 @@ extension ItemVideoPlayer.Overlay {
                         viewModel.eventSubject.send(.cancel)
                         router.dismissCoordinator()
                     } label: {
-                        Image(systemName: "chevron.backward")
+                        Image(systemName: "xmark")
                             .padding()
                             .padding(.trailing, -10)
                     }
@@ -41,7 +61,7 @@ extension ItemVideoPlayer.Overlay {
 
                     Spacer()
 
-                    ItemVideoPlayer.Overlay.ActionButtons(viewModel: viewModel)
+                    ItemVideoPlayer.Overlay.ActionButtons()
                         .padding(.leading, 100)
                 }
                 .font(.system(size: 24))
@@ -59,5 +79,34 @@ extension ItemVideoPlayer.Overlay {
                 }
             }
         }
+        
+//        static func == (
+//            lhs: ItemVideoPlayer.Overlay.TopBarView,
+//            rhs: ItemVideoPlayer.Overlay.TopBarView) -> Bool {
+//                lhs.viewModel.isAspectFilled == rhs.viewModel.isAspectFilled
+//        }
     }
 }
+
+//struct TopBarView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ZStack {
+//            Color.red
+//                .opacity(0.2)
+//
+//            VStack {
+//                ItemVideoPlayer.Overlay.TopBarView(viewModel: .init(
+//                    playbackURL: URL(string: "https://apple.com")!,
+//                    item: .placeHolder,
+//                    audioStreams: [],
+//                    subtitleStreams: []))
+//                .padding(.horizontal, 50)
+//
+//                Spacer()
+//            }
+//        }
+//        .ignoresSafeArea()
+//        .preferredColorScheme(.dark)
+//        .previewInterfaceOrientation(.landscapeRight)
+//    }
+//}

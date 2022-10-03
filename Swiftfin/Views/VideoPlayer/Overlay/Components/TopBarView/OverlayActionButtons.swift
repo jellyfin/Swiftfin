@@ -12,11 +12,11 @@ extension ItemVideoPlayer.Overlay {
 
     struct ActionButtons: View {
 
-        @ObservedObject
-        var viewModel: ItemVideoPlayerViewModel
+        @EnvironmentObject
+        private var viewModel: ItemVideoPlayerViewModel
 
         var body: some View {
-            HStack(spacing: 20) {
+            HStack(spacing: 0) {
                 if !viewModel.subtitleStreams.isEmpty {
                     Button {
                         viewModel.subtitlesEnabled.toggle()
@@ -29,6 +29,7 @@ extension ItemVideoPlayer.Overlay {
                     }
                     .disabled(viewModel.selectedSubtitleTrackIndex == -1)
                     .foregroundColor(viewModel.selectedSubtitleTrackIndex == -1 ? .gray : .white)
+                    .frame(width: 50, height: 50)
                 }
 
                 Button {
@@ -44,70 +45,17 @@ extension ItemVideoPlayer.Overlay {
                         }
                     }
                 } label: {
-                    if viewModel.isAspectFilled {
-                        Image(systemName: "arrow.down.right.and.arrow.up.left")
-                    } else {
-                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                    Group {
+                        if viewModel.isAspectFilled {
+                            Image(systemName: "arrow.down.right.and.arrow.up.left")
+                        } else {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        }
                     }
+                    .frame(width: 50, height: 50)
                 }
 
-                Menu {
-                    Menu {
-                        ForEach(viewModel.playerSubtitleTracks.keys.sorted(), id: \.self) { subtitleStreamIndex in
-                            Button {
-                                viewModel.eventSubject.send(.setSubtitleTrack(.absolute(subtitleStreamIndex)))
-                            } label: {
-                                if subtitleStreamIndex == viewModel.selectedSubtitleTrackIndex {
-                                    Label(viewModel.playerSubtitleTracks[subtitleStreamIndex] ?? L10n.noTitle, systemImage: "checkmark")
-                                } else {
-                                    Text(viewModel.playerSubtitleTracks[subtitleStreamIndex] ?? L10n.noTitle)
-                                }
-                            }
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: "captions.bubble")
-                            L10n.subtitles.text
-                        }
-                    }
-
-                    Menu {
-                        ForEach(viewModel.playerAudioTracks.keys.sorted(), id: \.self) { audioStreamIndex in
-                            Button {
-                                viewModel.eventSubject.send(.setAudioTrack(.absolute(audioStreamIndex)))
-                            } label: {
-                                Text(viewModel.playerAudioTracks[audioStreamIndex] ?? L10n.noTitle)
-                            }
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: "speaker.wave.3")
-                            L10n.audio.text
-                        }
-                    }
-
-                    Menu {
-                        ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
-                            Button {
-                                viewModel.eventSubject.send(.fastForward(.absolute(Float(speed.rawValue))))
-                                viewModel.playerPlaybackSpeed = speed
-                            } label: {
-                                if speed == viewModel.playerPlaybackSpeed {
-                                    Label(speed.displayTitle, systemImage: "checkmark")
-                                } else {
-                                    Text(speed.displayTitle)
-                                }
-                            }
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: "speedometer")
-                            L10n.playbackSpeed.text
-                        }
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
+                OverlayMenu()
             }
         }
     }

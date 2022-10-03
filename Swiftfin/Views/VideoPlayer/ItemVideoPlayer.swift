@@ -12,6 +12,39 @@ import MediaPlayer
 import SwiftUI
 import VLCUI
 
+struct CustomizeView: View {
+    
+    @EnvironmentObject
+    var viewModel: ItemVideoPlayerViewModel
+    
+    var body: some View {
+        VStack {
+            HStack  {
+                Button {
+                    withAnimation {
+                        viewModel.presentSettings = false
+                    }
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                
+                Text("Hello there")
+                
+                Spacer()
+            }
+            
+            Form {
+                Button {
+                    viewModel.eventSubject.send(.jumpBackward(10))
+                } label: {
+                    Text("Here")
+                }
+
+            }
+        }
+    }
+}
+
 class ItemVideoPlayerManager: ViewModel {
 
     @Published
@@ -38,50 +71,65 @@ struct ItemVideoPlayer: View {
 
     @ObservedObject
     var viewModel: ItemVideoPlayerManager
+    @ObservedObject
+    private var currentSecondsHandler: CurrentSecondsHandler = .init()
+    @State
+    private var currentSeconds: Int = 0
     @State
     private var showOverlay: Bool = false
 
     @ViewBuilder
     func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
-        ZStack(alignment: .bottom) {
-            VLCVideoPlayer {
-                let configuration = VLCVideoPlayer.Configuration(url: viewModel.playbackURL)
-                configuration.autoPlay = true
-                configuration.startTime = .seconds(Int32(viewModel.item.startTimeSeconds))
-                configuration.playbackChildren = viewModel.subtitleStreams
-                    .compactMap(\.asPlaybackChild)
-                return configuration
+        GeometryReader { reader in
+            HStack(spacing : 0) {
+                ZStack(alignment: .bottom) {
+                    VLCVideoPlayer(configuration: viewModel.configuration)
+                        .eventSubject(viewModel.eventSubject)
+                        .onTicksUpdated {
+                            viewModel.onTicksUpdated(ticks: $0, playbackInformation: $1)
+                            currentSecondsHandler.onTicksUpdated(ticks: $0, playbackInformation: $1)
+                        }
+                        .onStateUpdated(viewModel.onStateUpdated(state:playbackInformation:))
+
+                    GestureView()
+                        .onPinch { state, scale in
+                            guard state == .began || state == .changed else { return }
+                            if scale > 1, !viewModel.isAspectFilled {
+                                viewModel.isAspectFilled.toggle()
+                                UIView.animate(withDuration: 0.2) {
+                                    viewModel.eventSubject.send(.aspectFill(1))
+                                }
+                            } else if scale < 1, viewModel.isAspectFilled {
+                                viewModel.isAspectFilled.toggle()
+                                UIView.animate(withDuration: 0.2) {
+                                    viewModel.eventSubject.send(.aspectFill(0))
+                                }
+                            }
+                        }
+                        .onTap {
+                            showOverlay.toggle()
+                        }
+
+                    Overlay()
+                        .environmentObject(viewModel)
+                        .environmentObject(currentSecondsHandler)
+                        .opacity(showOverlay ? 1 : 0)
+                }
+                .onTapGesture {
+                    print("Parent got tap gesture")
+                }
+                .animation(.linear(duration: 0.1), value: showOverlay)
+                
+                if viewModel.presentSettings {
+                    CustomizeView()
+                        .environmentObject(viewModel)
+                        .frame(maxWidth: reader.size.width * 0.4)
+                        .transition(.asymmetric(
+                            insertion: .opacity,
+                            removal: .move(edge: .trailing)))
+                }
             }
-            .eventSubject(viewModel.eventSubject)
-            .onTicksUpdated(viewModel.onTicksUpdated(ticks:playbackInformation:))
-            .onStateUpdated(viewModel.onStateUpdated(state:playbackInformation:))
-
-            GestureView()
-                .onPinch { state, scale in
-                    guard state == .began || state == .changed else { return }
-                    if scale > 1, !viewModel.isAspectFilled {
-                        viewModel.isAspectFilled.toggle()
-                        UIView.animate(withDuration: 0.2) {
-                            viewModel.eventSubject.send(.aspectFill(1))
-                        }
-                    } else if scale < 1, viewModel.isAspectFilled {
-                        viewModel.isAspectFilled.toggle()
-                        UIView.animate(withDuration: 0.2) {
-                            viewModel.eventSubject.send(.aspectFill(0))
-                        }
-                    }
-                }
-                .onTap {
-                    showOverlay.toggle()
-                }
-
-            Overlay(viewModel: viewModel)
-                .opacity(showOverlay ? 1 : 0)
         }
-        .onTapGesture {
-            print("Parent got tap gesture")
-        }
-        .animation(.linear(duration: 0.1), value: showOverlay)
     }
 
     // TODO: Better and localize
@@ -118,5 +166,19 @@ extension MPVolumeView {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
             slider?.value = volume
         }
+    }
+}
+
+extension ItemVideoPlayer {
+    
+    enum BarLocation {
+        case top
+        case bottom
+    }
+    
+    enum PlaybackButtonLocation {
+        case middle
+        case bottomLeft
+        case bottomRight
     }
 }
