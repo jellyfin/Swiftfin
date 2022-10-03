@@ -110,24 +110,6 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         .store(in: &cancellables)
     }
 
-    func getRunYears() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
-
-        var startYear: String?
-        var endYear: String?
-
-        if item.premiereDate != nil {
-            startYear = dateFormatter.string(from: item.premiereDate!)
-        }
-
-        if item.endDate != nil {
-            endYear = dateFormatter.string(from: item.endDate!)
-        }
-
-        return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
-    }
-
     func select(section: BaseItemDto) {
         self.menuSelection = section
 
@@ -135,7 +117,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             if existingItems.allSatisfy({ $0 == .loading }) {
                 getEpisodesForSeason(section)
             } else if existingItems.allSatisfy({ $0 == .noResult }) {
-                menuSections[section] = Array(repeating: .loading, count: Int.random(in: 3 ..< 8))
+                menuSections[section] = PosterButtonType.loading.random(in: 3 ..< 8)
                 getEpisodesForSeason(section)
             }
         } else {
@@ -143,7 +125,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         }
     }
 
-    func getSeasons() {
+    private func getSeasons() {
         TvShowsAPI.getSeasons(
             seriesId: item.id ?? "",
             userId: SessionManager.main.currentLogin.user.id,
@@ -155,7 +137,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             guard let seasons = response.items else { return }
 
             seasons.forEach { season in
-                self.menuSections[season] = Array(repeating: .loading, count: Int.random(in: 3 ..< 8))
+                self.menuSections[season] = PosterButtonType.loading.random(in: 3 ..< 8)
             }
 
             if let firstSeason = seasons.first {
@@ -166,7 +148,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         .store(in: &cancellables)
     }
 
-    func getEpisodesForSeason(_ season: BaseItemDto) {
+    private func getEpisodesForSeason(_ season: BaseItemDto) {
         guard let seasonID = season.id else { return }
 
         TvShowsAPI.getEpisodes(

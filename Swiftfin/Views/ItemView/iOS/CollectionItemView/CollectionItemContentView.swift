@@ -20,7 +20,7 @@ extension CollectionItemView {
 
         private var items: [PosterButtonType<BaseItemDto>] {
             if viewModel.isLoading {
-                return Array(repeating: .loading, count: Int.random(in: 3 ..< 8))
+                return PosterButtonType.loading.random(in: 3 ..< 8)
             } else {
                 return viewModel.collectionItems.map { .item($0) }
             }
