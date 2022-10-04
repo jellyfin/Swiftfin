@@ -12,6 +12,9 @@ struct OverlayMenu: View {
     
     @EnvironmentObject
     private var viewModel: ItemVideoPlayerViewModel
+    @Environment(\.currentOverlayType)
+    @Binding
+    private var currentOverlayType
     
     var body: some View {
         Menu {
@@ -66,6 +69,16 @@ struct OverlayMenu: View {
                 HStack {
                     Image(systemName: "speedometer")
                     L10n.playbackSpeed.text
+                }
+            }
+            
+            Button {
+                currentOverlayType = .chapters
+            } label: {
+                HStack {
+                    L10n.chapters.text
+                    
+                    Image(systemName: "list.dash")
                 }
             }
             

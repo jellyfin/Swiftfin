@@ -67,7 +67,24 @@ class ItemVideoPlayerManager: ViewModel {
     }
 }
 
+private struct CurrentOverlayType: EnvironmentKey {
+    static let defaultValue: Binding<ItemVideoPlayer.OverlayType?> = .constant(nil)
+}
+
+extension EnvironmentValues {
+    var currentOverlayType: Binding<ItemVideoPlayer.OverlayType?> {
+        get { self[CurrentOverlayType.self] }
+        set { self[CurrentOverlayType.self] = newValue }
+    }
+}
+
+
 struct ItemVideoPlayer: View {
+    
+    enum OverlayType {
+        case main
+        case chapters
+    }
 
     @ObservedObject
     var viewModel: ItemVideoPlayerManager
@@ -76,7 +93,7 @@ struct ItemVideoPlayer: View {
     @State
     private var currentSeconds: Int = 0
     @State
-    private var showOverlay: Bool = false
+    private var currentOverlayType: OverlayType?
 
     @ViewBuilder
     func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
@@ -107,18 +124,31 @@ struct ItemVideoPlayer: View {
                             }
                         }
                         .onTap {
-                            showOverlay.toggle()
+                            if currentOverlayType == nil {
+                                currentOverlayType = .main
+                            } else {
+                                currentOverlayType = nil
+                            }
                         }
-
-                    Overlay()
-                        .environmentObject(viewModel)
-                        .environmentObject(currentSecondsHandler)
-                        .opacity(showOverlay ? 1 : 0)
+                    
+                    Group {
+                        if let currentOverlayType {
+                            switch currentOverlayType {
+                            case .main:
+                                Overlay()
+                            case .chapters:
+                                Overlay.ChapterOverlay()
+                            }
+                        }
+                    }
+                    .environmentObject(viewModel)
+                    .environmentObject(currentSecondsHandler)
+                    .environment(\.currentOverlayType, $currentOverlayType)
                 }
                 .onTapGesture {
                     print("Parent got tap gesture")
                 }
-                .animation(.linear(duration: 0.1), value: showOverlay)
+                .animation(.linear(duration: 0.1), value: currentOverlayType)
                 
                 if viewModel.presentSettings {
                     CustomizeView()
@@ -170,11 +200,6 @@ extension MPVolumeView {
 }
 
 extension ItemVideoPlayer {
-    
-    enum BarLocation {
-        case top
-        case bottom
-    }
     
     enum PlaybackButtonLocation {
         case middle

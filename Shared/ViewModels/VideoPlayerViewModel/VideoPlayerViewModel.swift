@@ -24,9 +24,6 @@ class CurrentSecondsHandler: ObservableObject {
 }
 
 class ItemVideoPlayerViewModel: ObservableObject {
-
-//    @Published
-//    var currentSeconds: Int = 0
     
     @Published
     var state: VLCVideoPlayer.State = .opening
@@ -67,17 +64,20 @@ class ItemVideoPlayerViewModel: ObservableObject {
     let item: BaseItemDto
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
+    let chapters: [ChapterInfo.FullInfo]
 
     init(
         playbackURL: URL,
         item: BaseItemDto,
         audioStreams: [MediaStream],
-        subtitleStreams: [MediaStream]
+        subtitleStreams: [MediaStream],
+        chapters: [ChapterInfo.FullInfo]
     ) {
         self.playbackURL = playbackURL
         self.item = item
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
+        self.chapters = chapters
     }
 
     func jump(to ticks: Int32) {
@@ -85,8 +85,6 @@ class ItemVideoPlayerViewModel: ObservableObject {
     }
 
     func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-//        self.currentSecondsHandler.currentSeconds = Int(ticks / 1000)
-//        self.currentSeconds = Int(ticks / 1000)
 
 //        if selectedSubtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
 //            lastPositiveSubtitleTrackIndex = max(selectedSubtitleTrackIndex, playbackInformation.currentSubtitleTrack.index)

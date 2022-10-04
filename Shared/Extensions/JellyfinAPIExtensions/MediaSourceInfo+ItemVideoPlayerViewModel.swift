@@ -27,7 +27,8 @@ extension MediaSourceInfo {
             playbackURL: directStreamURL,
             item: item,
             audioStreams: audioStreams,
-            subtitleStreams: subtitleStreams
+            subtitleStreams: subtitleStreams,
+            chapters: item.fullChapterInfo
         )
     }
 }

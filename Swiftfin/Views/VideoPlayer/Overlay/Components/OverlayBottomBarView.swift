@@ -32,9 +32,6 @@ extension ItemVideoPlayer.Overlay {
         private var progress: CGFloat = 0
 
         init() {
-//            self.currentSeconds = viewModel.currentSeconds
-//            self.progress = CGFloat(viewModel.currentSeconds) / CGFloat(viewModel.item.runTimeSeconds)
-
             print("bottom bar init-ed")
         }
 

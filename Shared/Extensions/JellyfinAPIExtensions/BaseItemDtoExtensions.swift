@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Algorithms
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -216,6 +217,36 @@ extension BaseItemDto {
         }
 
         return chapterImageURLs
+    }
+    
+    var fullChapterInfo: [ChapterInfo.FullInfo] {
+        guard let chapters else { return [] }
+        
+        let ranges: [Range<Int>] = []
+            .appending(chapters.map { $0.startTimeSeconds })
+            .appending(runTimeSeconds)
+            .adjacentPairs()
+            .map { $0..<$1 }
+        
+        return chapters
+            .enumerated()
+            .map { index, chapterInfo in
+                
+                let imageURL = ImageAPI.getItemImageWithRequestBuilder(
+                    itemId: id ?? "",
+                    imageType: .chapter,
+                    maxWidth: 500,
+                    quality: 90,
+                    imageIndex: index
+                ).url
+                
+                let range = ranges.first(where: { $0.first == chapterInfo.startTimeSeconds }) ?? startTimeSeconds..<startTimeSeconds + 1
+                
+                return ChapterInfo.FullInfo(
+                    chapterInfo: chapterInfo,
+                    imageSource: .init(url: imageURL),
+                    secondsRange: range)
+            }
     }
 
     // TODO: Don't use spoof objects as a placeholder or no results

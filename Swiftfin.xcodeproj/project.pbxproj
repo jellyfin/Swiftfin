@@ -288,6 +288,10 @@
 		E13849452780370B0024FB48 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
 		E1399474289B1EA900401ABC /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1399473289B1EA900401ABC /* Defaults+Workaround.swift */; };
 		E1399475289B1EA900401ABC /* Defaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1399473289B1EA900401ABC /* Defaults+Workaround.swift */; };
+		E139CC1928EBDA6300688DE2 /* BarLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139CC1828EBDA6300688DE2 /* BarLocation.swift */; };
+		E139CC1B28EBDAB800688DE2 /* PlaybackButtonLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139CC1A28EBDAB800688DE2 /* PlaybackButtonLocation.swift */; };
+		E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */; };
+		E139CC1F28EC83E400688DE2 /* IntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139CC1E28EC83E400688DE2 /* IntExtensions.swift */; };
 		E13AD72E2798BC8D00FDCEE8 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */; };
 		E13AD7302798C60F00FDCEE8 /* NativePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */; };
 		E13AF3B628A0C598009093AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B528A0C598009093AB /* Nuke */; };
@@ -844,6 +848,10 @@
 		E12D581328D3BBEE00A36FFF /* PlaybackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackManager.swift; sourceTree = "<group>"; };
 		E1384943278036C70024FB48 /* VLCPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerViewController.swift; sourceTree = "<group>"; };
 		E1399473289B1EA900401ABC /* Defaults+Workaround.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Defaults+Workaround.swift"; sourceTree = "<group>"; };
+		E139CC1828EBDA6300688DE2 /* BarLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarLocation.swift; sourceTree = "<group>"; };
+		E139CC1A28EBDAB800688DE2 /* PlaybackButtonLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackButtonLocation.swift; sourceTree = "<group>"; };
+		E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterOverlay.swift; sourceTree = "<group>"; };
+		E139CC1E28EC83E400688DE2 /* IntExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtensions.swift; sourceTree = "<group>"; };
 		E13AD72D2798BC8D00FDCEE8 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
 		E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePlayerViewController.swift; sourceTree = "<group>"; };
 		E13D02842788B634000FCB04 /* Swiftfin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Swiftfin.entitlements; sourceTree = "<group>"; };
@@ -1596,8 +1604,9 @@
 				E173DA5126D04AAF00CC4EB7 /* ColorExtensions.swift */,
 				E1399473289B1EA900401ABC /* Defaults+Workaround.swift */,
 				E1E00A34278628A40022235B /* DoubleExtensions.swift */,
-				E11CEB8C28999B4A003E74C7 /* FontExtensions.swift */,
 				E1B33EAF28EA890D0073B0FD /* EquatableExtensions.swift */,
+				E11CEB8C28999B4A003E74C7 /* FontExtensions.swift */,
+				E139CC1E28EC83E400688DE2 /* IntExtensions.swift */,
 				E1AD105226D96D5F003E4A08 /* JellyfinAPIExtensions */,
 				621338922660107500A81A2A /* StringExtensions.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplicationExtensions.swift */,
@@ -1726,7 +1735,10 @@
 		E11245B528D97EC200D8A977 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E139CC1828EBDA6300688DE2 /* BarLocation.swift */,
+				E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */,
 				E11245B328D97D5D00D8A977 /* OverlayBottomBarView.swift */,
+				E139CC1A28EBDAB800688DE2 /* PlaybackButtonLocation.swift */,
 				E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */,
 				E1E9017D28DAB12B001B1594 /* TopBarView */,
 			);
@@ -2848,6 +2860,7 @@
 				E1E9017F28DAB15F001B1594 /* OverlayActionButtons.swift in Sources */,
 				E17FB55928C125E900311DFE /* StudiosHStack.swift in Sources */,
 				E1C812C5277A90B200918266 /* URLComponentsExtensions.swift in Sources */,
+				E139CC1B28EBDAB800688DE2 /* PlaybackButtonLocation.swift in Sources */,
 				E1EBCB44278BD1CE009FE6E9 /* ItemOverviewCoordinator.swift in Sources */,
 				E12D581428D3BBEE00A36FFF /* PlaybackManager.swift in Sources */,
 				E1C925F428875037002A7A66 /* ItemViewType.swift in Sources */,
@@ -2921,6 +2934,7 @@
 				E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
 				E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */,
+				E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
 				E1E5D5492783CDD700692DFE /* OverlaySettingsView.swift in Sources */,
 				E11245B728D97ED200D8A977 /* OverlayTopBarView.swift in Sources */,
@@ -2942,6 +2956,7 @@
 				E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */,
 				E11CEB8D28999B4A003E74C7 /* FontExtensions.swift in Sources */,
 				E1C812CE277AE43100918266 /* LegacyVideoPlayerViewModel.swift in Sources */,
+				E139CC1F28EC83E400688DE2 /* IntExtensions.swift in Sources */,
 				E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
 				E1DA656C28E78C1700592A73 /* MenuPosterHStackModel.swift in Sources */,
 				E1C812C3277A8E5D00918266 /* LegacyVLCPlayerOverlayView.swift in Sources */,
@@ -3018,6 +3033,7 @@
 				E1B33EB028EA890D0073B0FD /* EquatableExtensions.swift in Sources */,
 				E1DA654C28E69B0500592A73 /* SpecialFeatureType.swift in Sources */,
 				E11CEB8B28998552003E74C7 /* iOSViewExtensions.swift in Sources */,
+				E139CC1928EBDA6300688DE2 /* BarLocation.swift in Sources */,
 				E1E1644428BC60C600323B0A /* MediaLibraryItem.swift in Sources */,
 				E18E0206288749200022598C /* AttributeFillView.swift in Sources */,
 				E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */,

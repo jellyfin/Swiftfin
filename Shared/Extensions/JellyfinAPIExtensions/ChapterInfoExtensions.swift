@@ -15,30 +15,49 @@ extension ChapterInfo {
         let seconds = (startPositionTicks ?? 0) / 10_000_000
         return seconds.toReadableString()
     }
+    
+    var startTimeSeconds: Int {
+        let playbackPositionTicks = startPositionTicks ?? 0
+        return Int(playbackPositionTicks / 10_000_000)
+    }
 }
 
-extension Int64 {
+extension ChapterInfo: Displayable {
+    
+    var displayName: String {
+        name ?? .emptyDash
+    }
+}
 
-    func toReadableString() -> String {
-
-        let s = Int(self) % 60
-        let mn = (Int(self) / 60) % 60
-        let hr = (Int(self) / 3600)
-
-        var final = ""
-
-        if hr != 0 {
-            final += "\(hr):"
+extension ChapterInfo {
+    
+    struct FullInfo: Poster, Equatable {
+        
+        let chapterInfo: ChapterInfo
+        let imageSource: ImageSource
+        let secondsRange: Range<Int>
+        
+        init(
+            chapterInfo: ChapterInfo,
+            imageSource: ImageSource,
+            secondsRange: Range<Int>) {
+                self.chapterInfo = chapterInfo
+                self.imageSource = imageSource
+                self.secondsRange = secondsRange
         }
-
-        if mn != 0 {
-            final += String(format: "%0.2d:", mn)
-        } else {
-            final += "00:"
+        
+        var displayName: String {
+            chapterInfo.displayName
         }
-
-        final += String(format: "%0.2d", s)
-
-        return final
+        var subtitle: String? = nil
+        var showTitle: Bool = true
+        
+        func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
+            .init()
+        }
+        
+        func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
+            [imageSource]
+        }
     }
 }

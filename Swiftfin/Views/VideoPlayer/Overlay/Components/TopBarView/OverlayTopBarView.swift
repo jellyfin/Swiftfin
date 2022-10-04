@@ -26,19 +26,6 @@ extension ItemVideoPlayer.Overlay {
             print("Top bar init-ed")
         }
 
-//        let item: BaseItemDto
-//        let eventSubject: CurrentValueSubject<VLCVideoPlayer.Event?, Never>
-        
-//        init(item: BaseItemDto, eventSubject: CurrentValueSubject<VLCVideoPlayer.Event?, Never>) {
-//            self.item = item
-//            self.eventSubject = eventSubject
-//
-//            print("top bar init-ed")
-//        }
-        
-//        let item: BaseItemDto
-//        let eventSubject: CurrentValueSubject<VLCVideoPlayer.Event?, Never>
-
         var body: some View {
             VStack(alignment: .EpisodeSeriesAlignmentGuide) {
                 HStack(alignment: .center) {
@@ -79,12 +66,6 @@ extension ItemVideoPlayer.Overlay {
                 }
             }
         }
-        
-//        static func == (
-//            lhs: ItemVideoPlayer.Overlay.TopBarView,
-//            rhs: ItemVideoPlayer.Overlay.TopBarView) -> Bool {
-//                lhs.viewModel.isAspectFilled == rhs.viewModel.isAspectFilled
-//        }
     }
 }
 
