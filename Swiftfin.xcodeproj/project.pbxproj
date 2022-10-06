@@ -515,6 +515,7 @@
 		E1CCF12E28ABF989006CAC9E /* PosterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF12D28ABF989006CAC9E /* PosterType.swift */; };
 		E1CCF12F28ABF989006CAC9E /* PosterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF12D28ABF989006CAC9E /* PosterType.swift */; };
 		E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */; };
+		E1CD13EF28EF364100CB46CA /* DetectOrientationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */; };
 		E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */; };
 		E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */; };
 		E1D3043228D175CE00587289 /* StaticLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3043128D175CE00587289 /* StaticLibraryViewModel.swift */; };
@@ -1005,6 +1006,7 @@
 		E1CCC3D128C858A50020ED54 /* UserProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileButton.swift; sourceTree = "<group>"; };
 		E1CCF12D28ABF989006CAC9E /* PosterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterType.swift; sourceTree = "<group>"; };
 		E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterHStack.swift; sourceTree = "<group>"; };
+		E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectOrientationModifier.swift; sourceTree = "<group>"; };
 		E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		E1D3043128D175CE00587289 /* StaticLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticLibraryViewModel.swift; sourceTree = "<group>"; };
@@ -1796,6 +1798,7 @@
 			isa = PBXGroup;
 			children = (
 				E11CEB8A28998552003E74C7 /* iOSViewExtensions.swift */,
+				E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */,
 				E113133028BDB6D600930F75 /* NavBarDrawerButtons */,
 				E11895B12893842D0042947B /* NavBarOffset */,
 			);
@@ -2338,9 +2341,9 @@
 		E1E9017D28DAB12B001B1594 /* TopBarView */ = {
 			isa = PBXGroup;
 			children = (
-				E11245B628D97ED200D8A977 /* OverlayTopBarView.swift */,
 				E1E9017E28DAB15F001B1594 /* OverlayActionButtons.swift */,
 				E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */,
+				E11245B628D97ED200D8A977 /* OverlayTopBarView.swift */,
 			);
 			path = TopBarView;
 			sourceTree = "<group>";
@@ -2998,6 +3001,7 @@
 				E113133228BDC72000930F75 /* FilterView.swift in Sources */,
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E11895AC289383EE0042947B /* NavBarOffsetModifier.swift in Sources */,
+				E1CD13EF28EF364100CB46CA /* DetectOrientationModifier.swift in Sources */,
 				E113133628BE98AA00930F75 /* FilterDrawerButton.swift in Sources */,
 				E13DD3FC2717EAE8009D4DAF /* UserListView.swift in Sources */,
 				E18E01DE288747230022598C /* iPadOSSeriesItemView.swift in Sources */,

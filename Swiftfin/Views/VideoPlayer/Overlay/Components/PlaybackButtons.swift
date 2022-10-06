@@ -25,7 +25,7 @@ extension ItemVideoPlayer.Overlay {
         var body: some View {
             HStack(spacing: 20) {
                 Button {
-                    viewModel.eventSubject.send(.jumpBackward(jumpBackwardLength.rawValue))
+                    viewModel.proxy.jumpBackward(jumpBackwardLength.rawValue)
                 } label: {
                     Image(systemName: jumpBackwardLength.backwardImageLabel)
                         .font(.system(size: 24, weight: .heavy, design: .default))
@@ -34,9 +34,9 @@ extension ItemVideoPlayer.Overlay {
                 Button {
                     switch viewModel.state {
                     case .playing:
-                        viewModel.eventSubject.send(.pause)
+                        viewModel.proxy.pause()
                     default:
-                        viewModel.eventSubject.send(.play)
+                        viewModel.proxy.play()
                     }
                 } label: {
                     Group {
@@ -53,7 +53,7 @@ extension ItemVideoPlayer.Overlay {
                 }
 
                 Button {
-                    viewModel.eventSubject.send(.jumpForward(jumpForwardLength.rawValue))
+                    viewModel.proxy.jumpForward(jumpForwardLength.rawValue)
                 } label: {
                     Image(systemName: jumpForwardLength.forwardImageLabel)
                         .font(.system(size: 24, weight: .heavy, design: .default))
@@ -77,7 +77,7 @@ extension ItemVideoPlayer.Overlay {
         var body: some View {
             HStack(spacing: 70) {
                 Button {
-                    viewModel.eventSubject.send(.jumpBackward(jumpBackwardLength.rawValue))
+                    viewModel.proxy.jumpBackward(jumpBackwardLength.rawValue)
                 } label: {
                     Image(systemName: jumpBackwardLength.backwardImageLabel)
                         .font(.system(size: 36, weight: .bold, design: .default))
@@ -86,9 +86,9 @@ extension ItemVideoPlayer.Overlay {
                 Button {
                     switch viewModel.state {
                     case .playing:
-                        viewModel.eventSubject.send(.pause)
+                        viewModel.proxy.pause()
                     default:
-                        viewModel.eventSubject.send(.play)
+                        viewModel.proxy.play()
                     }
                 } label: {
                     Group {
@@ -107,7 +107,7 @@ extension ItemVideoPlayer.Overlay {
                 .frame(width: 100)
 
                 Button {
-                    viewModel.eventSubject.send(.jumpForward(jumpForwardLength.rawValue))
+                    viewModel.proxy.jumpForward(jumpForwardLength.rawValue)
                 } label: {
                     Image(systemName: jumpForwardLength.forwardImageLabel)
                         .font(.system(size: 36, weight: .bold, design: .default))

@@ -12,6 +12,46 @@ import MediaPlayer
 import SwiftUI
 import VLCUI
 
+class TimerProxy: ObservableObject {
+    
+    @Published
+    var isActive = false
+    @Published
+    var wasForceStopped = false
+    
+    private var dismissTimer: Timer?
+    
+    func start(_ interval: Double) {
+        print("Started timer")
+        isActive = true
+        wasForceStopped = false
+        restartOverlayDismissTimer(interval: interval)
+    }
+    
+    func stop() {
+        print("Force stopped timer")
+        dismissTimer?.invalidate()
+        wasForceStopped = true
+    }
+    
+    private func restartOverlayDismissTimer(interval: Double) {
+        dismissTimer?.invalidate()
+        dismissTimer = Timer.scheduledTimer(
+            timeInterval: interval,
+            target: self,
+            selector: #selector(dismissTimerFired),
+            userInfo: nil,
+            repeats: false
+        )
+    }
+    
+    @objc
+    private func dismissTimerFired() {
+        isActive = false
+        wasForceStopped = false
+    }
+}
+
 struct CustomizeView: View {
     
     @EnvironmentObject
@@ -35,7 +75,7 @@ struct CustomizeView: View {
             
             Form {
                 Button {
-                    viewModel.eventSubject.send(.jumpBackward(10))
+                    viewModel.proxy.jumpBackward(10)
                 } label: {
                     Text("Here")
                 }
@@ -78,7 +118,6 @@ extension EnvironmentValues {
     }
 }
 
-
 struct ItemVideoPlayer: View {
     
     enum OverlayType {
@@ -90,6 +129,8 @@ struct ItemVideoPlayer: View {
     var viewModel: ItemVideoPlayerManager
     @ObservedObject
     private var currentSecondsHandler: CurrentSecondsHandler = .init()
+    @ObservedObject
+    private var overlayTimer: TimerProxy = .init()
     @State
     private var currentSeconds: Int = 0
     @State
@@ -97,68 +138,72 @@ struct ItemVideoPlayer: View {
 
     @ViewBuilder
     func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
-        GeometryReader { reader in
-            HStack(spacing : 0) {
-                ZStack(alignment: .bottom) {
-                    VLCVideoPlayer(configuration: viewModel.configuration)
-                        .eventSubject(viewModel.eventSubject)
-                        .onTicksUpdated {
-                            viewModel.onTicksUpdated(ticks: $0, playbackInformation: $1)
-                            currentSecondsHandler.onTicksUpdated(ticks: $0, playbackInformation: $1)
-                        }
-                        .onStateUpdated(viewModel.onStateUpdated(state:playbackInformation:))
+        HStack(spacing : 0) {
+            ZStack(alignment: .bottom) {
+                VLCVideoPlayer(configuration: viewModel.configuration)
+                    .proxy(viewModel.proxy)
+                    .onTicksUpdated {
+                        viewModel.onTicksUpdated(ticks: $0, playbackInformation: $1)
+                        currentSecondsHandler.onTicksUpdated(ticks: $0, playbackInformation: $1)
+                    }
+                    .onStateUpdated(viewModel.onStateUpdated(state:playbackInformation:))
 
-                    GestureView()
-                        .onPinch { state, scale in
-                            guard state == .began || state == .changed else { return }
-                            if scale > 1, !viewModel.isAspectFilled {
-                                viewModel.isAspectFilled.toggle()
-                                UIView.animate(withDuration: 0.2) {
-                                    viewModel.eventSubject.send(.aspectFill(1))
-                                }
-                            } else if scale < 1, viewModel.isAspectFilled {
-                                viewModel.isAspectFilled.toggle()
-                                UIView.animate(withDuration: 0.2) {
-                                    viewModel.eventSubject.send(.aspectFill(0))
-                                }
+                GestureView()
+                    .onPinch { state, scale in
+                        guard state == .began || state == .changed else { return }
+                        if scale > 1, !viewModel.isAspectFilled {
+                            viewModel.isAspectFilled.toggle()
+                            UIView.animate(withDuration: 0.2) {
+                                viewModel.proxy.aspectFill(1)
                             }
-                        }
-                        .onTap {
-                            if currentOverlayType == nil {
-                                currentOverlayType = .main
-                            } else {
-                                currentOverlayType = nil
-                            }
-                        }
-                    
-                    Group {
-                        if let currentOverlayType {
-                            switch currentOverlayType {
-                            case .main:
-                                Overlay()
-                            case .chapters:
-                                Overlay.ChapterOverlay()
+                        } else if scale < 1, viewModel.isAspectFilled {
+                            viewModel.isAspectFilled.toggle()
+                            UIView.animate(withDuration: 0.2) {
+                                viewModel.proxy.aspectFill(0)
                             }
                         }
                     }
-                    .environmentObject(viewModel)
-                    .environmentObject(currentSecondsHandler)
-                    .environment(\.currentOverlayType, $currentOverlayType)
-                }
-                .onTapGesture {
-                    print("Parent got tap gesture")
-                }
-                .animation(.linear(duration: 0.1), value: currentOverlayType)
+                    .onTap {
+                        if currentOverlayType == nil {
+                            currentOverlayType = .main
+                        } else {
+                            currentOverlayType = nil
+                        }
+                    }
                 
-                if viewModel.presentSettings {
-                    CustomizeView()
-                        .environmentObject(viewModel)
-                        .frame(maxWidth: reader.size.width * 0.4)
-                        .transition(.asymmetric(
-                            insertion: .opacity,
-                            removal: .move(edge: .trailing)))
+                Group {
+                    if let currentOverlayType {
+                        switch currentOverlayType {
+                        case .main:
+                            Overlay()
+                                .environmentObject(overlayTimer)
+                        case .chapters:
+                            Overlay.ChapterOverlay()
+                        }
+                    }
                 }
+                .environmentObject(viewModel)
+                .environmentObject(currentSecondsHandler)
+                .environment(\.currentOverlayType, $currentOverlayType)
             }
+            .onTapGesture {
+                print("Parent got tap gesture")
+                overlayTimer.start(5)
+            }
+            .animation(.linear(duration: 0.1), value: currentOverlayType)
+            
+//            if viewModel.presentSettings {
+//                CustomizeView()
+//                    .environmentObject(viewModel)
+//                    .frame(maxWidth: reader.size.width * 0.4)
+//                    .transition(.asymmetric(
+//                        insertion: .opacity,
+//                        removal: .move(edge: .trailing)))
+//            }
+        }
+        .onChange(of: overlayTimer.isActive) { newValue in
+            guard !newValue else { return }
+            currentOverlayType = nil
         }
     }
 
@@ -181,7 +226,6 @@ struct ItemVideoPlayer: View {
                 loadingView
             }
         }
-        .supportedOrientations(UIDevice.current.userInterfaceIdiom == .pad ? .all : .landscape)
         .navigationBarHidden(true)
         .statusBar(hidden: true)
         .ignoresSafeArea()
@@ -196,14 +240,5 @@ extension MPVolumeView {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
             slider?.value = volume
         }
-    }
-}
-
-extension ItemVideoPlayer {
-    
-    enum PlaybackButtonLocation {
-        case middle
-        case bottomLeft
-        case bottomRight
     }
 }

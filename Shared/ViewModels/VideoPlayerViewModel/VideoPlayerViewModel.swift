@@ -31,7 +31,7 @@ class ItemVideoPlayerViewModel: ObservableObject {
     var subtitlesEnabled: Bool = false {
         willSet {
             let trackIndex = newValue ? selectedSubtitleTrackIndex : -1
-            eventSubject.send(.setSubtitleTrack(.absolute(trackIndex)))
+//            eventSubject.send(.setSubtitleTrack(.absolute(trackIndex)))
         }
     }
 
@@ -47,8 +47,8 @@ class ItemVideoPlayerViewModel: ObservableObject {
     var isAspectFilled: Bool = false
     @Published
     var presentSettings: Bool = false
-
-    var eventSubject: CurrentValueSubject<VLCVideoPlayer.Event?, Never> = .init(nil)
+    
+    var proxy: VLCVideoPlayer.Proxy = .init()
     
     var configuration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
@@ -81,7 +81,7 @@ class ItemVideoPlayerViewModel: ObservableObject {
     }
 
     func jump(to ticks: Int32) {
-        eventSubject.send(.setTime(.ticks(ticks)))
+//        eventSubject.send(.setTime(.ticks(ticks)))
     }
 
     func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {

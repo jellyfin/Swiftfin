@@ -23,6 +23,8 @@ extension ItemVideoPlayer.Overlay {
         private var viewModel: ItemVideoPlayerViewModel
         @EnvironmentObject
         private var currentSecondsHandler: CurrentSecondsHandler
+        @EnvironmentObject
+        private var overlayTimer: TimerProxy
 
         @State
         private var currentSeconds: Int = 0
@@ -36,67 +38,58 @@ extension ItemVideoPlayer.Overlay {
         }
 
         var body: some View {
-            HStack(spacing: 20) {
+            CapsuleSlider(progress: $progress)
+                .topContent {
+                    HStack {
+                        Text(viewModel.item.displayName)
+                            .font(.title3)
+                            .fontWeight(.bold)
 
-                
-//                    HStack(spacing: 1) {
-//
-//                        Text(Double(currentSeconds).timeLabel)
-//
-//                        Text("/")
-//
-//                        Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
-//                    }
-//                    .font(.subheadline)
-//                    .foregroundColor(.gray)
-                    
-                CapsuleSlider(progress: $progress)
-                    .onEditingChanged { isEditing in
-                        isScrubbing = isEditing
+                        Spacer()
                     }
-                    .frame(height: 50)
-            }
-            .padding(.horizontal, 50)
-            .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
-                guard !isScrubbing else { return }
-                self.currentSeconds = newValue
-                self.progress = CGFloat(newValue) / CGFloat(viewModel.item.runTimeSeconds)
-            }
-            .onChange(of: isScrubbing) { newValue in
-                guard !newValue else { return }
-                let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
-                viewModel.eventSubject.send(.setTime(.seconds(Int32(scrubbedSeconds))))
-            }
-            .onChange(of: progress) { _ in
-                guard isScrubbing else { return }
-                let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
-                self.currentSeconds = scrubbedSeconds
-            }
-            .animation(.linear(duration: 0.1), value: isScrubbing)
+                    .padding(.bottom, 5)
+                }
+                .bottomContent {
+                    HStack {
+                        Text(Double(currentSeconds).timeLabel)
+                        
+                        Spacer()
+                        
+                        Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
+                    }
+                    .font(.caption)
+                    .padding(5)
+                }
+                .onEditingChanged { isEditing in
+                    isScrubbing = isEditing
+                }
+                .onRateRequested { <#CGFloat#> in
+                    <#code#>
+                }
+                .frame(height: 100)
+                .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
+                    guard !isScrubbing else { return }
+                    self.currentSeconds = newValue
+                    self.progress = CGFloat(newValue) / CGFloat(viewModel.item.runTimeSeconds)
+                }
+                .onChange(of: isScrubbing) { newValue in
+                    
+                    if newValue {
+                        overlayTimer.stop()
+                    } else {
+                        overlayTimer.start(5)
+                    }
+                    
+                    guard !newValue else { return }
+                    let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
+                    viewModel.proxy.setTime(.seconds(Int32(scrubbedSeconds)))
+                }
+                .onChange(of: progress) { _ in
+                    guard isScrubbing else { return }
+                    let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
+                    self.currentSeconds = scrubbedSeconds
+                }
+                .animation(.linear(duration: 0.1), value: isScrubbing)
         }
     }
 }
-
-//struct BottomBarView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ZStack {
-//            Color.red
-//                .opacity(0.2)
-//
-//            VStack {
-//                Spacer()
-//
-//                ItemVideoPlayer.Overlay.BottomBarView(viewModel: .init(
-//                    playbackURL: URL(string: "https://apple.com")!,
-//                    item: .placeHolder,
-//                    audioStreams: [],
-//                    subtitleStreams: []))
-//                .padding(.horizontal, 50)
-//                .padding(.bottom)
-//            }
-//        }
-//        .ignoresSafeArea()
-//        .preferredColorScheme(.dark)
-//        .previewInterfaceOrientation(.landscapeRight)
-//    }
-//}

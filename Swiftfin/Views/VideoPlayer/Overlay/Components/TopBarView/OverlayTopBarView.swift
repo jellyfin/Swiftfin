@@ -18,7 +18,6 @@ extension ItemVideoPlayer.Overlay {
 
         @EnvironmentObject
         private var router: ItemVideoPlayerCoordinator.Router
-        
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
         
@@ -30,7 +29,7 @@ extension ItemVideoPlayer.Overlay {
             VStack(alignment: .EpisodeSeriesAlignmentGuide) {
                 HStack(alignment: .center) {
                     Button {
-                        viewModel.eventSubject.send(.cancel)
+                        viewModel.proxy.stop()
                         router.dismissCoordinator()
                     } label: {
                         Image(systemName: "xmark")
@@ -69,25 +68,27 @@ extension ItemVideoPlayer.Overlay {
     }
 }
 
-//struct TopBarView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ZStack {
-//            Color.red
-//                .opacity(0.2)
-//
-//            VStack {
-//                ItemVideoPlayer.Overlay.TopBarView(viewModel: .init(
-//                    playbackURL: URL(string: "https://apple.com")!,
-//                    item: .placeHolder,
-//                    audioStreams: [],
-//                    subtitleStreams: []))
-//                .padding(.horizontal, 50)
-//
-//                Spacer()
-//            }
-//        }
-//        .ignoresSafeArea()
-//        .preferredColorScheme(.dark)
-//        .previewInterfaceOrientation(.landscapeRight)
-//    }
-//}
+struct TopBarView_Previews: PreviewProvider {
+    static var previews: some View {
+        ZStack {
+            Color.red
+                .opacity(0.2)
+
+            VStack {
+                ItemVideoPlayer.Overlay.TopBarView()
+                    .environmentObject(ItemVideoPlayerViewModel(
+                        playbackURL: URL(string: "https://apple.com")!,
+                        item: .placeHolder,
+                        audioStreams: [],
+                        subtitleStreams: [],
+                        chapters: []))
+                .padding(.horizontal, 50)
+
+                Spacer()
+            }
+        }
+        .ignoresSafeArea()
+        .preferredColorScheme(.dark)
+        .previewInterfaceOrientation(.landscapeRight)
+    }
+}

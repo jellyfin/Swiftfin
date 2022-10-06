@@ -14,8 +14,11 @@ extension ItemVideoPlayer.Overlay {
 
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
-
-        var body: some View {
+        @State
+        private var deviceOrientation: UIDeviceOrientation = .unknown
+        
+        @ViewBuilder
+        private var barButtons: some View {
             HStack(spacing: 0) {
                 if !viewModel.subtitleStreams.isEmpty {
                     Button {
@@ -36,12 +39,12 @@ extension ItemVideoPlayer.Overlay {
                     if viewModel.isAspectFilled {
                         viewModel.isAspectFilled.toggle()
                         UIView.animate(withDuration: 0.2) {
-                            viewModel.eventSubject.send(.aspectFill(0))
+                            viewModel.proxy.aspectFill(0)
                         }
                     } else {
                         viewModel.isAspectFilled.toggle()
                         UIView.animate(withDuration: 0.2) {
-                            viewModel.eventSubject.send(.aspectFill(1))
+                            viewModel.proxy.aspectFill(1)
                         }
                     }
                 } label: {
@@ -54,9 +57,18 @@ extension ItemVideoPlayer.Overlay {
                     }
                     .frame(width: 50, height: 50)
                 }
+            }
+        }
+
+        var body: some View {
+            HStack(spacing: 0) {
+                if deviceOrientation.isLandscape {
+                    barButtons
+                }
 
                 OverlayMenu()
             }
+            .detectOrientation($deviceOrientation)
         }
     }
 }

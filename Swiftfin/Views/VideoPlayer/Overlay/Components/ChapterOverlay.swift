@@ -15,9 +15,9 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
         @EnvironmentObject
+        private var overlayTimer: TimerProxy
+        @EnvironmentObject
         private var secondsHandler: CurrentSecondsHandler
-        @State
-        private var currentChapterID: Int?
         
         var body: some View {
             VStack {
@@ -68,7 +68,7 @@ extension ItemVideoPlayer.Overlay {
                     }
                     .onSelect { info in
                         let seconds = Int32(info.chapterInfo.startTimeSeconds)
-                        viewModel.eventSubject.send(.setTime(.seconds(seconds)))
+                        viewModel.proxy.setTime(.seconds(seconds))
                     }
                     .onAppear {
                         if let currentChapter = viewModel.chapters.first(where: { $0.secondsRange.contains(secondsHandler.currentSeconds) }) {

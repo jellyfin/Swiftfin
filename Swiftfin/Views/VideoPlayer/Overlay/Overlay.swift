@@ -19,17 +19,13 @@ extension ItemVideoPlayer {
             ZStack {
                 VStack {
                     TopBarView()
-                        .frame(height: 50)
                         .padding(.horizontal, 50)
-                        .padding(.top)
 
                     Spacer()
                         .allowsHitTesting(false)
 
                     BottomBarView()
-                        .frame(height: 50)
-                        .padding(.horizontal, 50)
-                        .padding(.bottom)
+                        .padding(50)
                 }
                 
                 LargePlaybackButtons()
