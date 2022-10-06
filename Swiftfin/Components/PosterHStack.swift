@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
 import SwiftUI
 
 // TODO: Remove `Header` and `TrailingContent` and create `HeaderPosterHStack`
@@ -150,10 +149,9 @@ extension PosterHStack where Header == EmptyView,
 
 extension PosterHStack {
 
-    @ViewBuilder
     func header<H: View>(@ViewBuilder _ header: @escaping () -> H)
     -> PosterHStack<H, Item, Content, ImageOverlay, ContextMenu, TrailingContent> {
-        PosterHStack<H, Item, Content, ImageOverlay, ContextMenu, TrailingContent>(
+        .init(
             header: header,
             title: title,
             type: type,
@@ -172,10 +170,9 @@ extension PosterHStack {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    @ViewBuilder
     func content<C: View>(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> C)
     -> PosterHStack<Header, Item, C, ImageOverlay, ContextMenu, TrailingContent> {
-        PosterHStack<Header, Item, C, ImageOverlay, ContextMenu, TrailingContent>(
+        .init(
             header: header,
             title: title,
             type: type,
@@ -190,10 +187,9 @@ extension PosterHStack {
         )
     }
 
-    @ViewBuilder
     func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (PosterButtonType<Item>) -> O)
     -> PosterHStack<Header, Item, Content, O, ContextMenu, TrailingContent> {
-        PosterHStack<Header, Item, Content, O, ContextMenu, TrailingContent>(
+        .init(
             header: header,
             title: title,
             type: type,
@@ -208,10 +204,9 @@ extension PosterHStack {
         )
     }
 
-    @ViewBuilder
     func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (PosterButtonType<Item>) -> M)
     -> PosterHStack<Header, Item, Content, ImageOverlay, M, TrailingContent> {
-        PosterHStack<Header, Item, Content, ImageOverlay, M, TrailingContent>(
+        .init(
             header: header,
             title: title,
             type: type,
@@ -226,10 +221,9 @@ extension PosterHStack {
         )
     }
 
-    @ViewBuilder
     func trailing<T: View>(@ViewBuilder _ trailingContent: @escaping () -> T)
     -> PosterHStack<Header, Item, Content, ImageOverlay, ContextMenu, T> {
-        PosterHStack<Header, Item, Content, ImageOverlay, ContextMenu, T>(
+        .init(
             header: header,
             title: title,
             type: type,

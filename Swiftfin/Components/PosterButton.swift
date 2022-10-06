@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: Look at something better for accomadating loading/noResults/other types
+
 struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
 
     private var state: PosterButtonType<Item>
@@ -115,10 +117,9 @@ extension PosterButton {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    @ViewBuilder
     func content<C: View>(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> C)
     -> PosterButton<Item, C, ImageOverlay, ContextMenu> {
-        PosterButton<Item, C, ImageOverlay, ContextMenu>(
+        .init(
             state: state,
             type: type,
             itemScale: itemScale,
@@ -131,10 +132,9 @@ extension PosterButton {
         )
     }
 
-    @ViewBuilder
     func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (PosterButtonType<Item>) -> O)
     -> PosterButton<Item, Content, O, ContextMenu> {
-        PosterButton<Item, Content, O, ContextMenu>(
+        .init(
             state: state,
             type: type,
             itemScale: itemScale,
@@ -147,10 +147,9 @@ extension PosterButton {
         )
     }
 
-    @ViewBuilder
     func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (PosterButtonType<Item>) -> M)
     -> PosterButton<Item, Content, ImageOverlay, M> {
-        PosterButton<Item, Content, ImageOverlay, M>(
+        .init(
             state: state,
             type: type,
             itemScale: itemScale,
