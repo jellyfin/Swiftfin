@@ -10,10 +10,10 @@ import SwiftUI
 
 struct GestureView: UIViewRepresentable {
 
-    private var onPinch: (UIGestureRecognizer.State, CGFloat) -> Void
-    private var onTap: () -> Void
-    private var onVerticalPan: (CGPoint, CGPoint) -> Void
-    private var onHorizontalPan: (CGPoint, CGPoint) -> Void
+    private var onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?
+    private var onTap: (() -> Void)?
+    private var onVerticalPan: ((CGPoint, CGPoint) -> Void)?
+    private var onHorizontalPan: ((CGPoint, CGPoint) -> Void)?
 
     func makeUIView(context: Context) -> UIGestureView {
         UIGestureView(
@@ -28,13 +28,6 @@ struct GestureView: UIViewRepresentable {
 }
 
 extension GestureView {
-
-    init() {
-        self.onPinch = { _, _ in }
-        self.onTap = {}
-        self.onVerticalPan = { _, _ in }
-        self.onHorizontalPan = { _, _ in }
-    }
 
     func onPinch(_ action: @escaping (UIGestureRecognizer.State, CGFloat) -> Void) -> Self {
         copy(modifying: \.onPinch, with: action)
@@ -55,16 +48,16 @@ extension GestureView {
 
 class UIGestureView: UIView {
 
-    private let onPinch: (UIGestureRecognizer.State, CGFloat) -> Void
-    private let onTap: () -> Void
-    private let onVerticalPan: (CGPoint, CGPoint) -> Void
-    private let onHorizontalPan: (CGPoint, CGPoint) -> Void
+    private let onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?
+    private let onTap: (() -> Void)?
+    private let onVerticalPan: ((CGPoint, CGPoint) -> Void)?
+    private let onHorizontalPan: ((CGPoint, CGPoint) -> Void)?
 
     init(
-        onPinch: @escaping (UIGestureRecognizer.State, CGFloat) -> Void,
-        onTap: @escaping () -> Void,
-        onVerticalPan: @escaping (CGPoint, CGPoint) -> Void,
-        onHorizontalPan: @escaping (CGPoint, CGPoint) -> Void
+        onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?,
+        onTap: (() -> Void)?,
+        onVerticalPan: ((CGPoint, CGPoint) -> Void)?,
+        onHorizontalPan: ((CGPoint, CGPoint) -> Void)?
     ) {
         self.onPinch = onPinch
         self.onTap = onTap
@@ -98,25 +91,25 @@ class UIGestureView: UIView {
 
     @objc
     private func didPerformPinch(_ gestureRecognizer: UIPinchGestureRecognizer) {
-        onPinch(gestureRecognizer.state, gestureRecognizer.scale)
+        onPinch?(gestureRecognizer.state, gestureRecognizer.scale)
     }
 
     @objc
     private func didPerformTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        onTap()
+        onTap?()
     }
 
     @objc
     private func didPerformVerticalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
         let location = gestureRecognizer.location(in: self)
         let translation = gestureRecognizer.translation(in: self)
-        onVerticalPan(location, translation)
+        onVerticalPan?(location, translation)
     }
 
     @objc
     private func didPerformHorizontalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
         let location = gestureRecognizer.location(in: self)
         let translation = gestureRecognizer.translation(in: self)
-        onHorizontalPan(location, translation)
+        onHorizontalPan?(location, translation)
     }
 }

@@ -28,10 +28,13 @@ extension ItemVideoPlayer.Overlay {
 
         @State
         private var currentSeconds: Int = 0
-        @State
-        private var isScrubbing: Bool = false
+        @Environment(\.isScrubbing)
+        @Binding
+        private var isScrubbing: Bool
         @State
         private var progress: CGFloat = 0
+        @State
+        private var scrubbingRate: CGFloat = 1
 
         init() {
             print("bottom bar init-ed")
@@ -39,6 +42,7 @@ extension ItemVideoPlayer.Overlay {
 
         var body: some View {
             CapsuleSlider(progress: $progress)
+                .rate($scrubbingRate)
                 .topContent {
                     HStack {
                         Text(viewModel.item.displayName)
@@ -50,23 +54,37 @@ extension ItemVideoPlayer.Overlay {
                     .padding(.bottom, 5)
                 }
                 .bottomContent {
-                    HStack {
-                        Text(Double(currentSeconds).timeLabel)
+                    ZStack {
+                        HStack {
+                            Text(Double(currentSeconds).timeLabel)
+                                .monospacedDigit()
+                            
+                            if isScrubbing {
+                                Text(Double(currentSecondsHandler.currentSeconds).timeLabel)
+                                    .monospacedDigit()
+                                    .transition(.opacity)
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            Spacer()
+                            
+                            Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
+                                .monospacedDigit()
+                        }
                         
-                        Spacer()
-                        
-                        Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
+                        if scrubbingRate < 1 {
+                            Text("Hi-Speed Scrubbing")
+                                .frame(maxWidth: .infinity)
+                                .transition(.opacity)
+                        }
                     }
                     .font(.caption)
                     .padding(5)
                 }
                 .onEditingChanged { isEditing in
                     isScrubbing = isEditing
+                    scrubbingRate = 1
                 }
-                .onRateRequested { <#CGFloat#> in
-                    <#code#>
-                }
-                .frame(height: 100)
                 .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
                     guard !isScrubbing else { return }
                     self.currentSeconds = newValue
@@ -90,6 +108,7 @@ extension ItemVideoPlayer.Overlay {
                     self.currentSeconds = scrubbedSeconds
                 }
                 .animation(.linear(duration: 0.1), value: isScrubbing)
+                .animation(.linear(duration: 0.1), value: scrubbingRate)
         }
     }
 }

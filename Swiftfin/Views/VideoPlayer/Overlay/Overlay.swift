@@ -14,27 +14,38 @@ import VLCUI
 extension ItemVideoPlayer {
 
     struct Overlay: View {
+        
+        @Environment(\.isScrubbing)
+        @Binding
+        private var isScrubbing: Bool
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets
+        
+        init() { }
 
         var body: some View {
             ZStack {
                 VStack {
                     TopBarView()
-                        .padding(.horizontal, 50)
+                        .padding(safeAreaInsets)
+                        .opacity(isScrubbing ? 0 : 1)
 
                     Spacer()
                         .allowsHitTesting(false)
 
                     BottomBarView()
-                        .padding(50)
+                        .padding(safeAreaInsets)
                 }
                 
                 LargePlaybackButtons()
+                    .opacity(isScrubbing ? 0 : 1)
             }
             .background {
                 Color.black
-                    .opacity(0.5)
+                    .opacity(isScrubbing ? 0 : 0.5)
                     .allowsHitTesting(false)
             }
+            .animation(.linear(duration: 0.1), value: isScrubbing)
         }
     }
 }

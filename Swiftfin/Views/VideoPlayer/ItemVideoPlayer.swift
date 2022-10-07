@@ -12,76 +12,37 @@ import MediaPlayer
 import SwiftUI
 import VLCUI
 
-class TimerProxy: ObservableObject {
-    
-    @Published
-    var isActive = false
-    @Published
-    var wasForceStopped = false
-    
-    private var dismissTimer: Timer?
-    
-    func start(_ interval: Double) {
-        print("Started timer")
-        isActive = true
-        wasForceStopped = false
-        restartOverlayDismissTimer(interval: interval)
-    }
-    
-    func stop() {
-        print("Force stopped timer")
-        dismissTimer?.invalidate()
-        wasForceStopped = true
-    }
-    
-    private func restartOverlayDismissTimer(interval: Double) {
-        dismissTimer?.invalidate()
-        dismissTimer = Timer.scheduledTimer(
-            timeInterval: interval,
-            target: self,
-            selector: #selector(dismissTimerFired),
-            userInfo: nil,
-            repeats: false
-        )
-    }
-    
-    @objc
-    private func dismissTimerFired() {
-        isActive = false
-        wasForceStopped = false
+extension UIApplication {
+    var keyWindow: UIWindow? {
+        connectedScenes
+            .compactMap {
+                $0 as? UIWindowScene
+            }
+            .flatMap {
+                $0.windows
+            }
+            .first {
+                $0.isKeyWindow
+            }
     }
 }
 
-struct CustomizeView: View {
-    
-    @EnvironmentObject
-    var viewModel: ItemVideoPlayerViewModel
-    
-    var body: some View {
-        VStack {
-            HStack  {
-                Button {
-                    withAnimation {
-                        viewModel.presentSettings = false
-                    }
-                } label: {
-                    Image(systemName: "xmark")
-                }
-                
-                Text("Hello there")
-                
-                Spacer()
-            }
-            
-            Form {
-                Button {
-                    viewModel.proxy.jumpBackward(10)
-                } label: {
-                    Text("Here")
-                }
+struct SafeAreaInsetsKey: EnvironmentKey {
+    static var defaultValue: EdgeInsets {
+        UIApplication.shared.keyWindow?.safeAreaInsets.swiftUiInsets ?? .zero
+    }
+}
 
-            }
-        }
+extension EnvironmentValues {
+    var safeAreaInsets: EdgeInsets {
+        self[SafeAreaInsetsKey.self]
+    }
+}
+
+extension UIEdgeInsets {
+    
+    var swiftUiInsets: EdgeInsets {
+        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
     }
 }
 
@@ -107,17 +68,6 @@ class ItemVideoPlayerManager: ViewModel {
     }
 }
 
-private struct CurrentOverlayType: EnvironmentKey {
-    static let defaultValue: Binding<ItemVideoPlayer.OverlayType?> = .constant(nil)
-}
-
-extension EnvironmentValues {
-    var currentOverlayType: Binding<ItemVideoPlayer.OverlayType?> {
-        get { self[CurrentOverlayType.self] }
-        set { self[CurrentOverlayType.self] = newValue }
-    }
-}
-
 struct ItemVideoPlayer: View {
     
     enum OverlayType {
@@ -130,16 +80,18 @@ struct ItemVideoPlayer: View {
     @ObservedObject
     private var currentSecondsHandler: CurrentSecondsHandler = .init()
     @ObservedObject
+    private var flashContentProxy: FlashContentProxy = .init()
+    @ObservedObject
     private var overlayTimer: TimerProxy = .init()
     @State
-    private var currentSeconds: Int = 0
+    private var isScrubbing: Bool = false
     @State
     private var currentOverlayType: OverlayType?
 
     @ViewBuilder
     func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
         HStack(spacing : 0) {
-            ZStack(alignment: .bottom) {
+            ZStack {
                 VLCVideoPlayer(configuration: viewModel.configuration)
                     .proxy(viewModel.proxy)
                     .onTicksUpdated {
@@ -172,19 +124,24 @@ struct ItemVideoPlayer: View {
                     }
                 
                 Group {
-                    if let currentOverlayType {
-                        switch currentOverlayType {
-                        case .main:
-                            Overlay()
-                                .environmentObject(overlayTimer)
-                        case .chapters:
-                            Overlay.ChapterOverlay()
-                        }
+                    switch currentOverlayType {
+                    case .main:
+                        Overlay()
+                    case .chapters:
+                        Overlay.ChapterOverlay()
+                    case .none:
+                        EmptyView()
                     }
                 }
-                .environmentObject(viewModel)
+                .transition(.opacity)
                 .environmentObject(currentSecondsHandler)
+                .environmentObject(flashContentProxy)
+                .environmentObject(overlayTimer)
+                .environmentObject(viewModel)
                 .environment(\.currentOverlayType, $currentOverlayType)
+                .environment(\.isScrubbing, $isScrubbing)
+                
+                FlashContentView(proxy: flashContentProxy)
             }
             .onTapGesture {
                 print("Parent got tap gesture")
@@ -192,14 +149,7 @@ struct ItemVideoPlayer: View {
             }
             .animation(.linear(duration: 0.1), value: currentOverlayType)
             
-//            if viewModel.presentSettings {
-//                CustomizeView()
-//                    .environmentObject(viewModel)
-//                    .frame(maxWidth: reader.size.width * 0.4)
-//                    .transition(.asymmetric(
-//                        insertion: .opacity,
-//                        removal: .move(edge: .trailing)))
-//            }
+            // TODO: Add advanced menu
         }
         .onChange(of: overlayTimer.isActive) { newValue in
             guard !newValue else { return }
@@ -229,16 +179,5 @@ struct ItemVideoPlayer: View {
         .navigationBarHidden(true)
         .statusBar(hidden: true)
         .ignoresSafeArea()
-    }
-}
-
-extension MPVolumeView {
-    static func setVolume(_ volume: Float) {
-        let volumeView = MPVolumeView()
-        let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
-
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-            slider?.value = volume
-        }
     }
 }

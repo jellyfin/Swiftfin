@@ -20,6 +20,8 @@ extension ItemVideoPlayer.Overlay {
         private var router: ItemVideoPlayerCoordinator.Router
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
+        @State
+        private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
         
         init() {
             print("Top bar init-ed")
@@ -34,7 +36,6 @@ extension ItemVideoPlayer.Overlay {
                     } label: {
                         Image(systemName: "xmark")
                             .padding()
-                            .padding(.trailing, -10)
                     }
 
                     Text(viewModel.item.displayName)
@@ -48,7 +49,9 @@ extension ItemVideoPlayer.Overlay {
                     Spacer()
 
                     ItemVideoPlayer.Overlay.ActionButtons()
-                        .padding(.leading, 100)
+                        .if(deviceOrientation.isLandscape) { view in
+                            view.padding(.leading, 100)
+                        }
                 }
                 .font(.system(size: 24))
                 .tint(Color.white)
@@ -64,31 +67,32 @@ extension ItemVideoPlayer.Overlay {
                         .offset(y: -18)
                 }
             }
+            .detectOrientation($deviceOrientation)
         }
     }
 }
 
-struct TopBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            Color.red
-                .opacity(0.2)
-
-            VStack {
-                ItemVideoPlayer.Overlay.TopBarView()
-                    .environmentObject(ItemVideoPlayerViewModel(
-                        playbackURL: URL(string: "https://apple.com")!,
-                        item: .placeHolder,
-                        audioStreams: [],
-                        subtitleStreams: [],
-                        chapters: []))
-                .padding(.horizontal, 50)
-
-                Spacer()
-            }
-        }
-        .ignoresSafeArea()
-        .preferredColorScheme(.dark)
-        .previewInterfaceOrientation(.landscapeRight)
-    }
-}
+//struct TopBarView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ZStack {
+//            Color.red
+//                .opacity(0.2)
+//
+//            VStack {
+//                ItemVideoPlayer.Overlay.TopBarView()
+//                    .environmentObject(ItemVideoPlayerViewModel(
+//                        playbackURL: URL(string: "https://apple.com")!,
+//                        item: .placeHolder,
+//                        audioStreams: [],
+//                        subtitleStreams: [],
+//                        chapters: []))
+//                .padding(.horizontal, 50)
+//
+//                Spacer()
+//            }
+//        }
+//        .ignoresSafeArea()
+//        .preferredColorScheme(.dark)
+//        .previewInterfaceOrientation(.landscapeRight)
+//    }
+//}

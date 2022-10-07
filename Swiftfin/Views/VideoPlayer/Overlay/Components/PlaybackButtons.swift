@@ -73,14 +73,16 @@ extension ItemVideoPlayer.Overlay {
         
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
+        @State
+        private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
         
         var body: some View {
-            HStack(spacing: 70) {
+            HStack(spacing: deviceOrientation.isLandscape ? 70 : 0) {
                 Button {
                     viewModel.proxy.jumpBackward(jumpBackwardLength.rawValue)
                 } label: {
                     Image(systemName: jumpBackwardLength.backwardImageLabel)
-                        .font(.system(size: 36, weight: .bold, design: .default))
+                        .font(.system(size: 36, weight: .regular, design: .default))
                 }
 
                 Button {
@@ -110,11 +112,12 @@ extension ItemVideoPlayer.Overlay {
                     viewModel.proxy.jumpForward(jumpForwardLength.rawValue)
                 } label: {
                     Image(systemName: jumpForwardLength.forwardImageLabel)
-                        .font(.system(size: 36, weight: .bold, design: .default))
+                        .font(.system(size: 36, weight: .regular, design: .default))
                 }
             }
             .tint(Color.white)
             .foregroundColor(Color.white)
+            .detectOrientation($deviceOrientation)
         }
     }
 }
