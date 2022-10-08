@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// TODO: Check for if statements, look at ViewBuilder's buildIf
+// TODO: Change to `SeparatorHStack` with a result builder
 
 struct DotHStack: View {
 

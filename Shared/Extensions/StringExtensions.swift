@@ -16,6 +16,11 @@ extension String: Displayable {
 }
 
 extension String {
+    
+    func prepending(_ content: String) -> String {
+        content + self
+    }
+    
     func removeRegexMatches(pattern: String, replaceWith: String = "") -> String {
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: .caseInsensitive)

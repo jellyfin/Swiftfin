@@ -75,11 +75,11 @@ struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View,
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            topContent()
+        HStack(spacing: 0) {
+            leadingContent()
             
-            HStack(spacing: 0) {
-                leadingContent()
+            VStack(spacing: 0) {
+                topContent()
                 
                 ZStack(alignment: .leading) {
                     
@@ -112,10 +112,10 @@ struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View,
                     }
                 }
                 
-                trailingContent()
+                bottomContent()
             }
             
-            bottomContent()
+            trailingContent()
         }
         .animation(progressAnimation, value: progress)
         .animation(.linear(duration: 0.1), value: isEditing)

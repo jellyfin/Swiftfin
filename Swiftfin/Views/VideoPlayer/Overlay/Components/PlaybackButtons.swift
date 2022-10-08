@@ -50,6 +50,7 @@ extension ItemVideoPlayer.Overlay {
                         }
                     }
                     .font(.system(size: 28, weight: .heavy, design: .default))
+                    .frame(width: 50)
                 }
 
                 Button {
@@ -77,7 +78,7 @@ extension ItemVideoPlayer.Overlay {
         private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
         
         var body: some View {
-            HStack(spacing: deviceOrientation.isLandscape ? 70 : 0) {
+            HStack(spacing: deviceOrientation.isLandscape ? 70 : 30) {
                 Button {
                     viewModel.proxy.jumpBackward(jumpBackwardLength.rawValue)
                 } label: {

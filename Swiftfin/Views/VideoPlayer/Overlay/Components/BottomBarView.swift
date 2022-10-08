@@ -18,6 +18,10 @@ extension ItemVideoPlayer.Overlay {
         private var jumpBackwardLength
         @Default(.videoPlayerJumpBackward)
         private var jumpForwardLength
+        @Default(.VideoPlayer.Overlay.playbackButtonType)
+        private var playbackButtonType
+        @Default(.VideoPlayer.Overlay.timestampType)
+        private var timestampType
 
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
@@ -25,66 +29,61 @@ extension ItemVideoPlayer.Overlay {
         private var currentSecondsHandler: CurrentSecondsHandler
         @EnvironmentObject
         private var overlayTimer: TimerProxy
-
-        @State
-        private var currentSeconds: Int = 0
+        
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
+
+        @State
+        private var currentSeconds: Int = 0
         @State
         private var progress: CGFloat = 0
         @State
         private var scrubbingRate: CGFloat = 1
+        @State
+        private var negativeScrubbing: Bool = true
 
         init() {
             print("bottom bar init-ed")
+        }
+        
+        private var trailingTimeStamp: String {
+            if negativeScrubbing {
+                return Double(viewModel.item.runTimeSeconds - currentSeconds)
+                    .timeLabel
+                    .prepending("-")
+            } else {
+                return Double(viewModel.item.runTimeSeconds)
+                    .timeLabel
+            }
         }
 
         var body: some View {
             CapsuleSlider(progress: $progress)
                 .rate($scrubbingRate)
-                .topContent {
-                    HStack {
-                        Text(viewModel.item.displayName)
-                            .font(.title3)
-                            .fontWeight(.bold)
-
-                        Spacer()
-                    }
-                    .padding(.bottom, 5)
-                }
                 .bottomContent {
-                    ZStack {
-                        HStack {
-                            Text(Double(currentSeconds).timeLabel)
-                                .monospacedDigit()
-                            
-                            if isScrubbing {
-                                Text(Double(currentSecondsHandler.currentSeconds).timeLabel)
-                                    .monospacedDigit()
-                                    .transition(.opacity)
-                                    .foregroundColor(.gray)
-                            }
-                            
-                            Spacer()
-                            
-                            Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel)
-                                .monospacedDigit()
-                        }
-                        
-                        if scrubbingRate < 1 {
-                            Text("Hi-Speed Scrubbing")
-                                .frame(maxWidth: .infinity)
-                                .transition(.opacity)
+                    Group {
+                        switch timestampType {
+                        case .split:
+                            SplitTimeStamp(currentSeconds: $currentSeconds)
+                        case .compact:
+                            CompactTimeStamp(currentSeconds: $currentSeconds)
                         }
                     }
-                    .font(.caption)
                     .padding(5)
+                }
+                .leadingContent {
+                    if playbackButtonType == .compact {
+                        SmallPlaybackButtons()
+                            .frame(height: 50)
+                            .padding(.trailing)
+                    }
                 }
                 .onEditingChanged { isEditing in
                     isScrubbing = isEditing
                     scrubbingRate = 1
                 }
+                .padding()
                 .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
                     guard !isScrubbing else { return }
                     self.currentSeconds = newValue
@@ -109,6 +108,10 @@ extension ItemVideoPlayer.Overlay {
                 }
                 .animation(.linear(duration: 0.1), value: isScrubbing)
                 .animation(.linear(duration: 0.1), value: scrubbingRate)
+                .onAppear {
+                    currentSeconds = currentSecondsHandler.currentSeconds
+                    progress = CGFloat(currentSecondsHandler.currentSeconds) / CGFloat(viewModel.item.runTimeSeconds)
+                }
         }
     }
 }

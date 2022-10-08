@@ -264,6 +264,15 @@
 		E1267D3E271A1F46003C492E /* PreferenceUIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */; };
 		E126F741278A656C00A522BF /* ServerStreamType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E126F740278A656C00A522BF /* ServerStreamType.swift */; };
 		E126F742278A656C00A522BF /* ServerStreamType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E126F740278A656C00A522BF /* ServerStreamType.swift */; };
+		E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */; };
+		E129428628F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */; };
+		E129428828F0831F00796AC6 /* TimeStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428728F0831F00796AC6 /* TimeStamp.swift */; };
+		E129428A28F0BBD900796AC6 /* OverlayComponentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428928F0BBD900796AC6 /* OverlayComponentType.swift */; };
+		E129428B28F0BBD900796AC6 /* OverlayComponentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428928F0BBD900796AC6 /* OverlayComponentType.swift */; };
+		E129428D28F0BBE600796AC6 /* OverlayLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428C28F0BBE600796AC6 /* OverlayLocation.swift */; };
+		E129428E28F0BBE600796AC6 /* OverlayLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428C28F0BBE600796AC6 /* OverlayLocation.swift */; };
+		E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428F28F0BDC300796AC6 /* TimeStampType.swift */; };
+		E129429128F0BDC300796AC6 /* TimeStampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428F28F0BDC300796AC6 /* TimeStampType.swift */; };
 		E12B835F28C07D8500878399 /* LibraryParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113133728BEADBA00930F75 /* LibraryParent.swift */; };
 		E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */; };
 		E12CC1AF28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */; };
@@ -840,6 +849,11 @@
 		E122A9122788EAAD0060FA63 /* MediaStreamExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStreamExtension.swift; sourceTree = "<group>"; };
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
 		E126F740278A656C00A522BF /* ServerStreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStreamType.swift; sourceTree = "<group>"; };
+		E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnReceiveNotificationModifier.swift; sourceTree = "<group>"; };
+		E129428728F0831F00796AC6 /* TimeStamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeStamp.swift; sourceTree = "<group>"; };
+		E129428928F0BBD900796AC6 /* OverlayComponentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayComponentType.swift; sourceTree = "<group>"; };
+		E129428C28F0BBE600796AC6 /* OverlayLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLocation.swift; sourceTree = "<group>"; };
+		E129428F28F0BDC300796AC6 /* TimeStampType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeStampType.swift; sourceTree = "<group>"; };
 		E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpLibraryViewModel.swift; sourceTree = "<group>"; };
 		E12CC1B028D1008F00678D5D /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
 		E12CC1B428D1124400678D5D /* BasicLibraryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicLibraryCoordinator.swift; sourceTree = "<group>"; };
@@ -1314,6 +1328,8 @@
 				E13F05EB28BC9000003499D2 /* LibraryViewType.swift */,
 				E1E1644328BC60C600323B0A /* MediaLibraryItem.swift */,
 				E1DA656B28E78C1700592A73 /* MenuPosterHStackModel.swift */,
+				E129428928F0BBD900796AC6 /* OverlayComponentType.swift */,
+				E129428C28F0BBE600796AC6 /* OverlayLocation.swift */,
 				E1AA331E2782639D00F6439C /* OverlayType.swift */,
 				E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */,
 				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
@@ -1328,6 +1344,7 @@
 				E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */,
 				5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */,
 				E1E306CC28EF6E8000537998 /* TimerProxy.swift */,
+				E129428F28F0BDC300796AC6 /* TimeStampType.swift */,
 				E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
 			);
@@ -1753,6 +1770,7 @@
 				E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */,
 				E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */,
 				E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */,
+				E129428728F0831F00796AC6 /* TimeStamp.swift */,
 				E11245B628D97ED200D8A977 /* TopBarView.swift */,
 			);
 			path = Components;
@@ -1781,6 +1799,7 @@
 			children = (
 				E11895B22893844A0042947B /* BackgroundParallaxHeaderModifier.swift */,
 				E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */,
+				E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */,
 				E1E1E24C28DF8A2E000DF5FD /* PreferenceKeys.swift */,
 				E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */,
 				6220D0AC26D5EABB00B8E046 /* ViewExtensions.swift */,
@@ -2646,6 +2665,7 @@
 				E1DA656D28E78C1700592A73 /* MenuPosterHStackModel.swift in Sources */,
 				E1A16CA1288A7CFD00EA4679 /* AboutViewCard.swift in Sources */,
 				E1937A3F288F0D3D00CB80AA /* UIScreenExtensions.swift in Sources */,
+				E129428B28F0BBD900796AC6 /* OverlayComponentType.swift in Sources */,
 				E18A8E7E28D606BE00333B9A /* BaseItemDto+ItemVideoPlayerViewModel.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				E17FB55328C119D400311DFE /* Displayable.swift in Sources */,
@@ -2657,6 +2677,7 @@
 				C40CD926271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift in Sources */,
 				E1D3043F28D18F5700587289 /* CastAndCrewLibraryView.swift in Sources */,
 				E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */,
+				E129428E28F0BBE600796AC6 /* OverlayLocation.swift in Sources */,
 				E193D53527193F8100900D82 /* ItemCoordinator.swift in Sources */,
 				E1C926162887565C002A7A66 /* SeriesItemView.swift in Sources */,
 				E1EBCB4A278BE443009FE6E9 /* ItemOverviewCoordinator.swift in Sources */,
@@ -2763,6 +2784,7 @@
 				E1D3043D28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift in Sources */,
 				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
 				E11CEB8928998549003E74C7 /* BottomEdgeGradientModifier.swift in Sources */,
+				E129428628F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				53ABFDE7267974EF00886593 /* ConnectToServerViewModel.swift in Sources */,
 				C4534981279A3F140045F1E2 /* tvOSLiveTVOverlay.swift in Sources */,
 				62E632E4267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
@@ -2792,6 +2814,7 @@
 				E1C812D2277AE50A00918266 /* URLComponentsExtensions.swift in Sources */,
 				E12CC1B628D1124400678D5D /* BasicLibraryCoordinator.swift in Sources */,
 				E1E00A36278628A40022235B /* DoubleExtensions.swift in Sources */,
+				E129429128F0BDC300796AC6 /* TimeStampType.swift in Sources */,
 				E1E1643A28BAC2EF00323B0A /* SearchView.swift in Sources */,
 				E1FA2F7427818A8800B4C270 /* SmallMenuOverlay.swift in Sources */,
 				E12CC1C728D12FD600678D5D /* CinematicRecentlyAddedView.swift in Sources */,
@@ -2888,6 +2911,7 @@
 				E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */,
 				E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */,
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
+				E129428A28F0BBD900796AC6 /* OverlayComponentType.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
 				C45942CD27F6994A00C54FE7 /* LiveTVPlayerView.swift in Sources */,
 				62C29EA126D102A500C1D2E7 /* iOSMainTabCoordinator.swift in Sources */,
@@ -2961,7 +2985,9 @@
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E113133428BE988200930F75 /* FilterDrawerHStack.swift in Sources */,
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
+				E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
+				E129428828F0831F00796AC6 /* TimeStamp.swift in Sources */,
 				E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */,
 				E11CEB8D28999B4A003E74C7 /* FontExtensions.swift in Sources */,
 				E1C812CE277AE43100918266 /* LegacyVideoPlayerViewModel.swift in Sources */,
@@ -2997,6 +3023,7 @@
 				E18CE0B928A2322D0092E7F1 /* QuickConnectCoordinator.swift in Sources */,
 				E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */,
 				6334175D287DE0D0000603CE /* QuickConnectSettingsViewModel.swift in Sources */,
+				E129428D28F0BBE600796AC6 /* OverlayLocation.swift in Sources */,
 				E1DA656F28E78C9900592A73 /* SeriesEpisodeSelector.swift in Sources */,
 				E18E01E0288747230022598C /* iPadOSMovieItemContentView.swift in Sources */,
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
@@ -3082,6 +3109,7 @@
 				E1AD105F26D9ADDD003E4A08 /* NameGUIDPairExtensions.swift in Sources */,
 				E18A8E7D28D606BE00333B9A /* BaseItemDto+ItemVideoPlayerViewModel.swift in Sources */,
 				E18E01F1288747230022598C /* PlayButton.swift in Sources */,
+				E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */,
 				E1D5C39928DF914700CDBEFB /* CapsuleSlider.swift in Sources */,
 				E13DD3D5271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
 				62E1DCC3273CE19800C9AE76 /* URLExtensions.swift in Sources */,

@@ -6,9 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
-import SwiftUI
 
 protocol Poster: Displayable, Hashable {
     var subtitle: String? { get }

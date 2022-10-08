@@ -26,9 +26,6 @@ struct CapsuleSlider<TopContent: View, BottomContent: View, LeadingContent: View
         Slider(progress: $progress)
             .gestureBehavior(.track)
             .trackGesturePadding(50)
-//            .rate { _ in
-//                rate
-//            }
             .rate { pointOffset in
                 if abs(pointOffset.y) > 50 {
                     rate = 0.01
@@ -45,7 +42,7 @@ struct CapsuleSlider<TopContent: View, BottomContent: View, LeadingContent: View
             .track { isEditing, _ in
                 Capsule()
                     .frame(height: isEditing ? 20 : 10)
-                    .foregroundColor(isEditing ? .purple : .purple.opacity(0.8))
+                    .foregroundColor(isEditing ? .white : .white.opacity(0.8))
             }
             .trackBackground { isEditing, _ in
                 Color.gray

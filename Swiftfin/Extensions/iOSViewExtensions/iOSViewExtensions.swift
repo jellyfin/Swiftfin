@@ -21,4 +21,25 @@ extension View {
     func navBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
         self.modifier(NavBarDrawerModifier(drawer: drawer))
     }
+    
+    func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
+        modifier(OnReceiveNotificationModifier(
+            notification: UIApplication.didEnterBackgroundNotification,
+            onReceive: action)
+        )
+    }
+    
+    func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
+        modifier(OnReceiveNotificationModifier(
+            notification: UIApplication.willResignActiveNotification,
+            onReceive: action)
+        )
+    }
+    
+    func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
+        modifier(OnReceiveNotificationModifier(
+            notification: UIApplication.willTerminateNotification,
+            onReceive: action)
+        )
+    }
 }

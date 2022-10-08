@@ -47,6 +47,19 @@ extension Defaults.Keys {
             static let gridPosterType = Key<PosterType>("Customization.Library.gridPosterType", default: .portrait, suite: .generalSuite)
         }
     }
+    
+    enum VideoPlayer {
+        
+        enum Overlay {
+            
+            static let playbackButtonType: Key<PlaybackButtonType> = .init("VideoPlayer.Overlay.playbackButtonLocation", default: .large, suite: .generalSuite)
+            
+            // Timestamp
+            static let negativeTimestamp: Key<Bool> = .init("VideoPlayer.Overlay.negativeTimestamp", default: true, suite: .generalSuite)
+            static let showCurrentTimeWhileScrubbing: Key<Bool> = .init("VideoPlayer.Overlay.showCurrentTimeWhileScrubbing", default: true, suite: .generalSuite)
+            static let timestampType: Key<TimestampType> = .init("VideoPlayer.Overlay.timestampType", default: .split, suite: .generalSuite)
+        }
+    }
 
     // Video player / overlay settings
     static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: .generalSuite)

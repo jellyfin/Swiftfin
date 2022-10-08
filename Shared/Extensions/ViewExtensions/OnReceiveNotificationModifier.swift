@@ -8,15 +8,15 @@
 
 import SwiftUI
 
-struct DetectOrientation: ViewModifier {
+struct OnReceiveNotificationModifier: ViewModifier {
     
-    @Binding
-    var orientation: UIDeviceOrientation
+    let notification: NSNotification.Name
+    let onReceive: () -> Void
     
     func body(content: Content) -> some View {
         content
-            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                orientation = UIDevice.current.orientation
+            .onReceive(NotificationCenter.default.publisher(for: notification)) { _ in
+                onReceive()
             }
     }
 }
