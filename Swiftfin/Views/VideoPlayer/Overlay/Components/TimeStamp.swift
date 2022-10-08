@@ -10,14 +10,14 @@ import Defaults
 import SwiftUI
 
 extension ItemVideoPlayer.Overlay {
-    
+
     struct CompactTimeStamp: View {
-        
+
         @Default(.VideoPlayer.Overlay.negativeTimestamp)
         private var timeLeftTimestamp
         @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
         private var showCurrentTimeWhileScrubbing
-        
+
         @EnvironmentObject
         private var currentSecondsHandler: CurrentSecondsHandler
         @EnvironmentObject
@@ -25,23 +25,23 @@ extension ItemVideoPlayer.Overlay {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        
+
         @Binding
         var currentSeconds: Int
-        
+
         @ViewBuilder
         private var leadingTimestamp: some View {
             Button {
                 timeLeftTimestamp.toggle()
             } label: {
                 HStack(spacing: 2) {
-                    
+
                     Text(Double(currentSeconds).timeLabel)
                         .foregroundColor(.white)
-                    
+
                     Text("/")
                         .foregroundColor(Color(UIColor.lightText))
-                    
+
                     if timeLeftTimestamp {
                         Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel.prepending("-"))
                             .foregroundColor(Color(UIColor.lightText))
@@ -52,26 +52,26 @@ extension ItemVideoPlayer.Overlay {
                 }
             }
         }
-        
+
         @ViewBuilder
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
-                
+
                 Text(Double(currentSecondsHandler.currentSeconds).timeLabel)
-                
+
                 Text("/")
-                
+
                 Text(Double(viewModel.item.runTimeSeconds - currentSecondsHandler.currentSeconds).timeLabel)
             }
             .foregroundColor(Color(UIColor.lightText))
         }
-        
+
         var body: some View {
             HStack {
                 leadingTimestamp
-                
+
                 Spacer()
-                
+
                 if isScrubbing && showCurrentTimeWhileScrubbing {
                     trailingTimestamp
                 }
@@ -80,14 +80,14 @@ extension ItemVideoPlayer.Overlay {
             .font(.caption)
         }
     }
-    
+
     struct SplitTimeStamp: View {
-        
+
         @Default(.VideoPlayer.Overlay.negativeTimestamp)
         private var timeLeftTimestamp
         @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
         private var showCurrentTimeWhileScrubbing
-        
+
         @EnvironmentObject
         private var currentSecondsHandler: CurrentSecondsHandler
         @EnvironmentObject
@@ -95,38 +95,38 @@ extension ItemVideoPlayer.Overlay {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        
+
         @Binding
         var currentSeconds: Int
-        
+
         @ViewBuilder
         private var leadingTimestamp: some View {
             HStack(spacing: 2) {
-                
+
                 Text(Double(currentSeconds).timeLabel)
                     .foregroundColor(.white)
-                
+
                 if isScrubbing && showCurrentTimeWhileScrubbing {
                     Text("/")
                         .foregroundColor(Color(UIColor.lightText))
-                    
+
                     Text(Double(currentSecondsHandler.currentSeconds).timeLabel)
                         .foregroundColor(Color(UIColor.lightText))
                 }
             }
         }
-        
+
         @ViewBuilder
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
                 if isScrubbing && showCurrentTimeWhileScrubbing {
                     Text(Double(viewModel.item.runTimeSeconds - currentSecondsHandler.currentSeconds).timeLabel.prepending("-"))
                         .foregroundColor(Color(UIColor.lightText))
-                    
+
                     Text("/")
                         .foregroundColor(Color(UIColor.lightText))
                 }
-                
+
                 if timeLeftTimestamp {
                     Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel.prepending("-"))
                         .foregroundColor(.white)
@@ -136,16 +136,16 @@ extension ItemVideoPlayer.Overlay {
                 }
             }
         }
-        
+
         var body: some View {
             Button {
                 timeLeftTimestamp.toggle()
             } label: {
                 HStack {
                     leadingTimestamp
-                    
+
                     Spacer()
-                    
+
                     trailingTimestamp
                 }
                 .monospacedDigit()

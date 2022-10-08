@@ -29,7 +29,7 @@ extension ItemVideoPlayer.Overlay {
         private var currentSecondsHandler: CurrentSecondsHandler
         @EnvironmentObject
         private var overlayTimer: TimerProxy
-        
+
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -46,7 +46,7 @@ extension ItemVideoPlayer.Overlay {
         init() {
             print("bottom bar init-ed")
         }
-        
+
         private var trailingTimeStamp: String {
             if negativeScrubbing {
                 return Double(viewModel.item.runTimeSeconds - currentSeconds)
@@ -90,13 +90,13 @@ extension ItemVideoPlayer.Overlay {
                     self.progress = CGFloat(newValue) / CGFloat(viewModel.item.runTimeSeconds)
                 }
                 .onChange(of: isScrubbing) { newValue in
-                    
+
                     if newValue {
                         overlayTimer.stop()
                     } else {
                         overlayTimer.start(5)
                     }
-                    
+
                     guard !newValue else { return }
                     let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
                     viewModel.proxy.setTime(.seconds(Int32(scrubbedSeconds)))

@@ -14,10 +14,10 @@ import VLCUI
 extension ItemVideoPlayer {
 
     struct Overlay: View {
-        
+
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
-        
+
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -33,7 +33,7 @@ extension ItemVideoPlayer {
                             LinearGradient(
                                 stops: [
                                     .init(color: .black.opacity(0.9), location: 0),
-                                    .init(color: .clear, location: 1)
+                                    .init(color: .clear, location: 1),
                                 ],
                                 startPoint: .top,
                                 endPoint: .bottom
@@ -60,7 +60,7 @@ extension ItemVideoPlayer {
                             .opacity(isScrubbing || playbackButtonType == .compact ? 1 : 0)
                         }
                 }
-                
+
                 if playbackButtonType == .large {
                     LargePlaybackButtons()
                         .opacity(isScrubbing ? 0 : 1)

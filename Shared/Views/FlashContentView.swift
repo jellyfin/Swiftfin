@@ -9,10 +9,10 @@
 import SwiftUI
 
 struct FlashContentView: View {
-    
+
     @ObservedObject
     var proxy: FlashContentProxy
-    
+
     var body: some View {
         Group {
             if let currentView = proxy.currentView {

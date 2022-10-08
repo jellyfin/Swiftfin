@@ -9,9 +9,9 @@
 import SwiftUI
 
 extension ItemVideoPlayer.Overlay {
-    
+
     struct OverlayMenu: View {
-        
+
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
         @EnvironmentObject
@@ -19,7 +19,7 @@ extension ItemVideoPlayer.Overlay {
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
-        
+
         @ViewBuilder
         private var subtitleTrackMenu: some View {
             Menu {
@@ -41,7 +41,7 @@ extension ItemVideoPlayer.Overlay {
                 }
             }
         }
-        
+
         @ViewBuilder
         private var audioTrackMenu: some View {
             Menu {
@@ -59,7 +59,7 @@ extension ItemVideoPlayer.Overlay {
                 }
             }
         }
-        
+
         @ViewBuilder
         private var playbackSpeedMenu: some View {
             Menu {
@@ -82,7 +82,7 @@ extension ItemVideoPlayer.Overlay {
                 }
             }
         }
-        
+
         @ViewBuilder
         private var chaptersButton: some View {
             Button {
@@ -90,12 +90,12 @@ extension ItemVideoPlayer.Overlay {
             } label: {
                 HStack {
                     L10n.chapters.text
-                    
+
                     Image(systemName: "list.dash")
                 }
             }
         }
-        
+
         @ViewBuilder
         private var advancedButton: some View {
             Button {
@@ -103,12 +103,12 @@ extension ItemVideoPlayer.Overlay {
             } label: {
                 HStack {
                     Text("Advanced")
-                    
+
                     Image(systemName: "gearshape.fill")
                 }
             }
         }
-        
+
         var body: some View {
             Menu {
                 subtitleTrackMenu
@@ -120,7 +120,7 @@ extension ItemVideoPlayer.Overlay {
                 if !viewModel.chapters.isEmpty {
                     chaptersButton
                 }
-                
+
                 advancedButton
                     .onAppear {
                         overlayTimer.stop()

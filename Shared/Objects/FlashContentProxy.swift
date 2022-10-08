@@ -9,20 +9,20 @@
 import SwiftUI
 
 class FlashContentProxy: ObservableObject {
-    
+
     @Published
     var currentView: AnyView?
     @Published
     var isShowing = false
-    
+
     private var dismissTimer: Timer?
-    
+
     func flash<V: View>(interval: Double = 1, @ViewBuilder _ content: @escaping () -> V) {
         currentView = AnyView(content())
         isShowing = true
         restartOverlayDismissTimer(interval: interval)
     }
-    
+
     private func restartOverlayDismissTimer(interval: Double) {
         dismissTimer?.invalidate()
         dismissTimer = Timer.scheduledTimer(
@@ -33,7 +33,7 @@ class FlashContentProxy: ObservableObject {
             repeats: false
         )
     }
-    
+
     @objc
     private func dismissTimerFired() {
         isShowing = false

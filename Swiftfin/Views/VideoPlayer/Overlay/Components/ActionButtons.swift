@@ -18,11 +18,11 @@ extension ItemVideoPlayer.Overlay {
         private var flashContentProxy: FlashContentProxy
         @State
         private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
-        
+
         @ViewBuilder
         private var barButtons: some View {
             HStack(spacing: 0) {
-                
+
                 if !viewModel.subtitleStreams.isEmpty {
                     Button {
                         viewModel.subtitlesEnabled.toggle()
@@ -65,7 +65,7 @@ extension ItemVideoPlayer.Overlay {
 
         var body: some View {
             HStack(spacing: 0) {
-                
+
                 if deviceOrientation.isLandscape {
                     barButtons
                 }

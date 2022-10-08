@@ -58,9 +58,10 @@ struct CapsuleSlider<TopContent: View, BottomContent: View, LeadingContent: View
 }
 
 extension CapsuleSlider where TopContent == EmptyView,
-                              BottomContent == EmptyView,
-                              LeadingContent == EmptyView,
-                              TrailingContent == EmptyView {
+    BottomContent == EmptyView,
+    LeadingContent == EmptyView,
+    TrailingContent == EmptyView
+{
 
     init(progress: Binding<CGFloat>) {
         self.init(
@@ -69,15 +70,16 @@ extension CapsuleSlider where TopContent == EmptyView,
             topContent: { EmptyView() },
             bottomContent: { EmptyView() },
             leadingContent: { EmptyView() },
-            trailingContent: {EmptyView() },
+            trailingContent: { EmptyView() },
             onEditingChanged: { _ in }
         )
     }
 }
 
 extension CapsuleSlider {
-    
-    func topContent<C: View>(@ViewBuilder _ content: @escaping () -> C) -> CapsuleSlider<C, BottomContent, LeadingContent, TrailingContent> {
+
+    func topContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
+    -> CapsuleSlider<C, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
@@ -88,8 +90,9 @@ extension CapsuleSlider {
             onEditingChanged: onEditingChanged
         )
     }
-    
-    func bottomContent<C: View>(@ViewBuilder _ content: @escaping () -> C) -> CapsuleSlider<TopContent, C, LeadingContent, TrailingContent> {
+
+    func bottomContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
+    -> CapsuleSlider<TopContent, C, LeadingContent, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
@@ -100,8 +103,9 @@ extension CapsuleSlider {
             onEditingChanged: onEditingChanged
         )
     }
-    
-    func leadingContent<C: View>(@ViewBuilder _ content: @escaping () -> C) -> CapsuleSlider<TopContent, BottomContent, C, TrailingContent> {
+
+    func leadingContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
+    -> CapsuleSlider<TopContent, BottomContent, C, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
@@ -112,8 +116,9 @@ extension CapsuleSlider {
             onEditingChanged: onEditingChanged
         )
     }
-    
-    func trailingContent<C: View>(@ViewBuilder _ content: @escaping () -> C) -> CapsuleSlider<TopContent, BottomContent, LeadingContent, C> {
+
+    func trailingContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
+    -> CapsuleSlider<TopContent, BottomContent, LeadingContent, C> {
         .init(
             progress: $progress,
             rate: $rate,
@@ -124,11 +129,11 @@ extension CapsuleSlider {
             onEditingChanged: onEditingChanged
         )
     }
-    
+
     func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
     }
-    
+
     func rate(_ rate: Binding<CGFloat>) -> Self {
         copy(modifying: \._rate, with: rate)
     }

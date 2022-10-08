@@ -14,17 +14,17 @@ import SwiftUI
 import VLCUI
 
 class CurrentSecondsHandler: ObservableObject {
-    
+
     @Published
     var currentSeconds: Int = 0
-    
+
     func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         self.currentSeconds = Int(ticks / 1000)
     }
 }
 
 class ItemVideoPlayerViewModel: ObservableObject {
-    
+
     @Published
     var state: VLCVideoPlayer.State = .opening
     @Published
@@ -47,9 +47,9 @@ class ItemVideoPlayerViewModel: ObservableObject {
     var isAspectFilled: Bool = false
     @Published
     var presentSettings: Bool = false
-    
+
     var proxy: VLCVideoPlayer.Proxy = .init()
-    
+
     var configuration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true

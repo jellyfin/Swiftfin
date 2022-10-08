@@ -18,9 +18,7 @@ extension UIApplication {
             .compactMap {
                 $0 as? UIWindowScene
             }
-            .flatMap {
-                $0.windows
-            }
+            .flatMap(\.windows)
             .first {
                 $0.isKeyWindow
             }
@@ -40,7 +38,7 @@ extension EnvironmentValues {
 }
 
 extension UIEdgeInsets {
-    
+
     var swiftUiInsets: EdgeInsets {
         EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
     }
@@ -69,7 +67,7 @@ class ItemVideoPlayerManager: ViewModel {
 }
 
 struct ItemVideoPlayer: View {
-    
+
     enum OverlayType {
         case main
         case chapters
@@ -90,7 +88,7 @@ struct ItemVideoPlayer: View {
 
     @ViewBuilder
     func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
-        HStack(spacing : 0) {
+        HStack(spacing: 0) {
             ZStack {
                 VLCVideoPlayer(configuration: viewModel.configuration)
                     .proxy(viewModel.proxy)
@@ -122,7 +120,7 @@ struct ItemVideoPlayer: View {
                             currentOverlayType = nil
                         }
                     }
-                
+
                 Group {
                     switch currentOverlayType {
                     case .main:
@@ -140,7 +138,7 @@ struct ItemVideoPlayer: View {
                 .environmentObject(viewModel)
                 .environment(\.currentOverlayType, $currentOverlayType)
                 .environment(\.isScrubbing, $isScrubbing)
-                
+
                 FlashContentView(proxy: flashContentProxy)
             }
             .onTapGesture {
@@ -148,7 +146,7 @@ struct ItemVideoPlayer: View {
                 overlayTimer.start(5)
             }
             .animation(.linear(duration: 0.1), value: currentOverlayType)
-            
+
             // TODO: Add advanced menu
         }
         .onChange(of: overlayTimer.isActive) { newValue in

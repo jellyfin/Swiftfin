@@ -17,7 +17,7 @@ struct IsScrubbing: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    
+
     var currentOverlayType: Binding<ItemVideoPlayer.OverlayType?> {
         get { self[CurrentOverlayType.self] }
         set { self[CurrentOverlayType.self] = newValue }

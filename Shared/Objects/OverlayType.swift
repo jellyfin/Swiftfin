@@ -24,10 +24,10 @@ enum OverlayType: String, CaseIterable, Defaults.Serializable {
 }
 
 enum PlaybackButtonType: String, CaseIterable, Defaults.Serializable, Displayable {
-    
+
     case large
     case compact
-    
+
     var displayName: String {
         switch self {
         case .large:

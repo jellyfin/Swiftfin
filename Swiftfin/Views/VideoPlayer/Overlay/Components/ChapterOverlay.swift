@@ -9,25 +9,26 @@
 import SwiftUI
 
 extension ItemVideoPlayer.Overlay {
-    
+
     struct ChapterOverlay: View {
-        
+
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
         private var secondsHandler: CurrentSecondsHandler
-        
+
         var body: some View {
             VStack {
                 Spacer()
-                
+
                 ScrollViewReader { proxy in
                     PosterHStack(
                         title: L10n.chapters,
                         type: .landscape,
-                        items: viewModel.chapters)
+                        items: viewModel.chapters
+                    )
                     .imageOverlay { type in
                         if case let PosterButtonType.item(info) = type, info.secondsRange.contains(secondsHandler.currentSeconds) {
                             RoundedRectangle(cornerRadius: 6)
@@ -42,7 +43,7 @@ extension ItemVideoPlayer.Overlay {
                                     .fontWeight(.semibold)
                                     .lineLimit(1)
                                     .foregroundColor(.white)
-                                
+
                                 Text(info.chapterInfo.timestampLabel)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
@@ -57,7 +58,9 @@ extension ItemVideoPlayer.Overlay {
                     }
                     .trailing {
                         Button {
-                            if let currentChapter = viewModel.chapters.first(where: { $0.secondsRange.contains(secondsHandler.currentSeconds) }) {
+                            if let currentChapter = viewModel.chapters
+                                .first(where: { $0.secondsRange.contains(secondsHandler.currentSeconds) })
+                            {
                                 withAnimation {
                                     proxy.scrollTo(currentChapter.hashValue, anchor: .center)
                                 }
@@ -71,7 +74,9 @@ extension ItemVideoPlayer.Overlay {
                         viewModel.proxy.setTime(.seconds(seconds))
                     }
                     .onAppear {
-                        if let currentChapter = viewModel.chapters.first(where: { $0.secondsRange.contains(secondsHandler.currentSeconds) }) {
+                        if let currentChapter = viewModel.chapters
+                            .first(where: { $0.secondsRange.contains(secondsHandler.currentSeconds) })
+                        {
                             proxy.scrollTo(currentChapter.hashValue, anchor: .center)
                         }
                     }

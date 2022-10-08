@@ -9,27 +9,27 @@
 import SwiftUI
 
 class TimerProxy: ObservableObject {
-    
+
     @Published
     var isActive = false
     @Published
     var wasForceStopped = false
-    
+
     private var dismissTimer: Timer?
-    
+
     func start(_ interval: Double) {
         print("Started timer")
         isActive = true
         wasForceStopped = false
         restartOverlayDismissTimer(interval: interval)
     }
-    
+
     func stop() {
         print("Force stopped timer")
         dismissTimer?.invalidate()
         wasForceStopped = true
     }
-    
+
     private func restartOverlayDismissTimer(interval: Double) {
         dismissTimer?.invalidate()
         dismissTimer = Timer.scheduledTimer(
@@ -40,7 +40,7 @@ class TimerProxy: ObservableObject {
             repeats: false
         )
     }
-    
+
     @objc
     private func dismissTimerFired() {
         isActive = false

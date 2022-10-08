@@ -11,17 +11,17 @@ import SwiftUI
 import VLCUI
 
 extension ItemVideoPlayer.Overlay {
-    
+
     struct SmallPlaybackButtons: View {
-        
+
         @Default(.videoPlayerJumpBackward)
         private var jumpBackwardLength
         @Default(.videoPlayerJumpBackward)
         private var jumpForwardLength
-        
+
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
-        
+
         var body: some View {
             HStack(spacing: 20) {
                 Button {
@@ -64,19 +64,19 @@ extension ItemVideoPlayer.Overlay {
             .foregroundColor(Color.white)
         }
     }
-    
+
     struct LargePlaybackButtons: View {
-        
+
         @Default(.videoPlayerJumpBackward)
         private var jumpBackwardLength
         @Default(.videoPlayerJumpBackward)
         private var jumpForwardLength
-        
+
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
         @State
         private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
-        
+
         var body: some View {
             HStack(spacing: deviceOrientation.isLandscape ? 70 : 30) {
                 Button {

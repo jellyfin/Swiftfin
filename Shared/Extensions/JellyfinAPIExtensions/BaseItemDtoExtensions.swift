@@ -218,20 +218,20 @@ extension BaseItemDto {
 
         return chapterImageURLs
     }
-    
+
     var fullChapterInfo: [ChapterInfo.FullInfo] {
         guard let chapters else { return [] }
-        
+
         let ranges: [Range<Int>] = []
-            .appending(chapters.map { $0.startTimeSeconds })
+            .appending(chapters.map(\.startTimeSeconds))
             .appending(runTimeSeconds)
             .adjacentPairs()
-            .map { $0..<$1 }
-        
+            .map { $0 ..< $1 }
+
         return chapters
             .enumerated()
             .map { index, chapterInfo in
-                
+
                 let imageURL = ImageAPI.getItemImageWithRequestBuilder(
                     itemId: id ?? "",
                     imageType: .chapter,
@@ -239,13 +239,14 @@ extension BaseItemDto {
                     quality: 90,
                     imageIndex: index
                 ).url
-                
-                let range = ranges.first(where: { $0.first == chapterInfo.startTimeSeconds }) ?? startTimeSeconds..<startTimeSeconds + 1
-                
+
+                let range = ranges.first(where: { $0.first == chapterInfo.startTimeSeconds }) ?? startTimeSeconds ..< startTimeSeconds + 1
+
                 return ChapterInfo.FullInfo(
                     chapterInfo: chapterInfo,
                     imageSource: .init(url: imageURL),
-                    secondsRange: range)
+                    secondsRange: range
+                )
             }
     }
 

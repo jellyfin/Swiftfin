@@ -22,7 +22,7 @@ extension ItemVideoPlayer.Overlay {
         private var viewModel: ItemVideoPlayerViewModel
         @State
         private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
-        
+
         init() {
             print("Top bar init-ed")
         }
@@ -42,7 +42,7 @@ extension ItemVideoPlayer.Overlay {
                         .font(.title3)
                         .fontWeight(.bold)
                         .lineLimit(1)
-                    
+
                     if let subtitle = viewModel.item.subtitle {
                         Text(subtitle)
                             .font(.subheadline)

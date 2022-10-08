@@ -13,8 +13,16 @@ enum SliderGestureBehavior {
     case track
 }
 
-struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View, BottomContent: View, LeadingContent: View, TrailingContent: View>: View {
-    
+struct Slider<
+    Track: View,
+    TrackBackground: View,
+    Thumb: View,
+    TopContent: View,
+    BottomContent: View,
+    LeadingContent: View,
+    TrailingContent: View
+>: View {
+
     @Binding
     private var progress: CGFloat
     @State
@@ -31,7 +39,7 @@ struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View,
     private var currentTranslation: CGFloat = 0
     @State
     private var thumbSize: CGSize = .zero
-    
+
     private var gestureBehavior: SliderGestureBehavior
     private var trackGesturePadding: CGFloat
     private var rate: (CGPoint) -> CGFloat
@@ -44,7 +52,7 @@ struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View,
     private var trailingContent: () -> TrailingContent
     private var onEditingChanged: (Bool) -> Void
     private var progressAnimation: Animation
-    
+
     private var trackDrag: some Gesture {
         DragGesture(coordinateSpace: .global)
             .onChanged { value in
@@ -55,20 +63,20 @@ struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View,
                     currentTranslationStartLocation = value.location
                     currentTranslation = 0
                 }
-                
+
                 let dragRate = rate(CGPoint(x: 0, y: value.startLocation.y - value.location.y))
                 if dragRate != lastDragRate {
                     dragStartProgress = progress
                     lastDragRate = dragRate
                     currentTranslationStartLocation = value.location
                 }
-                
+
                 currentTranslation = (currentTranslationStartLocation.x - value.location.x) * dragRate
-                
+
                 let newProgress: CGFloat = dragStartProgress - currentTranslation / totalWidth
                 progress = min(max(0, newProgress), 1)
             }
-            .onEnded { value in
+            .onEnded { _ in
                 isEditing = false
                 onEditingChanged(false)
             }
@@ -77,20 +85,20 @@ struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View,
     var body: some View {
         HStack(spacing: 0) {
             leadingContent()
-            
+
             VStack(spacing: 0) {
                 topContent()
-                
+
                 ZStack(alignment: .leading) {
-                    
+
                     trackBackground(isEditing, progress)
-                    
+
                     track(isEditing, progress)
                         .mask(alignment: .leading) {
                             Color.white
                                 .frame(width: progress * totalWidth)
                         }
-                    
+
                     thumb(isEditing, progress)
                         .if(gestureBehavior == .thumb) { view in
                             view.gesture(trackDrag)
@@ -111,10 +119,10 @@ struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View,
                             .gesture(trackDrag)
                     }
                 }
-                
+
                 bottomContent()
             }
-            
+
             trailingContent()
         }
         .animation(progressAnimation, value: progress)
@@ -123,13 +131,14 @@ struct Slider<Track: View, TrackBackground: View, Thumb: View, TopContent: View,
 }
 
 extension Slider where Track == EmptyView,
-                        TrackBackground == EmptyView,
-                        Thumb == EmptyView,
-                        TopContent == EmptyView,
-                        BottomContent == EmptyView,
-                        LeadingContent == EmptyView,
-                        TrailingContent == EmptyView {
-    
+    TrackBackground == EmptyView,
+    Thumb == EmptyView,
+    TopContent == EmptyView,
+    BottomContent == EmptyView,
+    LeadingContent == EmptyView,
+    TrailingContent == EmptyView
+{
+
     init(progress: Binding<CGFloat>) {
         self.init(
             progress: progress,
@@ -150,8 +159,9 @@ extension Slider where Track == EmptyView,
 }
 
 extension Slider {
-    
-    func track<T>(@ViewBuilder _ track: @escaping (Bool, CGFloat) -> T) -> Slider<T, TrackBackground, Thumb, TopContent, BottomContent, LeadingContent, TrailingContent> {
+
+    func track<T>(@ViewBuilder _ track: @escaping (Bool, CGFloat) -> T)
+    -> Slider<T, TrackBackground, Thumb, TopContent, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: _progress,
             gestureBehavior: gestureBehavior,
@@ -165,10 +175,12 @@ extension Slider {
             leadingContent: leadingContent,
             trailingContent: trailingContent,
             onEditingChanged: onEditingChanged,
-            progressAnimation: progressAnimation)
+            progressAnimation: progressAnimation
+        )
     }
-    
-    func trackBackground<T>(@ViewBuilder _ trackBackground: @escaping (Bool, CGFloat) -> T) -> Slider<Track, T, Thumb, TopContent, BottomContent, LeadingContent, TrailingContent> {
+
+    func trackBackground<T>(@ViewBuilder _ trackBackground: @escaping (Bool, CGFloat) -> T)
+    -> Slider<Track, T, Thumb, TopContent, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: _progress,
             gestureBehavior: gestureBehavior,
@@ -182,10 +194,12 @@ extension Slider {
             leadingContent: leadingContent,
             trailingContent: trailingContent,
             onEditingChanged: onEditingChanged,
-            progressAnimation: progressAnimation)
+            progressAnimation: progressAnimation
+        )
     }
-    
-    func thumb<T>(@ViewBuilder _ thumb: @escaping (Bool, CGFloat) -> T) -> Slider<Track, TrackBackground, T, TopContent, BottomContent, LeadingContent, TrailingContent> {
+
+    func thumb<T>(@ViewBuilder _ thumb: @escaping (Bool, CGFloat) -> T)
+    -> Slider<Track, TrackBackground, T, TopContent, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: _progress,
             gestureBehavior: gestureBehavior,
@@ -199,10 +213,12 @@ extension Slider {
             leadingContent: leadingContent,
             trailingContent: trailingContent,
             onEditingChanged: onEditingChanged,
-            progressAnimation: progressAnimation)
+            progressAnimation: progressAnimation
+        )
     }
-    
-    func topContent<T>(@ViewBuilder _ topContent: @escaping () -> T) -> Slider<Track, TrackBackground, Thumb, T, BottomContent, LeadingContent, TrailingContent> {
+
+    func topContent<T>(@ViewBuilder _ topContent: @escaping () -> T)
+    -> Slider<Track, TrackBackground, Thumb, T, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: _progress,
             gestureBehavior: gestureBehavior,
@@ -216,10 +232,12 @@ extension Slider {
             leadingContent: leadingContent,
             trailingContent: trailingContent,
             onEditingChanged: onEditingChanged,
-            progressAnimation: progressAnimation)
+            progressAnimation: progressAnimation
+        )
     }
-    
-    func bottomContent<T>(@ViewBuilder _ bottomContent: @escaping () -> T) -> Slider<Track, TrackBackground, Thumb, TopContent, T, LeadingContent, TrailingContent> {
+
+    func bottomContent<T>(@ViewBuilder _ bottomContent: @escaping () -> T)
+    -> Slider<Track, TrackBackground, Thumb, TopContent, T, LeadingContent, TrailingContent> {
         .init(
             progress: _progress,
             gestureBehavior: gestureBehavior,
@@ -233,10 +251,12 @@ extension Slider {
             leadingContent: leadingContent,
             trailingContent: trailingContent,
             onEditingChanged: onEditingChanged,
-            progressAnimation: progressAnimation)
+            progressAnimation: progressAnimation
+        )
     }
-    
-    func leadingContent<T>(@ViewBuilder _ leadingContent: @escaping () -> T) -> Slider<Track, TrackBackground, Thumb, TopContent, BottomContent, T, TrailingContent> {
+
+    func leadingContent<T>(@ViewBuilder _ leadingContent: @escaping () -> T)
+    -> Slider<Track, TrackBackground, Thumb, TopContent, BottomContent, T, TrailingContent> {
         .init(
             progress: _progress,
             gestureBehavior: gestureBehavior,
@@ -250,10 +270,12 @@ extension Slider {
             leadingContent: leadingContent,
             trailingContent: trailingContent,
             onEditingChanged: onEditingChanged,
-            progressAnimation: progressAnimation)
+            progressAnimation: progressAnimation
+        )
     }
-    
-    func trailingContent<T>(@ViewBuilder _ trailingContent: @escaping () -> T) -> Slider<Track, TrackBackground, Thumb, TopContent, BottomContent, LeadingContent, T> {
+
+    func trailingContent<T>(@ViewBuilder _ trailingContent: @escaping () -> T)
+    -> Slider<Track, TrackBackground, Thumb, TopContent, BottomContent, LeadingContent, T> {
         .init(
             progress: _progress,
             gestureBehavior: gestureBehavior,
@@ -267,13 +289,14 @@ extension Slider {
             leadingContent: leadingContent,
             trailingContent: trailingContent,
             onEditingChanged: onEditingChanged,
-            progressAnimation: progressAnimation)
+            progressAnimation: progressAnimation
+        )
     }
-    
+
     func trackGesturePadding(_ padding: CGFloat) -> Self {
         copy(modifying: \.trackGesturePadding, with: padding)
     }
-    
+
     func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
     }
