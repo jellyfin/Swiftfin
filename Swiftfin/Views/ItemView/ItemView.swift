@@ -50,6 +50,6 @@ struct ItemView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(item.displayName)
+        .navigationTitle(item.displayTitle)
     }
 }

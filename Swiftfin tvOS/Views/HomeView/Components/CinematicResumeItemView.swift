@@ -43,7 +43,7 @@ extension HomeView {
                             EmptyView()
                         }
                         .failure {
-                            Text(item.displayName)
+                            Text(item.displayTitle)
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
                         }

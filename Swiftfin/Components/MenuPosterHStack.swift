@@ -25,21 +25,21 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
     @ViewBuilder
     private var selectorMenu: some View {
         Menu {
-            ForEach(manager.menuSections.keys.sorted(by: { manager.menuSectionSort($0, $1) }), id: \.displayName) { section in
+            ForEach(manager.menuSections.keys.sorted(by: { manager.menuSectionSort($0, $1) }), id: \.displayTitle) { section in
                 Button {
                     manager.select(section: section)
                 } label: {
                     if section == manager.menuSelection {
-                        Label(section.displayName, systemImage: "checkmark")
+                        Label(section.displayTitle, systemImage: "checkmark")
                     } else {
-                        Text(section.displayName)
+                        Text(section.displayTitle)
                     }
                 }
             }
         } label: {
             HStack(spacing: 5) {
                 Group {
-                    Text(manager.menuSelection?.displayName ?? L10n.unknown)
+                    Text(manager.menuSelection?.displayTitle ?? L10n.unknown)
                         .fixedSize()
                     Image(systemName: "chevron.down")
                 }

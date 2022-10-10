@@ -9,5 +9,5 @@
 import Foundation
 
 protocol Displayable {
-    var displayName: String { get }
+    var displayTitle: String { get }
 }

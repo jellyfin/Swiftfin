@@ -148,7 +148,7 @@ struct SettingsView: View {
 
                 Picker(L10n.appearance, selection: $appAppearance) {
                     ForEach(AppAppearance.allCases, id: \.self) { appearance in
-                        Text(appearance.localizedName).tag(appearance.rawValue)
+                        Text(appearance.displayTitle).tag(appearance.rawValue)
                     }
                 }
 

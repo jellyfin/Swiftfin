@@ -47,7 +47,7 @@ extension ItemView {
                                     .cornerRadius(10)
 
                                 VStack(alignment: .leading, spacing: 10) {
-                                    Text(viewModel.item.displayName)
+                                    Text(viewModel.item.displayTitle)
                                         .font(.title2)
                                         .fontWeight(.semibold)
 

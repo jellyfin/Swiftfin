@@ -118,7 +118,7 @@ extension ItemView.iPadOSCinematicScrollView {
                         EmptyView()
                     }
                     .failure {
-                        Text(viewModel.item.displayName)
+                        Text(viewModel.item.displayTitle)
                             .font(.largeTitle)
                             .fontWeight(.semibold)
                             .lineLimit(2)

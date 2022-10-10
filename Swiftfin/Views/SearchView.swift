@@ -28,9 +28,9 @@ struct SearchView: View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions, id: \.id) { item in
                 Button {
-                    searchText = item.displayName
+                    searchText = item.displayTitle
                 } label: {
-                    Text(item.displayName)
+                    Text(item.displayTitle)
                         .font(.body)
                 }
             }

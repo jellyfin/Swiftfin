@@ -142,7 +142,7 @@ extension ItemView.CompactPosterScrollView {
 
                 // MARK: Name
 
-                Text(viewModel.item.displayName)
+                Text(viewModel.item.displayTitle)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)

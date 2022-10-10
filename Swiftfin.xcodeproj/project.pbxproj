@@ -275,6 +275,8 @@
 		E129429128F0BDC300796AC6 /* TimeStampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428F28F0BDC300796AC6 /* TimeStampType.swift */; };
 		E129429328F2845000796AC6 /* SliderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429228F2845000796AC6 /* SliderType.swift */; };
 		E129429428F2845000796AC6 /* SliderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429228F2845000796AC6 /* SliderType.swift */; };
+		E129429828F4785200796AC6 /* EnumPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429728F4785200796AC6 /* EnumPicker.swift */; };
+		E129429928F4785200796AC6 /* EnumPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429728F4785200796AC6 /* EnumPicker.swift */; };
 		E12B835F28C07D8500878399 /* LibraryParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113133728BEADBA00930F75 /* LibraryParent.swift */; };
 		E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */; };
 		E12CC1AF28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */; };
@@ -857,6 +859,7 @@
 		E129428C28F0BBE600796AC6 /* OverlayLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLocation.swift; sourceTree = "<group>"; };
 		E129428F28F0BDC300796AC6 /* TimeStampType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeStampType.swift; sourceTree = "<group>"; };
 		E129429228F2845000796AC6 /* SliderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderType.swift; sourceTree = "<group>"; };
+		E129429728F4785200796AC6 /* EnumPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPicker.swift; sourceTree = "<group>"; };
 		E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpLibraryViewModel.swift; sourceTree = "<group>"; };
 		E12CC1B028D1008F00678D5D /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
 		E12CC1B428D1124400678D5D /* BasicLibraryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicLibraryCoordinator.swift; sourceTree = "<group>"; };
@@ -1323,6 +1326,7 @@
 				E1D4BF862719D27100A11E64 /* Bitrates.swift */,
 				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
+				E129429728F4785200796AC6 /* EnumPicker.swift */,
 				E16DEAC428EFCFDF0058F196 /* FlashContentProxy.swift */,
 				E19169CD272514760085832A /* HTTPScheme.swift */,
 				535870AC2669D8DD00D05A09 /* ItemFilters.swift */,
@@ -2691,6 +2695,7 @@
 				E1C9260B2887565C002A7A66 /* MovieItemView.swift in Sources */,
 				E12CC1C128D12B0A00678D5D /* BasicLibraryView.swift in Sources */,
 				E1E9EFEB28C7EA2C00CC1F8B /* UserDtoExtensions.swift in Sources */,
+				E129429928F4785200796AC6 /* EnumPicker.swift in Sources */,
 				E16DEAC628EFCFDF0058F196 /* FlashContentProxy.swift in Sources */,
 				62E632EA267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				E1546777289AF46E00087E35 /* CollectionItemView.swift in Sources */,
@@ -2924,6 +2929,7 @@
 				E16AA60828A364A6009A983C /* PosterButton.swift in Sources */,
 				E1E1644128BB301900323B0A /* ArrayExtensions.swift in Sources */,
 				E18CE0AF28A222240092E7F1 /* PublicUserSignInView.swift in Sources */,
+				E129429828F4785200796AC6 /* EnumPicker.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
 				E1C812C0277A8E5D00918266 /* LegacyVLCPlayerView.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,

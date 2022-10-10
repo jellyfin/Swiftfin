@@ -26,7 +26,7 @@ struct LibraryItemRow: View {
                     .posterStyle(type: .portrait, width: 60)
 
                 VStack(alignment: .leading) {
-                    Text(item.displayName)
+                    Text(item.displayTitle)
                         .foregroundColor(.primary)
                         .fontWeight(.semibold)
                         .lineLimit(2)

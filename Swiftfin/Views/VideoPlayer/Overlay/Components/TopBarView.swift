@@ -38,7 +38,7 @@ extension ItemVideoPlayer.Overlay {
                 }
 
                 VStack {
-                    Text(viewModel.item.displayName)
+                    Text(viewModel.item.displayTitle)
                         .font(.title3)
                         .fontWeight(.bold)
                         .lineLimit(1)

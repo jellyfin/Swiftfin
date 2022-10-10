@@ -9,11 +9,11 @@
 import Defaults
 import Foundation
 
-enum SliderType: String, CaseIterable, Defaults.Serializable, Displayable {
+enum SliderType: String, CaseIterable, Displayable, Defaults.Serializable {
     case thumb
     case capsule
 
-    var displayName: String {
+    var displayTitle: String {
         switch self {
         case .thumb:
             return "Thumb"

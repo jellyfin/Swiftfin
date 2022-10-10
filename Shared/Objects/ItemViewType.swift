@@ -9,12 +9,12 @@
 import Defaults
 import Foundation
 
-enum ItemViewType: String, CaseIterable, Defaults.Serializable {
+enum ItemViewType: String, CaseIterable, Displayable, Defaults.Serializable {
     case compactPoster
     case compactLogo
     case cinematic
 
-    var localizedName: String {
+    var displayTitle: String {
         switch self {
         case .compactPoster:
             return L10n.compactPoster

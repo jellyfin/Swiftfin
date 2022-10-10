@@ -46,7 +46,7 @@ extension SeriesEpisodesView {
                 HStack {
                     ForEach(viewModel.sortedSeasons, id: \.self) { season in
                         Button {} label: {
-                            Text(season.displayName)
+                            Text(season.displayTitle)
                                 .fontWeight(.semibold)
                                 .fixedSize()
                                 .padding(.vertical, 10)

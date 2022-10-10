@@ -9,12 +9,12 @@
 import Defaults
 import SwiftUI
 
-enum AppAppearance: String, CaseIterable, Defaults.Serializable {
+enum AppAppearance: String, CaseIterable, Defaults.Serializable, Displayable {
     case system
     case dark
     case light
 
-    var localizedName: String {
+    var displayTitle: String {
         switch self {
         case .system:
             return L10n.system

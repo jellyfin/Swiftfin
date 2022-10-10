@@ -100,7 +100,7 @@ extension EpisodeItemView.ContentView {
                     .padding(.horizontal)
                     .foregroundColor(.secondary)
 
-                Text(viewModel.item.displayName)
+                Text(viewModel.item.displayTitle)
                     .font(.title2)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)

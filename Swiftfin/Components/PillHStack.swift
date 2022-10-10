@@ -37,11 +37,11 @@ struct PillHStack<Item: Displayable>: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(items, id: \.displayName) { item in
+                    ForEach(items, id: \.displayTitle) { item in
                         Button {
                             onSelect(item)
                         } label: {
-                            Text(item.displayName)
+                            Text(item.displayTitle)
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)

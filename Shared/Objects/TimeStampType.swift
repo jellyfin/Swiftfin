@@ -13,7 +13,7 @@ enum TimestampType: String, CaseIterable, Defaults.Serializable, Displayable {
     case split
     case compact
 
-    var displayName: String {
+    var displayTitle: String {
         switch self {
         case .split:
             return "Split"

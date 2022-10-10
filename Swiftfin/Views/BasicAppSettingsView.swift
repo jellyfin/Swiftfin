@@ -43,21 +43,13 @@ struct BasicAppSettingsView: View {
             }
 
             Section {
-                Picker(L10n.appearance, selection: $appAppearance) {
-                    ForEach(self.viewModel.appearances, id: \.self) { appearance in
-                        Text(appearance.localizedName).tag(appearance.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.appearance, selection: $appAppearance)
             } header: {
                 L10n.accessibility.text
             }
 
             Section {
-                Picker(L10n.defaultScheme, selection: $defaultHTTPScheme) {
-                    ForEach(HTTPScheme.allCases, id: \.self) { scheme in
-                        Text("\(scheme.rawValue)")
-                    }
-                }
+                EnumPicker(title: L10n.defaultScheme, selection: $defaultHTTPScheme)
             } header: {
                 L10n.networking.text
             }

@@ -28,7 +28,7 @@ extension CastAndCrewLibraryView {
                         .posterStyle(type: .portrait, width: 60)
 
                     VStack(alignment: .leading) {
-                        Text(person.displayName)
+                        Text(person.displayTitle)
                             .foregroundColor(.primary)
                             .fontWeight(.semibold)
                             .lineLimit(2)

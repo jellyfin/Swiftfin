@@ -25,7 +25,7 @@ struct SelectorView<Item: Displayable>: View {
 
     var body: some View {
         List {
-            ForEach(allItems, id: \.displayName) { item in
+            ForEach(allItems, id: \.displayTitle) { item in
                 Button {
                     switch type {
                     case .single:
@@ -35,12 +35,12 @@ struct SelectorView<Item: Displayable>: View {
                     }
                 } label: {
                     HStack {
-                        Text(item.displayName)
+                        Text(item.displayTitle)
                             .foregroundColor(.primary)
 
                         Spacer()
 
-                        if selectedItems.contains { $0.displayName == item.displayName } {
+                        if selectedItems.contains { $0.displayTitle == item.displayTitle } {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.jellyfinPurple)
                         }
@@ -55,8 +55,8 @@ struct SelectorView<Item: Displayable>: View {
     }
 
     private func handleMultiSelect(with item: Item) {
-        if selectedItems.contains(where: { $0.displayName == item.displayName }) {
-            selectedItems.removeAll(where: { $0.displayName == item.displayName })
+        if selectedItems.contains(where: { $0.displayTitle == item.displayTitle }) {
+            selectedItems.removeAll(where: { $0.displayTitle == item.displayTitle })
         } else {
             selectedItems.append(item)
         }

@@ -64,7 +64,7 @@ struct LibraryView: View {
                 libraryItemsView
             }
         }
-        .navigationTitle(viewModel.parent?.displayName ?? "")
+        .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .navBarDrawer {
             ScrollView(.horizontal, showsIndicators: false) {

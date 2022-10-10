@@ -18,7 +18,7 @@ protocol Poster: Displayable, Hashable {
 
 extension Poster {
     func hash(into hasher: inout Hasher) {
-        hasher.combine(displayName)
+        hasher.combine(displayTitle)
         hasher.combine(subtitle)
     }
 }

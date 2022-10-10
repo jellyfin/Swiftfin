@@ -94,7 +94,7 @@ extension EpisodeItemView.ContentView {
                                 .foregroundColor(.secondary)
                         }
 
-                        Text(viewModel.item.displayName)
+                        Text(viewModel.item.displayTitle)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .lineLimit(1)

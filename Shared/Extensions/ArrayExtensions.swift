@@ -34,8 +34,8 @@ extension Array {
     }
 }
 
-extension ArraySlice {
-    var asArray: [Element] {
-        Array(self)
-    }
-}
+//extension ArraySlice {
+//    var asArray: [Element] {
+//        Array(self)
+//    }
+//}

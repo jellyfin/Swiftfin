@@ -11,12 +11,12 @@ import JellyfinAPI
 
 extension NameGuidPair {
     var filter: ItemFilters.Filter {
-        .init(displayName: displayName, id: id, filterName: displayName)
+        .init(displayTitle: displayTitle, id: id, filterName: displayTitle)
     }
 }
 
 extension NameGuidPair: Displayable {
-    var displayName: String {
+    var displayTitle: String {
         self.name ?? .emptyDash
     }
 }

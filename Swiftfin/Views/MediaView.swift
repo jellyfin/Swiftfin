@@ -47,7 +47,7 @@ struct MediaView: View {
                         Color.black
                             .opacity(0.5)
 
-                        Text(item.library.displayName)
+                        Text(item.library.displayTitle)
                             .foregroundColor(.white)
                             .font(.title2)
                             .fontWeight(.semibold)

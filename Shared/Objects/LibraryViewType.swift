@@ -9,12 +9,12 @@
 import Defaults
 import Foundation
 
-enum LibraryViewType: String, CaseIterable, Defaults.Serializable {
+enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
     case grid
     case list
 
     // TODO: localize after organization
-    var localizedName: String {
+    var displayTitle: String {
         switch self {
         case .grid:
             return "Grid"

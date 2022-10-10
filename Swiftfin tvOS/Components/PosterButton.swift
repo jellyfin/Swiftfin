@@ -38,13 +38,13 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                     case .portrait:
                         ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
                             .failure {
-                                InitialFailureView(item.displayName.initials)
+                                InitialFailureView(item.displayTitle.initials)
                             }
                             .posterStyle(type: type, width: itemWidth)
                     case .landscape:
                         ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
                             .failure {
-                                InitialFailureView(item.displayName.initials)
+                                InitialFailureView(item.displayTitle.initials)
                             }
                             .posterStyle(type: type, width: itemWidth)
                     }
@@ -167,7 +167,7 @@ struct PosterButtonDefaultContentView<Item: Poster>: View {
     var body: some View {
         VStack(alignment: .leading) {
             if item.showTitle {
-                Text(item.displayName)
+                Text(item.displayTitle)
                     .font(.footnote)
                     .fontWeight(.regular)
                     .foregroundColor(.primary)

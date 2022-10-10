@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 extension String: Displayable {
-    var displayName: String {
+    var displayTitle: String {
         self
     }
 }
@@ -67,7 +67,7 @@ extension String {
     }
 
     var filter: ItemFilters.Filter {
-        .init(displayName: self, id: self, filterName: self)
+        .init(displayTitle: self, id: self, filterName: self)
     }
 
     static var emptyDash = "--"

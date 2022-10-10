@@ -40,11 +40,12 @@ struct CustomizeViewsSettings: View {
     var body: some View {
         List {
             Section {
-                Picker(L10n.items, selection: $itemViewType) {
-                    ForEach(ItemViewType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.items, selection: $itemViewType)
+//                Picker(L10n.items, selection: $itemViewType) {
+//                    ForEach(ItemViewType.allCases, id: \.self) { type in
+//                        Text(type.localizedName).tag(type.rawValue)
+//                    }
+//                }
 
             } header: {
                 EmptyView()
@@ -61,41 +62,47 @@ struct CustomizeViewsSettings: View {
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-                Picker(L10n.nextUp, selection: $nextUpPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.next, selection: $nextUpPosterType)
+//                Picker(L10n.nextUp, selection: $nextUpPosterType) {
+//                    ForEach(PosterType.allCases, id: \.self) { type in
+//                        Text(type.localizedName).tag(type.rawValue)
+//                    }
+//                }
 
-                Picker(L10n.recentlyAdded, selection: $recentlyAddedPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+//                Picker(L10n.recentlyAdded, selection: $recentlyAddedPosterType) {
+//                    ForEach(PosterType.allCases, id: \.self) { type in
+//                        Text(type.localizedName).tag(type.rawValue)
+//                    }
+//                }
 
-                Picker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+//                Picker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType) {
+//                    ForEach(PosterType.allCases, id: \.self) { type in
+//                        Text(type.localizedName).tag(type.rawValue)
+//                    }
+//                }
 
-                Picker(L10n.recommended, selection: $similarPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.recommended, selection: $similarPosterType)
+//                Picker(L10n.recommended, selection: $similarPosterType) {
+//                    ForEach(PosterType.allCases, id: \.self) { type in
+//                        Text(type.localizedName).tag(type.rawValue)
+//                    }
+//                }
 
-                Picker(L10n.search, selection: $searchPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.search, selection: $searchPosterType)
+//                Picker(L10n.search, selection: $searchPosterType) {
+//                    ForEach(PosterType.allCases, id: \.self) { type in
+//                        Text(type.localizedName).tag(type.rawValue)
+//                    }
+//                }
 
-                Picker(L10n.library, selection: $libraryGridPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.library, selection: $libraryGridPosterType)
+//                Picker(L10n.library, selection: $libraryGridPosterType) {
+//                    ForEach(PosterType.allCases, id: \.self) { type in
+//                        Text(type.localizedName).tag(type.rawValue)
+//                    }
+//                }
             } header: {
                 // TODO: localize after organization
                 Text("Posters")

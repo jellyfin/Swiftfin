@@ -24,7 +24,7 @@ extension ChapterInfo {
 
 extension ChapterInfo: Displayable {
 
-    var displayName: String {
+    var displayTitle: String {
         name ?? .emptyDash
     }
 }
@@ -47,8 +47,8 @@ extension ChapterInfo {
             self.secondsRange = secondsRange
         }
 
-        var displayName: String {
-            chapterInfo.displayName
+        var displayTitle: String {
+            chapterInfo.displayTitle
         }
 
         var subtitle: String?

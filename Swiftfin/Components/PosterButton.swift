@@ -45,12 +45,12 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
             case .portrait:
                 ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
                     .failure {
-                        InitialFailureView(item.displayName.initials)
+                        InitialFailureView(item.displayTitle.initials)
                     }
             case .landscape:
                 ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
                     .failure {
-                        InitialFailureView(item.displayName.initials)
+                        InitialFailureView(item.displayTitle.initials)
                     }
             }
         }
@@ -184,7 +184,7 @@ struct PosterButtonDefaultContentView<Item: Poster>: View {
                 L10n.noResults.text
             case let .item(item):
                 if item.showTitle {
-                    Text(item.displayName)
+                    Text(item.displayTitle)
                 } else {
                     EmptyView()
                 }

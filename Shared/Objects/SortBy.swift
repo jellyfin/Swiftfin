@@ -9,14 +9,14 @@
 import Foundation
 import JellyfinAPI
 
-public enum SortBy: String, Codable, CaseIterable {
+public enum SortBy: String, CaseIterable, Displayable {
     case premiereDate = "PremiereDate"
     case name = "SortName"
     case dateAdded = "DateCreated"
     case random = "Random"
 
     // TODO: Localize
-    var localized: String {
+    var displayTitle: String {
         switch self {
         case .premiereDate:
             return "Premiere date"
@@ -30,6 +30,6 @@ public enum SortBy: String, Codable, CaseIterable {
     }
 
     var filter: ItemFilters.Filter {
-        .init(displayName: localized, filterName: rawValue)
+        .init(displayTitle: displayTitle, filterName: rawValue)
     }
 }

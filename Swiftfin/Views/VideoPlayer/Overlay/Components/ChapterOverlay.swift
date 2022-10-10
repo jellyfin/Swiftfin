@@ -38,7 +38,7 @@ extension ItemVideoPlayer.Overlay {
                     .content { type in
                         if case let PosterButtonType.item(info) = type {
                             VStack(alignment: .leading, spacing: 5) {
-                                Text(info.chapterInfo.displayName)
+                                Text(info.chapterInfo.displayTitle)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .lineLimit(1)

@@ -151,7 +151,7 @@ extension ItemView.CompactLogoScrollView {
                         EmptyView()
                     }
                     .failure {
-                        Text(viewModel.item.displayName)
+                        Text(viewModel.item.displayTitle)
                             .font(.largeTitle)
                             .fontWeight(.semibold)
                             .multilineTextAlignment(.center)

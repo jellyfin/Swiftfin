@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 
 // TODO: Move to jellyfin-api-swift
-enum SpecialFeatureType: String, Displayable, CaseIterable {
+enum SpecialFeatureType: String, CaseIterable, Displayable {
     case unknown = "Unknown"
     case clip = "Clip"
     case trailer = "Trailer"
@@ -23,7 +23,7 @@ enum SpecialFeatureType: String, Displayable, CaseIterable {
     case themeVideo = "ThemeVideo"
 
     // TODO: localize
-    var displayName: String {
+    var displayTitle: String {
         switch self {
         case .unknown:
             return L10n.unknown

@@ -9,7 +9,16 @@
 import Defaults
 import Foundation
 
-enum HTTPScheme: String, Defaults.Serializable, CaseIterable {
+enum HTTPScheme: String, CaseIterable, Displayable, Defaults.Serializable {
     case http
     case https
+    
+    var displayTitle: String {
+        switch self {
+        case .http:
+            return "http"
+        case .https:
+            return "https"
+        }
+    }
 }

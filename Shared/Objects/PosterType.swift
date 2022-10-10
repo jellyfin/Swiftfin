@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-enum PosterType: String, CaseIterable, Defaults.Serializable {
+enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
     case portrait
     case landscape
 
@@ -23,7 +23,7 @@ enum PosterType: String, CaseIterable, Defaults.Serializable {
     }
 
     // TODO: localize
-    var localizedName: String {
+    var displayTitle: String {
         switch self {
         case .portrait:
             return "Portrait"
@@ -32,6 +32,7 @@ enum PosterType: String, CaseIterable, Defaults.Serializable {
         }
     }
 
+    // TODO: Make property of the enum type, not a nested type
     enum Width {
         #if os(tvOS)
         static let portrait = 200.0

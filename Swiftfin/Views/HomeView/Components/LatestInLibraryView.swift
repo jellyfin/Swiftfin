@@ -32,7 +32,7 @@ extension HomeView {
 
         var body: some View {
             PosterHStack(
-                title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash),
+                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                 type: latestInLibraryPosterType,
                 items: items
             )

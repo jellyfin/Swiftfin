@@ -63,7 +63,7 @@ struct CinematicItemSelector<
             VStack(alignment: .leading, spacing: 10) {
                 if let currentItem = viewModel.currentItem {
                     topContent(currentItem)
-                        .id(currentItem.displayName)
+                        .id(currentItem.displayTitle)
                 }
 
                 PosterHStack(type: .landscape, items: items)

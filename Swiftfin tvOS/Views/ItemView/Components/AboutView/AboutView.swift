@@ -35,7 +35,7 @@ extension ItemView {
                         .posterStyle(type: .portrait, width: 270)
 
                         InformationCard(
-                            title: viewModel.item.displayName,
+                            title: viewModel.item.displayTitle,
                             content: viewModel.item.overview ?? L10n.noOverviewAvailable
                         )
 

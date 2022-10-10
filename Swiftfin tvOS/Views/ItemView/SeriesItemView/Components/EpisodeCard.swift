@@ -55,7 +55,7 @@ struct EpisodeCard: View {
                             .foregroundColor(.secondary)
                     }
 
-                    Text(episode.displayName)
+                    Text(episode.displayTitle)
                         .font(.footnote)
                         .padding(.bottom, 1)
 

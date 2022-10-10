@@ -101,7 +101,7 @@ extension SeriesEpisodeSelector {
                 case .noResult:
                     L10n.noResults.text
                 case let .item(episode):
-                    Text(episode.displayName)
+                    Text(episode.displayTitle)
                 }
             }
             .font(.body)

@@ -11,7 +11,7 @@ import JellyfinAPI
 import UIKit
 
 extension BaseItemPerson: Displayable {
-    var displayName: String {
+    var displayTitle: String {
         self.name ?? .emptyDash
     }
 }

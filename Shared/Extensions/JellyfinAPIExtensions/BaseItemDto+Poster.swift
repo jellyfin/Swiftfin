@@ -18,9 +18,9 @@ extension BaseItemDto: Poster {
     var title: String {
         switch type {
         case .episode:
-            return seriesName ?? displayName
+            return seriesName ?? displayTitle
         default:
-            return displayName
+            return displayTitle
         }
     }
 
@@ -29,7 +29,7 @@ extension BaseItemDto: Poster {
         case .episode:
             return seasonEpisodeLocator
         case .video:
-            return specialFeatureType?.displayName
+            return specialFeatureType?.displayTitle
         default:
             return nil
         }

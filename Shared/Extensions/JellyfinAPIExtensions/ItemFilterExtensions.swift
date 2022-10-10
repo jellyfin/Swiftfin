@@ -31,6 +31,6 @@ extension ItemFilter {
     }
 
     var filter: ItemFilters.Filter {
-        .init(displayName: localized, filterName: rawValue)
+        .init(displayTitle: localized, filterName: rawValue)
     }
 }
