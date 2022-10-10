@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "496145761ab30e8cf1c44220c0882b95e6b41077",
-        "version" : "8.1.0"
+        "revision" : "25593754913d228777f14634bc6f493dbeb4e9fb",
+        "version" : "9.0.0"
       }
     },
     {

@@ -20,7 +20,7 @@ final class MainCoordinator: NavigationCoordinatable {
     @Injected(LogManager.service)
     private var logger
 
-    var stack: NavigationStack<MainCoordinator>
+    var stack: Stinsen.NavigationStack<MainCoordinator>
 
     @Root
     var mainTab = makeMainTab
