@@ -266,13 +266,15 @@
 		E126F742278A656C00A522BF /* ServerStreamType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E126F740278A656C00A522BF /* ServerStreamType.swift */; };
 		E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */; };
 		E129428628F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */; };
-		E129428828F0831F00796AC6 /* TimeStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428728F0831F00796AC6 /* TimeStamp.swift */; };
+		E129428828F0831F00796AC6 /* Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428728F0831F00796AC6 /* Timestamp.swift */; };
 		E129428A28F0BBD900796AC6 /* OverlayComponentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428928F0BBD900796AC6 /* OverlayComponentType.swift */; };
 		E129428B28F0BBD900796AC6 /* OverlayComponentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428928F0BBD900796AC6 /* OverlayComponentType.swift */; };
 		E129428D28F0BBE600796AC6 /* OverlayLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428C28F0BBE600796AC6 /* OverlayLocation.swift */; };
 		E129428E28F0BBE600796AC6 /* OverlayLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428C28F0BBE600796AC6 /* OverlayLocation.swift */; };
 		E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428F28F0BDC300796AC6 /* TimeStampType.swift */; };
 		E129429128F0BDC300796AC6 /* TimeStampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428F28F0BDC300796AC6 /* TimeStampType.swift */; };
+		E129429328F2845000796AC6 /* SliderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429228F2845000796AC6 /* SliderType.swift */; };
+		E129429428F2845000796AC6 /* SliderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429228F2845000796AC6 /* SliderType.swift */; };
 		E12B835F28C07D8500878399 /* LibraryParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113133728BEADBA00930F75 /* LibraryParent.swift */; };
 		E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */; };
 		E12CC1AF28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */; };
@@ -850,10 +852,11 @@
 		E1267D3D271A1F46003C492E /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
 		E126F740278A656C00A522BF /* ServerStreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStreamType.swift; sourceTree = "<group>"; };
 		E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnReceiveNotificationModifier.swift; sourceTree = "<group>"; };
-		E129428728F0831F00796AC6 /* TimeStamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeStamp.swift; sourceTree = "<group>"; };
+		E129428728F0831F00796AC6 /* Timestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timestamp.swift; sourceTree = "<group>"; };
 		E129428928F0BBD900796AC6 /* OverlayComponentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayComponentType.swift; sourceTree = "<group>"; };
 		E129428C28F0BBE600796AC6 /* OverlayLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLocation.swift; sourceTree = "<group>"; };
 		E129428F28F0BDC300796AC6 /* TimeStampType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeStampType.swift; sourceTree = "<group>"; };
+		E129429228F2845000796AC6 /* SliderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderType.swift; sourceTree = "<group>"; };
 		E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpLibraryViewModel.swift; sourceTree = "<group>"; };
 		E12CC1B028D1008F00678D5D /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
 		E12CC1B428D1124400678D5D /* BasicLibraryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicLibraryCoordinator.swift; sourceTree = "<group>"; };
@@ -1340,6 +1343,7 @@
 				E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */,
 				E17FB54E28C1197700311DFE /* SelectorType.swift */,
 				E126F740278A656C00A522BF /* ServerStreamType.swift */,
+				E129429228F2845000796AC6 /* SliderType.swift */,
 				E148128A28C15526003B8787 /* SortBy.swift */,
 				E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */,
 				5D1603FB278A3D5700D22B99 /* SubtitleSize.swift */,
@@ -1770,7 +1774,7 @@
 				E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */,
 				E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */,
 				E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */,
-				E129428728F0831F00796AC6 /* TimeStamp.swift */,
+				E129428728F0831F00796AC6 /* Timestamp.swift */,
 				E11245B628D97ED200D8A977 /* TopBarView.swift */,
 			);
 			path = Components;
@@ -2782,6 +2786,7 @@
 				E18E021F2887492B0022598C /* InitialFailureView.swift in Sources */,
 				E1D4BF882719D27100A11E64 /* Bitrates.swift in Sources */,
 				E1D3043D28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift in Sources */,
+				E129429428F2845000796AC6 /* SliderType.swift in Sources */,
 				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
 				E11CEB8928998549003E74C7 /* BottomEdgeGradientModifier.swift in Sources */,
 				E129428628F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
@@ -2987,7 +2992,7 @@
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
 				E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
-				E129428828F0831F00796AC6 /* TimeStamp.swift in Sources */,
+				E129428828F0831F00796AC6 /* Timestamp.swift in Sources */,
 				E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */,
 				E11CEB8D28999B4A003E74C7 /* FontExtensions.swift in Sources */,
 				E1C812CE277AE43100918266 /* LegacyVideoPlayerViewModel.swift in Sources */,
@@ -3064,6 +3069,7 @@
 				E1C812BD277A8E5D00918266 /* LegacyPlayerOverlayDelegate.swift in Sources */,
 				E113132F28BDB66A00930F75 /* NavBarDrawerModifier.swift in Sources */,
 				C45942C527F67DA400C54FE7 /* LiveTVCoordinator.swift in Sources */,
+				E129429328F2845000796AC6 /* SliderType.swift in Sources */,
 				E14A08CD28E68729004FC984 /* MenuPosterHStack.swift in Sources */,
 				E113133A28BEB71D00930F75 /* FilterViewModel.swift in Sources */,
 				E13DD3C227164941009D4DAF /* SwiftfinStore.swift in Sources */,

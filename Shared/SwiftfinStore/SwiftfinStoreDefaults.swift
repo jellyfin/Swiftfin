@@ -57,6 +57,7 @@ extension Defaults.Keys {
                 default: .large,
                 suite: .generalSuite
             )
+            static let sliderType: Key<SliderType> = .init("VideoPlayer.Overlay.sliderType", default: .capsule, suite: .generalSuite)
 
             // Timestamp
             static let negativeTimestamp: Key<Bool> = .init("VideoPlayer.Overlay.negativeTimestamp", default: true, suite: .generalSuite)

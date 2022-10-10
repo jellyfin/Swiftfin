@@ -20,6 +20,8 @@ extension ItemVideoPlayer.Overlay {
         private var jumpForwardLength
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
+        @Default(.VideoPlayer.Overlay.sliderType)
+        private var sliderType
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
 
@@ -58,7 +60,8 @@ extension ItemVideoPlayer.Overlay {
             }
         }
 
-        var body: some View {
+        @ViewBuilder
+        private var capsuleSlider: some View {
             CapsuleSlider(progress: $progress)
                 .rate($scrubbingRate)
                 .bottomContent {
@@ -83,6 +86,44 @@ extension ItemVideoPlayer.Overlay {
                     isScrubbing = isEditing
                     scrubbingRate = 1
                 }
+        }
+
+        @ViewBuilder
+        private var thumbSlider: some View {
+            ThumbSlider(progress: $progress)
+                .rate($scrubbingRate)
+                .bottomContent {
+                    Group {
+                        switch timestampType {
+                        case .split:
+                            SplitTimeStamp(currentSeconds: $currentSeconds)
+                        case .compact:
+                            CompactTimeStamp(currentSeconds: $currentSeconds)
+                        }
+                    }
+                    .padding(5)
+                }
+                .leadingContent {
+                    if playbackButtonType == .compact {
+                        SmallPlaybackButtons()
+                            .frame(height: 50)
+                            .padding(.trailing)
+                    }
+                }
+                .onEditingChanged { isEditing in
+                    isScrubbing = isEditing
+                    scrubbingRate = 1
+                }
+        }
+
+        var body: some View {
+//            Group {
+//                switch sliderType {
+//                case .capsule: capsuleSlider
+//                case .thumb: thumbSlider
+//                }
+//            }
+            thumbSlider
                 .padding()
                 .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
                     guard !isScrubbing else { return }
