@@ -9,17 +9,17 @@
 import SwiftUI
 
 struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable & RawRepresentable>: View {
-    
+
     @Binding
     var selection: EnumType
-    
+
     let title: String
-    
+
     init(title: String, selection: Binding<EnumType>) {
         self.title = title
         self._selection = selection
     }
-    
+
     var body: some View {
         Picker(title, selection: $selection) {
             ForEach(EnumType.allCases.asArray, id: \.hashValue) {

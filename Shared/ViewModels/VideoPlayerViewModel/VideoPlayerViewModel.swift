@@ -17,9 +17,12 @@ class CurrentSecondsHandler: ObservableObject {
 
     @Published
     var currentSeconds: Int = 0
+    @Published
+    var playbackInformation: VLCVideoPlayer.PlaybackInformation?
 
     func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         self.currentSeconds = Int(ticks / 1000)
+        self.playbackInformation = playbackInformation
     }
 }
 
@@ -45,8 +48,6 @@ class ItemVideoPlayerViewModel: ObservableObject {
     var playerPlaybackSpeed: PlaybackSpeed = .one
     @Published
     var isAspectFilled: Bool = false
-    @Published
-    var presentSettings: Bool = false
 
     var proxy: VLCVideoPlayer.Proxy = .init()
 
@@ -62,6 +63,7 @@ class ItemVideoPlayerViewModel: ObservableObject {
 
     let playbackURL: URL
     let item: BaseItemDto
+    let videoStream: MediaStream
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
     let chapters: [ChapterInfo.FullInfo]
@@ -69,12 +71,14 @@ class ItemVideoPlayerViewModel: ObservableObject {
     init(
         playbackURL: URL,
         item: BaseItemDto,
+        videoStream: MediaStream,
         audioStreams: [MediaStream],
         subtitleStreams: [MediaStream],
         chapters: [ChapterInfo.FullInfo]
     ) {
         self.playbackURL = playbackURL
         self.item = item
+        self.videoStream = videoStream
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
         self.chapters = chapters

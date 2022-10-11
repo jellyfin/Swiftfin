@@ -15,8 +15,8 @@ extension ItemVideoPlayer {
 
     struct Overlay: View {
 
-        @Default(.VideoPlayer.Overlay.playbackButtonType)
-        private var playbackButtonType
+//        @Default(.VideoPlayer.Overlay.playbackButtonType)
+        private var playbackButtonType: PlaybackButtonType = .large
 
         @Environment(\.isScrubbing)
         @Binding

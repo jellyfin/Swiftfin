@@ -7,10 +7,21 @@
 //
 
 import Combine
+import Defaults
 import JellyfinAPI
 import MediaPlayer
+import Stinsen
 import SwiftUI
 import VLCUI
+
+struct WrappedView: View {
+
+    let content: () -> any View
+
+    var body: some View {
+        AnyView(content())
+    }
+}
 
 extension UIApplication {
     var keyWindow: UIWindow? {
@@ -81,10 +92,13 @@ struct ItemVideoPlayer: View {
     private var flashContentProxy: FlashContentProxy = .init()
     @ObservedObject
     private var overlayTimer: TimerProxy = .init()
+
     @State
     private var isScrubbing: Bool = false
     @State
     private var currentOverlayType: OverlayType?
+    @State
+    private var showingAdvanced: Bool = false
 
     @ViewBuilder
     func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
@@ -138,6 +152,7 @@ struct ItemVideoPlayer: View {
                 .environmentObject(viewModel)
                 .environment(\.currentOverlayType, $currentOverlayType)
                 .environment(\.isScrubbing, $isScrubbing)
+                .environment(\.showAdvancedSettings, $showingAdvanced)
 
                 FlashContentView(proxy: flashContentProxy)
             }
@@ -148,6 +163,16 @@ struct ItemVideoPlayer: View {
             .animation(.linear(duration: 0.1), value: currentOverlayType)
 
             // TODO: Add advanced menu
+            if showingAdvanced {
+                WrappedView {
+                    NavigationViewCoordinator(AdvancedSettingsCoordinator()).view()
+                }
+                .environmentObject(currentSecondsHandler)
+                .environmentObject(viewModel)
+                .environment(\.showAdvancedSettings, $showingAdvanced)
+                .frame(width: 400)
+                .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .trailing)))
+            }
         }
         .onChange(of: overlayTimer.isActive) { newValue in
             guard !newValue else { return }

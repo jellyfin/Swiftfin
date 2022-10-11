@@ -9,8 +9,8 @@
 import Foundation
 
 public extension Collection {
-    
-    var asArray: Array<Element> {
+
+    var asArray: [Element] {
         Array(self)
     }
 

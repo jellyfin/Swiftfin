@@ -117,42 +117,41 @@ extension ItemVideoPlayer.Overlay {
         }
 
         var body: some View {
-//            Group {
-//                switch sliderType {
-//                case .capsule: capsuleSlider
-//                case .thumb: thumbSlider
-//                }
-//            }
-            thumbSlider
-                .padding()
-                .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
-                    guard !isScrubbing else { return }
-                    self.currentSeconds = newValue
-                    self.progress = CGFloat(newValue) / CGFloat(viewModel.item.runTimeSeconds)
+            Group {
+                switch sliderType {
+                case .capsule: capsuleSlider
+                case .thumb: thumbSlider
                 }
-                .onChange(of: isScrubbing) { newValue in
+            }
+            .padding()
+            .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
+                guard !isScrubbing else { return }
+                self.currentSeconds = newValue
+                self.progress = CGFloat(newValue) / CGFloat(viewModel.item.runTimeSeconds)
+            }
+            .onChange(of: isScrubbing) { newValue in
 
-                    if newValue {
-                        overlayTimer.stop()
-                    } else {
-                        overlayTimer.start(5)
-                    }
+                if newValue {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.start(5)
+                }
 
-                    guard !newValue else { return }
-                    let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
-                    viewModel.proxy.setTime(.seconds(Int32(scrubbedSeconds)))
-                }
-                .onChange(of: progress) { _ in
-                    guard isScrubbing else { return }
-                    let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
-                    self.currentSeconds = scrubbedSeconds
-                }
-                .animation(.linear(duration: 0.1), value: isScrubbing)
-                .animation(.linear(duration: 0.1), value: scrubbingRate)
-                .onAppear {
-                    currentSeconds = currentSecondsHandler.currentSeconds
-                    progress = CGFloat(currentSecondsHandler.currentSeconds) / CGFloat(viewModel.item.runTimeSeconds)
-                }
+                guard !newValue else { return }
+                let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
+                viewModel.proxy.setTime(.seconds(Int32(scrubbedSeconds)))
+            }
+            .onChange(of: progress) { _ in
+                guard isScrubbing else { return }
+                let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
+                self.currentSeconds = scrubbedSeconds
+            }
+            .animation(.linear(duration: 0.1), value: isScrubbing)
+            .animation(.linear(duration: 0.1), value: scrubbingRate)
+            .onAppear {
+                currentSeconds = currentSecondsHandler.currentSeconds
+                progress = CGFloat(currentSecondsHandler.currentSeconds) / CGFloat(viewModel.item.runTimeSeconds)
+            }
         }
     }
 }

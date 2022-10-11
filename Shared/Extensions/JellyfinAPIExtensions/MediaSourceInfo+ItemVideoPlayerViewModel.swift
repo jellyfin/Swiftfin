@@ -20,12 +20,14 @@ extension MediaSourceInfo {
             mediaSourceId: self.id
         ).url
 
+        let videoStream = mediaStreams?.filter { $0.type == .video }.first ?? .init()
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
 
         return ItemVideoPlayerViewModel(
             playbackURL: directStreamURL,
             item: item,
+            videoStream: videoStream,
             audioStreams: audioStreams,
             subtitleStreams: subtitleStreams,
             chapters: item.fullChapterInfo

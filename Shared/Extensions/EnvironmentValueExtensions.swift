@@ -16,6 +16,10 @@ struct IsScrubbing: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
 
+struct ShowAdvancedSettings: EnvironmentKey {
+    static let defaultValue: Binding<Bool> = .constant(false)
+}
+
 extension EnvironmentValues {
 
     var currentOverlayType: Binding<ItemVideoPlayer.OverlayType?> {
@@ -26,5 +30,10 @@ extension EnvironmentValues {
     var isScrubbing: Binding<Bool> {
         get { self[IsScrubbing.self] }
         set { self[IsScrubbing.self] = newValue }
+    }
+
+    var showAdvancedSettings: Binding<Bool> {
+        get { self[ShowAdvancedSettings.self] }
+        set { self[ShowAdvancedSettings.self] = newValue }
     }
 }

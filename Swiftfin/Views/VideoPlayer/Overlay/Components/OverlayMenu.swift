@@ -19,6 +19,9 @@ extension ItemVideoPlayer.Overlay {
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
+        @Environment(\.showAdvancedSettings)
+        @Binding
+        private var showAdvancedSettings
 
         @ViewBuilder
         private var subtitleTrackMenu: some View {
@@ -99,7 +102,7 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var advancedButton: some View {
             Button {
-                viewModel.presentSettings = true
+                showAdvancedSettings = true
             } label: {
                 HStack {
                     Text("Advanced")

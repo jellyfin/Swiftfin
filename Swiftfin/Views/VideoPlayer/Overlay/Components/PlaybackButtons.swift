@@ -23,7 +23,7 @@ extension ItemVideoPlayer.Overlay {
         private var viewModel: ItemVideoPlayerViewModel
 
         var body: some View {
-            HStack(spacing: 20) {
+            HStack(spacing: 15) {
                 Button {
                     viewModel.proxy.jumpBackward(jumpBackwardLength.rawValue)
                 } label: {
@@ -51,6 +51,7 @@ extension ItemVideoPlayer.Overlay {
                     }
                     .font(.system(size: 28, weight: .heavy, design: .default))
                     .frame(width: 50)
+                    .contentShape(Rectangle())
                 }
 
                 Button {

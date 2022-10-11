@@ -12,7 +12,7 @@ import Foundation
 enum HTTPScheme: String, CaseIterable, Displayable, Defaults.Serializable {
     case http
     case https
-    
+
     var displayTitle: String {
         switch self {
         case .http:
