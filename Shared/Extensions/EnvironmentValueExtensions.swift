@@ -16,7 +16,7 @@ struct IsScrubbing: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
 
-struct ShowAdvancedSettings: EnvironmentKey {
+struct PresentingPlaybackSettings: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
 
@@ -32,8 +32,8 @@ extension EnvironmentValues {
         set { self[IsScrubbing.self] = newValue }
     }
 
-    var showAdvancedSettings: Binding<Bool> {
-        get { self[ShowAdvancedSettings.self] }
-        set { self[ShowAdvancedSettings.self] = newValue }
+    var presentingPlaybackSettings: Binding<Bool> {
+        get { self[PresentingPlaybackSettings.self] }
+        set { self[PresentingPlaybackSettings.self] = newValue }
     }
 }

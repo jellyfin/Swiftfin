@@ -20,7 +20,7 @@ struct MediaStreamInfoView: View {
                     SplitText(leading: property.displayTitle, trailing: property.value)
                 }
             }
-            
+
             if !mediaStream.colorProperties.isEmpty {
                 Section("Color") {
                     ForEach(mediaStream.colorProperties) { property in
@@ -28,7 +28,7 @@ struct MediaStreamInfoView: View {
                     }
                 }
             }
-            
+
             if !mediaStream.deliveryProperties.isEmpty {
                 Section("Delivery") {
                     ForEach(mediaStream.deliveryProperties) { property in

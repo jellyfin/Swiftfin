@@ -12,9 +12,9 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
-final class AdvancedSettingsCoordinator: NavigationCoordinatable {
+final class PlaybackSettingsCoordinator: NavigationCoordinatable {
 
-    let stack = NavigationStack(initial: \AdvancedSettingsCoordinator.start)
+    let stack = NavigationStack(initial: \PlaybackSettingsCoordinator.start)
 
     @Root
     var start = makeStart
@@ -34,7 +34,7 @@ final class AdvancedSettingsCoordinator: NavigationCoordinatable {
     func makeMediaStreamInfo(mediaStream: MediaStream) -> some View {
         MediaStreamInfoView(mediaStream: mediaStream)
     }
-    
+
     @ViewBuilder
     func makePlaybackInformation() -> some View {
         PlaybackInformationView()
@@ -42,7 +42,7 @@ final class AdvancedSettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        AdvancedSettingsView()
+        PlaybackSettingsView()
     }
 }
 
@@ -104,18 +104,18 @@ extension ChevronButton {
     }
 }
 
-struct AdvancedSettingsView: View {
+struct PlaybackSettingsView: View {
 
     @EnvironmentObject
     private var currentSecondsHandler: CurrentSecondsHandler
     @EnvironmentObject
     private var viewModel: ItemVideoPlayerViewModel
     @EnvironmentObject
-    private var router: AdvancedSettingsCoordinator.Router
+    private var router: PlaybackSettingsCoordinator.Router
 
-    @Environment(\.showAdvancedSettings)
+    @Environment(\.presentingPlaybackSettings)
     @Binding
-    private var showAdvancedSettings
+    private var presentingPlaybackSettings
 
     var body: some View {
         Form {
@@ -125,7 +125,7 @@ struct AdvancedSettingsView: View {
                 } label: {
                     Text("Overlay Settings")
                 }
-                
+
                 Button {
                     router.route(to: \.playbackInformation)
                 } label: {
@@ -154,26 +154,20 @@ struct AdvancedSettingsView: View {
                 }
             }
         }
-        .navigationTitle("Advanced")
+        .navigationTitle("Playback")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 Button {
-                    showAdvancedSettings = false
+//                    withAnimation {
+                    presentingPlaybackSettings = false
+//                    }
                 } label: {
                     Image(systemName: "xmark.circle.fill")
+                        .resizable()
+//                        .frame(width: 44, height: 50)
                 }
             }
-        }
-        .onAppear {
-            let scenes = UIApplication.shared.connectedScenes
-            let windowScene = scenes.first as? UIWindowScene
-            windowScene?.windows.first?.overrideUserInterfaceStyle = .dark
-        }
-        .onDisappear {
-            let scenes = UIApplication.shared.connectedScenes
-            let windowScene = scenes.first as? UIWindowScene
-            windowScene?.windows.first?.overrideUserInterfaceStyle = Defaults[.appAppearance].style
         }
     }
 }

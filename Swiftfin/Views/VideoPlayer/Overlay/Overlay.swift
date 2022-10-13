@@ -15,20 +15,24 @@ extension ItemVideoPlayer {
 
     struct Overlay: View {
 
-//        @Default(.VideoPlayer.Overlay.playbackButtonType)
-        private var playbackButtonType: PlaybackButtonType = .large
+        @Default(.VideoPlayer.Overlay.playbackButtonType)
+        private var playbackButtonType
 
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
+        @Environment(\.presentingPlaybackSettings)
+        @Binding
+        private var presentingPlaybackSettings
 
         var body: some View {
             ZStack {
                 VStack {
                     TopBarView()
-                        .padding(safeAreaInsets)
+                        .padding(safeAreaInsets.mutating(\.trailing, to: 0))
+                        .padding(.trailing, presentingPlaybackSettings ? 0 : safeAreaInsets.trailing)
                         .background {
                             LinearGradient(
                                 stops: [
@@ -46,7 +50,8 @@ extension ItemVideoPlayer {
                         .allowsHitTesting(false)
 
                     BottomBarView()
-                        .padding(safeAreaInsets)
+                        .padding(safeAreaInsets.mutating(\.trailing, to: 0))
+                        .padding(.trailing, presentingPlaybackSettings ? 0 : safeAreaInsets.trailing)
                         .background {
                             LinearGradient(
                                 stops: [

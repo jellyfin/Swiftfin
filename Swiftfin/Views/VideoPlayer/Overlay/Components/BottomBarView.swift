@@ -9,6 +9,7 @@
 import Defaults
 import Sliders
 import SwiftUI
+import VLCUI
 
 extension ItemVideoPlayer.Overlay {
 
@@ -25,16 +26,18 @@ extension ItemVideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
 
+        @Environment(\.isScrubbing)
+        @Binding
+        private var isScrubbing: Bool
+
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
         @EnvironmentObject
         private var currentSecondsHandler: CurrentSecondsHandler
         @EnvironmentObject
         private var overlayTimer: TimerProxy
-
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
+        @EnvironmentObject
+        private var vlcVideoPlayerProxy: VLCVideoPlayer.Proxy
 
         @State
         private var currentSeconds: Int = 0
@@ -78,7 +81,6 @@ extension ItemVideoPlayer.Overlay {
                 .leadingContent {
                     if playbackButtonType == .compact {
                         SmallPlaybackButtons()
-                            .frame(height: 50)
                             .padding(.trailing)
                     }
                 }
@@ -86,6 +88,7 @@ extension ItemVideoPlayer.Overlay {
                     isScrubbing = isEditing
                     scrubbingRate = 1
                 }
+                .frame(height: 50)
         }
 
         @ViewBuilder
@@ -106,7 +109,6 @@ extension ItemVideoPlayer.Overlay {
                 .leadingContent {
                     if playbackButtonType == .compact {
                         SmallPlaybackButtons()
-                            .frame(height: 50)
                             .padding(.trailing)
                     }
                 }
@@ -138,8 +140,8 @@ extension ItemVideoPlayer.Overlay {
                 }
 
                 guard !newValue else { return }
-                let scrubbedSeconds = Int32(CGFloat(viewModel.item.runTimeSeconds) * progress)
-                viewModel.proxy.setTime(.seconds(Int32(scrubbedSeconds)))
+                let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
+                vlcVideoPlayerProxy.setTime(.seconds(scrubbedSeconds))
             }
             .onChange(of: progress) { _ in
                 guard isScrubbing else { return }

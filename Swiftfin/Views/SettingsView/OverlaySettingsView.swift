@@ -25,14 +25,14 @@ struct OverlaySettingsView: View {
     var body: some View {
         Form {
             EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
-            
+
             EnumPicker(title: "Slider", selection: $sliderType)
-            
+
             Section("Timestamp") {
                 Toggle("Negative Time", isOn: $negativeTimestamp)
-                
+
                 Toggle("Scrubbing Current Time", isOn: $showCurrentTimeWhileScrubbing)
-                
+
                 EnumPicker(title: "Timestamp Type", selection: $timestampType)
             }
         }

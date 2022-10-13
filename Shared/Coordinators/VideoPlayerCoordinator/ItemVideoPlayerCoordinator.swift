@@ -42,9 +42,9 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         if let item = parameters.item {
-            ItemVideoPlayer(viewModel: .init(item: item))
+            ItemVideoPlayer(manager: .init(item: item))
         } else if let viewModel = parameters.viewModel {
-            ItemVideoPlayer(viewModel: .init(viewModel: viewModel))
+            ItemVideoPlayer(manager: .init(viewModel: viewModel))
         } else {
             EmptyView()
         }

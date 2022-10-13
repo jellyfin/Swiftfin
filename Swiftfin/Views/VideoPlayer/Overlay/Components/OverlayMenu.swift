@@ -7,35 +7,45 @@
 //
 
 import SwiftUI
+import VLCUI
 
 extension ItemVideoPlayer.Overlay {
 
     struct OverlayMenu: View {
 
-        @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
-        @EnvironmentObject
-        private var overlayTimer: TimerProxy
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
-        @Environment(\.showAdvancedSettings)
+        @Environment(\.presentingPlaybackSettings)
         @Binding
-        private var showAdvancedSettings
+        private var presentingPlaybackSettings
+
+        @EnvironmentObject
+        private var overlayTimer: TimerProxy
+        @EnvironmentObject
+        private var viewModel: ItemVideoPlayerViewModel
+        @EnvironmentObject
+        private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
         @ViewBuilder
         private var subtitleTrackMenu: some View {
             Menu {
-                ForEach(viewModel.playerSubtitleTracks.keys.sorted(), id: \.self) { subtitleStreamIndex in
+                ForEach(viewModel.subtitleStreams, id: \.self) { subtitleStream in
                     Button {
-                        viewModel.proxy.setSubtitleTrack(.absolute(subtitleStreamIndex))
+                        videoPlayerProxy.setSubtitleTrack(.absolute(subtitleStream.index ?? -1))
                     } label: {
-                        if subtitleStreamIndex == viewModel.selectedSubtitleTrackIndex {
-                            Label(viewModel.playerSubtitleTracks[subtitleStreamIndex] ?? L10n.noTitle, systemImage: "checkmark")
-                        } else {
-                            Text(viewModel.playerSubtitleTracks[subtitleStreamIndex] ?? L10n.noTitle)
-                        }
+                        Text(subtitleStream.displayTitle ?? .emptyDash)
                     }
+                    
+//                    Button {
+//                        vlcVideoPlayerProxy.setSubtitleTrack(.absolute(subtitleStreamIndex))
+//                    } label: {
+//                        if subtitleStreamIndex == viewModel.selectedSubtitleTrackIndex {
+//                            Label(viewModel.playerSubtitleTracks[subtitleStreamIndex] ?? L10n.noTitle, systemImage: "checkmark")
+//                        } else {
+//                            Text(viewModel.playerSubtitleTracks[subtitleStreamIndex] ?? L10n.noTitle)
+//                        }
+//                    }
                 }
             } label: {
                 HStack {
@@ -45,46 +55,46 @@ extension ItemVideoPlayer.Overlay {
             }
         }
 
-        @ViewBuilder
-        private var audioTrackMenu: some View {
-            Menu {
-                ForEach(viewModel.playerAudioTracks.keys.sorted(), id: \.self) { audioStreamIndex in
-                    Button {
-                        viewModel.proxy.setAudioTrack(.absolute(audioStreamIndex))
-                    } label: {
-                        Text(viewModel.playerAudioTracks[audioStreamIndex] ?? L10n.noTitle)
-                    }
-                }
-            } label: {
-                HStack {
-                    Image(systemName: "speaker.wave.3")
-                    L10n.audio.text
-                }
-            }
-        }
-
-        @ViewBuilder
-        private var playbackSpeedMenu: some View {
-            Menu {
-                ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
-                    Button {
-                        viewModel.proxy.setRate(.absolute(Float(speed.rawValue)))
-                        viewModel.playerPlaybackSpeed = speed
-                    } label: {
-                        if speed == viewModel.playerPlaybackSpeed {
-                            Label(speed.displayTitle, systemImage: "checkmark")
-                        } else {
-                            Text(speed.displayTitle)
-                        }
-                    }
-                }
-            } label: {
-                HStack {
-                    Image(systemName: "speedometer")
-                    L10n.playbackSpeed.text
-                }
-            }
-        }
+//        @ViewBuilder
+//        private var audioTrackMenu: some View {
+//            Menu {
+//                ForEach(viewModel.playerAudioTracks.keys.sorted(), id: \.self) { audioStreamIndex in
+//                    Button {
+//                        vlcVideoPlayerProxy.setAudioTrack(.absolute(audioStreamIndex))
+//                    } label: {
+//                        Text(viewModel.playerAudioTracks[audioStreamIndex] ?? L10n.noTitle)
+//                    }
+//                }
+//            } label: {
+//                HStack {
+//                    Image(systemName: "speaker.wave.3")
+//                    L10n.audio.text
+//                }
+//            }
+//        }
+//
+//        @ViewBuilder
+//        private var playbackSpeedMenu: some View {
+//            Menu {
+//                ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
+//                    Button {
+//                        vlcVideoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
+//                        viewModel.playerPlaybackSpeed = speed
+//                    } label: {
+//                        if speed == viewModel.playerPlaybackSpeed {
+//                            Label(speed.displayTitle, systemImage: "checkmark")
+//                        } else {
+//                            Text(speed.displayTitle)
+//                        }
+//                    }
+//                }
+//            } label: {
+//                HStack {
+//                    Image(systemName: "speedometer")
+//                    L10n.playbackSpeed.text
+//                }
+//            }
+//        }
 
         @ViewBuilder
         private var chaptersButton: some View {
@@ -102,7 +112,9 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var advancedButton: some View {
             Button {
-                showAdvancedSettings = true
+                withAnimation {
+                    presentingPlaybackSettings = true
+                }
             } label: {
                 HStack {
                     Text("Advanced")
@@ -116,9 +128,9 @@ extension ItemVideoPlayer.Overlay {
             Menu {
                 subtitleTrackMenu
 
-                audioTrackMenu
-
-                playbackSpeedMenu
+//                audioTrackMenu
+//
+//                playbackSpeedMenu
 
                 if !viewModel.chapters.isEmpty {
                     chaptersButton

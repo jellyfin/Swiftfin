@@ -14,15 +14,6 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
-struct WrappedView: View {
-
-    let content: () -> any View
-
-    var body: some View {
-        AnyView(content())
-    }
-}
-
 extension UIApplication {
     var keyWindow: UIWindow? {
         connectedScenes
@@ -55,28 +46,6 @@ extension UIEdgeInsets {
     }
 }
 
-class ItemVideoPlayerManager: ViewModel {
-
-    @Published
-    var currentViewModel: ItemVideoPlayerViewModel?
-
-    init(viewModel: ItemVideoPlayerViewModel) {
-        self.currentViewModel = viewModel
-        super.init()
-    }
-
-    init(item: BaseItemDto) {
-        super.init()
-        item.createItemVideoPlayerViewModel()
-            .sink { completion in
-                self.handleAPIRequestError(completion: completion)
-            } receiveValue: { viewModels in
-                self.currentViewModel = viewModels[0]
-            }
-            .store(in: &cancellables)
-    }
-}
-
 struct ItemVideoPlayer: View {
 
     enum OverlayType {
@@ -84,64 +53,74 @@ struct ItemVideoPlayer: View {
         case chapters
     }
 
-    @ObservedObject
-    var viewModel: ItemVideoPlayerManager
+    @EnvironmentObject
+    private var router: ItemVideoPlayerCoordinator.Router
+
     @ObservedObject
     private var currentSecondsHandler: CurrentSecondsHandler = .init()
     @ObservedObject
     private var flashContentProxy: FlashContentProxy = .init()
     @ObservedObject
     private var overlayTimer: TimerProxy = .init()
+    @ObservedObject
+    private var vlcVideoPlayerProxy: VLCVideoPlayer.Proxy = .init()
+    @ObservedObject
+    private var videoPlayerManager: VideoPlayerManager
 
-    @State
-    private var isScrubbing: Bool = false
     @State
     private var currentOverlayType: OverlayType?
     @State
-    private var showingAdvanced: Bool = false
+    private var isScrubbing: Bool = false
+    @State
+    private var presentingPlaybackSettings: Bool = false
+
+    init(manager: VideoPlayerManager) {
+        self.videoPlayerManager = manager
+    }
 
     @ViewBuilder
-    func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
+    private func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
         HStack(spacing: 0) {
             ZStack {
                 VLCVideoPlayer(configuration: viewModel.configuration)
-                    .proxy(viewModel.proxy)
+                    .proxy(vlcVideoPlayerProxy)
                     .onTicksUpdated {
-                        viewModel.onTicksUpdated(ticks: $0, playbackInformation: $1)
+                        videoPlayerManager.onTicksUpdated(ticks: $0, playbackInformation: $1)
                         currentSecondsHandler.onTicksUpdated(ticks: $0, playbackInformation: $1)
                     }
-                    .onStateUpdated(viewModel.onStateUpdated(state:playbackInformation:))
+                    .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
 
                 GestureView()
-                    .onPinch { state, scale in
-                        guard state == .began || state == .changed else { return }
-                        if scale > 1, !viewModel.isAspectFilled {
-                            viewModel.isAspectFilled.toggle()
-                            UIView.animate(withDuration: 0.2) {
-                                viewModel.proxy.aspectFill(1)
-                            }
-                        } else if scale < 1, viewModel.isAspectFilled {
-                            viewModel.isAspectFilled.toggle()
-                            UIView.animate(withDuration: 0.2) {
-                                viewModel.proxy.aspectFill(0)
+//                    .onPinch { state, scale in
+//                        guard state == .began || state == .changed else { return }
+//                        if scale > 1, !viewModel.isAspectFilled {
+//                            viewModel.isAspectFilled.toggle()
+//                            UIView.animate(withDuration: 0.2) {
+//                                vlcVideoPlayerProxy.aspectFill(1)
+//                            }
+//                        } else if scale < 1, viewModel.isAspectFilled {
+//                            viewModel.isAspectFilled.toggle()
+//                            UIView.animate(withDuration: 0.2) {
+//                                vlcVideoPlayerProxy.aspectFill(0)
+//                            }
+//                        }
+//                    }
+                        .onTap {
+                            if currentOverlayType == nil {
+                                currentOverlayType = .main
+                            } else {
+                                currentOverlayType = nil
                             }
                         }
-                    }
-                    .onTap {
-                        if currentOverlayType == nil {
-                            currentOverlayType = .main
-                        } else {
-                            currentOverlayType = nil
-                        }
-                    }
 
                 Group {
                     switch currentOverlayType {
                     case .main:
                         Overlay()
-                    case .chapters:
-                        Overlay.ChapterOverlay()
-                    case .none:
+//                    case .chapters:
+//                        Overlay.ChapterOverlay()
+//                    case .none:
+                    default:
                         EmptyView()
                     }
                 }
@@ -150,30 +129,33 @@ struct ItemVideoPlayer: View {
                 .environmentObject(flashContentProxy)
                 .environmentObject(overlayTimer)
                 .environmentObject(viewModel)
+                .environmentObject(videoPlayerManager)
+                .environmentObject(vlcVideoPlayerProxy)
                 .environment(\.currentOverlayType, $currentOverlayType)
                 .environment(\.isScrubbing, $isScrubbing)
-                .environment(\.showAdvancedSettings, $showingAdvanced)
+                .environment(\.presentingPlaybackSettings, $presentingPlaybackSettings)
 
-                FlashContentView(proxy: flashContentProxy)
+//                FlashContentView(proxy: flashContentProxy)
             }
             .onTapGesture {
-                print("Parent got tap gesture")
                 overlayTimer.start(5)
             }
-            .animation(.linear(duration: 0.1), value: currentOverlayType)
 
-            // TODO: Add advanced menu
-            if showingAdvanced {
+            if presentingPlaybackSettings {
                 WrappedView {
-                    NavigationViewCoordinator(AdvancedSettingsCoordinator()).view()
+                    NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
                 }
+                .cornerRadius(20, corners: [.topLeft, .bottomLeft])
+                .frame(width: 400)
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
                 .environmentObject(currentSecondsHandler)
                 .environmentObject(viewModel)
-                .environment(\.showAdvancedSettings, $showingAdvanced)
-                .frame(width: 400)
-                .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .trailing)))
+                .environmentObject(videoPlayerManager)
+                .environment(\.presentingPlaybackSettings, $presentingPlaybackSettings)
             }
         }
+        .animation(.easeIn(duration: 0.2), value: presentingPlaybackSettings)
+        .animation(.linear(duration: 0.1), value: currentOverlayType)
         .onChange(of: overlayTimer.isActive) { newValue in
             guard !newValue else { return }
             currentOverlayType = nil
@@ -183,17 +165,25 @@ struct ItemVideoPlayer: View {
     // TODO: Better and localize
     @ViewBuilder
     private var loadingView: some View {
-        VStack {
-            ProgressView()
+        ZStack {
+            Color.black
 
-            Text("Retrieving media...")
-                .foregroundColor(.white)
+            VStack {
+                ProgressView()
+
+                Button {
+                    router.dismissCoordinator()
+                } label: {
+                    Text("Cancel")
+                        .foregroundColor(.red)
+                }
+            }
         }
     }
 
     var body: some View {
         Group {
-            if let viewModel = viewModel.currentViewModel {
+            if let viewModel = videoPlayerManager.currentViewModel {
                 playerView(with: viewModel)
             } else {
                 loadingView
@@ -202,5 +192,10 @@ struct ItemVideoPlayer: View {
         .navigationBarHidden(true)
         .statusBar(hidden: true)
         .ignoresSafeArea()
+        .onChange(of: videoPlayerManager.currentViewModel) { newValue in
+            print("New video view model for item: \(String(describing: newValue?.item.displayTitle))")
+            guard let newValue else { return }
+            vlcVideoPlayerProxy.playNewMedia(newValue.configuration)
+        }
     }
 }

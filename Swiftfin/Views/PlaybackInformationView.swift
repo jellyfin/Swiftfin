@@ -16,9 +16,14 @@ struct PlaybackInformationView: View {
 
     var body: some View {
         Form {
-            
-            SplitText(leading: "Read Bytes - Input", trailing: String(currentSecondsHandler.playbackInformation?.numberOfReadBytesOnInput ?? 0))
-            SplitText(leading: "Read Bytes - Demux", trailing: String(currentSecondsHandler.playbackInformation?.numberOfReadBytesOnDemux ?? 0))
+            SplitText(
+                leading: "Read Bytes - Input",
+                trailing: String(currentSecondsHandler.playbackInformation?.numberOfReadBytesOnInput ?? 0)
+            )
+            SplitText(
+                leading: "Read Bytes - Demux",
+                trailing: String(currentSecondsHandler.playbackInformation?.numberOfReadBytesOnDemux ?? 0)
+            )
         }
     }
 }

@@ -20,27 +20,29 @@ extension ItemVideoPlayer.Overlay {
         private var jumpForwardLength
 
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
+        private var videoPlayerManager: VideoPlayerManager
+        @EnvironmentObject
+        private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
         var body: some View {
             HStack(spacing: 15) {
                 Button {
-                    viewModel.proxy.jumpBackward(jumpBackwardLength.rawValue)
+                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
                 } label: {
                     Image(systemName: jumpBackwardLength.backwardImageLabel)
                         .font(.system(size: 24, weight: .heavy, design: .default))
                 }
 
                 Button {
-                    switch viewModel.state {
+                    switch videoPlayerManager.state {
                     case .playing:
-                        viewModel.proxy.pause()
+                        videoPlayerProxy.pause()
                     default:
-                        viewModel.proxy.play()
+                        videoPlayerProxy.play()
                     }
                 } label: {
                     Group {
-                        switch viewModel.state {
+                        switch videoPlayerManager.state {
                         case .stopped, .paused:
                             Image(systemName: "play.fill")
                         case .playing:
@@ -55,7 +57,7 @@ extension ItemVideoPlayer.Overlay {
                 }
 
                 Button {
-                    viewModel.proxy.jumpForward(jumpForwardLength.rawValue)
+                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
                 } label: {
                     Image(systemName: jumpForwardLength.forwardImageLabel)
                         .font(.system(size: 24, weight: .heavy, design: .default))
@@ -74,29 +76,32 @@ extension ItemVideoPlayer.Overlay {
         private var jumpForwardLength
 
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
+        private var videoPlayerManager: VideoPlayerManager
+        @EnvironmentObject
+        private var videoPlayerProxy: VLCVideoPlayer.Proxy
+
         @State
         private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
 
         var body: some View {
             HStack(spacing: deviceOrientation.isLandscape ? 70 : 30) {
                 Button {
-                    viewModel.proxy.jumpBackward(jumpBackwardLength.rawValue)
+                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
                 } label: {
                     Image(systemName: jumpBackwardLength.backwardImageLabel)
                         .font(.system(size: 36, weight: .regular, design: .default))
                 }
 
                 Button {
-                    switch viewModel.state {
+                    switch videoPlayerManager.state {
                     case .playing:
-                        viewModel.proxy.pause()
+                        videoPlayerProxy.pause()
                     default:
-                        viewModel.proxy.play()
+                        videoPlayerProxy.play()
                     }
                 } label: {
                     Group {
-                        switch viewModel.state {
+                        switch videoPlayerManager.state {
                         case .stopped, .paused:
                             Image(systemName: "play.fill")
                         case .playing:
@@ -111,7 +116,7 @@ extension ItemVideoPlayer.Overlay {
                 .frame(width: 100)
 
                 Button {
-                    viewModel.proxy.jumpForward(jumpForwardLength.rawValue)
+                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
                 } label: {
                     Image(systemName: jumpForwardLength.forwardImageLabel)
                         .font(.system(size: 36, weight: .regular, design: .default))

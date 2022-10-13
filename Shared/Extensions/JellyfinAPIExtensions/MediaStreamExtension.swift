@@ -11,10 +11,10 @@ import JellyfinAPI
 import VLCUI
 
 struct TextPairItem: Displayable, Identifiable {
-    
+
     let displayTitle: String
     let value: String
-    
+
     var id: String {
         displayTitle.appending(value)
     }
@@ -39,19 +39,19 @@ extension MediaStream {
             enforce: false
         )
     }
-    
+
     var size: String? {
         guard let height, let width else { return nil }
         return "\(width)x\(height)"
     }
-    
+
     var metadataProperties: [TextPairItem] {
         var properties: [TextPairItem] = []
-        
+
         if let value = type {
             properties.append(.init(displayTitle: "Type", value: value.rawValue))
         }
-        
+
         if let value = codec {
             properties.append(.init(displayTitle: "Codec", value: value))
         }
@@ -59,11 +59,11 @@ extension MediaStream {
         if let value = codecTag {
             properties.append(.init(displayTitle: "Codec Tag", value: value))
         }
-        
+
         if let value = language {
             properties.append(.init(displayTitle: "Language", value: value))
         }
-        
+
         if let value = timeBase {
             properties.append(.init(displayTitle: "Time Base", value: value))
         }
@@ -155,10 +155,10 @@ extension MediaStream {
         if let value = isAnamorphic {
             properties.append(.init(displayTitle: "Anamorphic", value: value.description))
         }
-        
+
         return properties
     }
-    
+
     var colorProperties: [TextPairItem] {
         var properties: [TextPairItem] = []
 
@@ -177,13 +177,13 @@ extension MediaStream {
         if let value = colorPrimaries {
             properties.append(.init(displayTitle: "Primaries", value: value))
         }
-        
+
         return properties
     }
-    
+
     var deliveryProperties: [TextPairItem] {
         var properties: [TextPairItem] = []
-        
+
         if let value = isExternal {
             properties.append(.init(displayTitle: "External", value: value.description))
         }
@@ -207,7 +207,7 @@ extension MediaStream {
         if let value = path {
             properties.append(.init(displayTitle: "Path", value: value))
         }
-        
+
         return properties
     }
 }

@@ -20,41 +20,30 @@ class CurrentSecondsHandler: ObservableObject {
     @Published
     var playbackInformation: VLCVideoPlayer.PlaybackInformation?
 
-    func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-        self.currentSeconds = Int(ticks / 1000)
+    func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
+        self.currentSeconds = ticks / 1000
         self.playbackInformation = playbackInformation
     }
 }
 
-class ItemVideoPlayerViewModel: ObservableObject {
+class ItemVideoPlayerViewModel: ObservableObject, Equatable {
 
-    @Published
-    var state: VLCVideoPlayer.State = .opening
-    @Published
-    var subtitlesEnabled: Bool = false {
-        willSet {
-            let trackIndex = newValue ? selectedSubtitleTrackIndex : -1
-//            eventSubject.send(.setSubtitleTrack(.absolute(trackIndex)))
-        }
+    static func == (lhs: ItemVideoPlayerViewModel, rhs: ItemVideoPlayerViewModel) -> Bool {
+        lhs.playbackURL == rhs.playbackURL &&
+            lhs.item == rhs.item
     }
 
     @Published
+    var subtitlesEnabled: Bool = false
+    @Published
     var selectedSubtitleTrackIndex: Int32 = -1
     @Published
-    var playerSubtitleTracks: [Int32: String] = [:]
-    @Published
-    var playerAudioTracks: [Int32: String] = [:]
-    @Published
-    var playerPlaybackSpeed: PlaybackSpeed = .one
-    @Published
     var isAspectFilled: Bool = false
-
-    var proxy: VLCVideoPlayer.Proxy = .init()
 
     var configuration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
-        configuration.startTime = .seconds(Int32(item.startTimeSeconds))
+        configuration.startTime = .seconds(item.startTimeSeconds)
         configuration.playbackChildren = subtitleStreams
             .filter { $0.deliveryMethod == .external }
             .compactMap(\.asPlaybackChild)
@@ -84,44 +73,16 @@ class ItemVideoPlayerViewModel: ObservableObject {
         self.chapters = chapters
     }
 
-    func jump(to ticks: Int32) {
-//        eventSubject.send(.setTime(.ticks(ticks)))
-    }
-
-    func onTicksUpdated(ticks: Int32, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-
-//        if selectedSubtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
-//            lastPositiveSubtitleTrackIndex = max(selectedSubtitleTrackIndex, playbackInformation.currentSubtitleTrack.index)
-//            selectedSubtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
-//            subtitlesEnabled = lastPositiveSubtitleTrackIndex != -1
+//    func videoSubtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
+//        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
+//
+//        guard let externalSubtitleStreamIndex = externalSubtitleStreams.firstIndex(where: { $0.index == subtitleStreamIndex }) else {
+//            return Int32(subtitleStreamIndex)
 //        }
-
-        if playerSubtitleTracks != playbackInformation.subtitleTracks {
-            print("Updating subtitle tracks")
-            playerSubtitleTracks = playbackInformation.subtitleTracks
-        }
-
-        if playerAudioTracks != playbackInformation.audioTracks {
-            print("Updating audio tracks")
-            playerAudioTracks = playbackInformation.audioTracks
-        }
-    }
-
-    func onStateUpdated(state: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-        guard self.state != state else { return }
-        self.state = state
-    }
-
-    func videoSubtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
-        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
-
-        guard let externalSubtitleStreamIndex = externalSubtitleStreams.firstIndex(where: { $0.index == subtitleStreamIndex }) else {
-            return Int32(subtitleStreamIndex)
-        }
-
-        let embeddedSubtitleStreamCount = subtitleStreams.count - externalSubtitleStreams.count
-        let embeddedStreamCount = 1 + audioStreams.count + embeddedSubtitleStreamCount
-
-        return Int32(embeddedStreamCount + externalSubtitleStreamIndex)
-    }
+//
+//        let embeddedSubtitleStreamCount = subtitleStreams.count - externalSubtitleStreams.count
+//        let embeddedStreamCount = 1 + audioStreams.count + embeddedSubtitleStreamCount
+//
+//        return Int32(embeddedStreamCount + externalSubtitleStreamIndex)
+//    }
 }

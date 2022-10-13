@@ -20,6 +20,9 @@ extension ItemVideoPlayer.Overlay {
         private var router: ItemVideoPlayerCoordinator.Router
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
+        @EnvironmentObject
+        private var vlcVideoPlayerProxy: VLCVideoPlayer.Proxy
+
         @State
         private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
 
@@ -30,7 +33,7 @@ extension ItemVideoPlayer.Overlay {
         var body: some View {
             HStack(alignment: .center) {
                 Button {
-                    viewModel.proxy.stop()
+                    vlcVideoPlayerProxy.stop()
                     router.dismissCoordinator()
                 } label: {
                     Image(systemName: "xmark")

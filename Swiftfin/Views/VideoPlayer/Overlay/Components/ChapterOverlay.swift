@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import VLCUI
 
 extension ItemVideoPlayer.Overlay {
 
@@ -18,6 +19,8 @@ extension ItemVideoPlayer.Overlay {
         private var overlayTimer: TimerProxy
         @EnvironmentObject
         private var secondsHandler: CurrentSecondsHandler
+        @EnvironmentObject
+        private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
         var body: some View {
             VStack {
@@ -70,8 +73,8 @@ extension ItemVideoPlayer.Overlay {
                         }
                     }
                     .onSelect { info in
-                        let seconds = Int32(info.chapterInfo.startTimeSeconds)
-                        viewModel.proxy.setTime(.seconds(seconds))
+                        let seconds = info.chapterInfo.startTimeSeconds
+                        videoPlayerProxy.setTime(.seconds(seconds))
                     }
                     .onAppear {
                         if let currentChapter = viewModel.chapters
