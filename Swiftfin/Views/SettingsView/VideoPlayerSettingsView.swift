@@ -9,12 +9,31 @@
 import Defaults
 import SwiftUI
 
-struct OverlaySettingsView: View {
+struct VideoPlayerSettingsView: View {
+
+    @Default(.VideoPlayer.autoPlay)
+    private var autoPlay
+    @Default(.VideoPlayer.jumpBackwardLength)
+    private var jumpBackwardLength
+    @Default(.VideoPlayer.jumpForwardLength)
+    private var jumpForwardLength
+    @Default(.VideoPlayer.playNextItem)
+    private var playNextItem
+    @Default(.VideoPlayer.playPreviousItem)
+    private var playPreviousItem
+    @Default(.VideoPlayer.resumeOffset)
+    private var resumeOffset
+
+    @Default(.VideoPlayer.Subtitle.subtitleFontName)
+    private var subtitleFontName
+    @Default(.VideoPlayer.Subtitle.subtitleSize)
+    private var subtitleSize
 
     @Default(.VideoPlayer.Overlay.playbackButtonType)
     private var playbackButtonType
     @Default(.VideoPlayer.Overlay.sliderType)
     private var sliderType
+
     @Default(.VideoPlayer.Overlay.negativeTimestamp)
     private var negativeTimestamp
     @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
@@ -22,13 +41,54 @@ struct OverlaySettingsView: View {
     @Default(.VideoPlayer.Overlay.timestampType)
     private var timestampType
 
+    @EnvironmentObject
+    private var router: VideoPlayerSettingsCoordinator.Router
+
     var body: some View {
         Form {
-            EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
 
-            EnumPicker(title: "Slider", selection: $sliderType)
+            Toggle(L10n.autoPlay, isOn: $autoPlay)
+
+            EnumPicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+
+            EnumPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
+
+            Toggle(L10n.playNextItem, isOn: $playNextItem)
+
+            Toggle(L10n.playPreviousItem, isOn: $playPreviousItem)
+
+            Section {
+                Toggle("Resume offset", isOn: $resumeOffset)
+            } footer: {
+                Text("Resume content 5 seconds before the actual resume time")
+            }
+
+            Section("Subtitle") {
+
+                ChevronButton(title: L10n.subtitleFont, subtitle: subtitleFontName)
+                    .onSelect {
+                        router.route(to: \.fontPicker)
+                    }
+
+                Stepper(value: $subtitleSize, in: 8 ... 24) {
+                    HStack {
+                        L10n.subtitleSize.text
+
+                        Text("\(subtitleSize)")
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+
+            Section("Overlay") {
+
+                EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
+
+                EnumPicker(title: "Slider", selection: $sliderType)
+            }
 
             Section("Timestamp") {
+
                 Toggle("Negative Time", isOn: $negativeTimestamp)
 
                 Toggle("Scrubbing Current Time", isOn: $showCurrentTimeWhileScrubbing)

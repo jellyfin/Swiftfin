@@ -70,19 +70,45 @@ class ItemVideoPlayerViewModel: ObservableObject, Equatable {
         self.videoStream = videoStream
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
+            .adjustExternalSubtitleIndexes(audioStreamCount: audioStreams.count)
         self.chapters = chapters
     }
 
-//    func videoSubtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
-//        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
-//
-//        guard let externalSubtitleStreamIndex = externalSubtitleStreams.firstIndex(where: { $0.index == subtitleStreamIndex }) else {
-//            return Int32(subtitleStreamIndex)
-//        }
-//
-//        let embeddedSubtitleStreamCount = subtitleStreams.count - externalSubtitleStreams.count
-//        let embeddedStreamCount = 1 + audioStreams.count + embeddedSubtitleStreamCount
-//
-//        return Int32(embeddedStreamCount + externalSubtitleStreamIndex)
-//    }
+    func chapter(from progress: CGFloat) -> ChapterInfo.FullInfo? {
+        let seconds = Int(CGFloat(item.runTimeSeconds) * progress)
+        return chapters.first(where: { $0.secondsRange.contains(seconds) })
+    }
+
+    func subtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
+        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
+
+        guard let externalSubtitleStreamIndex = externalSubtitleStreams.firstIndex(where: { $0.index == subtitleStreamIndex }) else {
+            return Int32(subtitleStreamIndex)
+        }
+
+        let embeddedSubtitleStreamCount = subtitleStreams.count - externalSubtitleStreams.count
+        let embeddedStreamCount = 1 + audioStreams.count + embeddedSubtitleStreamCount
+
+        return Int32(embeddedStreamCount + externalSubtitleStreamIndex)
+    }
+}
+
+extension [MediaStream] {
+
+    func adjustExternalSubtitleIndexes(audioStreamCount: Int) -> [MediaStream] {
+        guard allSatisfy({ $0.type == .subtitle }) else { return self }
+        let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
+
+        var mediaStreams = self
+
+        for (i, mediaStream) in mediaStreams.enumerated() {
+            guard mediaStream.isExternal ?? false else { continue }
+            var _mediaStream = mediaStream
+            _mediaStream.index = 1 + embeddedSubtitleCount + audioStreamCount
+
+            mediaStreams[i] = _mediaStream
+        }
+
+        return mediaStreams
+    }
 }

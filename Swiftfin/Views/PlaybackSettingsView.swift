@@ -12,6 +12,27 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
+final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
+
+    let stack = NavigationStack(initial: \VideoPlayerSettingsCoordinator.start)
+
+    @Root
+    var start = makeStart
+    @Route(.push)
+    var fontPicker = makeFontPicker
+
+    @ViewBuilder
+    func makeFontPicker() -> some View {
+        FontPickerView()
+            .navigationTitle(L10n.subtitleFont)
+    }
+
+    @ViewBuilder
+    func makeStart() -> some View {
+        VideoPlayerSettingsView()
+    }
+}
+
 final class PlaybackSettingsCoordinator: NavigationCoordinatable {
 
     let stack = NavigationStack(initial: \PlaybackSettingsCoordinator.start)
@@ -19,15 +40,14 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
     @Route(.push)
-    var overlaySettings = makeOverlaySettings
+    var overlaySettings = makeVideoPlayerSettings
     @Route(.push)
     var mediaStreamInfo = makeMediaStreamInfo
     @Route(.push)
     var playbackInformation = makePlaybackInformation
 
-    @ViewBuilder
-    func makeOverlaySettings() -> some View {
-        OverlaySettingsView()
+    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
+        VideoPlayerSettingsCoordinator()
     }
 
     @ViewBuilder

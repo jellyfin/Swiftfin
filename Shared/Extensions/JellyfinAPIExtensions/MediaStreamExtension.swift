@@ -22,6 +22,9 @@ struct TextPairItem: Displayable, Identifiable {
 
 extension MediaStream {
 
+    // TODO: Localize
+    static var none: MediaStream = .init(displayTitle: "None", index: -1)
+
     func externalURL(base: String) -> URL? {
         var base = base
         while base.last == Character("/") {
@@ -44,6 +47,8 @@ extension MediaStream {
         guard let height, let width else { return nil }
         return "\(width)x\(height)"
     }
+
+    // MARK: Property groups
 
     var metadataProperties: [TextPairItem] {
         var properties: [TextPairItem] = []

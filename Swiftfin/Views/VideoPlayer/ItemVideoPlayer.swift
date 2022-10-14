@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Defaults
 import JellyfinAPI
 import MediaPlayer
@@ -53,6 +52,11 @@ struct ItemVideoPlayer: View {
         case chapters
     }
 
+    @Default(.VideoPlayer.Subtitle.subtitleFontName)
+    private var subtitleFontName
+    @Default(.VideoPlayer.Subtitle.subtitleSize)
+    private var subtitleSize
+
     @EnvironmentObject
     private var router: ItemVideoPlayerCoordinator.Router
 
@@ -63,16 +67,20 @@ struct ItemVideoPlayer: View {
     @ObservedObject
     private var overlayTimer: TimerProxy = .init()
     @ObservedObject
-    private var vlcVideoPlayerProxy: VLCVideoPlayer.Proxy = .init()
+    private var videoPlayerProxy: VLCVideoPlayer.Proxy = .init()
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
 
+    @State
+    private var aspectFilled: Bool = false
     @State
     private var currentOverlayType: OverlayType?
     @State
     private var isScrubbing: Bool = false
     @State
     private var presentingPlaybackSettings: Bool = false
+    @State
+    private var scrubbedProgress: CGFloat = 0
 
     init(manager: VideoPlayerManager) {
         self.videoPlayerManager = manager
@@ -83,7 +91,7 @@ struct ItemVideoPlayer: View {
         HStack(spacing: 0) {
             ZStack {
                 VLCVideoPlayer(configuration: viewModel.configuration)
-                    .proxy(vlcVideoPlayerProxy)
+                    .proxy(videoPlayerProxy)
                     .onTicksUpdated {
                         videoPlayerManager.onTicksUpdated(ticks: $0, playbackInformation: $1)
                         currentSecondsHandler.onTicksUpdated(ticks: $0, playbackInformation: $1)
@@ -91,36 +99,35 @@ struct ItemVideoPlayer: View {
                     .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
 
                 GestureView()
-//                    .onPinch { state, scale in
-//                        guard state == .began || state == .changed else { return }
-//                        if scale > 1, !viewModel.isAspectFilled {
-//                            viewModel.isAspectFilled.toggle()
-//                            UIView.animate(withDuration: 0.2) {
-//                                vlcVideoPlayerProxy.aspectFill(1)
-//                            }
-//                        } else if scale < 1, viewModel.isAspectFilled {
-//                            viewModel.isAspectFilled.toggle()
-//                            UIView.animate(withDuration: 0.2) {
-//                                vlcVideoPlayerProxy.aspectFill(0)
-//                            }
-//                        }
-//                    }
-                        .onTap {
-                            if currentOverlayType == nil {
-                                currentOverlayType = .main
-                            } else {
-                                currentOverlayType = nil
+                    .onPinch { state, scale in
+                        guard state == .began || state == .changed else { return }
+                        if scale > 1, !aspectFilled {
+                            aspectFilled = true
+                            UIView.animate(withDuration: 0.2) {
+                                videoPlayerProxy.aspectFill(1)
+                            }
+                        } else if scale < 1, aspectFilled {
+                            aspectFilled = false
+                            UIView.animate(withDuration: 0.2) {
+                                videoPlayerProxy.aspectFill(0)
                             }
                         }
+                    }
+                    .onTap {
+                        if currentOverlayType == nil {
+                            currentOverlayType = .main
+                        } else {
+                            currentOverlayType = nil
+                        }
+                    }
 
                 Group {
                     switch currentOverlayType {
                     case .main:
                         Overlay()
-//                    case .chapters:
-//                        Overlay.ChapterOverlay()
-//                    case .none:
-                    default:
+                    case .chapters:
+                        Overlay.ChapterOverlay()
+                    case .none:
                         EmptyView()
                     }
                 }
@@ -130,10 +137,12 @@ struct ItemVideoPlayer: View {
                 .environmentObject(overlayTimer)
                 .environmentObject(viewModel)
                 .environmentObject(videoPlayerManager)
-                .environmentObject(vlcVideoPlayerProxy)
+                .environmentObject(videoPlayerProxy)
+                .environment(\.aspectFilled, $aspectFilled)
                 .environment(\.currentOverlayType, $currentOverlayType)
                 .environment(\.isScrubbing, $isScrubbing)
                 .environment(\.presentingPlaybackSettings, $presentingPlaybackSettings)
+                .environment(\.scrubbedProgress, $scrubbedProgress)
 
 //                FlashContentView(proxy: flashContentProxy)
             }
@@ -192,10 +201,16 @@ struct ItemVideoPlayer: View {
         .navigationBarHidden(true)
         .statusBar(hidden: true)
         .ignoresSafeArea()
+        .onChange(of: subtitleFontName) { newValue in
+            videoPlayerProxy.setSubtitleFont(newValue)
+        }
+        .onChange(of: subtitleSize) { newValue in
+            videoPlayerProxy.setSubtitleSize(.absolute(24 - newValue))
+        }
         .onChange(of: videoPlayerManager.currentViewModel) { newValue in
             print("New video view model for item: \(String(describing: newValue?.item.displayTitle))")
             guard let newValue else { return }
-            vlcVideoPlayerProxy.playNewMedia(newValue.configuration)
+            videoPlayerProxy.playNewMedia(newValue.configuration)
         }
     }
 }

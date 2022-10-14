@@ -23,29 +23,25 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
+        private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        @EnvironmentObject
+        private var viewModel: ItemVideoPlayerViewModel
 
         @ViewBuilder
         private var subtitleTrackMenu: some View {
             Menu {
-                ForEach(viewModel.subtitleStreams, id: \.self) { subtitleStream in
+                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.self) { subtitleTrack in
                     Button {
-                        videoPlayerProxy.setSubtitleTrack(.absolute(subtitleStream.index ?? -1))
+                        videoPlayerProxy.setSubtitleTrack(.absolute(subtitleTrack.index ?? -1))
                     } label: {
-                        Text(subtitleStream.displayTitle ?? .emptyDash)
+                        if videoPlayerManager.subtitleTrackIndex == subtitleTrack.index ?? -1 {
+                            Label(subtitleTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
+                        } else {
+                            Text(subtitleTrack.displayTitle ?? .emptyDash)
+                        }
                     }
-                    
-//                    Button {
-//                        vlcVideoPlayerProxy.setSubtitleTrack(.absolute(subtitleStreamIndex))
-//                    } label: {
-//                        if subtitleStreamIndex == viewModel.selectedSubtitleTrackIndex {
-//                            Label(viewModel.playerSubtitleTracks[subtitleStreamIndex] ?? L10n.noTitle, systemImage: "checkmark")
-//                        } else {
-//                            Text(viewModel.playerSubtitleTracks[subtitleStreamIndex] ?? L10n.noTitle)
-//                        }
-//                    }
                 }
             } label: {
                 HStack {
@@ -55,46 +51,49 @@ extension ItemVideoPlayer.Overlay {
             }
         }
 
-//        @ViewBuilder
-//        private var audioTrackMenu: some View {
-//            Menu {
-//                ForEach(viewModel.playerAudioTracks.keys.sorted(), id: \.self) { audioStreamIndex in
-//                    Button {
-//                        vlcVideoPlayerProxy.setAudioTrack(.absolute(audioStreamIndex))
-//                    } label: {
-//                        Text(viewModel.playerAudioTracks[audioStreamIndex] ?? L10n.noTitle)
-//                    }
-//                }
-//            } label: {
-//                HStack {
-//                    Image(systemName: "speaker.wave.3")
-//                    L10n.audio.text
-//                }
-//            }
-//        }
-//
-//        @ViewBuilder
-//        private var playbackSpeedMenu: some View {
-//            Menu {
-//                ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
-//                    Button {
-//                        vlcVideoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
-//                        viewModel.playerPlaybackSpeed = speed
-//                    } label: {
-//                        if speed == viewModel.playerPlaybackSpeed {
-//                            Label(speed.displayTitle, systemImage: "checkmark")
-//                        } else {
-//                            Text(speed.displayTitle)
-//                        }
-//                    }
-//                }
-//            } label: {
-//                HStack {
-//                    Image(systemName: "speedometer")
-//                    L10n.playbackSpeed.text
-//                }
-//            }
-//        }
+        @ViewBuilder
+        private var audioTrackMenu: some View {
+            Menu {
+                ForEach(viewModel.audioStreams.prepending(.none), id: \.self) { audioTrack in
+                    Button {
+                        videoPlayerProxy.setAudioTrack(.absolute(audioTrack.index ?? -1))
+                    } label: {
+                        if videoPlayerManager.audioTrackIndex == audioTrack.index ?? -1 {
+                            Label(audioTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
+                        } else {
+                            Text(audioTrack.displayTitle ?? .emptyDash)
+                        }
+                    }
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "speaker.wave.3")
+                    L10n.audio.text
+                }
+            }
+        }
+
+        @ViewBuilder
+        private var playbackSpeedMenu: some View {
+            Menu {
+                ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
+                    Button {
+                        videoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
+                    } label: {
+                        if Float(speed.rawValue) == videoPlayerManager.rate {
+                            Label(speed.displayTitle, systemImage: "checkmark")
+                        } else {
+                            Text(speed.displayTitle)
+                        }
+                    }
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "speedometer")
+                    L10n.playbackSpeed.text
+                }
+            }
+        }
 
         @ViewBuilder
         private var chaptersButton: some View {
@@ -115,6 +114,8 @@ extension ItemVideoPlayer.Overlay {
                 withAnimation {
                     presentingPlaybackSettings = true
                 }
+
+                overlayTimer.start(3)
             } label: {
                 HStack {
                     Text("Advanced")
@@ -128,9 +129,9 @@ extension ItemVideoPlayer.Overlay {
             Menu {
                 subtitleTrackMenu
 
-//                audioTrackMenu
-//
-//                playbackSpeedMenu
+                audioTrackMenu
+
+                playbackSpeedMenu
 
                 if !viewModel.chapters.isEmpty {
                     chaptersButton

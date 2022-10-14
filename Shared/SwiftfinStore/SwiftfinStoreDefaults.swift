@@ -50,6 +50,32 @@ extension Defaults.Keys {
 
     enum VideoPlayer {
 
+        static let autoPlay: Key<Bool> = .init("VideoPlayer.autoPlay", default: true, suite: .generalSuite)
+        static let autoPlayEnabled: Key<Bool> = .init("VideoPlayer.autoPlayEnabled", default: true, suite: .generalSuite)
+        static let jumpBackwardLength: Key<VideoPlayerJumpLength> = .init(
+            "VideoPlayer.jumpBackwardLength",
+            default: .fifteen,
+            suite: .generalSuite
+        )
+        static let jumpForwardLength: Key<VideoPlayerJumpLength> = .init(
+            "VideoPlayer.jumpForwardLength",
+            default: .fifteen,
+            suite: .generalSuite
+        )
+        static let playNextItem: Key<Bool> = .init("VideoPlayer.playNextItem", default: true, suite: .generalSuite)
+        static let playPreviousItem: Key<Bool> = .init("VideoPlayer.playPreviousItem", default: true, suite: .generalSuite)
+        static let resumeOffset: Key<Bool> = .init("VideoPlayer.resumeOffset", default: false, suite: .generalSuite)
+
+        enum Subtitle {
+
+            static let subtitleFontName: Key<String> = .init(
+                "VideoPlayer.Subtitle.subtitleFontName",
+                default: UIFont.systemFont(ofSize: 14).fontName,
+                suite: .generalSuite
+            )
+            static let subtitleSize: Key<Int> = .init("VideoPlayer.Subtitle.subtitleSize", default: 16, suite: .generalSuite)
+        }
+
         enum Overlay {
 
             static let playbackButtonType: Key<PlaybackButtonType> = .init(

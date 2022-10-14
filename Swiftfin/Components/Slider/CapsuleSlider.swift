@@ -8,14 +8,17 @@
 
 import SwiftUI
 
-struct CapsuleSlider<TopContent: View, BottomContent: View, LeadingContent: View, TrailingContent: View>: View {
+struct CapsuleSlider<TrackMask: View, TopContent: View, BottomContent: View, LeadingContent: View, TrailingContent: View>: View {
 
     @Binding
     private var progress: CGFloat
     @Binding
     private var rate: CGFloat
+
     @State
     private var isEditing: Bool = false
+
+    private var trackMask: () -> TrackMask
     private var topContent: () -> TopContent
     private var bottomContent: () -> BottomContent
     private var leadingContent: () -> LeadingContent
@@ -25,7 +28,7 @@ struct CapsuleSlider<TopContent: View, BottomContent: View, LeadingContent: View
     var body: some View {
         Slider(progress: $progress)
             .gestureBehavior(.track)
-            .trackGesturePadding(50)
+            .trackGesturePadding(.init(top: 10, leading: 0, bottom: 30, trailing: 0))
             .rate { pointOffset in
                 if abs(pointOffset.y) > 50 {
                     rate = 0.01
@@ -45,11 +48,12 @@ struct CapsuleSlider<TopContent: View, BottomContent: View, LeadingContent: View
                     .foregroundColor(isEditing ? .white : .white.opacity(0.8))
             }
             .trackBackground { isEditing, _ in
-                Color.gray
-                    .opacity(0.5)
+                Capsule()
                     .frame(height: isEditing ? 20 : 10)
-                    .clipShape(Capsule())
+                    .foregroundColor(Color.gray)
+                    .opacity(0.5)
             }
+            .trackMask(trackMask)
             .topContent(topContent)
             .bottomContent(bottomContent)
             .leadingContent(leadingContent)
@@ -57,7 +61,8 @@ struct CapsuleSlider<TopContent: View, BottomContent: View, LeadingContent: View
     }
 }
 
-extension CapsuleSlider where TopContent == EmptyView,
+extension CapsuleSlider where TrackMask == Color,
+    TopContent == EmptyView,
     BottomContent == EmptyView,
     LeadingContent == EmptyView,
     TrailingContent == EmptyView
@@ -67,6 +72,7 @@ extension CapsuleSlider where TopContent == EmptyView,
         self.init(
             progress: progress,
             rate: .constant(1),
+            trackMask: { Color.white },
             topContent: { EmptyView() },
             bottomContent: { EmptyView() },
             leadingContent: { EmptyView() },
@@ -78,11 +84,26 @@ extension CapsuleSlider where TopContent == EmptyView,
 
 extension CapsuleSlider {
 
-    func topContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> CapsuleSlider<C, BottomContent, LeadingContent, TrailingContent> {
+    func trackMask<C: View>(@ViewBuilder _ content: @escaping () -> C)
+    -> CapsuleSlider<C, TopContent, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
+            trackMask: content,
+            topContent: topContent,
+            bottomContent: bottomContent,
+            leadingContent: leadingContent,
+            trailingContent: trailingContent,
+            onEditingChanged: onEditingChanged
+        )
+    }
+
+    func topContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
+    -> CapsuleSlider<TrackMask, C, BottomContent, LeadingContent, TrailingContent> {
+        .init(
+            progress: $progress,
+            rate: $rate,
+            trackMask: trackMask,
             topContent: content,
             bottomContent: bottomContent,
             leadingContent: leadingContent,
@@ -92,10 +113,11 @@ extension CapsuleSlider {
     }
 
     func bottomContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> CapsuleSlider<TopContent, C, LeadingContent, TrailingContent> {
+    -> CapsuleSlider<TrackMask, TopContent, C, LeadingContent, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
+            trackMask: trackMask,
             topContent: topContent,
             bottomContent: content,
             leadingContent: leadingContent,
@@ -105,10 +127,11 @@ extension CapsuleSlider {
     }
 
     func leadingContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> CapsuleSlider<TopContent, BottomContent, C, TrailingContent> {
+    -> CapsuleSlider<TrackMask, TopContent, BottomContent, C, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
+            trackMask: trackMask,
             topContent: topContent,
             bottomContent: bottomContent,
             leadingContent: content,
@@ -118,10 +141,11 @@ extension CapsuleSlider {
     }
 
     func trailingContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> CapsuleSlider<TopContent, BottomContent, LeadingContent, C> {
+    -> CapsuleSlider<TrackMask, TopContent, BottomContent, LeadingContent, C> {
         .init(
             progress: $progress,
             rate: $rate,
+            trackMask: trackMask,
             topContent: topContent,
             bottomContent: bottomContent,
             leadingContent: leadingContent,

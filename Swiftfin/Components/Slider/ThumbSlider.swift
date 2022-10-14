@@ -47,6 +47,10 @@ struct ThumbSlider<TopContent: View, BottomContent: View, LeadingContent: View, 
                     .opacity(0.5)
                     .frame(height: 5)
             }
+            .trackMask {
+//                Color.white
+                ItemVideoPlayer.Overlay.ChapterTrack()
+            }
             .thumb { isEditing, _ in
                 ZStack {
                     Color.clear

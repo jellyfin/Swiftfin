@@ -6,12 +6,26 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 import VLCUI
 
 extension ItemVideoPlayer.Overlay {
 
     struct ActionButtons: View {
+
+        @Default(.VideoPlayer.autoPlay)
+        private var autoPlay
+        @Default(.VideoPlayer.autoPlayEnabled)
+        private var autoPlayEnabled
+        @Default(.VideoPlayer.playNextItem)
+        private var playNextItem
+        @Default(.VideoPlayer.playPreviousItem)
+        private var playPreviousItem
+
+        @Environment(\.aspectFilled)
+        @Binding
+        private var aspectFilled: Bool
 
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
@@ -23,22 +37,46 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var barButtons: some View {
             HStack(spacing: 0) {
-                
-                Button {
-                    videoPlayerManager.selectPreviousViewModel()
-                } label: {
-                    Image(systemName: "chevron.left.circle.fill")
-                        .frame(width: 50, height: 50)
-                }
-                .disabled(videoPlayerManager.previousViewModel == nil)
 
-                Button {
-                    videoPlayerManager.selectNextViewModel()
-                } label: {
-                    Image(systemName: "chevron.right.circle.fill")
-                        .frame(width: 50, height: 50)
+                if viewModel.item.type == .episode {
+
+                    if playPreviousItem {
+                        Button {
+                            videoPlayerManager.selectPreviousViewModel()
+                        } label: {
+                            Image(systemName: "chevron.left.circle.fill")
+                                .frame(width: 50, height: 50)
+                        }
+                        .disabled(videoPlayerManager.previousViewModel == nil)
+                        .foregroundColor(videoPlayerManager.previousViewModel == nil ? .gray : .white)
+                    }
+
+                    if playNextItem {
+                        Button {
+                            videoPlayerManager.selectNextViewModel()
+                        } label: {
+                            Image(systemName: "chevron.right.circle.fill")
+                                .frame(width: 50, height: 50)
+                        }
+                        .disabled(videoPlayerManager.nextViewModel == nil)
+                        .foregroundColor(videoPlayerManager.nextViewModel == nil ? .gray : .white)
+                    }
+
+                    if autoPlay {
+                        Button {
+                            autoPlayEnabled.toggle()
+                        } label: {
+                            Group {
+                                if autoPlayEnabled {
+                                    Image(systemName: "play.circle.fill")
+                                } else {
+                                    Image(systemName: "stop.circle")
+                                }
+                            }
+                            .frame(width: 50, height: 50)
+                        }
+                    }
                 }
-                .disabled(videoPlayerManager.nextViewModel == nil)
 
 //                if !viewModel.subtitleStreams.isEmpty {
 //                    Button {
@@ -54,29 +92,29 @@ extension ItemVideoPlayer.Overlay {
 //                    .foregroundColor(viewModel.selectedSubtitleTrackIndex == -1 ? .gray : .white)
 //                    .frame(width: 50, height: 50)
 //                }
-//                
-//                Button {
-//                    if viewModel.isAspectFilled {
-//                        viewModel.isAspectFilled.toggle()
-//                        UIView.animate(withDuration: 0.2) {
-//                            vlcVideoPlayerProxy.aspectFill(0)
-//                        }
-//                    } else {
-//                        viewModel.isAspectFilled.toggle()
-//                        UIView.animate(withDuration: 0.2) {
-//                            vlcVideoPlayerProxy.aspectFill(1)
-//                        }
-//                    }
-//                } label: {
-//                    Group {
-//                        if viewModel.isAspectFilled {
-//                            Image(systemName: "arrow.down.right.and.arrow.up.left")
-//                        } else {
-//                            Image(systemName: "arrow.up.left.and.arrow.down.right")
-//                        }
-//                    }
-//                    .frame(width: 50, height: 50)
-//                }
+
+                Button {
+                    if aspectFilled {
+                        aspectFilled = false
+                        UIView.animate(withDuration: 0.2) {
+                            videoPlayerProxy.aspectFill(0)
+                        }
+                    } else {
+                        aspectFilled = true
+                        UIView.animate(withDuration: 0.2) {
+                            videoPlayerProxy.aspectFill(1)
+                        }
+                    }
+                } label: {
+                    Group {
+                        if aspectFilled {
+                            Image(systemName: "arrow.down.right.and.arrow.up.left")
+                        } else {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        }
+                    }
+                    .frame(width: 50, height: 50)
+                }
             }
         }
 

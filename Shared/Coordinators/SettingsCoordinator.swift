@@ -40,7 +40,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeOverlaySettings() -> some View {
-        OverlaySettingsView()
+        VideoPlayerSettingsView()
     }
 
     @ViewBuilder

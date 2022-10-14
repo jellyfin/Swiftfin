@@ -9,11 +9,15 @@
 import Defaults
 import UIKit
 
-enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable {
+enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable, Displayable {
     case thirty = 30
     case fifteen = 15
     case ten = 10
     case five = 5
+
+    var displayTitle: String {
+        L10n.jumpLengthSeconds("\(self.rawValue)")
+    }
 
     var label: String {
         L10n.jumpLengthSeconds("\(self.rawValue)")

@@ -25,6 +25,10 @@ extension Array {
         self + contents
     }
 
+    func prepending(_ element: Element) -> [Element] {
+        [element] + self
+    }
+
     // There are instances where `removeFirst()` is called on an empty
     // collection even with a count check and causes a crash
     @discardableResult

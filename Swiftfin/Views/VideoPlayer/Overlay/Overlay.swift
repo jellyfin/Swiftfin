@@ -56,8 +56,8 @@ extension ItemVideoPlayer {
                             LinearGradient(
                                 stops: [
                                     .init(color: .clear, location: 0),
-                                    .init(color: .black.opacity(0.7), location: 0.5),
-                                    .init(color: .black.opacity(0.9), location: 1),
+                                    .init(color: .black.opacity(0.5), location: 0.5),
+                                    .init(color: .black.opacity(0.5), location: 1),
                                 ],
                                 startPoint: .top,
                                 endPoint: .bottom

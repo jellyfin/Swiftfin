@@ -29,6 +29,12 @@ extension ItemVideoPlayer.Overlay {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
+        @Environment(\.currentOverlayType)
+        @Binding
+        private var currentOverlayType
+        @Environment(\.scrubbedProgress)
+        @Binding
+        private var scrubbedProgress: CGFloat
 
         @EnvironmentObject
         private var viewModel: ItemVideoPlayerViewModel
@@ -67,6 +73,32 @@ extension ItemVideoPlayer.Overlay {
         private var capsuleSlider: some View {
             CapsuleSlider(progress: $progress)
                 .rate($scrubbingRate)
+                .trackMask {
+                    ChapterTrack()
+                        .clipShape(Capsule())
+                }
+                .topContent {
+                    HStack {
+                        if let currentChapter = viewModel.chapter(from: progress) {
+                            Button {
+                                currentOverlayType = .chapters
+                            } label: {
+                                HStack {
+                                    Text(currentChapter.displayTitle)
+                                        .monospacedDigit()
+
+                                    Image(systemName: "chevron.right")
+                                }
+                                .foregroundColor(.white)
+                                .font(.subheadline.weight(.medium))
+                            }
+                        }
+
+                        Spacer()
+                    }
+                    .padding(.leading, 5)
+                    .padding(.bottom, 10)
+                }
                 .bottomContent {
                     Group {
                         switch timestampType {
@@ -147,6 +179,8 @@ extension ItemVideoPlayer.Overlay {
                 guard isScrubbing else { return }
                 let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
                 self.currentSeconds = scrubbedSeconds
+
+                scrubbedProgress = progress
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.linear(duration: 0.1), value: scrubbingRate)

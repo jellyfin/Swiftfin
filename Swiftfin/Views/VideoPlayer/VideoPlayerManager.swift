@@ -12,8 +12,18 @@ import VLCUI
 
 class VideoPlayerManager: ViewModel {
 
+    // MARK: Properties
+
+    @Published
+    var audioTrackIndex: Int = -1
+    @Published
+    var rate: Float = 1
     @Published
     var state: VLCVideoPlayer.State = .opening
+    @Published
+    var subtitleTrackIndex: Int = -1
+
+    // MARK: ViewModel
 
     @Published
     var previousViewModel: ItemVideoPlayerViewModel?
@@ -24,8 +34,11 @@ class VideoPlayerManager: ViewModel {
             getAdjacentEpisodes(for: newValue.item)
         }
     }
+
     @Published
     var nextViewModel: ItemVideoPlayerViewModel?
+
+    // MARK: init
 
     init(viewModel: ItemVideoPlayerViewModel) {
         self.currentViewModel = viewModel
@@ -65,15 +78,18 @@ class VideoPlayerManager: ViewModel {
 
     func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
 
-//        if playerSubtitleTracks != playbackInformation.subtitleTracks {
-//            print("Updating subtitle tracks")
-//            playerSubtitleTracks = playbackInformation.subtitleTracks
-//        }
-//
-//        if playerAudioTracks != playbackInformation.audioTracks {
-//            print("Updating audio tracks")
-//            playerAudioTracks = playbackInformation.audioTracks
-//        }
+        if audioTrackIndex != playbackInformation.currentAudioTrack.index {
+            audioTrackIndex = playbackInformation.currentAudioTrack.index
+            print("Current audio track index: \(playbackInformation.currentAudioTrack.index)")
+        }
+
+        if rate != playbackInformation.playbackRate {
+            self.rate = playbackInformation.playbackRate
+        }
+
+        if subtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
+            subtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
+        }
     }
 
     func onStateUpdated(state: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {

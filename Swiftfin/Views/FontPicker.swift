@@ -29,7 +29,7 @@ struct FontPickerView: UIViewControllerRepresentable {
     class Coordinator: NSObject, UIFontPickerViewControllerDelegate {
         func fontPickerViewControllerDidPickFont(_ viewController: UIFontPickerViewController) {
             guard let descriptor = viewController.selectedFontDescriptor else { return }
-            Defaults[.subtitleFontName] = descriptor.postscriptName
+            Defaults[.VideoPlayer.Subtitle.subtitleFontName] = descriptor.postscriptName
         }
     }
 }

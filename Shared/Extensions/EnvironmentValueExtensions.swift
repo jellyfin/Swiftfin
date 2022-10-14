@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+struct AspectFilled: EnvironmentKey {
+    static let defaultValue: Binding<Bool> = .constant(false)
+}
+
 struct CurrentOverlayType: EnvironmentKey {
     static let defaultValue: Binding<ItemVideoPlayer.OverlayType?> = .constant(nil)
 }
@@ -20,7 +24,16 @@ struct PresentingPlaybackSettings: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
 
+struct ScrubbedProgress: EnvironmentKey {
+    static let defaultValue: Binding<CGFloat> = .constant(0)
+}
+
 extension EnvironmentValues {
+
+    var aspectFilled: Binding<Bool> {
+        get { self[AspectFilled.self] }
+        set { self[AspectFilled.self] = newValue }
+    }
 
     var currentOverlayType: Binding<ItemVideoPlayer.OverlayType?> {
         get { self[CurrentOverlayType.self] }
@@ -35,5 +48,10 @@ extension EnvironmentValues {
     var presentingPlaybackSettings: Binding<Bool> {
         get { self[PresentingPlaybackSettings.self] }
         set { self[PresentingPlaybackSettings.self] = newValue }
+    }
+
+    var scrubbedProgress: Binding<CGFloat> {
+        get { self[ScrubbedProgress.self] }
+        set { self[ScrubbedProgress.self] = newValue }
     }
 }
