@@ -29,13 +29,17 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
+    @Default(.VideoPlayer.Overlay.chapterSlider)
+    private var chapterSlider
     @Default(.VideoPlayer.Overlay.playbackButtonType)
     private var playbackButtonType
+    @Default(.VideoPlayer.Overlay.sliderColor)
+    private var sliderColor
     @Default(.VideoPlayer.Overlay.sliderType)
     private var sliderType
 
-    @Default(.VideoPlayer.Overlay.negativeTimestamp)
-    private var negativeTimestamp
+    @Default(.VideoPlayer.Overlay.timeLeftTimestamp)
+    private var timeLeftTimestamp
     @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
     private var showCurrentTimeWhileScrubbing
     @Default(.VideoPlayer.Overlay.timestampType)
@@ -47,15 +51,9 @@ struct VideoPlayerSettingsView: View {
     var body: some View {
         Form {
 
-            Toggle(L10n.autoPlay, isOn: $autoPlay)
-
             EnumPicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
             EnumPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
-
-            Toggle(L10n.playNextItem, isOn: $playNextItem)
-
-            Toggle(L10n.playPreviousItem, isOn: $playPreviousItem)
 
             Section {
                 Toggle("Resume offset", isOn: $resumeOffset)
@@ -83,13 +81,43 @@ struct VideoPlayerSettingsView: View {
             Section("Overlay") {
 
                 EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
+                
+                Toggle(isOn: $autoPlay) {
+                    HStack {
+                        Image(systemName: "play.circle.fill")
+                        L10n.autoPlay.text
+                    }
+                }
+                
+                Toggle(isOn: $playNextItem) {
+                    HStack {
+                        Image(systemName: "chevron.left.circle")
+                        L10n.playPreviousItem.text
+                    }
+                }
 
-                EnumPicker(title: "Slider", selection: $sliderType)
+                Toggle(isOn: $playPreviousItem) {
+                    HStack {
+                        Image(systemName: "chevron.right.circle")
+                        L10n.playNextItem.text
+                    }
+                }
+            }
+            
+            Section("Slider") {
+                
+                Toggle("Chapter Slider", isOn: $chapterSlider)
+
+                ColorPicker(selection: $sliderColor, supportsOpacity: false) {
+                    Text("Slider Color")
+                }
+
+                EnumPicker(title: "Slider Type", selection: $sliderType)
             }
 
             Section("Timestamp") {
 
-                Toggle("Negative Time", isOn: $negativeTimestamp)
+                Toggle("Negative Time", isOn: $timeLeftTimestamp)
 
                 Toggle("Scrubbing Current Time", isOn: $showCurrentTimeWhileScrubbing)
 
@@ -97,59 +125,4 @@ struct VideoPlayerSettingsView: View {
             }
         }
     }
-
-//    @Default(.overlayType)
-//    var overlayType
-//    @Default(.shouldShowPlayPreviousItem)
-//    var shouldShowPlayPreviousItem
-//    @Default(.shouldShowPlayNextItem)
-//    var shouldShowPlayNextItem
-//    @Default(.shouldShowAutoPlay)
-//    var shouldShowAutoPlay
-//    @Default(.shouldShowJumpButtonsInOverlayMenu)
-//    var shouldShowJumpButtonsInOverlayMenu
-//    @Default(.shouldShowChaptersInfoInBottomOverlay)
-//    var shouldShowChaptersInfoInBottomOverlay
-//
-//    var body: some View {
-//        Form {
-//            Section(header: L10n.overlay.text) {
-//                Picker(L10n.overlayType, selection: $overlayType) {
-//                    ForEach(OverlayType.allCases, id: \.self) { overlay in
-//                        Text(overlay.label).tag(overlay)
-//                    }
-//                }
-//
-//                Toggle(isOn: $shouldShowPlayPreviousItem) {
-//                    HStack {
-//                        Image(systemName: "chevron.left.circle")
-//                        L10n.playPreviousItem.text
-//                    }
-//                }
-//
-//                Toggle(isOn: $shouldShowPlayNextItem) {
-//                    HStack {
-//                        Image(systemName: "chevron.right.circle")
-//                        L10n.playNextItem.text
-//                    }
-//                }
-//
-//                Toggle(isOn: $shouldShowAutoPlay) {
-//                    HStack {
-//                        Image(systemName: "play.circle.fill")
-//                        L10n.autoPlay.text
-//                    }
-//                }
-//
-//                Toggle(isOn: $shouldShowChaptersInfoInBottomOverlay) {
-//                    HStack {
-//                        Image(systemName: "photo.on.rectangle")
-//                        L10n.showChaptersInfoInBottomOverlay.text
-//                    }
-//                }
-//
-//                Toggle(L10n.editJumpLengths, isOn: $shouldShowJumpButtonsInOverlayMenu)
-//            }
-//        }
-//    }
 }

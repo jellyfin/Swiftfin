@@ -12,52 +12,16 @@ import VLCUI
 
 extension ItemVideoPlayer.Overlay {
 
-    struct ChapterTrack: View {
-
-        @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
-
-        @State
-        private var width: CGFloat = 0
-
-        private func maxWidth(for chapter: ChapterInfo.FullInfo) -> CGFloat {
-            width * CGFloat(chapter.secondsRange.count) / CGFloat(viewModel.item.runTimeSeconds)
-        }
-
-        var body: some View {
-            HStack(spacing: 0) {
-                ForEach(viewModel.chapters, id: \.self) { chapter in
-                    HStack(spacing: 0) {
-                        if chapter != viewModel.chapters.first {
-                            Color.clear
-                                .frame(width: 1)
-                        }
-
-                        Color.white
-                    }
-                    .frame(maxWidth: maxWidth(for: chapter))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .onSizeChanged { newSize in
-                width = newSize.width
-            }
-        }
-    }
-}
-
-extension ItemVideoPlayer.Overlay {
-
     struct ChapterOverlay: View {
 
-        @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
         private var secondsHandler: CurrentSecondsHandler
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        @EnvironmentObject
+        private var viewModel: ItemVideoPlayerViewModel
 
         var body: some View {
             VStack {

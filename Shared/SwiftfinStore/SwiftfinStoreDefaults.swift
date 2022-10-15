@@ -8,6 +8,7 @@
 
 import Defaults
 import Foundation
+import SwiftUI
 import UIKit
 
 // TODO: Organize
@@ -50,49 +51,51 @@ extension Defaults.Keys {
 
     enum VideoPlayer {
 
-        static let autoPlay: Key<Bool> = .init("VideoPlayer.autoPlay", default: true, suite: .generalSuite)
-        static let autoPlayEnabled: Key<Bool> = .init("VideoPlayer.autoPlayEnabled", default: true, suite: .generalSuite)
+        static let autoPlay: Key<Bool> = .init("autoPlay", default: true, suite: .generalSuite)
+        static let autoPlayEnabled: Key<Bool> = .init("autoPlayEnabled", default: true, suite: .generalSuite)
         static let jumpBackwardLength: Key<VideoPlayerJumpLength> = .init(
-            "VideoPlayer.jumpBackwardLength",
+            "jumpBackwardLength",
             default: .fifteen,
             suite: .generalSuite
         )
         static let jumpForwardLength: Key<VideoPlayerJumpLength> = .init(
-            "VideoPlayer.jumpForwardLength",
+            "jumpForwardLength",
             default: .fifteen,
             suite: .generalSuite
         )
-        static let playNextItem: Key<Bool> = .init("VideoPlayer.playNextItem", default: true, suite: .generalSuite)
-        static let playPreviousItem: Key<Bool> = .init("VideoPlayer.playPreviousItem", default: true, suite: .generalSuite)
-        static let resumeOffset: Key<Bool> = .init("VideoPlayer.resumeOffset", default: false, suite: .generalSuite)
+        static let playNextItem: Key<Bool> = .init("playNextItem", default: true, suite: .generalSuite)
+        static let playPreviousItem: Key<Bool> = .init("playPreviousItem", default: true, suite: .generalSuite)
+        static let resumeOffset: Key<Bool> = .init("resumeOffset", default: false, suite: .generalSuite)
 
         enum Subtitle {
 
             static let subtitleFontName: Key<String> = .init(
-                "VideoPlayer.Subtitle.subtitleFontName",
+                "subtitleFontName",
                 default: UIFont.systemFont(ofSize: 14).fontName,
                 suite: .generalSuite
             )
-            static let subtitleSize: Key<Int> = .init("VideoPlayer.Subtitle.subtitleSize", default: 16, suite: .generalSuite)
+            static let subtitleSize: Key<Int> = .init("subtitleSize", default: 16, suite: .generalSuite)
         }
 
         enum Overlay {
 
+            static let chapterSlider: Key<Bool> = .init("chapterSlider", default: true, suite: .generalSuite)
             static let playbackButtonType: Key<PlaybackButtonType> = .init(
                 "VideoPlayer.Overlay.playbackButtonLocation",
                 default: .large,
                 suite: .generalSuite
             )
-            static let sliderType: Key<SliderType> = .init("VideoPlayer.Overlay.sliderType", default: .capsule, suite: .generalSuite)
+            static let sliderColor: Key<Color> = .init("sliderColor", default: Color.white, suite: .generalSuite)
+            static let sliderType: Key<SliderType> = .init("sliderType", default: .capsule, suite: .generalSuite)
 
             // Timestamp
-            static let negativeTimestamp: Key<Bool> = .init("VideoPlayer.Overlay.negativeTimestamp", default: true, suite: .generalSuite)
+            static let timeLeftTimestamp: Key<Bool> = .init("timeLeftTimestamp", default: true, suite: .generalSuite)
             static let showCurrentTimeWhileScrubbing: Key<Bool> = .init(
-                "VideoPlayer.Overlay.showCurrentTimeWhileScrubbing",
+                "showCurrentTimeWhileScrubbing",
                 default: true,
                 suite: .generalSuite
             )
-            static let timestampType: Key<TimestampType> = .init("VideoPlayer.Overlay.timestampType", default: .split, suite: .generalSuite)
+            static let timestampType: Key<TimestampType> = .init("timestampType", default: .split, suite: .generalSuite)
         }
     }
 
@@ -114,29 +117,6 @@ extension Defaults.Keys {
         default: true,
         suite: .generalSuite
     )
-    static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>(
-        "videoPlayerJumpForward",
-        default: .fifteen,
-        suite: .generalSuite
-    )
-    static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>(
-        "videoPlayerJumpBackward",
-        default: .fifteen,
-        suite: .generalSuite
-    )
-    static let autoplayEnabled = Key<Bool>("autoPlayNextItem", default: true, suite: .generalSuite)
-    static let resumeOffset = Key<Bool>("resumeOffset", default: false, suite: .generalSuite)
-    static let subtitleFontName = Key<String>(
-        "subtitleFontName",
-        default: UIFont.systemFont(ofSize: 14).fontName,
-        suite: .generalSuite
-    )
-    static let subtitleSize = Key<SubtitleSize>("subtitleSize", default: .regular, suite: .generalSuite)
-
-    // Should show video player items
-    static let shouldShowPlayPreviousItem = Key<Bool>("shouldShowPreviousItem", default: true, suite: .generalSuite)
-    static let shouldShowPlayNextItem = Key<Bool>("shouldShowNextItem", default: true, suite: .generalSuite)
-    static let shouldShowAutoPlay = Key<Bool>("shouldShowAutoPlayNextItem", default: true, suite: .generalSuite)
 
     // Should show missing seasons and episodes
     static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
@@ -172,4 +152,34 @@ extension Defaults.Keys {
     // tvos specific
     static let downActionShowsMenu = Key<Bool>("downActionShowsMenu", default: true, suite: .generalSuite)
     static let confirmClose = Key<Bool>("confirmClose", default: false, suite: .generalSuite)
+}
+
+// MARK: Legacy
+// To be removed after their usage is removed
+
+extension Defaults.Keys {
+    
+    static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>(
+        "videoPlayerJumpForward",
+        default: .fifteen,
+        suite: .generalSuite
+    )
+    static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>(
+        "videoPlayerJumpBackward",
+        default: .fifteen,
+        suite: .generalSuite
+    )
+    static let autoplayEnabled = Key<Bool>("autoPlayNextItem", default: true, suite: .generalSuite)
+    static let resumeOffset = Key<Bool>("resumeOffset", default: false, suite: .generalSuite)
+    static let subtitleFontName = Key<String>(
+        "subtitleFontName",
+        default: UIFont.systemFont(ofSize: 14).fontName,
+        suite: .generalSuite
+    )
+    static let subtitleSize = Key<SubtitleSize>("subtitleSize", default: .regular, suite: .generalSuite)
+
+    // Should show video player items
+    static let shouldShowPlayPreviousItem = Key<Bool>("shouldShowPreviousItem", default: true, suite: .generalSuite)
+    static let shouldShowPlayNextItem = Key<Bool>("shouldShowNextItem", default: true, suite: .generalSuite)
+    static let shouldShowAutoPlay = Key<Bool>("shouldShowAutoPlayNextItem", default: true, suite: .generalSuite)
 }

@@ -44,7 +44,7 @@ extension ItemVideoPlayer.Overlay {
                         Button {
                             videoPlayerManager.selectPreviousViewModel()
                         } label: {
-                            Image(systemName: "chevron.left.circle.fill")
+                            Image(systemName: "chevron.left.circle")
                                 .frame(width: 50, height: 50)
                         }
                         .disabled(videoPlayerManager.previousViewModel == nil)
@@ -55,7 +55,7 @@ extension ItemVideoPlayer.Overlay {
                         Button {
                             videoPlayerManager.selectNextViewModel()
                         } label: {
-                            Image(systemName: "chevron.right.circle.fill")
+                            Image(systemName: "chevron.right.circle")
                                 .frame(width: 50, height: 50)
                         }
                         .disabled(videoPlayerManager.nextViewModel == nil)

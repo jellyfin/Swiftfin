@@ -15,6 +15,8 @@ extension ItemVideoPlayer.Overlay {
 
     struct BottomBarView: View {
 
+        @Default(.VideoPlayer.Overlay.chapterSlider)
+        private var chapterSlider
         @Default(.videoPlayerJumpBackward)
         private var jumpBackwardLength
         @Default(.videoPlayerJumpBackward)
@@ -74,30 +76,36 @@ extension ItemVideoPlayer.Overlay {
             CapsuleSlider(progress: $progress)
                 .rate($scrubbingRate)
                 .trackMask {
-                    ChapterTrack()
-                        .clipShape(Capsule())
+                    if chapterSlider {
+                        ChapterTrack()
+                            .clipShape(Capsule())
+                    } else {
+                        Color.white
+                    }
                 }
                 .topContent {
-                    HStack {
-                        if let currentChapter = viewModel.chapter(from: progress) {
-                            Button {
-                                currentOverlayType = .chapters
-                            } label: {
-                                HStack {
-                                    Text(currentChapter.displayTitle)
-                                        .monospacedDigit()
+                    if chapterSlider {
+                        HStack {
+                            if let currentChapter = viewModel.chapter(from: progress) {
+                                Button {
+                                    currentOverlayType = .chapters
+                                } label: {
+                                    HStack {
+                                        Text(currentChapter.displayTitle)
+                                            .monospacedDigit()
 
-                                    Image(systemName: "chevron.right")
+                                        Image(systemName: "chevron.right")
+                                    }
+                                    .foregroundColor(.white)
+                                    .font(.subheadline.weight(.medium))
                                 }
-                                .foregroundColor(.white)
-                                .font(.subheadline.weight(.medium))
                             }
-                        }
 
-                        Spacer()
+                            Spacer()
+                        }
+                        .padding(.leading, 5)
+                        .padding(.bottom, 10)
                     }
-                    .padding(.leading, 5)
-                    .padding(.bottom, 10)
                 }
                 .bottomContent {
                     Group {
@@ -127,6 +135,38 @@ extension ItemVideoPlayer.Overlay {
         private var thumbSlider: some View {
             ThumbSlider(progress: $progress)
                 .rate($scrubbingRate)
+                .trackMask {
+                    if chapterSlider {
+                        ChapterTrack()
+                            .clipShape(Capsule())
+                    } else {
+                        Color.white
+                    }
+                }
+                .topContent {
+                    if chapterSlider {
+                        HStack {
+                            if let currentChapter = viewModel.chapter(from: progress) {
+                                Button {
+                                    currentOverlayType = .chapters
+                                } label: {
+                                    HStack {
+                                        Text(currentChapter.displayTitle)
+                                            .monospacedDigit()
+
+                                        Image(systemName: "chevron.right")
+                                    }
+                                    .foregroundColor(.white)
+                                    .font(.subheadline.weight(.medium))
+                                }
+                            }
+
+                            Spacer()
+                        }
+                        .padding(.leading, 5)
+                        .padding(.bottom, 10)
+                    }
+                }
                 .bottomContent {
                     Group {
                         switch timestampType {

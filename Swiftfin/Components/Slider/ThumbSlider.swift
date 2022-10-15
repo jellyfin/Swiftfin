@@ -6,16 +6,23 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-struct ThumbSlider<TopContent: View, BottomContent: View, LeadingContent: View, TrailingContent: View>: View {
+struct ThumbSlider<TrackMask: View, TopContent: View, BottomContent: View, LeadingContent: View, TrailingContent: View>: View {
+
+    @Default(.VideoPlayer.Overlay.sliderColor)
+    private var sliderColor
 
     @Binding
     private var progress: CGFloat
     @Binding
     private var rate: CGFloat
+
     @State
     private var isEditing: Bool = false
+
+    private var trackMask: () -> TrackMask
     private var topContent: () -> TopContent
     private var bottomContent: () -> BottomContent
     private var leadingContent: () -> LeadingContent
@@ -38,7 +45,7 @@ struct ThumbSlider<TopContent: View, BottomContent: View, LeadingContent: View, 
             }
             .track { _, _ in
                 Capsule()
-                    .foregroundColor(Color.purple)
+                    .foregroundColor(sliderColor)
                     .frame(height: 5)
             }
             .trackBackground { _, _ in
@@ -47,17 +54,13 @@ struct ThumbSlider<TopContent: View, BottomContent: View, LeadingContent: View, 
                     .opacity(0.5)
                     .frame(height: 5)
             }
-            .trackMask {
-//                Color.white
-                ItemVideoPlayer.Overlay.ChapterTrack()
-            }
             .thumb { isEditing, _ in
                 ZStack {
                     Color.clear
                         .frame(height: 25)
 
                     Circle()
-                        .foregroundColor(Color.purple)
+                        .foregroundColor(sliderColor)
                         .frame(width: isEditing ? 25 : 20)
                 }
                 .overlay {
@@ -66,6 +69,7 @@ struct ThumbSlider<TopContent: View, BottomContent: View, LeadingContent: View, 
                         .contentShape(Rectangle())
                 }
             }
+            .trackMask(trackMask)
             .topContent(topContent)
             .bottomContent(bottomContent)
             .leadingContent(leadingContent)
@@ -73,7 +77,8 @@ struct ThumbSlider<TopContent: View, BottomContent: View, LeadingContent: View, 
     }
 }
 
-extension ThumbSlider where TopContent == EmptyView,
+extension ThumbSlider where TrackMask == Color,
+    TopContent == EmptyView,
     BottomContent == EmptyView,
     LeadingContent == EmptyView,
     TrailingContent == EmptyView
@@ -83,6 +88,7 @@ extension ThumbSlider where TopContent == EmptyView,
         self.init(
             progress: progress,
             rate: .constant(1),
+            trackMask: { Color.white },
             topContent: { EmptyView() },
             bottomContent: { EmptyView() },
             leadingContent: { EmptyView() },
@@ -94,11 +100,26 @@ extension ThumbSlider where TopContent == EmptyView,
 
 extension ThumbSlider {
 
-    func topContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<C, BottomContent, LeadingContent, TrailingContent> {
+    func trackMask<C: View>(@ViewBuilder _ content: @escaping () -> C)
+    -> ThumbSlider<C, TopContent, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
+            trackMask: content,
+            topContent: topContent,
+            bottomContent: bottomContent,
+            leadingContent: leadingContent,
+            trailingContent: trailingContent,
+            onEditingChanged: onEditingChanged
+        )
+    }
+
+    func topContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
+    -> ThumbSlider<TrackMask, C, BottomContent, LeadingContent, TrailingContent> {
+        .init(
+            progress: $progress,
+            rate: $rate,
+            trackMask: trackMask,
             topContent: content,
             bottomContent: bottomContent,
             leadingContent: leadingContent,
@@ -108,10 +129,11 @@ extension ThumbSlider {
     }
 
     func bottomContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<TopContent, C, LeadingContent, TrailingContent> {
+    -> ThumbSlider<TrackMask, TopContent, C, LeadingContent, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
+            trackMask: trackMask,
             topContent: topContent,
             bottomContent: content,
             leadingContent: leadingContent,
@@ -121,10 +143,11 @@ extension ThumbSlider {
     }
 
     func leadingContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<TopContent, BottomContent, C, TrailingContent> {
+    -> ThumbSlider<TrackMask, TopContent, BottomContent, C, TrailingContent> {
         .init(
             progress: $progress,
             rate: $rate,
+            trackMask: trackMask,
             topContent: topContent,
             bottomContent: bottomContent,
             leadingContent: content,
@@ -134,10 +157,11 @@ extension ThumbSlider {
     }
 
     func trailingContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<TopContent, BottomContent, LeadingContent, C> {
+    -> ThumbSlider<TrackMask, TopContent, BottomContent, LeadingContent, C> {
         .init(
             progress: $progress,
             rate: $rate,
+            trackMask: trackMask,
             topContent: topContent,
             bottomContent: bottomContent,
             leadingContent: leadingContent,

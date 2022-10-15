@@ -13,7 +13,7 @@ extension ItemVideoPlayer.Overlay {
 
     struct CompactTimeStamp: View {
 
-        @Default(.VideoPlayer.Overlay.negativeTimestamp)
+        @Default(.VideoPlayer.Overlay.timeLeftTimestamp)
         private var timeLeftTimestamp
         @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
         private var showCurrentTimeWhileScrubbing
@@ -83,7 +83,7 @@ extension ItemVideoPlayer.Overlay {
 
     struct SplitTimeStamp: View {
 
-        @Default(.VideoPlayer.Overlay.negativeTimestamp)
+        @Default(.VideoPlayer.Overlay.timeLeftTimestamp)
         private var timeLeftTimestamp
         @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
         private var showCurrentTimeWhileScrubbing

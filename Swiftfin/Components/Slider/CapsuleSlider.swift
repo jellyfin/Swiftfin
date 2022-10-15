@@ -6,9 +6,13 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct CapsuleSlider<TrackMask: View, TopContent: View, BottomContent: View, LeadingContent: View, TrailingContent: View>: View {
+
+    @Default(.VideoPlayer.Overlay.sliderColor)
+    private var sliderColor
 
     @Binding
     private var progress: CGFloat
@@ -45,7 +49,7 @@ struct CapsuleSlider<TrackMask: View, TopContent: View, BottomContent: View, Lea
             .track { isEditing, _ in
                 Capsule()
                     .frame(height: isEditing ? 20 : 10)
-                    .foregroundColor(isEditing ? .white : .white.opacity(0.8))
+                    .foregroundColor(isEditing ? sliderColor : sliderColor.opacity(0.8))
             }
             .trackBackground { isEditing, _ in
                 Capsule()
