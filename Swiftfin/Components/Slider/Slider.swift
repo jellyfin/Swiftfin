@@ -13,6 +13,19 @@ enum SliderGestureBehavior {
     case track
 }
 
+extension VerticalAlignment {
+
+    private struct SliderCenterAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[VerticalAlignment.center]
+        }
+    }
+
+    static let sliderCenterAlignmentGuide = VerticalAlignment(
+        SliderCenterAlignment.self
+    )
+}
+
 struct Slider<
     Track: View,
     TrackBackground: View,
@@ -85,8 +98,11 @@ struct Slider<
     }
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(alignment: .sliderCenterAlignmentGuide, spacing: 0) {
             leadingContent()
+                .alignmentGuide(.sliderCenterAlignmentGuide) { context in
+                    context[VerticalAlignment.center]
+                }
 
             VStack(spacing: 0) {
                 topContent()
@@ -126,11 +142,17 @@ struct Slider<
                             .gesture(trackDrag)
                     }
                 }
+                .alignmentGuide(.sliderCenterAlignmentGuide) { context in
+                    context[VerticalAlignment.center]
+                }
 
                 bottomContent()
             }
 
             trailingContent()
+                .alignmentGuide(.sliderCenterAlignmentGuide) { context in
+                    context[VerticalAlignment.center]
+                }
         }
         .animation(progressAnimation, value: progress)
         .animation(.linear(duration: 0.2), value: isEditing)

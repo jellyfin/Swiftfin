@@ -21,11 +21,11 @@ extension ItemVideoPlayer {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
         @Environment(\.presentingPlaybackSettings)
         @Binding
         private var presentingPlaybackSettings
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets
 
         var body: some View {
             ZStack {

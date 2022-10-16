@@ -81,6 +81,7 @@ extension ItemVideoPlayer.Overlay {
                 }
                 .monospacedDigit()
                 .font(.caption)
+                .lineLimit(1)
             }
         }
     }

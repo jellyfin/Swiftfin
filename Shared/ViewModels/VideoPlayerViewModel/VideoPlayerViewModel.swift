@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
@@ -44,9 +45,16 @@ class ItemVideoPlayerViewModel: ObservableObject, Equatable {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
         configuration.startTime = .seconds(item.startTimeSeconds)
+        configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
+        
+        if let font = UIFont(name: Defaults[.VideoPlayer.Subtitle.subtitleFontName], size: 0) {
+            configuration.subtitleFont = .absolute(font)
+        }
+        
         configuration.playbackChildren = subtitleStreams
             .filter { $0.deliveryMethod == .external }
             .compactMap(\.asPlaybackChild)
+        
         return configuration
     }
 

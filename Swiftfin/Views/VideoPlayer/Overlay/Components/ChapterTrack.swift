@@ -29,7 +29,7 @@ extension ItemVideoPlayer.Overlay {
                     HStack(spacing: 0) {
                         if chapter != viewModel.chapters.first {
                             Color.clear
-                                .frame(width: 3)
+                                .frame(width: 1.5)
                         }
 
                         Color.white

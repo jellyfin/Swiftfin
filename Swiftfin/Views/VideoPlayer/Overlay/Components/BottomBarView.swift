@@ -105,6 +105,9 @@ extension ItemVideoPlayer.Overlay {
                         }
                         .padding(.leading, 5)
                         .padding(.bottom, 10)
+                    } else {
+                        Color.clear
+                            .frame(height: 20)
                     }
                 }
                 .bottomContent {
