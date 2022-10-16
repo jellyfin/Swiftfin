@@ -155,10 +155,11 @@ extension Defaults.Keys {
 }
 
 // MARK: Legacy
+
 // To be removed after their usage is removed
 
 extension Defaults.Keys {
-    
+
     static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>(
         "videoPlayerJumpForward",
         default: .fifteen,

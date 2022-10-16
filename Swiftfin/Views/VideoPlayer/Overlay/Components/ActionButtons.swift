@@ -34,6 +34,7 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
+        // TODO: Break up into individual buttons
         @ViewBuilder
         private var barButtons: some View {
             HStack(spacing: 0) {

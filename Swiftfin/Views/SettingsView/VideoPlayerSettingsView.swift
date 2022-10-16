@@ -81,14 +81,14 @@ struct VideoPlayerSettingsView: View {
             Section("Overlay") {
 
                 EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
-                
+
                 Toggle(isOn: $autoPlay) {
                     HStack {
                         Image(systemName: "play.circle.fill")
                         L10n.autoPlay.text
                     }
                 }
-                
+
                 Toggle(isOn: $playNextItem) {
                     HStack {
                         Image(systemName: "chevron.left.circle")
@@ -103,9 +103,9 @@ struct VideoPlayerSettingsView: View {
                     }
                 }
             }
-            
+
             Section("Slider") {
-                
+
                 Toggle("Chapter Slider", isOn: $chapterSlider)
 
                 ColorPicker(selection: $sliderColor, supportsOpacity: false) {

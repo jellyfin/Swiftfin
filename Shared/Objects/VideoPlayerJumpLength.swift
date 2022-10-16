@@ -9,6 +9,7 @@
 import Defaults
 import UIKit
 
+// TODO: Convert to Int
 enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable, Displayable {
     case thirty = 30
     case fifteen = 15
