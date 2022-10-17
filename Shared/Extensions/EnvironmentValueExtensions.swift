@@ -24,6 +24,12 @@ struct PresentingPlaybackSettings: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
 
+struct SafeAreaInsetsKey: EnvironmentKey {
+    static var defaultValue: EdgeInsets {
+        UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
+    }
+}
+
 struct ScrubbedProgress: EnvironmentKey {
     static let defaultValue: Binding<CGFloat> = .constant(0)
 }
@@ -48,6 +54,10 @@ extension EnvironmentValues {
     var presentingPlaybackSettings: Binding<Bool> {
         get { self[PresentingPlaybackSettings.self] }
         set { self[PresentingPlaybackSettings.self] = newValue }
+    }
+
+    var safeAreaInsets: EdgeInsets {
+        self[SafeAreaInsetsKey.self]
     }
 
     var scrubbedProgress: Binding<CGFloat> {

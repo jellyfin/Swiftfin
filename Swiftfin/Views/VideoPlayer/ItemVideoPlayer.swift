@@ -13,38 +13,6 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
-extension UIApplication {
-    var keyWindow: UIWindow? {
-        connectedScenes
-            .compactMap {
-                $0 as? UIWindowScene
-            }
-            .flatMap(\.windows)
-            .first {
-                $0.isKeyWindow
-            }
-    }
-}
-
-struct SafeAreaInsetsKey: EnvironmentKey {
-    static var defaultValue: EdgeInsets {
-        UIApplication.shared.keyWindow?.safeAreaInsets.swiftUiInsets ?? .zero
-    }
-}
-
-extension EnvironmentValues {
-    var safeAreaInsets: EdgeInsets {
-        self[SafeAreaInsetsKey.self]
-    }
-}
-
-extension UIEdgeInsets {
-
-    var swiftUiInsets: EdgeInsets {
-        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
-    }
-}
-
 struct ItemVideoPlayer: View {
 
     enum OverlayType {
@@ -67,9 +35,9 @@ struct ItemVideoPlayer: View {
     @ObservedObject
     private var overlayTimer: TimerProxy = .init()
     @ObservedObject
-    private var videoPlayerProxy: VLCVideoPlayer.Proxy = .init()
-    @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
+    @ObservedObject
+    private var videoPlayerProxy: VLCVideoPlayer.Proxy = .init()
 
     @State
     private var aspectFilled: Bool = false
@@ -135,9 +103,9 @@ struct ItemVideoPlayer: View {
                 .environmentObject(currentSecondsHandler)
                 .environmentObject(flashContentProxy)
                 .environmentObject(overlayTimer)
-                .environmentObject(viewModel)
                 .environmentObject(videoPlayerManager)
                 .environmentObject(videoPlayerProxy)
+                .environmentObject(viewModel)
                 .environment(\.aspectFilled, $aspectFilled)
                 .environment(\.currentOverlayType, $currentOverlayType)
                 .environment(\.isScrubbing, $isScrubbing)
@@ -208,7 +176,6 @@ struct ItemVideoPlayer: View {
             videoPlayerProxy.setSubtitleSize(.absolute(24 - newValue))
         }
         .onChange(of: videoPlayerManager.currentViewModel) { newValue in
-            print("New video view model for item: \(String(describing: newValue?.item.displayTitle))")
             guard let newValue else { return }
             videoPlayerProxy.playNewMedia(newValue.configuration)
         }

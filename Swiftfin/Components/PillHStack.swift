@@ -14,16 +14,6 @@ struct PillHStack<Item: Displayable>: View {
     private var items: [Item]
     private var onSelect: (Item) -> Void
 
-    private init(
-        title: String,
-        items: [Item],
-        onSelect: @escaping (Item) -> Void
-    ) {
-        self.title = title
-        self.items = items
-        self.onSelect = onSelect
-    }
-
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
@@ -65,7 +55,11 @@ struct PillHStack<Item: Displayable>: View {
 extension PillHStack {
 
     init(title: String, items: [Item]) {
-        self.init(title: title, items: items, onSelect: { _ in })
+        self.init(
+            title: title,
+            items: items,
+            onSelect: { _ in }
+        )
     }
 
     func onSelect(_ action: @escaping (Item) -> Void) -> Self {

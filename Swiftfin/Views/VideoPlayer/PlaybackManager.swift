@@ -7,17 +7,22 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 
 final class PlaybackManager {
 
+    static let service = Factory<PlaybackManager>(scope: .singleton) {
+        .init()
+    }
+
     private var cancellables = Set<AnyCancellable>()
 
     func sendStartReport(
         _ request: ReportPlaybackStartRequest,
-        onSuccess: @escaping () -> Void,
-        onFailure: @escaping (Error) -> Void
+        onSuccess: @escaping () -> Void = {},
+        onFailure: @escaping (Error) -> Void = { _ in }
     ) {
         PlaystateAPI.reportPlaybackStart(reportPlaybackStartRequest: request)
             .sink { completion in
@@ -34,8 +39,8 @@ final class PlaybackManager {
 
     func sendProgressReport(
         _ request: ReportPlaybackProgressRequest,
-        onSuccess: @escaping () -> Void,
-        onFailure: @escaping (Error) -> Void
+        onSuccess: @escaping () -> Void = {},
+        onFailure: @escaping (Error) -> Void = { _ in }
     ) {
         PlaystateAPI.reportPlaybackProgress(reportPlaybackProgressRequest: request)
             .sink { completion in
@@ -52,8 +57,8 @@ final class PlaybackManager {
 
     func sendStopReport(
         _ request: ReportPlaybackStoppedRequest,
-        onSuccess: @escaping () -> Void,
-        onFailure: @escaping (Error) -> Void
+        onSuccess: @escaping () -> Void = {},
+        onFailure: @escaping (Error) -> Void = { _ in }
     ) {
         PlaystateAPI.reportPlaybackStopped(reportPlaybackStoppedRequest: request)
             .sink { completion in

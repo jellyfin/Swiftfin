@@ -63,8 +63,6 @@ class VideoPlayerManager: ViewModel {
         currentViewModel = nextViewModel
         previousViewModel = nil
         self.nextViewModel = nil
-
-        getAdjacentEpisodes(for: nextViewModel.item)
     }
 
     func selectPreviousViewModel() {
@@ -72,8 +70,6 @@ class VideoPlayerManager: ViewModel {
         currentViewModel = previousViewModel
         self.previousViewModel = nil
         nextViewModel = nil
-
-        getAdjacentEpisodes(for: previousViewModel.item)
     }
 
     func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {

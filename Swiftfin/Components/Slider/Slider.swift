@@ -13,19 +13,6 @@ enum SliderGestureBehavior {
     case track
 }
 
-extension VerticalAlignment {
-
-    private struct SliderCenterAlignment: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            context[VerticalAlignment.center]
-        }
-    }
-
-    static let sliderCenterAlignmentGuide = VerticalAlignment(
-        SliderCenterAlignment.self
-    )
-}
-
 struct Slider<
     Track: View,
     TrackBackground: View,

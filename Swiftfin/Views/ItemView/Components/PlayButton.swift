@@ -15,8 +15,10 @@ extension ItemView {
 
         @Injected(LogManager.service)
         private var logger
+
         @EnvironmentObject
         private var mainRouter: MainCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
 

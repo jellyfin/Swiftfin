@@ -19,21 +19,14 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var router: ItemVideoPlayerCoordinator.Router
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
+        private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
-        private var vlcVideoPlayerProxy: VLCVideoPlayer.Proxy
-
-        @State
-        private var deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
-
-        init() {
-            print("Top bar init-ed")
-        }
+        private var viewModel: ItemVideoPlayerViewModel
 
         var body: some View {
             HStack(alignment: .center) {
                 Button {
-                    vlcVideoPlayerProxy.stop()
+                    videoPlayerProxy.stop()
                     router.dismissCoordinator()
                 } label: {
                     Image(systemName: "xmark")
@@ -59,14 +52,10 @@ extension ItemVideoPlayer.Overlay {
                 Spacer()
 
                 ItemVideoPlayer.Overlay.ActionButtons()
-                    .if(deviceOrientation.isLandscape) { view in
-                        view.padding(.leading, 100)
-                    }
             }
             .font(.system(size: 24))
             .tint(Color.white)
             .foregroundColor(Color.white)
-            .detectOrientation($deviceOrientation)
         }
     }
 }

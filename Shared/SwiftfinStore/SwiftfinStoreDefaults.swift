@@ -100,7 +100,6 @@ extension Defaults.Keys {
     }
 
     // Video player / overlay settings
-    static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: .generalSuite)
     static let jumpGesturesEnabled = Key<Bool>("gesturesEnabled", default: true, suite: .generalSuite)
     static let systemControlGesturesEnabled = Key<Bool>(
         "systemControlGesturesEnabled",
@@ -121,19 +120,6 @@ extension Defaults.Keys {
     // Should show missing seasons and episodes
     static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
     static let shouldShowMissingEpisodes = Key<Bool>("shouldShowMissingEpisodes", default: true, suite: .generalSuite)
-
-    // Should show video player items in overlay menu
-    static let shouldShowJumpButtonsInOverlayMenu = Key<Bool>(
-        "shouldShowJumpButtonsInMenu",
-        default: true,
-        suite: .generalSuite
-    )
-
-    static let shouldShowChaptersInfoInBottomOverlay = Key<Bool>(
-        "shouldShowChaptersInfoInBottomOverlay",
-        default: true,
-        suite: .generalSuite
-    )
 
     // Experimental settings
     enum Experimental {
@@ -160,6 +146,7 @@ extension Defaults.Keys {
 
 extension Defaults.Keys {
 
+    static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: .generalSuite)
     static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>(
         "videoPlayerJumpForward",
         default: .fifteen,
@@ -183,4 +170,17 @@ extension Defaults.Keys {
     static let shouldShowPlayPreviousItem = Key<Bool>("shouldShowPreviousItem", default: true, suite: .generalSuite)
     static let shouldShowPlayNextItem = Key<Bool>("shouldShowNextItem", default: true, suite: .generalSuite)
     static let shouldShowAutoPlay = Key<Bool>("shouldShowAutoPlayNextItem", default: true, suite: .generalSuite)
+
+    // Should show video player items in overlay menu
+    static let shouldShowJumpButtonsInOverlayMenu = Key<Bool>(
+        "shouldShowJumpButtonsInMenu",
+        default: true,
+        suite: .generalSuite
+    )
+
+    static let shouldShowChaptersInfoInBottomOverlay = Key<Bool>(
+        "shouldShowChaptersInfoInBottomOverlay",
+        default: true,
+        suite: .generalSuite
+    )
 }

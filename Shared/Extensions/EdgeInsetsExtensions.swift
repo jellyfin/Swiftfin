@@ -16,3 +16,10 @@ extension EdgeInsets {
         return copy
     }
 }
+
+extension UIEdgeInsets {
+
+    var asEdgeInsets: EdgeInsets {
+        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
+    }
+}

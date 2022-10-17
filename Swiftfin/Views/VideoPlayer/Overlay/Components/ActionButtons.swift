@@ -30,9 +30,9 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
-        @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        @EnvironmentObject
+        private var viewModel: ItemVideoPlayerViewModel
 
         // TODO: Break up into individual buttons
         @ViewBuilder

@@ -28,24 +28,24 @@ extension ItemVideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
 
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
+        @Environment(\.isScrubbing)
+        @Binding
+        private var isScrubbing: Bool
         @Environment(\.scrubbedProgress)
         @Binding
         private var scrubbedProgress: CGFloat
 
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
-        @EnvironmentObject
         private var currentSecondsHandler: CurrentSecondsHandler
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
-        private var vlcVideoPlayerProxy: VLCVideoPlayer.Proxy
+        private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        @EnvironmentObject
+        private var viewModel: ItemVideoPlayerViewModel
 
         @State
         private var currentSeconds: Int = 0
@@ -55,10 +55,6 @@ extension ItemVideoPlayer.Overlay {
         private var scrubbingRate: CGFloat = 1
         @State
         private var negativeScrubbing: Bool = true
-
-        init() {
-            print("bottom bar init-ed")
-        }
 
         private var trailingTimeStamp: String {
             if negativeScrubbing {
@@ -216,7 +212,7 @@ extension ItemVideoPlayer.Overlay {
 
                 guard !newValue else { return }
                 let scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
-                vlcVideoPlayerProxy.setTime(.seconds(scrubbedSeconds))
+                videoPlayerProxy.setTime(.seconds(scrubbedSeconds))
             }
             .onChange(of: progress) { _ in
                 guard isScrubbing else { return }
