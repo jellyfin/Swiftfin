@@ -29,7 +29,7 @@ struct ItemVideoPlayer: View {
     private var router: ItemVideoPlayerCoordinator.Router
 
     @ObservedObject
-    private var currentSecondsHandler: CurrentSecondsHandler = .init()
+    private var currentSecondsHandler: VideoPlayerViewModel.CurrentPlaybackInformation = .init()
     @ObservedObject
     private var flashContentProxy: FlashContentProxy = .init()
     @ObservedObject

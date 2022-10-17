@@ -12,17 +12,17 @@ import VLCUI
 struct PlaybackInformationView: View {
 
     @EnvironmentObject
-    private var currentSecondsHandler: CurrentSecondsHandler
+    private var currentPlaybackInformation: VideoPlayerViewModel.CurrentPlaybackInformation
 
     var body: some View {
         Form {
-            SplitText(
+            TextPairView(
                 leading: "Read Bytes - Input",
-                trailing: String(currentSecondsHandler.playbackInformation?.numberOfReadBytesOnInput ?? 0)
+                trailing: String(currentPlaybackInformation.playbackInformation?.numberOfReadBytesOnInput ?? 0)
             )
-            SplitText(
+            TextPairView(
                 leading: "Read Bytes - Demux",
-                trailing: String(currentSecondsHandler.playbackInformation?.numberOfReadBytesOnDemux ?? 0)
+                trailing: String(currentPlaybackInformation.playbackInformation?.numberOfReadBytesOnDemux ?? 0)
             )
         }
     }

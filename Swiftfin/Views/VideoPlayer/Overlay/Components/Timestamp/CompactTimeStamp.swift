@@ -26,7 +26,7 @@ extension ItemVideoPlayer.Overlay {
         private var scrubbedProgress: CGFloat
 
         @EnvironmentObject
-        private var currentSecondsHandler: CurrentSecondsHandler
+        private var currentSecondsHandler: VideoPlayerViewModel.CurrentPlaybackInformation
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 

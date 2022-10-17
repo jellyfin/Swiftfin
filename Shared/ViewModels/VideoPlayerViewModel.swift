@@ -14,24 +14,19 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-class CurrentSecondsHandler: ObservableObject {
+class VideoPlayerViewModel: ObservableObject {
 
-    @Published
-    var currentSeconds: Int = 0
-    @Published
-    var playbackInformation: VLCVideoPlayer.PlaybackInformation?
+    class CurrentPlaybackInformation: ObservableObject {
 
-    func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-        self.currentSeconds = ticks / 1000
-        self.playbackInformation = playbackInformation
-    }
-}
+        @Published
+        var currentSeconds: Int = 0
+        @Published
+        var playbackInformation: VLCVideoPlayer.PlaybackInformation?
 
-class VideoPlayerViewModel: ObservableObject, Equatable {
-
-    static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
-        lhs.playbackURL == rhs.playbackURL &&
-            lhs.item == rhs.item
+        func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
+            self.currentSeconds = ticks / 1000
+            self.playbackInformation = playbackInformation
+        }
     }
 
     @Published
@@ -86,17 +81,12 @@ class VideoPlayerViewModel: ObservableObject, Equatable {
         let seconds = Int(CGFloat(item.runTimeSeconds) * progress)
         return chapters.first(where: { $0.secondsRange.contains(seconds) })
     }
+}
 
-    func subtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
-        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
+extension VideoPlayerViewModel: Equatable {
 
-        guard let externalSubtitleStreamIndex = externalSubtitleStreams.firstIndex(where: { $0.index == subtitleStreamIndex }) else {
-            return Int32(subtitleStreamIndex)
-        }
-
-        let embeddedSubtitleStreamCount = subtitleStreams.count - externalSubtitleStreams.count
-        let embeddedStreamCount = 1 + audioStreams.count + embeddedSubtitleStreamCount
-
-        return Int32(embeddedStreamCount + externalSubtitleStreamIndex)
+    static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
+        lhs.playbackURL == rhs.playbackURL &&
+            lhs.item == rhs.item
     }
 }

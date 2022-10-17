@@ -17,14 +17,14 @@ struct MediaStreamInfoView: View {
         Form {
             Section(mediaStream.displayTitle ?? .emptyDash) {
                 ForEach(mediaStream.metadataProperties) { property in
-                    SplitText(leading: property.displayTitle, trailing: property.subtitle)
+                    TextPairView(property)
                 }
             }
 
             if !mediaStream.colorProperties.isEmpty {
                 Section("Color") {
                     ForEach(mediaStream.colorProperties) { property in
-                        SplitText(leading: property.displayTitle, trailing: property.subtitle)
+                        TextPairView(property)
                     }
                 }
             }
@@ -32,7 +32,7 @@ struct MediaStreamInfoView: View {
             if !mediaStream.deliveryProperties.isEmpty {
                 Section("Delivery") {
                     ForEach(mediaStream.deliveryProperties) { property in
-                        SplitText(leading: property.displayTitle, trailing: property.subtitle)
+                        TextPairView(property)
                     }
                 }
             }
