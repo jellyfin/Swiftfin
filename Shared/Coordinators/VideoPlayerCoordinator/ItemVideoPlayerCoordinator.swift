@@ -15,14 +15,14 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
 
     struct Parameters {
         let item: BaseItemDto?
-        let viewModel: ItemVideoPlayerViewModel?
+        let viewModel: VideoPlayerViewModel?
 
         init(item: BaseItemDto) {
             self.item = item
             self.viewModel = nil
         }
 
-        init(viewModel: ItemVideoPlayerViewModel) {
+        init(viewModel: VideoPlayerViewModel) {
             self.item = nil
             self.viewModel = viewModel
         }

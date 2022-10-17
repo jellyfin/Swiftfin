@@ -35,9 +35,9 @@ class ItemViewModel: ViewModel {
     var isFavorited = false
 
     @Published
-    var selectedVideoPlayerViewModel: ItemVideoPlayerViewModel?
+    var selectedVideoPlayerViewModel: VideoPlayerViewModel?
     @Published
-    var videoPlayerViewModels: [ItemVideoPlayerViewModel] = []
+    var videoPlayerViewModels: [VideoPlayerViewModel] = []
 
     @Published
     var legacyselectedVideoPlayerViewModel: LegacyVideoPlayerViewModel?

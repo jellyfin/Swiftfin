@@ -27,7 +27,7 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
+        private var viewModel: VideoPlayerViewModel
 
         @ViewBuilder
         private var subtitleTrackMenu: some View {

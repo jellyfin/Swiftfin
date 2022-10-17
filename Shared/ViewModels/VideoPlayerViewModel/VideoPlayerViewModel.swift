@@ -27,9 +27,9 @@ class CurrentSecondsHandler: ObservableObject {
     }
 }
 
-class ItemVideoPlayerViewModel: ObservableObject, Equatable {
+class VideoPlayerViewModel: ObservableObject, Equatable {
 
-    static func == (lhs: ItemVideoPlayerViewModel, rhs: ItemVideoPlayerViewModel) -> Bool {
+    static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
         lhs.playbackURL == rhs.playbackURL &&
             lhs.item == rhs.item
     }
@@ -98,25 +98,5 @@ class ItemVideoPlayerViewModel: ObservableObject, Equatable {
         let embeddedStreamCount = 1 + audioStreams.count + embeddedSubtitleStreamCount
 
         return Int32(embeddedStreamCount + externalSubtitleStreamIndex)
-    }
-}
-
-extension [MediaStream] {
-
-    func adjustExternalSubtitleIndexes(audioStreamCount: Int) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .subtitle }) else { return self }
-        let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
-
-        var mediaStreams = self
-
-        for (i, mediaStream) in mediaStreams.enumerated() {
-            guard mediaStream.isExternal ?? false else { continue }
-            var _mediaStream = mediaStream
-            _mediaStream.index = 1 + embeddedSubtitleCount + audioStreamCount
-
-            mediaStreams[i] = _mediaStream
-        }
-
-        return mediaStreams
     }
 }

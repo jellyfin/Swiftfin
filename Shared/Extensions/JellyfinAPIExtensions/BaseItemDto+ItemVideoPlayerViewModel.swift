@@ -13,7 +13,7 @@ import SwiftUI
 
 extension BaseItemDto {
 
-    func createItemVideoPlayerViewModel() -> AnyPublisher<[ItemVideoPlayerViewModel], Error> {
+    func createItemVideoPlayerViewModel() -> AnyPublisher<[VideoPlayerViewModel], Error> {
 
         let builder = DeviceProfileBuilder()
         // TODO: fix bitrate settings

@@ -26,9 +26,9 @@ class VideoPlayerManager: ViewModel {
     // MARK: ViewModel
 
     @Published
-    var previousViewModel: ItemVideoPlayerViewModel?
+    var previousViewModel: VideoPlayerViewModel?
     @Published
-    var currentViewModel: ItemVideoPlayerViewModel? {
+    var currentViewModel: VideoPlayerViewModel? {
         willSet {
             guard let newValue else { return }
             getAdjacentEpisodes(for: newValue.item)
@@ -36,11 +36,11 @@ class VideoPlayerManager: ViewModel {
     }
 
     @Published
-    var nextViewModel: ItemVideoPlayerViewModel?
+    var nextViewModel: VideoPlayerViewModel?
 
     // MARK: init
 
-    init(viewModel: ItemVideoPlayerViewModel) {
+    init(viewModel: VideoPlayerViewModel) {
         self.currentViewModel = viewModel
         super.init()
 

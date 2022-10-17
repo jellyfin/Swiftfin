@@ -28,7 +28,7 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var currentSecondsHandler: CurrentSecondsHandler
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
+        private var viewModel: VideoPlayerViewModel
 
         @Binding
         var currentSeconds: Int

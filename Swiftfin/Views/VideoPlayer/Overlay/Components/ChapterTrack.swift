@@ -14,7 +14,7 @@ extension ItemVideoPlayer.Overlay {
     struct ChapterTrack: View {
 
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
+        private var viewModel: VideoPlayerViewModel
 
         @State
         private var width: CGFloat = 0

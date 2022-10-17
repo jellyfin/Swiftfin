@@ -55,7 +55,7 @@ struct ItemVideoPlayer: View {
     }
 
     @ViewBuilder
-    private func playerView(with viewModel: ItemVideoPlayerViewModel) -> some View {
+    private func playerView(with viewModel: VideoPlayerViewModel) -> some View {
         HStack(spacing: 0) {
             ZStack {
                 VLCVideoPlayer(configuration: viewModel.configuration)

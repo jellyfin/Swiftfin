@@ -11,7 +11,7 @@ import JellyfinAPI
 
 extension MediaSourceInfo {
 
-    func itemVideoPlayerViewModel(with item: BaseItemDto, playSessionID: String) -> ItemVideoPlayerViewModel {
+    func itemVideoPlayerViewModel(with item: BaseItemDto, playSessionID: String) -> VideoPlayerViewModel {
         let directStreamURL = VideosAPI.getVideoStreamWithRequestBuilder(
             itemId: item.id!,
             _static: true,
@@ -24,7 +24,7 @@ extension MediaSourceInfo {
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
 
-        return ItemVideoPlayerViewModel(
+        return VideoPlayerViewModel(
             playbackURL: directStreamURL,
             item: item,
             videoStream: videoStream,

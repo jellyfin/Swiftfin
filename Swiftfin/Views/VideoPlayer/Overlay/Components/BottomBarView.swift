@@ -45,7 +45,7 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
-        private var viewModel: ItemVideoPlayerViewModel
+        private var viewModel: VideoPlayerViewModel
 
         @State
         private var currentSeconds: Int = 0

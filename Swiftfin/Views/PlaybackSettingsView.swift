@@ -129,7 +129,7 @@ struct PlaybackSettingsView: View {
     @EnvironmentObject
     private var currentSecondsHandler: CurrentSecondsHandler
     @EnvironmentObject
-    private var viewModel: ItemVideoPlayerViewModel
+    private var viewModel: VideoPlayerViewModel
     @EnvironmentObject
     private var router: PlaybackSettingsCoordinator.Router
 
