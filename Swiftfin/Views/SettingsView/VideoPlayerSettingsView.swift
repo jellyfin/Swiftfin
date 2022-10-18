@@ -38,8 +38,8 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.Overlay.sliderType)
     private var sliderType
 
-    @Default(.VideoPlayer.Overlay.timeLeftTimestamp)
-    private var timeLeftTimestamp
+    @Default(.VideoPlayer.Overlay.trailingTimestampType)
+    private var trailingTimestampType
     @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
     private var showCurrentTimeWhileScrubbing
     @Default(.VideoPlayer.Overlay.timestampType)
@@ -56,29 +56,21 @@ struct VideoPlayerSettingsView: View {
             EnumPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
-                Toggle("Resume offset", isOn: $resumeOffset)
-            } footer: {
-                Text("Resume content 5 seconds before the actual resume time")
-            }
-
-            Section("Subtitle") {
-
-                ChevronButton(title: L10n.subtitleFont, subtitle: subtitleFontName)
-                    .onSelect {
-                        router.route(to: \.fontPicker)
-                    }
-
-                Stepper(value: $subtitleSize, in: 8 ... 24) {
+                Stepper(value: $resumeOffset, in: 0 ... 30) {
                     HStack {
-                        L10n.subtitleSize.text
+                        Text("Resume Offset")
+                        
+                        Spacer()
 
-                        Text("\(subtitleSize)")
+                        Text("\(resumeOffset)")
                             .foregroundColor(.secondary)
                     }
                 }
+            } footer: {
+                Text("Resume content seconds before the recorded resume time")
             }
 
-            Section("Overlay") {
+            Section("Buttons") {
 
                 EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
 
@@ -92,14 +84,14 @@ struct VideoPlayerSettingsView: View {
                 Toggle(isOn: $playNextItem) {
                     HStack {
                         Image(systemName: "chevron.left.circle")
-                        L10n.playPreviousItem.text
+                        Text("Next Item")
                     }
                 }
 
                 Toggle(isOn: $playPreviousItem) {
                     HStack {
                         Image(systemName: "chevron.right.circle")
-                        L10n.playNextItem.text
+                        Text("Previous Item")
                     }
                 }
             }
@@ -114,15 +106,41 @@ struct VideoPlayerSettingsView: View {
 
                 EnumPicker(title: "Slider Type", selection: $sliderType)
             }
+            
+            Section("Subtitle") {
+
+                ChevronButton(title: L10n.subtitleFont, subtitle: subtitleFontName)
+                    .onSelect {
+                        router.route(to: \.fontPicker)
+                    }
+
+                Stepper(value: $subtitleSize, in: 8 ... 24) {
+                    HStack {
+                        L10n.subtitleSize.text
+                        
+                        Spacer()
+
+                        Text("\(subtitleSize)")
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
 
             Section("Timestamp") {
 
-                Toggle("Negative Time", isOn: $timeLeftTimestamp)
-
-                Toggle("Scrubbing Current Time", isOn: $showCurrentTimeWhileScrubbing)
+                Toggle("Scrub Current Time", isOn: $showCurrentTimeWhileScrubbing)
 
                 EnumPicker(title: "Timestamp Type", selection: $timestampType)
+                
+                EnumPicker(title: "Trailing Value", selection: $trailingTimestampType)
             }
         }
+    }
+}
+
+struct VideoPlayerSettingsView_Preview: PreviewProvider {
+    
+    static var previews: some View {
+        VideoPlayerSettingsView()
     }
 }

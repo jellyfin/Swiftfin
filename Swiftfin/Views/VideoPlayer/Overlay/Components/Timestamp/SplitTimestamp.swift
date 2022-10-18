@@ -15,15 +15,15 @@ extension ItemVideoPlayer.Overlay {
 
         @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
         private var showCurrentTimeWhileScrubbing
-        @Default(.VideoPlayer.Overlay.timeLeftTimestamp)
-        private var timeLeftTimestamp
+        @Default(.VideoPlayer.Overlay.trailingTimestampType)
+        private var trailingTimestampType
 
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
 
         @EnvironmentObject
-        private var currentSecondsHandler: VideoPlayerViewModel.CurrentPlaybackInformation
+        private var currentSecondsHandler: VideoPlayerManager.CurrentPlaybackInformation
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 
@@ -58,11 +58,12 @@ extension ItemVideoPlayer.Overlay {
                         .foregroundColor(Color(UIColor.lightText))
                 }
 
-                if timeLeftTimestamp {
-                    Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel.prepending("-"))
-                        .foregroundColor(.white)
-                } else {
+                switch trailingTimestampType {
+                case .timeLeft:
                     Text(Double(viewModel.item.runTimeSeconds).timeLabel)
+                        .foregroundColor(.white)
+                case .totalTime:
+                    Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel.prepending("-"))
                         .foregroundColor(.white)
                 }
             }
@@ -70,7 +71,12 @@ extension ItemVideoPlayer.Overlay {
 
         var body: some View {
             Button {
-                timeLeftTimestamp.toggle()
+                switch trailingTimestampType {
+                case .timeLeft:
+                    trailingTimestampType = .totalTime
+                case .totalTime:
+                    trailingTimestampType = .timeLeft
+                }
             } label: {
                 HStack {
                     leadingTimestamp

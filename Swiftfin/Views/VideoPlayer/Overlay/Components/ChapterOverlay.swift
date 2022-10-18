@@ -17,7 +17,7 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
-        private var secondsHandler: VideoPlayerViewModel.CurrentPlaybackInformation
+        private var secondsHandler: VideoPlayerManager.CurrentPlaybackInformation
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject

@@ -65,7 +65,7 @@ extension Defaults.Keys {
         )
         static let playNextItem: Key<Bool> = .init("playNextItem", default: true, suite: .generalSuite)
         static let playPreviousItem: Key<Bool> = .init("playPreviousItem", default: true, suite: .generalSuite)
-        static let resumeOffset: Key<Bool> = .init("resumeOffset", default: false, suite: .generalSuite)
+        static let resumeOffset: Key<Int> = .init("resumeOffset", default: 0, suite: .generalSuite)
 
         enum Subtitle {
 
@@ -89,7 +89,7 @@ extension Defaults.Keys {
             static let sliderType: Key<SliderType> = .init("sliderType", default: .capsule, suite: .generalSuite)
 
             // Timestamp
-            static let timeLeftTimestamp: Key<Bool> = .init("timeLeftTimestamp", default: true, suite: .generalSuite)
+            static let trailingTimestampType: Key<TrailingTimestampType> = .init("trailingTimestamp", default: .timeLeft, suite: .generalSuite)
             static let showCurrentTimeWhileScrubbing: Key<Bool> = .init(
                 "showCurrentTimeWhileScrubbing",
                 default: true,

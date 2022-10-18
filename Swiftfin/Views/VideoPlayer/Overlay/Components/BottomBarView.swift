@@ -39,7 +39,7 @@ extension ItemVideoPlayer.Overlay {
         private var scrubbedProgress: CGFloat
 
         @EnvironmentObject
-        private var currentSecondsHandler: VideoPlayerViewModel.CurrentPlaybackInformation
+        private var currentSecondsHandler: VideoPlayerManager.CurrentPlaybackInformation
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
@@ -82,7 +82,7 @@ extension ItemVideoPlayer.Overlay {
                 .topContent {
                     if chapterSlider {
                         HStack {
-                            if let currentChapter = viewModel.chapter(from: progress) {
+                            if let currentChapter = viewModel.chapter(from: progress), !isScrubbing {
                                 Button {
                                     currentOverlayType = .chapters
                                 } label: {
@@ -145,7 +145,7 @@ extension ItemVideoPlayer.Overlay {
                 .topContent {
                     if chapterSlider {
                         HStack {
-                            if let currentChapter = viewModel.chapter(from: progress) {
+                            if let currentChapter = viewModel.chapter(from: progress), !isScrubbing {
                                 Button {
                                     currentOverlayType = .chapters
                                 } label: {

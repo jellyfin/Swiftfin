@@ -15,8 +15,8 @@ extension ItemVideoPlayer.Overlay {
 
         @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
         private var showCurrentTimeWhileScrubbing
-        @Default(.VideoPlayer.Overlay.timeLeftTimestamp)
-        private var timeLeftTimestamp
+        @Default(.VideoPlayer.Overlay.trailingTimestampType)
+        private var trailingTimestampType
 
         @Environment(\.isScrubbing)
         @Binding
@@ -26,7 +26,7 @@ extension ItemVideoPlayer.Overlay {
         private var scrubbedProgress: CGFloat
 
         @EnvironmentObject
-        private var currentSecondsHandler: VideoPlayerViewModel.CurrentPlaybackInformation
+        private var currentSecondsHandler: VideoPlayerManager.CurrentPlaybackInformation
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 
@@ -36,7 +36,12 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var leadingTimestamp: some View {
             Button {
-                timeLeftTimestamp.toggle()
+                switch trailingTimestampType {
+                case .timeLeft:
+                    trailingTimestampType = .totalTime
+                case .totalTime:
+                    trailingTimestampType = .timeLeft
+                }
             } label: {
                 HStack(spacing: 2) {
 
@@ -46,10 +51,11 @@ extension ItemVideoPlayer.Overlay {
                     Text("/")
                         .foregroundColor(Color(UIColor.lightText))
 
-                    if timeLeftTimestamp {
+                    switch trailingTimestampType {
+                    case .timeLeft:
                         Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel.prepending("-"))
                             .foregroundColor(Color(UIColor.lightText))
-                    } else {
+                    case .totalTime:
                         Text(Double(viewModel.item.runTimeSeconds).timeLabel)
                             .foregroundColor(Color(UIColor.lightText))
                     }

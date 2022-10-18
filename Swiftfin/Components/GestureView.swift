@@ -6,14 +6,15 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import SwiftUI
 
 struct GestureView: UIViewRepresentable {
 
     private var onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?
-    private var onTap: (() -> Void)?
-    private var onVerticalPan: ((CGPoint, CGPoint) -> Void)?
-    private var onHorizontalPan: ((CGPoint, CGPoint) -> Void)?
+    private var onTap: ((UnitPoint, Int) -> Void)?
+    private var onVerticalPan: ((UnitPoint, CGPoint) -> Void)?
+    private var onHorizontalPan: ((UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void)?
 
     func makeUIView(context: Context) -> UIGestureView {
         UIGestureView(
@@ -33,31 +34,35 @@ extension GestureView {
         copy(modifying: \.onPinch, with: action)
     }
 
-    func onTap(_ action: @escaping () -> Void) -> Self {
+    func onTap(_ action: @escaping ((UnitPoint, Int) -> Void)) -> Self {
         copy(modifying: \.onTap, with: action)
     }
 
-    func onVerticalPan(_ action: @escaping (CGPoint, CGPoint) -> Void) -> Self {
+    func onVerticalPan(_ action: @escaping (UnitPoint, CGPoint) -> Void) -> Self {
         copy(modifying: \.onVerticalPan, with: action)
     }
 
-    func onHorizontalPan(_ action: @escaping (CGPoint, CGPoint) -> Void) -> Self {
-        copy(modifying: \.onVerticalPan, with: action)
+    func onHorizontalPan(_ action: @escaping (UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void) -> Self {
+        copy(modifying: \.onHorizontalPan, with: action)
     }
 }
 
 class UIGestureView: UIView {
 
     private let onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?
-    private let onTap: (() -> Void)?
-    private let onVerticalPan: ((CGPoint, CGPoint) -> Void)?
-    private let onHorizontalPan: ((CGPoint, CGPoint) -> Void)?
+    private let onTap: ((UnitPoint, Int) -> Void)?
+    private let onVerticalPan: ((UnitPoint, CGPoint) -> Void)?
+    private let onHorizontalPan: ((UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void)?
+    
+    private var multiTapAmount: Int = 0
+    private var multiTapTimer: Timer?
+    private var lastTouchLocation: CGPoint?
 
     init(
         onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?,
-        onTap: (() -> Void)?,
-        onVerticalPan: ((CGPoint, CGPoint) -> Void)?,
-        onHorizontalPan: ((CGPoint, CGPoint) -> Void)?
+        onTap: ((UnitPoint, Int) -> Void)?,
+        onVerticalPan: ((UnitPoint, CGPoint) -> Void)?,
+        onHorizontalPan: ((UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void)?
     ) {
         self.onPinch = onPinch
         self.onTap = onTap
@@ -96,20 +101,56 @@ class UIGestureView: UIView {
 
     @objc
     private func didPerformTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        onTap?()
+        guard let onTap else { return }
+        let location = gestureRecognizer.location(in: self)
+        let unitPoint: UnitPoint = .init(x: location.x / frame.width, y: location.y / frame.height)
+        
+        if let lastTouchLocation, lastTouchLocation.isNear(lastTouchLocation, padding: 30) {
+            multiTapOccurred(at: location)
+            onTap(unitPoint, multiTapAmount)
+        } else {
+            multiTapOccurred(at: location)
+            onTap(unitPoint, 1)
+        }
     }
 
     @objc
     private func didPerformVerticalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
+        guard let onVerticalPan else { return }
         let location = gestureRecognizer.location(in: self)
+        let unitPoint: UnitPoint = .init(x: location.x / frame.width, y: location.y / frame.height)
         let translation = gestureRecognizer.translation(in: self)
-        onVerticalPan?(location, translation)
+        onVerticalPan(unitPoint, translation)
     }
 
     @objc
     private func didPerformHorizontalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
+        guard let onHorizontalPan else { return }
         let location = gestureRecognizer.location(in: self)
-        let translation = gestureRecognizer.translation(in: self)
-        onHorizontalPan?(location, translation)
+        let unitPoint: UnitPoint = .init(x: location.x / frame.width, y: location.y / frame.height)
+        let translation = gestureRecognizer.translation(in: self).x
+        let velocity = gestureRecognizer.velocity(in: self).x
+        onHorizontalPan(gestureRecognizer.state, unitPoint, velocity, translation)
+    }
+    
+    private func multiTapOccurred(at location: CGPoint) {
+        lastTouchLocation = location
+        
+        multiTapTimer?.invalidate()
+        multiTapTimer = Timer.scheduledTimer(
+            timeInterval: 0.5,
+            target: self,
+            selector: #selector(multiTapTimed),
+            userInfo: nil,
+            repeats: false)
+        
+        multiTapAmount += 1
+    }
+    
+    @objc
+    private func multiTapTimed() {
+        multiTapTimer = nil
+        multiTapAmount = 0
+        lastTouchLocation = nil
     }
 }

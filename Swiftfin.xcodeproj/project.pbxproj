@@ -529,6 +529,10 @@
 		E1C812CE277AE43100918266 /* LegacyVideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C9277AE40900918266 /* LegacyVideoPlayerViewModel.swift */; };
 		E1C812D1277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */; };
 		E1C812D2277AE50A00918266 /* URLComponentsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */; };
+		E1C8CE5B28FE512400DF5D7B /* CGPointExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE5A28FE512400DF5D7B /* CGPointExtensions.swift */; };
+		E1C8CE5C28FE512400DF5D7B /* CGPointExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE5A28FE512400DF5D7B /* CGPointExtensions.swift */; };
+		E1C8CE7C28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */; };
+		E1C8CE7D28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */; };
 		E1C925F428875037002A7A66 /* ItemViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F328875037002A7A66 /* ItemViewType.swift */; };
 		E1C925F528875037002A7A66 /* ItemViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F328875037002A7A66 /* ItemViewType.swift */; };
 		E1C925F72887504B002A7A66 /* PanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */; };
@@ -1047,6 +1051,8 @@
 		E1C812C8277AE40900918266 /* VideoPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		E1C812C9277AE40900918266 /* LegacyVideoPlayerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyVideoPlayerViewModel.swift; sourceTree = "<group>"; };
 		E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVideoPlayerCoordinator.swift; sourceTree = "<group>"; };
+		E1C8CE5A28FE512400DF5D7B /* CGPointExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPointExtensions.swift; sourceTree = "<group>"; };
+		E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailingTimestampType.swift; sourceTree = "<group>"; };
 		E1C925F328875037002A7A66 /* ItemViewType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemViewType.swift; sourceTree = "<group>"; };
 		E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PanDirectionGestureRecognizer.swift; sourceTree = "<group>"; };
 		E1C925F828875647002A7A66 /* LatestInLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LatestInLibraryView.swift; sourceTree = "<group>"; };
@@ -1239,7 +1245,6 @@
 			children = (
 				E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */,
 				625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */,
-				E1DA656828E78B5900592A73 /* SpecialFeaturesViewModel.swift */,
 				E10D87E127852FD000BD264C /* EpisodesRowManager.swift */,
 				E113133928BEB71D00930F75 /* FilterViewModel.swift */,
 				625CB5722678C32A00530A6E /* HomeViewModel.swift */,
@@ -1257,11 +1262,13 @@
 				E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */,
 				E13DD3E027176BD3009D4DAF /* ServerListViewModel.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
+				E1DA656828E78B5900592A73 /* SpecialFeaturesViewModel.swift */,
 				E1D3043128D175CE00587289 /* StaticLibraryViewModel.swift */,
 				E13DD3F82717E961009D4DAF /* UserListViewModel.swift */,
 				E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */,
-				E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */,
+				E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */,
 				E126F73F278A655300A522BF /* VideoPlayerViewModel */,
+				E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */,
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
 			);
 			path = ViewModels;
@@ -1345,7 +1352,7 @@
 				535870AB2669D8D300D05A09 /* Objects */,
 				AE8C3157265D6F5E008AA076 /* Resources */,
 				091B5A852683142E00D78B61 /* ServerDiscovery */,
-				62EC352A26766657000E9F2D /* Singleton */,
+				E1C8CE7A28FEF8A500DF5D7B /* Services */,
 				6286F09F271C0AA500C40ED5 /* Strings */,
 				E13DD3C0271648EC009D4DAF /* SwiftfinStore */,
 				532175392671BCED005491E6 /* ViewModels */,
@@ -1390,6 +1397,7 @@
 				E1E306CC28EF6E8000537998 /* TimerProxy.swift */,
 				E129428F28F0BDC300796AC6 /* TimeStampType.swift */,
 				E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */,
+				E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
 			);
 			path = Objects;
@@ -1673,6 +1681,7 @@
 			children = (
 				E1E1644028BB301900323B0A /* ArrayExtensions.swift */,
 				E1A2C157279A7D76005EC829 /* BundleExtensions.swift */,
+				E1C8CE5A28FE512400DF5D7B /* CGPointExtensions.swift */,
 				E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */,
 				6267B3D526710B8900A7371D /* CollectionExtensions.swift */,
 				E173DA5126D04AAF00CC4EB7 /* ColorExtensions.swift */,
@@ -1736,16 +1745,6 @@
 				E1A1528C28FD23AC00600579 /* VideoPlayerSettingsCoordinator.swift */,
 			);
 			path = Coordinators;
-			sourceTree = "<group>";
-		};
-		62EC352A26766657000E9F2D /* Singleton */ = {
-			isa = PBXGroup;
-			children = (
-				53649AB0269CFB1900A2D8B7 /* LogManager.swift */,
-				62EC352E267666A5000E9F2D /* SessionManager.swift */,
-				E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */,
-			);
-			path = Singleton;
 			sourceTree = "<group>";
 		};
 		62ECA01926FA6D6900E8EBB7 /* AppURLHandler */ = {
@@ -2245,8 +2244,6 @@
 			children = (
 				E11245AF28D9193700D8A977 /* Legacy */,
 				E18A8E8228D60BC400333B9A /* ItemVideoPlayer.swift */,
-				E12D581328D3BBEE00A36FFF /* PlaybackManager.swift */,
-				E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */,
 				E11245B228D97D4A00D8A977 /* Overlay */,
 			);
 			path = VideoPlayer;
@@ -2340,6 +2337,18 @@
 				E1C812D0277AE4E300918266 /* tvOSVideoPlayerCoordinator.swift */,
 			);
 			path = VideoPlayerCoordinator;
+			sourceTree = "<group>";
+		};
+		E1C8CE7A28FEF8A500DF5D7B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				53649AB0269CFB1900A2D8B7 /* LogManager.swift */,
+				E12D581328D3BBEE00A36FFF /* PlaybackManager.swift */,
+				62EC352E267666A5000E9F2D /* SessionManager.swift */,
+				E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */,
+			);
+			name = Services;
+			path = Singleton/Services;
 			sourceTree = "<group>";
 		};
 		E1C925FA2887565C002A7A66 /* MovieItemView */ = {
@@ -2730,6 +2739,7 @@
 				E18845F626DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */,
 				E193D53327193F7D00900D82 /* FilterCoordinator.swift in Sources */,
 				C4B9B91427E1921B0063535C /* LiveTVNativeVideoPlayerView.swift in Sources */,
+				E1C8CE7D28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */,
 				E18E021E2887492B0022598C /* Divider.swift in Sources */,
 				E107BB9427880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
 				C4534985279A40C60045F1E2 /* LiveTVVideoPlayerView.swift in Sources */,
@@ -2752,6 +2762,7 @@
 				C40CD926271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift in Sources */,
 				E1D3043F28D18F5700587289 /* CastAndCrewLibraryView.swift in Sources */,
 				E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */,
+				E1C8CE5C28FE512400DF5D7B /* CGPointExtensions.swift in Sources */,
 				E129428E28F0BBE600796AC6 /* OverlayLocation.swift in Sources */,
 				E193D53527193F8100900D82 /* ItemCoordinator.swift in Sources */,
 				E1C926162887565C002A7A66 /* SeriesItemView.swift in Sources */,
@@ -3053,6 +3064,7 @@
 				E18E0204288749200022598C /* Divider.swift in Sources */,
 				E18E01DA288747230022598C /* iPadOSEpisodeContentView.swift in Sources */,
 				E1047E2327E5880000CB0D4A /* InitialFailureView.swift in Sources */,
+				E1C8CE5B28FE512400DF5D7B /* CGPointExtensions.swift in Sources */,
 				E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
 				E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */,
@@ -3124,6 +3136,7 @@
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				E1937A3B288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E16DEAC828EFD01F0058F196 /* FlashContentView.swift in Sources */,
+				E1C8CE7C28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */,
 				62E632E9267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E1B33ED128EB860A0073B0FD /* PlaybackButtons.swift in Sources */,

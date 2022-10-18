@@ -12,7 +12,7 @@ import VLCUI
 struct PlaybackInformationView: View {
 
     @EnvironmentObject
-    private var currentPlaybackInformation: VideoPlayerViewModel.CurrentPlaybackInformation
+    private var currentPlaybackInformation: VideoPlayerManager.CurrentPlaybackInformation
 
     var body: some View {
         Form {

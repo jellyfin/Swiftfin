@@ -16,30 +16,10 @@ import VLCUI
 
 class VideoPlayerViewModel: ObservableObject {
 
-    class CurrentPlaybackInformation: ObservableObject {
-
-        @Published
-        var currentSeconds: Int = 0
-        @Published
-        var playbackInformation: VLCVideoPlayer.PlaybackInformation?
-
-        func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-            self.currentSeconds = ticks / 1000
-            self.playbackInformation = playbackInformation
-        }
-    }
-
-    @Published
-    var subtitlesEnabled: Bool = false
-    @Published
-    var selectedSubtitleTrackIndex: Int32 = -1
-    @Published
-    var isAspectFilled: Bool = false
-
     var configuration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
-        configuration.startTime = .seconds(item.startTimeSeconds)
+        configuration.startTime = .seconds(max(0, item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]))
         configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
 
         if let font = UIFont(name: Defaults[.VideoPlayer.Subtitle.subtitleFontName], size: 0) {

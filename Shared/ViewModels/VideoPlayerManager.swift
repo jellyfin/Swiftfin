@@ -6,11 +6,36 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 import VLCUI
 
 class VideoPlayerManager: ViewModel {
+    
+    // Used for accessing live playback information and
+    // updating only the views that request it
+    class CurrentPlaybackInformation: ObservableObject {
+
+        @Published
+        var currentSeconds: Int = 0
+        @Published
+        var playbackInformation: VLCVideoPlayer.PlaybackInformation?
+
+        func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
+            self.currentSeconds = ticks / 1000
+            self.playbackInformation = playbackInformation
+        }
+    }
+    
+    @Default(.VideoPlayer.autoPlay)
+    private var autoPlay
+    @Default(.VideoPlayer.autoPlayEnabled)
+    private var autoPlayEnabled
+    
+    @Injected(PlaybackManager.service)
+    private var playbackManager
 
     // MARK: Properties
 
@@ -34,16 +59,18 @@ class VideoPlayerManager: ViewModel {
             getAdjacentEpisodes(for: newValue.item)
         }
     }
-
     @Published
     var nextViewModel: VideoPlayerViewModel?
+    
+    private let playstateTimer: TimerProxy = .init()
+    let proxy: VLCVideoPlayer.Proxy = .init()
 
     // MARK: init
 
     init(viewModel: VideoPlayerViewModel) {
         self.currentViewModel = viewModel
         super.init()
-
+        
         getAdjacentEpisodes(for: viewModel.item)
     }
 
@@ -91,6 +118,21 @@ class VideoPlayerManager: ViewModel {
     func onStateUpdated(state: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         guard self.state != state else { return }
         self.state = state
+        
+        if state == .buffering ||
+            state == .paused {
+            
+        }
+        
+        if state == .stopped {
+            if let nextViewModel,
+               autoPlay,
+               autoPlayEnabled {
+                selectNextViewModel()
+                
+                proxy.playNewMedia(nextViewModel.configuration)
+            }
+        }
     }
 }
 
