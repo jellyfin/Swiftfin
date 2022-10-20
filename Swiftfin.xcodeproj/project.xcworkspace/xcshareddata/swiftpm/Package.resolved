@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/BlurHashKit",
       "state" : {
-        "revision" : "c0bd7423398de68cbeb3f99bff70f79c38bf36ab",
-        "version" : "1.2.0"
+        "revision" : "3c23237f1f2b62741bce70bd2e4ef2aa7799ea85",
+        "version" : "1.1.0"
       }
     },
     {

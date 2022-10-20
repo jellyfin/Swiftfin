@@ -111,12 +111,12 @@ struct ItemVideoPlayer: View {
                         }
                     }
                     .onHorizontalPan { state, unitPoint, velocity, translation in
-                        let action = JumpGestureAction(
-                            currentPlaybackInformation: currentPlaybackInformation,
-                            flashContentProxy: flashContentProxy,
-                            videoPlayerManager: videoPlayerManager)
+//                        let action = JumpGestureAction(
+//                            currentPlaybackInformation: currentPlaybackInformation,
+//                            flashContentProxy: flashContentProxy,
+//                            videoPlayerManager: videoPlayerManager)
                         
-                        action.performGesture(state: state, unitPoint: unitPoint, velocity: velocity, translation: translation)
+//                        action.performGesture(state: state, unitPoint: unitPoint, velocity: velocity, translation: translation)
                         
 //                        guard state == .began || state == .changed else {
 //                            isScrubbing = false
