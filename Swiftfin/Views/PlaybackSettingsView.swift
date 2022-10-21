@@ -29,7 +29,7 @@ struct PlaybackSettingsView: View {
                 Button {
                     router.route(to: \.overlaySettings)
                 } label: {
-                    Text("Overlay Settings")
+                    Text("Video Player")
                 }
 
                 Button {

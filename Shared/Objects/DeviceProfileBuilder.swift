@@ -241,7 +241,7 @@ class DeviceProfileBuilder {
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
         let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let subtitle = element.subtitle as? Int8, subtitle != 0 else { return identifier }
+            guard let subtitle = element.value as? Int8, subtitle != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(subtitle)))
         }
         #endif

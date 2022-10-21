@@ -13,28 +13,6 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
-protocol VideoPlayerPanAction {
-    var currentPlaybackInformation: VideoPlayerManager.CurrentPlaybackInformation { get }
-    var flashContentProxy: FlashContentProxy { get }
-    var videoPlayerManager: VideoPlayerManager { get }
-    
-    // (UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat)
-    func performGesture(state: UIGestureRecognizer.State, unitPoint: UnitPoint, velocity: CGFloat, translation: CGFloat)
-}
-
-struct JumpGestureAction: VideoPlayerPanAction {
-    var currentPlaybackInformation: VideoPlayerManager.CurrentPlaybackInformation
-    var flashContentProxy: FlashContentProxy
-    var videoPlayerManager: VideoPlayerManager
-    
-    func performGesture(state: UIGestureRecognizer.State, unitPoint: UnitPoint, velocity: CGFloat, translation: CGFloat) {
-        print("velocity: \(velocity)")
-        if velocity > 3000 {
-            videoPlayerManager.proxy.jumpForward(15)
-        }
-    }
-}
-
 struct ItemVideoPlayer: View {
 
     enum OverlayType {
@@ -42,6 +20,10 @@ struct ItemVideoPlayer: View {
         case chapters
     }
 
+    @Default(.VideoPlayer.jumpBackwardLength)
+    private var jumpBackwardLength
+    @Default(.VideoPlayer.jumpForwardLength)
+    private var jumpForwardLength
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
     @Default(.VideoPlayer.Subtitle.subtitleSize)
@@ -110,26 +92,22 @@ struct ItemVideoPlayer: View {
                             currentOverlayType = nil
                         }
                     }
-                    .onHorizontalPan { state, unitPoint, velocity, translation in
-//                        let action = JumpGestureAction(
-//                            currentPlaybackInformation: currentPlaybackInformation,
-//                            flashContentProxy: flashContentProxy,
-//                            videoPlayerManager: videoPlayerManager)
-                        
-//                        action.performGesture(state: state, unitPoint: unitPoint, velocity: velocity, translation: translation)
-                        
-//                        guard state == .began || state == .changed else {
-//                            isScrubbing = false
-//                            return
-//                        }
-//
-//                        let rate = translation / 10_000
-//                        let seconds = Int(CGFloat(videoPlayerManager.currentViewModel?.item.runTimeSeconds ?? 0) * abs(rate))
-//                        let slowScrubbedProgress = CGFloat(seconds) / CGFloat(videoPlayerManager.currentViewModel?.item.runTimeSeconds ?? 0)
-//                        let sign: CGFloat = translation > 0 ? 1 : -1
-//
-//                        isScrubbing = true
-//                        scrubbedProgress += (sign * slowScrubbedProgress)
+                    .onHorizontalSwipe(translation: 100, velocity: 2000) { translation in
+                        if translation > 0 {
+                            videoPlayerManager.proxy.jumpForward(Int(jumpForwardLength.rawValue))
+                            flashContentProxy.flash(interval: 0.5) {
+                                Image(systemName: jumpForwardLength.forwardImageLabel)
+                                    .font(.system(size: 48, weight: .regular, design: .default))
+                                    .foregroundColor(.white)
+                            }
+                        } else {
+                            videoPlayerManager.proxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+                            flashContentProxy.flash(interval: 0.5) {
+                                Image(systemName: jumpBackwardLength.backwardImageLabel)
+                                    .font(.system(size: 48, weight: .regular, design: .default))
+                                    .foregroundColor(.white)
+                            }
+                        }
                     }
 
                 Group {
@@ -155,24 +133,24 @@ struct ItemVideoPlayer: View {
                 .environment(\.presentingPlaybackSettings, $presentingPlaybackSettings)
                 .environment(\.scrubbedProgress, $scrubbedProgress)
 
-//                FlashContentView(proxy: flashContentProxy)
+                FlashContentView(proxy: flashContentProxy)
             }
             .onTapGesture {
                 overlayTimer.start(5)
             }
 
-//            if presentingPlaybackSettings {
-//                WrappedView {
-//                    NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
-//                }
-//                .cornerRadius(20, corners: [.topLeft, .bottomLeft])
-//                .frame(width: 400)
-//                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-//                .environmentObject(currentPlaybackInformation)
-//                .environmentObject(viewModel)
-//                .environmentObject(videoPlayerManager)
-//                .environment(\.presentingPlaybackSettings, $presentingPlaybackSettings)
-//            }
+            if presentingPlaybackSettings {
+                WrappedView {
+                    NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
+                }
+                .cornerRadius(20, corners: [.topLeft, .bottomLeft])
+                .frame(width: 400)
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
+                .environmentObject(currentPlaybackInformation)
+                .environmentObject(viewModel)
+                .environmentObject(videoPlayerManager)
+                .environment(\.presentingPlaybackSettings, $presentingPlaybackSettings)
+            }
         }
         .animation(.easeIn(duration: 0.2), value: presentingPlaybackSettings)
         .animation(.linear(duration: 0.1), value: currentOverlayType)

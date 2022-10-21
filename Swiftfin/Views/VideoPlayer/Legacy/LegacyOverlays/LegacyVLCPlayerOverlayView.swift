@@ -519,7 +519,7 @@ struct LegacyVLCPlayerOverlayView: View {
 // MARK: TitleSubtitleAlignment
 
 extension HorizontalAlignment {
-    private struct TitleSubtitleAlignment: AlignmentID {
+    struct TitleSubtitleAlignment: AlignmentID {
         static func defaultValue(in context: ViewDimensions) -> CGFloat {
             context[HorizontalAlignment.leading]
         }

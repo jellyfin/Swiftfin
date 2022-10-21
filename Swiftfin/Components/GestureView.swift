@@ -14,16 +14,18 @@ struct GestureView: UIViewRepresentable {
     private var onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?
     private var onTap: ((UnitPoint, Int) -> Void)?
     private var samePointPadding: CGFloat = 0
+    private var samePointTimeout: Double = 0
     private var onVerticalPan: ((UnitPoint, CGPoint) -> Void)?
     private var onHorizontalPan: ((UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void)?
     private var onHorizontalSwipe: ((CGFloat) -> Void)?
-    private var swipeTranslation: CGFloat
-    private var swipeVelocity: CGFloat
+    private var swipeTranslation: CGFloat = 0
+    private var swipeVelocity: CGFloat = 0
 
     func makeUIView(context: Context) -> UIGestureView {
         UIGestureView(
             onPinch: onPinch,
             onTap: onTap,
+            samePointPadding: samePointPadding,
             onVerticalPan: onVerticalPan,
             onHorizontalPan: onHorizontalPan,
             onHorizontalSwipe: onHorizontalSwipe,
@@ -75,6 +77,7 @@ class UIGestureView: UIView {
     private let swipeTranslation: CGFloat
     private let swipeVelocity: CGFloat
     
+    private var hasSwiped: Bool = false
     private var multiTapAmount: Int = 0
     private var multiTapTimer: Timer?
     private var lastTouchLocation: CGPoint?
@@ -154,14 +157,23 @@ class UIGestureView: UIView {
 
     @objc
     private func didPerformHorizontalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
-        guard let onHorizontalPan else { return }
         let location = gestureRecognizer.location(in: self)
         let unitPoint: UnitPoint = .init(x: location.x / frame.width, y: location.y / frame.height)
         let translation = gestureRecognizer.translation(in: self).x
         let velocity = gestureRecognizer.velocity(in: self).x
-        onHorizontalPan(gestureRecognizer.state, unitPoint, velocity, translation)
         
+        onHorizontalPan?(gestureRecognizer.state, unitPoint, velocity, translation)
         
+        if !hasSwiped,
+           abs(translation) >= swipeTranslation,
+           abs(velocity) >= swipeVelocity {
+            onHorizontalSwipe?(translation)
+            hasSwiped = true
+        }
+        
+        if gestureRecognizer.state == .ended {
+            hasSwiped = false
+        }
     }
     
     private func multiTapOccurred(at location: CGPoint) {

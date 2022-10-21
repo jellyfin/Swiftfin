@@ -85,17 +85,17 @@ extension ItemVideoPlayer.Overlay {
                         }
                     }
                 }
-                .background {
-                    LinearGradient(
-                        stops: [
-                            .init(color: .clear, location: 0),
-                            .init(color: .black.opacity(0.4), location: 0.4),
-                            .init(color: .black.opacity(0.9), location: 1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                }
+            }
+            .background {
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black.opacity(0.4), location: 0.4),
+                        .init(color: .black.opacity(0.9), location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             }
         }
     }

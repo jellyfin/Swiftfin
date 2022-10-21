@@ -80,11 +80,12 @@ extension ItemVideoPlayer.Overlay {
                     }
                 }
                 .topContent {
-                    if chapterSlider {
+                    if chapterSlider && !viewModel.chapters.isEmpty {
                         HStack {
-                            if let currentChapter = viewModel.chapter(from: progress), !isScrubbing {
+                            if let currentChapter = viewModel.chapter(from: progress) {
                                 Button {
                                     currentOverlayType = .chapters
+                                    overlayTimer.stop()
                                 } label: {
                                     HStack {
                                         Text(currentChapter.displayTitle)
@@ -95,12 +96,13 @@ extension ItemVideoPlayer.Overlay {
                                     .foregroundColor(.white)
                                     .font(.subheadline.weight(.medium))
                                 }
+                                .disabled(isScrubbing)
                             }
 
                             Spacer()
                         }
                         .padding(.leading, 5)
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 15)
                     } else {
                         Color.clear
                             .frame(height: 20)
@@ -121,6 +123,7 @@ extension ItemVideoPlayer.Overlay {
                     if playbackButtonType == .compact {
                         SmallPlaybackButtons()
                             .padding(.trailing)
+                            .disabled(isScrubbing)
                     }
                 }
                 .onEditingChanged { isEditing in
@@ -143,11 +146,12 @@ extension ItemVideoPlayer.Overlay {
                     }
                 }
                 .topContent {
-                    if chapterSlider {
+                    if chapterSlider && !viewModel.chapters.isEmpty {
                         HStack {
-                            if let currentChapter = viewModel.chapter(from: progress), !isScrubbing {
+                            if let currentChapter = viewModel.chapter(from: progress) {
                                 Button {
                                     currentOverlayType = .chapters
+                                    overlayTimer.stop()
                                 } label: {
                                     HStack {
                                         Text(currentChapter.displayTitle)
@@ -158,12 +162,13 @@ extension ItemVideoPlayer.Overlay {
                                     .foregroundColor(.white)
                                     .font(.subheadline.weight(.medium))
                                 }
+                                .disabled(isScrubbing)
                             }
 
                             Spacer()
                         }
                         .padding(.leading, 5)
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 15)
                     }
                 }
                 .bottomContent {
@@ -181,6 +186,7 @@ extension ItemVideoPlayer.Overlay {
                     if playbackButtonType == .compact {
                         SmallPlaybackButtons()
                             .padding(.trailing)
+                            .disabled(isScrubbing)
                     }
                 }
                 .onEditingChanged { isEditing in

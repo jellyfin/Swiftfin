@@ -135,6 +135,7 @@ struct VideoPlayerSettingsView: View {
                 EnumPicker(title: "Trailing Value", selection: $trailingTimestampType)
             }
         }
+        .navigationTitle("Video Player")
     }
 }
 

@@ -10,6 +10,7 @@ import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
+import Stinsen
 import VLCUI
 
 class VideoPlayerManager: ViewModel {
@@ -36,6 +37,9 @@ class VideoPlayerManager: ViewModel {
     
     @Injected(PlaybackManager.service)
     private var playbackManager
+    
+    @RouterObject
+    private var router: ItemVideoPlayerCoordinator.Router?
 
     // MARK: Properties
 
@@ -131,6 +135,8 @@ class VideoPlayerManager: ViewModel {
                 selectNextViewModel()
                 
                 proxy.playNewMedia(nextViewModel.configuration)
+            } else {
+                router?.dismissCoordinator()
             }
         }
     }

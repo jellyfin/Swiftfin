@@ -23,6 +23,8 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
+        private var router: ItemVideoPlayerCoordinator.Router
+        @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
@@ -114,7 +116,7 @@ extension ItemVideoPlayer.Overlay {
                 withAnimation {
                     presentingPlaybackSettings = true
                 }
-
+                
                 overlayTimer.start(3)
             } label: {
                 HStack {
