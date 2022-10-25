@@ -106,9 +106,9 @@ internal enum L10n {
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Empty Next Up
   internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
-  /// Episode %2$@
+  /// Episode %1$@
   internal static func episodeNumber(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "episodeNumber", String(describing: p1), fallback: "Episode %2$@")
+    return L10n.tr("Localizable", "episodeNumber", String(describing: p1), fallback: "Episode %1$@")
   }
   /// Episodes
   internal static let episodes = L10n.tr("Localizable", "episodes", fallback: "Episodes")
