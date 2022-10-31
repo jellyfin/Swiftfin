@@ -37,6 +37,10 @@ class LogFormatter: LogFormattable {
 
 private extension Puppy {
     static func swiftfinInstance() -> Puppy {
+
+        let logger = Puppy()
+
+        #if !os(tvOS)
         let logsDirectory = URL.documents.appendingPathComponent("logs", isDirectory: true)
 
         do {
@@ -56,12 +60,12 @@ private extension Puppy {
             fileURL: logFileURL
         )
         fileRotationLogger.format = LogFormatter()
+        logger.add(fileRotationLogger, withLevel: .debug)
+        #endif
 
         let consoleLogger = ConsoleLogger("org.jellyfin.swiftfin.logger.console")
         consoleLogger.format = LogFormatter()
 
-        let logger = Puppy()
-        logger.add(fileRotationLogger, withLevel: .debug)
         logger.add(consoleLogger, withLevel: .debug)
         return logger
     }
