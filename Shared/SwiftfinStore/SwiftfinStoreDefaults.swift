@@ -66,15 +66,10 @@ extension Defaults.Keys {
         static let playNextItem: Key<Bool> = .init("playNextItem", default: true, suite: .generalSuite)
         static let playPreviousItem: Key<Bool> = .init("playPreviousItem", default: true, suite: .generalSuite)
         static let resumeOffset: Key<Int> = .init("resumeOffset", default: 0, suite: .generalSuite)
-
-        enum Subtitle {
-
-            static let subtitleFontName: Key<String> = .init(
-                "subtitleFontName",
-                default: UIFont.systemFont(ofSize: 14).fontName,
-                suite: .generalSuite
-            )
-            static let subtitleSize: Key<Int> = .init("subtitleSize", default: 16, suite: .generalSuite)
+        
+        enum Gesture {
+            
+            static let horizontalGesture: Key<VideoPlayerHorizontalGesture> = .init("videoPlayerHorizontalGesture", default: .panScrub, suite: .generalSuite)
         }
 
         enum Overlay {
@@ -96,6 +91,16 @@ extension Defaults.Keys {
                 suite: .generalSuite
             )
             static let timestampType: Key<TimestampType> = .init("timestampType", default: .split, suite: .generalSuite)
+        }
+        
+        enum Subtitle {
+
+            static let subtitleFontName: Key<String> = .init(
+                "subtitleFontName",
+                default: UIFont.systemFont(ofSize: 14).fontName,
+                suite: .generalSuite
+            )
+            static let subtitleSize: Key<Int> = .init("subtitleSize", default: 16, suite: .generalSuite)
         }
     }
 

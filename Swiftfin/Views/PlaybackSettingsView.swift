@@ -19,9 +19,15 @@ struct PlaybackSettingsView: View {
     @EnvironmentObject
     private var router: PlaybackSettingsCoordinator.Router
 
+    @Environment(\.audioOffset)
+    @Binding
+    private var audioOffset
     @Environment(\.presentingPlaybackSettings)
     @Binding
     private var presentingPlaybackSettings
+    @Environment(\.subtitleOffset)
+    @Binding
+    private var subtitleOffset
 
     var body: some View {
         Form {
@@ -40,6 +46,28 @@ struct PlaybackSettingsView: View {
 
             } header: {
                 EmptyView()
+            }
+            
+            Stepper(value: _audioOffset.wrappedValue, in: -30_000 ... 30_000, step: 100) {
+                HStack {
+                    Text("Audio Offset")
+                    
+                    Spacer()
+                    
+                    Text("\(audioOffset)")
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Stepper(value: _subtitleOffset.wrappedValue, in: -30_000 ... 30_000, step: 100) {
+                HStack {
+                    Text("Subtitle Offset")
+                    
+                    Spacer()
+                    
+                    Text("\(subtitleOffset)")
+                        .foregroundColor(.secondary)
+                }
             }
 
             Section("Audio") {

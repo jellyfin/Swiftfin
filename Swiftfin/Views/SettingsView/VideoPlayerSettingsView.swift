@@ -139,9 +139,9 @@ struct VideoPlayerSettingsView: View {
     }
 }
 
-struct VideoPlayerSettingsView_Preview: PreviewProvider {
-    
-    static var previews: some View {
-        VideoPlayerSettingsView()
-    }
-}
+//struct VideoPlayerSettingsView_Preview: PreviewProvider {
+//
+//    static var previews: some View {
+//        VideoPlayerSettingsView()
+//    }
+//}

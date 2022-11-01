@@ -7,12 +7,15 @@
 //
 
 import Combine
+import Foundation
 import SwiftUI
 
 struct GestureView: UIViewRepresentable {
 
     private var onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?
     private var onTap: ((UnitPoint, Int) -> Void)?
+    private var onLongPress: ((UnitPoint) -> Void)?
+    private var longPressMinimumDuration: TimeInterval = 0
     private var samePointPadding: CGFloat = 0
     private var samePointTimeout: Double = 0
     private var onVerticalPan: ((UnitPoint, CGPoint) -> Void)?
@@ -25,6 +28,8 @@ struct GestureView: UIViewRepresentable {
         UIGestureView(
             onPinch: onPinch,
             onTap: onTap,
+            onLongPress: onLongPress,
+            longPressMinimumDuration: longPressMinimumDuration,
             samePointPadding: samePointPadding,
             onVerticalPan: onVerticalPan,
             onHorizontalPan: onHorizontalPan,
@@ -46,6 +51,11 @@ extension GestureView {
     func onTap(samePointPadding: CGFloat = 0, _ action: @escaping ((UnitPoint, Int) -> Void)) -> Self {
         copy(modifying: \.samePointPadding, with: samePointPadding)
             .copy(modifying: \.onTap, with: action)
+    }
+    
+    func onLongPress(minimumDuration: TimeInterval = 2, _ action: @escaping (UnitPoint) -> Void) -> Self {
+        copy(modifying: \.longPressMinimumDuration, with: minimumDuration)
+            .copy(modifying: \.onLongPress, with: action)
     }
 
     func onVerticalPan(_ action: @escaping (UnitPoint, CGPoint) -> Void) -> Self {
@@ -70,6 +80,8 @@ class UIGestureView: UIView {
 
     private let onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?
     private let onTap: ((UnitPoint, Int) -> Void)?
+    private let onLongPress: ((UnitPoint) -> Void)?
+    private let longPressMinimumDuration: TimeInterval
     private let samePointPadding: CGFloat
     private let onVerticalPan: ((UnitPoint, CGPoint) -> Void)?
     private let onHorizontalPan: ((UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void)?
@@ -85,6 +97,8 @@ class UIGestureView: UIView {
     init(
         onPinch: ((UIGestureRecognizer.State, CGFloat) -> Void)?,
         onTap: ((UnitPoint, Int) -> Void)?,
+        onLongPress: ((UnitPoint) -> Void)?,
+        longPressMinimumDuration: TimeInterval,
         samePointPadding: CGFloat,
         onVerticalPan: ((UnitPoint, CGPoint) -> Void)?,
         onHorizontalPan: ((UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void)?,
@@ -94,6 +108,8 @@ class UIGestureView: UIView {
     ) {
         self.onPinch = onPinch
         self.onTap = onTap
+        self.onLongPress = onLongPress
+        self.longPressMinimumDuration = longPressMinimumDuration
         self.samePointPadding = samePointPadding
         self.onVerticalPan = onVerticalPan
         self.onHorizontalPan = onHorizontalPan
@@ -102,21 +118,24 @@ class UIGestureView: UIView {
         self.swipeVelocity = swipeVelocity
         super.init(frame: .zero)
 
-        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPerformPinch(_:)))
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap(_:)))
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPerformPinch))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap))
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didPerformLongPress))
+        longPressGesture.minimumPressDuration = longPressMinimumDuration
         let verticalPanGesture = PanDirectionGestureRecognizer(
             direction: .vertical,
             target: self,
-            action: #selector(didPerformVerticalPan(_:))
+            action: #selector(didPerformVerticalPan)
         )
         let horizontalPanGesture = PanDirectionGestureRecognizer(
             direction: .horizontal,
             target: self,
-            action: #selector(didPerformHorizontalPan(_:))
+            action: #selector(didPerformHorizontalPan)
         )
 
         addGestureRecognizer(pinchGesture)
         addGestureRecognizer(tapGesture)
+        addGestureRecognizer(longPressGesture)
         addGestureRecognizer(verticalPanGesture)
         addGestureRecognizer(horizontalPanGesture)
     }
@@ -144,6 +163,14 @@ class UIGestureView: UIView {
             multiTapOccurred(at: location)
             onTap(unitPoint, 1)
         }
+    }
+    
+    @objc
+    private func didPerformLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        guard let onLongPress, gestureRecognizer.state == .began else { return }
+        let location = gestureRecognizer.location(in: self)
+        let unitPoint: UnitPoint = .init(x: location.x / frame.width, y: location.y / frame.height)
+        onLongPress(unitPoint)
     }
 
     @objc

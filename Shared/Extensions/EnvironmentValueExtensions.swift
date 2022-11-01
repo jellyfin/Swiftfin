@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+struct AudioOffset: EnvironmentKey {
+    static let defaultValue: Binding<Int> = .constant(0)
+}
+
 struct AspectFilled: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
@@ -34,7 +38,16 @@ struct ScrubbedProgress: EnvironmentKey {
     static let defaultValue: Binding<CGFloat> = .constant(0)
 }
 
+struct SubtitleOffset: EnvironmentKey {
+    static let defaultValue: Binding<Int> = .constant(0)
+}
+
 extension EnvironmentValues {
+    
+    var audioOffset: Binding<Int> {
+        get { self[AudioOffset.self] }
+        set { self[AudioOffset.self] = newValue }
+    }
 
     var aspectFilled: Binding<Bool> {
         get { self[AspectFilled.self] }
@@ -63,5 +76,10 @@ extension EnvironmentValues {
     var scrubbedProgress: Binding<CGFloat> {
         get { self[ScrubbedProgress.self] }
         set { self[ScrubbedProgress.self] = newValue }
+    }
+    
+    var subtitleOffset: Binding<Int> {
+        get { self[SubtitleOffset.self] }
+        set { self[SubtitleOffset.self] = newValue }
     }
 }

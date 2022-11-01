@@ -213,6 +213,8 @@
 		E1047E2327E5880000CB0D4A /* InitialFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1047E2227E5880000CB0D4A /* InitialFailureView.swift */; };
 		E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E107BB9227880A8F00354E07 /* CollectionItemViewModel.swift */; };
 		E107BB9427880A8F00354E07 /* CollectionItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E107BB9227880A8F00354E07 /* CollectionItemViewModel.swift */; };
+		E1092F4C29106F9F00163F57 /* VideoPlayerHorizontalGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1092F4B29106F9F00163F57 /* VideoPlayerHorizontalGesture.swift */; };
+		E1092F4D29106F9F00163F57 /* VideoPlayerHorizontalGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1092F4B29106F9F00163F57 /* VideoPlayerHorizontalGesture.swift */; };
 		E10D87E227852FD000BD264C /* EpisodesRowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87E127852FD000BD264C /* EpisodesRowManager.swift */; };
 		E10D87E327852FD000BD264C /* EpisodesRowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10D87E127852FD000BD264C /* EpisodesRowManager.swift */; };
 		E10EAA45277BB646000269ED /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E10EAA44277BB646000269ED /* JellyfinAPI */; };
@@ -267,8 +269,6 @@
 		E129428828F0831F00796AC6 /* SplitTimestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428728F0831F00796AC6 /* SplitTimestamp.swift */; };
 		E129428A28F0BBD900796AC6 /* OverlayComponentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428928F0BBD900796AC6 /* OverlayComponentType.swift */; };
 		E129428B28F0BBD900796AC6 /* OverlayComponentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428928F0BBD900796AC6 /* OverlayComponentType.swift */; };
-		E129428D28F0BBE600796AC6 /* OverlayLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428C28F0BBE600796AC6 /* OverlayLocation.swift */; };
-		E129428E28F0BBE600796AC6 /* OverlayLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428C28F0BBE600796AC6 /* OverlayLocation.swift */; };
 		E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428F28F0BDC300796AC6 /* TimeStampType.swift */; };
 		E129429128F0BDC300796AC6 /* TimeStampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129428F28F0BDC300796AC6 /* TimeStampType.swift */; };
 		E129429328F2845000796AC6 /* SliderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429228F2845000796AC6 /* SliderType.swift */; };
@@ -846,6 +846,7 @@
 		E1002B632793CEE700E47059 /* ChapterInfoExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterInfoExtensions.swift; sourceTree = "<group>"; };
 		E1047E2227E5880000CB0D4A /* InitialFailureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialFailureView.swift; sourceTree = "<group>"; };
 		E107BB9227880A8F00354E07 /* CollectionItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemViewModel.swift; sourceTree = "<group>"; };
+		E1092F4B29106F9F00163F57 /* VideoPlayerHorizontalGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerHorizontalGesture.swift; sourceTree = "<group>"; };
 		E10D87E127852FD000BD264C /* EpisodesRowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesRowManager.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtensions.swift; sourceTree = "<group>"; };
 		E10EAA52277BBD17000269ED /* BaseItemDto+LegacyVideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+LegacyVideoPlayerViewModel.swift"; sourceTree = "<group>"; };
@@ -880,7 +881,6 @@
 		E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnReceiveNotificationModifier.swift; sourceTree = "<group>"; };
 		E129428728F0831F00796AC6 /* SplitTimestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitTimestamp.swift; sourceTree = "<group>"; };
 		E129428928F0BBD900796AC6 /* OverlayComponentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayComponentType.swift; sourceTree = "<group>"; };
-		E129428C28F0BBE600796AC6 /* OverlayLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLocation.swift; sourceTree = "<group>"; };
 		E129428F28F0BDC300796AC6 /* TimeStampType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeStampType.swift; sourceTree = "<group>"; };
 		E129429228F2845000796AC6 /* SliderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderType.swift; sourceTree = "<group>"; };
 		E129429728F4785200796AC6 /* EnumPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPicker.swift; sourceTree = "<group>"; };
@@ -1378,7 +1378,6 @@
 				E1E1644328BC60C600323B0A /* MediaLibraryItem.swift */,
 				E1DA656B28E78C1700592A73 /* MenuPosterHStackModel.swift */,
 				E129428928F0BBD900796AC6 /* OverlayComponentType.swift */,
-				E129428C28F0BBE600796AC6 /* OverlayLocation.swift */,
 				E1AA331E2782639D00F6439C /* OverlayType.swift */,
 				E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */,
 				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
@@ -1398,6 +1397,7 @@
 				E129428F28F0BDC300796AC6 /* TimeStampType.swift */,
 				E1D4BF832719D25A00A11E64 /* TrackLanguage.swift */,
 				E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */,
+				E1092F4B29106F9F00163F57 /* VideoPlayerHorizontalGesture.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
 			);
 			path = Objects;
@@ -2763,7 +2763,6 @@
 				E1D3043F28D18F5700587289 /* CastAndCrewLibraryView.swift in Sources */,
 				E1FCD09726C47118007C8DCF /* ErrorMessage.swift in Sources */,
 				E1C8CE5C28FE512400DF5D7B /* CGPointExtensions.swift in Sources */,
-				E129428E28F0BBE600796AC6 /* OverlayLocation.swift in Sources */,
 				E193D53527193F8100900D82 /* ItemCoordinator.swift in Sources */,
 				E1C926162887565C002A7A66 /* SeriesItemView.swift in Sources */,
 				E1EBCB4A278BE443009FE6E9 /* ItemOverviewCoordinator.swift in Sources */,
@@ -2885,6 +2884,7 @@
 				53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */,
 				E1DA654D28E69B0500592A73 /* SpecialFeatureType.swift in Sources */,
 				E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */,
+				E1092F4D29106F9F00163F57 /* VideoPlayerHorizontalGesture.swift in Sources */,
 				E13DD3D6271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
 				E193D549271941CC00900D82 /* UserSignInView.swift in Sources */,
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
@@ -3034,6 +3034,7 @@
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				C4BE07852728446F003F4AD1 /* LiveTVChannelsViewModel.swift in Sources */,
 				E1D3043228D175CE00587289 /* StaticLibraryViewModel.swift in Sources */,
+				E1092F4C29106F9F00163F57 /* VideoPlayerHorizontalGesture.swift in Sources */,
 				E16DEAC228EFCF590058F196 /* EnvironmentValueExtensions.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
@@ -3129,7 +3130,6 @@
 				E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */,
 				E1A1528528FD191A00600579 /* TextPair.swift in Sources */,
 				6334175D287DE0D0000603CE /* QuickConnectSettingsViewModel.swift in Sources */,
-				E129428D28F0BBE600796AC6 /* OverlayLocation.swift in Sources */,
 				E1DA656F28E78C9900592A73 /* SeriesEpisodeSelector.swift in Sources */,
 				E18E01E0288747230022598C /* iPadOSMovieItemContentView.swift in Sources */,
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
