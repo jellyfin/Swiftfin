@@ -33,8 +33,8 @@ extension BaseItemDto {
             maxStreamingBitrate: tempOverkillBitrate,
             getPostedPlaybackInfoRequest: playbackInfoRequest
         )
-        .map { response in
-            response.mediaSources!.map { $0.itemVideoPlayerViewModel(with: self, playSessionID: response.playSessionId!) }
+        .tryMap { response in
+            response.mediaSources!.map { try! $0.itemVideoPlayerViewModel(with: self, playSessionID: response.playSessionId!) }
         }
         .eraseToAnyPublisher()
     }

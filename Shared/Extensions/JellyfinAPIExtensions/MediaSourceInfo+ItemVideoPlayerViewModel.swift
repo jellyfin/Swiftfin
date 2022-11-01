@@ -6,31 +6,47 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 
 extension MediaSourceInfo {
 
-    func itemVideoPlayerViewModel(with item: BaseItemDto, playSessionID: String) -> VideoPlayerViewModel {
-        let directStreamURL = VideosAPI.getVideoStreamWithRequestBuilder(
-            itemId: item.id!,
-            _static: true,
-            tag: item.etag,
-            playSessionId: playSessionID,
-            mediaSourceId: self.id
-        ).url
+    // TODO: Better throwing handling
+    func itemVideoPlayerViewModel(with item: BaseItemDto, playSessionID: String, server: String = "") throws -> VideoPlayerViewModel {
+        let playbackURL: URL
+        let streamType: StreamType
+        
+        if let transcodingUrl, !Defaults[.Experimental.forceDirectPlay] {
+            guard let fullTranscodeURL = URL(string: server.appending(transcodingUrl)) else { throw JellyfinAPIError("Unable to construct transcoded url") }
+            playbackURL = fullTranscodeURL
+            streamType = .transcode
+        } else {
+            playbackURL = VideosAPI.getVideoStreamWithRequestBuilder(
+                itemId: item.id!,
+                _static: true,
+                tag: item.etag,
+                playSessionId: playSessionID,
+                mediaSourceId: self.id
+            ).url
+            
+            streamType = .direct
+        }
 
         let videoStream = mediaStreams?.filter { $0.type == .video }.first ?? .init()
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
 
         return VideoPlayerViewModel(
-            playbackURL: directStreamURL,
+            playbackURL: playbackURL,
             item: item,
             videoStream: videoStream,
             audioStreams: audioStreams,
             subtitleStreams: subtitleStreams,
-            chapters: item.fullChapterInfo
+            selectedAudioStreamIndex: defaultAudioStreamIndex ?? -1,
+            selectedSubtitleStreamIndex: defaultSubtitleStreamIndex ?? -1,
+            chapters: item.fullChapterInfo,
+            streamType: streamType
         )
     }
 }

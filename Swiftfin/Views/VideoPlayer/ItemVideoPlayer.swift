@@ -149,6 +149,7 @@ struct ItemVideoPlayer: View {
                 .environment(\.scrubbedProgress, $scrubbedProgress)
 
                 FlashContentView(proxy: flashContentProxy)
+                    .allowsHitTesting(false)
             }
             .onTapGesture {
                 overlayTimer.start(5)
@@ -211,6 +212,7 @@ struct ItemVideoPlayer: View {
             videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
         }
         .onChange(of: gestureLocked) { newValue in
+            // TODO: Change
             flashContentProxy.flash(interval: 2) {
                 ZStack {
                     Color.black
