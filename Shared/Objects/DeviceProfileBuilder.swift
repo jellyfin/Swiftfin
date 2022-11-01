@@ -8,6 +8,7 @@
 
 // lol can someone buy me a coffee this took forever :|
 
+import Defaults
 import Foundation
 import JellyfinAPI
 
@@ -43,6 +44,7 @@ class DeviceProfileBuilder {
     }
 
     public func buildProfile() -> ClientCapabilitiesDeviceProfile {
+        let segmentContainer = Defaults[.Experimental.usefmp4Hls] ? "mp4" : "ts"
         let maxStreamingBitrate = bitrate
         let maxStaticBitrate = bitrate
         let musicStreamingTranscodingBitrate = bitrate
@@ -99,7 +101,7 @@ class DeviceProfileBuilder {
         if supportsFeature(minimumSupported: .A8X) {
             if supportsFeature(minimumSupported: .A9) {
                 transcodingProfiles = [TranscodingProfile(
-                    container: "ts",
+                    container: segmentContainer,
                     type: .video,
                     videoCodec: "h264,hevc,mpeg4",
                     audioCodec: "aac,mp3,wav,eac3,ac3,flac,opus",
@@ -111,7 +113,7 @@ class DeviceProfileBuilder {
                 )]
             } else {
                 transcodingProfiles = [TranscodingProfile(
-                    container: "ts",
+                    container: segmentContainer,
                     type: .video,
                     videoCodec: "h264,mpeg4",
                     audioCodec: "aac,mp3,wav,eac3,ac3,opus",
@@ -127,7 +129,7 @@ class DeviceProfileBuilder {
         // Device supports FLAC?
         if supportsFeature(minimumSupported: .A10X) {
             transcodingProfiles = [TranscodingProfile(
-                container: "ts",
+                container: segmentContainer,
                 type: .video,
                 videoCodec: "hevc,h264,mpeg4",
                 audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus",

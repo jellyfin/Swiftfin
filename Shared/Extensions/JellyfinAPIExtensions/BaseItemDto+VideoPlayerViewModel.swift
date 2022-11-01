@@ -21,6 +21,7 @@ extension BaseItemDto {
         let tempOverkillBitrate = 360_000_000
         builder.setMaxBitrate(bitrate: tempOverkillBitrate)
         let profile = builder.buildProfile()
+        let segmentContainer = Defaults[.Experimental.usefmp4Hls] ? "mp4" : "ts"
 
         let getPostedPlaybackInfoRequest = GetPostedPlaybackInfoRequest(
             userId: SessionManager.main.currentLogin.user.id,
@@ -95,7 +96,7 @@ extension BaseItemDto {
                     tag: currentMediaSource.eTag,
                     deviceProfileId: nil,
                     playSessionId: response.playSessionId,
-                    segmentContainer: "ts",
+                    segmentContainer: segmentContainer,
                     segmentLength: nil,
                     minSegments: 2,
                     deviceId: UIDevice.vendorUUIDString,
