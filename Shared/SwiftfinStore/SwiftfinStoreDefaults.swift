@@ -116,6 +116,7 @@ extension Defaults.Keys {
         )
         static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: .generalSuite)
         static let nativePlayer = Key<Bool>("nativePlayer", default: false, suite: .generalSuite)
+        static let usefmp4Hls = Key<Bool>("usefmp4Hls", default: false, suite: .generalSuite)
         static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: .generalSuite)
         static let liveTVForceDirectPlay = Key<Bool>("liveTVForceDirectPlay", default: false, suite: .generalSuite)
         static let liveTVNativePlayer = Key<Bool>("liveTVNativePlayer", default: false, suite: .generalSuite)
