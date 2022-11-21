@@ -79,21 +79,6 @@ extension ItemVideoPlayer.Overlay {
                     }
                 }
 
-//                if !viewModel.subtitleStreams.isEmpty {
-//                    Button {
-//                        viewModel.subtitlesEnabled.toggle()
-//                    } label: {
-//                        if viewModel.subtitlesEnabled {
-//                            Image(systemName: "captions.bubble.fill")
-//                        } else {
-//                            Image(systemName: "captions.bubble")
-//                        }
-//                    }
-//                    .disabled(viewModel.selectedSubtitleTrackIndex == -1)
-//                    .foregroundColor(viewModel.selectedSubtitleTrackIndex == -1 ? .gray : .white)
-//                    .frame(width: 50, height: 50)
-//                }
-
                 Button {
                     if aspectFilled {
                         aspectFilled = false

@@ -173,12 +173,28 @@ final class HomeViewModel: ViewModel {
         .store(in: &cancellables)
     }
 
-    func removeItemFromResume(_ item: BaseItemDto) {
+    func markItemUnplayed(_ item: BaseItemDto) {
         guard let itemID = item.id, resumeItems.contains(where: { $0.id == itemID }) else { return }
 
         PlaystateAPI.markUnplayedItem(
             userId: SessionManager.main.currentLogin.user.id,
             itemId: item.id!
+        )
+        .sink(receiveCompletion: { [weak self] completion in
+            self?.handleAPIRequestError(completion: completion)
+        }, receiveValue: { _ in
+            self.refreshResumeItems()
+            self.refreshNextUpItems()
+        })
+        .store(in: &cancellables)
+    }
+    
+    func markItemPlayed(_ item: BaseItemDto) {
+        guard let itemID = item.id, resumeItems.contains(where: { $0.id == itemID }) else { return }
+        
+        PlaystateAPI.markPlayedItem(
+            userId: SessionManager.main.currentLogin.user.id,
+            itemId: itemID
         )
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)

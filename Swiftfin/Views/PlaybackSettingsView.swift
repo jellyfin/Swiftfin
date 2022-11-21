@@ -15,16 +15,15 @@ import VLCUI
 struct PlaybackSettingsView: View {
 
     @EnvironmentObject
-    private var viewModel: VideoPlayerViewModel
-    @EnvironmentObject
     private var router: PlaybackSettingsCoordinator.Router
+    @EnvironmentObject
+    private var splitContentViewProxy: SplitContentViewProxy
+    @EnvironmentObject
+    private var viewModel: VideoPlayerViewModel
 
     @Environment(\.audioOffset)
     @Binding
     private var audioOffset
-    @Environment(\.presentingPlaybackSettings)
-    @Binding
-    private var presentingPlaybackSettings
     @Environment(\.subtitleOffset)
     @Binding
     private var subtitleOffset
@@ -93,12 +92,10 @@ struct PlaybackSettingsView: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 Button {
-//                    withAnimation {
-                    presentingPlaybackSettings = false
-//                    }
+                    splitContentViewProxy.hide()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .resizable()
+//                        .resizable()
 //                        .frame(width: 44, height: 50)
                 }
             }

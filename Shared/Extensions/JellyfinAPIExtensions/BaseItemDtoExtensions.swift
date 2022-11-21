@@ -28,9 +28,8 @@ extension BaseItemDto {
     }
 
     var episodeLocator: String? {
-        "crash!?!?"
-//        guard let episodeNo = indexNumber else { return nil }
-//        return L10n.episodeNumber(episodeNo)
+        guard let episodeNo = indexNumber else { return nil }
+        return L10n.episodeNumber(episodeNo)
     }
 
     var runTimeSeconds: Int {
@@ -248,6 +247,26 @@ extension BaseItemDto {
                     secondsRange: range
                 )
             }
+    }
+    
+    var nextPlayedUserData: BaseItemDtoUserData {
+        if let userData {
+            var currentUserData = userData
+            currentUserData.playedPercentage = 0
+            currentUserData.playbackPositionTicks = 0
+            currentUserData.playCount = (currentUserData.playCount ?? 0) + 1
+            currentUserData.lastPlayedDate = .now
+            currentUserData.played = true
+            
+            return currentUserData
+        } else {
+            return .init(
+                playedPercentage: 0,
+                playbackPositionTicks: 0,
+                playCount: 1,
+                lastPlayedDate: .now,
+                played: true)
+        }
     }
 
     // TODO: Don't use spoof objects as a placeholder or no results

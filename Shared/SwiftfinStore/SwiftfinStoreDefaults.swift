@@ -50,6 +50,8 @@ extension Defaults.Keys {
     }
 
     enum VideoPlayer {
+        
+        // TODO: rename buttons to show_
 
         static let autoPlay: Key<Bool> = .init("autoPlay", default: true, suite: .generalSuite)
         static let autoPlayEnabled: Key<Bool> = .init("autoPlayEnabled", default: true, suite: .generalSuite)
@@ -66,6 +68,8 @@ extension Defaults.Keys {
         static let playNextItem: Key<Bool> = .init("playNextItem", default: true, suite: .generalSuite)
         static let playPreviousItem: Key<Bool> = .init("playPreviousItem", default: true, suite: .generalSuite)
         static let resumeOffset: Key<Int> = .init("resumeOffset", default: 0, suite: .generalSuite)
+        
+        static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
         
         enum Gesture {
             

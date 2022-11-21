@@ -16,14 +16,13 @@ extension ItemVideoPlayer.Overlay {
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
-        @Environment(\.presentingPlaybackSettings)
-        @Binding
-        private var presentingPlaybackSettings
 
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
         private var router: ItemVideoPlayerCoordinator.Router
+        @EnvironmentObject
+        private var splitContentViewProxy: SplitContentViewProxy
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
@@ -34,7 +33,7 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var subtitleTrackMenu: some View {
             Menu {
-                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.self) { subtitleTrack in
+                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in
                     Button {
                         videoPlayerProxy.setSubtitleTrack(.absolute(subtitleTrack.index ?? -1))
                     } label: {
@@ -56,7 +55,7 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var audioTrackMenu: some View {
             Menu {
-                ForEach(viewModel.audioStreams.prepending(.none), id: \.self) { audioTrack in
+                ForEach(viewModel.audioStreams.prepending(.none), id: \.index) { audioTrack in
                     Button {
                         videoPlayerProxy.setAudioTrack(.absolute(audioTrack.index ?? -1))
                     } label: {
@@ -113,10 +112,7 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var advancedButton: some View {
             Button {
-                withAnimation {
-                    presentingPlaybackSettings = true
-                }
-                
+                splitContentViewProxy.present()
                 overlayTimer.start(3)
             } label: {
                 HStack {

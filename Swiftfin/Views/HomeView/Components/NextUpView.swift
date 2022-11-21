@@ -42,6 +42,15 @@ extension HomeView {
                         router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
                     }
             }
+            .contextMenu { state in
+                if case let PosterButtonType.item(item) = state {
+                    Button {
+//                        viewModel.markItemPlayed(item)
+                    } label: {
+                        Label("Played", systemImage: "checkmark.circle")
+                    }
+                }
+            }
             .onSelect { item in
                 router.route(to: \.item, item)
             }

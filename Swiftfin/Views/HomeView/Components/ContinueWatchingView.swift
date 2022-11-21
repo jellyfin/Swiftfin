@@ -26,10 +26,16 @@ extension HomeView {
             .scaleItems(1.5)
             .contextMenu { state in
                 if case let PosterButtonType.item(item) = state {
-                    Button(role: .destructive) {
-                        viewModel.removeItemFromResume(item)
+                    Button {
+                        viewModel.markItemPlayed(item)
                     } label: {
-                        Label(L10n.removeFromResume, systemImage: "minus.circle")
+                        Label("Played", systemImage: "checkmark.circle")
+                    }
+                    
+                    Button(role: .destructive) {
+                        viewModel.markItemUnplayed(item)
+                    } label: {
+                        Label("Unplayed", systemImage: "minus.circle")
                     }
                 }
             }

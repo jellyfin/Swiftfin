@@ -79,35 +79,6 @@ extension ItemVideoPlayer.Overlay {
                         Color.white
                     }
                 }
-                .topContent {
-                    if chapterSlider && !viewModel.chapters.isEmpty {
-                        HStack {
-                            if let currentChapter = viewModel.chapter(from: progress) {
-                                Button {
-                                    currentOverlayType = .chapters
-                                    overlayTimer.stop()
-                                } label: {
-                                    HStack {
-                                        Text(currentChapter.displayTitle)
-                                            .monospacedDigit()
-
-                                        Image(systemName: "chevron.right")
-                                    }
-                                    .foregroundColor(.white)
-                                    .font(.subheadline.weight(.medium))
-                                }
-                                .disabled(isScrubbing)
-                            }
-
-                            Spacer()
-                        }
-                        .padding(.leading, 5)
-                        .padding(.bottom, 15)
-                    } else {
-                        Color.clear
-                            .frame(height: 20)
-                    }
-                }
                 .bottomContent {
                     Group {
                         switch timestampType {
@@ -145,32 +116,6 @@ extension ItemVideoPlayer.Overlay {
                         Color.white
                     }
                 }
-                .topContent {
-                    if chapterSlider && !viewModel.chapters.isEmpty {
-                        HStack {
-                            if let currentChapter = viewModel.chapter(from: progress) {
-                                Button {
-                                    currentOverlayType = .chapters
-                                    overlayTimer.stop()
-                                } label: {
-                                    HStack {
-                                        Text(currentChapter.displayTitle)
-                                            .monospacedDigit()
-
-                                        Image(systemName: "chevron.right")
-                                    }
-                                    .foregroundColor(.white)
-                                    .font(.subheadline.weight(.medium))
-                                }
-                                .disabled(isScrubbing)
-                            }
-
-                            Spacer()
-                        }
-                        .padding(.leading, 5)
-                        .padding(.bottom, 15)
-                    }
-                }
                 .bottomContent {
                     Group {
                         switch timestampType {
@@ -196,13 +141,39 @@ extension ItemVideoPlayer.Overlay {
         }
 
         var body: some View {
-            Group {
-                switch sliderType {
-                case .capsule: capsuleSlider
-                case .thumb: thumbSlider
+            VStack(spacing: 0) {
+                if chapterSlider && !viewModel.chapters.isEmpty {
+                    HStack {
+                        if let currentChapter = viewModel.chapter(from: progress) {
+                            Button {
+                                currentOverlayType = .chapters
+                                overlayTimer.stop()
+                            } label: {
+                                HStack {
+                                    Text(currentChapter.displayTitle)
+                                        .monospacedDigit()
+
+                                    Image(systemName: "chevron.right")
+                                }
+                                .foregroundColor(.white)
+                                .font(.subheadline.weight(.medium))
+                            }
+                            .disabled(isScrubbing)
+                        }
+
+                        Spacer()
+                    }
+                    .padding(.leading, 5)
+                    .padding(.bottom, 15)
+                }
+                
+                Group {
+                    switch sliderType {
+                    case .capsule: capsuleSlider
+                    case .thumb: thumbSlider
+                    }
                 }
             }
-            .padding()
             .onChange(of: currentSecondsHandler.currentSeconds) { newValue in
                 guard !isScrubbing else { return }
                 self.currentSeconds = newValue

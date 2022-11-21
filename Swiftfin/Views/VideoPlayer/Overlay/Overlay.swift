@@ -21,18 +21,18 @@ extension ItemVideoPlayer {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        @Environment(\.presentingPlaybackSettings)
-        @Binding
-        private var presentingPlaybackSettings
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
+        
+        @EnvironmentObject
+        private var splitContentViewProxy: SplitContentViewProxy
 
         var body: some View {
             ZStack {
                 VStack {
                     TopBarView()
                         .padding(safeAreaInsets.mutating(\.trailing, to: 0))
-                        .padding(.trailing, presentingPlaybackSettings ? 0 : safeAreaInsets.trailing)
+                        .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         .background {
                             LinearGradient(
                                 stops: [
@@ -51,7 +51,7 @@ extension ItemVideoPlayer {
 
                     BottomBarView()
                         .padding(safeAreaInsets.mutating(\.trailing, to: 0))
-                        .padding(.trailing, presentingPlaybackSettings ? 0 : safeAreaInsets.trailing)
+                        .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         .background {
                             LinearGradient(
                                 stops: [
