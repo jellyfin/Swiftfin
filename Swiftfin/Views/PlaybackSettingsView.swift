@@ -12,6 +12,50 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
+struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
+    
+    @Binding
+    private var value: Value
+    
+    private let title: String
+    private let range: ClosedRange<Value>
+    private let step: Value.Stride
+    private var formatter: (Value) -> String
+    
+    var body: some View {
+        Stepper(value: $value, in: range, step: step) {
+            HStack {
+                Text(title)
+                
+                Spacer()
+                
+                formatter(value).text
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+extension BasicStepper {
+    
+    init(
+        title: String,
+        value: Binding<Value>,
+        range: ClosedRange<Value>,
+        step: Value.Stride
+    ) {
+        self.title = title
+        self.range = range
+        self.step = step
+        self._value = value
+        self.formatter = { $0.description }
+    }
+    
+    func valueFormatter(_ formatter: @escaping (Value) -> String) -> Self {
+        copy(modifying: \.formatter, with: formatter)
+    }
+}
+
 struct PlaybackSettingsView: View {
 
     @EnvironmentObject
@@ -31,43 +75,58 @@ struct PlaybackSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Button {
-                    router.route(to: \.overlaySettings)
-                } label: {
-                    Text("Video Player")
-                }
-
-                Button {
-                    router.route(to: \.playbackInformation)
-                } label: {
-                    Text("Playback Information")
-                }
-
+                
+                ChevronButton(title: L10n.videoPlayer)
+                    .onSelect {
+                        router.route(to: \.videoPlayerSettings)
+                    }
+                
+                ChevronButton(title: "Playback Information")
+                    .onSelect {
+                        router.route(to: \.playbackInformation)
+                    }
             } header: {
                 EmptyView()
             }
             
-            Stepper(value: _audioOffset.wrappedValue, in: -30_000 ... 30_000, step: 100) {
-                HStack {
-                    Text("Audio Offset")
-                    
-                    Spacer()
-                    
-                    Text("\(audioOffset)")
-                        .foregroundColor(.secondary)
-                }
-            }
+            BasicStepper(
+                title: "Audio Offset",
+                value: _audioOffset.wrappedValue,
+                range: -30_000 ... 30_000,
+                step: 100
+            )
+//            .valueFormatter { value in
+//                "\()"
+//            }
             
-            Stepper(value: _subtitleOffset.wrappedValue, in: -30_000 ... 30_000, step: 100) {
-                HStack {
-                    Text("Subtitle Offset")
-                    
-                    Spacer()
-                    
-                    Text("\(subtitleOffset)")
-                        .foregroundColor(.secondary)
-                }
-            }
+            BasicStepper(
+                title: "Subtitle Offset",
+                value: _subtitleOffset.wrappedValue,
+                range: -30_000 ... 30_000,
+                step: 100
+            )
+            
+//            Stepper(value: _audioOffset.wrappedValue, in: -30_000 ... 30_000, step: 100) {
+//                HStack {
+//                    Text("Audio Offset")
+//                    
+//                    Spacer()
+//                    
+//                    Text("\(audioOffset)")
+//                        .foregroundColor(.secondary)
+//                }
+//            }
+//            
+//            Stepper(value: _subtitleOffset.wrappedValue, in: -30_000 ... 30_000, step: 100) {
+//                HStack {
+//                    Text("Subtitle Offset")
+//                    
+//                    Spacer()
+//                    
+//                    Text("\(subtitleOffset)")
+//                        .foregroundColor(.secondary)
+//                }
+//            }
 
             Section("Audio") {
                 ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in

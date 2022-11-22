@@ -20,26 +20,6 @@ struct SettingsView: View {
 
     @Default(.appAppearance)
     var appAppearance
-    @Default(.overlayType)
-    var overlayType
-    @Default(.videoPlayerJumpForward)
-    var jumpForwardLength
-    @Default(.videoPlayerJumpBackward)
-    var jumpBackwardLength
-    @Default(.jumpGesturesEnabled)
-    var jumpGesturesEnabled
-    @Default(.systemControlGesturesEnabled)
-    var systemControlGesturesEnabled
-    @Default(.playerGesturesLockGestureEnabled)
-    var playerGesturesLockGestureEnabled
-    @Default(.seekSlideGestureEnabled)
-    var seekSlideGestureEnabled
-    @Default(.resumeOffset)
-    var resumeOffset
-    @Default(.subtitleSize)
-    var subtitleSize
-    @Default(.subtitleFontName)
-    var subtitleFontName
 
     var body: some View {
         Form {
@@ -50,31 +30,16 @@ struct SettingsView: View {
                     Text(viewModel.user.username)
                         .foregroundColor(.jellyfinPurple)
                 }
-
-                Button {
-                    settingsRouter.route(to: \.serverDetail)
-                } label: {
-                    HStack {
-                        L10n.server.text
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Text(viewModel.server.name)
-                            .foregroundColor(.jellyfinPurple)
-
-                        Image(systemName: "chevron.right")
+                
+                ChevronButton(title: L10n.server, subtitle: viewModel.server.name)
+                    .onSelect {
+                        settingsRouter.route(to: \.serverDetail)
                     }
-                }
-
-                Button {
-                    settingsRouter.route(to: \.quickConnect)
-                } label: {
-                    HStack {
-                        L10n.quickConnect.text
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
+                
+                ChevronButton(title: L10n.quickConnect)
+                    .onSelect {
+                        settingsRouter.route(to: \.quickConnect)
                     }
-                }
 
                 Button {
                     settingsRouter.dismissCoordinator {
@@ -87,101 +52,32 @@ struct SettingsView: View {
             }
 
             Section(header: L10n.videoPlayer.text) {
-                Picker(L10n.jumpForwardLength, selection: $jumpForwardLength) {
-                    ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
-                        Text(length.label).tag(length.rawValue)
+                
+                ChevronButton(title: L10n.videoPlayer)
+                    .onSelect {
+                        settingsRouter.route(to: \.videoPlayerSettings)
                     }
-                }
-
-                Picker(L10n.jumpBackwardLength, selection: $jumpBackwardLength) {
-                    ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
-                        Text(length.label).tag(length.rawValue)
-                    }
-                }
-
-                Toggle(L10n.jumpGesturesEnabled, isOn: $jumpGesturesEnabled)
-
-                Toggle(L10n.systemControlGesturesEnabled, isOn: $systemControlGesturesEnabled)
-
-                Toggle(L10n.seekSlideGestureEnabled, isOn: $seekSlideGestureEnabled)
-
-                Toggle(L10n.playerGesturesLockGestureEnabled, isOn: $playerGesturesLockGestureEnabled)
-
-                Toggle(L10n.resume5SecondOffset, isOn: $resumeOffset)
-
-                Button {
-                    settingsRouter.route(to: \.overlaySettings)
-                } label: {
-                    HStack {
-                        L10n.overlay.text
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Text(overlayType.label)
-                        Image(systemName: "chevron.right")
-                    }
-                }
-
-                Button {
-                    settingsRouter.route(to: \.experimentalSettings)
-                } label: {
-                    HStack {
-                        L10n.experimental.text
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                    }
-                }
             }
 
             Section(header: L10n.accessibility.text) {
-
-                Button {
-                    settingsRouter.route(to: \.customizeViewsSettings)
-                } label: {
-                    HStack {
-                        L10n.customize.text
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
+                
+                EnumPicker(title: L10n.appearance, selection: $appAppearance)
+                
+                ChevronButton(title: L10n.customize)
+                    .onSelect {
+                        settingsRouter.route(to: \.customizeViewsSettings)
                     }
-                }
-
-                Picker(L10n.appearance, selection: $appAppearance) {
-                    ForEach(AppAppearance.allCases, id: \.self) { appearance in
-                        Text(appearance.displayTitle).tag(appearance.rawValue)
+                
+                ChevronButton(title: L10n.experimental)
+                    .onSelect {
+                        settingsRouter.route(to: \.experimentalSettings)
                     }
-                }
-
-                Button {
-                    settingsRouter.route(to: \.fontPicker)
-                } label: {
-                    HStack {
-                        L10n.subtitleFont.text
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Text(subtitleFontName)
-                            .foregroundColor(.gray)
-                        Image(systemName: "chevron.right")
-                    }
-                }
-
-                Picker(L10n.subtitleSize, selection: $subtitleSize) {
-                    ForEach(SubtitleSize.allCases, id: \.self) { size in
-                        Text(size.label).tag(size.rawValue)
-                    }
-                }
             }
-
-            Button {
-                settingsRouter.route(to: \.about)
-            } label: {
-                HStack {
-                    L10n.about.text
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
+            
+            ChevronButton(title: L10n.about)
+                .onSelect {
+                    settingsRouter.route(to: \.about)
                 }
-            }
         }
         .navigationBarTitle(L10n.settings, displayMode: .inline)
         .toolbar {

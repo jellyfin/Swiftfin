@@ -21,6 +21,7 @@ extension MediaSourceInfo {
             guard let fullTranscodeURL = URL(string: SessionManager.main.currentLogin.server.currentURI.appending(transcodingUrl)) else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL
             streamType = .transcode
+            print("Making transcoded stream")
         } else {
             playbackURL = VideosAPI.getVideoStreamWithRequestBuilder(
                 itemId: item.id!,
@@ -31,6 +32,7 @@ extension MediaSourceInfo {
             ).url
             
             streamType = .direct
+            print("Making direct stream")
         }
 
         let videoStream = mediaStreams?.filter { $0.type == .video }.first ?? .init()

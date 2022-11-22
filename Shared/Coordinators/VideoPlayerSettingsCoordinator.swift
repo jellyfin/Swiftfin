@@ -17,11 +17,19 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     var start = makeStart
     @Route(.push)
     var fontPicker = makeFontPicker
+    @Route(.push)
+    var gestureSettings = makeGestureSettings
 
     @ViewBuilder
     func makeFontPicker() -> some View {
         FontPickerView()
             .navigationTitle(L10n.subtitleFont)
+    }
+    
+    @ViewBuilder
+    func makeGestureSettings() -> some View {
+        GestureSettingsView()
+            .navigationTitle("Gestures")
     }
 
     @ViewBuilder

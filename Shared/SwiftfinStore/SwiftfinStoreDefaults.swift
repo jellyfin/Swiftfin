@@ -52,6 +52,7 @@ extension Defaults.Keys {
     enum VideoPlayer {
         
         // TODO: rename buttons to show_
+        // TODO: Add to own suite
 
         static let autoPlay: Key<Bool> = .init("autoPlay", default: true, suite: .generalSuite)
         static let autoPlayEnabled: Key<Bool> = .init("autoPlayEnabled", default: true, suite: .generalSuite)
@@ -67,13 +68,19 @@ extension Defaults.Keys {
         )
         static let playNextItem: Key<Bool> = .init("playNextItem", default: true, suite: .generalSuite)
         static let playPreviousItem: Key<Bool> = .init("playPreviousItem", default: true, suite: .generalSuite)
+        static let pauseOnBackgrounded: Key<Bool> = .init("pauseOnBackgrounded", default: true, suite: .generalSuite)
         static let resumeOffset: Key<Int> = .init("resumeOffset", default: 0, suite: .generalSuite)
         
+        static let showAspectFill: Key<Bool> = .init("videoPlayer.showAspectFill", default: true, suite: .generalSuite)
         static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
         
         enum Gesture {
-            
-            static let horizontalGesture: Key<VideoPlayerHorizontalGesture> = .init("videoPlayerHorizontalGesture", default: .panScrub, suite: .generalSuite)
+            static let horizontalPanGesture: Key<PanAction> = .init("videoPlayer.horizontalPanGesture", default: .none, suite: .generalSuite)
+            static let horizontalSwipeGesture: Key<SwipeAction> = .init("videoPlayer.horizontalSwipeGesture", default: .none, suite: .generalSuite)
+            static let longPressGesture: Key<LongPressAction> = .init("videoPlayer.longPressGesture", default: .gestureLock, suite: .generalSuite)
+            static let pinchGesture: Key<PinchAction> = .init("videoPlayer.swipeGesture", default: .aspectFill, suite: .generalSuite)
+            static let verticalPanGestureLeft: Key<PanAction> = .init("videoPlayer.verticalPanGestureLeft", default: .none, suite: .generalSuite)
+            static let verticalPanGestureRight: Key<PanAction> = .init("videoPlayer.verticalPanGestureRight", default: .none, suite: .generalSuite)
         }
 
         enum Overlay {

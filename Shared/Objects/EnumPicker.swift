@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: Allow optional binding
+
 struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable & RawRepresentable>: View {
 
     @Binding

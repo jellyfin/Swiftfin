@@ -17,7 +17,7 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
     @Route(.push)
-    var overlaySettings = makeVideoPlayerSettings
+    var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var mediaStreamInfo = makeMediaStreamInfo
     @Route(.push)

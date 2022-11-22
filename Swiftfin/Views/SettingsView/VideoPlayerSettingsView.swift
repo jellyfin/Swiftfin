@@ -10,6 +10,8 @@ import Defaults
 import SwiftUI
 
 struct VideoPlayerSettingsView: View {
+    
+    // TODO: Organize
 
     @Default(.VideoPlayer.autoPlay)
     private var autoPlay
@@ -23,6 +25,11 @@ struct VideoPlayerSettingsView: View {
     private var playPreviousItem
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
+    
+    @Default(.VideoPlayer.showAspectFill)
+    private var showAspectFill
+    @Default(.VideoPlayer.showJumpButtons)
+    private var showJumpButtons
 
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
@@ -50,22 +57,24 @@ struct VideoPlayerSettingsView: View {
 
     var body: some View {
         Form {
+            
+            ChevronButton(title: "Gestures")
+                .onSelect {
+                    router.route(to: \.gestureSettings)
+                }
 
             EnumPicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
             EnumPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
-                Stepper(value: $resumeOffset, in: 0 ... 30) {
-                    HStack {
-                        Text("Resume Offset")
-                        
-                        Spacer()
-
-                        Text("\(resumeOffset)")
-                            .foregroundColor(.secondary)
-                    }
-                }
+                
+                BasicStepper(
+                    title: "Resume Offset",
+                    value: $resumeOffset,
+                    range: 0 ... 30,
+                    step: 1
+                )
             } footer: {
                 Text("Resume content seconds before the recorded resume time")
             }
@@ -73,11 +82,25 @@ struct VideoPlayerSettingsView: View {
             Section("Buttons") {
 
                 EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
+                
+                Toggle(isOn: $showAspectFill) {
+                    HStack {
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        Text("Aspect Fill")
+                    }
+                }
 
                 Toggle(isOn: $autoPlay) {
                     HStack {
                         Image(systemName: "play.circle.fill")
                         L10n.autoPlay.text
+                    }
+                }
+                
+                Toggle(isOn: $showJumpButtons) {
+                    HStack {
+                        Image(systemName: "goforward")
+                        Text("Jump")
                     }
                 }
 
@@ -113,17 +136,13 @@ struct VideoPlayerSettingsView: View {
                     .onSelect {
                         router.route(to: \.fontPicker)
                     }
-
-                Stepper(value: $subtitleSize, in: 8 ... 24) {
-                    HStack {
-                        L10n.subtitleSize.text
-                        
-                        Spacer()
-
-                        Text("\(subtitleSize)")
-                            .foregroundColor(.secondary)
-                    }
-                }
+                
+                BasicStepper(
+                    title: L10n.subtitleSize,
+                    value: $subtitleSize,
+                    range: 8 ... 24,
+                    step: 1
+                )
             }
 
             Section("Timestamp") {

@@ -19,13 +19,25 @@ struct ItemVideoPlayer: View {
         case main
         case chapters
     }
-
-    @Default(.VideoPlayer.Gesture.horizontalGesture)
-    private var horizontalGesture
+    
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardLength)
     private var jumpForwardLength
+    
+    @Default(.VideoPlayer.Gesture.horizontalPanGesture)
+    private var horizontalPanGesture
+    @Default(.VideoPlayer.Gesture.horizontalSwipeGesture)
+    private var horizontalSwipeGesture
+    @Default(.VideoPlayer.Gesture.longPressGesture)
+    private var longPressGesture
+    @Default(.VideoPlayer.Gesture.pinchGesture)
+    private var pinchGesture
+    @Default(.VideoPlayer.Gesture.verticalPanGestureLeft)
+    private var verticalGestureLeft
+    @Default(.VideoPlayer.Gesture.verticalPanGestureRight)
+    private var verticalGestureRight
+
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
     @Default(.VideoPlayer.Subtitle.subtitleSize)
@@ -74,66 +86,25 @@ struct ItemVideoPlayer: View {
                         .proxy(videoPlayerManager.proxy)
                         .onTicksUpdated {
                             videoPlayerManager.onTicksUpdated(ticks: $0, playbackInformation: $1)
-                            
-                            guard !isScrubbing else { return }
                             currentPlaybackInformation.onTicksUpdated(ticks: $0, playbackInformation: $1)
                         }
                         .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
 
                     GestureView()
-                        .onPinch { state, scale in
-                            guard !gestureLocked else { return }
-                            guard state == .began || state == .changed else { return }
-                            if scale > 1, !aspectFilled {
-                                aspectFilled = true
-                                UIView.animate(withDuration: 0.2) {
-                                    videoPlayerManager.proxy.aspectFill(1)
-                                }
-                            } else if scale < 1, aspectFilled {
-                                aspectFilled = false
-                                UIView.animate(withDuration: 0.2) {
-                                    videoPlayerManager.proxy.aspectFill(0)
-                                }
-                            }
-                        }
-                        .onTap { unit, taps in
-                            guard !gestureLocked else { return }
-                            if currentOverlayType == nil {
-                                currentOverlayType = .main
-                            } else {
-                                currentOverlayType = nil
-                            }
-                        }
-                        .onLongPress { point in
-                            guard currentOverlayType == nil else { return }
-                            gestureLocked.toggle()
-                        }
-                        .onHorizontalSwipe(translation: 100, velocity: 2000) { translation in
-                            guard !gestureLocked else { return }
-                            if translation > 0 {
-                                videoPlayerManager.proxy.jumpForward(Int(jumpForwardLength.rawValue))
-                                flashContentProxy.flash(interval: 0.5) {
-                                    Image(systemName: jumpForwardLength.forwardImageLabel)
-                                        .font(.system(size: 48, weight: .regular, design: .default))
-                                        .foregroundColor(.white)
-                                }
-                            } else {
-                                videoPlayerManager.proxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                                flashContentProxy.flash(interval: 0.5) {
-                                    Image(systemName: jumpBackwardLength.backwardImageLabel)
-                                        .font(.system(size: 48, weight: .regular, design: .default))
-                                        .foregroundColor(.white)
-                                }
-                            }
-                        }
+                        .onHorizontalPan(handleHorizontalPan)
+                        .onHorizontalSwipe(translation: 100, velocity: 2000, handleHorizontalSwipe)
+                        .onLongPress(minimumDuration: 2, handleLongPress)
+                        .onPinch(handlePinchGesture)
+                        .onTap(samePointPadding: 20, samePointTimeout: 0.5, handleTapGesture)
+                        .onVerticalPan(handleVerticalPan)
 
                     Group {
                         switch currentOverlayType {
                         case .main:
                             Overlay()
-                        case .chapters:
-                            Overlay.ChapterOverlay()
-                        case .none:
+//                        case .chapters:
+//                            Overlay.ChapterOverlay()
+                        default:
                             EmptyView()
                         }
                     }
@@ -162,23 +133,12 @@ struct ItemVideoPlayer: View {
                     NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
                 }
                     .cornerRadius(20, corners: [.topLeft, .bottomLeft])
-                    .frame(width: 400)
                     .environmentObject(currentPlaybackInformation)
                     .environmentObject(splitContentViewProxy)
                     .environmentObject(viewModel)
                     .environmentObject(videoPlayerManager)
                     .environment(\.audioOffset, $audioOffset)
                     .environment(\.subtitleOffset, $subtitleOffset)
-                    .onAppear {
-                        let scenes = UIApplication.shared.connectedScenes
-                        let windowScene = scenes.first as? UIWindowScene
-                        windowScene?.windows.first?.overrideUserInterfaceStyle = .dark
-                    }
-                    .onDisappear {
-                        let scenes = UIApplication.shared.connectedScenes
-                        let windowScene = scenes.first as? UIWindowScene
-                        windowScene?.windows.first?.overrideUserInterfaceStyle = Defaults[.appAppearance].style
-                    }
             }
             .animation(.linear(duration: 0.1), value: currentOverlayType)
             .onChange(of: overlayTimer.isActive) { newValue in
@@ -253,6 +213,123 @@ struct ItemVideoPlayer: View {
             aspectFilled = false
             audioOffset = 0
             subtitleOffset = 0
+        }
+    }
+}
+
+// MARK: Gestures
+
+extension ItemVideoPlayer {
+    
+    private func handleHorizontalPan(
+        state: UIGestureRecognizer.State,
+        unitPoint: UnitPoint,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        guard !gestureLocked else { return }
+        
+        switch horizontalPanGesture {
+        case .none:
+            return
+        case .scrub:
+            return
+        default:
+            return
+        }
+    }
+    
+    private func handleHorizontalSwipe(
+        state: UIGestureRecognizer.State,
+        unitPoint: UnitPoint,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        guard !gestureLocked else { return }
+        
+        switch horizontalSwipeGesture {
+        case .none:
+            return
+        case .jump:
+            jumpAction(translation: translation)
+        }
+    }
+    
+    private func handleLongPress(point: UnitPoint) {
+        switch longPressGesture {
+        case .none:
+            return
+        case .gestureLock:
+            guard currentOverlayType == nil else { return }
+            gestureLocked.toggle()
+        }
+    }
+    
+    private func handlePinchGesture(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
+        guard !gestureLocked else { return }
+        
+        switch pinchGesture {
+        case .none:
+            return
+        case .aspectFill:
+            aspectFillAction(state: state, unitPoint: unitPoint, scale: scale)
+        }
+    }
+    
+    private func handleTapGesture(unitPoint: UnitPoint, taps: Int) {
+        guard !gestureLocked else { return }
+        
+        if currentOverlayType == nil {
+            currentOverlayType = .main
+        } else {
+            currentOverlayType = nil
+        }
+    }
+    
+    private func handleVerticalPan(
+        state: UIGestureRecognizer.State,
+        unitPoint: UnitPoint,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        guard !gestureLocked else { return }
+    }
+}
+
+// MARK: Gesture Actions
+
+extension ItemVideoPlayer {
+    
+    private func aspectFillAction(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
+        guard state == .began || state == .changed else { return }
+        if scale > 1, !aspectFilled {
+            aspectFilled = true
+            UIView.animate(withDuration: 0.2) {
+                videoPlayerManager.proxy.aspectFill(1)
+            }
+        } else if scale < 1, aspectFilled {
+            aspectFilled = false
+            UIView.animate(withDuration: 0.2) {
+                videoPlayerManager.proxy.aspectFill(0)
+            }
+        }
+    }
+    
+    private func jumpAction(translation: CGFloat) {
+        if translation > 0 {
+            videoPlayerManager.proxy.jumpForward(Int(jumpForwardLength.rawValue))
+            flashContentProxy.flash(interval: 0.5) {
+                Image(systemName: jumpForwardLength.forwardImageLabel)
+                    .font(.system(size: 48, weight: .regular, design: .default))
+                    .foregroundColor(.white)
+            }
+        } else {
+            videoPlayerManager.proxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+            flashContentProxy.flash(interval: 0.5) {
+                Image(systemName: jumpBackwardLength.backwardImageLabel)
+                    .font(.system(size: 48, weight: .regular, design: .default))
+                    .foregroundColor(.white)
+            }
         }
     }
 }

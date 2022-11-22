@@ -41,8 +41,6 @@ class VideoPlayerManager: ViewModel {
     @RouterObject
     private var router: ItemVideoPlayerCoordinator.Router?
 
-    // MARK: Properties
-
     @Published
     var audioTrackIndex: Int = -1
     @Published
@@ -123,22 +121,16 @@ class VideoPlayerManager: ViewModel {
         guard self.state != state else { return }
         self.state = state
         
-        if state == .buffering ||
-            state == .paused {
-            
-        }
-        
-        if state == .stopped {
-            if let nextViewModel,
-               autoPlay,
-               autoPlayEnabled {
-                selectNextViewModel()
-                
-                proxy.playNewMedia(nextViewModel.configuration)
-            } else {
-                router?.dismissCoordinator()
-            }
-        }
+        // TODO: Fix autoplay
+//        if state == .stopped {
+//            if let nextViewModel,
+//               autoPlay,
+//               autoPlayEnabled {
+//                selectNextViewModel()
+//
+//                proxy.playNewMedia(nextViewModel.configuration)
+//            }
+//        }
     }
 }
 

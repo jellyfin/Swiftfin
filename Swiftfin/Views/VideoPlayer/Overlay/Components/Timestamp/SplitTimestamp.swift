@@ -60,10 +60,10 @@ extension ItemVideoPlayer.Overlay {
 
                 switch trailingTimestampType {
                 case .timeLeft:
-                    Text(Double(viewModel.item.runTimeSeconds).timeLabel)
+                    Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel.prepending("-"))
                         .foregroundColor(.white)
                 case .totalTime:
-                    Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel.prepending("-"))
+                    Text(Double(viewModel.item.runTimeSeconds).timeLabel)
                         .foregroundColor(.white)
                 }
             }

@@ -18,6 +18,7 @@ extension BaseItemDto {
         let builder = DeviceProfileBuilder()
         // TODO: fix bitrate settings
         let tempOverkillBitrate = 360_000_000
+//        let tempOverkillBitrate = 30_000
         builder.setMaxBitrate(bitrate: tempOverkillBitrate)
         let profile = builder.buildProfile()
 

@@ -10,8 +10,8 @@ import SwiftUI
 
 struct ChevronButton: View {
 
-    let title: String
-    let subtitle: String?
+    private let title: String
+    private let subtitle: String?
     private var onSelect: () -> Void
 
     var body: some View {

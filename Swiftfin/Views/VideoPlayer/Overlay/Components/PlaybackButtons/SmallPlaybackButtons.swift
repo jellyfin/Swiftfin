@@ -18,6 +18,8 @@ extension ItemVideoPlayer.Overlay {
         private var jumpBackwardLength
         @Default(.videoPlayerJumpBackward)
         private var jumpForwardLength
+        @Default(.VideoPlayer.showJumpButtons)
+        private var showJumpButtons
 
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
@@ -26,11 +28,13 @@ extension ItemVideoPlayer.Overlay {
 
         var body: some View {
             HStack(spacing: 15) {
-                Button {
-                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                } label: {
-                    Image(systemName: jumpBackwardLength.backwardImageLabel)
-                        .font(.system(size: 24, weight: .heavy, design: .default))
+                if showJumpButtons {
+                    Button {
+                        videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+                    } label: {
+                        Image(systemName: jumpBackwardLength.backwardImageLabel)
+                            .font(.system(size: 24, weight: .bold, design: .default))
+                    }
                 }
 
                 Button {
@@ -52,15 +56,17 @@ extension ItemVideoPlayer.Overlay {
                         }
                     }
                     .font(.system(size: 28, weight: .heavy, design: .default))
-                    .frame(width: 50)
+                    .frame(width: 50, height: 50)
                     .contentShape(Rectangle())
                 }
 
-                Button {
-                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-                } label: {
-                    Image(systemName: jumpForwardLength.forwardImageLabel)
-                        .font(.system(size: 24, weight: .heavy, design: .default))
+                if showJumpButtons {
+                    Button {
+                        videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+                    } label: {
+                        Image(systemName: jumpForwardLength.forwardImageLabel)
+                            .font(.system(size: 24, weight: .bold, design: .default))
+                    }
                 }
             }
             .tint(Color.white)

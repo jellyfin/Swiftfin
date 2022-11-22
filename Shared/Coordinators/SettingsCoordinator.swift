@@ -18,7 +18,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var serverDetail = makeServerDetail
     @Route(.push)
-    var overlaySettings = makeOverlaySettings
+    var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
     @Route(.push)
@@ -29,8 +29,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #if !os(tvOS)
     @Route(.push)
     var quickConnect = makeQuickConnectSettings
-    @Route(.push)
-    var fontPicker = makeFontPicker
     #endif
 
     @ViewBuilder
@@ -38,9 +36,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
         ServerDetailView(viewModel: .init(server: SessionManager.main.currentLogin.server))
     }
 
-    @ViewBuilder
-    func makeOverlaySettings() -> some View {
-        VideoPlayerSettingsView()
+    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
+        VideoPlayerSettingsCoordinator()
     }
 
     @ViewBuilder
@@ -61,14 +58,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #if !os(tvOS)
     @ViewBuilder
     func makeQuickConnectSettings() -> some View {
-        let viewModel = QuickConnectSettingsViewModel()
-        QuickConnectSettingsView(viewModel: viewModel)
-    }
-
-    @ViewBuilder
-    func makeFontPicker() -> some View {
-        FontPickerView()
-            .navigationTitle(L10n.subtitleFont)
+        QuickConnectSettingsView(viewModel: .init())
     }
     #endif
 
