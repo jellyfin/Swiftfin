@@ -11,19 +11,23 @@ import VLCUI
 
 struct PlaybackInformationView: View {
 
-    @EnvironmentObject
-    private var currentPlaybackInformation: VideoPlayerManager.CurrentPlaybackInformation
-
+//    @EnvironmentObject
+//    private var currentPlaybackInformation: VideoPlayerManager.CurrentPlaybackInformation
+//
+//    var body: some View {
+//        Form {
+//            TextPairView(
+//                leading: "Read Bytes - Input",
+//                trailing: String(currentPlaybackInformation.playbackInformation?.numberOfReadBytesOnInput ?? 0)
+//            )
+//            TextPairView(
+//                leading: "Read Bytes - Demux",
+//                trailing: String(currentPlaybackInformation.playbackInformation?.numberOfReadBytesOnDemux ?? 0)
+//            )
+//        }
+//    }
+    
     var body: some View {
-        Form {
-            TextPairView(
-                leading: "Read Bytes - Input",
-                trailing: String(currentPlaybackInformation.playbackInformation?.numberOfReadBytesOnInput ?? 0)
-            )
-            TextPairView(
-                leading: "Read Bytes - Demux",
-                trailing: String(currentPlaybackInformation.playbackInformation?.numberOfReadBytesOnDemux ?? 0)
-            )
-        }
+        Text("-")
     }
 }

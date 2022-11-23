@@ -12,6 +12,7 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
+// TODO: organize
 struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
     
     @Binding
@@ -81,14 +82,15 @@ struct PlaybackSettingsView: View {
                         router.route(to: \.videoPlayerSettings)
                     }
                 
-                ChevronButton(title: "Playback Information")
-                    .onSelect {
-                        router.route(to: \.playbackInformation)
-                    }
+//                ChevronButton(title: "Playback Information")
+//                    .onSelect {
+//                        router.route(to: \.playbackInformation)
+//                    }
             } header: {
                 EmptyView()
             }
             
+            // TODO: second formatting
             BasicStepper(
                 title: "Audio Offset",
                 value: _audioOffset.wrappedValue,
@@ -105,28 +107,6 @@ struct PlaybackSettingsView: View {
                 range: -30_000 ... 30_000,
                 step: 100
             )
-            
-//            Stepper(value: _audioOffset.wrappedValue, in: -30_000 ... 30_000, step: 100) {
-//                HStack {
-//                    Text("Audio Offset")
-//                    
-//                    Spacer()
-//                    
-//                    Text("\(audioOffset)")
-//                        .foregroundColor(.secondary)
-//                }
-//            }
-//            
-//            Stepper(value: _subtitleOffset.wrappedValue, in: -30_000 ... 30_000, step: 100) {
-//                HStack {
-//                    Text("Subtitle Offset")
-//                    
-//                    Spacer()
-//                    
-//                    Text("\(subtitleOffset)")
-//                        .foregroundColor(.secondary)
-//                }
-//            }
 
             Section("Audio") {
                 ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in

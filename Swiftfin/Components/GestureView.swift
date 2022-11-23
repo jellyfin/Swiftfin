@@ -10,6 +10,8 @@ import Combine
 import Foundation
 import SwiftUI
 
+// TODO: Add translated unit point
+
 // state, point, velocity, translation
 typealias PanGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void
 // state, point, scale

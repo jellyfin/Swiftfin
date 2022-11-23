@@ -20,6 +20,7 @@ extension Double {
         return v
     }
 
+    // TODO: implement at Int
     var timeLabel: String {
         let hours = floor(magnitude / 3600)
         let minutes = magnitude.truncatingRemainder(dividingBy: 3600) / 60

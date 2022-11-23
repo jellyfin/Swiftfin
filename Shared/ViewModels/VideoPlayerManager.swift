@@ -13,6 +13,8 @@ import JellyfinAPI
 import Stinsen
 import VLCUI
 
+// TODO: Make online/offline
+
 class VideoPlayerManager: ViewModel {
     
     // Used for accessing live playback information and
@@ -34,9 +36,6 @@ class VideoPlayerManager: ViewModel {
     private var autoPlay
     @Default(.VideoPlayer.autoPlayEnabled)
     private var autoPlayEnabled
-    
-    @Injected(PlaybackManager.service)
-    private var playbackManager
     
     @RouterObject
     private var router: ItemVideoPlayerCoordinator.Router?

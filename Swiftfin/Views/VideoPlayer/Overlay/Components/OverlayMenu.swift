@@ -13,10 +13,6 @@ extension ItemVideoPlayer.Overlay {
 
     struct OverlayMenu: View {
 
-        @Environment(\.currentOverlayType)
-        @Binding
-        private var currentOverlayType
-
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
@@ -99,7 +95,7 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var chaptersButton: some View {
             Button {
-                currentOverlayType = .chapters
+//                currentOverlayType = .chapters
             } label: {
                 HStack {
                     L10n.chapters.text

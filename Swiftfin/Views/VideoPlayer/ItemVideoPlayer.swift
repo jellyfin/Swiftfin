@@ -13,12 +13,12 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
-struct ItemVideoPlayer: View {
+// TODO: organize
+// TODO: new overlay handler
+// TODO: gesture state handler
+// TODO: look at re-implementing object that holds current seconds
 
-    enum OverlayType {
-        case main
-        case chapters
-    }
+struct ItemVideoPlayer: View {
     
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
@@ -47,8 +47,6 @@ struct ItemVideoPlayer: View {
     private var router: ItemVideoPlayerCoordinator.Router
 
     @ObservedObject
-    private var currentPlaybackInformation: VideoPlayerManager.CurrentPlaybackInformation = .init()
-    @ObservedObject
     private var flashContentProxy: FlashContentProxy = .init()
     @ObservedObject
     private var overlayTimer: TimerProxy = .init()
@@ -56,24 +54,62 @@ struct ItemVideoPlayer: View {
     private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
+    
+    @ObservedObject
+    private var rotateContentProxy: RotateContentView.Proxy = .init()
 
     @State
     private var aspectFilled: Bool = false
     @State
     private var audioOffset: Int = 0
     @State
-    private var currentOverlayType: OverlayType?
-    @State
     private var gestureLocked: Bool = false
     @State
     private var isScrubbing: Bool = false
     @State
+    private var progress: CGFloat = 0
+    @State
+    private var seconds: Int = 0
+    @State
     private var scrubbedProgress: CGFloat = 0
     @State
+    private var scrubbedSeconds: Int = 0
+    @State
     private var subtitleOffset: Int = 0
+    
+    @State
+    private var beginningHorizontalPanProgress: CGFloat = 0
+    @State
+    private var beginningHorizontalPanUnit: CGFloat = 0
 
     init(manager: VideoPlayerManager) {
         self.videoPlayerManager = manager
+    }
+    
+    // TODO: move
+    
+    private func showOverlay() {
+        rotateContentProxy.update {
+            Overlay()
+                .environmentObject(flashContentProxy)
+                .environmentObject(overlayTimer)
+                .environmentObject(splitContentViewProxy)
+                .environmentObject(videoPlayerManager)
+                .environmentObject(videoPlayerManager.proxy)
+                .environmentObject(videoPlayerManager.currentViewModel!)
+                .environment(\.aspectFilled, $aspectFilled)
+                .environment(\.isScrubbing, $isScrubbing)
+                .environment(\.progress, $progress)
+                .environment(\.seconds, $seconds)
+                .environment(\.scrubbedProgress, $scrubbedProgress)
+                .environment(\.scrubbedSeconds, $scrubbedSeconds)
+        }
+    }
+    
+    private func showChapters() {
+        rotateContentProxy.update {
+            Overlay.ChapterOverlay()
+        }
     }
 
     @ViewBuilder
@@ -84,9 +120,14 @@ struct ItemVideoPlayer: View {
                 ZStack {
                     VLCVideoPlayer(configuration: viewModel.configuration)
                         .proxy(videoPlayerManager.proxy)
-                        .onTicksUpdated {
-                            videoPlayerManager.onTicksUpdated(ticks: $0, playbackInformation: $1)
-                            currentPlaybackInformation.onTicksUpdated(ticks: $0, playbackInformation: $1)
+                        .onTicksUpdated { ticks, playbackInformation in
+                            videoPlayerManager.onTicksUpdated(ticks: ticks, playbackInformation: playbackInformation)
+                            
+                            progress = CGFloat(ticks / 1000) / CGFloat(viewModel.item.runTimeSeconds)
+//                            seconds = Int(CGFloat(viewModel.item.runTimeSeconds) * progress)
+                            
+                            guard !isScrubbing else { return }
+                            scrubbedProgress = progress
                         }
                         .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
 
@@ -98,28 +139,9 @@ struct ItemVideoPlayer: View {
                         .onTap(samePointPadding: 20, samePointTimeout: 0.5, handleTapGesture)
                         .onVerticalPan(handleVerticalPan)
 
-                    Group {
-                        switch currentOverlayType {
-                        case .main:
-                            Overlay()
-//                        case .chapters:
-//                            Overlay.ChapterOverlay()
-                        default:
-                            EmptyView()
-                        }
-                    }
-                    .transition(.opacity)
-                    .environmentObject(currentPlaybackInformation)
-                    .environmentObject(flashContentProxy)
-                    .environmentObject(overlayTimer)
-                    .environmentObject(splitContentViewProxy)
-                    .environmentObject(videoPlayerManager)
-                    .environmentObject(videoPlayerManager.proxy)
-                    .environmentObject(viewModel)
-                    .environment(\.aspectFilled, $aspectFilled)
-                    .environment(\.currentOverlayType, $currentOverlayType)
-                    .environment(\.isScrubbing, $isScrubbing)
-                    .environment(\.scrubbedProgress, $scrubbedProgress)
+                    RotateContentView()
+                        .proxy(rotateContentProxy)
+                        .allowsHitTesting(false)
 
                     FlashContentView(proxy: flashContentProxy)
                         .allowsHitTesting(false)
@@ -133,17 +155,14 @@ struct ItemVideoPlayer: View {
                     NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
                 }
                     .cornerRadius(20, corners: [.topLeft, .bottomLeft])
-                    .environmentObject(currentPlaybackInformation)
                     .environmentObject(splitContentViewProxy)
                     .environmentObject(viewModel)
                     .environmentObject(videoPlayerManager)
                     .environment(\.audioOffset, $audioOffset)
                     .environment(\.subtitleOffset, $subtitleOffset)
             }
-            .animation(.linear(duration: 0.1), value: currentOverlayType)
-            .onChange(of: overlayTimer.isActive) { newValue in
-                guard !newValue else { return }
-                currentOverlayType = nil
+            .onChange(of: scrubbedProgress) { newValue in
+//                scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * newValue)
             }
     }
 
@@ -196,6 +215,21 @@ struct ItemVideoPlayer: View {
                 .font(.system(size: 36, weight: .regular, design: .default))
             }
         }
+        .onChange(of: isScrubbing) { newValue in
+
+            if newValue {
+                overlayTimer.stop()
+            } else {
+                overlayTimer.start(5)
+            }
+
+            guard !newValue else { return }
+            videoPlayerManager.proxy.setTime(.seconds(scrubbedSeconds))
+        }
+        .onChange(of: overlayTimer.isActive) { newValue in
+            guard !newValue else { return }
+//            rotateContentProxy.update(nil)
+        }
         .onChange(of: subtitleFontName) { newValue in
             videoPlayerManager.proxy.setSubtitleFont(newValue)
         }
@@ -233,7 +267,7 @@ extension ItemVideoPlayer {
         case .none:
             return
         case .scrub:
-            return
+            scrubAction(state: state, unitPoint: unitPoint, velocity: velocity, translation: translation)
         default:
             return
         }
@@ -260,7 +294,7 @@ extension ItemVideoPlayer {
         case .none:
             return
         case .gestureLock:
-            guard currentOverlayType == nil else { return }
+//            guard currentOverlayType == nil else { return }
             gestureLocked.toggle()
         }
     }
@@ -279,11 +313,17 @@ extension ItemVideoPlayer {
     private func handleTapGesture(unitPoint: UnitPoint, taps: Int) {
         guard !gestureLocked else { return }
         
-        if currentOverlayType == nil {
-            currentOverlayType = .main
+        if rotateContentProxy.currentView == nil {
+            showOverlay()
         } else {
-            currentOverlayType = nil
+            rotateContentProxy.update(nil)
         }
+        
+//        if currentOverlayType == nil {
+//            currentOverlayType = .main
+//        } else {
+//            currentOverlayType = nil
+//        }
     }
     
     private func handleVerticalPan(
@@ -331,5 +371,23 @@ extension ItemVideoPlayer {
                     .foregroundColor(.white)
             }
         }
+    }
+    
+    private func scrubAction(
+        state: UIGestureRecognizer.State,
+        unitPoint: UnitPoint,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        if state == .began {
+            isScrubbing = true
+            beginningHorizontalPanProgress = progress
+            beginningHorizontalPanUnit = unitPoint.x
+        } else if state == .ended {
+            isScrubbing = false
+            return
+        }
+        
+        scrubbedProgress = beginningHorizontalPanProgress - beginningHorizontalPanUnit + unitPoint.x
     }
 }

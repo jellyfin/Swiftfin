@@ -18,30 +18,37 @@ extension ItemVideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
+        @EnvironmentObject
+        private var viewModel: VideoPlayerViewModel
+        
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-
-        @EnvironmentObject
-        private var currentSecondsHandler: VideoPlayerManager.CurrentPlaybackInformation
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
-
+        @Environment(\.progress)
         @Binding
-        var currentSeconds: Int
+        private var progress: CGFloat
+        @Environment(\.seconds)
+        @Binding
+        private var seconds: Int
+        @Environment(\.scrubbedProgress)
+        @Binding
+        private var scrubbedProgress: CGFloat
+        @Environment(\.scrubbedSeconds)
+        @Binding
+        private var scrubbedSeconds: Int
 
         @ViewBuilder
         private var leadingTimestamp: some View {
             HStack(spacing: 2) {
 
-                Text(Double(currentSeconds).timeLabel)
+                Text(Double(scrubbedSeconds).timeLabel)
                     .foregroundColor(.white)
 
                 if isScrubbing && showCurrentTimeWhileScrubbing {
                     Text("/")
                         .foregroundColor(Color(UIColor.lightText))
 
-                    Text(Double(currentSecondsHandler.currentSeconds).timeLabel)
+                    Text(Double(seconds).timeLabel)
                         .foregroundColor(Color(UIColor.lightText))
                 }
             }
@@ -51,7 +58,7 @@ extension ItemVideoPlayer.Overlay {
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
                 if isScrubbing && showCurrentTimeWhileScrubbing {
-                    Text(Double(viewModel.item.runTimeSeconds - currentSecondsHandler.currentSeconds).timeLabel.prepending("-"))
+                    Text(Double(viewModel.item.runTimeSeconds - seconds).timeLabel.prepending("-"))
                         .foregroundColor(Color(UIColor.lightText))
 
                     Text("/")
@@ -60,7 +67,7 @@ extension ItemVideoPlayer.Overlay {
 
                 switch trailingTimestampType {
                 case .timeLeft:
-                    Text(Double(viewModel.item.runTimeSeconds - currentSeconds).timeLabel.prepending("-"))
+                    Text(Double(viewModel.item.runTimeSeconds - scrubbedSeconds).timeLabel.prepending("-"))
                         .foregroundColor(.white)
                 case .totalTime:
                     Text(Double(viewModel.item.runTimeSeconds).timeLabel)

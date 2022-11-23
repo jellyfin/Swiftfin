@@ -8,16 +8,14 @@
 
 import SwiftUI
 
+// TODO: Look at name spacing
+
 struct AudioOffset: EnvironmentKey {
     static let defaultValue: Binding<Int> = .constant(0)
 }
 
 struct AspectFilled: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
-}
-
-struct CurrentOverlayType: EnvironmentKey {
-    static let defaultValue: Binding<ItemVideoPlayer.OverlayType?> = .constant(nil)
 }
 
 struct IsScrubbing: EnvironmentKey {
@@ -28,14 +26,26 @@ struct PresentingPlaybackSettings: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
 
+struct Progress: EnvironmentKey {
+    static let defaultValue: Binding<CGFloat> = .constant(0)
+}
+
 struct SafeAreaInsetsKey: EnvironmentKey {
     static var defaultValue: EdgeInsets {
         UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
     }
 }
 
+struct Seconds: EnvironmentKey {
+    static let defaultValue: Binding<Int> = .constant(0)
+}
+
 struct ScrubbedProgress: EnvironmentKey {
     static let defaultValue: Binding<CGFloat> = .constant(0)
+}
+
+struct ScrubbedSeconds: EnvironmentKey {
+    static let defaultValue: Binding<Int> = .constant(0)
 }
 
 struct SubtitleOffset: EnvironmentKey {
@@ -54,11 +64,6 @@ extension EnvironmentValues {
         set { self[AspectFilled.self] = newValue }
     }
 
-    var currentOverlayType: Binding<ItemVideoPlayer.OverlayType?> {
-        get { self[CurrentOverlayType.self] }
-        set { self[CurrentOverlayType.self] = newValue }
-    }
-
     var isScrubbing: Binding<Bool> {
         get { self[IsScrubbing.self] }
         set { self[IsScrubbing.self] = newValue }
@@ -68,14 +73,29 @@ extension EnvironmentValues {
         get { self[PresentingPlaybackSettings.self] }
         set { self[PresentingPlaybackSettings.self] = newValue }
     }
+    
+    var progress: Binding<CGFloat> {
+        get { self[Progress.self] }
+        set { self[Progress.self] = newValue }
+    }
 
     var safeAreaInsets: EdgeInsets {
         self[SafeAreaInsetsKey.self]
+    }
+    
+    var seconds: Binding<Int> {
+        get { self[Seconds.self] }
+        set { self[Seconds.self] = newValue }
     }
 
     var scrubbedProgress: Binding<CGFloat> {
         get { self[ScrubbedProgress.self] }
         set { self[ScrubbedProgress.self] = newValue }
+    }
+    
+    var scrubbedSeconds: Binding<Int> {
+        get { self[ScrubbedSeconds.self] }
+        set { self[ScrubbedSeconds.self] = newValue }
     }
     
     var subtitleOffset: Binding<Int> {

@@ -130,7 +130,7 @@ struct VideoPlayerSettingsView: View {
                 EnumPicker(title: "Slider Type", selection: $sliderType)
             }
             
-            Section("Subtitle") {
+            Section {
 
                 ChevronButton(title: L10n.subtitleFont, subtitle: subtitleFontName)
                     .onSelect {
@@ -143,6 +143,11 @@ struct VideoPlayerSettingsView: View {
                     range: 8 ... 24,
                     step: 1
                 )
+            } header: {
+                Text("Subtitle")
+            } footer: {
+                // TODO: better wording
+                Text("Only text based subtitles are affected")
             }
 
             Section("Timestamp") {
@@ -157,10 +162,3 @@ struct VideoPlayerSettingsView: View {
         .navigationTitle("Video Player")
     }
 }
-
-//struct VideoPlayerSettingsView_Preview: PreviewProvider {
-//
-//    static var previews: some View {
-//        VideoPlayerSettingsView()
-//    }
-//}
