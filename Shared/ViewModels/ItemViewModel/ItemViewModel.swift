@@ -80,6 +80,10 @@ class ItemViewModel: ViewModel {
             } receiveValue: { viewModels in
                 self.videoPlayerViewModels = viewModels
                 self.selectedVideoPlayerViewModel = viewModels.first
+                if self.selectedVideoPlayerViewModel?.item.emptyStreams ?? true {
+                    self.playButtonItem = nil
+                    self.selectedVideoPlayerViewModel = nil
+                }
             }
             .store(in: &cancellables)
     }

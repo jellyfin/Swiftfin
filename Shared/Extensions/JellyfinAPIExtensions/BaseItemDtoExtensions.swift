@@ -150,6 +150,10 @@ extension BaseItemDto {
 
     // MARK: Missing and Unaired
 
+    var emptyStreams: Bool {
+        mediaStreams?.isEmpty ?? true
+    }
+    
     var missing: Bool {
         locationType == .virtual
     }

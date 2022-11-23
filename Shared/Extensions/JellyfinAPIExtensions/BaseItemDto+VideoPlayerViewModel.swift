@@ -45,7 +45,10 @@ extension BaseItemDto {
             var viewModels: [VideoPlayerViewModel] = []
 
             for currentMediaSource in mediaSources {
-                let videoStream = currentMediaSource.mediaStreams?.filter { $0.type == .video }.first
+                guard let videoStream = currentMediaSource.mediaStreams?.filter({ $0.type == .video }).first else {
+                    LogManager.service().debug("No videos stream")
+                    continue
+                }
                 let audioStreams = currentMediaSource.mediaStreams?.filter { $0.type == .audio } ?? []
                 let subtitleStreams = currentMediaSource.mediaStreams?.filter { $0.type == .subtitle } ?? []
 
@@ -106,8 +109,8 @@ extension BaseItemDto {
                     breakOnNonKeyFrames: true,
                     requireAvc: true,
                     transcodingMaxAudioChannels: 6,
-                    videoCodec: videoStream?.codec,
-                    videoStreamIndex: videoStream?.index,
+                    videoCodec: videoStream.codec,
+                    videoStreamIndex: videoStream.index,
                     enableAdaptiveBitrateStreaming: true
                 )
 
@@ -156,7 +159,7 @@ extension BaseItemDto {
                     hlsStreamURL: hlsStreamURL,
                     streamType: streamType,
                     response: response,
-                    videoStream: videoStream!,
+                    videoStream: videoStream,
                     audioStreams: audioStreams,
                     subtitleStreams: subtitleStreams,
                     chapters: modifiedSelfItem.chapters ?? [],
