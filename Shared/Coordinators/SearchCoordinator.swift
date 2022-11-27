@@ -17,7 +17,7 @@ final class SearchCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    @Route(.modal)
+    @Route(.push)
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
