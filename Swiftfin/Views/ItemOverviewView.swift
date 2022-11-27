@@ -17,8 +17,7 @@ struct ItemOverviewView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            Text(item.overview ?? "")
-                .font(.body)
+            ItemView.OverviewView(item: item)
                 .padding()
         }
         .navigationBarTitle(L10n.overview, displayMode: .inline)

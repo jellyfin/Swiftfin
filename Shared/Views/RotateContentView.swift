@@ -14,25 +14,33 @@ struct RotateContentView: UIViewRepresentable {
     private var proxy: Proxy
     
     func makeUIView(context: Context) -> UIRotateContentView {
-        UIRotateContentView(initialView: nil)
+        UIRotateContentView(initialView: nil, proxy: proxy)
     }
     
     func updateUIView(_ uiView: UIRotateContentView, context: Context) {
-        uiView.update(with: proxy.currentView)
+        
     }
     
     class Proxy: ObservableObject {
+    
+        private(set) var hasView: Bool = false
         
-        @Published
-        private(set) var currentView: UIView?
+        weak var rotateContentView: UIRotateContentView?
         
         func update(_ content: (() -> any View)?) {
             guard let content else {
-                currentView = nil
+                hasView = false
+                rotateContentView?.update(with: nil)
                 return
             }
             
-            currentView = UIHostingController(rootView: AnyView(content())).view
+            hasView = true
+            
+            let newHostingController = UIHostingController(rootView: AnyView(content()), ignoreSafeArea: true)
+            newHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+            newHostingController.view.backgroundColor = .clear
+            
+            rotateContentView?.update(with: newHostingController.view)
         }
     }
 }
@@ -51,9 +59,14 @@ extension RotateContentView {
 class UIRotateContentView: UIView {
 
     private(set) var currentView: UIView?
+    var proxy: RotateContentView.Proxy
 
-    init(initialView: UIView?) {
+    init(initialView: UIView?, proxy: RotateContentView.Proxy) {
+        self.proxy = proxy
+        
         super.init(frame: .zero)
+        
+        proxy.rotateContentView = self
         
         guard let initialView else { return }
 
@@ -106,5 +119,9 @@ class UIRotateContentView: UIView {
             self.currentView?.removeFromSuperview()
             self.currentView = newView
         }
+    }
+    
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        currentView?.hitTest(point, with: event)
     }
 }

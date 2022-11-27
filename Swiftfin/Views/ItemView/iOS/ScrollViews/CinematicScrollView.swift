@@ -94,7 +94,7 @@ extension ItemView {
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.6,
+                height: UIScreen.main.bounds.height * 0.8,
                 multiplier: 0.3
             ) {
                 headerView
@@ -158,26 +158,11 @@ extension ItemView.CinematicScrollView {
                         .foregroundColor(.white)
                 }
                 .frame(maxWidth: .infinity)
-
-                if let firstTagline = viewModel.item.taglines?.first {
-                    Text(firstTagline)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .foregroundColor(.white)
-                }
-
-                if let itemOverview = viewModel.item.overview {
-                    TruncatedTextView(text: itemOverview) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
-                    }
-                    .font(.footnote)
-                    .lineLimit(4)
+                
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(4)
+                    .taglineLineLimit(2)
                     .foregroundColor(.white)
-                    .fixedSize(horizontal: false, vertical: true)
-                }
 
                 ItemView.AttributesHStack(viewModel: viewModel)
             }

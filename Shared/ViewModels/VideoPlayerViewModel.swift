@@ -16,6 +16,16 @@ import VLCUI
 
 class VideoPlayerViewModel: ObservableObject {
 
+    let playbackURL: URL
+    let item: BaseItemDto
+    let videoStream: MediaStream
+    let audioStreams: [MediaStream]
+    let subtitleStreams: [MediaStream]
+    let selectedAudioStreamIndex: Int
+    let selectedSubtitleStreamIndex: Int
+    let chapters: [ChapterInfo.FullInfo]
+    let streamType: StreamType
+    
     var configuration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
@@ -34,16 +44,6 @@ class VideoPlayerViewModel: ObservableObject {
 
         return configuration
     }
-
-    let playbackURL: URL
-    let item: BaseItemDto
-    let videoStream: MediaStream
-    let audioStreams: [MediaStream]
-    let subtitleStreams: [MediaStream]
-    let selectedAudioStreamIndex: Int
-    let selectedSubtitleStreamIndex: Int
-    let chapters: [ChapterInfo.FullInfo]
-    let streamType: StreamType
 
     init(
         playbackURL: URL,
@@ -68,9 +68,8 @@ class VideoPlayerViewModel: ObservableObject {
         self.streamType = streamType
     }
 
-    func chapter(from progress: CGFloat) -> ChapterInfo.FullInfo? {
-        let seconds = Int(CGFloat(item.runTimeSeconds) * progress)
-        return chapters.first(where: { $0.secondsRange.contains(seconds) })
+    func chapter(from seconds: Int) -> ChapterInfo.FullInfo? {
+        chapters.first(where: { $0.secondsRange.contains(seconds) })
     }
 }
 

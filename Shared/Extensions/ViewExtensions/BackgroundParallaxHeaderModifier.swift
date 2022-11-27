@@ -34,6 +34,10 @@ struct BackgroundParallaxHeaderModifier<Header: View>: ViewModifier {
             header()
                 .offset(y: scrollViewOffset > 0 ? -scrollViewOffset * multiplier : 0)
                 .scaleEffect(scrollViewOffset < 0 ? (height - scrollViewOffset) / height : 1, anchor: .top)
+                .mask(alignment: .top) {
+                    Color.black
+                        .frame(height: max(0, height - scrollViewOffset))
+                }
                 .ignoresSafeArea()
         }
     }

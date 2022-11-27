@@ -21,7 +21,7 @@ extension ItemView {
                     viewModel.toggleWatchState()
                 } label: {
                     Group {
-                        if viewModel.isWatched {
+                        if viewModel.isPlayed {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.jellyfinPurple)
                         } else {

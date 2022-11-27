@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: rate cleanup
+
 struct CapsuleSlider<TrackMask: View, TopContent: View, BottomContent: View, LeadingContent: View, TrailingContent: View>: View {
 
     @Default(.VideoPlayer.Overlay.sliderColor)

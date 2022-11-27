@@ -15,24 +15,16 @@ struct TruncatedTextView: View {
     @State
     private var fullSize: CGFloat = 0
 
-    private var font: Font = .body
-    private var lineLimit: Int = 3
-    private var foregroundColor: Color = .primary
-
-    let text: String
-    let seeMoreAction: () -> Void
-    let seeMoreText = "... \(L10n.seeMore)"
-
-    public init(text: String, seeMoreAction: @escaping () -> Void) {
-        self.text = text
-        self.seeMoreAction = seeMoreAction
-    }
+    private var font: Font
+    private var lineLimit: Int
+    private let text: String
+    private var seeMoreAction: () -> Void
+    private let seeMoreText = "... \(L10n.seeMore)"
 
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Text(text)
                 .font(font)
-                .foregroundColor(foregroundColor)
                 .lineLimit(lineLimit)
                 .if(truncated) { text in
                     text.mask {
@@ -112,21 +104,25 @@ struct TruncatedTextView: View {
 }
 
 extension TruncatedTextView {
+    
+    init(text: String) {
+        self.init(
+            font: .body,
+            lineLimit: 1000,
+            text: text,
+            seeMoreAction: { }
+        )
+    }
+    
     func font(_ font: Font) -> Self {
-        var result = self
-        result.font = font
-        return result
+        copy(modifying: \.font, with: font)
     }
 
-    func lineLimit(_ lineLimit: Int) -> Self {
-        var result = self
-        result.lineLimit = lineLimit
-        return result
+    func lineLimit(_ limit: Int) -> Self {
+        copy(modifying: \.lineLimit, with: limit)
     }
-
-    func foregroundColor(_ color: Color) -> Self {
-        var result = self
-        result.foregroundColor = color
-        return result
+    
+    func seeMoreAction(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.seeMoreAction, with: action)
     }
 }

@@ -12,7 +12,6 @@ import JellyfinAPI
 
 extension MediaSourceInfo {
 
-    // TODO: Better throwing handling
     func itemVideoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
         let playbackURL: URL
         let streamType: StreamType
@@ -21,7 +20,6 @@ extension MediaSourceInfo {
             guard let fullTranscodeURL = URL(string: SessionManager.main.currentLogin.server.currentURI.appending(transcodingUrl)) else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL
             streamType = .transcode
-            print("Making transcoded stream")
         } else {
             playbackURL = VideosAPI.getVideoStreamWithRequestBuilder(
                 itemId: item.id!,
@@ -32,10 +30,9 @@ extension MediaSourceInfo {
             ).url
             
             streamType = .direct
-            print("Making direct stream")
         }
 
-        let videoStream = mediaStreams?.filter { $0.type == .video }.first ?? .init()
+        guard let videoStream = mediaStreams?.filter({ $0.type == .video }).first else { throw JellyfinAPIError("No video  stream") }
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
 

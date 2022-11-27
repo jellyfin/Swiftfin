@@ -15,9 +15,9 @@ extension ItemVideoPlayer.Overlay {
     struct ChapterOverlay: View {
 
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
+        private var currentProgressHandler: CurrentProgressHandler
         @EnvironmentObject
-        private var secondsHandler: VideoPlayerManager.CurrentPlaybackInformation
+        private var overlayTimer: TimerProxy
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
@@ -34,7 +34,7 @@ extension ItemVideoPlayer.Overlay {
                         items: viewModel.chapters
                     )
                     .imageOverlay { type in
-                        if case let PosterButtonType.item(info) = type, info.secondsRange.contains(secondsHandler.currentSeconds) {
+                        if case let PosterButtonType.item(info) = type, info.secondsRange.contains(currentProgressHandler.seconds) {
                             RoundedRectangle(cornerRadius: 6)
                                 .stroke(Color.jellyfinPurple, lineWidth: 8)
                         }
@@ -63,7 +63,7 @@ extension ItemVideoPlayer.Overlay {
                     .trailing {
                         Button {
                             if let currentChapter = viewModel.chapters
-                                .first(where: { $0.secondsRange.contains(secondsHandler.currentSeconds) })
+                                .first(where: { $0.secondsRange.contains(currentProgressHandler.seconds) })
                             {
                                 withAnimation {
                                     proxy.scrollTo(currentChapter.hashValue, anchor: .center)
@@ -79,7 +79,7 @@ extension ItemVideoPlayer.Overlay {
                     }
                     .onAppear {
                         if let currentChapter = viewModel.chapters
-                            .first(where: { $0.secondsRange.contains(secondsHandler.currentSeconds) })
+                            .first(where: { $0.secondsRange.contains(currentProgressHandler.seconds) })
                         {
                             proxy.scrollTo(currentChapter.hashValue, anchor: .center)
                         }

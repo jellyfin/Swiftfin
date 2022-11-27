@@ -32,7 +32,9 @@ struct NavBarOffsetView<Content: View>: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> UINavBarOffsetHostingController<Content> {
-        UINavBarOffsetHostingController(rootView: content())
+        let a = UINavBarOffsetHostingController(rootView: content())
+        a.additionalSafeAreaInsets = .zero
+        return a
     }
 
     func updateUIViewController(_ uiViewController: UINavBarOffsetHostingController<Content>, context: Context) {

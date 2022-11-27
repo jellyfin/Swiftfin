@@ -11,7 +11,7 @@ import Combine
 import JellyfinAPI
 import UIKit
 
-class NativePlayerViewController: AVPlayerViewController {
+class LegacyNativePlayerViewController: AVPlayerViewController {
 
     let viewModel: LegacyVideoPlayerViewModel
 
@@ -52,18 +52,6 @@ class NativePlayerViewController: AVPlayerViewController {
         self.player?.allowsExternalPlayback = true
     }
 
-    private func createMetadataItem(
-        for identifier: AVMetadataIdentifier,
-        value: Any
-    ) -> AVMetadataItem {
-        let item = AVMutableMetadataItem()
-        item.identifier = identifier
-        item.value = value as? NSCopying & NSObjectProtocol
-        // Specify "und" to indicate an undefined language.
-        item.extendedLanguageTag = "und"
-        return item.copy() as! AVMetadataItem
-    }
-
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -102,17 +90,13 @@ class NativePlayerViewController: AVPlayerViewController {
 
     private func play() {
         player?.play()
-
-        viewModel.sendPlayReport()
     }
 
     private func sendProgressReport(seconds: Double) {
         viewModel.setSeconds(Int64(seconds))
-        viewModel.sendProgressReport()
     }
 
     private func stop() {
         self.player?.pause()
-        viewModel.sendStopReport()
     }
 }

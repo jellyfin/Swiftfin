@@ -41,60 +41,43 @@ extension ItemView {
 
         var body: some View {
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    Color.clear
-                        .frame(height: UIScreen.main.bounds.height * 0.15)
-
-                    OverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
-                        .padding(.horizontal)
-                        .padding(.bottom)
-                        .background {
-                            BlurView(style: .systemThinMaterialDark)
-                                .mask {
-                                    LinearGradient(
-                                        stops: [
-                                            .init(color: .white.opacity(0), location: 0.2),
-                                            .init(color: .white.opacity(0.5), location: 0.3),
-                                            .init(color: .white, location: 0.55),
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                }
-                        }
-                        .overlay {
-                            Color.systemBackground
-                                .opacity(topOpacity)
-                        }
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        if let firstTagline = viewModel.item.taglines?.first {
-                            Text(firstTagline)
-                                .font(.body)
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(2)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-
-                        if let itemOverview = viewModel.item.overview {
-                            TruncatedTextView(text: itemOverview) {
-                                itemRouter.route(to: \.itemOverview, viewModel.item)
+                VStack(alignment: .leading, spacing: 0) {
+                    
+                    VStack {
+                        Spacer()
+                        
+                        OverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .background {
+                                BlurView(style: .systemThinMaterialDark)
+                                    .mask {
+                                        LinearGradient(
+                                            stops: [
+                                                .init(color: .white.opacity(0), location: 0.2),
+                                                .init(color: .white.opacity(0.5), location: 0.3),
+                                                .init(color: .white, location: 0.55),
+                                            ],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    }
                             }
-                            .font(.footnote)
-                            .lineLimit(4)
-                            .fixedSize(horizontal: false, vertical: true)
-                        }
+                            .overlay {
+                                Color.systemBackground
+                                    .opacity(topOpacity)
+                            }
                     }
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.systemBackground)
-                    .foregroundColor(.white)
+                    .frame(height: UIScreen.main.bounds.height * 0.45)
+
+                    ItemView.OverviewView(item: viewModel.item)
+                        .overviewLineLimit(4)
+                        .taglineLineLimit(2)
+                        .padding(.top)
+                        .padding(.horizontal)
 
                     content()
                         .padding(.vertical)
-                        .background(Color.systemBackground)
                 }
             }
             .edgesIgnoringSafeArea(.top)
@@ -106,7 +89,7 @@ extension ItemView {
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.35,
+                height: UIScreen.main.bounds.height * 0.45,
                 multiplier: 0.8
             ) {
                 headerView

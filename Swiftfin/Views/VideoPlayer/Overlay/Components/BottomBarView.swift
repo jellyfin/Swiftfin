@@ -28,22 +28,16 @@ extension ItemVideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
 
-//        @Environment(\.currentOverlayType)
-//        @Binding
-//        private var currentOverlayType
+        @Environment(\.currentOverlayType)
+        @Binding
+        private var currentOverlayType
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        @Environment(\.progress)
-        @Binding
-        private var progress: CGFloat
-        @Environment(\.scrubbedProgress)
-        @Binding
-        private var scrubbedProgress: CGFloat
-        @Environment(\.scrubbedSeconds)
-        @Binding
-        private var scrubbedSeconds: Int
 
+        @EnvironmentObject
+        private var currentProgressHandler: CurrentProgressHandler
+        
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
@@ -56,7 +50,7 @@ extension ItemVideoPlayer.Overlay {
 
         @ViewBuilder
         private var capsuleSlider: some View {
-            CapsuleSlider(progress: _scrubbedProgress.wrappedValue)
+            CapsuleSlider(progress: $currentProgressHandler.scrubbedProgress)
                 .rate($scrubbingRate)
                 .trackMask {
                     if chapterSlider {
@@ -93,7 +87,7 @@ extension ItemVideoPlayer.Overlay {
 
         @ViewBuilder
         private var thumbSlider: some View {
-            ThumbSlider(progress: _scrubbedProgress.wrappedValue)
+            ThumbSlider(progress: $currentProgressHandler.scrubbedProgress)
                 .rate($scrubbingRate)
                 .trackMask {
                     if chapterSlider {
@@ -131,7 +125,7 @@ extension ItemVideoPlayer.Overlay {
             VStack(spacing: 0) {
                 if chapterSlider && !viewModel.chapters.isEmpty {
                     HStack {
-                        if let currentChapter = viewModel.chapter(from: progress) {
+                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
                             Button {
 //                                currentOverlayType = .chapters
 //                                overlayTimer.stop()

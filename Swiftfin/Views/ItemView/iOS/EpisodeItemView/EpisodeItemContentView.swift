@@ -32,15 +32,10 @@ extension EpisodeItemView {
                 }
 
                 // MARK: Overview
-
-                if let itemOverview = viewModel.item.overview {
-                    TruncatedTextView(text: itemOverview) {
-                        router.route(to: \.itemOverview, viewModel.item)
-                    }
-                    .font(.footnote)
-                    .lineLimit(5)
+                
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(4)
                     .padding(.horizontal)
-                }
 
                 // MARK: Genres
 

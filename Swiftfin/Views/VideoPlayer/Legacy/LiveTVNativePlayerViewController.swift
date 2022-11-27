@@ -11,7 +11,7 @@ import Combine
 import JellyfinAPI
 import UIKit
 
-class LiveTVNativePlayerViewController: AVPlayerViewController {
+class LiveTVLegacyNativePlayerViewController: AVPlayerViewController {
 
     let viewModel: LegacyVideoPlayerViewModel
 

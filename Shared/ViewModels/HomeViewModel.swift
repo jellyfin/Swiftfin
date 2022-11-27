@@ -146,15 +146,15 @@ final class HomeViewModel: ViewModel {
         ItemsAPI.getResumeItems(
             userId: SessionManager.main.currentLogin.user.id,
             limit: 20,
-            fields: [
-                .primaryImageAspectRatio,
-                .seriesPrimaryImage,
-                .seasonUserData,
-                .overview,
-                .genres,
-                .people,
-                .chapters,
-            ],
+//            fields: [
+//                .primaryImageAspectRatio,
+//                .seriesPrimaryImage,
+//                .seasonUserData,
+//                .overview,
+//                .genres,
+//                .people,
+//                .chapters,
+//            ],
             enableUserData: true
         )
         .trackActivity(loading)

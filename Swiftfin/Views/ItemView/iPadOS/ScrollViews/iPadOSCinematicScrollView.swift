@@ -125,12 +125,11 @@ extension ItemView.iPadOSCinematicScrollView {
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.white)
                     }
-
-                    TruncatedTextView(text: viewModel.item.overview ?? L10n.noOverviewAvailable) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
-                    }
-                    .lineLimit(3)
-                    .foregroundColor(.white)
+                    
+                    ItemView.OverviewView(item: viewModel.item)
+                        .overviewLineLimit(3)
+                        .taglineLineLimit(1)
+                        .foregroundColor(.white)
 
                     HStack(spacing: 30) {
                         ItemView.AttributesHStack(viewModel: viewModel)

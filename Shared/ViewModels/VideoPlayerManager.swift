@@ -17,21 +17,6 @@ import VLCUI
 
 class VideoPlayerManager: ViewModel {
     
-    // Used for accessing live playback information and
-    // updating only the views that request it
-    class CurrentPlaybackInformation: ObservableObject {
-
-        @Published
-        var currentSeconds: Int = 0
-        @Published
-        var playbackInformation: VLCVideoPlayer.PlaybackInformation?
-
-        func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-            self.currentSeconds = ticks / 1000
-            self.playbackInformation = playbackInformation
-        }
-    }
-    
     @Default(.VideoPlayer.autoPlay)
     private var autoPlay
     @Default(.VideoPlayer.autoPlayEnabled)
@@ -63,7 +48,6 @@ class VideoPlayerManager: ViewModel {
     @Published
     var nextViewModel: VideoPlayerViewModel?
     
-    private let playstateTimer: TimerProxy = .init()
     let proxy: VLCVideoPlayer.Proxy = .init()
 
     // MARK: init

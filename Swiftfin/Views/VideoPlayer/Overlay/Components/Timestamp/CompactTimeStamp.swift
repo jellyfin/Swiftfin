@@ -19,23 +19,13 @@ extension ItemVideoPlayer.Overlay {
         private var trailingTimestampType
 
         @EnvironmentObject
+        private var currentProgressHandler: CurrentProgressHandler
+        @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
         
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        @Environment(\.progress)
-        @Binding
-        private var progress: CGFloat
-        @Environment(\.seconds)
-        @Binding
-        private var seconds: Int
-        @Environment(\.scrubbedProgress)
-        @Binding
-        private var scrubbedProgress: CGFloat
-        @Environment(\.scrubbedSeconds)
-        @Binding
-        private var scrubbedSeconds: Int
 
         @ViewBuilder
         private var leadingTimestamp: some View {
@@ -49,7 +39,7 @@ extension ItemVideoPlayer.Overlay {
             } label: {
                 HStack(spacing: 2) {
 
-                    Text(Double(scrubbedSeconds).timeLabel)
+                    Text(Double(currentProgressHandler.scrubbedSeconds).timeLabel)
                         .foregroundColor(.white)
 
                     Text("/")
@@ -57,7 +47,7 @@ extension ItemVideoPlayer.Overlay {
 
                     switch trailingTimestampType {
                     case .timeLeft:
-                        Text(Double(viewModel.item.runTimeSeconds - scrubbedSeconds).timeLabel.prepending("-"))
+                        Text(Double(viewModel.item.runTimeSeconds - currentProgressHandler.scrubbedSeconds).timeLabel.prepending("-"))
                             .foregroundColor(Color(UIColor.lightText))
                     case .totalTime:
                         Text(Double(viewModel.item.runTimeSeconds).timeLabel)
@@ -71,11 +61,11 @@ extension ItemVideoPlayer.Overlay {
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
 
-                Text(Double(seconds).timeLabel)
+                Text(Double(currentProgressHandler.seconds).timeLabel)
 
                 Text("/")
 
-                Text(Double(viewModel.item.runTimeSeconds - seconds).timeLabel)
+                Text(Double(viewModel.item.runTimeSeconds - currentProgressHandler.seconds).timeLabel)
             }
             .foregroundColor(Color(UIColor.lightText))
         }

@@ -15,12 +15,22 @@ import UIKit
 class ItemViewModel: ViewModel {
 
     @Published
-    var item: BaseItemDto
+    var item: BaseItemDto {
+        willSet {
+            switch item.type {
+            case .episode, .movie:
+                if !item.missing && !item.unaired {
+                    playButtonItem = newValue
+                }
+            default: ()
+            }
+        }
+    }
     @Published
     var playButtonItem: BaseItemDto? {
-        didSet {
-            if let playButtonItem = playButtonItem {
-                refreshItemVideoPlayerViewModel(for: playButtonItem)
+        willSet {
+            if let newValue {
+                refreshItemVideoPlayerViewModel(for: newValue)
             }
         }
     }
@@ -30,23 +40,23 @@ class ItemViewModel: ViewModel {
     @Published
     var specialFeatures: [BaseItemDto] = []
     @Published
-    var isWatched = false
+    var isPlayed = false
     @Published
     var isFavorited = false
+    
+    @Published
+    var selectedMediaSource: MediaSourceInfo?
 
-    @Published
-    var selectedVideoPlayerViewModel: VideoPlayerViewModel?
-    @Published
-    var videoPlayerViewModels: [VideoPlayerViewModel] = []
-
-    @Published
-    var legacyselectedVideoPlayerViewModel: LegacyVideoPlayerViewModel?
-    @Published
-    var legacyvideoPlayerViewModels: [LegacyVideoPlayerViewModel] = []
+//    @Published
+//    var selectedVideoPlayerViewModel: VideoPlayerViewModel?
+//    @Published
+//    var videoPlayerViewModels: [VideoPlayerViewModel] = []
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
+        
+        getFullItem()
 
         switch item.type {
         case .episode, .movie:
@@ -57,13 +67,31 @@ class ItemViewModel: ViewModel {
         }
 
         isFavorited = item.userData?.isFavorite ?? false
-        isWatched = item.userData?.played ?? false
+        isPlayed = item.userData?.played ?? false
 
         getSimilarItems()
         getSpecialFeatures()
         refreshItemVideoPlayerViewModel(for: item)
 
         Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
+    }
+    
+    private func getFullItem() {
+        guard let itemID = item.id else { logger.error("Unable to retrieve full item: no item ID"); return }
+        
+        ItemsAPI.getItemsByUserId(
+            userId: SessionManager.main.currentLogin.user.id,
+            fields: ItemFields.allCases,
+            enableUserData: true,
+            ids: [itemID]
+        )
+        .sink { completion in
+            self.handleAPIRequestError(completion: completion)
+        } receiveValue: { [weak self] response in
+            guard let self, let fullItem = response.items?.first else { self?.logger.error("Unable to retrieve full item: item not in response"); return }
+            self.item = fullItem
+        }
+        .store(in: &cancellables)
     }
 
     @objc
@@ -83,14 +111,14 @@ class ItemViewModel: ViewModel {
         guard item.type == .episode || item.type == .movie,
               !item.missing else { return }
 
-        item.createItemVideoPlayerViewModel()
-            .sink { completion in
-                self.handleAPIRequestError(completion: completion)
-            } receiveValue: { viewModels in
-                self.videoPlayerViewModels = viewModels
-                self.selectedVideoPlayerViewModel = viewModels.first
-            }
-            .store(in: &cancellables)
+//        item.createItemVideoPlayerViewModel()
+//            .sink { completion in
+//                self.handleAPIRequestError(completion: completion)
+//            } receiveValue: { viewModels in
+//                self.videoPlayerViewModels = viewModels
+//                self.selectedVideoPlayerViewModel = viewModels.first
+//            }
+//            .store(in: &cancellables)
     }
 
     func playButtonText() -> String {
@@ -140,8 +168,8 @@ class ItemViewModel: ViewModel {
     }
 
     func toggleWatchState() {
-        let current = isWatched
-        isWatched.toggle()
+        let current = isPlayed
+        isPlayed.toggle()
         let request: AnyPublisher<UserItemDataDto, Error>
 
         if current {
@@ -155,7 +183,7 @@ class ItemViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 switch completion {
                 case .failure:
-                    self?.isWatched = !current
+                    self?.isPlayed = !current
                 case .finished: ()
                 }
                 self?.handleAPIRequestError(completion: completion)

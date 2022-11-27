@@ -27,7 +27,7 @@ extension ItemView {
                     UIDevice.impact(.light)
                     viewModel.toggleWatchState()
                 } label: {
-                    if viewModel.isWatched {
+                    if viewModel.isPlayed {
                         Image(systemName: "checkmark.circle.fill")
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(
@@ -58,6 +58,10 @@ extension ItemView {
                 .buttonStyle(.plain)
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
+                }
+                
+                if (viewModel.item.mediaSources?.count ?? 0) > 1 {
+                    
                 }
 
 //                if viewModel.videoPlayerViewModels.count > 1 {

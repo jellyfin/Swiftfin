@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -27,6 +28,9 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
             self.viewModel = viewModel
         }
     }
+    
+    @Default(.Experimental.nativePlayer)
+    private var nativePlayer
 
     let stack = NavigationStack(initial: \ItemVideoPlayerCoordinator.start)
 
@@ -42,9 +46,17 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         if let item = parameters.item {
-            ItemVideoPlayer(manager: .init(item: item))
+            if nativePlayer {
+                NativeVideoPlayer(manager: .init(item: item))
+            } else {
+                ItemVideoPlayer(manager: .init(item: item))
+            }
         } else if let viewModel = parameters.viewModel {
-            ItemVideoPlayer(manager: .init(viewModel: viewModel))
+            if nativePlayer {
+                NativeVideoPlayer(manager: .init(viewModel: viewModel))
+            } else {
+                ItemVideoPlayer(manager: .init(viewModel: viewModel))
+            }
         } else {
             EmptyView()
         }
