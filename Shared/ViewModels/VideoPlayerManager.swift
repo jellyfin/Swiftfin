@@ -52,20 +52,14 @@ class VideoPlayerManager: ViewModel {
 
     // MARK: init
 
-    init(viewModel: VideoPlayerViewModel) {
-        self.currentViewModel = viewModel
+    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
         super.init()
         
-        getAdjacentEpisodes(for: viewModel.item)
-    }
-
-    init(item: BaseItemDto) {
-        super.init()
-        item.createItemVideoPlayerViewModel()
+        item.createVideoPlayerViewModel(with: mediaSource)
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
-            } receiveValue: { viewModels in
-                self.currentViewModel = viewModels[0]
+            } receiveValue: { viewModel in
+                self.currentViewModel = viewModel
             }
             .store(in: &cancellables)
     }

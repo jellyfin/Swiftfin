@@ -60,32 +60,29 @@ extension ItemView {
                     view.frame(maxWidth: .infinity)
                 }
                 
-                if (viewModel.item.mediaSources?.count ?? 0) > 1 {
-                    
+                if let playButtonItem = viewModel.playButtonItem,
+                    let mediaSources = playButtonItem.mediaSources,
+                    mediaSources.count > 1 {
+                    Menu {
+                        ForEach(mediaSources, id: \.hashValue) { mediaSource in
+                            Button {
+                                viewModel.selectedMediaSource = mediaSource
+                            } label: {
+                                if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
+                                    Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
+                                } else {
+                                    Text(mediaSource.displayTitle)
+                                }
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "list.dash")
+                    }
+                    .buttonStyle(.plain)
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
                 }
-
-//                if viewModel.videoPlayerViewModels.count > 1 {
-//                    Menu {
-//                        ForEach(viewModel.videoPlayerViewModels, id: \.versionName) { viewModelOption in
-//                            Button {
-//                                viewModel.selectedVideoPlayerViewModel = viewModelOption
-//                            } label: {
-//                                if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
-//                                    Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
-//                                } else {
-//                                    Text(viewModelOption.versionName ?? L10n.noTitle)
-//                                }
-//                            }
-//                        }
-//                    } label: {
-//                        HStack(spacing: 5) {
-//                            Image(systemName: "list.dash")
-//                        }
-//                    }
-//                    .if(equalSpacing) { view in
-//                        view.frame(maxWidth: .infinity)
-//                    }
-//                }
             }
         }
     }

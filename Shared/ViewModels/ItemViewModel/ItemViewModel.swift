@@ -30,31 +30,27 @@ class ItemViewModel: ViewModel {
     var playButtonItem: BaseItemDto? {
         willSet {
             if let newValue {
-                refreshItemVideoPlayerViewModel(for: newValue)
+                selectedMediaSource = newValue.mediaSources?.first
             }
         }
     }
 
     @Published
-    var similarItems: [BaseItemDto] = []
-    @Published
-    var specialFeatures: [BaseItemDto] = []
+    var isFavorited = false
     @Published
     var isPlayed = false
     @Published
-    var isFavorited = false
-    
-    @Published
     var selectedMediaSource: MediaSourceInfo?
-
-//    @Published
-//    var selectedVideoPlayerViewModel: VideoPlayerViewModel?
-//    @Published
-//    var videoPlayerViewModels: [VideoPlayerViewModel] = []
+    @Published
+    var similarItems: [BaseItemDto] = []
+    @Published
+    var specialFeatures: [BaseItemDto] = []
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
+        
+        self.selectedMediaSource = item.mediaSources?.first
         
         getFullItem()
 
@@ -143,7 +139,7 @@ class ItemViewModel: ViewModel {
             itemId: item.id!,
             userId: SessionManager.main.currentLogin.user.id,
             limit: 20,
-            fields: ItemFields.allCases
+            fields: ItemFields.minimumCases
         )
         .trackActivity(loading)
         .sink(receiveCompletion: { [weak self] completion in

@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire",
+      "state" : {
+        "revision" : "78424be314842833c04bc3bef5b72e85fff99204",
+        "version" : "5.6.4"
+      }
+    },
+    {
       "identity" : "anycodable",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Flight-School/AnyCodable",
@@ -151,15 +160,6 @@
       "state" : {
         "branch" : "master",
         "revision" : "5b9f14eb3ec5d48cec8b3e4462dcc554d4bff2a8"
-      }
-    },
-    {
-      "identity" : "swiftyjson",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftyJSON/SwiftyJSON",
-      "state" : {
-        "revision" : "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
-        "version" : "5.0.1"
       }
     },
     {

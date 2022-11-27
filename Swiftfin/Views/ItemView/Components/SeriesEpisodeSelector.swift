@@ -30,7 +30,8 @@ struct SeriesEpisodeSelector: View {
             EpisodeContent(type: type)
         }
         .onSelect { item in
-            mainRouter.route(to: \.videoPlayer, .init(item: item))
+            guard let mediaSource = item.mediaSources?.first else { return }
+            mainRouter.route(to: \.videoPlayer, .init(item: item, mediaSource: mediaSource))
         }
     }
 }

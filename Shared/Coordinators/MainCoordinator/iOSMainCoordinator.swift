@@ -10,6 +10,7 @@ import Combine
 import Defaults
 import Factory
 import Foundation
+import JellyfinAPI
 import Nuke
 import Stinsen
 import SwiftUI

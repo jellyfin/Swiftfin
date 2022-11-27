@@ -39,7 +39,7 @@ extension ItemVideoPlayer.Overlay {
             } label: {
                 HStack(spacing: 2) {
 
-                    Text(Double(currentProgressHandler.scrubbedSeconds).timeLabel)
+                    Text(currentProgressHandler.scrubbedSeconds.timeLabel)
                         .foregroundColor(.white)
 
                     Text("/")
@@ -47,10 +47,10 @@ extension ItemVideoPlayer.Overlay {
 
                     switch trailingTimestampType {
                     case .timeLeft:
-                        Text(Double(viewModel.item.runTimeSeconds - currentProgressHandler.scrubbedSeconds).timeLabel.prepending("-"))
+                        Text((viewModel.item.runTimeSeconds - currentProgressHandler.scrubbedSeconds).timeLabel.prepending("-"))
                             .foregroundColor(Color(UIColor.lightText))
                     case .totalTime:
-                        Text(Double(viewModel.item.runTimeSeconds).timeLabel)
+                        Text(viewModel.item.runTimeSeconds.timeLabel)
                             .foregroundColor(Color(UIColor.lightText))
                     }
                 }
@@ -61,11 +61,11 @@ extension ItemVideoPlayer.Overlay {
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
 
-                Text(Double(currentProgressHandler.seconds).timeLabel)
+                Text(currentProgressHandler.seconds.timeLabel)
 
                 Text("/")
 
-                Text(Double(viewModel.item.runTimeSeconds - currentProgressHandler.seconds).timeLabel)
+                Text((viewModel.item.runTimeSeconds - currentProgressHandler.seconds).timeLabel)
             }
             .foregroundColor(Color(UIColor.lightText))
         }

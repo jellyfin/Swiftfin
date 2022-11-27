@@ -37,9 +37,3 @@ extension Array {
         return removeFirst()
     }
 }
-
-// extension ArraySlice {
-//    var asArray: [Element] {
-//        Array(self)
-//    }
-// }

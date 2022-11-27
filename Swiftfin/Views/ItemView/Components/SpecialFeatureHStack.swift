@@ -25,7 +25,8 @@ extension ItemView {
                 items: items.map { .item($0) }
             )
             .onSelect { item in
-                router.route(to: \.videoPlayer, .init(item: item))
+                guard let mediaSource = item.mediaSources?.first else { return }
+                router.route(to: \.videoPlayer, .init(item: item, mediaSource: mediaSource))
             }
         }
     }

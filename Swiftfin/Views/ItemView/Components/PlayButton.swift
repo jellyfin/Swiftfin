@@ -24,11 +24,11 @@ extension ItemView {
 
         var body: some View {
             Button {
-//                if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-//                    mainRouter.route(to: \.videoPlayer, .init(viewModel: selectedVideoPlayerViewModel))
-//                } else {
-//                    logger.error("Attempted to play item but no playback information available")
-//                }
+                if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
+                    mainRouter.route(to: \.videoPlayer, .init(item: playButtonItem, mediaSource: selectedMediaSource))
+                } else {
+                    logger.error("No media source available")
+                }
             } label: {
                 ZStack {
                     Rectangle()

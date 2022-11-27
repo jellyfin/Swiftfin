@@ -13,20 +13,10 @@ import Stinsen
 import SwiftUI
 
 final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
-
+    
     struct Parameters {
-        let item: BaseItemDto?
-        let viewModel: VideoPlayerViewModel?
-
-        init(item: BaseItemDto) {
-            self.item = item
-            self.viewModel = nil
-        }
-
-        init(viewModel: VideoPlayerViewModel) {
-            self.item = nil
-            self.viewModel = viewModel
-        }
+        let item: BaseItemDto
+        let mediaSource: MediaSourceInfo
     }
     
     @Default(.Experimental.nativePlayer)
@@ -45,20 +35,10 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        if let item = parameters.item {
-            if nativePlayer {
-                NativeVideoPlayer(manager: .init(item: item))
-            } else {
-                ItemVideoPlayer(manager: .init(item: item))
-            }
-        } else if let viewModel = parameters.viewModel {
-            if nativePlayer {
-                NativeVideoPlayer(manager: .init(viewModel: viewModel))
-            } else {
-                ItemVideoPlayer(manager: .init(viewModel: viewModel))
-            }
+        if nativePlayer {
+            NativeVideoPlayer(manager: .init(item: parameters.item, mediaSource: parameters.mediaSource))
         } else {
-            EmptyView()
+            ItemVideoPlayer(manager: .init(item: parameters.item, mediaSource: parameters.mediaSource))
         }
     }
 }

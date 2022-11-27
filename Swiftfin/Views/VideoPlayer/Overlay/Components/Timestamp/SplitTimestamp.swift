@@ -31,14 +31,14 @@ extension ItemVideoPlayer.Overlay {
         private var leadingTimestamp: some View {
             HStack(spacing: 2) {
 
-                Text(Double(currentProgressHandler.scrubbedSeconds).timeLabel)
+                Text(currentProgressHandler.scrubbedSeconds.timeLabel)
                     .foregroundColor(.white)
 
                 if isScrubbing && showCurrentTimeWhileScrubbing {
                     Text("/")
                         .foregroundColor(Color(UIColor.lightText))
 
-                    Text(Double(currentProgressHandler.seconds).timeLabel)
+                    Text(currentProgressHandler.seconds.timeLabel)
                         .foregroundColor(Color(UIColor.lightText))
                 }
             }
@@ -48,7 +48,7 @@ extension ItemVideoPlayer.Overlay {
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
                 if isScrubbing && showCurrentTimeWhileScrubbing {
-                    Text(Double(viewModel.item.runTimeSeconds - currentProgressHandler.seconds).timeLabel.prepending("-"))
+                    Text((viewModel.item.runTimeSeconds - currentProgressHandler.seconds).timeLabel.prepending("-"))
                         .foregroundColor(Color(UIColor.lightText))
 
                     Text("/")
@@ -57,10 +57,10 @@ extension ItemVideoPlayer.Overlay {
 
                 switch trailingTimestampType {
                 case .timeLeft:
-                    Text(Double(viewModel.item.runTimeSeconds - currentProgressHandler.scrubbedSeconds).timeLabel.prepending("-"))
+                    Text((viewModel.item.runTimeSeconds - currentProgressHandler.scrubbedSeconds).timeLabel.prepending("-"))
                         .foregroundColor(.white)
                 case .totalTime:
-                    Text(Double(viewModel.item.runTimeSeconds).timeLabel)
+                    Text(viewModel.item.runTimeSeconds.timeLabel)
                         .foregroundColor(.white)
                 }
             }

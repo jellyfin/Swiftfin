@@ -132,14 +132,14 @@ struct ItemVideoPlayer: View {
                         .onVerticalPan(handleVerticalPan)
                     
                     FlashContentView(proxy: flashContentProxy)
-                        .allowsHitTesting(false) 
+                        .allowsHitTesting(false)
                     
                     Group {
                         Overlay()
                             .opacity(currentOverlayType == .main ? 1 : 0)
                         
-                        Overlay.ChapterOverlay()
-                            .opacity(currentOverlayType == .chapters ? 1 : 0)
+//                        Overlay.ChapterOverlay()
+//                            .opacity(currentOverlayType == .chapters ? 1 : 0)
                     }
                     .environmentObject(currentProgressHandler)
                     .environmentObject(flashContentProxy)
