@@ -12,6 +12,10 @@ import VLCUI
 extension ItemVideoPlayer.Overlay {
 
     struct OverlayMenu: View {
+        
+        @Environment(\.currentOverlayType)
+        @Binding
+        private var currentOverlayType
 
         @EnvironmentObject
         private var overlayTimer: TimerProxy
@@ -95,7 +99,8 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var chaptersButton: some View {
             Button {
-//                currentOverlayType = .chapters
+                currentOverlayType = .chapters
+                overlayTimer.stop()
             } label: {
                 HStack {
                     L10n.chapters.text
@@ -121,7 +126,9 @@ extension ItemVideoPlayer.Overlay {
 
         var body: some View {
             Menu {
-                subtitleTrackMenu
+                if !viewModel.item.subtitleStreams.isEmpty {
+                    subtitleTrackMenu
+                }
 
                 audioTrackMenu
 

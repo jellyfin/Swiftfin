@@ -74,6 +74,9 @@ extension Defaults.Keys {
         static let showAspectFill: Key<Bool> = .init("videoPlayer.showAspectFill", default: true, suite: .generalSuite)
         static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
         
+        static let showAudioTrackMenu: Key<Bool> = .init("showAudioTrackMenu", default: false, suite: .generalSuite)
+        static let showSubtitleTrackMenu: Key<Bool> = .init("showSubtitleTrackMenu", default: false, suite: .generalSuite)
+        
         enum Gesture {
             static let horizontalPanGesture: Key<PanAction> = .init("videoPlayer.horizontalPanGesture", default: .none, suite: .generalSuite)
             static let horizontalSwipeGesture: Key<SwipeAction> = .init("videoPlayer.horizontalSwipeGesture", default: .none, suite: .generalSuite)

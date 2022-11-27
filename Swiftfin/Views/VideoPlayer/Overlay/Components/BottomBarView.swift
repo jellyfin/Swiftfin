@@ -125,10 +125,10 @@ extension ItemVideoPlayer.Overlay {
             VStack(spacing: 0) {
                 if chapterSlider && !viewModel.chapters.isEmpty {
                     HStack {
-                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
+                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.scrubbedSeconds) {
                             Button {
-//                                currentOverlayType = .chapters
-//                                overlayTimer.stop()
+                                currentOverlayType = .chapters
+                                overlayTimer.stop()
                             } label: {
                                 HStack {
                                     Text(currentChapter.displayTitle)

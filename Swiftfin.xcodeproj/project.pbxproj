@@ -1819,6 +1819,7 @@
 		E11245B228D97D4A00D8A977 /* Overlay */ = {
 			isa = PBXGroup;
 			children = (
+				E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */,
 				E11245B028D919CD00D8A977 /* Overlay.swift */,
 				E11245B528D97EC200D8A977 /* Components */,
 			);
@@ -1830,7 +1831,6 @@
 			children = (
 				E1E9017E28DAB15F001B1594 /* ActionButtons.swift */,
 				E11245B328D97D5D00D8A977 /* BottomBarView.swift */,
-				E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */,
 				E1CFE27F28FA606800B7D34C /* ChapterTrack.swift */,
 				E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */,
 				E1721FAC28FB801000762992 /* PlaybackButtons */,

@@ -19,6 +19,8 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
+        private var videoPlayerManager: VideoPlayerManager
+        @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
@@ -26,6 +28,7 @@ extension ItemVideoPlayer.Overlay {
         var body: some View {
             VStack {
                 Spacer()
+                    .allowsHitTesting(false)
 
                 ScrollViewReader { proxy in
                     PosterHStack(
@@ -76,7 +79,12 @@ extension ItemVideoPlayer.Overlay {
                     .onSelect { info in
                         let seconds = info.chapterInfo.startTimeSeconds
                         videoPlayerProxy.setTime(.seconds(seconds))
+                        
+                        if videoPlayerManager.state != .playing {
+                            videoPlayerProxy.play()
+                        }
                     }
+                    .foregroundColor(.white)
                     .onAppear {
                         if let currentChapter = viewModel.chapters
                             .first(where: { $0.secondsRange.contains(currentProgressHandler.seconds) })

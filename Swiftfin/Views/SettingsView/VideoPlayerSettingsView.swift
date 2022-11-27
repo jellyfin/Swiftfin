@@ -30,6 +30,10 @@ struct VideoPlayerSettingsView: View {
     private var showAspectFill
     @Default(.VideoPlayer.showJumpButtons)
     private var showJumpButtons
+    @Default(.VideoPlayer.showAudioTrackMenu)
+    private var showAudioTrackMenu
+    @Default(.VideoPlayer.showSubtitleTrackMenu)
+    private var showSubtitleTrackMenu
 
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
@@ -89,6 +93,13 @@ struct VideoPlayerSettingsView: View {
                         Text("Aspect Fill")
                     }
                 }
+                
+                Toggle(isOn: $showAudioTrackMenu) {
+                    HStack {
+                        Image(systemName: "speaker.wave.3")
+                        Text("Audio Tracks")
+                    }
+                }
 
                 Toggle(isOn: $autoPlay) {
                     HStack {
@@ -115,6 +126,13 @@ struct VideoPlayerSettingsView: View {
                     HStack {
                         Image(systemName: "chevron.right.circle")
                         Text("Previous Item")
+                    }
+                }
+                
+                Toggle(isOn: $showSubtitleTrackMenu) {
+                    HStack {
+                        Image(systemName: "captions.bubble")
+                        Text("Subtitle Tracks")
                     }
                 }
             }

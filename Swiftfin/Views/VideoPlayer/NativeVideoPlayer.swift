@@ -134,15 +134,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         super.viewWillDisappear(animated)
 
         stop()
-//        removePeriodicTimeObserver()
     }
-
-//    func removePeriodicTimeObserver() {
-//        if let timeObserverToken = timeObserverToken {
-//            player?.removeTimeObserver(timeObserverToken)
-//            self.timeObserverToken = nil
-//        }
-//    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -181,10 +173,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     private func play() {
         player?.play()
-    }
-
-    private func sendProgressReport(seconds: Double) {
-//        viewModel.setSeconds(Int64(seconds))
     }
 
     private func stop() {

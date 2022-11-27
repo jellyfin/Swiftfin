@@ -132,7 +132,7 @@ struct ItemVideoPlayer: View {
                         .onVerticalPan(handleVerticalPan)
                     
                     FlashContentView(proxy: flashContentProxy)
-                        .allowsHitTesting(false)
+                        .allowsHitTesting(false) 
                     
                     Group {
                         Overlay()

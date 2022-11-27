@@ -13,7 +13,14 @@ import VLCUI
 extension ItemVideoPlayer.Overlay {
 
     struct ActionButtons: View {
+        
+        // TODO: organize
 
+        @Default(.VideoPlayer.showAudioTrackMenu)
+        private var showAudioTrackMenu
+        @Default(.VideoPlayer.showSubtitleTrackMenu)
+        private var showSubtitleTrackMenu
+        
         @Default(.VideoPlayer.showAspectFill)
         private var showAspectFill
         @Default(.VideoPlayer.autoPlay)
@@ -79,6 +86,25 @@ extension ItemVideoPlayer.Overlay {
         }
         
         @ViewBuilder
+        private var audioTrackMenu: some View {
+            Menu {
+                ForEach(viewModel.audioStreams.prepending(.none), id: \.index) { audioTrack in
+                    Button {
+                        videoPlayerProxy.setAudioTrack(.absolute(audioTrack.index ?? -1))
+                    } label: {
+                        if videoPlayerManager.audioTrackIndex == audioTrack.index ?? -1 {
+                            Label(audioTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
+                        } else {
+                            Text(audioTrack.displayTitle ?? .emptyDash)
+                        }
+                    }
+                }
+            } label: {
+                Image(systemName: "speaker.wave.3")
+            }
+        }
+        
+        @ViewBuilder
         private var nextItemButton: some View {
             Button {
                 videoPlayerManager.selectNextViewModel()
@@ -101,6 +127,27 @@ extension ItemVideoPlayer.Overlay {
             .disabled(videoPlayerManager.previousViewModel == nil)
             .foregroundColor(videoPlayerManager.previousViewModel == nil ? .gray : .white)
         }
+        
+        
+        @ViewBuilder
+        private var subtitleTrackMenu: some View {
+            Menu {
+                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in
+                    Button {
+                        videoPlayerProxy.setSubtitleTrack(.absolute(subtitleTrack.index ?? -1))
+                    } label: {
+                        if videoPlayerManager.subtitleTrackIndex == subtitleTrack.index ?? -1 {
+                            Label(subtitleTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
+                        } else {
+                            Text(subtitleTrack.displayTitle ?? .emptyDash)
+                        }
+                    }
+                }
+            } label: {
+                Image(systemName: "captions.bubble")
+            }
+            .frame(width: 50, height: 50)
+        }
 
         var body: some View {
             HStack(spacing: 0) {
@@ -117,6 +164,14 @@ extension ItemVideoPlayer.Overlay {
                     if autoPlay {
                         autoPlayButton
                     }
+                }
+                
+                if !viewModel.audioStreams.isEmpty && showAudioTrackMenu {
+                    audioTrackMenu
+                }
+                
+                if !viewModel.subtitleStreams.isEmpty && showSubtitleTrackMenu {
+                    subtitleTrackMenu
                 }
 
                 if showAspectFill {
