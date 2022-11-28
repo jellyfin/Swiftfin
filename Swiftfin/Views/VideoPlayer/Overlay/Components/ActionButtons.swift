@@ -21,6 +21,9 @@ extension ItemVideoPlayer.Overlay {
         @Default(.VideoPlayer.showSubtitleTrackMenu)
         private var showSubtitleTrackMenu
         
+        @Default(.VideoPlayer.showPlaybackSpeed)
+        private var showPlaybackSpeed
+        
         @Default(.VideoPlayer.showAspectFill)
         private var showAspectFill
         @Default(.VideoPlayer.autoPlay)
@@ -117,6 +120,30 @@ extension ItemVideoPlayer.Overlay {
         }
         
         @ViewBuilder
+        private var playbackSpeedMenu: some View {
+            Menu {
+                ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
+                    Button {
+                        videoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
+                    } label: {
+                        if Float(speed.rawValue) == videoPlayerManager.playbackSpeed {
+                            Label(speed.displayTitle, systemImage: "checkmark")
+                        } else {
+                            Text(speed.displayTitle)
+                        }
+                    }
+                }
+                
+                if !PlaybackSpeed.allCases.map(\.rawValue).contains(where: { $0 == Double(videoPlayerManager.playbackSpeed) }) {
+                    Label(String(format: "%.2f", videoPlayerManager.playbackSpeed).appending("x"), systemImage: "checkmark")
+                }
+            } label: {
+                Image(systemName: "speedometer")
+            }
+            .frame(width: 50, height: 50)
+        }
+        
+        @ViewBuilder
         private var previousItemButton: some View {
             Button {
                 videoPlayerManager.selectPreviousViewModel()
@@ -127,7 +154,6 @@ extension ItemVideoPlayer.Overlay {
             .disabled(videoPlayerManager.previousViewModel == nil)
             .foregroundColor(videoPlayerManager.previousViewModel == nil ? .gray : .white)
         }
-        
         
         @ViewBuilder
         private var subtitleTrackMenu: some View {
@@ -164,6 +190,10 @@ extension ItemVideoPlayer.Overlay {
                     if autoPlay {
                         autoPlayButton
                     }
+                }
+                
+                if showPlaybackSpeed {
+                    playbackSpeedMenu
                 }
                 
                 if !viewModel.audioStreams.isEmpty && showAudioTrackMenu {

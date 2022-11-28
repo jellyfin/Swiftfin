@@ -28,7 +28,7 @@ class VideoPlayerManager: ViewModel {
     @Published
     var audioTrackIndex: Int = -1
     @Published
-    var rate: Float = 1
+    var playbackSpeed: Float = 1
     @Published
     var state: VLCVideoPlayer.State = .opening
     @Published
@@ -82,11 +82,10 @@ class VideoPlayerManager: ViewModel {
 
         if audioTrackIndex != playbackInformation.currentAudioTrack.index {
             audioTrackIndex = playbackInformation.currentAudioTrack.index
-            print("Current audio track index: \(playbackInformation.currentAudioTrack.index)")
         }
 
-        if rate != playbackInformation.playbackRate {
-            self.rate = playbackInformation.playbackRate
+        if playbackSpeed != playbackInformation.playbackRate {
+            self.playbackSpeed = playbackInformation.playbackRate
         }
 
         if subtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
@@ -118,7 +117,7 @@ extension VideoPlayerManager {
         TvShowsAPI.getEpisodes(
             seriesId: seriesID,
             userId: SessionManager.main.currentLogin.user.id,
-            fields: [.chapters],
+            fields: ItemFields.minimumCases,
             adjacentTo: item.id,
             limit: 3
         )

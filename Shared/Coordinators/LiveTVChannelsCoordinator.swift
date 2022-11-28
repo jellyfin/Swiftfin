@@ -18,16 +18,16 @@ final class LiveTVChannelsCoordinator: NavigationCoordinatable {
     var start = makeStart
     @Route(.modal)
     var modalItem = makeModalItem
-    @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
+//    @Route(.fullScreen)
+//    var videoPlayer = makeVideoPlayer
 
     func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
         NavigationViewCoordinator(ItemCoordinator(item: item))
     }
 
-    func makeVideoPlayer(viewModel: LegacyVideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
-        NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
-    }
+//    func makeVideoPlayer(viewModel: LegacyVideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
+//        NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
+//    }
 
     @ViewBuilder
     func makeStart() -> some View {

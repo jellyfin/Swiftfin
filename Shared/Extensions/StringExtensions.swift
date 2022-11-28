@@ -16,9 +16,25 @@ extension String: Displayable {
 }
 
 extension String {
+    
+    func appending(_ element: String) -> String {
+        self + element
+    }
+    
+    func appending(_ element: String.Element) -> String {
+        self + String(element)
+    }
 
-    func prepending(_ content: String) -> String {
-        content + self
+    func prepending(_ element: String) -> String {
+        element + self
+    }
+    
+    func prepending(_ element: String, if condition: Bool) -> String {
+        if condition {
+            return element + self
+        } else {
+            return self
+        }
     }
 
     func removeRegexMatches(pattern: String, replaceWith: String = "") -> String {

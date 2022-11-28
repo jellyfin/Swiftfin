@@ -55,7 +55,7 @@ extension ItemVideoPlayer.Overlay {
                 if let subtitle = viewModel.item.subtitle {
                     Text(subtitle)
                         .font(.subheadline)
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(.white)
                         .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
                             dimensions[.leading]
                         }

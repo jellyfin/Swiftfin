@@ -81,12 +81,16 @@ extension ItemVideoPlayer.Overlay {
                     Button {
                         videoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
                     } label: {
-                        if Float(speed.rawValue) == videoPlayerManager.rate {
+                        if Float(speed.rawValue) == videoPlayerManager.playbackSpeed {
                             Label(speed.displayTitle, systemImage: "checkmark")
                         } else {
                             Text(speed.displayTitle)
                         }
                     }
+                }
+                
+                if !PlaybackSpeed.allCases.map(\.rawValue).contains(where: { $0 == Double(videoPlayerManager.playbackSpeed) }) {
+                    Label(String(format: "%.2f", videoPlayerManager.playbackSpeed).appending("x"), systemImage: "checkmark")
                 }
             } label: {
                 HStack {

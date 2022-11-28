@@ -34,6 +34,8 @@ struct VideoPlayerSettingsView: View {
     private var showAudioTrackMenu
     @Default(.VideoPlayer.showSubtitleTrackMenu)
     private var showSubtitleTrackMenu
+    @Default(.VideoPlayer.showPlaybackSpeed)
+    private var showPlaybackSpeed
 
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
@@ -112,6 +114,13 @@ struct VideoPlayerSettingsView: View {
                     HStack {
                         Image(systemName: "goforward")
                         Text("Jump")
+                    }
+                }
+                
+                Toggle(isOn: $showPlaybackSpeed) {
+                    HStack {
+                        Image(systemName: "speedometer")
+                        Text("Playback Speed")
                     }
                 }
 

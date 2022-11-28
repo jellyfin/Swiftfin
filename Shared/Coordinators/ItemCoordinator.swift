@@ -27,8 +27,6 @@ final class ItemCoordinator: NavigationCoordinatable {
     var castAndCrew = makeCastAndCrew
     @Route(.modal)
     var itemOverview = makeItemOverview
-    @Route(.fullScreen)
-    var legacyVideoPlayer = makeLegacyVideoPlayer
 
     let itemDto: BaseItemDto
 
@@ -54,10 +52,6 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
-    }
-
-    func makeLegacyVideoPlayer(viewModel: LegacyVideoPlayerViewModel) -> NavigationViewCoordinator<LegacyVideoPlayerCoordinator> {
-        NavigationViewCoordinator(LegacyVideoPlayerCoordinator(viewModel: viewModel))
     }
 
     @ViewBuilder

@@ -96,12 +96,12 @@ struct LiveTVChannelsView: View {
             ),
             onSelect: { loadingAction in
                 loadingAction(true)
-                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-                    self.liveTVRouter.route(to: \.videoPlayer, playerViewModel)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        loadingAction(false)
-                    }
-                }
+//                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
+//                    self.liveTVRouter.route(to: \.videoPlayer, playerViewModel)
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                        loadingAction(false)
+//                    }
+//                }
             }
         )
     }

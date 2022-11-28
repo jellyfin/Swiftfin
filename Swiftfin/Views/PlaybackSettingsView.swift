@@ -13,49 +13,6 @@ import SwiftUI
 import VLCUI
 
 // TODO: organize
-struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
-    
-    @Binding
-    private var value: Value
-    
-    private let title: String
-    private let range: ClosedRange<Value>
-    private let step: Value.Stride
-    private var formatter: (Value) -> String
-    
-    var body: some View {
-        Stepper(value: $value, in: range, step: step) {
-            HStack {
-                Text(title)
-                
-                Spacer()
-                
-                formatter(value).text
-                    .foregroundColor(.secondary)
-            }
-        }
-    }
-}
-
-extension BasicStepper {
-    
-    init(
-        title: String,
-        value: Binding<Value>,
-        range: ClosedRange<Value>,
-        step: Value.Stride
-    ) {
-        self.title = title
-        self.range = range
-        self.step = step
-        self._value = value
-        self.formatter = { $0.description }
-    }
-    
-    func valueFormatter(_ formatter: @escaping (Value) -> String) -> Self {
-        copy(modifying: \.formatter, with: formatter)
-    }
-}
 
 struct PlaybackSettingsView: View {
 
@@ -72,6 +29,19 @@ struct PlaybackSettingsView: View {
     @Environment(\.subtitleOffset)
     @Binding
     private var subtitleOffset
+    
+    private func millisecondFormat(from value: Int) -> String {
+        let negative = value < 0
+        let value = abs(value)
+        let seconds = "\(value / 1000)"
+        let milliseconds = "\(value % 1000)".first ?? "0"
+        
+        return seconds
+            .appending(".")
+            .appending(milliseconds)
+            .appending("s")
+            .prepending("-", if: negative)
+    }
 
     var body: some View {
         Form {
@@ -97,9 +67,7 @@ struct PlaybackSettingsView: View {
                 range: -30_000 ... 30_000,
                 step: 100
             )
-//            .valueFormatter { value in
-//                "\()"
-//            }
+            .valueFormatter(millisecondFormat(from:))
             
             BasicStepper(
                 title: "Subtitle Offset",
@@ -107,6 +75,7 @@ struct PlaybackSettingsView: View {
                 range: -30_000 ... 30_000,
                 step: 100
             )
+            .valueFormatter(millisecondFormat(from:))
 
             Section("Audio") {
                 ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in

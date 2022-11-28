@@ -75,6 +75,7 @@ extension Defaults.Keys {
         static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
         
         static let showAudioTrackMenu: Key<Bool> = .init("showAudioTrackMenu", default: false, suite: .generalSuite)
+        static let showPlaybackSpeed: Key<Bool> = .init("showPlaybackSpeed", default: false, suite: .generalSuite)
         static let showSubtitleTrackMenu: Key<Bool> = .init("showSubtitleTrackMenu", default: false, suite: .generalSuite)
         
         enum Gesture {

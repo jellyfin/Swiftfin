@@ -40,9 +40,13 @@ struct ItemVideoPlayer: View {
     class GestureStateHandler {
         
         var beganPanWithOverlay: Bool = false
-        var beginningHorizontalPanProgress: CGFloat = 0
+        var beginningPanProgress: CGFloat = 0
         var beginningHorizontalPanUnit: CGFloat = 0
         
+        var beginningAudioOffset: Int = 0
+        var beginningBrightnessValue: CGFloat = 0
+        var beginningPlaybackSpeed: Float = 0
+        var beginningSubtitleOffset: Int = 0
         var beginningVolumeValue: Float = 0
     }
     
@@ -124,12 +128,20 @@ struct ItemVideoPlayer: View {
                         .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
 
                     GestureView()
-                        .onHorizontalPan(handleHorizontalPan)
+                        .onHorizontalPan {
+                            handlePan(action: horizontalPanGesture, state: $0, point: $1.x, velocity: $2, translation: $3)
+                        }
                         .onHorizontalSwipe(translation: 100, velocity: 2000, handleHorizontalSwipe)
                         .onLongPress(minimumDuration: 2, handleLongPress)
                         .onPinch(handlePinchGesture)
                         .onTap(samePointPadding: 20, samePointTimeout: 0.5, handleTapGesture)
-                        .onVerticalPan(handleVerticalPan)
+                        .onVerticalPan {
+                            if $1.x <= 0.5 {
+                                handlePan(action: verticalGestureLeft, state: $0, point: -$1.y, velocity: $2, translation: $3)
+                            } else {
+                                handlePan(action: verticalGestureRight, state: $0, point: -$1.y, velocity: $2, translation: $3)
+                            }
+                        }
                     
                     FlashContentView(proxy: flashContentProxy)
                         .allowsHitTesting(false)
@@ -267,27 +279,32 @@ struct ItemVideoPlayer: View {
 
 extension ItemVideoPlayer {
     
-    private func handleHorizontalPan(
+    private func handlePan(
+        action: PanAction,
         state: UIGestureRecognizer.State,
-        unitPoint: UnitPoint,
+        point: CGFloat,
         velocity: CGFloat,
         translation: CGFloat
     ) {
         guard !gestureLocked else { return }
         
-        switch horizontalPanGesture {
+        switch action {
         case .none:
             return
         case .audioffset:
-            return
+            audioOffsetAction(state: state, point: point, velocity: velocity, translation: translation)
+        case .brightness:
+            brightnessAction(state: state, point: point, velocity: velocity, translation: translation)
+        case .playbackSpeed:
+            playbackSpeedAction(state: state, point: point, velocity: velocity, translation: translation)
         case .scrub:
-            scrubAction(state: state, unitPoint: unitPoint, velocity: velocity, translation: translation, rate: 1)
+            scrubAction(state: state, point: point, velocity: velocity, translation: translation, rate: 1)
         case .slowScrub:
-            scrubAction(state: state, unitPoint: unitPoint, velocity: velocity, translation: translation, rate: 0.2)
+            scrubAction(state: state, point: point, velocity: velocity, translation: translation, rate: 0.1)
+        case .subtitleOffset:
+            subtitleOffsetAction(state: state, point: point, velocity: velocity, translation: translation)
         case .volume:
-            volumeAction(state: state, unitPoint: unitPoint, velocity: velocity, translation: translation)
-        default:
-            return
+            volumeAction(state: state, point: point, velocity: velocity, translation: translation)
         }
     }
     
@@ -337,15 +354,6 @@ extension ItemVideoPlayer {
             showOverlay(nil)
         }
     }
-    
-    private func handleVerticalPan(
-        state: UIGestureRecognizer.State,
-        unitPoint: UnitPoint,
-        velocity: CGFloat,
-        translation: CGFloat
-    ) {
-        guard !gestureLocked else { return }
-    }
 }
 
 // MARK: Gesture Actions
@@ -367,6 +375,47 @@ extension ItemVideoPlayer {
         }
     }
     
+    // TODO: have offset actions be stepped by 100
+    
+    private func audioOffsetAction(
+        state: UIGestureRecognizer.State,
+        point: CGFloat,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        if state == .began {
+            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
+            gestureStateHandler.beginningHorizontalPanUnit = point
+            gestureStateHandler.beginningAudioOffset = audioOffset
+        } else if state == .ended {
+            return
+        }
+        
+        let newOffset = gestureStateHandler.beginningAudioOffset - round(Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000), toNearest: 100)
+        audioOffset = clamp(newOffset, min: -30_000, max: 30_000)
+    }
+    
+    private func brightnessAction(
+        state: UIGestureRecognizer.State,
+        point: CGFloat,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        if state == .began {
+            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
+            gestureStateHandler.beginningHorizontalPanUnit = point
+            gestureStateHandler.beginningBrightnessValue = UIScreen.main.brightness
+        } else if state == .ended {
+            return
+        }
+        
+        let newBrightness = gestureStateHandler.beginningBrightnessValue - (gestureStateHandler.beginningHorizontalPanUnit - point)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+            UIScreen.main.brightness = newBrightness
+        }
+    }
+    
     private func jumpAction(translation: CGFloat) {
         if translation > 0 {
             videoPlayerManager.proxy.jumpForward(Int(jumpForwardLength.rawValue))
@@ -385,11 +434,27 @@ extension ItemVideoPlayer {
         }
     }
     
-    // TODO: Fix scrubbing and volume
+    private func playbackSpeedAction(
+        state: UIGestureRecognizer.State,
+        point: CGFloat,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        if state == .began {
+            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
+            gestureStateHandler.beginningHorizontalPanUnit = point
+            gestureStateHandler.beginningPlaybackSpeed = videoPlayerManager.playbackSpeed
+        } else if state == .ended {
+            return
+        }
+        
+        let newPlaybackSpeed = round(gestureStateHandler.beginningPlaybackSpeed - Float(gestureStateHandler.beginningHorizontalPanUnit - point) * 2, toNearest: 0.25)
+        videoPlayerManager.proxy.setRate(.absolute(clamp(newPlaybackSpeed, min: 0.25, max: 5.0)))
+    }
     
     private func scrubAction(
         state: UIGestureRecognizer.State,
-        unitPoint: UnitPoint,
+        point: CGFloat,
         velocity: CGFloat,
         translation: CGFloat,
         rate: CGFloat
@@ -397,11 +462,9 @@ extension ItemVideoPlayer {
         if state == .began {
             isScrubbing = true
             
-            gestureStateHandler.beginningHorizontalPanProgress = currentProgressHandler.scrubbedProgress
-            gestureStateHandler.beginningHorizontalPanUnit = unitPoint.x
+            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
+            gestureStateHandler.beginningHorizontalPanUnit = point
             gestureStateHandler.beganPanWithOverlay = currentOverlayType == .main
-            
-            print("Began pan: \(currentProgressHandler.scrubbedProgress), \(unitPoint.x)")
             
             if !gestureStateHandler.beganPanWithOverlay {
                 showOverlay(.main)
@@ -416,16 +479,33 @@ extension ItemVideoPlayer {
             return
         }
         
-        let newProgress = gestureStateHandler.beginningHorizontalPanProgress - (gestureStateHandler.beginningHorizontalPanUnit + unitPoint.x)
+        let newProgress = gestureStateHandler.beginningPanProgress - (gestureStateHandler.beginningHorizontalPanUnit - point) * rate
+        currentProgressHandler.scrubbedProgress = clamp(newProgress, min: 0, max: 1)
+    }
+    
+    private func subtitleOffsetAction(
+        state: UIGestureRecognizer.State,
+        point: CGFloat,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        if state == .began {
+            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
+            gestureStateHandler.beginningHorizontalPanUnit = point
+            gestureStateHandler.beginningSubtitleOffset = subtitleOffset
+        } else if state == .ended {
+            return
+        }
         
-        print("scrubbed progress: \(newProgress)")
+//        let newOffset = gestureStateHandler.beginningSubtitleOffset - Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000).round(multiple: 100)
         
-        currentProgressHandler.scrubbedProgress = newProgress
+        let newOffset = gestureStateHandler.beginningSubtitleOffset - round(Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000), toNearest: 100)
+        subtitleOffset = clamp(newOffset, min: -30_000, max: 30_000)
     }
     
     private func volumeAction(
         state: UIGestureRecognizer.State,
-        unitPoint: UnitPoint,
+        point: CGFloat,
         velocity: CGFloat,
         translation: CGFloat
     ) {
@@ -433,23 +513,17 @@ extension ItemVideoPlayer {
         guard let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider else { return }
         
         if state == .began {
-            gestureStateHandler.beginningHorizontalPanProgress = currentProgressHandler.progress
-            gestureStateHandler.beginningHorizontalPanUnit = unitPoint.x
-            gestureStateHandler.beginningVolumeValue = slider.value
-            
-            if gestureStateHandler.beganPanWithOverlay {
-                showOverlay(nil)
-            }
+            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
+            gestureStateHandler.beginningHorizontalPanUnit = point
+            gestureStateHandler.beginningVolumeValue = AVAudioSession.sharedInstance().outputVolume
         } else if state == .ended {
-            if gestureStateHandler.beganPanWithOverlay {
-                showOverlay(.main)
-            }
-            
             return
         }
         
-        DispatchQueue.main.async {
-            slider.value = Float(CGFloat(gestureStateHandler.beginningVolumeValue) - (gestureStateHandler.beginningHorizontalPanUnit + unitPoint.x))
+        let newVolume = gestureStateHandler.beginningVolumeValue - Float(gestureStateHandler.beginningHorizontalPanUnit - point)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+            slider.value = newVolume
         }
     }
 }

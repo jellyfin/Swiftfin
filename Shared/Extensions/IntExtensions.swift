@@ -25,3 +25,18 @@ extension FixedWidthInteger {
             .appending(secondsText)
     }
 }
+
+//extension Int {
+//
+//    func round(multiple: Int) -> Self {
+//        let remainder = abs(self) % multiple
+//
+//        guard remainder > 0 else { return self }
+//
+//        if self < 0 {
+//            return -(abs(self) - remainder)
+//        } else {
+//            return self + multiple - remainder
+//        }
+//    }
+//}

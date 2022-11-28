@@ -46,7 +46,7 @@ enum PanAction: String, GestureAction {
     case none
     case audioffset
     case brightness
-    case playbackRate
+    case playbackSpeed
     case scrub
     case slowScrub
     case subtitleOffset
@@ -60,8 +60,8 @@ enum PanAction: String, GestureAction {
             return "Audio Offset"
         case .brightness:
             return "Brightness"
-        case .playbackRate:
-            return "Playback Rate"
+        case .playbackSpeed:
+            return "Playback Speed"
         case .scrub:
             return "Scrub"
         case .slowScrub:

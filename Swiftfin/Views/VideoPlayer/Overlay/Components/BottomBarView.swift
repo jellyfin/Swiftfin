@@ -37,7 +37,6 @@ extension ItemVideoPlayer.Overlay {
 
         @EnvironmentObject
         private var currentProgressHandler: CurrentProgressHandler
-        
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
@@ -51,6 +50,7 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var capsuleSlider: some View {
             CapsuleSlider(progress: $currentProgressHandler.scrubbedProgress)
+                .isEditing(_isScrubbing.wrappedValue)
                 .rate($scrubbingRate)
                 .trackMask {
                     if chapterSlider {
@@ -78,9 +78,10 @@ extension ItemVideoPlayer.Overlay {
                             .disabled(isScrubbing)
                     }
                 }
-                .onEditingChanged { isEditing in
-                    isScrubbing = isEditing
-                    scrubbingRate = 1
+                .onChange(of: isScrubbing) { newValue in
+                    if newValue {
+                        scrubbingRate = 1
+                    }
                 }
                 .frame(height: 50)
         }
@@ -88,6 +89,7 @@ extension ItemVideoPlayer.Overlay {
         @ViewBuilder
         private var thumbSlider: some View {
             ThumbSlider(progress: $currentProgressHandler.scrubbedProgress)
+                .isEditing(_isScrubbing.wrappedValue)
                 .rate($scrubbingRate)
                 .trackMask {
                     if chapterSlider {
@@ -115,10 +117,15 @@ extension ItemVideoPlayer.Overlay {
                             .disabled(isScrubbing)
                     }
                 }
-                .onEditingChanged { isEditing in
-                    isScrubbing = isEditing
-                    scrubbingRate = 1
+                .onChange(of: isScrubbing) { newValue in
+                    if newValue {
+                        scrubbingRate = 1
+                    }
                 }
+//                .onEditingChanged { isEditing in
+//                    isScrubbing = isEditing
+//                    scrubbingRate = 1
+//                }
         }
 
         var body: some View {

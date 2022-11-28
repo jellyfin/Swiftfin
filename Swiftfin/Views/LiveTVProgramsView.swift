@@ -22,85 +22,85 @@ struct LiveTVProgramsView: View {
                    let items = viewModel.recommendedItems
                 {
                     PosterHStack(title: "On Now", type: .portrait, items: items)
-                        .onSelect { item in
-                            if let chanId = item.channelId,
-                               let chan = viewModel.findChannel(id: chanId)
-                            {
-                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                }
-                            }
-                        }
+//                        .onSelect { item in
+//                            if let chanId = item.channelId,
+//                               let chan = viewModel.findChannel(id: chanId)
+//                            {
+////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+////                                }
+//                            }
+//                        }
                 }
                 if !viewModel.seriesItems.isEmpty,
                    let items = viewModel.seriesItems
                 {
                     PosterHStack(title: "Shows", type: .portrait, items: items)
-                        .onSelect { item in
-                            if let chanId = item.channelId,
-                               let chan = viewModel.findChannel(id: chanId)
-                            {
-                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                }
-                            }
-                        }
+//                        .onSelect { item in
+//                            if let chanId = item.channelId,
+//                               let chan = viewModel.findChannel(id: chanId)
+//                            {
+////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+////                                }
+//                            }
+//                        }
                 }
                 if !viewModel.movieItems.isEmpty,
                    let items = viewModel.movieItems
                 {
                     PosterHStack(title: "Movies", type: .portrait, items: items)
-                        .onSelect { item in
-                            if let chanId = item.channelId,
-                               let chan = viewModel.findChannel(id: chanId)
-                            {
-                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                }
-                            }
-                        }
+//                        .onSelect { item in
+//                            if let chanId = item.channelId,
+//                               let chan = viewModel.findChannel(id: chanId)
+//                            {
+////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+////                                }
+//                            }
+//                        }
                 }
                 if !viewModel.sportsItems.isEmpty,
                    let items = viewModel.sportsItems
                 {
                     PosterHStack(title: "Sports", type: .portrait, items: items)
-                        .onSelect { item in
-                            if let chanId = item.channelId,
-                               let chan = viewModel.findChannel(id: chanId)
-                            {
-                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                }
-                            }
-                        }
+//                        .onSelect { item in
+//                            if let chanId = item.channelId,
+//                               let chan = viewModel.findChannel(id: chanId)
+//                            {
+////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+////                                }
+//                            }
+//                        }
                 }
                 if !viewModel.kidsItems.isEmpty,
                    let items = viewModel.kidsItems
                 {
                     PosterHStack(title: "Kids", type: .portrait, items: items)
-                        .onSelect { item in
-                            if let chanId = item.channelId,
-                               let chan = viewModel.findChannel(id: chanId)
-                            {
-                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                }
-                            }
-                        }
+//                        .onSelect { item in
+//                            if let chanId = item.channelId,
+//                               let chan = viewModel.findChannel(id: chanId)
+//                            {
+////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+////                                }
+//                            }
+//                        }
                 }
                 if !viewModel.newsItems.isEmpty,
                    let items = viewModel.newsItems
                 {
                     PosterHStack(title: "News", type: .portrait, items: items)
-                        .onSelect { item in
-                            if let chanId = item.channelId,
-                               let chan = viewModel.findChannel(id: chanId)
-                            {
-                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                }
-                            }
-                        }
+//                        .onSelect { item in
+//                            if let chanId = item.channelId,
+//                               let chan = viewModel.findChannel(id: chanId)
+//                            {
+////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+////                                }
+//                            }
+//                        }
                 }
             }
         }

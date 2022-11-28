@@ -44,10 +44,10 @@ struct Slider<
     private var gestureBehavior: SliderGestureBehavior
     private var trackGesturePadding: EdgeInsets
     private var rate: (CGPoint) -> CGFloat
-    private var track: (Bool, CGFloat) -> Track
-    private var trackBackground: (Bool, CGFloat) -> TrackBackground
+    private var track: () -> Track
+    private var trackBackground: () -> TrackBackground
     private var trackMask: () -> TrackMask
-    private var thumb: (Bool, CGFloat) -> Thumb
+    private var thumb: () -> Thumb
     private var topContent: () -> TopContent
     private var bottomContent: () -> BottomContent
     private var leadingContent: () -> LeadingContent
@@ -97,9 +97,9 @@ struct Slider<
                 ZStack(alignment: .leading) {
 
                     ZStack {
-                        trackBackground(isEditing, progress)
+                        trackBackground()
 
-                        track(isEditing, progress)
+                        track()
                             .mask(alignment: .leading) {
                                 Color.white
                                     .frame(width: progress * totalWidth)
@@ -109,7 +109,7 @@ struct Slider<
                         trackMask()
                     }
 
-                    thumb(isEditing, progress)
+                    thumb()
                         .if(gestureBehavior == .thumb) { view in
                             view.gesture(trackDrag)
                         }
@@ -162,10 +162,10 @@ extension Slider where Track == EmptyView,
             gestureBehavior: .thumb,
             trackGesturePadding: .zero,
             rate: { _ in 1.0 },
-            track: { _, _ in EmptyView() },
-            trackBackground: { _, _ in EmptyView() },
+            track: { EmptyView() },
+            trackBackground: { EmptyView() },
             trackMask: { EmptyView() },
-            thumb: { _, _ in EmptyView() },
+            thumb: { EmptyView() },
             topContent: { EmptyView() },
             bottomContent: { EmptyView() },
             leadingContent: { EmptyView() },
@@ -178,7 +178,7 @@ extension Slider where Track == EmptyView,
 
 extension Slider {
 
-    func track<T>(@ViewBuilder _ track: @escaping (Bool, CGFloat) -> T)
+    func track<T>(@ViewBuilder _ track: @escaping () -> T)
     -> Slider<T, TrackBackground, TrackMask, Thumb, TopContent, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: _progress,
@@ -198,7 +198,7 @@ extension Slider {
         )
     }
 
-    func trackBackground<T>(@ViewBuilder _ trackBackground: @escaping (Bool, CGFloat) -> T)
+    func trackBackground<T>(@ViewBuilder _ trackBackground: @escaping () -> T)
     -> Slider<Track, T, TrackMask, Thumb, TopContent, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: _progress,
@@ -238,7 +238,7 @@ extension Slider {
         )
     }
 
-    func thumb<T>(@ViewBuilder _ thumb: @escaping (Bool, CGFloat) -> T)
+    func thumb<T>(@ViewBuilder _ thumb: @escaping () -> T)
     -> Slider<Track, TrackBackground, TrackMask, T, TopContent, BottomContent, LeadingContent, TrailingContent> {
         .init(
             progress: _progress,
