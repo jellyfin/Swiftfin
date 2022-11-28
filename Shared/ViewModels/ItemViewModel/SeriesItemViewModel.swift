@@ -154,7 +154,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         TvShowsAPI.getEpisodes(
             seriesId: item.id ?? "",
             userId: SessionManager.main.currentLogin.user.id,
-            fields: [.overview, .seasonUserData],
+            fields: ItemFields.minimumCases,
             seasonId: seasonID,
             isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
             enableUserData: true

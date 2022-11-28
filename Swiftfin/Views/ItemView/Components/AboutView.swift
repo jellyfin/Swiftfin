@@ -37,21 +37,10 @@ extension ItemView {
                         )
                         .posterStyle(type: .portrait, width: 130)
                         .accessibilityIgnoresInvertColors()
-
-                        Button {
-                            itemRouter.route(to: \.itemOverview, viewModel.item)
-                        } label: {
-                            ZStack {
-
-                                Color.secondarySystemFill
-                                    .cornerRadius(10)
-
+                        
+                        Card(title: viewModel.item.displayTitle)
+                            .content {
                                 VStack(alignment: .leading, spacing: 10) {
-                                    Text(viewModel.item.displayTitle)
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
-
-                                    Spacer()
 
                                     if let overview = viewModel.item.overview {
                                         Text(overview)
@@ -64,11 +53,28 @@ extension ItemView {
                                             .foregroundColor(.secondary)
                                     }
                                 }
-                                .padding()
                             }
-                            .frame(width: 330, height: 195)
-                        }
-                        .buttonStyle(.plain)
+                            .onSelect {
+                                itemRouter.route(to: \.itemOverview, viewModel.item)
+                            }
+                        
+                        Card(title: "Ratings")
+                            .content {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    
+                                    if let communityRating = viewModel.item.communityRating {
+                                        HStack {
+                                            Image(systemName: "star.fill")
+                                                .foregroundColor(.yellow)
+                                            
+                                            Text(String(format: "%.2f", communityRating))
+                                        }
+                                    }
+                                }
+                            }
+                            .onSelect {
+                                itemRouter.route(to: \.remoteImages)
+                            }
                     }
                     .padding(.horizontal)
                     .if(UIDevice.isIPad) { view in
@@ -77,5 +83,67 @@ extension ItemView {
                 }
             }
         }
+    }
+}
+
+extension ItemView.AboutView {
+    
+    struct Card<Content: View>: View {
+        
+        private let content: () -> Content
+        private var onSelect: () -> Void
+        private let title: String
+        
+        var body: some View {
+            Button {
+                onSelect()
+            } label: {
+                ZStack {
+
+                    Color.secondarySystemFill
+                        .cornerRadius(10)
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(title)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+
+                        Spacer()
+
+                        content()
+                            .frame(maxWidth: .infinity)
+                    }
+                    .padding()
+                }
+                .frame(width: 330, height: 195)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+}
+
+extension ItemView.AboutView.Card where Content == EmptyView {
+    
+    init(title: String) {
+        self.init(
+            content: { EmptyView() },
+            onSelect: {},
+            title: title
+        )
+    }
+}
+
+extension ItemView.AboutView.Card {
+    
+    func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> ItemView.AboutView.Card<C> {
+        .init(
+            content: content,
+            onSelect: onSelect,
+            title: title
+        )
+    }
+    
+    func onSelect(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

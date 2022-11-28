@@ -26,7 +26,21 @@ extension FixedWidthInteger {
     }
 }
 
-//extension Int {
+extension Int {
+    
+    var millisecondToSecondLabel: String {
+        let negative = self < 0
+        let value = abs(self)
+        let seconds = "\(value / 1000)"
+        let milliseconds = "\(value % 1000)".first ?? "0"
+        
+        return seconds
+            .appending(".")
+            .appending(milliseconds)
+            .appending("s")
+            .prepending("-", if: negative)
+    }
+}
 //
 //    func round(multiple: Int) -> Self {
 //        let remainder = abs(self) % multiple

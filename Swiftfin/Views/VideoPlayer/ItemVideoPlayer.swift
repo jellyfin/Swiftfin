@@ -79,13 +79,14 @@ struct ItemVideoPlayer: View {
     @ObservedObject
     private var currentProgressHandler: CurrentProgressHandler = .init()
     @ObservedObject
-    private var flashContentProxy: FlashContentProxy = .init()
-    @ObservedObject
     private var overlayTimer: TimerProxy = .init()
     @ObservedObject
     private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
+    
+    @ObservedObject
+    private var updateViewProxy: UpdateViewProxy = .init()
 
     @State
     private var aspectFilled: Bool = false
@@ -131,10 +132,10 @@ struct ItemVideoPlayer: View {
                         .onHorizontalPan {
                             handlePan(action: horizontalPanGesture, state: $0, point: $1.x, velocity: $2, translation: $3)
                         }
-                        .onHorizontalSwipe(translation: 100, velocity: 2000, handleHorizontalSwipe)
+                        .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
                         .onLongPress(minimumDuration: 2, handleLongPress)
                         .onPinch(handlePinchGesture)
-                        .onTap(samePointPadding: 20, samePointTimeout: 0.5, handleTapGesture)
+                        .onTap(samePointPadding: 20, samePointTimeout: 0.7, handleTapGesture)
                         .onVerticalPan {
                             if $1.x <= 0.5 {
                                 handlePan(action: verticalGestureLeft, state: $0, point: -$1.y, velocity: $2, translation: $3)
@@ -143,8 +144,7 @@ struct ItemVideoPlayer: View {
                             }
                         }
                     
-                    FlashContentView(proxy: flashContentProxy)
-                        .allowsHitTesting(false)
+                    UpdateView(proxy: updateViewProxy)
                     
                     Group {
                         Overlay()
@@ -154,7 +154,6 @@ struct ItemVideoPlayer: View {
 //                            .opacity(currentOverlayType == .chapters ? 1 : 0)
                     }
                     .environmentObject(currentProgressHandler)
-                    .environmentObject(flashContentProxy)
                     .environmentObject(overlayTimer)
                     .environmentObject(splitContentViewProxy)
                     .environmentObject(videoPlayerManager)
@@ -218,19 +217,10 @@ struct ItemVideoPlayer: View {
             videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
         }
         .onChange(of: gestureLocked) { newValue in
-            // TODO: Change
-            flashContentProxy.flash(interval: 2) {
-                ZStack {
-                    Color.black
-                        .opacity(0.5)
-                    
-                    if newValue {
-                        Image(systemName: "lock.fill")
-                    } else {
-                        Image(systemName: "lock.open.fill")
-                    }
-                }
-                .font(.system(size: 36, weight: .regular, design: .default))
+            if newValue {
+                updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
+            } else {
+                updateViewProxy.present(systemName: "lock.open.fill", title: "Gestures Unlocked")
             }
         }
         .onChange(of: isScrubbing) { newValue in
@@ -309,10 +299,9 @@ extension ItemVideoPlayer {
     }
     
     private func handleHorizontalSwipe(
-        state: UIGestureRecognizer.State,
         unitPoint: UnitPoint,
-        velocity: CGFloat,
-        translation: CGFloat
+        direction: Bool,
+        amount: Int
     ) {
         guard !gestureLocked else { return }
         
@@ -320,7 +309,7 @@ extension ItemVideoPlayer {
         case .none:
             return
         case .jump:
-            jumpAction(translation: translation)
+            jumpAction(unitPoint: .init(x: direction ? 1 : 0, y: 0), amount: amount)
         }
     }
     
@@ -346,12 +335,19 @@ extension ItemVideoPlayer {
     }
     
     private func handleTapGesture(unitPoint: UnitPoint, taps: Int) {
-        guard !gestureLocked else { return }
+        if gestureLocked {
+            updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
+            return
+        }
         
-        if currentOverlayType == nil {
-            showOverlay(.main)
+        if taps > 1 {
+            jumpAction(unitPoint: unitPoint, amount: taps - 1)
         } else {
-            showOverlay(nil)
+            if currentOverlayType == nil {
+                showOverlay(.main)
+            } else {
+                showOverlay(nil)
+            }
         }
     }
 }
@@ -410,27 +406,35 @@ extension ItemVideoPlayer {
         }
         
         let newBrightness = gestureStateHandler.beginningBrightnessValue - (gestureStateHandler.beginningHorizontalPanUnit - point)
+        let clampedBrightness = clamp(newBrightness, min: 0, max: 1.0)
+        let flashPercentage = Int(clampedBrightness * 100)
+        
+        if flashPercentage >= 67 {
+            updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%", iconSize: .init(width: 30, height: 30))
+        } else if flashPercentage >= 33 {
+            updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%")
+        } else {
+            updateViewProxy.present(systemName: "sun.min.fill", title: "\(flashPercentage)%", iconSize: .init(width: 20, height: 20))
+        }
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-            UIScreen.main.brightness = newBrightness
+            UIScreen.main.brightness = clampedBrightness
         }
     }
     
-    private func jumpAction(translation: CGFloat) {
-        if translation > 0 {
-            videoPlayerManager.proxy.jumpForward(Int(jumpForwardLength.rawValue))
-            flashContentProxy.flash(interval: 0.5) {
-                Image(systemName: jumpForwardLength.forwardImageLabel)
-                    .font(.system(size: 48, weight: .regular, design: .default))
-                    .foregroundColor(.white)
-            }
-        } else {
+    // TODO: decide on overlay behavior?
+    private func jumpAction(
+        unitPoint: UnitPoint,
+        amount: Int
+    ) {
+        if unitPoint.x <= 0.5 {
             videoPlayerManager.proxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-            flashContentProxy.flash(interval: 0.5) {
-                Image(systemName: jumpBackwardLength.backwardImageLabel)
-                    .font(.system(size: 48, weight: .regular, design: .default))
-                    .foregroundColor(.white)
-            }
+            
+            updateViewProxy.present(systemName: "gobackward", title: "\(amount * Int(jumpBackwardLength.rawValue))s")
+        } else {
+            videoPlayerManager.proxy.jumpForward(Int(jumpForwardLength.rawValue))
+            
+            updateViewProxy.present(systemName: "goforward", title: "\(amount * Int(jumpForwardLength.rawValue))s")
         }
     }
     
@@ -449,7 +453,11 @@ extension ItemVideoPlayer {
         }
         
         let newPlaybackSpeed = round(gestureStateHandler.beginningPlaybackSpeed - Float(gestureStateHandler.beginningHorizontalPanUnit - point) * 2, toNearest: 0.25)
-        videoPlayerManager.proxy.setRate(.absolute(clamp(newPlaybackSpeed, min: 0.25, max: 5.0)))
+        let clampedPlaybackSpeed = clamp(newPlaybackSpeed, min: 0.25, max: 5.0)
+        
+        updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
+        
+        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
     }
     
     private func scrubAction(
@@ -497,10 +505,12 @@ extension ItemVideoPlayer {
             return
         }
         
-//        let newOffset = gestureStateHandler.beginningSubtitleOffset - Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000).round(multiple: 100)
-        
         let newOffset = gestureStateHandler.beginningSubtitleOffset - round(Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000), toNearest: 100)
-        subtitleOffset = clamp(newOffset, min: -30_000, max: 30_000)
+        let clampedOffset = clamp(newOffset, min: -30_000, max: 30_000)
+        
+        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: clampedOffset.millisecondToSecondLabel)
+        
+        subtitleOffset = clampedOffset
     }
     
     private func volumeAction(

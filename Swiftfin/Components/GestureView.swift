@@ -10,29 +10,30 @@ import Combine
 import Foundation
 import SwiftUI
 
-// TODO: Add translated unit point
-
 // state, point, velocity, translation
 typealias PanGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void
 // state, point, scale
 typealias PinchGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat) -> Void
-// point, taps
+// point, direction, amount
+typealias SwipeGestureHandler = (UnitPoint, Bool, Int) -> Void
+// point, amount
 typealias TapGestureHandler = (UnitPoint, Int) -> Void
 
 struct GestureView: UIViewRepresentable {
 
     private var onHorizontalPan: PanGestureHandler?
-    private var onHorizontalSwipe: PanGestureHandler?
+    private var onHorizontalSwipe: SwipeGestureHandler?
     private var onLongPress: ((UnitPoint) -> Void)?
     private var onPinch: PinchGestureHandler?
     private var onTap: TapGestureHandler?
     private var onVerticalPan: PanGestureHandler?
     
-    private var longPressMinimumDuration: TimeInterval = 0
-    private var samePointPadding: CGFloat = 0
-    private var samePointTimeout: TimeInterval = 0
-    private var swipeTranslation: CGFloat = 0
-    private var swipeVelocity: CGFloat = 0
+    private var longPressMinimumDuration: TimeInterval
+    private var samePointPadding: CGFloat
+    private var samePointTimeout: TimeInterval
+    private var swipeTranslation: CGFloat
+    private var swipeVelocity: CGFloat
+    private var sameSwipeDirectionTimeout: TimeInterval
 
     func makeUIView(context: Context) -> UIGestureView {
         UIGestureView(
@@ -46,7 +47,8 @@ struct GestureView: UIViewRepresentable {
             samePointPadding: samePointPadding,
             samePointTimeout: samePointTimeout,
             swipeTranslation: swipeTranslation,
-            swipeVelocity: swipeVelocity
+            swipeVelocity: swipeVelocity,
+            sameSwipeDirectionTimeout: sameSwipeDirectionTimeout
         )
     }
 
@@ -55,6 +57,17 @@ struct GestureView: UIViewRepresentable {
 
 extension GestureView {
     
+    init() {
+        self.init(
+            longPressMinimumDuration: 0,
+            samePointPadding: 0,
+            samePointTimeout: 0,
+            swipeTranslation: 0,
+            swipeVelocity: 0,
+            sameSwipeDirectionTimeout: 0
+        )
+    }
+    
     func onHorizontalPan(_ action: @escaping PanGestureHandler) -> Self {
         copy(modifying: \.onHorizontalPan, with: action)
     }
@@ -62,10 +75,12 @@ extension GestureView {
     func onHorizontalSwipe(
         translation: CGFloat,
         velocity: CGFloat,
-        _ action: @escaping PanGestureHandler
+        sameSwipeDirectionTimeout: TimeInterval = 0,
+        _ action: @escaping SwipeGestureHandler
     ) -> Self {
             copy(modifying: \.swipeTranslation, with: translation)
                 .copy(modifying: \.swipeVelocity, with: velocity)
+                .copy(modifying: \.sameSwipeDirectionTimeout, with: sameSwipeDirectionTimeout)
                 .copy(modifying: \.onHorizontalSwipe, with: action)
     }
 
@@ -79,6 +94,7 @@ extension GestureView {
         _ action: @escaping TapGestureHandler
     ) -> Self {
         copy(modifying: \.samePointPadding, with: samePointPadding)
+            .copy(modifying: \.samePointTimeout, with: samePointTimeout)
             .copy(modifying: \.onTap, with: action)
     }
     
@@ -95,7 +111,7 @@ extension GestureView {
 class UIGestureView: UIView {
 
     private let onHorizontalPan: PanGestureHandler?
-    private let onHorizontalSwipe: PanGestureHandler?
+    private let onHorizontalSwipe: SwipeGestureHandler?
     private let onLongPress: ((UnitPoint) -> Void)?
     private let onPinch: PinchGestureHandler?
     private let onTap: TapGestureHandler?
@@ -106,15 +122,19 @@ class UIGestureView: UIView {
     private let samePointTimeout: TimeInterval
     private let swipeTranslation: CGFloat
     private let swipeVelocity: CGFloat
+    private var sameSwipeDirectionTimeout: TimeInterval
     
     private var hasSwiped: Bool = false
-    private var multiTapAmount: Int = 0
-    private var multiTapTimer: Timer?
+    private var lastSwipeDirection: Bool?
     private var lastTouchLocation: CGPoint?
+    private var multiTapWorkItem: DispatchWorkItem?
+    private var sameSwipeWorkItem: DispatchWorkItem?
+    private var multiTapAmount: Int = 0
+    private var sameSwipeAmount: Int = 0
 
     init(
         onHorizontalPan: PanGestureHandler?,
-        onHorizontalSwipe: PanGestureHandler?,
+        onHorizontalSwipe: SwipeGestureHandler?,
         onLongPress: ((UnitPoint) -> Void)?,
         onPinch: PinchGestureHandler?,
         onTap: TapGestureHandler?,
@@ -123,7 +143,8 @@ class UIGestureView: UIView {
         samePointPadding: CGFloat,
         samePointTimeout: TimeInterval,
         swipeTranslation: CGFloat,
-        swipeVelocity: CGFloat
+        swipeVelocity: CGFloat,
+        sameSwipeDirectionTimeout: TimeInterval
     ) {
         self.onHorizontalPan = onHorizontalPan
         self.onHorizontalSwipe = onHorizontalSwipe
@@ -136,6 +157,7 @@ class UIGestureView: UIView {
         self.samePointTimeout = samePointTimeout
         self.swipeTranslation = swipeTranslation
         self.swipeVelocity = swipeVelocity
+        self.sameSwipeDirectionTimeout = sameSwipeDirectionTimeout
         super.init(frame: .zero)
 
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPerformPinch))
@@ -176,13 +198,42 @@ class UIGestureView: UIView {
         if !hasSwiped,
            abs(translation) >= swipeTranslation,
            abs(velocity) >= swipeVelocity {
-            onHorizontalSwipe?(UIGestureRecognizer.State.ended, unitPoint, velocity, translation)
+            didPerformSwipe(unitPoint: unitPoint, direction: translation > 0)
+            
             hasSwiped = true
         }
         
         if gestureRecognizer.state == .ended {
             hasSwiped = false
         }
+    }
+    
+    private func didPerformSwipe(unitPoint: UnitPoint, direction: Bool) {
+        
+        if lastSwipeDirection == direction {
+            sameSwipeOccurred(unitPoint: unitPoint, direction: direction)
+            onHorizontalSwipe?(unitPoint, direction, sameSwipeAmount)
+        } else {
+            sameSwipeOccurred(unitPoint: unitPoint, direction: direction)
+            onHorizontalSwipe?(unitPoint, direction, 1)
+        }
+    }
+    
+    private func sameSwipeOccurred(unitPoint: UnitPoint, direction: Bool) {
+        guard sameSwipeDirectionTimeout > 0 else { return }
+        lastSwipeDirection = direction
+        
+        sameSwipeAmount += 1
+        
+        sameSwipeWorkItem?.cancel()
+        let task = DispatchWorkItem {
+            self.sameSwipeAmount = 0
+            self.lastSwipeDirection = nil
+        }
+        
+        sameSwipeWorkItem = task
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + sameSwipeDirectionTimeout, execute: task)
     }
     
     @objc
@@ -195,9 +246,10 @@ class UIGestureView: UIView {
 
     @objc
     private func didPerformPinch(_ gestureRecognizer: UIPinchGestureRecognizer) {
+        guard let onPinch else { return }
         let unitPoint = gestureRecognizer.unitPoint(in: self)
         
-        onPinch?(gestureRecognizer.state, unitPoint, gestureRecognizer.scale)
+        onPinch(gestureRecognizer.state, unitPoint, gestureRecognizer.scale)
     }
 
     @objc
@@ -229,25 +281,21 @@ class UIGestureView: UIView {
         guard samePointTimeout > 0 else { return }
         lastTouchLocation = location
         
-        multiTapTimer?.invalidate()
-        multiTapTimer = Timer.scheduledTimer(
-            timeInterval: samePointTimeout,
-            target: self,
-            selector: #selector(multiTapTimed),
-            userInfo: nil,
-            repeats: false)
-        
         multiTapAmount += 1
-    }
-    
-    @objc
-    private func multiTapTimed() {
-        multiTapTimer = nil
-        multiTapAmount = 0
-        lastTouchLocation = nil
+        
+        multiTapWorkItem?.cancel()
+        let task = DispatchWorkItem {
+            self.multiTapAmount = 0
+            self.lastTouchLocation = nil
+        }
+        
+        multiTapWorkItem = task
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + samePointTimeout, execute: task)
     }
 }
 
+// TODO: move to extensions
 extension UIGestureRecognizer {
     
     func unitPoint(in view: UIView) -> UnitPoint {

@@ -68,7 +68,7 @@ extension ItemVideoPlayer.Overlay {
                 }
             } label: {
                 HStack {
-                    Image(systemName: "speaker.wave.3")
+                    Image(systemName: "speaker.wave.2")
                     L10n.audio.text
                 }
             }
@@ -90,7 +90,7 @@ extension ItemVideoPlayer.Overlay {
                 }
                 
                 if !PlaybackSpeed.allCases.map(\.rawValue).contains(where: { $0 == Double(videoPlayerManager.playbackSpeed) }) {
-                    Label(String(format: "%.2f", videoPlayerManager.playbackSpeed).appending("x"), systemImage: "checkmark")
+                    Label(videoPlayerManager.playbackSpeed.rateLabel, systemImage: "checkmark")
                 }
             } label: {
                 HStack {

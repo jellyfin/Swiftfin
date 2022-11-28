@@ -53,7 +53,7 @@ extension ItemVideoPlayer.Overlay {
                 .isEditing(_isScrubbing.wrappedValue)
                 .rate($scrubbingRate)
                 .trackMask {
-                    if chapterSlider {
+                    if chapterSlider && !(viewModel.item.chapters?.isEmpty ?? true) {
                         ChapterTrack()
                             .clipShape(Capsule())
                     } else {
@@ -92,7 +92,7 @@ extension ItemVideoPlayer.Overlay {
                 .isEditing(_isScrubbing.wrappedValue)
                 .rate($scrubbingRate)
                 .trackMask {
-                    if chapterSlider {
+                    if chapterSlider && !(viewModel.item.chapters?.isEmpty ?? true) {
                         ChapterTrack()
                             .clipShape(Capsule())
                     } else {

@@ -103,7 +103,7 @@ extension ItemVideoPlayer.Overlay {
                     }
                 }
             } label: {
-                Image(systemName: "speaker.wave.3")
+                Image(systemName: "speaker.wave.2")
             }
         }
         

@@ -115,7 +115,7 @@ struct SmallMediaStreamSelectionView: View {
                     } label: {
                         if updateFocusedLayer == .audio {
                             HStack(spacing: 15) {
-                                Image(systemName: "speaker.wave.3")
+                                Image(systemName: "speaker.wave.2")
                                 L10n.audio.text
                             }
                             .padding()
@@ -123,7 +123,7 @@ struct SmallMediaStreamSelectionView: View {
                             .foregroundColor(.black)
                         } else {
                             HStack(spacing: 15) {
-                                Image(systemName: "speaker.wave.3")
+                                Image(systemName: "speaker.wave.2")
                                 L10n.audio.text
                             }
                             .padding()

@@ -35,10 +35,24 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        if nativePlayer {
-            NativeVideoPlayer(manager: .init(item: parameters.item, mediaSource: parameters.mediaSource))
+        PreferenceUIHostingControllerView {
+            ItemVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
+                .prefersHomeIndicatorAutoHidden(true)
+                .overrideViewPreference(.dark)
+                .iOS16HideSystemOverlays()
+        }
+        .ignoresSafeArea()
+    }
+}
+
+extension View {
+    
+    @ViewBuilder
+    func iOS16HideSystemOverlays() -> some View {
+        if #available(iOS 16, *) {
+            self.persistentSystemOverlays(.hidden)
         } else {
-            ItemVideoPlayer(manager: .init(item: parameters.item, mediaSource: parameters.mediaSource))
+            self
         }
     }
 }

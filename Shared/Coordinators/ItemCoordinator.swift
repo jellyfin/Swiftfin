@@ -27,6 +27,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     var castAndCrew = makeCastAndCrew
     @Route(.modal)
     var itemOverview = makeItemOverview
+    @Route(.modal)
+    var remoteImages = makeRemoteImages
 
     let itemDto: BaseItemDto
 
@@ -52,6 +54,10 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
+    }
+    
+    func makeRemoteImages() -> EditItemMetadataView {
+        EditItemMetadataView(viewModel: .init(item: itemDto, imageType: .primary))
     }
 
     @ViewBuilder

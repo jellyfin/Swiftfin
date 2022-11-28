@@ -98,7 +98,7 @@ struct VideoPlayerSettingsView: View {
                 
                 Toggle(isOn: $showAudioTrackMenu) {
                     HStack {
-                        Image(systemName: "speaker.wave.3")
+                        Image(systemName: "speaker.wave.2")
                         Text("Audio Tracks")
                     }
                 }
@@ -116,18 +116,18 @@ struct VideoPlayerSettingsView: View {
                         Text("Jump")
                     }
                 }
-                
-                Toggle(isOn: $showPlaybackSpeed) {
-                    HStack {
-                        Image(systemName: "speedometer")
-                        Text("Playback Speed")
-                    }
-                }
 
                 Toggle(isOn: $playNextItem) {
                     HStack {
                         Image(systemName: "chevron.left.circle")
                         Text("Next Item")
+                    }
+                }
+                
+                Toggle(isOn: $showPlaybackSpeed) {
+                    HStack {
+                        Image(systemName: "speedometer")
+                        Text("Playback Speed")
                     }
                 }
 
