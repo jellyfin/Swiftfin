@@ -15,3 +15,18 @@ extension MediaSourceInfo: Displayable {
         name ?? .emptyDash
     }
 }
+
+extension MediaSourceInfo {
+    
+    var audioStreams: [MediaStream]? {
+        mediaStreams?.filter({ $0.type == .audio })
+    }
+    
+    var subtitleStreams: [MediaStream]? {
+        mediaStreams?.filter({ $0.type == .subtitle })
+    }
+    
+    var videoStreams: [MediaStream]? {
+        mediaStreams?.filter({ $0.type == .video })
+    }
+}

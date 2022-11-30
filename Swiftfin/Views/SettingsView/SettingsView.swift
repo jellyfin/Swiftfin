@@ -13,17 +13,21 @@ import SwiftUI
 
 struct SettingsView: View {
 
+    @Default(.appAppearance)
+    private var appAppearance
+    @Default(.VideoPlayer.videoPlayerType)
+    private var videoPlayerType
+    
     @EnvironmentObject
-    private var settingsRouter: SettingsCoordinator.Router
+    private var router: SettingsCoordinator.Router
+    
     @ObservedObject
     var viewModel: SettingsViewModel
 
-    @Default(.appAppearance)
-    var appAppearance
-
     var body: some View {
         Form {
-            Section(header: EmptyView()) {
+            
+            Section {
                 HStack {
                     L10n.user.text
                     Spacer()
@@ -33,16 +37,16 @@ struct SettingsView: View {
                 
                 ChevronButton(title: L10n.server, subtitle: viewModel.server.name)
                     .onSelect {
-                        settingsRouter.route(to: \.serverDetail)
+                        router.route(to: \.serverDetail)
                     }
                 
                 ChevronButton(title: L10n.quickConnect)
                     .onSelect {
-                        settingsRouter.route(to: \.quickConnect)
+                        router.route(to: \.quickConnect)
                     }
 
                 Button {
-                    settingsRouter.dismissCoordinator {
+                    router.dismissCoordinator {
                         SessionManager.main.logout()
                     }
                 } label: {
@@ -50,40 +54,52 @@ struct SettingsView: View {
                         .font(.callout)
                 }
             }
-
-            Section(header: L10n.videoPlayer.text) {
+            
+            Section {
+                EnumPicker(
+                    title: "Video Player Type",
+                    selection: $videoPlayerType
+                )
+                
+                ChevronButton(title: "Native Player")
+                    .onSelect {
+                        router.route(to: \.nativePlayerSettings)
+                    }
                 
                 ChevronButton(title: L10n.videoPlayer)
                     .onSelect {
-                        settingsRouter.route(to: \.videoPlayerSettings)
+                        router.route(to: \.videoPlayerSettings)
                     }
+            } header: {
+                L10n.videoPlayer.text
             }
-
-            Section(header: L10n.accessibility.text) {
-                
+            
+            Section {
                 EnumPicker(title: L10n.appearance, selection: $appAppearance)
                 
                 ChevronButton(title: L10n.customize)
                     .onSelect {
-                        settingsRouter.route(to: \.customizeViewsSettings)
+                        router.route(to: \.customizeViewsSettings)
                     }
                 
                 ChevronButton(title: L10n.experimental)
                     .onSelect {
-                        settingsRouter.route(to: \.experimentalSettings)
+                        router.route(to: \.experimentalSettings)
                     }
+            } header: {
+                L10n.accessibility.text
             }
             
             ChevronButton(title: L10n.about)
                 .onSelect {
-                    settingsRouter.route(to: \.about)
+                    router.route(to: \.about)
                 }
         }
         .navigationBarTitle(L10n.settings, displayMode: .inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 Button {
-                    settingsRouter.dismissCoordinator()
+                    router.dismissCoordinator()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                 }

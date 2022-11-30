@@ -44,7 +44,7 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+        private var viewModel: VLCVideoPlayerViewModel
         
         @ViewBuilder
         private var aspectFillButton: some View {

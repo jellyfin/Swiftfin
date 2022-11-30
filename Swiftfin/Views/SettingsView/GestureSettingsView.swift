@@ -17,6 +17,8 @@ struct GestureSettingsView: View {
     private var horizontalSwipeGesture
     @Default(.VideoPlayer.Gesture.longPressGesture)
     private var longPressGesture
+    @Default(.VideoPlayer.Gesture.multiTapGesture)
+    private var multiTapGesture
     @Default(.VideoPlayer.Gesture.pinchGesture)
     private var pinchGesture
     @Default(.VideoPlayer.Gesture.verticalPanGestureLeft)
@@ -36,6 +38,8 @@ struct GestureSettingsView: View {
                     .disabled(horizontalPanGesture != .none && horizontalSwipeGesture == .none)
                 
                 EnumPicker(title: "Long Press", selection: $longPressGesture)
+                
+                EnumPicker(title: "Multi Tap", selection: $multiTapGesture)
                 
                 EnumPicker(title: "Pinch", selection: $pinchGesture)
                 

@@ -53,6 +53,8 @@ extension Defaults.Keys {
         
         // TODO: rename buttons to show_
         // TODO: Add to own suite
+        
+        static let videoPlayerType: Key<VideoPlayerType> = .init("videoPlayerType", default: .vlc, suite: .generalSuite)
 
         static let autoPlay: Key<Bool> = .init("autoPlay", default: true, suite: .generalSuite)
         static let autoPlayEnabled: Key<Bool> = .init("autoPlayEnabled", default: true, suite: .generalSuite)
@@ -82,6 +84,7 @@ extension Defaults.Keys {
             static let horizontalPanGesture: Key<PanAction> = .init("videoPlayer.horizontalPanGesture", default: .none, suite: .generalSuite)
             static let horizontalSwipeGesture: Key<SwipeAction> = .init("videoPlayer.horizontalSwipeGesture", default: .none, suite: .generalSuite)
             static let longPressGesture: Key<LongPressAction> = .init("videoPlayer.longPressGesture", default: .gestureLock, suite: .generalSuite)
+            static let multiTapGesture: Key<MultiTapAction> = .init("videoPlayer.multiTapGesture", default: .none, suite: .generalSuite)
             static let pinchGesture: Key<PinchAction> = .init("videoPlayer.swipeGesture", default: .aspectFill, suite: .generalSuite)
             static let verticalPanGestureLeft: Key<PanAction> = .init("videoPlayer.verticalPanGestureLeft", default: .none, suite: .generalSuite)
             static let verticalPanGestureRight: Key<PanAction> = .init("videoPlayer.verticalPanGestureRight", default: .none, suite: .generalSuite)
@@ -106,6 +109,11 @@ extension Defaults.Keys {
                 suite: .generalSuite
             )
             static let timestampType: Key<TimestampType> = .init("timestampType", default: .split, suite: .generalSuite)
+        }
+        
+        enum NativePlayer {
+            
+            static let useFMP4Container: Key<Bool> = .init("nativePlayer.useFMP4Container", default: false, suite: .generalSuite)
         }
         
         enum Subtitle {
@@ -153,6 +161,7 @@ extension Defaults.Keys {
         static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: .generalSuite)
         static let liveTVForceDirectPlay = Key<Bool>("liveTVForceDirectPlay", default: false, suite: .generalSuite)
         static let liveTVNativePlayer = Key<Bool>("liveTVNativePlayer", default: false, suite: .generalSuite)
+        static let lastChapterNextItem: Key<Bool> = .init("lastChapterNextItem", default: false, suite: .generalSuite)
     }
 
     // tvos specific

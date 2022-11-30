@@ -17,15 +17,16 @@ struct NativeVideoPlayer: View {
     private var router: ItemVideoPlayerCoordinator.Router
     
     @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: NativeVideoPlayerManager
     
-    init(manager: VideoPlayerManager) {
+    init(manager: NativeVideoPlayerManager) {
         self.videoPlayerManager = manager
     }
     
     @ViewBuilder
-    private func playerView(with viewModel: VideoPlayerViewModel) -> some View {
-        NativeVideoPlayerView(manager: videoPlayerManager, viewModel: viewModel)
+    private func playerView(with viewModel: NativeVideoPlayerViewModel) -> some View {
+        Text("todo")
+//        NativeVideoPlayerView(manager: videoPlayerManager, viewModel: viewModel)
     }
     
     @ViewBuilder
@@ -48,7 +49,7 @@ struct NativeVideoPlayer: View {
     
     var body: some View {
         Group {
-            if let viewModel = videoPlayerManager.currentViewModel {
+            if let viewModel = videoPlayerManager.viewModel {
                 playerView(with: viewModel)
             } else {
                 loadingView
@@ -62,13 +63,13 @@ struct NativeVideoPlayer: View {
 
 struct NativeVideoPlayerView: UIViewControllerRepresentable {
     
-    let videoPlayerManager: VideoPlayerManager
-    let viewModel: VideoPlayerViewModel
+    let videoPlayerManager: NativeVideoPlayerManager
+    let viewModel: NativeVideoPlayerViewModel
     
-    init(manager: VideoPlayerManager, viewModel: VideoPlayerViewModel) {
-        self.videoPlayerManager = manager
-        self.viewModel = viewModel
-    }
+//    init(manager: NativeVideoPlayerManager, viewModel: NativeVideoPlayerViewModel) {
+//        self.videoPlayerManager = manager
+//        self.viewModel = viewModel
+//    }
     
     func makeUIViewController(context: Context) -> some UIViewController {
         UINativeVideoPlayerViewController(manager: videoPlayerManager, viewModel: viewModel)
@@ -81,14 +82,14 @@ struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
 class UINativeVideoPlayerViewController: AVPlayerViewController {
 
-    let videoPlayerManager: VideoPlayerManager
-    let viewModel: VideoPlayerViewModel
+    let videoPlayerManager: NativeVideoPlayerManager
+    let viewModel: NativeVideoPlayerViewModel
 
 //    var timeObserverToken: Any?
 
     var lastProgressTicks: Int64 = 0
 
-    init(manager: VideoPlayerManager, viewModel: VideoPlayerViewModel) {
+    init(manager: NativeVideoPlayerManager, viewModel: NativeVideoPlayerViewModel) {
 
         self.videoPlayerManager = manager
         self.viewModel = viewModel
@@ -97,14 +98,22 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         let player: AVPlayer = .init(url: viewModel.playbackURL)
 
-//        if let transcodedStreamURL = viewModel.transcodedStreamURL {
-//            player = AVPlayer(url: transcodedStreamURL)
-//        } else {
-//            player = AVPlayer(url: viewModel.hlsStreamURL)
-//        }
-
         player.appliesMediaSelectionCriteriaAutomatically = false
         player.currentItem?.externalMetadata = createMetadata()
+        
+//        var isHdrVideo = false
+//            let pVideoTrack = AVAsset(url: URL(fileURLWithPath: assetURL!))
+//            if #available(iOS 14.0, *) {
+//                let tracks = pVideoTrack.tracks(withMediaCharacteristic: .containsHDRVideo)
+//                for track in tracks{
+//                    isHdrVideo = track.hasMediaCharacteristic(.containsHDRVideo)
+//                    if(isHdrVideo){
+//                        break
+//                    }
+//                }
+//            }
+        
+//        self.showsPlaybackControls = false
 
 //        let timeScale = CMTimeScale(NSEC_PER_SEC)
 //        let time = CMTime(seconds: 5, preferredTimescale: timeScale)
@@ -140,7 +149,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         super.viewDidAppear(animated)
 
         player?.seek(
-            to: CMTimeMake(value: Int64(viewModel.item.startTimeSeconds), timescale: 10_000_000),
+            to: CMTimeMake(value: Int64(viewModel.item.startTimeSeconds), timescale: 1),
             toleranceBefore: CMTimeMake(value: 1, timescale: 1),
             toleranceAfter: CMTimeMake(value: 1, timescale: 1),
             completionHandler: { _ in

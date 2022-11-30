@@ -9,22 +9,9 @@
 import Defaults
 import Foundation
 
-protocol GestureAction: CaseIterable, Codable, Defaults.Serializable, Displayable { }
+// TODO: look at optional values for defaults to remove .none
 
-enum SwipeAction: String, GestureAction {
-    
-    case none
-    case jump
-    
-    var displayTitle: String {
-        switch self {
-        case .none:
-            return L10n.none
-        case .jump:
-            return "Jump"
-        }
-    }
-}
+protocol GestureAction: CaseIterable, Codable, Defaults.Serializable, Displayable { }
 
 enum LongPressAction: String, GestureAction {
     
@@ -37,6 +24,21 @@ enum LongPressAction: String, GestureAction {
             return L10n.none
         case .gestureLock:
             return "Gesture Lock"
+        }
+    }
+}
+
+enum MultiTapAction: String, GestureAction {
+    
+    case none
+    case jump
+    
+    var displayTitle: String {
+        switch self {
+        case .none:
+            return L10n.none
+        case .jump:
+            return "Jump"
         }
     }
 }
@@ -85,6 +87,21 @@ enum PinchAction: String, GestureAction {
             return L10n.none
         case .aspectFill:
             return "Aspect Fill"
+        }
+    }
+}
+
+enum SwipeAction: String, GestureAction {
+    
+    case none
+    case jump
+    
+    var displayTitle: String {
+        switch self {
+        case .none:
+            return L10n.none
+        case .jump:
+            return "Jump"
         }
     }
 }

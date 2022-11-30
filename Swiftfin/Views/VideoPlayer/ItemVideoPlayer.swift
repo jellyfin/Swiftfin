@@ -13,9 +13,14 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
+protocol VideoPlayerRenderingLayer {
+    
+    associatedtype Body: View
+    
+    func makeLayer(with videoPlayerManager: VideoPlayerManager) -> Self.Body
+}
+
 // TODO: organize
-// TODO: new overlay handler
-// TODO: gesture state handler
 
 class CurrentProgressHandler: ObservableObject {
     
@@ -61,6 +66,8 @@ struct ItemVideoPlayer: View {
     private var horizontalSwipeGesture
     @Default(.VideoPlayer.Gesture.longPressGesture)
     private var longPressGesture
+    @Default(.VideoPlayer.Gesture.multiTapGesture)
+    private var multiTapGesture
     @Default(.VideoPlayer.Gesture.pinchGesture)
     private var pinchGesture
     @Default(.VideoPlayer.Gesture.verticalPanGestureLeft)
@@ -113,20 +120,20 @@ struct ItemVideoPlayer: View {
             .proxy(splitContentViewProxy)
             .content {
                 ZStack {
-                    VLCVideoPlayer(configuration: viewModel.configuration)
-                        .proxy(videoPlayerManager.proxy)
-                        .onTicksUpdated { ticks, playbackInformation in
-                            videoPlayerManager.onTicksUpdated(ticks: ticks, playbackInformation: playbackInformation)
-                            
-                            let newSeconds = ticks / 1000
-                            let newProgress = CGFloat(newSeconds) / CGFloat(viewModel.item.runTimeSeconds)
-                            currentProgressHandler.progress = newProgress
-                            currentProgressHandler.seconds = newSeconds
-
-                            guard !isScrubbing else { return }
-                            currentProgressHandler.scrubbedProgress = newProgress
-                        }
-                        .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
+//                    VLCVideoPlayer(configuration: viewModel.configuration)
+//                        .proxy(videoPlayerManager.proxy)
+//                        .onTicksUpdated { ticks, playbackInformation in
+//                            videoPlayerManager.onTicksUpdated(ticks: ticks, playbackInformation: playbackInformation)
+//                            
+//                            let newSeconds = ticks / 1000
+//                            let newProgress = CGFloat(newSeconds) / CGFloat(viewModel.item.runTimeSeconds)
+//                            currentProgressHandler.progress = newProgress
+//                            currentProgressHandler.seconds = newSeconds
+//
+//                            guard !isScrubbing else { return }
+//                            currentProgressHandler.scrubbedProgress = newProgress
+//                        }
+//                        .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
 
                     GestureView()
                         .onHorizontalPan {
@@ -135,7 +142,7 @@ struct ItemVideoPlayer: View {
                         .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
                         .onLongPress(minimumDuration: 2, handleLongPress)
                         .onPinch(handlePinchGesture)
-                        .onTap(samePointPadding: 20, samePointTimeout: 0.7, handleTapGesture)
+                        .onTap(samePointPadding: 10, samePointTimeout: 0.7, handleTapGesture)
                         .onVerticalPan {
                             if $1.x <= 0.5 {
                                 handlePan(action: verticalGestureLeft, state: $0, point: -$1.y, velocity: $2, translation: $3)
@@ -144,11 +151,9 @@ struct ItemVideoPlayer: View {
                             }
                         }
                     
-                    UpdateView(proxy: updateViewProxy)
-                    
                     Group {
                         Overlay()
-                            .opacity(currentOverlayType == .main ? 1 : 0)
+//                            .opacity(currentOverlayType == .main ? 1 : 0)
                         
 //                        Overlay.ChapterOverlay()
 //                            .opacity(currentOverlayType == .chapters ? 1 : 0)
@@ -180,6 +185,10 @@ struct ItemVideoPlayer: View {
             }
             .onChange(of: currentProgressHandler.scrubbedProgress) { newValue in
                 currentProgressHandler.scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * newValue)
+            }
+            .overlay(alignment: .top) {
+                UpdateView(proxy: updateViewProxy)
+                    .padding(.top)
             }
     }
 
@@ -250,7 +259,7 @@ struct ItemVideoPlayer: View {
         .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
             guard let newViewModel else { return }
             
-            videoPlayerManager.proxy.playNewMedia(newViewModel.configuration)
+//            videoPlayerManager.proxy.playNewMedia(newViewModel.configuration)
             
             aspectFilled = false
             audioOffset = 0
@@ -340,8 +349,13 @@ extension ItemVideoPlayer {
             return
         }
         
-        if taps > 1 {
-            jumpAction(unitPoint: unitPoint, amount: taps - 1)
+        if taps > 1 && multiTapGesture != .none {
+            switch multiTapGesture {
+            case .none:
+                return
+            case .jump:
+                jumpAction(unitPoint: unitPoint, amount: taps - 1)
+            }
         } else {
             if currentOverlayType == nil {
                 showOverlay(.main)
@@ -353,6 +367,9 @@ extension ItemVideoPlayer {
 }
 
 // MARK: Gesture Actions
+
+// TODO: look at having action changes be separated from the calculations, for incremental jumps vs pans
+// TODO: UX polish: small delay (1s) after scrub for isScrubbing = false, only when starting with no overlay
 
 extension ItemVideoPlayer {
     
@@ -370,8 +387,6 @@ extension ItemVideoPlayer {
             }
         }
     }
-    
-    // TODO: have offset actions be stepped by 100
     
     private func audioOffsetAction(
         state: UIGestureRecognizer.State,
@@ -473,10 +488,6 @@ extension ItemVideoPlayer {
             gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
             gestureStateHandler.beginningHorizontalPanUnit = point
             gestureStateHandler.beganPanWithOverlay = currentOverlayType == .main
-            
-            if !gestureStateHandler.beganPanWithOverlay {
-                showOverlay(.main)
-            }
         } else if state == .ended {
             if !gestureStateHandler.beganPanWithOverlay {
                 showOverlay(nil)

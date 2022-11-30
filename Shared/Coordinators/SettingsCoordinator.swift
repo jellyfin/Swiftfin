@@ -11,25 +11,49 @@ import Stinsen
 import SwiftUI
 
 final class SettingsCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \SettingsCoordinator.start)
 
     @Root
     var start = makeStart
+    
+    @Route(.push)
+    var about = makeAbout
+    @Route(.push)
+    var customizeViewsSettings = makeCustomizeViewsSettings
+    @Route(.push)
+    var experimentalSettings = makeExperimentalSettings
+    @Route(.push)
+    var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
     var serverDetail = makeServerDetail
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
-    @Route(.push)
-    var experimentalSettings = makeExperimentalSettings
-    @Route(.push)
-    var customizeViewsSettings = makeCustomizeViewsSettings
-    @Route(.push)
-    var about = makeAbout
 
     #if !os(tvOS)
     @Route(.push)
     var quickConnect = makeQuickConnectSettings
     #endif
+    
+    @ViewBuilder
+    func makeAbout() -> some View {
+        AboutAppView()
+    }
+    
+    @ViewBuilder
+    func makeCustomizeViewsSettings() -> some View {
+        CustomizeViewsSettings()
+    }
+    
+    @ViewBuilder
+    func makeExperimentalSettings() -> some View {
+        ExperimentalSettingsView()
+    }
+    
+    @ViewBuilder
+    func makeNativePlayerSettings() -> some View {
+        NativeVideoPlayerSettingsView()
+    }
 
     @ViewBuilder
     func makeServerDetail() -> some View {
@@ -38,21 +62,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
-    }
-
-    @ViewBuilder
-    func makeExperimentalSettings() -> some View {
-        ExperimentalSettingsView()
-    }
-
-    @ViewBuilder
-    func makeCustomizeViewsSettings() -> some View {
-        CustomizeViewsSettings()
-    }
-
-    @ViewBuilder
-    func makeAbout() -> some View {
-        AboutAppView()
     }
 
     #if !os(tvOS)

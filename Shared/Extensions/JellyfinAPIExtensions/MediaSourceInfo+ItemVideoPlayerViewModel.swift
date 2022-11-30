@@ -35,17 +35,19 @@ extension MediaSourceInfo {
         guard let videoStream = mediaStreams?.filter({ $0.type == .video }).first else { throw JellyfinAPIError("No video  stream") }
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
+        
+        throw JellyfinAPIError("todo")
 
-        return VideoPlayerViewModel(
-            playbackURL: playbackURL,
-            item: item,
-            videoStream: videoStream,
-            audioStreams: audioStreams,
-            subtitleStreams: subtitleStreams,
-            selectedAudioStreamIndex: defaultAudioStreamIndex ?? -1,
-            selectedSubtitleStreamIndex: defaultSubtitleStreamIndex ?? -1,
-            chapters: item.fullChapterInfo,
-            streamType: streamType
-        )
+//        return VideoPlayerViewModel(
+//            playbackURL: playbackURL,
+//            item: item,
+//            videoStream: videoStream,
+//            audioStreams: audioStreams,
+//            subtitleStreams: subtitleStreams,
+//            selectedAudioStreamIndex: defaultAudioStreamIndex ?? -1,
+//            selectedSubtitleStreamIndex: defaultSubtitleStreamIndex ?? -1,
+//            chapters: item.fullChapterInfo,
+//            streamType: streamType
+//        )
     }
 }

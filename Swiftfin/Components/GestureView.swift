@@ -10,6 +10,9 @@ import Combine
 import Foundation
 import SwiftUI
 
+// TODO: change swipe to directional
+// TODO: figure out way for multitap near the middle be distinguished as different
+
 // state, point, velocity, translation
 typealias PanGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void
 // state, point, scale

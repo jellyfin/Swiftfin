@@ -27,6 +27,9 @@ extension ItemVideoPlayer.Overlay {
         private var sliderType
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
+        
+        @Default(.Experimental.lastChapterNextItem)
+        private var lastChapterNextItem
 
         @Environment(\.currentOverlayType)
         @Binding
@@ -42,8 +45,12 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+        private var videoPlayerManager: VideoPlayerManager
+        @EnvironmentObject
+        private var viewModel: VLCVideoPlayerViewModel
 
+        @State
+        private var isShowingNextItem: Bool = false
         @State
         private var scrubbingRate: CGFloat = 1
 
@@ -122,38 +129,42 @@ extension ItemVideoPlayer.Overlay {
                         scrubbingRate = 1
                     }
                 }
-//                .onEditingChanged { isEditing in
-//                    isScrubbing = isEditing
-//                    scrubbingRate = 1
-//                }
         }
 
         var body: some View {
             VStack(spacing: 0) {
-                if chapterSlider && !viewModel.chapters.isEmpty {
-                    HStack {
-                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.scrubbedSeconds) {
-                            Button {
-                                currentOverlayType = .chapters
-                                overlayTimer.stop()
-                            } label: {
-                                HStack {
-                                    Text(currentChapter.displayTitle)
-                                        .monospacedDigit()
+                HStack {
+                    if chapterSlider,
+                       !viewModel.chapters.isEmpty,
+                        let currentChapter = viewModel.chapter(from: currentProgressHandler.scrubbedSeconds) {
+                        Button {
+                            currentOverlayType = .chapters
+                            overlayTimer.stop()
+                        } label: {
+                            HStack {
+                                Text(currentChapter.displayTitle)
+                                    .monospacedDigit()
 
-                                    Image(systemName: "chevron.right")
-                                }
-                                .foregroundColor(.white)
-                                .font(.subheadline.weight(.medium))
+                                Image(systemName: "chevron.right")
                             }
-                            .disabled(isScrubbing)
+                            .foregroundColor(.white)
+                            .font(.subheadline.weight(.medium))
                         }
-
-                        Spacer()
+                        .disabled(isScrubbing)
                     }
-                    .padding(.leading, 5)
-                    .padding(.bottom, 15)
+
+                    Spacer()
+                    
+                    if !isScrubbing,
+                       isShowingNextItem,
+                        videoPlayerManager.nextViewModel != nil {
+                        ProgressButton {
+                            videoPlayerManager.selectNextViewModel()
+                        }
+                    }
                 }
+                .padding(.leading, 5)
+                .padding(.bottom, 15)
                 
                 Group {
                     switch sliderType {
@@ -164,6 +175,67 @@ extension ItemVideoPlayer.Overlay {
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.linear(duration: 0.1), value: scrubbingRate)
+            .onChange(of: currentProgressHandler.seconds) { newValue in
+                guard lastChapterNextItem,
+                        let lastChapter = viewModel.chapters.last,
+                      (lastChapter.secondsRange.first ?? 0) > (viewModel.item.runTimeSeconds / 10) * 8  else {
+                    isShowingNextItem = false
+                    return
+                }
+                isShowingNextItem = lastChapter.secondsRange.contains(newValue)
+            }
         }
+    }
+}
+
+struct ProgressButton: View {
+    
+    @State
+    private var seconds: Int = 10
+    @State
+    private var currentTask: DispatchWorkItem?
+    
+    let action: () -> Void
+    
+    var body: some View {
+        Button {
+            action()
+        } label: {
+            HStack {
+                Text("Next in \(seconds)s")
+                    .monospacedDigit()
+                
+                Image(systemName: "arrow.right.circle")
+            }
+            .foregroundColor(.black)
+            .padding()
+            .background {
+                Color.white
+            }
+            .cornerRadius(10)
+        }
+        .onAppear {
+            nextSecond()
+        }
+        .onDisappear {
+            currentTask?.cancel()
+        }
+    }
+    
+    private func nextSecond() {
+        guard seconds > 0 else {
+            action()
+            return
+        }
+        
+        let task = DispatchWorkItem {
+            seconds -= 1
+            
+            nextSecond()
+        }
+        
+        self.currentTask = task
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: task)
     }
 }

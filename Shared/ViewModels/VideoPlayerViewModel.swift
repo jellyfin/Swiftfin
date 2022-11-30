@@ -14,7 +14,7 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-class VideoPlayerViewModel: ObservableObject {
+class VLCVideoPlayerViewModel: ObservableObject {
 
     let playbackURL: URL
     let item: BaseItemDto
@@ -73,9 +73,9 @@ class VideoPlayerViewModel: ObservableObject {
     }
 }
 
-extension VideoPlayerViewModel: Equatable {
+extension VLCVideoPlayerViewModel: Equatable {
 
-    static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
+    static func == (lhs: VLCVideoPlayerViewModel, rhs: VLCVideoPlayerViewModel) -> Bool {
         lhs.playbackURL == rhs.playbackURL &&
             lhs.item == rhs.item
     }

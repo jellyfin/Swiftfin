@@ -36,10 +36,16 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         PreferenceUIHostingControllerView {
-            ItemVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
-                .prefersHomeIndicatorAutoHidden(true)
-                .overrideViewPreference(.dark)
-                .iOS16HideSystemOverlays()
+            Group {
+                if Defaults[.VideoPlayer.videoPlayerType] == .vlc {
+                    ItemVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
+                } else {
+                    NativeVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource, playSessionID: ""))
+                }
+            }
+            .prefersHomeIndicatorAutoHidden(true)
+            .overrideViewPreference(.dark)
+            .iOS16HideSystemOverlays()
         }
         .ignoresSafeArea()
     }

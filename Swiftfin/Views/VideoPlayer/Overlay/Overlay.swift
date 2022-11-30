@@ -17,7 +17,10 @@ extension ItemVideoPlayer {
 
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
-
+        
+        @Environment(\.currentOverlayType)
+        @Binding
+        private var currentOverlayType
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -44,7 +47,7 @@ extension ItemVideoPlayer {
                             )
                             .opacity(playbackButtonType == .compact ? 1 : 0)
                         }
-                        .opacity(isScrubbing ? 0 : 1)
+                        .opacity(!isScrubbing && currentOverlayType == .main ? 1 : 0)
 
                     Spacer()
                         .allowsHitTesting(false)
@@ -64,16 +67,17 @@ extension ItemVideoPlayer {
                             )
                             .opacity(isScrubbing || playbackButtonType == .compact ? 1 : 0)
                         }
+                        .opacity(isScrubbing || currentOverlayType == .main ? 1 : 0)
                 }
 
                 if playbackButtonType == .large {
                     LargePlaybackButtons()
-                        .opacity(isScrubbing ? 0 : 1)
+                        .opacity(!isScrubbing && currentOverlayType == .main ? 1 : 0)
                 }
             }
             .background {
                 Color.black
-                    .opacity(isScrubbing || (!isScrubbing && playbackButtonType != .large) ? 0 : 0.5)
+                    .opacity(!isScrubbing && playbackButtonType == .large && currentOverlayType == .main ? 0.5 : 0)
                     .allowsHitTesting(false)
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
