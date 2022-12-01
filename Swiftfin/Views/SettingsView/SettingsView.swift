@@ -77,6 +77,11 @@ struct SettingsView: View {
             Section {
                 EnumPicker(title: L10n.appearance, selection: $appAppearance)
                 
+                ChevronButton(title: "App Icon")
+                    .onSelect {
+                        router.route(to: \.appIconSelector)
+                    }
+                
                 ChevronButton(title: L10n.customize)
                     .onSelect {
                         router.route(to: \.customizeViewsSettings)

@@ -9,6 +9,9 @@
 import SwiftUI
 
 struct AboutAppView: View {
+    
+    @ObservedObject
+    var viewModel: SettingsViewModel
 
     var body: some View {
         List {
@@ -17,8 +20,9 @@ struct AboutAppView: View {
                     Spacer()
 
                     VStack(alignment: .center) {
-                        AppIcon()
-                            .cornerRadius(11)
+                        Image(uiImage: viewModel.currentAppIcon.iconPreview)
+                            .resizable()
+                            .cornerRadius(12)
                             .frame(width: 150, height: 150)
 
                         // App name, not to be localized
@@ -35,57 +39,33 @@ struct AboutAppView: View {
             Section {
 
                 HStack {
-                    L10n.about.text
+                    L10n.version.text
                     Spacer()
                     Text("\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))")
                         .foregroundColor(.secondary)
                 }
-
-                HStack {
-                    Image("github-logo")
-                        .renderingMode(.template)
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundColor(.primary)
-                    Link(
-                        L10n.sourceCode,
-                        destination: URL(string: "https://github.com/jellyfin/Swiftfin")!
-                    )
-                    .foregroundColor(.primary)
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                }
-
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Link(
-                        L10n.requestFeature,
-                        destination: URL(string: "https://github.com/jellyfin/Swiftfin/issues")!
-                    )
-                    .foregroundColor(.primary)
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                }
-
-                HStack {
-                    Image(systemName: "xmark.circle.fill")
-                    Link(
-                        L10n.reportIssue,
-                        destination: URL(string: "https://github.com/jellyfin/Swiftfin/issues")!
-                    )
-                    .foregroundColor(.primary)
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                }
+                
+                ChevronButton(title: L10n.sourceCode)
+                    .leadingView {
+                        Image("logo.github")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.primary)
+                    }
+                    .onSelect {
+                        UIApplication.shared.open(URL(string: "https://www.hackingwithswift.com")!)
+                    }
+                
+                ChevronButton(title: "Bugs and Features")
+                    .leadingView {
+                        Image(systemName: "plus.circle.fill")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.primary)
+                    }
+                    .onSelect {
+                        UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
+                    }
             }
         }
     }

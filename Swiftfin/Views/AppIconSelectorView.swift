@@ -10,7 +10,83 @@ import SwiftUI
 
 struct AppIconSelectorView: View {
     
+    @ObservedObject
+    var viewModel: SettingsViewModel
+    
     var body: some View {
-        Text("")
+        
+        Form {
+            
+            Section {
+                ForEach(PrimaryAppIcon.allCases) { icon in
+                    AppIconRow(viewModel: viewModel, icon: icon)
+                }
+            }
+            
+            Section("Dark") {
+                ForEach(DarkAppIcon.allCases) { icon in
+                    AppIconRow(viewModel: viewModel, icon: icon)
+                }
+            }
+            
+            Section("Inverse") {
+                ForEach(InverseAppIcon.allCases) { icon in
+                    AppIconRow(viewModel: viewModel, icon: icon)
+                }
+            }
+            
+            Section("Light") {
+                ForEach(LightAppIcon.allCases) { icon in
+                    AppIconRow(viewModel: viewModel, icon: icon)
+                }
+            }
+        }
+        .navigationTitle("App Icon")
+    }
+}
+
+extension AppIconSelectorView {
+    
+    struct AppIconRow: View {
+        
+        @ObservedObject
+        var viewModel: SettingsViewModel
+        
+        let icon: any AppIcon
+        
+        var body: some View {
+            Button {
+                viewModel.select(icon: icon)
+            } label: {
+                HStack {
+                    
+                    Image(uiImage: icon.iconPreview)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(12)
+                        .shadow(radius: 2)
+                    
+                    Text(icon.displayTitle)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    if icon.iconName == viewModel.currentAppIcon.iconName {
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.jellyfinPurple)
+                    } else {
+                        Image(systemName: "circle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+        }
     }
 }

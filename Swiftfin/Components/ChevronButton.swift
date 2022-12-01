@@ -12,6 +12,7 @@ struct ChevronButton: View {
 
     private let title: String
     private let subtitle: String?
+    private var leadingView: () -> any View
     private var onSelect: () -> Void
 
     var body: some View {
@@ -19,6 +20,10 @@ struct ChevronButton: View {
             onSelect()
         } label: {
             HStack {
+                
+                leadingView()
+                    .eraseToAnyView()
+                
                 Text(title)
                     .foregroundColor(.primary)
 
@@ -26,10 +31,12 @@ struct ChevronButton: View {
 
                 if let subtitle {
                     Text(subtitle)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
 
                 Image(systemName: "chevron.right")
+                    .font(.body.weight(.regular))
+                    .foregroundColor(.secondary)
             }
         }
     }
@@ -40,8 +47,13 @@ extension ChevronButton {
         self.init(
             title: title,
             subtitle: subtitle,
+            leadingView: { EmptyView() },
             onSelect: {}
         )
+    }
+    
+    func leadingView(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.leadingView, with: content)
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {

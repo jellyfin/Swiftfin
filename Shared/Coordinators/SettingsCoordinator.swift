@@ -20,6 +20,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var about = makeAbout
     @Route(.push)
+    var appIconSelector = makeAppIconSelector
+    @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
@@ -35,9 +37,20 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var quickConnect = makeQuickConnectSettings
     #endif
     
+    private let viewModel: SettingsViewModel
+    
+    init() {
+        viewModel = .init(server: SessionManager.main.currentLogin.server, user: SessionManager.main.currentLogin.user)
+    }
+    
     @ViewBuilder
     func makeAbout() -> some View {
-        AboutAppView()
+        AboutAppView(viewModel: viewModel)
+    }
+    
+    @ViewBuilder
+    func makeAppIconSelector() -> some View {
+        AppIconSelectorView(viewModel: viewModel)
     }
     
     @ViewBuilder
@@ -73,7 +86,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        let viewModel = SettingsViewModel(server: SessionManager.main.currentLogin.server, user: SessionManager.main.currentLogin.user)
         SettingsView(viewModel: viewModel)
     }
 }

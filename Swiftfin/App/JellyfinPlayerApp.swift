@@ -70,6 +70,6 @@ extension View {
 extension UINavigationController {
     // Remove back button text
     override open func viewWillLayoutSubviews() {
-        navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationBar.topItem?.backButtonDisplayMode = .minimal
     }
 }
