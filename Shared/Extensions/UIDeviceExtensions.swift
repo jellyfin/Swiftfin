@@ -31,13 +31,11 @@ extension UIDevice {
     }
 
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(type)
+        UINotificationFeedbackGenerator().notificationOccurred(type)
     }
 
     static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
-        let generator = UIImpactFeedbackGenerator(style: type)
-        generator.impactOccurred()
+        UIImpactFeedbackGenerator(style: type).impactOccurred()
     }
     #endif
 }

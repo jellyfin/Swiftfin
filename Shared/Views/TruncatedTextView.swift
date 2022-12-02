@@ -6,9 +6,13 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct TruncatedTextView: View {
+    
+    @Default(.accentColor)
+    private var accentColor
 
     @State
     private var truncated: Bool = false
@@ -53,14 +57,14 @@ struct TruncatedTextView: View {
                 #if os(tvOS)
                 Text(seeMoreText)
                     .font(font)
-                    .foregroundColor(.purple)
+                    .foregroundColor(accentColor)
                 #else
                 Button {
                     seeMoreAction()
                 } label: {
                     Text(seeMoreText)
                         .font(font)
-                        .foregroundColor(.purple)
+                        .foregroundColor(accentColor)
                 }
                 #endif
             }

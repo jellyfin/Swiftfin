@@ -8,9 +8,17 @@
 
 import SwiftUI
 
-public extension Color {
+extension Color {
 
-    internal static let jellyfinPurple = Color(uiColor: .jellyfinPurple)
+    static let jellyfinPurple = Color(uiColor: .jellyfinPurple)
+    
+    var uiColor: UIColor {
+        UIColor(self)
+    }
+    
+    var overlayColor: Color {
+        Color(uiColor: uiColor.overlayColor)
+    }
 
     #if os(tvOS) // tvOS doesn't have these
     static let systemFill = Color(UIColor.white)

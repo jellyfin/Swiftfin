@@ -48,4 +48,18 @@ extension View {
             )
         )
     }
+    
+    func navigationCloseButton(accentColor: Binding<Color>, _ action: @escaping () -> Void) -> some View {
+        self.toolbar {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
+                Button {
+                    action()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(accentColor.wrappedValue.overlayColor, accentColor.wrappedValue)
+                }
+            }
+        }
+    }
 }

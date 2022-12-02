@@ -13,13 +13,6 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
-protocol VideoPlayerRenderingLayer {
-    
-    associatedtype Body: View
-    
-    func makeLayer(with videoPlayerManager: VideoPlayerManager) -> Self.Body
-}
-
 // TODO: organize
 
 class CurrentProgressHandler: ObservableObject {
@@ -120,20 +113,20 @@ struct ItemVideoPlayer: View {
             .proxy(splitContentViewProxy)
             .content {
                 ZStack {
-//                    VLCVideoPlayer(configuration: viewModel.configuration)
-//                        .proxy(videoPlayerManager.proxy)
-//                        .onTicksUpdated { ticks, playbackInformation in
-//                            videoPlayerManager.onTicksUpdated(ticks: ticks, playbackInformation: playbackInformation)
-//                            
-//                            let newSeconds = ticks / 1000
-//                            let newProgress = CGFloat(newSeconds) / CGFloat(viewModel.item.runTimeSeconds)
-//                            currentProgressHandler.progress = newProgress
-//                            currentProgressHandler.seconds = newSeconds
-//
-//                            guard !isScrubbing else { return }
-//                            currentProgressHandler.scrubbedProgress = newProgress
-//                        }
-//                        .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
+                    VLCVideoPlayer(configuration: viewModel.vlcVideoPlayerConfiguration)
+                        .proxy(videoPlayerManager.proxy)
+                        .onTicksUpdated { ticks, playbackInformation in
+                            videoPlayerManager.onTicksUpdated(ticks: ticks, playbackInformation: playbackInformation)
+                            
+                            let newSeconds = ticks / 1000
+                            let newProgress = CGFloat(newSeconds) / CGFloat(viewModel.item.runTimeSeconds)
+                            currentProgressHandler.progress = newProgress
+                            currentProgressHandler.seconds = newSeconds
+
+                            guard !isScrubbing else { return }
+                            currentProgressHandler.scrubbedProgress = newProgress
+                        }
+                        .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
 
                     GestureView()
                         .onHorizontalPan {
@@ -259,7 +252,7 @@ struct ItemVideoPlayer: View {
         .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
             guard let newViewModel else { return }
             
-//            videoPlayerManager.proxy.playNewMedia(newViewModel.configuration)
+            videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
             
             aspectFilled = false
             audioOffset = 0

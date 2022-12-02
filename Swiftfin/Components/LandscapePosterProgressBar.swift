@@ -6,9 +6,13 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct LandscapePosterProgressBar: View {
+    
+    @Default(.accentColor)
+    private var accentColor
 
     let title: String
     let progress: CGFloat
@@ -39,6 +43,7 @@ struct LandscapePosterProgressBar: View {
                         .foregroundColor(.white)
 
                     ProgressBar(progress: progress)
+                        .foregroundColor(accentColor)
                         .frame(height: 3)
                 }
                 .padding(.horizontal, 5 * paddingScale)

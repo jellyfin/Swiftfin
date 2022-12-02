@@ -45,25 +45,11 @@ final class MainCoordinator: NavigationCoordinatable {
         WidgetCenter.shared.reloadAllTimelines()
         UIScrollView.appearance().keyboardDismissMode = .onDrag
 
-        // Back bar button item setup
-        let config = UIImage.SymbolConfiguration(paletteColors: [.white, .jellyfinPurple])
-        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill", withConfiguration: config)
-        let barAppearance = UINavigationBar.appearance()
-        barAppearance.backIndicatorImage = backButtonBackgroundImage
-        barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
-        barAppearance.tintColor = UIColor(Color.jellyfinPurple)
-
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
         Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
         Notifications[.processDeepLink].subscribe(self, selector: #selector(processDeepLink(_:)))
         Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeServerCurrentURI(_:)))
-
-        Defaults.publisher(.appAppearance)
-            .sink { _ in
-                JellyfinPlayerApp.setupAppearance()
-            }
-            .store(in: &cancellables)
     }
 
     @objc

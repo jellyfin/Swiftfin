@@ -37,10 +37,10 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
     func makeStart() -> some View {
         PreferenceUIHostingControllerView {
             Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .vlc {
+                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     ItemVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
                 } else {
-                    NativeVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource, playSessionID: ""))
+                    NativeVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
                 }
             }
             .prefersHomeIndicatorAutoHidden(true)

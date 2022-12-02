@@ -16,23 +16,20 @@ struct AboutAppView: View {
     var body: some View {
         List {
             Section {
-                HStack {
-                    Spacer()
+                VStack(alignment: .center) {
+                    
+                    Image(uiImage: viewModel.currentAppIcon.iconPreview)
+                        .resizable()
+                        .frame(width: 150, height: 150)
+                        .cornerRadius(150 / 6.4)
+                        .shadow(radius: 5)
 
-                    VStack(alignment: .center) {
-                        Image(uiImage: viewModel.currentAppIcon.iconPreview)
-                            .resizable()
-                            .cornerRadius(12)
-                            .frame(width: 150, height: 150)
-
-                        // App name, not to be localized
-                        Text("Swiftfin")
-                            .fontWeight(.semibold)
-                            .font(.title2)
-                    }
-
-                    Spacer()
+                    // App name, not to be localized
+                    Text("Swiftfin")
+                        .fontWeight(.semibold)
+                        .font(.title2)
                 }
+                .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
             }
 

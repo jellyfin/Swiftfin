@@ -6,19 +6,20 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Defaults
-import Factory
 import Foundation
 import JellyfinAPI
-import SwiftUI
 import VLCUI
+import UIKit
 
-class VLCVideoPlayerViewModel: ObservableObject {
-
+final class VideoPlayerViewModel: ViewModel {
+    
     let playbackURL: URL
+    let hlsPlaybackURL: URL
     let item: BaseItemDto
-    let videoStream: MediaStream
+    let mediaSource: MediaSourceInfo
+    let playSessionID: String
+    let videoStreams: [MediaStream]
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
     let selectedAudioStreamIndex: Int
@@ -26,7 +27,7 @@ class VLCVideoPlayerViewModel: ObservableObject {
     let chapters: [ChapterInfo.FullInfo]
     let streamType: StreamType
     
-    var configuration: VLCVideoPlayer.Configuration {
+    var vlcVideoPlayerConfiguration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
         configuration.startTime = .seconds(max(0, item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]))
@@ -44,11 +45,14 @@ class VLCVideoPlayerViewModel: ObservableObject {
 
         return configuration
     }
-
+    
     init(
         playbackURL: URL,
+        hlsPlaybackURL: URL,
         item: BaseItemDto,
-        videoStream: MediaStream,
+        mediaSource: MediaSourceInfo,
+        playSessionID: String,
+        videoStreams: [MediaStream],
         audioStreams: [MediaStream],
         subtitleStreams: [MediaStream],
         selectedAudioStreamIndex: Int,
@@ -56,9 +60,12 @@ class VLCVideoPlayerViewModel: ObservableObject {
         chapters: [ChapterInfo.FullInfo],
         streamType: StreamType
     ) {
-        self.playbackURL = playbackURL
         self.item = item
-        self.videoStream = videoStream
+        self.mediaSource = mediaSource
+        self.playSessionID = playSessionID
+        self.playbackURL = playbackURL
+        self.hlsPlaybackURL = hlsPlaybackURL
+        self.videoStreams = videoStreams
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
             .adjustExternalSubtitleIndexes(audioStreamCount: audioStreams.count)
@@ -66,17 +73,50 @@ class VLCVideoPlayerViewModel: ObservableObject {
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
         self.chapters = chapters
         self.streamType = streamType
+        super.init()
     }
-
+    
     func chapter(from seconds: Int) -> ChapterInfo.FullInfo? {
         chapters.first(where: { $0.secondsRange.contains(seconds) })
     }
+    
+    func constructHLSPlaybackURL() throws -> URL {
+        
+        guard let itemID = item.id, let mediaSourceID = mediaSource.id else { throw JellyfinAPIError("Unable to construct HLS stream: invalid item ID or media source ID") }
+
+        let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(
+            itemId: itemID,
+            mediaSourceId: mediaSourceID,
+            _static: true,
+            tag: mediaSource.eTag,
+            playSessionId: playSessionID,
+            segmentContainer: "mp4",
+            minSegments: 2,
+            deviceId: UIDevice.vendorUUIDString,
+            audioCodec: mediaSource.audioStreams?
+                .compactMap(\.codec)
+                .joined(separator: ","),
+            breakOnNonKeyFrames: true,
+            requireAvc: false,
+            transcodingMaxAudioChannels: 6,
+            videoCodec: mediaSource.videoStreams?
+                .compactMap(\.codec)
+                .joined(separator: ","),
+            videoStreamIndex: mediaSource.videoStreams?.first?.index,
+            enableAdaptiveBitrateStreaming: true
+        )
+
+        var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
+        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
+
+        return hlsStreamComponents.url!
+    }
 }
 
-extension VLCVideoPlayerViewModel: Equatable {
-
-    static func == (lhs: VLCVideoPlayerViewModel, rhs: VLCVideoPlayerViewModel) -> Bool {
-        lhs.playbackURL == rhs.playbackURL &&
-            lhs.item == rhs.item
+extension VideoPlayerViewModel: Equatable {
+    
+    static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
+        lhs.item == rhs.item &&
+        lhs.playbackURL == rhs.playbackURL
     }
 }

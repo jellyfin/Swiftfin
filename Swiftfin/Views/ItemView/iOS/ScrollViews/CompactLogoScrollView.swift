@@ -26,7 +26,7 @@ extension ItemView {
 
         private var topOpacity: CGFloat {
             let start = UIScreen.main.bounds.height * 0.25
-            let end = UIScreen.main.bounds.height * 0.44
+            let end = UIScreen.main.bounds.height * 0.425
             let diff = end - start
             let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
             return opacity

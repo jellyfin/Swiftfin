@@ -13,6 +13,8 @@ import SwiftUI
 
 struct SettingsView: View {
 
+    @Default(.accentColor)
+    private var accentColor
     @Default(.appAppearance)
     private var appAppearance
     @Default(.VideoPlayer.videoPlayerType)
@@ -32,7 +34,7 @@ struct SettingsView: View {
                     L10n.user.text
                     Spacer()
                     Text(viewModel.user.username)
-                        .foregroundColor(.jellyfinPurple)
+                        .foregroundColor(accentColor)
                 }
                 
                 ChevronButton(title: L10n.server, subtitle: viewModel.server.name)
@@ -95,20 +97,20 @@ struct SettingsView: View {
                 L10n.accessibility.text
             }
             
+            Section {
+                ColorPicker("Accent Color", selection: $accentColor, supportsOpacity: false)
+            } footer: {
+                Text("Some views may need an app restart to update.")
+            }
+            
             ChevronButton(title: L10n.about)
                 .onSelect {
                     router.route(to: \.about)
                 }
         }
         .navigationBarTitle(L10n.settings, displayMode: .inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button {
-                    router.dismissCoordinator()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-            }
+        .navigationCloseButton(accentColor: $accentColor) {
+            router.dismissCoordinator()
         }
     }
 }

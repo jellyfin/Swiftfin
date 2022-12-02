@@ -12,14 +12,14 @@ import Foundation
 enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
     
     case native
-    case vlc
+    case swiftfin
     
     var displayTitle: String {
         switch self {
         case .native:
             return "Native"
-        case .vlc:
-            return "VLC"
+        case .swiftfin:
+            return "Swiftfin"
         }
     }
 }

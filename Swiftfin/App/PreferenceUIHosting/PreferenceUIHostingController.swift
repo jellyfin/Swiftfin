@@ -12,6 +12,7 @@ import UIKit
 // MARK: PreferenceUIHostingController
 
 class PreferenceUIHostingController: UIHostingController<AnyView> {
+    
     init<V: View>(@ViewBuilder wrappedView: @escaping () -> V) {
         let box = Box()
         super.init(rootView: AnyView(

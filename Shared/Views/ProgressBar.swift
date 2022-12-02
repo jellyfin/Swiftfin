@@ -19,7 +19,6 @@ struct ProgressBar: View {
                 .opacity(0.2)
 
             Capsule()
-                .foregroundColor(.jellyfinPurple)
                 .scaleEffect(x: progress, y: 1, anchor: .leading)
         }
         .frame(maxWidth: .infinity)

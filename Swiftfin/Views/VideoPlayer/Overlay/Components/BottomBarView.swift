@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 import Sliders
 import SwiftUI
 import VLCUI
@@ -47,12 +48,14 @@ extension ItemVideoPlayer.Overlay {
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
-        private var viewModel: VLCVideoPlayerViewModel
+        private var viewModel: VideoPlayerViewModel
 
         @State
         private var isShowingNextItem: Bool = false
         @State
         private var scrubbingRate: CGFloat = 1
+        @State
+        private var currentChapter: ChapterInfo.FullInfo?
 
         @ViewBuilder
         private var capsuleSlider: some View {
@@ -134,9 +137,7 @@ extension ItemVideoPlayer.Overlay {
         var body: some View {
             VStack(spacing: 0) {
                 HStack {
-                    if chapterSlider,
-                       !viewModel.chapters.isEmpty,
-                        let currentChapter = viewModel.chapter(from: currentProgressHandler.scrubbedSeconds) {
+                    if let currentChapter {
                         Button {
                             currentOverlayType = .chapters
                             overlayTimer.stop()
@@ -183,6 +184,16 @@ extension ItemVideoPlayer.Overlay {
                     return
                 }
                 isShowingNextItem = lastChapter.secondsRange.contains(newValue)
+            }
+            .onChange(of: currentProgressHandler.scrubbedSeconds) { newValue in
+                let newChapter = viewModel.chapter(from: newValue)
+                if newChapter != currentChapter {
+                    if isScrubbing {
+                        UIDevice.impact(.light)
+                    }
+                    
+                    self.currentChapter = newChapter
+                }
             }
         }
     }

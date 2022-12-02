@@ -23,6 +23,8 @@ struct BasicAppSettingsView: View {
     @State
     var removeAllUsersTapped: Bool = false
 
+    @Default(.accentColor)
+    private var accentColor
     @Default(.appAppearance)
     var appAppearance
     @Default(.defaultHTTPScheme)
@@ -30,6 +32,8 @@ struct BasicAppSettingsView: View {
 
     var body: some View {
         Form {
+            
+            ColorPicker("Accent Color", selection: $accentColor, supportsOpacity: false)
 
             Button {
                 basicAppSettingsRouter.route(to: \.about)

@@ -223,7 +223,7 @@ extension BaseItemDto {
 
         let ranges: [Range<Int>] = []
             .appending(chapters.map(\.startTimeSeconds))
-            .appending(runTimeSeconds)
+            .appending(runTimeSeconds + 1)
             .adjacentPairs()
             .map { $0 ..< $1 }
 

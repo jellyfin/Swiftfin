@@ -22,7 +22,9 @@ extension Defaults.Keys {
     // Universal settings
     static let defaultHTTPScheme = Key<HTTPScheme>("defaultHTTPScheme", default: .http, suite: .universalSuite)
     static let appAppearance = Key<AppAppearance>("appAppearance", default: .system, suite: .universalSuite)
-
+    
+    static let accentColor: Key<Color> = .init("accentColor", default: .jellyfinPurple, suite: .generalSuite)
+    
     // General settings
     static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .generalSuite)
     static let inNetworkBandwidth = Key<Int>("InNetworkBandwidth", default: 40_000_000, suite: .generalSuite)
@@ -54,7 +56,7 @@ extension Defaults.Keys {
         // TODO: rename buttons to show_
         // TODO: Add to own suite
         
-        static let videoPlayerType: Key<VideoPlayerType> = .init("videoPlayerType", default: .vlc, suite: .generalSuite)
+        static let videoPlayerType: Key<VideoPlayerType> = .init("videoPlayerType", default: .swiftfin, suite: .generalSuite)
 
         static let autoPlay: Key<Bool> = .init("autoPlay", default: true, suite: .generalSuite)
         static let autoPlayEnabled: Key<Bool> = .init("autoPlayEnabled", default: true, suite: .generalSuite)

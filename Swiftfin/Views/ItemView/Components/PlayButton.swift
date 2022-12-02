@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import SwiftUI
 
@@ -13,6 +14,9 @@ extension ItemView {
 
     struct PlayButton: View {
 
+        @Default(.accentColor)
+        private var accentColor
+        
         @Injected(LogManager.service)
         private var logger
 
@@ -32,17 +36,18 @@ extension ItemView {
             } label: {
                 ZStack {
                     Rectangle()
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
+                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : accentColor)
                         .cornerRadius(10)
 
                     HStack {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
+                        
                         Text(viewModel.playButtonText())
                             .font(.callout)
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
+                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
                 }
             }
 //            .contextMenu {
