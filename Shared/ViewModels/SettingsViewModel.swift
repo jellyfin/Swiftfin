@@ -70,7 +70,7 @@ final class SettingsViewModel: ViewModel {
                     try await UIApplication.shared.setAlternateIconName(icon.iconName)
                 }
             } catch {
-                logger.error("Unable to update app icon to: \(icon.iconName)")
+                logger.error("Unable to update app icon to \(icon.iconName): \(error.localizedDescription)")
                 currentAppIcon = previousAppIcon
             }
         }

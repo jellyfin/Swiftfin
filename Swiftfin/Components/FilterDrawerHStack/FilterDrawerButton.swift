@@ -6,10 +6,15 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension FilterDrawerHStack {
+    
     struct FilterDrawerButton: View {
+        
+        @Default(.accentColor)
+        private var accentColor
 
         private let systemName: String?
         private let title: String
@@ -50,12 +55,12 @@ extension FilterDrawerHStack {
                 .padding(.vertical, 5)
                 .background {
                     Capsule()
-                        .foregroundColor(activated ? .jellyfinPurple : Color(UIColor.secondarySystemFill))
+                        .foregroundColor(activated ? accentColor : Color(UIColor.secondarySystemFill))
                         .opacity(0.5)
                 }
                 .overlay {
                     Capsule()
-                        .stroke(activated ? .purple : Color(UIColor.secondarySystemFill), lineWidth: 1)
+                        .stroke(activated ? accentColor : Color(UIColor.secondarySystemFill), lineWidth: 1)
                 }
             }
         }

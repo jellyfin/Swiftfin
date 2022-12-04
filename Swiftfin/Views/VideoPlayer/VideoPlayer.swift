@@ -28,7 +28,7 @@ class CurrentProgressHandler: ObservableObject {
     var scrubbedSeconds: Int = 0
 }
 
-struct ItemVideoPlayer: View {
+struct VideoPlayer: View {
     
     enum OverlayType {
         case main
@@ -102,9 +102,11 @@ struct ItemVideoPlayer: View {
     private var subtitleOffset: Int = 0
     
     private let gestureStateHandler: GestureStateHandler = .init()
+    private var overlay: () -> any VideoPlayerOverlay
 
     init(manager: VideoPlayerManager) {
         self.videoPlayerManager = manager
+        self.overlay = { EmptyView() }
     }
 
     @ViewBuilder
@@ -145,11 +147,9 @@ struct ItemVideoPlayer: View {
                         }
                     
                     Group {
-                        Overlay()
-//                            .opacity(currentOverlayType == .main ? 1 : 0)
-                        
-//                        Overlay.ChapterOverlay()
-//                            .opacity(currentOverlayType == .chapters ? 1 : 0)
+//                        Overlay()
+                        overlay()
+                            .eraseToAnyView()
                     }
                     .environmentObject(currentProgressHandler)
                     .environmentObject(overlayTimer)
@@ -267,9 +267,16 @@ struct ItemVideoPlayer: View {
     }
 }
 
+extension VideoPlayer {
+    
+    func overlay(@ViewBuilder _ content: @escaping () -> any VideoPlayerOverlay) -> Self {
+        copy(modifying: \.overlay, with: content)
+    }
+}
+
 // MARK: Gestures
 
-extension ItemVideoPlayer {
+extension VideoPlayer {
     
     private func handlePan(
         action: PanAction,
@@ -364,7 +371,7 @@ extension ItemVideoPlayer {
 // TODO: look at having action changes be separated from the calculations, for incremental jumps vs pans
 // TODO: UX polish: small delay (1s) after scrub for isScrubbing = false, only when starting with no overlay
 
-extension ItemVideoPlayer {
+extension VideoPlayer {
     
     private func aspectFillAction(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
         guard state == .began || state == .changed else { return }

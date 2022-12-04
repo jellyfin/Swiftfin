@@ -12,15 +12,15 @@ import Sliders
 import SwiftUI
 import VLCUI
 
-extension ItemVideoPlayer.Overlay {
+extension VideoPlayer.Overlay {
 
     struct BottomBarView: View {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
-        @Default(.videoPlayerJumpBackward)
+        @Default(.VideoPlayer.jumpBackwardLength)
         private var jumpBackwardLength
-        @Default(.videoPlayerJumpBackward)
+        @Default(.VideoPlayer.jumpForwardLength)
         private var jumpForwardLength
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType

@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -67,6 +68,9 @@ extension SeriesEpisodeSelector {
     }
 
     struct EpisodeContent: View {
+        
+        @Default(.accentColor)
+        private var accentColor
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -136,7 +140,7 @@ extension SeriesEpisodeSelector {
                     L10n.seeMore.text
                         .font(.footnote)
                         .fontWeight(.medium)
-                        .foregroundColor(.jellyfinPurple)
+                        .foregroundColor(accentColor)
                 }
             }
             .font(.caption.weight(.light))

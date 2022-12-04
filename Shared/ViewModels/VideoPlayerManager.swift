@@ -15,8 +15,6 @@ import VLCUI
 import UIKit
 
 // TODO: Make online/offline
-// TODO: move native stuff
-// TODO: make manager and viewmodels parent classes
 // TODO: proper error catching
 
 class VideoPlayerManager: ViewModel {

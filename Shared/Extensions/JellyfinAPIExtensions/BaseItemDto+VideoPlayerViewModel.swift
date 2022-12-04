@@ -35,10 +35,10 @@ extension BaseItemDto {
             getPostedPlaybackInfoRequest: playbackInfoRequest
         )
         .tryMap { response in
-            guard let matchingMediaSource = response.mediaSources?.first(where: { $0.eTag == mediaSource.eTag && $0.name == mediaSource.name }) else { throw JellyfinAPIError("Matching media source not in ") }
+//            guard let matchingMediaSource = response.mediaSources?.first(where: { $0.eTag == mediaSource.eTag && $0.id == mediaSource.id }) else { throw JellyfinAPIError("Matching media source not in playback info") }
             guard let playSessionID = response.playSessionId else { throw JellyfinAPIError("Play session ID not in playback info request") }
             
-            return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: playSessionID)
+            return try mediaSource.videoPlayerViewModel(with: self, playSessionID: playSessionID)
         }
         .eraseToAnyPublisher()
     }

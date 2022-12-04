@@ -36,6 +36,11 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     var useSeriesLandscapeBackdrop
+    
+    @Default(.Customization.Library.showFavorites)
+    private var showFavorites
+    @Default(.Customization.Library.randomImage)
+    private var libraryRandomImage
 
     var body: some View {
         List {
@@ -79,6 +84,14 @@ struct CustomizeViewsSettings: View {
                 // TODO: think of a better name
                 // TODO: localize after organization
                 Text("Episode Landscape Poster")
+            }
+            
+            Section {
+                Toggle("Random Image", isOn: $libraryRandomImage)
+                
+                Toggle("Show Favorites", isOn: $showFavorites)
+            } header: {
+                Text("Library")
             }
         }
         .navigationTitle(L10n.customize)

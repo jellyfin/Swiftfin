@@ -10,13 +10,13 @@ import Defaults
 import SwiftUI
 import VLCUI
 
-extension ItemVideoPlayer.Overlay {
+extension VideoPlayer.Overlay {
 
     struct SmallPlaybackButtons: View {
 
-        @Default(.videoPlayerJumpBackward)
+        @Default(.VideoPlayer.jumpBackwardLength)
         private var jumpBackwardLength
-        @Default(.videoPlayerJumpBackward)
+        @Default(.VideoPlayer.jumpForwardLength)
         private var jumpForwardLength
         @Default(.VideoPlayer.showJumpButtons)
         private var showJumpButtons
@@ -25,48 +25,66 @@ extension ItemVideoPlayer.Overlay {
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        
+        @ViewBuilder
+        private var jumpBackwardButton: some View {
+            Button {
+                videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+            } label: {
+                Image(systemName: jumpBackwardLength.backwardImageLabel)
+                    .font(.system(size: 24, weight: .bold, design: .default))
+            }
+            .contentShape(Rectangle())
+        }
+        
+        @ViewBuilder
+        private var playButton: some View {
+            Button {
+                switch videoPlayerManager.state {
+                case .playing:
+                    videoPlayerProxy.pause()
+                default:
+                    videoPlayerProxy.play()
+                }
+            } label: {
+                Group {
+                    switch videoPlayerManager.state {
+                    case .stopped, .paused:
+                        Image(systemName: "play.fill")
+                    case .playing:
+                        Image(systemName: "pause.fill")
+                    default:
+                        ProgressView()
+                    }
+                }
+                .font(.system(size: 28, weight: .bold, design: .default))
+                .frame(width: 50, height: 50)
+            }
+            .contentShape(Rectangle())
+        }
+        
+        @ViewBuilder
+        private var jumpForwardButton: some View {
+            Button {
+                videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+            } label: {
+                Image(systemName: jumpForwardLength.forwardImageLabel)
+                    .font(.system(size: 24, weight: .bold, design: .default))
+            }
+            .contentShape(Rectangle())
+        }
 
         var body: some View {
             HStack(spacing: 15) {
+                
                 if showJumpButtons {
-                    Button {
-                        videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                    } label: {
-                        Image(systemName: jumpBackwardLength.backwardImageLabel)
-                            .font(.system(size: 24, weight: .bold, design: .default))
-                    }
+                    jumpBackwardButton
                 }
 
-                Button {
-                    switch videoPlayerManager.state {
-                    case .playing:
-                        videoPlayerProxy.pause()
-                    default:
-                        videoPlayerProxy.play()
-                    }
-                } label: {
-                    Group {
-                        switch videoPlayerManager.state {
-                        case .stopped, .paused:
-                            Image(systemName: "play.fill")
-                        case .playing:
-                            Image(systemName: "pause")
-                        default:
-                            ProgressView()
-                        }
-                    }
-                    .font(.system(size: 28, weight: .heavy, design: .default))
-                    .frame(width: 50, height: 50)
-                    .contentShape(Rectangle())
-                }
-
+                playButton
+                
                 if showJumpButtons {
-                    Button {
-                        videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-                    } label: {
-                        Image(systemName: jumpForwardLength.forwardImageLabel)
-                            .font(.system(size: 24, weight: .bold, design: .default))
-                    }
+                    jumpForwardButton
                 }
             }
             .tint(Color.white)

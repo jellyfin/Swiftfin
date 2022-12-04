@@ -42,20 +42,6 @@ struct SwiftfinApp: App {
             .onOpenURL { url in
                 AppURLHandler.shared.processDeepLink(url: url)
             }
-            
-//            EmptyView()
-//                .ignoresSafeArea()
-//                .withHostingWindow { window in
-//                    window?.rootViewController = PreferenceUIHostingController {
-//                        MainCoordinator()
-//                            .view()
-//                    }
-//                }
-//                .onAppear {
-//                    Self.setupAppearance()
-//                    Self.setupNavigationBackButton()
-//                    Self.setupTintColor()
-//                }
         }
     }
     
@@ -77,28 +63,6 @@ struct SwiftfinApp: App {
         let scenes = UIApplication.shared.connectedScenes
         let windowScene = scenes.first as? UIWindowScene
         windowScene?.windows.first?.tintColor = accentColor
-    }
-}
-
-// MARK: Hosting Window
-
-struct HostingWindowFinder: UIViewRepresentable {
-    var callback: (UIWindow?) -> Void
-
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        DispatchQueue.main.async { [weak view] in
-            callback(view?.window)
-        }
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {}
-}
-
-extension View {
-    func withHostingWindow(_ callback: @escaping (UIWindow?) -> Void) -> some View {
-        background(HostingWindowFinder(callback: callback))
     }
 }
 

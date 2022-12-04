@@ -28,6 +28,14 @@ extension Array {
     func prepending(_ element: Element) -> [Element] {
         [element] + self
     }
+    
+    func prepending(_ element: Element, if condition: Bool) -> [Element] {
+        if condition {
+            return [element] + self
+        } else {
+            return self
+        }
+    }
 
     // There are instances where `removeFirst()` is called on an empty
     // collection even with a count check and causes a crash

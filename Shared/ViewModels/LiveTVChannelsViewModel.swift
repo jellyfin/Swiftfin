@@ -83,6 +83,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             startIndex: 0,
             limit: 1000,
             enableImageTypes: [.primary],
+            fields: ItemFields.minimumCases,
             enableUserData: false,
             enableFavoriteSorting: true
         )
@@ -195,18 +196,6 @@ final class LiveTVChannelsViewModel: ViewModel {
     func stopScheduleCheckTimer() {
         timer?.invalidate()
     }
-
-//    func fetchVideoPlayerViewModel(item: BaseItemDto, completion: @escaping (LegacyVideoPlayerViewModel) -> Void) {
-//        item.createLegacyLiveTVVideoPlayerViewModel()
-//            .sink { completion in
-//                self.handleAPIRequestError(completion: completion)
-//            } receiveValue: { videoPlayerViewModels in
-//                if let viewModel = videoPlayerViewModels.first {
-//                    completion(viewModel)
-//                }
-//            }
-//            .store(in: &self.cancellables)
-//    }
 }
 
 extension Array {

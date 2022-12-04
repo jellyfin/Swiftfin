@@ -22,6 +22,7 @@ extension Defaults.Keys {
     // Universal settings
     static let defaultHTTPScheme = Key<HTTPScheme>("defaultHTTPScheme", default: .http, suite: .universalSuite)
     static let appAppearance = Key<AppAppearance>("appAppearance", default: .system, suite: .universalSuite)
+    static let hapticFeedback: Key<Bool> = .init("hapticFeedback", default: true, suite: .universalSuite)
     
     static let accentColor: Key<Color> = .init("accentColor", default: .jellyfinPurple, suite: .generalSuite)
     
@@ -46,8 +47,10 @@ extension Defaults.Keys {
         }
 
         enum Library {
+            static let showFavorites: Key<Bool> = .init("Customization.Library.showFavorites", default: true, suite: .generalSuite)
             static let viewType = Key<LibraryViewType>("Customization.Library.viewType", default: .grid, suite: .generalSuite)
             static let gridPosterType = Key<PosterType>("Customization.Library.gridPosterType", default: .portrait, suite: .generalSuite)
+            static let randomImage: Key<Bool> = .init("Customization.Library.randomImage", default: true, suite: .generalSuite)
         }
     }
 
@@ -129,24 +132,6 @@ extension Defaults.Keys {
         }
     }
 
-    // Video player / overlay settings
-    static let jumpGesturesEnabled = Key<Bool>("gesturesEnabled", default: true, suite: .generalSuite)
-    static let systemControlGesturesEnabled = Key<Bool>(
-        "systemControlGesturesEnabled",
-        default: true,
-        suite: .generalSuite
-    )
-    static let playerGesturesLockGestureEnabled = Key<Bool>(
-        "playerGesturesLockGestureEnabled",
-        default: true,
-        suite: .generalSuite
-    )
-    static let seekSlideGestureEnabled = Key<Bool>(
-        "seekSlideGestureEnabled",
-        default: true,
-        suite: .generalSuite
-    )
-
     // Should show missing seasons and episodes
     static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
     static let shouldShowMissingEpisodes = Key<Bool>("shouldShowMissingEpisodes", default: true, suite: .generalSuite)
@@ -169,49 +154,4 @@ extension Defaults.Keys {
     // tvos specific
     static let downActionShowsMenu = Key<Bool>("downActionShowsMenu", default: true, suite: .generalSuite)
     static let confirmClose = Key<Bool>("confirmClose", default: false, suite: .generalSuite)
-}
-
-// MARK: Legacy
-
-// To be removed after their usage is removed
-
-extension Defaults.Keys {
-
-    static let overlayType = Key<OverlayType>("overlayType", default: .normal, suite: .generalSuite)
-    static let videoPlayerJumpForward = Key<VideoPlayerJumpLength>(
-        "videoPlayerJumpForward",
-        default: .fifteen,
-        suite: .generalSuite
-    )
-    static let videoPlayerJumpBackward = Key<VideoPlayerJumpLength>(
-        "videoPlayerJumpBackward",
-        default: .fifteen,
-        suite: .generalSuite
-    )
-    static let autoplayEnabled = Key<Bool>("autoPlayNextItem", default: true, suite: .generalSuite)
-    static let resumeOffset = Key<Bool>("resumeOffset", default: false, suite: .generalSuite)
-    static let subtitleFontName = Key<String>(
-        "subtitleFontName",
-        default: UIFont.systemFont(ofSize: 14).fontName,
-        suite: .generalSuite
-    )
-    static let subtitleSize = Key<SubtitleSize>("subtitleSize", default: .regular, suite: .generalSuite)
-
-    // Should show video player items
-    static let shouldShowPlayPreviousItem = Key<Bool>("shouldShowPreviousItem", default: true, suite: .generalSuite)
-    static let shouldShowPlayNextItem = Key<Bool>("shouldShowNextItem", default: true, suite: .generalSuite)
-    static let shouldShowAutoPlay = Key<Bool>("shouldShowAutoPlayNextItem", default: true, suite: .generalSuite)
-
-    // Should show video player items in overlay menu
-    static let shouldShowJumpButtonsInOverlayMenu = Key<Bool>(
-        "shouldShowJumpButtonsInMenu",
-        default: true,
-        suite: .generalSuite
-    )
-
-    static let shouldShowChaptersInfoInBottomOverlay = Key<Bool>(
-        "shouldShowChaptersInfoInBottomOverlay",
-        default: true,
-        suite: .generalSuite
-    )
 }

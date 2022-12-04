@@ -9,7 +9,7 @@
 import SwiftUI
 import VLCUI
 
-extension ItemVideoPlayer.Overlay {
+extension VideoPlayer.Overlay {
 
     struct OverlayMenu: View {
         

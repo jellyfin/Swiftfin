@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct AppIconSelectorView: View {
@@ -49,6 +50,9 @@ extension AppIconSelectorView {
     
     struct AppIconRow: View {
         
+        @Default(.accentColor)
+        private var accentColor
+        
         @ObservedObject
         var viewModel: SettingsViewModel
         
@@ -77,7 +81,7 @@ extension AppIconSelectorView {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 25, height: 25)
-                            .foregroundColor(.jellyfinPurple)
+                            .foregroundColor(accentColor)
                     } else {
                         Image(systemName: "circle")
                             .resizable()

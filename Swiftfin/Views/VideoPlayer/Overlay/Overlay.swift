@@ -11,9 +11,15 @@ import Sliders
 import SwiftUI
 import VLCUI
 
-extension ItemVideoPlayer {
+protocol VideoPlayerOverlay: View {
+    
+}
 
-    struct Overlay: View {
+extension EmptyView: VideoPlayerOverlay { }
+
+extension VideoPlayer {
+
+    struct Overlay: VideoPlayerOverlay {
 
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
@@ -34,8 +40,14 @@ extension ItemVideoPlayer {
             ZStack {
                 VStack {
                     TopBarView()
-                        .padding(safeAreaInsets.mutating(\.trailing, to: 0))
-                        .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
+                        .if(UIDevice.isPhone) { view in
+                            view.padding(safeAreaInsets.mutating(\.trailing, to: 0))
+                                .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
+                        }
+                        .if(UIDevice.isIPad) { view in
+                            view.padding(.top)
+                                .padding2(.horizontal)
+                        }
                         .background {
                             LinearGradient(
                                 stops: [
@@ -53,8 +65,14 @@ extension ItemVideoPlayer {
                         .allowsHitTesting(false)
 
                     BottomBarView()
-                        .padding(safeAreaInsets.mutating(\.trailing, to: 0))
-                        .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
+                        .if(UIDevice.isPhone) { view in
+                            view.padding(safeAreaInsets.mutating(\.trailing, to: 0))
+                                .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
+                        }
+                        .if(UIDevice.isIPad) { view in
+                            view.padding2(.bottom)
+                                .padding2(.horizontal)
+                        }
                         .background {
                             LinearGradient(
                                 stops: [

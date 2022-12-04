@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 import VLCUI
 
-extension ItemVideoPlayer.Overlay {
+extension VideoPlayer.Overlay {
 
     struct ActionButtons: View {
         

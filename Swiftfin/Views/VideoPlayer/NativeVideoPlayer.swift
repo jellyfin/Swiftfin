@@ -79,7 +79,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
     let videoPlayerManager: VideoPlayerManager
     let viewModel: VideoPlayerViewModel
 
-    private var timeObserverToken: Any?
+    private var timeObserverToken: Any!
 
     init(manager: VideoPlayerManager, viewModel: VideoPlayerViewModel) {
 
@@ -99,7 +99,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
             
             if time.seconds >= 0 {
                 let milliseconds = Int(time.seconds) * 1000
-                print("milliseconds: \(milliseconds)")
 //                self?.videoPlayerManager.onTicksUpdated(ticks: milliseconds, playbackInformation: VLCVideoPlayer.)
             }
             

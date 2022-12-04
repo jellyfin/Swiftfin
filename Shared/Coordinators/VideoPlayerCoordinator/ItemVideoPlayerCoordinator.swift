@@ -38,7 +38,10 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
         PreferenceUIHostingControllerView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    ItemVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
+                    VideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
+                        .overlay {
+                            VideoPlayer.Overlay()
+                        }
                 } else {
                     NativeVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
                 }

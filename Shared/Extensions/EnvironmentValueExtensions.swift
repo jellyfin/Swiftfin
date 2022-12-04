@@ -19,7 +19,7 @@ struct AspectFilled: EnvironmentKey {
 }
 
 struct CurrentOverlayType: EnvironmentKey {
-    static let defaultValue: Binding<ItemVideoPlayer.OverlayType?> = .constant(nil)
+    static let defaultValue: Binding<VideoPlayer.OverlayType?> = .constant(nil)
 }
 
 struct IsScrubbing: EnvironmentKey {
@@ -48,7 +48,7 @@ extension EnvironmentValues {
         set { self[AspectFilled.self] = newValue }
     }
     
-    var currentOverlayType: Binding<ItemVideoPlayer.OverlayType?> {
+    var currentOverlayType: Binding<VideoPlayer.OverlayType?> {
         get { self[CurrentOverlayType.self] }
         set { self[CurrentOverlayType.self] = newValue }
     }

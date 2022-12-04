@@ -27,6 +27,7 @@ extension EpisodeItemView {
                         .aspectRatio(1.77, contentMode: .fill)
                         .cornerRadius(10)
                         .padding(.horizontal)
+                        .posterShadow()
 
                     ShelfView(viewModel: viewModel)
                 }

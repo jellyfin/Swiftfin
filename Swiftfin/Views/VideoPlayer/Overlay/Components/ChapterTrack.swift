@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ItemVideoPlayer.Overlay {
+extension VideoPlayer.Overlay {
 
     struct ChapterTrack: View {
 

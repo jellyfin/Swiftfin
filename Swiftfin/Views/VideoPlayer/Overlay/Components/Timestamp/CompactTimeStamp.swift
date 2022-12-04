@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-extension ItemVideoPlayer.Overlay {
+extension VideoPlayer.Overlay {
 
     struct CompactTimeStamp: View {
 

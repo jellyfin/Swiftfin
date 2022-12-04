@@ -17,15 +17,7 @@ enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable, Displaya
     case five = 5
 
     var displayTitle: String {
-        L10n.jumpLengthSeconds("\(self.rawValue)")
-    }
-
-    var label: String {
-        L10n.jumpLengthSeconds("\(self.rawValue)")
-    }
-
-    var shortLabel: String {
-        "\(self.rawValue)s"
+        "\(rawValue)s"
     }
 
     var forwardImageLabel: String {

@@ -6,13 +6,17 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-extension ItemVideoPlayer.Overlay {
+extension VideoPlayer.Overlay {
 
     struct ChapterOverlay: View {
+        
+        @Default(.accentColor)
+        private var accentColor
 
         @EnvironmentObject
         private var currentProgressHandler: CurrentProgressHandler
@@ -39,7 +43,7 @@ extension ItemVideoPlayer.Overlay {
                     .imageOverlay { type in
                         if case let PosterButtonType.item(info) = type, info.secondsRange.contains(currentProgressHandler.seconds) {
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.jellyfinPurple, lineWidth: 8)
+                                .stroke(accentColor, lineWidth: 8)
                         }
                     }
                     .content { type in

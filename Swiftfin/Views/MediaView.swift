@@ -7,6 +7,7 @@
 //
 
 import CollectionView
+import Defaults
 import JellyfinAPI
 import Stinsen
 import SwiftUI
@@ -27,33 +28,18 @@ struct MediaView: View {
     }
 
     var body: some View {
-        CollectionView(items: viewModel.libraryItems) { _, item, _ in
-            PosterButton(state: .item(item), type: .landscape)
-                .scaleItem(UIDevice.isPhone ? 0.85 : 1)
+        CollectionView(items: viewModel.libraryItems) { _, viewModel, _ in
+            LibraryCard(viewModel: viewModel)
                 .onSelect {
-                    switch item.library.collectionType {
+                    switch viewModel.item.collectionType {
                     case "favorites":
-                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .favorites))
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .favorites))
                     case "folders":
-                        router.route(to: \.library, .init(parent: item.library, type: .folders, filters: .init()))
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .folders, filters: .init()))
                     case "liveTV":
                         router.route(to: \.liveTV)
                     default:
-                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .init()))
-                    }
-                }
-                .imageOverlay { _ in
-                    ZStack {
-                        Color.black
-                            .opacity(0.5)
-
-                        Text(item.library.displayTitle)
-                            .foregroundColor(.white)
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.center)
-                            .frame(alignment: .center)
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .init()))
                     }
                 }
         }
@@ -76,5 +62,66 @@ struct MediaView: View {
                 }
             }
         }
+    }
+}
+
+extension MediaView {
+    
+    struct LibraryCard: View {
+        
+        @ObservedObject
+        var viewModel: MediaItemViewModel
+        
+        private var onSelect: () -> Void
+        
+        private var itemWidth: CGFloat {
+            PosterType.landscape.width * (UIDevice.isPhone ? 0.85 : 1)
+        }
+        
+        var body: some View {
+            Button {
+                onSelect()
+            } label: {
+                Group {
+                    if let imageSources = viewModel.imageSources {
+                        ImageView(imageSources)
+                    } else {
+                        ImageView(nil)
+                    }
+                }
+                .overlay {
+                    if Defaults[.Customization.Library.randomImage] ||
+                        viewModel.item.collectionType == "favorites" {
+                        ZStack {
+                            Color.black
+                                .opacity(0.5)
+
+                            Text(viewModel.item.displayTitle)
+                                .foregroundColor(.white)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.center)
+                                .frame(alignment: .center)
+                        }
+                    }
+                }
+                .posterStyle(type: .landscape, width: itemWidth)
+            }
+        }
+    }
+}
+
+extension MediaView.LibraryCard {
+    
+    init(viewModel: MediaItemViewModel) {
+        self.init(
+            viewModel: viewModel,
+            onSelect: {}
+        )
+    }
+    
+    func onSelect(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

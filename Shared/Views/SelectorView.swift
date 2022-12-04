@@ -6,15 +6,20 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 // TODO: Implement different behavior types, where selected/unselected
-//       items appear in different sections
+//       items can appear in different sections
 struct SelectorView<Item: Displayable>: View {
+    
+    @Default(.accentColor)
+    private var accentColor
 
-    private let allItems: [Item]
     @Binding
     private var selectedItems: [Item]
+    
+    private let allItems: [Item]
     private let type: SelectorType
 
     init(type: SelectorType, allItems: [Item], selectedItems: Binding<[Item]>) {
@@ -42,7 +47,10 @@ struct SelectorView<Item: Displayable>: View {
 
                         if selectedItems.contains { $0.displayTitle == item.displayTitle } {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.jellyfinPurple)
+                                .foregroundColor(accentColor)
+                        } else {
+                            Image(systemName: "circle")
+                                .foregroundColor(.secondary)
                         }
                     }
                 }

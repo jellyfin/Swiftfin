@@ -12,7 +12,7 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
-extension ItemVideoPlayer.Overlay {
+extension VideoPlayer.Overlay {
 
     struct TopBarView: View {
 
@@ -46,7 +46,7 @@ extension ItemVideoPlayer.Overlay {
 
                     Spacer()
 
-                    ItemVideoPlayer.Overlay.ActionButtons()
+                    VideoPlayer.Overlay.ActionButtons()
                 }
                 .font(.system(size: 24))
                 .tint(Color.white)
