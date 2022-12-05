@@ -6,9 +6,13 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Files
 import SwiftUI
 
 struct AboutAppView: View {
+    
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
     
     @ObservedObject
     var viewModel: SettingsViewModel
@@ -34,13 +38,11 @@ struct AboutAppView: View {
             }
 
             Section {
-
-                HStack {
-                    L10n.version.text
-                    Spacer()
-                    Text("\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))")
-                        .foregroundColor(.secondary)
-                }
+                
+                TextPairView(
+                    leading: L10n.version,
+                    trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                )
                 
                 ChevronButton(title: L10n.sourceCode)
                     .leadingView {
@@ -63,6 +65,21 @@ struct AboutAppView: View {
                     .onSelect {
                         UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
                     }
+                
+                HStack {
+                    Image("git.commit")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(.primary)
+                    
+                    Text("git commit")
+                    
+                    Spacer()
+                    
+                    Text(Bundle.main.gitCommit ?? .emptyDash)
+                        .foregroundColor(.secondary)
+                }
             }
         }
     }

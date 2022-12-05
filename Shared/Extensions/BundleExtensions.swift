@@ -17,4 +17,8 @@ extension Bundle {
         else { return nil }
         return iconFileName
     }
+    
+    var gitCommit: String? {
+        object(forInfoDictionaryKey: "GIT_COMMIT_HASH") as? String
+    }
 }

@@ -73,6 +73,15 @@
       }
     },
     {
+      "identity" : "files",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnSundell/Files",
+      "state" : {
+        "revision" : "d273b5b7025d386feef79ef6bad7de762e106eaf",
+        "version" : "4.2.0"
+      }
+    },
+    {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift",
@@ -142,15 +151,6 @@
       "state" : {
         "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
         "version" : "0.1.4"
-      }
-    },
-    {
-      "identity" : "swiftui-sliders",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/spacenation/swiftui-sliders",
-      "state" : {
-        "branch" : "master",
-        "revision" : "5ba8614462a7ed4bd47a93fbca6c281599f74337"
       }
     },
     {

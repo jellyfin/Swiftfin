@@ -7,11 +7,15 @@
 //
 
 import BlurHashKit
+import Defaults
 import SwiftUI
 
 extension ItemView {
 
     struct CinematicScrollView<Content: View>: View {
+        
+        @Default(.Customization.CinematicItemViewType.usePrimaryImage)
+        private var cinematicItemViewTypeUsePrimaryImage
 
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
@@ -34,7 +38,10 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+            ImageView(viewModel.item.imageSource(
+                cinematicItemViewTypeUsePrimaryImage ? .primary : .backdrop,
+                maxWidth: UIScreen.main.bounds.width
+            ))
                 .frame(height: UIScreen.main.bounds.height * 0.6)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
                 .onAppear {
@@ -106,6 +113,9 @@ extension ItemView {
 extension ItemView.CinematicScrollView {
 
     struct OverlayView: View {
+        
+        @Default(.Customization.CinematicItemViewType.usePrimaryImage)
+        private var cinematicItemViewTypeUsePrimaryImage
 
         @EnvironmentObject
         private var itemRouter: ItemCoordinator.Router
@@ -116,20 +126,25 @@ extension ItemView.CinematicScrollView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center, spacing: 10) {
-                    ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
-                        .resizingMode(.aspectFit)
-                        .placeholder {
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(viewModel.item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.white)
-                        }
-                        .frame(height: 100)
-                        .frame(maxWidth: .infinity)
+                    if !cinematicItemViewTypeUsePrimaryImage {
+                        ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
+                            .resizingMode(.aspectFit)
+                            .placeholder {
+                                EmptyView()
+                            }
+                            .failure {
+                                Text(viewModel.item.displayTitle)
+                                    .font(.largeTitle)
+                                    .fontWeight(.semibold)
+                                    .multilineTextAlignment(.center)
+                                    .foregroundColor(.white)
+                            }
+                            .frame(height: 100)
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Spacer()
+                            .frame(height: 50)
+                    }
 
                     DotHStack {
                         if let firstGenre = viewModel.item.genres?.first {

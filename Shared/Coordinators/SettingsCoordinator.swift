@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Files
 import Foundation
 import Stinsen
 import SwiftUI
@@ -35,6 +36,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #if !os(tvOS)
     @Route(.push)
     var quickConnect = makeQuickConnectSettings
+    @Route(.push)
+    var log = makeLog
+    @Route(.modal)
+    var shareFile = makeShareFile
     #endif
     
     private let viewModel: SettingsViewModel
@@ -81,6 +86,16 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeQuickConnectSettings() -> some View {
         QuickConnectSettingsView(viewModel: .init())
+    }
+    
+    @ViewBuilder
+    func makeLog(file: File) -> some View {
+        TextFileView(file: file)
+    }
+    
+    @ViewBuilder
+    func makeShareFile(file: File) -> some View {
+        ActivityView(file: file)
     }
     #endif
 

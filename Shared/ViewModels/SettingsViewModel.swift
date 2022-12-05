@@ -7,13 +7,16 @@
 //
 
 import Defaults
+import Files
 import Foundation
-import SwiftUI
+import UIKit
 
 final class SettingsViewModel: ViewModel {
 
     @Published
     var currentAppIcon: any AppIcon
+    @Published
+    var logFiles: [File] = []
     
     let server: SwiftfinStore.State.Server
     let user: SwiftfinStore.State.User
@@ -21,6 +24,11 @@ final class SettingsViewModel: ViewModel {
     init(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
         self.server = server
         self.user = user
+        
+        if let documents = Folder.documents?.path,
+           let logDirectory = try? Folder(path: documents.appending("logs")) {
+            logFiles = logDirectory.files.map { $0 }
+        }
         
         guard let iconName = UIApplication.shared.alternateIconName else {
             currentAppIcon = PrimaryAppIcon.primary

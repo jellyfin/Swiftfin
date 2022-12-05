@@ -13,6 +13,8 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.itemViewType)
     var itemViewType
+    @Default(.Customization.CinematicItemViewType.usePrimaryImage)
+    private var cinematicItemViewTypeUsePrimaryImage
 
     @Default(.shouldShowMissingSeasons)
     var shouldShowMissingSeasons
@@ -44,11 +46,19 @@ struct CustomizeViewsSettings: View {
 
     var body: some View {
         List {
-            Section {
-                EnumPicker(title: L10n.items, selection: $itemViewType)
-
-            } header: {
-                EmptyView()
+            
+            if UIDevice.isPhone {
+                Section {
+                    EnumPicker(title: L10n.items, selection: $itemViewType)
+                }
+                
+                if itemViewType == .cinematic {
+                    Section {
+                        Toggle("Use Primary Image", isOn: $cinematicItemViewTypeUsePrimaryImage)
+                    } footer: {
+                        Text("Uses the primary image and hides the logo.")
+                    }
+                }
             }
 
             Section {

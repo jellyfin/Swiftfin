@@ -33,6 +33,7 @@ extension Defaults.Keys {
     static let libraryFilterStore = Key<[String: ItemFilters]>("libraryFilterStore", default: [:], suite: .generalSuite)
 
     enum Customization {
+        
         static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactLogo, suite: .generalSuite)
 
         static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: .generalSuite)
@@ -41,6 +42,10 @@ extension Defaults.Keys {
         static let latestInLibraryPosterType = Key<PosterType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
         static let similarPosterType = Key<PosterType>("similarPosterType", default: .portrait, suite: .generalSuite)
         static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
+        
+        enum CinematicItemViewType {
+            static let usePrimaryImage: Key<Bool> = .init("cinematicItemViewType.usePrimaryImage", default: false, suite: .generalSuite)
+        }
 
         enum Episodes {
             static let useSeriesLandscapeBackdrop = Key<Bool>("useSeriesBackdrop", default: true, suite: .generalSuite)
