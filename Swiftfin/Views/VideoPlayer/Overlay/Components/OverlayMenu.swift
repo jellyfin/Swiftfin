@@ -130,11 +130,13 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             Menu {
-                if !viewModel.item.subtitleStreams.isEmpty {
+                if !viewModel.subtitleStreams.isEmpty {
                     subtitleTrackMenu
                 }
 
-                audioTrackMenu
+                if !viewModel.audioStreams.isEmpty {
+                    audioTrackMenu
+                }
 
                 playbackSpeedMenu
 

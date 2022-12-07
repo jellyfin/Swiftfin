@@ -76,22 +76,37 @@ struct PlaybackSettingsView: View {
                 step: 100
             )
             .valueFormatter(millisecondFormat(from:))
-
-            Section("Audio") {
-                ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in
-                    ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
-                        .onSelect {
-                            router.route(to: \.mediaStreamInfo, mediaStream)
-                        }
+            
+            if !viewModel.videoStreams.isEmpty {
+                Section("Video") {
+                    ForEach(viewModel.videoStreams, id: \.displayTitle) { mediaStream in
+                        ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
+                            .onSelect {
+                                router.route(to: \.mediaStreamInfo, mediaStream)
+                            }
+                    }
                 }
             }
 
-            Section("Subtitle") {
-                ForEach(viewModel.subtitleStreams, id: \.displayTitle) { mediaStream in
-                    ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
-                        .onSelect {
-                            router.route(to: \.mediaStreamInfo, mediaStream)
-                        }
+            if !viewModel.audioStreams.isEmpty {
+                Section("Audio") {
+                    ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in
+                        ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
+                            .onSelect {
+                                router.route(to: \.mediaStreamInfo, mediaStream)
+                            }
+                    }
+                }
+            }
+
+            if !viewModel.subtitleStreams.isEmpty {
+                Section("Subtitle") {
+                    ForEach(viewModel.subtitleStreams, id: \.displayTitle) { mediaStream in
+                        ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
+                            .onSelect {
+                                router.route(to: \.mediaStreamInfo, mediaStream)
+                            }
+                    }
                 }
             }
         }

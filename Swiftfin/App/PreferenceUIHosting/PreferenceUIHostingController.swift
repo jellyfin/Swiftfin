@@ -138,17 +138,15 @@ struct KeyCommandsPreferenceKey: PreferenceKey {
 }
 
 struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
-    typealias Value = Bool
 
-    static var defaultValue: Value = false
+    static var defaultValue: Bool = false
 
-    static func reduce(value: inout Value, nextValue: () -> Value) {
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
         value = nextValue() || value
     }
 }
 
 struct SupportedOrientationsPreferenceKey: PreferenceKey {
-    typealias Value = UIInterfaceOrientationMask
 
     static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
 
@@ -159,7 +157,6 @@ struct SupportedOrientationsPreferenceKey: PreferenceKey {
 }
 
 struct ViewPreferenceKey: PreferenceKey {
-    typealias Value = UIUserInterfaceStyle
 
     static var defaultValue: UIUserInterfaceStyle = .unspecified
 

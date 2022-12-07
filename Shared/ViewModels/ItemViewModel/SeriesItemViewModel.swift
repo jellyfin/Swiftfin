@@ -56,6 +56,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         logger.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
         TvShowsAPI.getNextUp(
             userId: SessionManager.main.currentLogin.user.id,
+            fields: ItemFields.minimumCases,
             seriesId: self.item.id!,
             enableUserData: true
         )
@@ -74,7 +75,8 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         ItemsAPI.getResumeItems(
             userId: SessionManager.main.currentLogin.user.id,
             limit: 1,
-            parentId: item.id
+            parentId: item.id,
+            fields: ItemFields.minimumCases
         )
         .trackActivity(loading)
         .sink { [weak self] completion in
@@ -94,6 +96,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             recursive: true,
             sortOrder: [.ascending],
             parentId: item.id,
+            fields: ItemFields.minimumCases,
             includeItemTypes: [.episode]
         )
         .trackActivity(loading)
