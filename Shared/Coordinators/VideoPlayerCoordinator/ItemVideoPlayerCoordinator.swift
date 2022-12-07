@@ -35,6 +35,8 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
+        #if os(iOS)
+        
         PreferenceUIHostingControllerView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
@@ -51,6 +53,16 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
             .iOS16HideSystemOverlays()
         }
         .ignoresSafeArea()
+        .onAppear {
+            AppDelegate.changeOrientation(.landscape)
+        }
+        
+        #else
+        
+        VideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
+            .ignoresSafeArea()
+        
+        #endif
     }
 }
 
@@ -58,7 +70,7 @@ extension View {
     
     @ViewBuilder
     func iOS16HideSystemOverlays() -> some View {
-        if #available(iOS 16, *) {
+        if #available(iOS 16, tvOS 16, *) {
             self.persistentSystemOverlays(.hidden)
         } else {
             self

@@ -52,7 +52,7 @@ struct AboutAppView: View {
                             .foregroundColor(.primary)
                     }
                     .onSelect {
-                        UIApplication.shared.open(URL(string: "https://www.hackingwithswift.com")!)
+                        UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin")!)
                     }
                 
                 ChevronButton(title: "Bugs and Features")

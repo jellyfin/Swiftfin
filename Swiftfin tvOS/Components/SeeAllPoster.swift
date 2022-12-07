@@ -31,7 +31,7 @@ struct SeeAllPoster: View {
             }
             .posterStyle(type: type, width: type.width)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.card)
     }
 }
 

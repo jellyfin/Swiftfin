@@ -239,8 +239,13 @@ public final class TvOSSlider: UIControl {
 
     // MARK: VideoPlayerVieModel init
 
-    init(viewModel: VideoPlayerViewModel) {
-        self.viewModel = viewModel
+//    init(viewModel: VideoPlayerViewModel) {
+//        self.viewModel = viewModel
+//        super.init(frame: .zero)
+//        setUpView()
+//    }
+    
+    init() {
         super.init(frame: .zero)
         setUpView()
     }
@@ -287,7 +292,7 @@ public final class TvOSSlider: UIControl {
 
     // MARK: - Private
 
-    private let viewModel: VideoPlayerViewModel!
+//    private let viewModel: VideoPlayerViewModel!
 
     private typealias ControlState = UInt
 
@@ -461,8 +466,8 @@ public final class TvOSSlider: UIControl {
             stopDeceleratingTimer()
         }
 
-        viewModel.sliderPercentage = Double(percent)
-        viewModel.sliderIsScrubbing = false
+//        viewModel.sliderPercentage = Double(percent)
+//        viewModel.sliderIsScrubbing = false
     }
 
     private func stopDeceleratingTimer() {
@@ -494,12 +499,12 @@ public final class TvOSSlider: UIControl {
 
         switch panGestureRecognizer.state {
         case .began:
-            viewModel.sliderIsScrubbing = true
+//            viewModel.sliderIsScrubbing = true
 
             stopDeceleratingTimer()
             thumbViewCenterXConstraintConstant = Float(thumbViewCenterXConstraint.constant)
         case .changed:
-            viewModel.sliderIsScrubbing = true
+//            viewModel.sliderIsScrubbing = true
 
             let centerX = thumbViewCenterXConstraintConstant + translation / panDampingValue
             let percent = centerX / Float(trackView.frame.width)
@@ -508,7 +513,7 @@ public final class TvOSSlider: UIControl {
                 sendActions(for: .valueChanged)
             }
 
-            viewModel.sliderPercentage = Double(percent)
+//            viewModel.sliderPercentage = Double(percent)
         case .ended, .cancelled:
 
             thumbViewCenterXConstraintConstant = Float(thumbViewCenterXConstraint.constant)
@@ -524,7 +529,7 @@ public final class TvOSSlider: UIControl {
                     repeats: true
                 )
             } else {
-                viewModel.sliderIsScrubbing = false
+//                viewModel.sliderIsScrubbing = false
                 stopDeceleratingTimer()
             }
         default:
@@ -535,13 +540,13 @@ public final class TvOSSlider: UIControl {
     @objc
     private func leftTapWasTriggered() {
         //        setValue(value-stepValue, animated: true)
-        viewModel.playerOverlayDelegate?.didSelectBackward()
+//        viewModel.playerOverlayDelegate?.didSelectBackward()
     }
 
     @objc
     private func rightTapWasTriggered() {
         //        setValue(value+stepValue, animated: true)
-        viewModel.playerOverlayDelegate?.didSelectForward()
+//        viewModel.playerOverlayDelegate?.didSelectForward()
     }
 
     override public func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {

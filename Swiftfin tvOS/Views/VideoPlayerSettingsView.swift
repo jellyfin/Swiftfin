@@ -7,14 +7,10 @@
 //
 
 import SwiftUI
-import UIKit
 
-@main
-struct JellyfinPlayer_tvOSApp: App {
-
-    var body: some Scene {
-        WindowGroup {
-            MainCoordinator().view()
-        }
+struct VideoPlayerSettingsView: View {
+    
+    var body: some View {
+        Text("")
     }
 }

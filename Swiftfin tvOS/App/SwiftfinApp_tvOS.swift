@@ -7,13 +7,14 @@
 //
 
 import SwiftUI
+import UIKit
 
-struct AboutAppView: View {
-    
-    @ObservedObject
-    var viewModel: SettingsViewModel
+@main
+struct SwiftfinApp_tvOS: App {
 
-    var body: some View {
-        Text("dud")
+    var body: some Scene {
+        WindowGroup {
+            MainCoordinator().view()
+        }
     }
 }

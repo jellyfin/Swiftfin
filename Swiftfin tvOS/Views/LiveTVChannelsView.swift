@@ -73,12 +73,12 @@ struct LiveTVChannelsView: View {
             nextProgramsText: nextProgramsDisplayText(nextItems: nextItems, timeFormatter: viewModel.timeFormatter),
             onSelect: { loadingAction in
                 loadingAction(true)
-                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-                    self.router.route(to: \.videoPlayer, playerViewModel)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        loadingAction(false)
-                    }
-                }
+//                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
+//                    self.router.route(to: \.videoPlayer, playerViewModel)
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                        loadingAction(false)
+//                    }
+//                }
             }
         )
     }

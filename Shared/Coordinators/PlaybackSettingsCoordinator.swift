@@ -18,15 +18,19 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
     var start = makeStart
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
+    
+    #if !os(tvOS)
     @Route(.push)
     var mediaStreamInfo = makeMediaStreamInfo
     @Route(.push)
     var playbackInformation = makePlaybackInformation
+    #endif
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
     }
 
+    #if !os(tvOS)
     @ViewBuilder
     func makeMediaStreamInfo(mediaStream: MediaStream) -> some View {
         MediaStreamInfoView(mediaStream: mediaStream)
@@ -36,9 +40,17 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
     func makePlaybackInformation() -> some View {
         PlaybackInformationView()
     }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {
         PlaybackSettingsView()
     }
 }
+
+//struct PlaybackSettingsView: View {
+//    
+//    var body: some View {
+//        Text("")
+//    }
+//}

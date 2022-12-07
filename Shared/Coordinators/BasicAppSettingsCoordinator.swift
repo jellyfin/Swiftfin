@@ -21,7 +21,11 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeAbout() -> some View {
+        #if os(tvOS)
+        Text("")
+        #else
         AboutAppView(viewModel: .init(server: .sample, user: .sample))
+        #endif
     }
 
     @ViewBuilder

@@ -18,9 +18,6 @@ import UIKit
 // TODO: proper error catching
 
 class VideoPlayerManager: ViewModel {
-    
-    @RouterObject
-    private var router: ItemVideoPlayerCoordinator.Router?
 
     @Published
     var audioTrackIndex: Int = -1
@@ -36,7 +33,7 @@ class VideoPlayerManager: ViewModel {
     @Published
     var previousViewModel: VideoPlayerViewModel?
     @Published
-    var currentViewModel: VideoPlayerViewModel? {
+    var currentViewModel: VideoPlayerViewModel! {
         willSet {
             guard let newValue else { return }
 //            getAdjacentEpisodes(for: newValue.item)

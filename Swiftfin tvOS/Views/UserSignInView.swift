@@ -61,7 +61,7 @@ struct UserSignInView: View {
                     .background(viewModel.isLoading || username.isEmpty ? .secondary : Color.jellyfinPurple)
                 }
                 .disabled(viewModel.isLoading || username.isEmpty)
-                .buttonStyle(.plain)
+                .buttonStyle(.card)
 
                 Button {
                     presentQuickConnect = true
@@ -69,9 +69,9 @@ struct UserSignInView: View {
                     L10n.quickConnect.text
                         .frame(height: 75)
                         .frame(maxWidth: .infinity)
-                        .background(Color.secondary)
+                        .background(Color.jellyfinPurple)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.card)
             } header: {
                 L10n.signInToServer(viewModel.server.name).text
             }

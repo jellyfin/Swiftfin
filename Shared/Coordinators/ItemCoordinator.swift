@@ -27,8 +27,11 @@ final class ItemCoordinator: NavigationCoordinatable {
     var castAndCrew = makeCastAndCrew
     @Route(.modal)
     var itemOverview = makeItemOverview
-    @Route(.modal)
-    var remoteImages = makeRemoteImages
+    
+    #if os(tvOS)
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
+    #endif
 
     let itemDto: BaseItemDto
 
@@ -56,9 +59,11 @@ final class ItemCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
     }
     
-    func makeRemoteImages() -> EditItemMetadataView {
-        EditItemMetadataView(viewModel: .init(item: itemDto, imageType: .primary))
+    #if os(tvOS)
+    func makeVideoPlayer(parameters: ItemVideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
+        NavigationViewCoordinator(ItemVideoPlayerCoordinator(parameters: parameters))
     }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {

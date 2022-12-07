@@ -8,7 +8,6 @@
 
 import Defaults
 import JellyfinAPI
-import Sliders
 import SwiftUI
 import VLCUI
 
@@ -155,14 +154,6 @@ extension VideoPlayer.Overlay {
                     }
 
                     Spacer()
-                    
-                    if !isScrubbing,
-                       isShowingNextItem,
-                        videoPlayerManager.nextViewModel != nil {
-                        ProgressButton {
-                            videoPlayerManager.selectNextViewModel()
-                        }
-                    }
                 }
                 .padding(.leading, 5)
                 .padding(.bottom, 15)
@@ -176,19 +167,10 @@ extension VideoPlayer.Overlay {
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.linear(duration: 0.1), value: scrubbingRate)
-            .onChange(of: currentProgressHandler.seconds) { newValue in
-                guard lastChapterNextItem,
-                        let lastChapter = viewModel.chapters.last,
-                      (lastChapter.secondsRange.first ?? 0) > (viewModel.item.runTimeSeconds / 10) * 8  else {
-                    isShowingNextItem = false
-                    return
-                }
-                isShowingNextItem = lastChapter.secondsRange.contains(newValue)
-            }
             .onChange(of: currentProgressHandler.scrubbedSeconds) { newValue in
                 let newChapter = viewModel.chapter(from: newValue)
                 if newChapter != currentChapter {
-                    if isScrubbing {
+                    if isScrubbing && Defaults[.hapticFeedback] {
                         UIDevice.impact(.light)
                     }
                     
@@ -196,57 +178,5 @@ extension VideoPlayer.Overlay {
                 }
             }
         }
-    }
-}
-
-struct ProgressButton: View {
-    
-    @State
-    private var seconds: Int = 10
-    @State
-    private var currentTask: DispatchWorkItem?
-    
-    let action: () -> Void
-    
-    var body: some View {
-        Button {
-            action()
-        } label: {
-            HStack {
-                Text("Next in \(seconds)s")
-                    .monospacedDigit()
-                
-                Image(systemName: "arrow.right.circle")
-            }
-            .foregroundColor(.black)
-            .padding()
-            .background {
-                Color.white
-            }
-            .cornerRadius(10)
-        }
-        .onAppear {
-            nextSecond()
-        }
-        .onDisappear {
-            currentTask?.cancel()
-        }
-    }
-    
-    private func nextSecond() {
-        guard seconds > 0 else {
-            action()
-            return
-        }
-        
-        let task = DispatchWorkItem {
-            seconds -= 1
-            
-            nextSecond()
-        }
-        
-        self.currentTask = task
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: task)
     }
 }

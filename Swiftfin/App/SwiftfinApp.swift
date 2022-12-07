@@ -37,6 +37,7 @@ struct SwiftfinApp: App {
             PreferenceUIHostingControllerView {
                 MainCoordinator()
                     .view()
+                    .supportedOrientations(.portrait)
             }
             .ignoresSafeArea()
             .onOpenURL { url in

@@ -51,7 +51,7 @@ struct ConnectToServerView: View {
                     .background(viewModel.isLoading || uri.isEmpty ? .secondary : Color.jellyfinPurple)
                 }
                 .disabled(viewModel.isLoading || uri.isEmpty)
-                .buttonStyle(.plain)
+                .buttonStyle(.card)
             } header: {
                 L10n.connectToJellyfinServer.text
             }

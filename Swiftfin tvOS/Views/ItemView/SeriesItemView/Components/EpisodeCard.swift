@@ -23,12 +23,12 @@ struct EpisodeCard: View {
         VStack(alignment: .center, spacing: 20) {
             Button {
                 // TODO: Figure out ad-hoc video player view model creation
-                episode.createVideoPlayerViewModel()
-                    .sink(receiveCompletion: { _ in }) { viewModels in
-                        guard !viewModels.isEmpty else { return }
-                        self.router.route(to: \.videoPlayer, viewModels[0])
-                    }
-                    .store(in: &cancellables)
+//                episode.createVideoPlayerViewModel()
+//                    .sink(receiveCompletion: { _ in }) { viewModels in
+//                        guard !viewModels.isEmpty else { return }
+//                        self.router.route(to: \.videoPlayer, viewModels[0])
+//                    }
+//                    .store(in: &cancellables)
             } label: {
                 ImageView(
                     episode.imageSource(.primary, maxWidth: 600)

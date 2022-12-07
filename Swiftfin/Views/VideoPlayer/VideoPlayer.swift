@@ -46,6 +46,14 @@ struct VideoPlayer: View {
         var beginningPlaybackSpeed: Float = 0
         var beginningSubtitleOffset: Int = 0
         var beginningVolumeValue: Float = 0
+        
+        var jumpBackwardKeyPressActive: Bool = false
+        var jumpBackwardKeyPressWorkItem: DispatchWorkItem?
+        var jumpBackwardKeyPressAmount: Int = 0
+        
+        var jumpForwardKeyPressActive: Bool = false
+        var jumpForwardKeyPressWorkItem: DispatchWorkItem?
+        var jumpForwardKeyPressAmount: Int = 0
     }
     
     @Default(.VideoPlayer.jumpBackwardLength)
@@ -147,7 +155,6 @@ struct VideoPlayer: View {
                         }
                     
                     Group {
-//                        Overlay()
                         overlay()
                             .eraseToAnyView()
                     }
@@ -183,6 +190,143 @@ struct VideoPlayer: View {
                 UpdateView(proxy: updateViewProxy)
                     .padding(.top)
             }
+            .keyCommands([
+                .init(
+                    title: L10n.playAndPause,
+                    input: " ",
+                    action: {
+                        if videoPlayerManager.state == .playing {
+                            videoPlayerManager.proxy.pause()
+                            updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+                        } else {
+                            videoPlayerManager.proxy.play()
+                            updateViewProxy.present(systemName: "play.fill", title: "Play")
+                        }
+                    }),
+                .init(
+                    title: L10n.jumpForward,
+                    input: UIKeyCommand.inputRightArrow,
+                    action: {
+                        if gestureStateHandler.jumpForwardKeyPressActive {
+                            gestureStateHandler.jumpForwardKeyPressAmount += 1
+                            gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
+                            
+                            let task = DispatchWorkItem {
+                                gestureStateHandler.jumpForwardKeyPressActive = false
+                                gestureStateHandler.jumpForwardKeyPressAmount = 0
+                            }
+                            
+                            gestureStateHandler.jumpForwardKeyPressWorkItem = task
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                        } else {
+                            gestureStateHandler.jumpForwardKeyPressActive = true
+                            gestureStateHandler.jumpForwardKeyPressAmount += 1
+                            
+                            let task = DispatchWorkItem {
+                                gestureStateHandler.jumpForwardKeyPressActive = false
+                                gestureStateHandler.jumpForwardKeyPressAmount = 0
+                            }
+                            
+                            gestureStateHandler.jumpForwardKeyPressWorkItem = task
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                        }
+                        
+                        jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
+                    }
+                ),
+                .init(
+                    title: L10n.jumpBackward,
+                    input: UIKeyCommand.inputLeftArrow,
+                    action: {
+                        if gestureStateHandler.jumpBackwardKeyPressActive {
+                            gestureStateHandler.jumpBackwardKeyPressAmount += 1
+                            gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
+                            
+                            let task = DispatchWorkItem {
+                                gestureStateHandler.jumpBackwardKeyPressActive = false
+                                gestureStateHandler.jumpBackwardKeyPressAmount = 0
+                            }
+                            
+                            gestureStateHandler.jumpBackwardKeyPressWorkItem = task
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                        } else {
+                            gestureStateHandler.jumpBackwardKeyPressActive = true
+                            gestureStateHandler.jumpBackwardKeyPressAmount += 1
+                            
+                            let task = DispatchWorkItem {
+                                gestureStateHandler.jumpBackwardKeyPressActive = false
+                                gestureStateHandler.jumpBackwardKeyPressAmount = 0
+                            }
+                            
+                            gestureStateHandler.jumpBackwardKeyPressWorkItem = task
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                        }
+                        
+                        jumpAction(unitPoint: .init(x: 0, y: 0), amount: gestureStateHandler.jumpBackwardKeyPressAmount)
+                    }
+                ),
+                .init(
+                    title: "Decrease Playback Speed",
+                    input: "[",
+                    modifierFlags: .command,
+                    action: {
+                        let clampedPlaybackSpeed = clamp(
+                            videoPlayerManager.playbackSpeed - 0.25,
+                            min: 0.25,
+                            max: 5.0
+                        )
+                        
+                        updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
+                        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
+                    }
+                ),
+                .init(
+                    title: "Increase Playback Speed",
+                    input: "]",
+                    modifierFlags: .command,
+                    action: {
+                        let clampedPlaybackSpeed = clamp(
+                            videoPlayerManager.playbackSpeed + 0.25,
+                            min: 0.25,
+                            max: 5.0
+                        )
+                        
+                        updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
+                        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
+                    }
+                ),
+                .init(
+                    title: "Reset Playback Speed",
+                    input: "\\",
+                    modifierFlags: .command,
+                    action: {
+                        let clampedPlaybackSpeed: Float = 1
+                        
+                        updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
+                        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
+                    }
+                ),
+                .init(
+                    title: L10n.nextItem,
+                    input: UIKeyCommand.inputRightArrow,
+                    modifierFlags: .command,
+                    action: {
+                        videoPlayerManager.selectNextViewModel()
+                    }
+                ),
+                .init(
+                    title: L10n.nextItem,
+                    input: UIKeyCommand.inputLeftArrow,
+                    modifierFlags: .command,
+                    action: {
+                        videoPlayerManager.selectPreviousViewModel()
+                    }
+                ),
+            ])
     }
 
     // TODO: Better and localize
@@ -192,6 +336,10 @@ struct VideoPlayer: View {
             Color.black
 
             VStack {
+                
+                Text("Retrieving media information")
+                    .foregroundColor(.white)
+                
                 ProgressView()
 
                 Button {
@@ -199,6 +347,11 @@ struct VideoPlayer: View {
                 } label: {
                     Text("Cancel")
                         .foregroundColor(.red)
+                        .padding()
+                        .overlay {
+                            Capsule()
+                                .stroke(Color.red, lineWidth: 1)
+                        }
                 }
             }
         }
@@ -208,6 +361,7 @@ struct VideoPlayer: View {
         Group {
             if let viewModel = videoPlayerManager.currentViewModel {
                 playerView(with: viewModel)
+                    .prefersHomeIndicatorAutoHidden(true)
             } else {
                 loadingView
             }
@@ -369,7 +523,6 @@ extension VideoPlayer {
 // MARK: Gesture Actions
 
 // TODO: look at having action changes be separated from the calculations, for incremental jumps vs pans
-// TODO: UX polish: small delay (1s) after scrub for isScrubbing = false, only when starting with no overlay
 
 extension VideoPlayer {
     

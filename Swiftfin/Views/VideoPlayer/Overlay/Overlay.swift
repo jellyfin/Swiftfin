@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Sliders
 import SwiftUI
 import VLCUI
 

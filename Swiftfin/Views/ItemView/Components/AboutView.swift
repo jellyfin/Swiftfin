@@ -58,23 +58,23 @@ extension ItemView {
                                 itemRouter.route(to: \.itemOverview, viewModel.item)
                             }
                         
-                        Card(title: "Ratings")
-                            .content {
-                                VStack(alignment: .leading, spacing: 10) {
-                                    
-                                    if let communityRating = viewModel.item.communityRating {
-                                        HStack {
-                                            Image(systemName: "star.fill")
-                                                .foregroundColor(.yellow)
-                                            
-                                            Text(String(format: "%.2f", communityRating))
-                                        }
-                                    }
-                                }
-                            }
-                            .onSelect {
-                                itemRouter.route(to: \.remoteImages)
-                            }
+//                        Card(title: "Ratings")
+//                            .content {
+//                                VStack(alignment: .leading, spacing: 10) {
+//                                    
+//                                    if let communityRating = viewModel.item.communityRating {
+//                                        HStack {
+//                                            Image(systemName: "star.fill")
+//                                                .foregroundColor(.yellow)
+//                                            
+//                                            Text(String(format: "%.2f", communityRating))
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            .onSelect {
+//                                itemRouter.route(to: \.remoteImages)
+//                            }
                     }
                     .padding(.horizontal)
                     .if(UIDevice.isIPad) { view in

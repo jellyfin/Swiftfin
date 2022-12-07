@@ -26,6 +26,7 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        LiveTVProgramsView()
+        Text("")
+//        LiveTVProgramsView()
     }
 }

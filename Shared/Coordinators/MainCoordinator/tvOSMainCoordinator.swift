@@ -25,6 +25,8 @@ final class MainCoordinator: NavigationCoordinatable {
     var serverList = makeServerList
     @Root
     var liveTV = makeLiveTV
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
 
     init() {
         if SessionManager.main.currentLogin != nil {
@@ -65,5 +67,9 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeLiveTV() -> LiveTVTabCoordinator {
         LiveTVTabCoordinator()
+    }
+    
+    func makeVideoPlayer(parameters: ItemVideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
+        NavigationViewCoordinator(ItemVideoPlayerCoordinator(parameters: parameters))
     }
 }

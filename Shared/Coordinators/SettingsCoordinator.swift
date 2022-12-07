@@ -20,14 +20,18 @@ final class SettingsCoordinator: NavigationCoordinatable {
     
     @Route(.push)
     var about = makeAbout
+    #if !os(tvOS)
     @Route(.push)
     var appIconSelector = makeAppIconSelector
+    #endif
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
+    #if !os(tvOS)
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
+    #endif
     @Route(.push)
     var serverDetail = makeServerDetail
     @Route(.push)
@@ -53,10 +57,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
         AboutAppView(viewModel: viewModel)
     }
     
+    #if !os(tvOS)
     @ViewBuilder
     func makeAppIconSelector() -> some View {
         AppIconSelectorView(viewModel: viewModel)
     }
+    #endif
     
     @ViewBuilder
     func makeCustomizeViewsSettings() -> some View {
@@ -68,10 +74,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
         ExperimentalSettingsView()
     }
     
+    #if !os(tvOS)
     @ViewBuilder
     func makeNativePlayerSettings() -> some View {
         NativeVideoPlayerSettingsView()
     }
+    #endif
 
     @ViewBuilder
     func makeServerDetail() -> some View {
