@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CoreStore
 import Foundation
 import SwiftUI
 
@@ -24,7 +25,9 @@ class ServerListViewModel: ObservableObject {
     }
 
     func fetchServers() {
-        self.servers = SessionManager.main.fetchServers()
+//        self.servers = SessionManager.main.fetchServers()
+        let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.StoredServer>())
+        self.servers = servers.map(\.state)
     }
 
     func userTextFor(server: SwiftfinStore.State.Server) -> String {

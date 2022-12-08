@@ -35,7 +35,7 @@ struct ConnectToServerView: View {
                     }
 
                 Button {
-                    viewModel.connectToServer(uri: uri)
+//                    viewModel.connectToServer(uri: uri)
                 } label: {
                     HStack {
                         if viewModel.isLoading {

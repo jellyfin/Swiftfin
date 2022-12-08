@@ -1,185 +1,205 @@
 {
-  "pins" : [
-    {
-      "identity" : "activityindicator",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/duyquang91/ActivityIndicator",
-      "state" : {
-        "revision" : "0101a02196f6a67cf26f6434b007d3db6bd07fee",
-        "version" : "1.1.0"
+  "object": {
+    "pins": [
+      {
+        "package": "ActivityIndicator",
+        "repositoryURL": "https://github.com/duyquang91/ActivityIndicator",
+        "state": {
+          "branch": null,
+          "revision": "0101a02196f6a67cf26f6434b007d3db6bd07fee",
+          "version": "1.1.0"
+        }
+      },
+      {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire",
+        "state": {
+          "branch": null,
+          "revision": "78424be314842833c04bc3bef5b72e85fff99204",
+          "version": "5.6.4"
+        }
+      },
+      {
+        "package": "AnyCodable",
+        "repositoryURL": "https://github.com/Flight-School/AnyCodable",
+        "state": {
+          "branch": null,
+          "revision": "862808b2070cd908cb04f9aafe7de83d35f81b05",
+          "version": "0.6.7"
+        }
+      },
+      {
+        "package": "BlurHashKit",
+        "repositoryURL": "https://github.com/LePips/BlurHashKit",
+        "state": {
+          "branch": null,
+          "revision": "3c23237f1f2b62741bce70bd2e4ef2aa7799ea85",
+          "version": "1.1.0"
+        }
+      },
+      {
+        "package": "CollectionView",
+        "repositoryURL": "https://github.com/LePips/CollectionView",
+        "state": {
+          "branch": "main",
+          "revision": "b05ad718700cc99a4b88009ede6cf04c7326cd99",
+          "version": null
+        }
+      },
+      {
+        "package": "CoreStore",
+        "repositoryURL": "https://github.com/JohnEstropia/CoreStore.git",
+        "state": {
+          "branch": null,
+          "revision": "25593754913d228777f14634bc6f493dbeb4e9fb",
+          "version": "9.0.0"
+        }
+      },
+      {
+        "package": "Defaults",
+        "repositoryURL": "https://github.com/sindresorhus/Defaults",
+        "state": {
+          "branch": null,
+          "revision": "7a22d378742acbef49ecff11b9de8bf8b72b34dc",
+          "version": "7.0.0"
+        }
+      },
+      {
+        "package": "Factory",
+        "repositoryURL": "https://github.com/hmlongco/Factory",
+        "state": {
+          "branch": null,
+          "revision": "8557426f3286e20b631ecdac8115242f888656e0",
+          "version": "1.2.8"
+        }
+      },
+      {
+        "package": "Files",
+        "repositoryURL": "https://github.com/JohnSundell/Files",
+        "state": {
+          "branch": null,
+          "revision": "d273b5b7025d386feef79ef6bad7de762e106eaf",
+          "version": "4.2.0"
+        }
+      },
+      {
+        "package": "Get",
+        "repositoryURL": "https://github.com/kean/Get",
+        "state": {
+          "branch": null,
+          "revision": "a7dd8e0233d4041330591445de21b7e5d4c953c6",
+          "version": "1.0.4"
+        }
+      },
+      {
+        "package": "JellyfinAPI",
+        "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
+        "state": {
+          "branch": null,
+          "revision": "87a77bb857c2c5fd6fd355bcbc527ec026e1b17d",
+          "version": "0.2.2"
+        }
+      },
+      {
+        "package": "Nuke",
+        "repositoryURL": "https://github.com/kean/Nuke",
+        "state": {
+          "branch": null,
+          "revision": "8ea514737c2011ff7d7544aa065ad44905bdae0b",
+          "version": "11.1.0"
+        }
+      },
+      {
+        "package": "Puppy",
+        "repositoryURL": "https://github.com/sushichop/Puppy",
+        "state": {
+          "branch": null,
+          "revision": "7cfae42becac2d8916cb1a866dd12d9843199df9",
+          "version": "0.5.0"
+        }
+      },
+      {
+        "package": "Stinsen",
+        "repositoryURL": "https://github.com/rundfunk47/stinsen",
+        "state": {
+          "branch": "master",
+          "revision": "17afde3c4763e014c7505da15258a5d44821c91a",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-algorithms",
+        "repositoryURL": "https://github.com/apple/swift-algorithms.git",
+        "state": {
+          "branch": null,
+          "revision": "b14b7f4c528c942f121c8b860b9410b2bf57825e",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
+          "version": "1.4.2"
+        }
+      },
+      {
+        "package": "swift-numerics",
+        "repositoryURL": "https://github.com/apple/swift-numerics",
+        "state": {
+          "branch": null,
+          "revision": "0a5bc04095a675662cf24757cc0640aa2204253b",
+          "version": "1.0.2"
+        }
+      },
+      {
+        "package": "Introspect",
+        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "state": {
+          "branch": null,
+          "revision": "f2616860a41f9d9932da412a8978fec79c06fe24",
+          "version": "0.1.4"
+        }
+      },
+      {
+        "package": "SwiftUICollection",
+        "repositoryURL": "https://github.com/defagos/SwiftUICollection",
+        "state": {
+          "branch": "master",
+          "revision": "5b9f14eb3ec5d48cec8b3e4462dcc554d4bff2a8",
+          "version": null
+        }
+      },
+      {
+        "package": "SwizzleSwift",
+        "repositoryURL": "https://github.com/MarioIannotta/SwizzleSwift",
+        "state": {
+          "branch": null,
+          "revision": "337dd5f158182620b2bb53c6847f8874a0117b2f",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "URLQueryEncoder",
+        "repositoryURL": "https://github.com/CreateAPI/URLQueryEncoder",
+        "state": {
+          "branch": null,
+          "revision": "4ce950479707ea109f229d7230ec074a133b15d7",
+          "version": "0.2.1"
+        }
+      },
+      {
+        "package": "VLCUI",
+        "repositoryURL": "https://github.com/LePips/VLCUI",
+        "state": {
+          "branch": "main",
+          "revision": "da3ff09e7a71549936def4db27231395dafa2fe8",
+          "version": null
+        }
       }
-    },
-    {
-      "identity" : "alamofire",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire",
-      "state" : {
-        "revision" : "78424be314842833c04bc3bef5b72e85fff99204",
-        "version" : "5.6.4"
-      }
-    },
-    {
-      "identity" : "anycodable",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Flight-School/AnyCodable",
-      "state" : {
-        "revision" : "f9fda69a7b704d46fb5123005f2f7e43dbb8a0fa",
-        "version" : "0.6.5"
-      }
-    },
-    {
-      "identity" : "blurhashkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/BlurHashKit",
-      "state" : {
-        "revision" : "3c23237f1f2b62741bce70bd2e4ef2aa7799ea85",
-        "version" : "1.1.0"
-      }
-    },
-    {
-      "identity" : "collectionview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionView",
-      "state" : {
-        "branch" : "main",
-        "revision" : "b05ad718700cc99a4b88009ede6cf04c7326cd99"
-      }
-    },
-    {
-      "identity" : "corestore",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JohnEstropia/CoreStore.git",
-      "state" : {
-        "revision" : "25593754913d228777f14634bc6f493dbeb4e9fb",
-        "version" : "9.0.0"
-      }
-    },
-    {
-      "identity" : "defaults",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sindresorhus/Defaults",
-      "state" : {
-        "revision" : "7a22d378742acbef49ecff11b9de8bf8b72b34dc",
-        "version" : "7.0.0"
-      }
-    },
-    {
-      "identity" : "factory",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/hmlongco/Factory",
-      "state" : {
-        "revision" : "8557426f3286e20b631ecdac8115242f888656e0",
-        "version" : "1.2.8"
-      }
-    },
-    {
-      "identity" : "files",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JohnSundell/Files",
-      "state" : {
-        "revision" : "d273b5b7025d386feef79ef6bad7de762e106eaf",
-        "version" : "4.2.0"
-      }
-    },
-    {
-      "identity" : "jellyfin-sdk-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jellyfin/jellyfin-sdk-swift",
-      "state" : {
-        "branch" : "main",
-        "revision" : "9d6e46b94d2178116ee3546b03dfb67e19e3a93a"
-      }
-    },
-    {
-      "identity" : "nuke",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kean/Nuke",
-      "state" : {
-        "revision" : "8ea514737c2011ff7d7544aa065ad44905bdae0b",
-        "version" : "11.1.0"
-      }
-    },
-    {
-      "identity" : "puppy",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sushichop/Puppy",
-      "state" : {
-        "revision" : "7cfae42becac2d8916cb1a866dd12d9843199df9",
-        "version" : "0.5.0"
-      }
-    },
-    {
-      "identity" : "stinsen",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rundfunk47/stinsen",
-      "state" : {
-        "branch" : "master",
-        "revision" : "17afde3c4763e014c7505da15258a5d44821c91a"
-      }
-    },
-    {
-      "identity" : "swift-algorithms",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-algorithms.git",
-      "state" : {
-        "revision" : "b14b7f4c528c942f121c8b860b9410b2bf57825e",
-        "version" : "1.0.0"
-      }
-    },
-    {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log.git",
-      "state" : {
-        "revision" : "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-        "version" : "1.4.2"
-      }
-    },
-    {
-      "identity" : "swift-numerics",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-numerics",
-      "state" : {
-        "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
-        "version" : "1.0.2"
-      }
-    },
-    {
-      "identity" : "swiftui-introspect",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/siteline/SwiftUI-Introspect",
-      "state" : {
-        "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
-        "version" : "0.1.4"
-      }
-    },
-    {
-      "identity" : "swiftuicollection",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/defagos/SwiftUICollection",
-      "state" : {
-        "branch" : "master",
-        "revision" : "5b9f14eb3ec5d48cec8b3e4462dcc554d4bff2a8"
-      }
-    },
-    {
-      "identity" : "swizzleswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/MarioIannotta/SwizzleSwift",
-      "state" : {
-        "revision" : "337dd5f158182620b2bb53c6847f8874a0117b2f",
-        "version" : "1.0.0"
-      }
-    },
-    {
-      "identity" : "vlcui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/VLCUI",
-      "state" : {
-        "branch" : "main",
-        "revision" : "da3ff09e7a71549936def4db27231395dafa2fe8"
-      }
-    }
-  ],
-  "version" : 2
+    ]
+  },
+  "version": 1
 }

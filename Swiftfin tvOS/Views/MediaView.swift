@@ -7,7 +7,7 @@
 //
 
 import CollectionView
-import JellyfinAPI
+import JellyfinAPILegacy
 import Stinsen
 import SwiftUI
 

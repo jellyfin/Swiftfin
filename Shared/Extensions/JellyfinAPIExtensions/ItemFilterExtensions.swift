@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 extension ItemFilter {
     static var supportedCases: [ItemFilter] {

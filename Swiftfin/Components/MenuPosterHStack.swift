@@ -6,7 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverlay: View, ContextMenu: View>: View {

@@ -8,7 +8,7 @@
 
 import Defaults
 import Introspect
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 struct ItemView: View {

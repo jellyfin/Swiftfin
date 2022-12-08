@@ -8,7 +8,7 @@
 
 import Combine
 import Defaults
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 protocol EpisodesRowManager: ViewModel {

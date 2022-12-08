@@ -7,7 +7,7 @@
 //
 
 import Combine
-import JellyfinAPI
+import JellyfinAPILegacy
 import Nuke
 import SwiftUI
 

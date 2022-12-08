@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 extension NameGuidPair {
     var filter: ItemFilters.Filter {

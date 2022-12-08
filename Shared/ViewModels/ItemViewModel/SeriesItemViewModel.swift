@@ -9,7 +9,7 @@
 import Combine
 import Defaults
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 

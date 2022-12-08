@@ -9,7 +9,7 @@
 import Combine
 import Factory
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 final class PlaybackManager {
 

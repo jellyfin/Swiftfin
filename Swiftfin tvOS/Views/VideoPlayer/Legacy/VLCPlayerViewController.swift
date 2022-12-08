@@ -11,7 +11,7 @@
 //import Combine
 //import Defaults
 //import Factory
-//import JellyfinAPI
+//import JellyfinAPILegacy
 //import MediaPlayer
 //import SwiftUI
 //import TVVLCKit

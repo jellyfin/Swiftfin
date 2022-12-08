@@ -8,7 +8,7 @@
 
 import CollectionView
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)

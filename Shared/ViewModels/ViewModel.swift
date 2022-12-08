@@ -10,7 +10,7 @@ import ActivityIndicator
 import Combine
 import Factory
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 class ViewModel: ObservableObject {
 
@@ -25,7 +25,7 @@ class ViewModel: ObservableObject {
     var cancellables = Set<AnyCancellable>()
 
     init() {
-        loading.loading.assign(to: \.isLoading, on: self).store(in: &cancellables)
+//        loading.loading.assign(to: \.isLoading, on: self).store(in: &cancellables)
     }
 
     func handleAPIRequestError(displayMessage: String? = nil, completion: Subscribers.Completion<Error>) {

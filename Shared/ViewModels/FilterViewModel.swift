@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 final class FilterViewModel: ViewModel {

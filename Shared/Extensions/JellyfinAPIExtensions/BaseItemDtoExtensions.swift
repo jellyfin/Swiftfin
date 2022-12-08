@@ -8,7 +8,7 @@
 
 import Algorithms
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import UIKit
 
 extension BaseItemDto: Displayable {

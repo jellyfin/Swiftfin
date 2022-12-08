@@ -6,7 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
+import JellyfinAPILegacy
 import Stinsen
 import SwiftUI
 

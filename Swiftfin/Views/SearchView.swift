@@ -8,7 +8,7 @@
 
 import CollectionView
 import Defaults
-import JellyfinAPI
+import JellyfinAPILegacy
 import SwiftUI
 
 struct SearchView: View {

@@ -8,7 +8,7 @@
 //
 //import Combine
 //import Defaults
-//import JellyfinAPI
+//import JellyfinAPILegacy
 //import UIKit
 //
 //extension BaseItemDto {

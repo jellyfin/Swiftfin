@@ -8,7 +8,7 @@
 
 import Defaults
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 import VLCUI
 import UIKit
 

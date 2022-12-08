@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPI
+import JellyfinAPILegacy
 
 // TODO: Move to jellyfin-api-swift
 enum SpecialFeatureType: String, CaseIterable, Displayable {
