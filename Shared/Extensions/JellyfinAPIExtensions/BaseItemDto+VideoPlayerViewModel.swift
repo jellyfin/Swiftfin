@@ -21,6 +21,7 @@ extension BaseItemDto {
         let tempOverkillBitrate = 360_000_000
         builder.setMaxBitrate(bitrate: tempOverkillBitrate)
         let profile = builder.buildProfile()
+        let segmentContainer = Defaults[.Experimental.usefmp4Hls] ? "mp4" : "ts"
 
         let playbackInfoRequest = GetPostedPlaybackInfoRequest(
             userId: SessionManager.main.currentLogin.user.id,

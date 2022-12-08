@@ -50,6 +50,21 @@ class ViewModel: ObservableObject {
                     networkError = .HTTPURLError(response: errorResponse, displayMessage: displayMessage)
                     logger
                         .error("Request failed: HTTP URL request failed with description: \(errorResponse.localizedDescription)")
+
+                case let .error(_, _, _, baseError as DecodingError):
+                    networkError = .JellyfinError(response: errorResponse, displayMessage: displayMessage)
+                    if case let .dataCorrupted(decodeContext) = baseError {
+                        let codingPath = decodeContext.codingPath.map(\.stringValue).joined(separator: ",")
+                        let underlyingError = decodeContext.debugDescription
+                        logger
+                            .error(
+                                "Request failed: JSON Decoding failed: Underlying Error: \(underlyingError) - Coding Path: [\(codingPath)]"
+                            )
+                    } else {
+                        logger
+                            .error("Request failed: JSON Decoding failed!")
+                    }
+
                 default:
                     networkError = .JellyfinError(response: errorResponse, displayMessage: displayMessage)
                     // Able to use user-facing friendly description here since just HTTP status codes
