@@ -2,30 +2,21 @@
   "object": {
     "pins": [
       {
-        "package": "ActivityIndicator",
-        "repositoryURL": "https://github.com/duyquang91/ActivityIndicator",
-        "state": {
-          "branch": null,
-          "revision": "0101a02196f6a67cf26f6434b007d3db6bd07fee",
-          "version": "1.1.0"
-        }
-      },
-      {
-        "package": "Alamofire",
-        "repositoryURL": "https://github.com/Alamofire/Alamofire",
-        "state": {
-          "branch": null,
-          "revision": "78424be314842833c04bc3bef5b72e85fff99204",
-          "version": "5.6.4"
-        }
-      },
-      {
         "package": "AnyCodable",
         "repositoryURL": "https://github.com/Flight-School/AnyCodable",
         "state": {
           "branch": null,
           "revision": "862808b2070cd908cb04f9aafe7de83d35f81b05",
           "version": "0.6.7"
+        }
+      },
+      {
+        "package": "async-plus",
+        "repositoryURL": "https://github.com/async-plus/async-plus",
+        "state": {
+          "branch": "main",
+          "revision": "c99c106ac4a6275f0a9507c3dd722ecd74c323d3",
+          "version": null
         }
       },
       {
@@ -95,9 +86,9 @@
         "package": "JellyfinAPI",
         "repositoryURL": "https://github.com/jellyfin/jellyfin-sdk-swift",
         "state": {
-          "branch": null,
-          "revision": "87a77bb857c2c5fd6fd355bcbc527ec026e1b17d",
-          "version": "0.2.2"
+          "branch": "main",
+          "revision": "9f300ff2940400caab3b32dbd37381341b58503d",
+          "version": null
         }
       },
       {
@@ -110,12 +101,12 @@
         }
       },
       {
-        "package": "Puppy",
-        "repositoryURL": "https://github.com/sushichop/Puppy",
+        "package": "Pulse",
+        "repositoryURL": "https://github.com/kean/Pulse",
         "state": {
           "branch": null,
-          "revision": "7cfae42becac2d8916cb1a866dd12d9843199df9",
-          "version": "0.5.0"
+          "revision": "6b682c529d98a38e6fdffee2a8bfa40c8de30821",
+          "version": "2.1.3"
         }
       },
       {
@@ -141,8 +132,8 @@
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
-          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-          "version": "1.4.2"
+          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
+          "version": "1.4.4"
         }
       },
       {
@@ -179,6 +170,15 @@
           "branch": null,
           "revision": "337dd5f158182620b2bb53c6847f8874a0117b2f",
           "version": "1.0.0"
+        }
+      },
+      {
+        "package": "Then",
+        "repositoryURL": "https://github.com/freshOS/Then",
+        "state": {
+          "branch": null,
+          "revision": "7fefb1cae999b58318edc149f91dc2bda8d194eb",
+          "version": "7.0.0"
         }
       },
       {

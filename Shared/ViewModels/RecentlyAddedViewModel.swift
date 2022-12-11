@@ -19,28 +19,28 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel {
     }
 
     override func _requestNextPage() {
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            startIndex: currentPage * pageItemSize,
-            limit: pageItemSize,
-            recursive: true,
-            sortOrder: [.descending],
-            fields: ItemFields.allCases,
-            includeItemTypes: [.movie, .series],
-            sortBy: [SortBy.dateAdded.rawValue],
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            guard let items = response.items, !items.isEmpty else {
-                self?.hasNextPage = false
-                return
-            }
-
-            self?.items.append(contentsOf: items)
-        }
-        .store(in: &cancellables)
+//        ItemsAPI.getItemsByUserId(
+//            userId: "123abc",
+//            startIndex: currentPage * pageItemSize,
+//            limit: pageItemSize,
+//            recursive: true,
+//            sortOrder: [.descending],
+//            fields: ItemFields.allCases,
+//            includeItemTypes: [.movie, .series],
+//            sortBy: [SortBy.dateAdded.rawValue],
+//            enableUserData: true
+//        )
+//        .trackActivity(loading)
+//        .sink { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        } receiveValue: { [weak self] response in
+//            guard let items = response.items, !items.isEmpty else {
+//                self?.hasNextPage = false
+//                return
+//            }
+//
+//            self?.items.append(contentsOf: items)
+//        }
+//        .store(in: &cancellables)
     }
 }

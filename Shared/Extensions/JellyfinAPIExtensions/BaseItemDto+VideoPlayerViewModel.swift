@@ -24,14 +24,16 @@ extension BaseItemDto {
         let segmentContainer = Defaults[.Experimental.usefmp4Hls] ? "mp4" : "ts"
 
         let playbackInfoRequest = GetPostedPlaybackInfoRequest(
-            userId: SessionManager.main.currentLogin.user.id,
+//            userId: "123abc",
+            userId: "123abc",
             maxStreamingBitrate: tempOverkillBitrate,
             deviceProfile: profile
         )
 
         return MediaInfoAPI.getPostedPlaybackInfo(
             itemId: self.id!,
-            userId: SessionManager.main.currentLogin.user.id,
+//            userId: "123abc",
+            userId: "123abc",
             maxStreamingBitrate: tempOverkillBitrate,
             getPostedPlaybackInfoRequest: playbackInfoRequest
         )

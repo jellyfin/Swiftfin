@@ -23,7 +23,7 @@
 //        let profile = builder.buildProfile()
 //
 //        let getPostedPlaybackInfoRequest = GetPostedPlaybackInfoRequest(
-//            userId: SessionManager.main.currentLogin.user.id,
+//            userId: "123abc",
 //            maxStreamingBitrate: tempOverkillBitrate,
 //            startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
 //            deviceProfile: profile,
@@ -32,7 +32,7 @@
 //
 //        return MediaInfoAPI.getPostedPlaybackInfo(
 //            itemId: self.id!,
-//            userId: SessionManager.main.currentLogin.user.id,
+//            userId: "123abc",
 //            maxStreamingBitrate: tempOverkillBitrate,
 //            startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
 //            autoOpenLiveStream: true,
@@ -191,7 +191,7 @@
 //        let profile = builder.buildProfile()
 //
 //        let getPostedPlaybackInfoRequest = GetPostedPlaybackInfoRequest(
-//            userId: SessionManager.main.currentLogin.user.id,
+//            userId: "123abc",
 //            maxStreamingBitrate: tempOverkillBitrate,
 //            startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
 //            deviceProfile: profile,
@@ -200,7 +200,7 @@
 //
 //        return MediaInfoAPI.getPostedPlaybackInfo(
 //            itemId: self.id!,
-//            userId: SessionManager.main.currentLogin.user.id,
+//            userId: "123abc",
 //            maxStreamingBitrate: tempOverkillBitrate,
 //            startTimeTicks: self.userData?.playbackPositionTicks ?? 0,
 //            autoOpenLiveStream: true,

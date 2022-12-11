@@ -22,17 +22,18 @@ final class CollectionItemViewModel: ItemViewModel {
     }
 
     private func getCollectionItems() {
-        ItemsAPI.getItems(
-            userId: SessionManager.main.currentLogin.user.id,
-            parentId: item.id,
-            fields: ItemFields.allCases
-        )
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            self?.collectionItems = response.items ?? []
-        }
-        .store(in: &cancellables)
+//        ItemsAPI.getItems(
+////            userId: "123abc",
+//            userId: "123abc",
+//            parentId: item.id,
+//            fields: ItemFields.allCases
+//        )
+//        .trackActivity(loading)
+//        .sink { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        } receiveValue: { [weak self] response in
+//            self?.collectionItems = response.items ?? []
+//        }
+//        .store(in: &cancellables)
     }
 }

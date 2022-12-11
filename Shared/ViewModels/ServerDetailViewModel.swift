@@ -19,14 +19,14 @@ class ServerDetailViewModel: ViewModel {
     }
 
     func setServerCurrentURI(uri: String) {
-        SessionManager.main.setServerCurrentURI(server: server, uri: uri)
-            .sink { c in
-                print(c)
-            } receiveValue: { newServerState in
-                self.server = newServerState
-
-                Notifications[.didChangeServerCurrentURI].post(object: newServerState)
-            }
-            .store(in: &cancellables)
+//        SessionManager.main.setServerCurrentURI(server: server, uri: uri)
+//            .sink { c in
+//                print(c)
+//            } receiveValue: { newServerState in
+//                self.server = newServerState
+//
+//                Notifications[.didChangeServerCurrentURI].post(object: newServerState)
+//            }
+//            .store(in: &cancellables)
     }
 }

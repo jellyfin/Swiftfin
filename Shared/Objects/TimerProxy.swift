@@ -9,6 +9,7 @@
 import SwiftUI
 
 // TODO: Rename to something more generic, non-proxy
+// TODO: change from timer to DispatchWorkItem
 class TimerProxy: ObservableObject {
 
     @Published

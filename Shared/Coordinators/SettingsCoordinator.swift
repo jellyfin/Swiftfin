@@ -49,7 +49,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     private let viewModel: SettingsViewModel
     
     init() {
-        viewModel = .init(server: SessionManager.main.currentLogin.server, user: SessionManager.main.currentLogin.user)
+//        viewModel = .init(server: SessionManager.main.currentLogin.server, user: SessionManager.main.currentLogin.user)
+        viewModel = .init(server: .sample, user: .sample)
     }
     
     @ViewBuilder
@@ -83,7 +84,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeServerDetail() -> some View {
-        ServerDetailView(viewModel: .init(server: SessionManager.main.currentLogin.server))
+//        ServerDetailView(viewModel: .init(server: SessionManager.main.currentLogin.server))
+        Text("")
     }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {

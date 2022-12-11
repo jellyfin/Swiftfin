@@ -107,7 +107,7 @@ final class VideoPlayerViewModel: ViewModel {
         )
 
         var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
-        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
+//        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
 
         return hlsStreamComponents.url!
     }

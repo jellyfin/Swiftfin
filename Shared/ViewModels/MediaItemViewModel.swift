@@ -31,22 +31,22 @@ final class MediaItemViewModel: ViewModel {
     }
     
     private func getRandomItemImageSource(with filters: [ItemFilter]?) {
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 3,
-            recursive: true,
-            parentId: item.id,
-            includeItemTypes: [.movie, .series],
-            filters: filters,
-            sortBy: ["Random"]
-        )
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            guard let items = response.items else { return }
-            self?.imageSources = items.map { $0.imageSource(.backdrop, maxWidth: 500) }
-        })
-        .store(in: &cancellables)
+//        ItemsAPI.getItemsByUserId(
+//            userId: "123abc",
+//            limit: 3,
+//            recursive: true,
+//            parentId: item.id,
+//            includeItemTypes: [.movie, .series],
+//            filters: filters,
+//            sortBy: ["Random"]
+//        )
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            guard let items = response.items else { return }
+//            self?.imageSources = items.map { $0.imageSource(.backdrop, maxWidth: 500) }
+//        })
+//        .store(in: &cancellables)
     }
 }
 

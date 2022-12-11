@@ -21,6 +21,6 @@ final class BasicAppSettingsViewModel: ViewModel {
     }
 
     func removeAllUsers() {
-        SessionManager.main.purge()
+//        SessionManager.main.purge()
     }
 }

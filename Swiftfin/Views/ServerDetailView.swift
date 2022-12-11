@@ -13,11 +13,11 @@ struct ServerDetailView: View {
     @ObservedObject
     var viewModel: ServerDetailViewModel
     @State
-    var currentServerURI: String
+    var currentServerURI: String = ""
 
     init(viewModel: ServerDetailViewModel) {
         self.viewModel = viewModel
-        self.currentServerURI = viewModel.server.currentURI
+//        self.currentServerURI = viewModel.server.currentURI
     }
 
     var body: some View {
@@ -31,12 +31,12 @@ struct ServerDetailView: View {
                 }
 
                 Picker(L10n.url, selection: $currentServerURI) {
-                    ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
-                        Text(uri).tag(uri)
-                            .foregroundColor(.secondary)
-                    }.onChange(of: currentServerURI) { newValue in
-                        viewModel.setServerCurrentURI(uri: newValue)
-                    }
+//                    ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
+//                        Text(uri).tag(uri)
+//                            .foregroundColor(.secondary)
+//                    }.onChange(of: currentServerURI) { newValue in
+//                        viewModel.setServerCurrentURI(uri: newValue)
+//                    }
                 }
 
                 HStack {

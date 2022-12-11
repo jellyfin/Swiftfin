@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PulseUI
 import Stinsen
 import SwiftUI
 
@@ -22,6 +23,8 @@ final class ServerListCoordinator: NavigationCoordinatable {
     var userList = makeUserList
     @Route(.modal)
     var basicAppSettings = makeBasicAppSettings
+    @Route(.modal)
+    var pulseConsole = makePulseConsole
 
     func makeConnectToServer() -> ConnectToServerCoodinator {
         ConnectToServerCoodinator()
@@ -33,6 +36,11 @@ final class ServerListCoordinator: NavigationCoordinatable {
 
     func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
         NavigationViewCoordinator(BasicAppSettingsCoordinator())
+    }
+    
+    @ViewBuilder
+    func makePulseConsole() -> some View {
+        MainView()
     }
 
     @ViewBuilder

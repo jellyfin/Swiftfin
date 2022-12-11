@@ -53,64 +53,64 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     }
 
     private func getNextUp() {
-        logger.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
-        TvShowsAPI.getNextUp(
-            userId: SessionManager.main.currentLogin.user.id,
-            fields: ItemFields.minimumCases,
-            seriesId: self.item.id!,
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
-                self?.playButtonItem = nextUpItem
-            }
-        })
-        .store(in: &cancellables)
+//        logger.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
+//        TvShowsAPI.getNextUp(
+//            userId: "123abc",
+//            fields: ItemFields.minimumCases,
+//            seriesId: self.item.id!,
+//            enableUserData: true
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
+//                self?.playButtonItem = nextUpItem
+//            }
+//        })
+//        .store(in: &cancellables)
     }
 
     private func getResumeItem() {
-        ItemsAPI.getResumeItems(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 1,
-            parentId: item.id,
-            fields: ItemFields.minimumCases
-        )
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            if let firstItem = response.items?.first {
-                self?.playButtonItem = firstItem
-            }
-        }
-        .store(in: &cancellables)
+//        ItemsAPI.getResumeItems(
+//            userId: "123abc",
+//            limit: 1,
+//            parentId: item.id,
+//            fields: ItemFields.minimumCases
+//        )
+//        .trackActivity(loading)
+//        .sink { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        } receiveValue: { [weak self] response in
+//            if let firstItem = response.items?.first {
+//                self?.playButtonItem = firstItem
+//            }
+//        }
+//        .store(in: &cancellables)
     }
 
     private func getFirstAvailableItem() {
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 2,
-            recursive: true,
-            sortOrder: [.ascending],
-            parentId: item.id,
-            fields: ItemFields.minimumCases,
-            includeItemTypes: [.episode]
-        )
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            if let firstItem = response.items?.first {
-                if self?.playButtonItem == nil {
-                    // If other calls finish after this, it will be overwritten
-                    self?.playButtonItem = firstItem
-                }
-            }
-        }
-        .store(in: &cancellables)
+//        ItemsAPI.getItemsByUserId(
+//            userId: "123abc",
+//            limit: 2,
+//            recursive: true,
+//            sortOrder: [.ascending],
+//            parentId: item.id,
+//            fields: ItemFields.minimumCases,
+//            includeItemTypes: [.episode]
+//        )
+//        .trackActivity(loading)
+//        .sink { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        } receiveValue: { [weak self] response in
+//            if let firstItem = response.items?.first {
+//                if self?.playButtonItem == nil {
+//                    // If other calls finish after this, it will be overwritten
+//                    self?.playButtonItem = firstItem
+//                }
+//            }
+//        }
+//        .store(in: &cancellables)
     }
 
     func select(section: BaseItemDto) {
@@ -129,49 +129,49 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     }
 
     private func getSeasons() {
-        TvShowsAPI.getSeasons(
-            seriesId: item.id ?? "",
-            userId: SessionManager.main.currentLogin.user.id,
-            isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false
-        )
-        .sink { completion in
-            self.handleAPIRequestError(completion: completion)
-        } receiveValue: { response in
-            guard let seasons = response.items else { return }
-
-            seasons.forEach { season in
-                self.menuSections[season] = PosterButtonType.loading.random(in: 3 ..< 8)
-            }
-
-            if let firstSeason = seasons.first {
-                self.menuSelection = firstSeason
-                self.getEpisodesForSeason(firstSeason)
-            }
-        }
-        .store(in: &cancellables)
+//        TvShowsAPI.getSeasons(
+//            seriesId: item.id ?? "",
+//            userId: "123abc",
+//            isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false
+//        )
+//        .sink { completion in
+//            self.handleAPIRequestError(completion: completion)
+//        } receiveValue: { response in
+//            guard let seasons = response.items else { return }
+//
+//            seasons.forEach { season in
+//                self.menuSections[season] = PosterButtonType.loading.random(in: 3 ..< 8)
+//            }
+//
+//            if let firstSeason = seasons.first {
+//                self.menuSelection = firstSeason
+//                self.getEpisodesForSeason(firstSeason)
+//            }
+//        }
+//        .store(in: &cancellables)
     }
 
     private func getEpisodesForSeason(_ season: BaseItemDto) {
-        guard let seasonID = season.id else { return }
-
-        TvShowsAPI.getEpisodes(
-            seriesId: item.id ?? "",
-            userId: SessionManager.main.currentLogin.user.id,
-            fields: ItemFields.minimumCases,
-            seasonId: seasonID,
-            isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink { completion in
-            self.handleAPIRequestError(completion: completion)
-        } receiveValue: { response in
-            if let items = response.items {
-                self.menuSections[season] = items.map { .item($0) }
-            } else {
-                self.menuSections[season] = [.noResult]
-            }
-        }
-        .store(in: &cancellables)
+//        guard let seasonID = season.id else { return }
+//
+//        TvShowsAPI.getEpisodes(
+//            seriesId: item.id ?? "",
+//            userId: "123abc",
+//            fields: ItemFields.minimumCases,
+//            seasonId: seasonID,
+//            isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
+//            enableUserData: true
+//        )
+//        .trackActivity(loading)
+//        .sink { completion in
+//            self.handleAPIRequestError(completion: completion)
+//        } receiveValue: { response in
+//            if let items = response.items {
+//                self.menuSections[season] = items.map { .item($0) }
+//            } else {
+//                self.menuSections[season] = [.noResult]
+//            }
+//        }
+//        .store(in: &cancellables)
     }
 }

@@ -19,7 +19,7 @@ extension MediaSourceInfo {
         let streamType: StreamType
         
         if let transcodingUrl, !Defaults[.Experimental.forceDirectPlay] {
-            guard let fullTranscodeURL = URL(string: SessionManager.main.currentLogin.server.currentURI.appending(transcodingUrl)) else { throw JellyfinAPIError("Unable to construct transcoded url") }
+            guard let fullTranscodeURL = URL(string: "".appending(transcodingUrl)) else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL
             streamType = .transcode
         } else {
@@ -63,7 +63,7 @@ extension MediaSourceInfo {
         )
 
         var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
-        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
+//        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
         
         return .init(
             playbackURL: playbackURL,

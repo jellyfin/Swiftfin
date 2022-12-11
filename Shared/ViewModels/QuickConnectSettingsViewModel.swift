@@ -17,30 +17,31 @@ final class QuickConnectSettingsViewModel: ViewModel {
     var showSuccessMessage = false
 
     var alertTitle: String {
-        var message: String = ""
-        if errorMessage?.code != ErrorMessage.noShowErrorCode {
-            message.append(contentsOf: "\(errorMessage?.code ?? ErrorMessage.noShowErrorCode)\n")
-        }
-        message.append(contentsOf: "\(errorMessage?.title ?? L10n.unknownError)")
-        return message
+        .emptyDash
+//        var message: String = ""
+//        if errorMessage?.code != ErrorMessage.noShowErrorCode {
+//            message.append(contentsOf: "\(errorMessage?.code ?? ErrorMessage.noShowErrorCode)\n")
+//        }
+//        message.append(contentsOf: "\(errorMessage?.title ?? L10n.unknownError)")
+//        return message
     }
 
     func sendQuickConnect() {
-        QuickConnectAPI.authorize(code: self.quickConnectCode)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(displayMessage: L10n.quickConnectInvalidError, completion: completion)
-                switch completion {
-                case .failure:
-                    self.logger.debug("Invalid Quick Connect code entered")
-                default:
-                    break
-                }
-            }, receiveValue: { _ in
-                // receiving a successful HTTP response indicates a valid code
-                self.logger.debug("Valid Quick connect code entered")
-                self.showSuccessMessage = true
-            })
-            .store(in: &cancellables)
+//        QuickConnectAPI.authorize(code: self.quickConnectCode)
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { completion in
+//                self.handleAPIRequestError(displayMessage: L10n.quickConnectInvalidError, completion: completion)
+//                switch completion {
+//                case .failure:
+//                    self.logger.debug("Invalid Quick Connect code entered")
+//                default:
+//                    break
+//                }
+//            }, receiveValue: { _ in
+//                // receiving a successful HTTP response indicates a valid code
+//                self.logger.debug("Valid Quick connect code entered")
+//                self.showSuccessMessage = true
+//            })
+//            .store(in: &cancellables)
     }
 }

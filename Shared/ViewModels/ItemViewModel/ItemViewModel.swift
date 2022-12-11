@@ -75,19 +75,19 @@ class ItemViewModel: ViewModel {
     private func getFullItem() {
         guard let itemID = item.id else { logger.error("Unable to retrieve full item: no item ID"); return }
         
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            fields: ItemFields.allCases,
-            enableUserData: true,
-            ids: [itemID]
-        )
-        .sink { completion in
-            self.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            guard let self, let fullItem = response.items?.first else { self?.logger.error("Unable to retrieve full item: item not in response"); return }
-            self.item = fullItem
-        }
-        .store(in: &cancellables)
+//        ItemsAPI.getItemsByUserId(
+//            userId: "123abc",
+//            fields: ItemFields.allCases,
+//            enableUserData: true,
+//            ids: [itemID]
+//        )
+//        .sink { completion in
+//            self.handleAPIRequestError(completion: completion)
+//        } receiveValue: { [weak self] response in
+//            guard let self, let fullItem = response.items?.first else { self?.logger.error("Unable to retrieve full item: item not in response"); return }
+//            self.item = fullItem
+//        }
+//        .store(in: &cancellables)
     }
 
     @objc
@@ -135,32 +135,32 @@ class ItemViewModel: ViewModel {
     }
 
     func getSimilarItems() {
-        LibraryAPI.getSimilarItems(
-            itemId: item.id!,
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 20,
-            fields: ItemFields.minimumCases
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.similarItems = response.items ?? []
-        })
-        .store(in: &cancellables)
+//        LibraryAPI.getSimilarItems(
+//            itemId: item.id!,
+//            userId: "123abc",
+//            limit: 20,
+//            fields: ItemFields.minimumCases
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            self?.similarItems = response.items ?? []
+//        })
+//        .store(in: &cancellables)
     }
 
     func getSpecialFeatures() {
-        UserLibraryAPI.getSpecialFeatures(
-            userId: SessionManager.main.currentLogin.user.id,
-            itemId: item.id!
-        )
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] items in
-            self?.specialFeatures = items.filter { $0.specialFeatureType?.isVideo ?? false }
-        }
-        .store(in: &cancellables)
+//        UserLibraryAPI.getSpecialFeatures(
+//            userId: "123abc",
+//            itemId: item.id!
+//        )
+//        .sink { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        } receiveValue: { [weak self] items in
+//            self?.specialFeatures = items.filter { $0.specialFeatureType?.isVideo ?? false }
+//        }
+//        .store(in: &cancellables)
     }
 
     func toggleWatchState() {
@@ -169,22 +169,22 @@ class ItemViewModel: ViewModel {
         let request: AnyPublisher<UserItemDataDto, Error>
 
         if current {
-            request = PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+            request = PlaystateAPI.markUnplayedItem(userId: "123abc", itemId: item.id!)
         } else {
-            request = PlaystateAPI.markPlayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+            request = PlaystateAPI.markPlayedItem(userId: "123abc", itemId: item.id!)
         }
 
-        request
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case .failure:
-                    self?.isPlayed = !current
-                case .finished: ()
-                }
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { _ in })
-            .store(in: &cancellables)
+//        request
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { [weak self] completion in
+//                switch completion {
+//                case .failure:
+//                    self?.isPlayed = !current
+//                case .finished: ()
+//                }
+//                self?.handleAPIRequestError(completion: completion)
+//            }, receiveValue: { _ in })
+//            .store(in: &cancellables)
     }
 
     func toggleFavoriteState() {
@@ -193,22 +193,22 @@ class ItemViewModel: ViewModel {
         let request: AnyPublisher<UserItemDataDto, Error>
 
         if current {
-            request = UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+            request = UserLibraryAPI.unmarkFavoriteItem(userId: "123abc", itemId: item.id!)
         } else {
-            request = UserLibraryAPI.markFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
+            request = UserLibraryAPI.markFavoriteItem(userId: "123abc", itemId: item.id!)
         }
 
-        request
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case .failure:
-                    self?.isFavorited = !current
-                case .finished: ()
-                }
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { _ in })
-            .store(in: &cancellables)
+//        request
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { [weak self] completion in
+//                switch completion {
+//                case .failure:
+//                    self?.isFavorited = !current
+//                case .finished: ()
+//                }
+//                self?.handleAPIRequestError(completion: completion)
+//            }, receiveValue: { _ in })
+//            .store(in: &cancellables)
     }
 
     // Overridden by subclasses

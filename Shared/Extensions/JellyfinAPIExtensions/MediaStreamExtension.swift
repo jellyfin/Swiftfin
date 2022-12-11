@@ -25,12 +25,13 @@ extension MediaStream {
     }
 
     var asPlaybackChild: VLCVideoPlayer.PlaybackChild? {
-        guard let url = externalURL(base: SessionManager.main.currentLogin.server.currentURI) else { return nil }
-        return .init(
-            url: url,
-            type: .subtitle,
-            enforce: false
-        )
+        return nil
+//        guard let url = externalURL(base: SessionManager.main.currentLogin.server.currentURI) else { return nil }
+//        return .init(
+//            url: url,
+//            type: .subtitle,
+//            enforce: false
+//        )
     }
 
     var size: String? {

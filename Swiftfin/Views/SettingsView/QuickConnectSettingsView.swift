@@ -37,12 +37,12 @@ struct QuickConnectSettingsView: View {
                 )
             }
         }
-        .alert(item: $viewModel.errorMessage) { _ in
-            Alert(
-                title: Text(viewModel.alertTitle),
-                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-                dismissButton: .cancel()
-            )
-        }
+//        .alert(item: $viewModel.errorMessage) { _ in
+//            Alert(
+//                title: Text(viewModel.alertTitle),
+//                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
+//                dismissButton: .cancel()
+//            )
+//        }
     }
 }

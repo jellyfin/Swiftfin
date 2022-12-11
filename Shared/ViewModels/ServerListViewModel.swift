@@ -6,17 +6,19 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import AsyncPlus
 import CoreStore
 import Foundation
 import SwiftUI
 
-class ServerListViewModel: ObservableObject {
+final class ServerListViewModel: ViewModel {
 
     @Published
     var servers: [SwiftfinStore.State.Server] = []
 
-    init() {
-
+    override init() {
+        super.init()
+        
         // Oct. 15, 2021
         // This is a workaround since Stinsen doesn't have the ability to rebuild a root at the time of writing.
         // Feature request issue: https://github.com/rundfunk47/stinsen/issues/33
@@ -25,7 +27,6 @@ class ServerListViewModel: ObservableObject {
     }
 
     func fetchServers() {
-//        self.servers = SessionManager.main.fetchServers()
         let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.StoredServer>())
         self.servers = servers.map(\.state)
     }
@@ -39,7 +40,17 @@ class ServerListViewModel: ObservableObject {
     }
 
     func remove(server: SwiftfinStore.State.Server) {
-        SessionManager.main.delete(server: server)
+        
+        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
+            From<SwiftfinStore.Models.StoredServer>(),
+            [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]
+        )
+        else { fatalError("No stored server for state server?") }
+        
+        try! SwiftfinStore.dataStack.perform { transaction in
+            transaction.delete(storedServer)
+        }
+        
         fetchServers()
     }
 

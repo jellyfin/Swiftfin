@@ -6,18 +6,17 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
+import AsyncPlus
 import CoreStore
+import Get
 import Factory
 import Foundation
 import JellyfinAPI
-//import JellyfinAPILegacy
-import Stinsen
-import UIKit
+import Pulse
 
 struct AddServerURIPayload: Identifiable {
 
-    let server: SwiftfinStore.State.Server
+    let server: ServerState
     let uri: String
 
     var id: String {
@@ -27,153 +26,93 @@ struct AddServerURIPayload: Identifiable {
 
 final class ConnectToServerViewModel: ViewModel {
     
-    enum State {
-        case loading
-        case connecting
-        case error(Error)
-    }
-
-    @RouterObject
-    var router: ConnectToServerCoodinator.Router?
+    @Published
+    private(set) var discoveredServers: [ServerState] = []
     
     @Published
-    var discoveredServers: [SwiftfinStore.State.Server] = []
-    
-    @Published
-    var searching = false
+    private(set) var isSearching = false
     
     @Published
     var addServerURIPayload: AddServerURIPayload?
+    
     var backAddServerURIPayload: AddServerURIPayload?
 
     private let discovery = ServerDiscovery()
-
-    var alertTitle: String {
-        var message: String = ""
-        if errorMessage?.code != ErrorMessage.noShowErrorCode {
-            message.append(contentsOf: "\(errorMessage?.code ?? ErrorMessage.noShowErrorCode)\n")
-        }
-        message.append(contentsOf: "\(errorMessage?.title ?? L10n.unknownError)")
-        return message
-    }
-
-    func connectToServer(uri: String, redirectCount: Int = 0) async throws -> SwiftfinStore.State.Server {
-
-        let uri = uri.trimmingCharacters(in: .whitespacesAndNewlines)
+    
+    var connectToServerTask: Task<ServerState, Error>?
+    
+    func connectToServer(url: String) async throws -> (server: ServerState, url: URL) {
+        
+        let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
 
-        logger.debug("Attempting to connect to server at \"\(uri)\"", tag: "connectToServer")
-        
-        guard let url = URL(string: uri) else { throw JellyfinAPIError("Invalid URL") }
-        
-        var deviceName = await UIDevice.current.name.folding(options: .diacriticInsensitive, locale: .current)
-        deviceName = String(deviceName.unicodeScalars.filter { CharacterSet.urlQueryAllowed.contains($0) })
-        
+        guard let url = URL(string: formattedURL) else { throw JellyfinAPIError("Invalid URL") }
+
         let client = JellyfinClient(
-            configuration: .init(url: url,
-                                 client: "Jellyfin iOS",
-                                 deviceName: deviceName,
-                                 deviceID: "iOS_\(await UIDevice.vendorUUIDString)_\(String(Date().timeIntervalSince1970))",
-                                 version: "0.0.1"))
+            configuration: .swiftfinConfiguration(url: url),
+            sessionDelegate: URLSessionProxyDelegate()
+        )
         
-        let systemInfo = try await client.send(Paths.getPublicSystemInfo)
+        let response = try await client.send(Paths.getPublicSystemInfo)
         
-        guard let name = systemInfo.value.serverName,
-              let id = systemInfo.value.id,
-              let os = systemInfo.value.operatingSystem,
-              let version = systemInfo.value.version else {
+        guard let name = response.value.serverName,
+              let id = response.value.id,
+              let os = response.value.operatingSystem,
+              let version = response.value.version else {
             throw JellyfinAPIError("Missing server data from network call")
         }
-                
-        try await MainActor.run(body: {
-            if let existingServer = try? SwiftfinStore.dataStack.fetchOne(
-                From<SwiftfinStore.Models.StoredServer>(),
-                [Where<SwiftfinStore.Models.StoredServer>(
-                    "id == %@",
-                    id
-                )]
-            ) {
-                throw SwiftfinStore.Error.existingServer(existingServer.state)
-            }
-        })
-                
-        let transaction = try SwiftfinStore.dataStack.perform { transaction in
-            let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
-            
-            newServer.uris = [uri]
-            newServer.currentURI = uri
-            newServer.name = name
-            newServer.id = id
-            newServer.os = os
-            newServer.version = version
-            newServer.users = []
-            
-            return newServer.state
+        
+        let newServerState = ServerState(
+            urls: [url],
+            currentURL: url,
+            name: name,
+            id: id,
+            os: os,
+            version: version,
+            usersIDs: []
+        )
+        
+        return (newServerState, url)
+    }
+    
+    func isDuplicate(server: ServerState) -> Bool {
+        if let _ = try? SwiftfinStore.dataStack.fetchOne(
+            From<SwiftfinStore.Models.StoredServer>(),
+            [Where<SwiftfinStore.Models.StoredServer>(
+                "id == %@",
+                server.id
+            )]
+        ) {
+            return true
         }
-        
-        return transaction
-        
-        
-        
-//        SessionManager.main.connectToServer(with: uri)
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { completion in
-//                // This is disgusting. ViewModel Error handling overall needs to be refactored
-//                switch completion {
-//                case .finished: ()
-//                case let .failure(error):
-//                    switch error {
-//                    case is ErrorResponse:
-//                        let errorResponse = error as! ErrorResponse
-//                        switch errorResponse {
-//                        case let .error(_, _, response, _):
-//                            // a url in the response is the result if a redirect
-//                            if let newURL = response?.url {
-//                                if redirectCount > 2 {
-//                                    self.handleAPIRequestError(displayMessage: L10n.tooManyRedirects, completion: completion)
-//                                } else {
-//                                    self
-//                                        .connectToServer(
-//                                            uri: newURL.absoluteString
-//                                                .removeRegexMatches(pattern: "/web/index.html"),
-//                                            redirectCount: redirectCount + 1
-//                                        )
-//                                }
-//                            } else {
-//                                self.handleAPIRequestError(completion: completion)
-//                            }
-//                        }
-//                    case is SwiftfinStore.Error:
-//                        let swiftfinError = error as! SwiftfinStore.Error
-//                        switch swiftfinError {
-//                        case let .existingServer(server):
-//                            self.addServerURIPayload = AddServerURIPayload(server: server, uri: uri)
-//                            self.backAddServerURIPayload = AddServerURIPayload(server: server, uri: uri)
-//                        default:
-//                            self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-//                        }
-//                    default:
-//                        self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-//                    }
-//                }
-//            }, receiveValue: { server in
-//                self.logger.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
-//                self.router?.route(to: \.userSignIn, server)
-//            })
-//            .store(in: &cancellables)
+        return false
+    }
+    
+    func save(server: ServerState) throws {
+        try SwiftfinStore.dataStack.perform { transaction in
+            let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
+
+            newServer.urls = server.urls
+            newServer.currentURL = server.currentURL
+            newServer.name = server.name
+            newServer.id = server.id
+            newServer.os = server.os
+            newServer.version = server.version
+            newServer.users = []
+        }
     }
 
     func discoverServers() {
+        isSearching = true
         discoveredServers.removeAll()
-        searching = true
 
         var _discoveredServers: Set<SwiftfinStore.State.Server> = []
 
         discovery.locateServer { server in
             if let server = server {
                 _discoveredServers.insert(.init(
-                    uris: [],
-                    currentURI: server.url.absoluteString,
+                    urls: [],
+                    currentURL: server.url,
                     name: server.name,
                     id: server.id,
                     os: "",
@@ -185,32 +124,23 @@ final class ConnectToServerViewModel: ViewModel {
 
         // Timeout after 3 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.searching = false
+            self.isSearching = false
             self.discoveredServers = _discoveredServers.sorted(by: { $0.name < $1.name })
         }
     }
 
-    func addURIToServer(addServerURIPayload: AddServerURIPayload) {
-        SessionManager.main.addURIToServer(server: addServerURIPayload.server, uri: addServerURIPayload.uri)
-            .sink { completion in
-                self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-            } receiveValue: { server in
-                SessionManager.main.setServerCurrentURI(server: server, uri: addServerURIPayload.uri)
-                    .sink { completion in
-                        self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-                    } receiveValue: { _ in
-                        self.router?.dismissCoordinator()
-                    }
-                    .store(in: &self.cancellables)
-            }
-            .store(in: &cancellables)
-    }
+    func add(url: URL, server: ServerState) {
+        try! SwiftfinStore.dataStack.perform { transaction in
+            let existingServer = try! SwiftfinStore.dataStack.fetchOne(
+                From<SwiftfinStore.Models.StoredServer>(),
+                [Where<SwiftfinStore.Models.StoredServer>(
+                    "id == %@",
+                    server.id
+                )]
+            )
 
-    func cancelConnection() {
-        for cancellable in cancellables {
-            cancellable.cancel()
+            let editServer = transaction.edit(existingServer)!
+            editServer.urls.insert(url)
         }
-
-        self.isLoading = false
     }
 }

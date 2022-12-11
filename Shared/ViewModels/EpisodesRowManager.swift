@@ -39,43 +39,45 @@ extension EpisodesRowManager {
 
     // Also retrieves the current season episodes if available
     func getSeasons() {
-        TvShowsAPI.getSeasons(
-            seriesId: item.id ?? "",
-            userId: SessionManager.main.currentLogin.user.id,
-            isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false
-        )
-        .sink { completion in
-            self.handleAPIRequestError(completion: completion)
-        } receiveValue: { response in
-            let seasons = response.items ?? []
-
-            seasons.forEach { season in
-                self.seasonsEpisodes[season] = []
-            }
-
-            self.selectedSeason = seasons.first
-        }
-        .store(in: &cancellables)
+//        TvShowsAPI.getSeasons(
+//            seriesId: item.id ?? "",
+////            userId: "123abc",
+//            userId: "123abc",
+//            isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false
+//        )
+//        .sink { completion in
+//            self.handleAPIRequestError(completion: completion)
+//        } receiveValue: { response in
+//            let seasons = response.items ?? []
+//
+//            seasons.forEach { season in
+//                self.seasonsEpisodes[season] = []
+//            }
+//
+//            self.selectedSeason = seasons.first
+//        }
+//        .store(in: &cancellables)
     }
 
     func getEpisodesForSeason(_ season: BaseItemDto) {
-        guard let seasonID = season.id else { return }
-
-        TvShowsAPI.getEpisodes(
-            seriesId: item.id ?? "",
-            userId: SessionManager.main.currentLogin.user.id,
-            fields: [.overview, .seasonUserData],
-            seasonId: seasonID,
-            isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink { completion in
-            self.handleAPIRequestError(completion: completion)
-        } receiveValue: { episodes in
-            self.seasonsEpisodes[season] = episodes.items ?? []
-        }
-        .store(in: &cancellables)
+//        guard let seasonID = season.id else { return }
+//
+//        TvShowsAPI.getEpisodes(
+//            seriesId: item.id ?? "",
+////            userId: "123abc",
+//            userId: "123abc",
+//            fields: [.overview, .seasonUserData],
+//            seasonId: seasonID,
+//            isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
+//            enableUserData: true
+//        )
+//        .trackActivity(loading)
+//        .sink { completion in
+//            self.handleAPIRequestError(completion: completion)
+//        } receiveValue: { episodes in
+//            self.seasonsEpisodes[season] = episodes.items ?? []
+//        }
+//        .store(in: &cancellables)
     }
 
     func select(season: BaseItemDto) {

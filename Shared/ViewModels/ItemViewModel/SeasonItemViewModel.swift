@@ -39,71 +39,71 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
     }
 
     private func requestEpisodes() {
-        logger
-            .debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
-        TvShowsAPI.getEpisodes(
-            seriesId: item.seriesId ?? "",
-            userId: SessionManager.main.currentLogin.user.id,
-            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-            seasonId: item.id ?? ""
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            guard let self = self else { return }
-            self.seasonsEpisodes[self.item] = response.items ?? []
-
-            self.setNextUpInSeason()
-        })
-        .store(in: &cancellables)
+//        logger
+//            .debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
+//        TvShowsAPI.getEpisodes(
+//            seriesId: item.seriesId ?? "",
+//            userId: "123abc",
+//            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+//            seasonId: item.id ?? ""
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            guard let self = self else { return }
+//            self.seasonsEpisodes[self.item] = response.items ?? []
+//
+//            self.setNextUpInSeason()
+//        })
+//        .store(in: &cancellables)
     }
 
     private func setNextUpInSeason() {
 
-        TvShowsAPI.getNextUp(
-            userId: SessionManager.main.currentLogin.user.id,
-            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
-            seriesId: item.seriesId ?? "",
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            guard let self = self else { return }
-
-            // Find the nextup item that belongs to current season.
-            if let nextUpItem = (response.items ?? []).first(where: { episode in
-                !episode.unaired && !episode.missing && episode.seasonId ?? "" == self.item.id!
-            }) {
-                self.playButtonItem = nextUpItem
-                self.logger.debug("Nextup in season \(self.item.id!) (\(self.item.name!)): \(nextUpItem.id!)")
-            }
-
-            //				if self.playButtonItem == nil && !self.episodes.isEmpty {
-            //					// Fallback to the old mechanism:
-            //					// Sets the play button item to the "Next up" in the season based upon
-            //					// the watched status of episodes in the season.
-            //					// Default to the first episode of the season if all have been watched.
-            //					var firstUnwatchedSearch: BaseItemDto?
+//        TvShowsAPI.getNextUp(
+//            userId: "123abc",
+//            fields: [.primaryImageAspectRatio, .seriesPrimaryImage, .seasonUserData, .overview, .genres, .people],
+//            seriesId: item.seriesId ?? "",
+//            enableUserData: true
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            guard let self = self else { return }
 //
-            //					for episode in self.episodes {
-            //						guard let played = episode.userData?.played else { continue }
-            //						if !played {
-            //							firstUnwatchedSearch = episode
-            //							break
-            //						}
-            //					}
+//            // Find the nextup item that belongs to current season.
+//            if let nextUpItem = (response.items ?? []).first(where: { episode in
+//                !episode.unaired && !episode.missing && episode.seasonId ?? "" == self.item.id!
+//            }) {
+//                self.playButtonItem = nextUpItem
+//                self.logger.debug("Nextup in season \(self.item.id!) (\(self.item.name!)): \(nextUpItem.id!)")
+//            }
 //
-            //					if let firstUnwatched = firstUnwatchedSearch {
-            //						self.playButtonItem = firstUnwatched
-            //					} else {
-            //						guard let firstEpisode = self.episodes.first else { return }
-            //						self.playButtonItem = firstEpisode
-            //					}
-            //				}
-        })
-        .store(in: &cancellables)
+//            //				if self.playButtonItem == nil && !self.episodes.isEmpty {
+//            //					// Fallback to the old mechanism:
+//            //					// Sets the play button item to the "Next up" in the season based upon
+//            //					// the watched status of episodes in the season.
+//            //					// Default to the first episode of the season if all have been watched.
+//            //					var firstUnwatchedSearch: BaseItemDto?
+////
+//            //					for episode in self.episodes {
+//            //						guard let played = episode.userData?.played else { continue }
+//            //						if !played {
+//            //							firstUnwatchedSearch = episode
+//            //							break
+//            //						}
+//            //					}
+////
+//            //					if let firstUnwatched = firstUnwatchedSearch {
+//            //						self.playButtonItem = firstUnwatched
+//            //					} else {
+//            //						guard let firstEpisode = self.episodes.first else { return }
+//            //						self.playButtonItem = firstEpisode
+//            //					}
+//            //				}
+//        })
+//        .store(in: &cancellables)
     }
 }

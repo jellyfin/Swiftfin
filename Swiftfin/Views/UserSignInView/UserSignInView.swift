@@ -13,42 +13,102 @@ struct UserSignInView: View {
 
     @EnvironmentObject
     private var router: UserSignInCoordinator.Router
+    
     @ObservedObject
     var viewModel: UserSignInViewModel
+    
     @State
-    private var username: String = ""
+    private var isPresentingSignInError: Bool = false
     @State
     private var password: String = ""
+    @State
+    private var signInError: Error?
+    @State
+    private var signInTask: Task<Void, Never>?
+    @State
+    private var username: String = ""
+    
+    @ViewBuilder
+    private var signInSection: some View {
+        Section {
+            TextField(L10n.username, text: $username)
+                .disableAutocorrection(true)
+                .autocapitalization(.none)
+
+            SecureField(L10n.password, text: $password)
+                .disableAutocorrection(true)
+                .autocapitalization(.none)
+
+            if viewModel.isLoading {
+                Button(role: .destructive) {
+                    viewModel.isLoading = false
+                    signInTask?.cancel()
+                } label: {
+                    L10n.cancel.text
+                }
+            } else {
+                Button {
+                    let task = Task {
+                        viewModel.isLoading = true
+                        
+                        do {
+                            try await viewModel.signIn(username: username, password: password)
+                        } catch {
+                            signInError = error
+                            isPresentingSignInError = true
+                        }
+                        
+                        viewModel.isLoading = false
+                    }
+                    signInTask = task
+                } label: {
+                    L10n.signIn.text
+                }
+                .disabled(username.isEmpty)
+            }
+        } header: {
+            L10n.signInToServer(viewModel.server.name).text
+        }
+    }
+    
+    @ViewBuilder
+    private var publicUsersSection: some View {
+        Section {
+            if viewModel.publicUsers.isEmpty {
+                L10n.noPublicUsers.text
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+            } else {
+                ForEach(viewModel.publicUsers, id: \.id) { user in
+                    PublicUserSignInView(viewModel: viewModel, publicUser: user)
+                        .disabled(viewModel.isLoading)
+                }
+            }
+        } header: {
+            HStack {
+                L10n.publicUsers.text
+
+                Spacer()
+
+                Button {
+                    Task {
+                        try? await viewModel.getPublicUsers()
+                    }
+                } label: {
+                    Image(systemName: "arrow.clockwise.circle.fill")
+                }
+                .disabled(viewModel.isLoading)
+            }
+        }
+        .headerProminence(.increased)
+    }
 
     var body: some View {
         List {
-            Section {
-                TextField(L10n.username, text: $username)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
 
-                SecureField(L10n.password, text: $password)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-
-                if viewModel.isLoading {
-                    Button(role: .destructive) {
-                        viewModel.cancelSignIn()
-                    } label: {
-                        L10n.cancel.text
-                    }
-                } else {
-                    Button {
-                        viewModel.signIn(username: username, password: password)
-                    } label: {
-                        L10n.signIn.text
-                    }
-                    .disabled(username.isEmpty)
-                }
-            } header: {
-                L10n.signInToServer(viewModel.server.name).text
-            }
-
+            signInSection
+            
             if viewModel.quickConnectEnabled {
                 Button {
                     router.route(to: \.quickConnect)
@@ -57,47 +117,28 @@ struct UserSignInView: View {
                 }
             }
 
-            Section {
-                if !viewModel.publicUsers.isEmpty {
-                    ForEach(viewModel.publicUsers, id: \.id) { user in
-                        PublicUserSignInView(viewModel: viewModel, publicUser: user)
-                            .disabled(viewModel.isLoading)
-                    }
-                } else {
-                    HStack(alignment: .center) {
-                        Spacer()
-                        L10n.noPublicUsers.text
-                            .font(.callout)
-                            .foregroundColor(.secondary)
-                        Spacer()
-                    }
+            publicUsersSection
+        }
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingSignInError) {
+                Button(role: .cancel) {
+                    
+                } label: {
+                    Text("Dismiss")
                 }
-            } header: {
-                HStack {
-                    L10n.publicUsers.text
-
-                    Spacer()
-
-                    Button {
-                        viewModel.getPublicUsers()
-                    } label: {
-                        Image(systemName: "arrow.clockwise.circle.fill")
-                    }
-                    .disabled(viewModel.isLoading)
-                }
+            } message: {
+                Text(signInError?.localizedDescription ?? .emptyDash)
             }
-            .headerProminence(.increased)
-        }
-        .alert(item: $viewModel.errorMessage) { _ in
-            Alert(
-                title: Text(viewModel.alertTitle),
-                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-                dismissButton: .cancel()
-            )
-        }
         .navigationTitle(L10n.signIn)
-        .navigationBarBackButtonHidden(viewModel.isLoading)
+        .onAppear {
+            Task {
+                try? await viewModel.checkQuickConnect()
+                try? await viewModel.getPublicUsers()
+            }
+        }
         .onDisappear {
+            viewModel.isLoading = false
             viewModel.stopQuickConnectAuthCheck()
         }
     }

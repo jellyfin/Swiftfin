@@ -28,18 +28,18 @@ struct UserProfileButton: View {
             Button {
                 onSelect()
             } label: {
-                ImageView(user.profileImageSource(maxWidth: 120, maxHeight: 120))
-                    .failure {
-                        ZStack {
-                            Color.secondarySystemFill
-                                .opacity(0.5)
-
-                            Image(systemName: "person.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
-                        }
-                    }
-                    .clipShape(Circle())
+//                ImageView(user.profileImageSource(maxWidth: 120, maxHeight: 120))
+//                    .failure {
+//                        ZStack {
+//                            Color.secondarySystemFill
+//                                .opacity(0.5)
+//
+//                            Image(systemName: "person.fill")
+//                                .resizable()
+//                                .frame(width: 60, height: 60)
+//                        }
+//                    }
+//                    .clipShape(Circle())
             }
             .frame(width: 120, height: 120)
 

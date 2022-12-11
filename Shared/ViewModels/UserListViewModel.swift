@@ -22,7 +22,7 @@ class UserListViewModel: ViewModel {
 
         super.init()
 
-        JellyfinAPIAPI.basePath = server.currentURI
+//        JellyfinAPIAPI.basePath = server.currentURI.absoluteString
         Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
     }
 
@@ -33,16 +33,16 @@ class UserListViewModel: ViewModel {
     }
 
     func fetchUsers() {
-        self.users = SessionManager.main.fetchUsers(for: server)
+//        self.users = SessionManager.main.fetchUsers(for: server)
     }
 
     func signIn(user: SwiftfinStore.State.User) {
         self.isLoading = true
-        SessionManager.main.signInUser(server: server, user: user)
+//        SessionManager.main.signInUser(server: server, user: user)
     }
 
     func remove(user: SwiftfinStore.State.User) {
-        SessionManager.main.delete(user: user)
+//        SessionManager.main.delete(user: user)
         fetchUsers()
     }
 }

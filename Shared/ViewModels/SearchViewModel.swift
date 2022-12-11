@@ -44,20 +44,20 @@ final class SearchViewModel: ViewModel {
 
         getSuggestions()
 
-        searchTextSubject
-            .handleEvents(receiveOutput: { _ in self.cancelPreviousSearch() })
-            .filter { !$0.isEmpty }
-            .debounce(for: 0.25, scheduler: DispatchQueue.main)
-            .sink { newSearch in
-                self._search(with: newSearch, filters: self.filterViewModel.currentFilters)
-            }
-            .store(in: &cancellables)
-
-        filterViewModel.$currentFilters
-            .sink { newFilters in
-                self._search(with: self.searchTextSubject.value, filters: newFilters)
-            }
-            .store(in: &cancellables)
+//        searchTextSubject
+//            .handleEvents(receiveOutput: { _ in self.cancelPreviousSearch() })
+//            .filter { !$0.isEmpty }
+//            .debounce(for: 0.25, scheduler: DispatchQueue.main)
+//            .sink { newSearch in
+//                self._search(with: newSearch, filters: self.filterViewModel.currentFilters)
+//            }
+//            .store(in: &cancellables)
+//
+//        filterViewModel.$currentFilters
+//            .sink { newFilters in
+//                self._search(with: self.searchTextSubject.value, filters: newFilters)
+//            }
+//            .store(in: &cancellables)
     }
 
     private func cancelPreviousSearch() {
@@ -87,27 +87,27 @@ final class SearchViewModel: ViewModel {
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 20,
-            recursive: true,
-            searchTerm: query,
-            sortOrder: sortOrder,
-            fields: ItemFields.allCases,
-            includeItemTypes: [itemType],
-            filters: itemFilters,
-            sortBy: sortBy,
-            enableUserData: true,
-            genreIds: genreIDs,
-            enableImages: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?[keyPath: keyPath] = response.items ?? []
-        })
-        .store(in: &searchCancellables)
+//        ItemsAPI.getItemsByUserId(
+//            userId: "123abc",
+//            limit: 20,
+//            recursive: true,
+//            searchTerm: query,
+//            sortOrder: sortOrder,
+//            fields: ItemFields.allCases,
+//            includeItemTypes: [itemType],
+//            filters: itemFilters,
+//            sortBy: sortBy,
+//            enableUserData: true,
+//            genreIds: genreIDs,
+//            enableImages: true
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            self?[keyPath: keyPath] = response.items ?? []
+//        })
+//        .store(in: &searchCancellables)
     }
 
     private func getPeople(for query: String?, with filters: ItemFilters) {
@@ -116,35 +116,35 @@ final class SearchViewModel: ViewModel {
             return
         }
 
-        PersonsAPI.getPersons(
-            limit: 20,
-            searchTerm: query
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.people = response.items ?? []
-        })
-        .store(in: &searchCancellables)
+//        PersonsAPI.getPersons(
+//            limit: 20,
+//            searchTerm: query
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            self?.people = response.items ?? []
+//        })
+//        .store(in: &searchCancellables)
     }
 
     private func getSuggestions() {
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 10,
-            recursive: true,
-            includeItemTypes: [.movie, .series],
-            sortBy: ["IsFavoriteOrLiked", "Random"],
-            imageTypeLimit: 0,
-            enableTotalRecordCount: false,
-            enableImages: false
-        )
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.suggestions = response.items ?? []
-        })
-        .store(in: &cancellables)
+//        ItemsAPI.getItemsByUserId(
+//            userId: "123abc",
+//            limit: 10,
+//            recursive: true,
+//            includeItemTypes: [.movie, .series],
+//            sortBy: ["IsFavoriteOrLiked", "Random"],
+//            imageTypeLimit: 0,
+//            enableTotalRecordCount: false,
+//            enableImages: false
+//        )
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            self?.suggestions = response.items ?? []
+//        })
+//        .store(in: &cancellables)
     }
 }

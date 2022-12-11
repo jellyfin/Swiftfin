@@ -6,7 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 extension UserSignInView {
@@ -25,13 +25,13 @@ extension UserSignInView {
             DisclosureGroup {
                 SecureField(L10n.password, text: $enteredPassword)
                 Button {
-                    viewModel.signIn(username: publicUser.name ?? .emptyDash, password: enteredPassword)
+//                    viewModel.signIn(username: publicUser.name ?? .emptyDash, password: enteredPassword)
                 } label: {
                     L10n.signIn.text
                 }
             } label: {
                 HStack {
-                    ImageView(publicUser.profileImageSource(maxWidth: 50, maxHeight: 50))
+                    ImageView(publicUser.profileImageSource(client: viewModel.client, maxWidth: 50, maxHeight: 50))
                         .failure {
                             Image(systemName: "person.circle")
                                 .resizable()

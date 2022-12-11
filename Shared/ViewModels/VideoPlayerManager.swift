@@ -49,13 +49,13 @@ class VideoPlayerManager: ViewModel {
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
         super.init()
         
-        item.createVideoPlayerViewModel(with: mediaSource)
-            .sink { completion in
-                self.handleAPIRequestError(completion: completion)
-            } receiveValue: { viewModel in
-                self.currentViewModel = viewModel
-            }
-            .store(in: &cancellables)
+//        item.createVideoPlayerViewModel(with: mediaSource)
+//            .sink { completion in
+//                self.handleAPIRequestError(completion: completion)
+//            } receiveValue: { viewModel in
+//                self.currentViewModel = viewModel
+//            }
+//            .store(in: &cancellables)
     }
 
     func selectNextViewModel() {

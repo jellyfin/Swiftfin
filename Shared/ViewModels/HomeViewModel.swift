@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import ActivityIndicator
 import Combine
 import Foundation
 import JellyfinAPILegacy
@@ -38,9 +37,9 @@ final class HomeViewModel: ViewModel {
 
     @objc
     private func didSignIn() {
-        for cancellable in cancellables {
-            cancellable.cancel()
-        }
+//        for cancellable in cancellables {
+//            cancellable.cancel()
+//        }
 
         librariesShowRecentlyAddedIDs = []
         libraries = []
@@ -51,11 +50,11 @@ final class HomeViewModel: ViewModel {
 
     @objc
     private func didSignOut() {
-        for cancellable in cancellables {
-            cancellable.cancel()
-        }
-
-        cancellables.removeAll()
+//        for cancellable in cancellables {
+//            cancellable.cancel()
+//        }
+//
+//        cancellables.removeAll()
     }
 
     @objc
@@ -71,158 +70,158 @@ final class HomeViewModel: ViewModel {
     // MARK: Libraries Latest Items
 
     private func refreshLibrariesLatest() {
-        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished: ()
-                case .failure:
-                    self.libraries = []
-                }
-
-                self.handleAPIRequestError(completion: completion)
-            }, receiveValue: { response in
-
-                var newLibraries: [BaseItemDto] = []
-
-                response.items!.forEach { item in
-                    self.logger
-                        .debug("Retrieved user view: \(item.id!) (\(item.name ?? "nil")) with type \(item.collectionType ?? "nil")")
-                    if item.collectionType == "movies" || item.collectionType == "tvshows" {
-                        newLibraries.append(item)
-                    }
-                }
-
-                UserAPI.getCurrentUser()
-                    .trackActivity(self.loading)
-                    .sink(receiveCompletion: { completion in
-                        switch completion {
-                        case .finished: ()
-                        case .failure:
-                            self.libraries = []
-                            self.handleAPIRequestError(completion: completion)
-                        }
-                    }, receiveValue: { response in
-                        let excludeIDs = response.configuration?.latestItemsExcludes != nil ? response.configuration!
-                            .latestItemsExcludes! : []
-
-                        for excludeID in excludeIDs {
-                            newLibraries.removeAll { library in
-                                library.id == excludeID
-                            }
-                        }
-
-                        self.libraries = newLibraries
-                    })
-                    .store(in: &self.cancellables)
-            })
-            .store(in: &cancellables)
+//        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { completion in
+//                switch completion {
+//                case .finished: ()
+//                case .failure:
+//                    self.libraries = []
+//                }
+//
+//                self.handleAPIRequestError(completion: completion)
+//            }, receiveValue: { response in
+//
+//                var newLibraries: [BaseItemDto] = []
+//
+//                response.items!.forEach { item in
+//                    self.logger
+//                        .debug("Retrieved user view: \(item.id!) (\(item.name ?? "nil")) with type \(item.collectionType ?? "nil")")
+//                    if item.collectionType == "movies" || item.collectionType == "tvshows" {
+//                        newLibraries.append(item)
+//                    }
+//                }
+//
+//                UserAPI.getCurrentUser()
+//                    .trackActivity(self.loading)
+//                    .sink(receiveCompletion: { completion in
+//                        switch completion {
+//                        case .finished: ()
+//                        case .failure:
+//                            self.libraries = []
+//                            self.handleAPIRequestError(completion: completion)
+//                        }
+//                    }, receiveValue: { response in
+//                        let excludeIDs = response.configuration?.latestItemsExcludes != nil ? response.configuration!
+//                            .latestItemsExcludes! : []
+//
+//                        for excludeID in excludeIDs {
+//                            newLibraries.removeAll { library in
+//                                library.id == excludeID
+//                            }
+//                        }
+//
+//                        self.libraries = newLibraries
+//                    })
+//                    .store(in: &self.cancellables)
+//            })
+//            .store(in: &cancellables)
     }
 
     // MARK: Recently Added Items
 
     private func refreshLatestAddedItems() {
-        UserLibraryAPI.getLatestMedia(
-            userId: SessionManager.main.currentLogin.user.id,
-            includeItemTypes: [.movie, .series],
-            limit: 1
-        )
-        .sink { completion in
-            switch completion {
-            case .finished: ()
-            case .failure:
-                self.hasRecentlyAdded = false
-                self.handleAPIRequestError(completion: completion)
-            }
-        } receiveValue: { items in
-            self.hasRecentlyAdded = items.count > 0
-        }
-        .store(in: &cancellables)
+//        UserLibraryAPI.getLatestMedia(
+//            userId: "123abc",
+//            includeItemTypes: [.movie, .series],
+//            limit: 1
+//        )
+//        .sink { completion in
+//            switch completion {
+//            case .finished: ()
+//            case .failure:
+//                self.hasRecentlyAdded = false
+//                self.handleAPIRequestError(completion: completion)
+//            }
+//        } receiveValue: { items in
+//            self.hasRecentlyAdded = items.count > 0
+//        }
+//        .store(in: &cancellables)
     }
 
     // MARK: Resume Items
 
     private func refreshResumeItems() {
-        ItemsAPI.getResumeItems(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 20,
-//            fields: [
-//                .primaryImageAspectRatio,
-//                .seriesPrimaryImage,
-//                .seasonUserData,
-//                .overview,
-//                .genres,
-//                .people,
-//                .chapters,
-//            ],
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { completion in
-            switch completion {
-            case .finished: ()
-            case .failure:
-                self.resumeItems = []
-                self.handleAPIRequestError(completion: completion)
-            }
-        }, receiveValue: { response in
-            self.logger.debug("Retrieved \(String(response.items!.count)) resume items")
-
-            self.resumeItems = response.items ?? []
-        })
-        .store(in: &cancellables)
+//        ItemsAPI.getResumeItems(
+//            userId: "123abc",
+//            limit: 20,
+////            fields: [
+////                .primaryImageAspectRatio,
+////                .seriesPrimaryImage,
+////                .seasonUserData,
+////                .overview,
+////                .genres,
+////                .people,
+////                .chapters,
+////            ],
+//            enableUserData: true
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { completion in
+//            switch completion {
+//            case .finished: ()
+//            case .failure:
+//                self.resumeItems = []
+//                self.handleAPIRequestError(completion: completion)
+//            }
+//        }, receiveValue: { response in
+//            self.logger.debug("Retrieved \(String(response.items!.count)) resume items")
+//
+//            self.resumeItems = response.items ?? []
+//        })
+//        .store(in: &cancellables)
     }
 
     func markItemUnplayed(_ item: BaseItemDto) {
-        guard let itemID = item.id, resumeItems.contains(where: { $0.id == itemID }) else { return }
-
-        PlaystateAPI.markUnplayedItem(
-            userId: SessionManager.main.currentLogin.user.id,
-            itemId: item.id!
-        )
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { _ in
-            self.refreshResumeItems()
-            self.refreshNextUpItems()
-        })
-        .store(in: &cancellables)
+//        guard let itemID = item.id, resumeItems.contains(where: { $0.id == itemID }) else { return }
+//
+//        PlaystateAPI.markUnplayedItem(
+//            userId: "123abc",
+//            itemId: item.id!
+//        )
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { _ in
+//            self.refreshResumeItems()
+//            self.refreshNextUpItems()
+//        })
+//        .store(in: &cancellables)
     }
     
     func markItemPlayed(_ item: BaseItemDto) {
-        guard let itemID = item.id, resumeItems.contains(where: { $0.id == itemID }) else { return }
-        
-        PlaystateAPI.markPlayedItem(
-            userId: SessionManager.main.currentLogin.user.id,
-            itemId: itemID
-        )
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { _ in
-            self.refreshResumeItems()
-            self.refreshNextUpItems()
-        })
-        .store(in: &cancellables)
+//        guard let itemID = item.id, resumeItems.contains(where: { $0.id == itemID }) else { return }
+//
+//        PlaystateAPI.markPlayedItem(
+//            userId: "123abc",
+//            itemId: itemID
+//        )
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { _ in
+//            self.refreshResumeItems()
+//            self.refreshNextUpItems()
+//        })
+//        .store(in: &cancellables)
     }
 
     // MARK: Next Up Items
 
     private func refreshNextUpItems() {
-        TvShowsAPI.getNextUp(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 1
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { completion in
-            switch completion {
-            case .finished: ()
-            case .failure:
-                self.hasNextUp = false
-                self.handleAPIRequestError(completion: completion)
-            }
-        }, receiveValue: { response in
-            self.hasNextUp = (response.items ?? []).count > 0
-        })
-        .store(in: &cancellables)
+//        TvShowsAPI.getNextUp(
+//            userId: "123abc",
+//            limit: 1
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { completion in
+//            switch completion {
+//            case .finished: ()
+//            case .failure:
+//                self.hasNextUp = false
+//                self.handleAPIRequestError(completion: completion)
+//            }
+//        }, receiveValue: { response in
+//            self.hasNextUp = (response.items ?? []).count > 0
+//        })
+//        .store(in: &cancellables)
     }
 }

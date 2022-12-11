@@ -38,7 +38,7 @@ struct ServerListView: View {
                                         .font(.title2)
                                         .foregroundColor(.primary)
 
-                                    Text(server.currentURI)
+                                    Text(server.currentURL.absoluteString)
                                         .font(.footnote)
                                         .disabled(true)
                                         .foregroundColor(.secondary)
@@ -47,10 +47,11 @@ struct ServerListView: View {
                                         .font(.footnote)
                                         .foregroundColor(.primary)
                                 }
-                            }.padding()
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
+                    .padding()
                     .contextMenu {
                         Button(role: .destructive) {
                             viewModel.remove(server: server)
@@ -89,9 +90,7 @@ struct ServerListView: View {
 
     @ViewBuilder
     private var trailingToolbarContent: some View {
-        if viewModel.servers.isEmpty {
-            EmptyView()
-        } else {
+        if !viewModel.servers.isEmpty {
             Button {
                 serverListRouter.route(to: \.connectToServer)
             } label: {
@@ -102,7 +101,8 @@ struct ServerListView: View {
 
     private var leadingToolbarContent: some View {
         Button {
-            serverListRouter.route(to: \.basicAppSettings)
+//            serverListRouter.route(to: \.basicAppSettings)
+            serverListRouter.route(to: \.pulseConsole)
         } label: {
             Image(systemName: "gearshape.fill")
                 .accessibilityLabel(L10n.settings)

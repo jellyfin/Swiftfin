@@ -65,38 +65,38 @@ final class LiveTVChannelsViewModel: ViewModel {
     }
 
     private func getGuideInfo() {
-        LiveTvAPI.getGuideInfo()
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] _ in
-                self?.logger.debug("Received Guide Info")
-                guard let self = self else { return }
-                self.getChannels()
-            })
-            .store(in: &cancellables)
+//        LiveTvAPI.getGuideInfo()
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { [weak self] completion in
+//                self?.handleAPIRequestError(completion: completion)
+//            }, receiveValue: { [weak self] _ in
+//                self?.logger.debug("Received Guide Info")
+//                guard let self = self else { return }
+//                self.getChannels()
+//            })
+//            .store(in: &cancellables)
     }
 
     func getChannels() {
-        LiveTvAPI.getLiveTvChannels(
-            userId: SessionManager.main.currentLogin.user.id,
-            startIndex: 0,
-            limit: 1000,
-            enableImageTypes: [.primary],
-            fields: ItemFields.minimumCases,
-            enableUserData: false,
-            enableFavoriteSorting: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.logger.debug("Received \(response.items?.count ?? 0) Channels")
-            guard let self = self else { return }
-            self.channels = response.items ?? []
-            self.getPrograms()
-        })
-        .store(in: &cancellables)
+//        LiveTvAPI.getLiveTvChannels(
+//            userId: "123abc",
+//            startIndex: 0,
+//            limit: 1000,
+//            enableImageTypes: [.primary],
+//            fields: ItemFields.minimumCases,
+//            enableUserData: false,
+//            enableFavoriteSorting: true
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            self?.logger.debug("Received \(response.items?.count ?? 0) Channels")
+//            guard let self = self else { return }
+//            self.channels = response.items ?? []
+//            self.getPrograms()
+//        })
+//        .store(in: &cancellables)
     }
 
     private func getPrograms() {
@@ -112,7 +112,7 @@ final class LiveTVChannelsViewModel: ViewModel {
 
         let getProgramsRequest = GetProgramsRequest(
             channelIds: channelIds,
-            userId: SessionManager.main.currentLogin.user.id,
+            userId: "123abc",
             maxStartDate: maxStartDate,
             minEndDate: minEndDate,
             sortBy: ["StartDate"],
@@ -123,17 +123,17 @@ final class LiveTVChannelsViewModel: ViewModel {
             enableUserData: false
         )
 
-        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
-                self?.logger.debug("Received \(response.items?.count ?? 0) Programs")
-                guard let self = self else { return }
-                self.programs = response.items ?? []
-                self.channelPrograms = self.processChannelPrograms()
-            })
-            .store(in: &cancellables)
+//        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { [weak self] completion in
+//                self?.handleAPIRequestError(completion: completion)
+//            }, receiveValue: { [weak self] response in
+//                self?.logger.debug("Received \(response.items?.count ?? 0) Programs")
+//                guard let self = self else { return }
+//                self.programs = response.items ?? []
+//                self.channelPrograms = self.processChannelPrograms()
+//            })
+//            .store(in: &cancellables)
     }
 
     private func processChannelPrograms() -> [LiveTVChannelProgram] {

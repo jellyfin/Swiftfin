@@ -33,11 +33,11 @@ final class MainCoordinator: NavigationCoordinatable {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        if SessionManager.main.currentLogin != nil {
-            self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
-        } else {
+//        if SessionManager.main.currentLogin != nil {
+//            self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
+//        } else {
             self.stack = NavigationStack(initial: \MainCoordinator.serverList)
-        }
+//        }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
@@ -80,12 +80,12 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @objc
     func didChangeServerCurrentURI(_ notification: Notification) {
-        guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server
-        else { fatalError("Need to have new current login state server") }
-        guard SessionManager.main.currentLogin != nil else { return }
-        if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
-            SessionManager.main.signInUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
-        }
+//        guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server
+//        else { fatalError("Need to have new current login state server") }
+//        guard SessionManager.main.currentLogin != nil else { return }
+//        if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
+//            SessionManager.main.signInUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
+//        }
     }
 
     func makeMainTab() -> MainTabCoordinator {

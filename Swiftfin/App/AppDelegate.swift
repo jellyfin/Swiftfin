@@ -7,7 +7,11 @@
 //
 
 import AVFAudio
+import CoreStore
 import Defaults
+import Logging
+import Pulse
+import PulseLogHandler
 import SwiftUI
 import UIKit
 
@@ -20,15 +24,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        // Lazily initialize datastack
-        _ = SwiftfinStore.dataStack
-
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(.playback)
-        } catch {
-            print("setting category AVAudioSessionCategoryPlayback failed")
+        CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
+        
+        LoggingSystem.bootstrap { id in
+            MultiplexLogHandler([
+                PersistentLogHandler(label: id).settingTrace(),
+//                MyLogHandler(label: id)
+            ])
         }
+
+//        let audioSession = AVAudioSession.sharedInstance()
+//        do {
+//            try audioSession.setCategory(.playback)
+//        } catch {
+//            print("setting category AVAudioSessionCategoryPlayback failed")
+//        }
 
         return true
     }
@@ -48,6 +58,31 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
         } else {
             UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+        }
+    }
+}
+
+extension PersistentLogHandler {
+    
+    func settingTrace() -> Self {
+        var copy = self
+        copy.logLevel = .trace
+        return copy
+    }
+}
+
+extension CoreStore.LogLevel {
+    
+    var toSwiftLog: Logger.Level {
+        switch self {
+        case .trace:
+            return .trace
+        case .notice:
+            return .info
+        case .warning:
+            return .warning
+        case .fatal:
+            return .critical
         }
     }
 }

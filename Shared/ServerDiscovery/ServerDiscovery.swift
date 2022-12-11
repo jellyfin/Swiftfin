@@ -61,7 +61,7 @@ public class ServerDiscovery {
         func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
             do {
                 let response = try JSONDecoder().decode(ServerLookupResponse.self, from: data)
-                logger.debug("Received JellyfinServer from \"\(response.name)\"", tag: "ServerDiscovery")
+                logger.debug("Received JellyfinServer from \"\(response.name)\"")
                 completion(response)
             } catch {
                 completion(nil)
@@ -69,15 +69,15 @@ public class ServerDiscovery {
         }
 
         func errorHandler(error: UDPBroadcastConnection.ConnectionError) {
-            logger.error("Error handling response: \(error.localizedDescription)", tag: "ServerDiscovery")
+            logger.error("Error handling response: \(error.localizedDescription)")
         }
 
         do {
             self.connection = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
             try self.connection?.sendBroadcast("Who is JellyfinServer?")
-            logger.debug("Discovery broadcast sent", tag: "ServerDiscovery")
+            logger.debug("Discovery broadcast sent")
         } catch {
-            logger.error("Error sending discovery broadcast", tag: "ServerDiscovery")
+            logger.error("Error sending discovery broadcast")
         }
     }
 }

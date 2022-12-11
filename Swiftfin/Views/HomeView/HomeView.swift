@@ -18,9 +18,10 @@ struct HomeView: View {
 
     var body: some View {
         Group {
-            if let errorMessage = viewModel.errorMessage {
-                ErrorView(viewModel: viewModel, errorMessage: errorMessage)
-            } else if viewModel.isLoading {
+//            if let errorMessage = viewModel.errorMessage {
+//                ErrorView(viewModel: viewModel, errorMessage: errorMessage)
+//            } else
+            if viewModel.isLoading {
                 ProgressView()
             } else {
                 ContentView(viewModel: viewModel)

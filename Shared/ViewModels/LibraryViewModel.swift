@@ -45,15 +45,15 @@ final class LibraryViewModel: PagingLibraryViewModel {
         self.saveFilters = saveFilters
         super.init()
 
-        filterViewModel.$currentFilters
-            .sink { newFilters in
-                self.requestItems(with: newFilters, replaceCurrentItems: true)
-
-                if self.saveFilters, let id = self.parent?.id {
-                    Defaults[.libraryFilterStore][id] = newFilters
-                }
-            }
-            .store(in: &cancellables)
+//        filterViewModel.$currentFilters
+//            .sink { newFilters in
+//                self.requestItems(with: newFilters, replaceCurrentItems: true)
+//
+//                if self.saveFilters, let id = self.parent?.id {
+//                    Defaults[.libraryFilterStore][id] = newFilters
+//                }
+//            }
+//            .store(in: &cancellables)
     }
 
     private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
@@ -102,49 +102,49 @@ final class LibraryViewModel: PagingLibraryViewModel {
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            excludeItemIds: excludedIDs,
-            startIndex: currentPage * pageItemSize,
-            limit: pageItemSize,
-            recursive: recursive,
-            sortOrder: sortOrder,
-            parentId: libraryID,
-            fields: ItemFields.allCases,
-            includeItemTypes: includeItemTypes,
-            filters: itemFilters,
-            sortBy: sortBy,
-            enableUserData: true,
-            personIds: personIDs,
-            studioIds: studioIDs,
-            genreIds: genreIDs,
-            enableImages: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            guard !(response.items?.isEmpty ?? false) else {
-                self?.hasNextPage = false
-                return
-            }
-
-            let items: [BaseItemDto]
-
-            // There is a bug either with the request construction or the server when using
-            // "Random" sort which causes duplicate items to be sent even though we send the
-            // excluded ids. This causes shorter item additions when using "Random" over
-            // consecutive calls. Investigation needs to be done to find the root of the problem.
-            // Only filter for "Random" as an optimization.
-            if filters.sortBy.first == SortBy.random.filter {
-                items = response.items?.filter { !(self?.items.contains($0) ?? true) } ?? []
-            } else {
-                items = response.items ?? []
-            }
-
-            self?.items.append(contentsOf: items)
-        })
-        .store(in: &cancellables)
+//        ItemsAPI.getItemsByUserId(
+//            userId: "123abc",
+//            excludeItemIds: excludedIDs,
+//            startIndex: currentPage * pageItemSize,
+//            limit: pageItemSize,
+//            recursive: recursive,
+//            sortOrder: sortOrder,
+//            parentId: libraryID,
+//            fields: ItemFields.allCases,
+//            includeItemTypes: includeItemTypes,
+//            filters: itemFilters,
+//            sortBy: sortBy,
+//            enableUserData: true,
+//            personIds: personIDs,
+//            studioIds: studioIDs,
+//            genreIds: genreIDs,
+//            enableImages: true
+//        )
+//        .trackActivity(loading)
+//        .sink(receiveCompletion: { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        }, receiveValue: { [weak self] response in
+//            guard !(response.items?.isEmpty ?? false) else {
+//                self?.hasNextPage = false
+//                return
+//            }
+//
+//            let items: [BaseItemDto]
+//
+//            // There is a bug either with the request construction or the server when using
+//            // "Random" sort which causes duplicate items to be sent even though we send the
+//            // excluded ids. This causes shorter item additions when using "Random" over
+//            // consecutive calls. Investigation needs to be done to find the root of the problem.
+//            // Only filter for "Random" as an optimization.
+//            if filters.sortBy.first == SortBy.random.filter {
+//                items = response.items?.filter { !(self?.items.contains($0) ?? true) } ?? []
+//            } else {
+//                items = response.items ?? []
+//            }
+//
+//            self?.items.append(contentsOf: items)
+//        })
+//        .store(in: &cancellables)
     }
 
     override func _requestNextPage() {

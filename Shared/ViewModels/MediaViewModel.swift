@@ -36,16 +36,16 @@ final class MediaViewModel: ViewModel {
     }
 
     func requestLibraries() {
-        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(completion: completion)
-            }, receiveValue: { response in
-                guard let items = response.items else { return }
-                let filteredLibraries = items.filter { Self.supportedCollectionTypes.contains($0.collectionType ?? "unknown") }
-
-                self.libraries = filteredLibraries
-            })
-            .store(in: &cancellables)
+//        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { completion in
+//                self.handleAPIRequestError(completion: completion)
+//            }, receiveValue: { response in
+//                guard let items = response.items else { return }
+//                let filteredLibraries = items.filter { Self.supportedCollectionTypes.contains($0.collectionType ?? "unknown") }
+//
+//                self.libraries = filteredLibraries
+//            })
+//            .store(in: &cancellables)
     }
 }

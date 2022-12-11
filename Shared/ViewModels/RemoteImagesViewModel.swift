@@ -26,19 +26,19 @@ class RemoteImageViewModel: PagingLibraryViewModel {
     }
     
     override func _requestNextPage() {
-        guard let itemID = item.id else { return }
-        
-        RemoteImageAPI.getRemoteImages(
-            itemId: itemID,
-            type: imageType,
-            startIndex: currentPage,
-            limit: 30
-        )
-        .sink { completion in
-            self.handleAPIRequestError(completion: completion)
-        } receiveValue: { result in
-            self.images = result.images ?? []
-        }
-        .store(in: &cancellables)
+//        guard let itemID = item.id else { return }
+//        
+//        RemoteImageAPI.getRemoteImages(
+//            itemId: itemID,
+//            type: imageType,
+//            startIndex: currentPage,
+//            limit: 30
+//        )
+//        .sink { completion in
+//            self.handleAPIRequestError(completion: completion)
+//        } receiveValue: { result in
+//            self.images = result.images ?? []
+//        }
+//        .store(in: &cancellables)
     }
 }

@@ -20,51 +20,51 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
         self.filterViewModel = .init(parent: nil, currentFilters: filters)
         super.init()
 
-        filterViewModel.$currentFilters
-            .sink { newFilters in
-                self.requestItems(with: newFilters, replaceCurrentItems: true)
-            }
-            .store(in: &cancellables)
+//        filterViewModel.$currentFilters
+//            .sink { newFilters in
+//                self.requestItems(with: newFilters, replaceCurrentItems: true)
+//            }
+//            .store(in: &cancellables)
     }
 
     private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
 
-        if replaceCurrentItems {
-            self.items = []
-            self.currentPage = 0
-            self.hasNextPage = true
-        }
-
-        let genreIDs = filters.genres.compactMap(\.id)
-        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
-        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            startIndex: currentPage * pageItemSize,
-            limit: pageItemSize,
-            recursive: true,
-            sortOrder: sortOrder,
-            fields: ItemFields.allCases,
-            includeItemTypes: itemTypes,
-            filters: itemFilters,
-            sortBy: sortBy,
-            enableUserData: true,
-            genreIds: genreIDs
-        )
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            guard let items = response.items, !items.isEmpty else {
-                self?.hasNextPage = false
-                return
-            }
-
-            self?.items.append(contentsOf: items)
-        }
-        .store(in: &cancellables)
+//        if replaceCurrentItems {
+//            self.items = []
+//            self.currentPage = 0
+//            self.hasNextPage = true
+//        }
+//
+//        let genreIDs = filters.genres.compactMap(\.id)
+//        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
+//        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+//        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+//
+//        ItemsAPI.getItemsByUserId(
+//            userId: "123abc",
+//            startIndex: currentPage * pageItemSize,
+//            limit: pageItemSize,
+//            recursive: true,
+//            sortOrder: sortOrder,
+//            fields: ItemFields.allCases,
+//            includeItemTypes: itemTypes,
+//            filters: itemFilters,
+//            sortBy: sortBy,
+//            enableUserData: true,
+//            genreIds: genreIDs
+//        )
+//        .trackActivity(loading)
+//        .sink { [weak self] completion in
+//            self?.handleAPIRequestError(completion: completion)
+//        } receiveValue: { [weak self] response in
+//            guard let items = response.items, !items.isEmpty else {
+//                self?.hasNextPage = false
+//                return
+//            }
+//
+//            self?.items.append(contentsOf: items)
+//        }
+//        .store(in: &cancellables)
     }
 
     override func _requestNextPage() {
