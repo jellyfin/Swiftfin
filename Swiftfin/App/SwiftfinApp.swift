@@ -47,9 +47,7 @@ struct SwiftfinApp: App {
     }
     
     private static func setupAppearance(with appearance: UIUserInterfaceStyle) {
-        let scenes = UIApplication.shared.connectedScenes
-        let windowScene = scenes.first as? UIWindowScene
-        windowScene?.windows.first?.overrideUserInterfaceStyle = appearance
+        UIApplication.shared.keyWindow?.overrideUserInterfaceStyle = appearance
     }
     
     private static func setupNavigationBackButton(accentColor: UIColor) {
@@ -61,9 +59,7 @@ struct SwiftfinApp: App {
     }
     
     private static func setupAccentColor(with accentColor: UIColor) {
-        let scenes = UIApplication.shared.connectedScenes
-        let windowScene = scenes.first as? UIWindowScene
-        windowScene?.windows.first?.tintColor = accentColor
+        UIApplication.shared.keyWindow?.tintColor = accentColor
     }
 }
 

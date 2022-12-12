@@ -317,7 +317,7 @@
 		E13F05F328BC9016003499D2 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13F05F028BC9016003499D2 /* LibraryView.swift */; };
 		E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */; };
 		E1401CA22938122C00E8B599 /* AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA12938122C00E8B599 /* AppIcons.swift */; };
-		E1401CA5293813F400E8B599 /* InverseAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA4293813F400E8B599 /* InverseAppIcon.swift */; };
+		E1401CA5293813F400E8B599 /* InvertedDarkAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA4293813F400E8B599 /* InvertedDarkAppIcon.swift */; };
 		E1401CA72938140300E8B599 /* PrimaryAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA62938140300E8B599 /* PrimaryAppIcon.swift */; };
 		E1401CA92938140700E8B599 /* DarkAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA82938140700E8B599 /* DarkAppIcon.swift */; };
 		E1401CAB2938140A00E8B599 /* LightAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CAA2938140A00E8B599 /* LightAppIcon.swift */; };
@@ -331,6 +331,11 @@
 		E148128B28C15526003B8787 /* SortBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128A28C15526003B8787 /* SortBy.swift */; };
 		E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */; };
 		E14A08CD28E68729004FC984 /* MenuPosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14A08CC28E68729004FC984 /* MenuPosterHStack.swift */; };
+		E15210542946DF1B00375CC2 /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E15210532946DF1B00375CC2 /* Pulse */; };
+		E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E15210552946DF1B00375CC2 /* PulseLogHandler */; };
+		E15210582946DF1B00375CC2 /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E15210572946DF1B00375CC2 /* PulseUI */; };
+		E152107C2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E152107B2947ACA000375CC2 /* InvertedLightAppIcon.swift */; };
+		E152107D2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E152107B2947ACA000375CC2 /* InvertedLightAppIcon.swift */; };
 		E1546777289AF46E00087E35 /* CollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1546776289AF46E00087E35 /* CollectionItemView.swift */; };
 		E154677A289AF48200087E35 /* CollectionItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1546779289AF48200087E35 /* CollectionItemContentView.swift */; };
 		E157563029355B7900976E1F /* UpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E157562F29355B7900976E1F /* UpdateView.swift */; };
@@ -385,7 +390,7 @@
 		E1575E84293E7A00001665B1 /* PrimaryAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA62938140300E8B599 /* PrimaryAppIcon.swift */; };
 		E1575E85293E7A00001665B1 /* DarkAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA82938140700E8B599 /* DarkAppIcon.swift */; };
 		E1575E86293E7A00001665B1 /* AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA12938122C00E8B599 /* AppIcons.swift */; };
-		E1575E87293E7A00001665B1 /* InverseAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA4293813F400E8B599 /* InverseAppIcon.swift */; };
+		E1575E87293E7A00001665B1 /* InvertedDarkAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA4293813F400E8B599 /* InvertedDarkAppIcon.swift */; };
 		E1575E88293E7A00001665B1 /* LightAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CAA2938140A00E8B599 /* LightAppIcon.swift */; };
 		E1575E8C293E7B1E001665B1 /* UIScreenExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1937A3D288F0D3D00CB80AA /* UIScreenExtensions.swift */; };
 		E1575E8D293E7B1E001665B1 /* URLComponentsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponentsExtensions.swift */; };
@@ -922,7 +927,6 @@
 		E1388A40293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingSwizzling.swift; sourceTree = "<group>"; };
 		E1388A41293F0AAD009721B1 /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
 		E1388A4C2941462C009721B1 /* jellyfin-sdk-swift-legacy */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "jellyfin-sdk-swift-legacy"; path = "../../jellyfin-sdk-swift-legacy"; sourceTree = "<group>"; };
-		E1388A4F29414B25009721B1 /* NewSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSessionManager.swift; sourceTree = "<group>"; };
 		E1399473289B1EA900401ABC /* Defaults+Workaround.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Defaults+Workaround.swift"; sourceTree = "<group>"; };
 		E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterOverlay.swift; sourceTree = "<group>"; };
 		E139CC1E28EC83E400688DE2 /* IntExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtensions.swift; sourceTree = "<group>"; };
@@ -947,7 +951,7 @@
 		E13F05F028BC9016003499D2 /* LibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconSelectorView.swift; sourceTree = "<group>"; };
 		E1401CA12938122C00E8B599 /* AppIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIcons.swift; sourceTree = "<group>"; };
-		E1401CA4293813F400E8B599 /* InverseAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InverseAppIcon.swift; sourceTree = "<group>"; };
+		E1401CA4293813F400E8B599 /* InvertedDarkAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedDarkAppIcon.swift; sourceTree = "<group>"; };
 		E1401CA62938140300E8B599 /* PrimaryAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryAppIcon.swift; sourceTree = "<group>"; };
 		E1401CA82938140700E8B599 /* DarkAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkAppIcon.swift; sourceTree = "<group>"; };
 		E1401CAA2938140A00E8B599 /* LightAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightAppIcon.swift; sourceTree = "<group>"; };
@@ -958,6 +962,7 @@
 		E148128A28C15526003B8787 /* SortBy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortBy.swift; sourceTree = "<group>"; };
 		E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
 		E14A08CC28E68729004FC984 /* MenuPosterHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPosterHStack.swift; sourceTree = "<group>"; };
+		E152107B2947ACA000375CC2 /* InvertedLightAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedLightAppIcon.swift; sourceTree = "<group>"; };
 		E1546776289AF46E00087E35 /* CollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemView.swift; sourceTree = "<group>"; };
 		E1546779289AF48200087E35 /* CollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemContentView.swift; sourceTree = "<group>"; };
 		E157562F29355B7900976E1F /* UpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateView.swift; sourceTree = "<group>"; };
@@ -1219,6 +1224,7 @@
 				E1002B682793CFBA00E47059 /* Algorithms in Frameworks */,
 				E1734D7C28B9577700C66367 /* CollectionView in Frameworks */,
 				62666E1127E501B900EC0ECD /* UIKit.framework in Frameworks */,
+				E15210582946DF1B00375CC2 /* PulseUI in Frameworks */,
 				62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */,
 				62666E0327E5017100EC0ECD /* CoreMedia.framework in Frameworks */,
 				E10706122942F57D00646DAF /* PulseLogHandler in Frameworks */,
@@ -1240,6 +1246,7 @@
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
+				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
@@ -2053,7 +2060,8 @@
 			children = (
 				E1401CA12938122C00E8B599 /* AppIcons.swift */,
 				E1401CA82938140700E8B599 /* DarkAppIcon.swift */,
-				E1401CA4293813F400E8B599 /* InverseAppIcon.swift */,
+				E1401CA4293813F400E8B599 /* InvertedDarkAppIcon.swift */,
+				E152107B2947ACA000375CC2 /* InvertedLightAppIcon.swift */,
 				E1401CAA2938140A00E8B599 /* LightAppIcon.swift */,
 				E1401CA62938140300E8B599 /* PrimaryAppIcon.swift */,
 			);
@@ -2311,8 +2319,8 @@
 		E193D5452719418B00900D82 /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				E18A8E8228D60BC400333B9A /* VideoPlayer.swift */,
 				E1D842162932AB8F00D1041A /* NativeVideoPlayer.swift */,
+				E18A8E8228D60BC400333B9A /* VideoPlayer.swift */,
 				E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */,
 				E11245B228D97D4A00D8A977 /* Overlay */,
 			);
@@ -2413,7 +2421,6 @@
 				53649AB0269CFB1900A2D8B7 /* LogManager.swift */,
 				E12D581328D3BBEE00A36FFF /* PlaybackManager.swift */,
 				62EC352E267666A5000E9F2D /* SessionManager.swift */,
-				E1388A4F29414B25009721B1 /* NewSessionManager.swift */,
 				E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */,
 			);
 			name = Services;
@@ -2625,11 +2632,9 @@
 				E18A8E7928D5FEDF00333B9A /* VLCUI */,
 				E1575E3B293C6B15001665B1 /* Files */,
 				E1388A4D2941465A009721B1 /* JellyfinAPILegacy */,
-				E107060F2942F57D00646DAF /* Pulse */,
-				E10706112942F57D00646DAF /* PulseLogHandler */,
-				E10706132942F57D00646DAF /* PulseUI */,
-				E1070620294450F900646DAF /* AsyncPlus */,
-				E1070623294464C100646DAF /* Then */,
+				E15210532946DF1B00375CC2 /* Pulse */,
+				E15210552946DF1B00375CC2 /* PulseLogHandler */,
+				E15210572946DF1B00375CC2 /* PulseUI */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -2694,9 +2699,7 @@
 				E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */,
 				E18A8E7828D5FEDF00333B9A /* XCRemoteSwiftPackageReference "VLCUI" */,
 				E1575E3A293C6B15001665B1 /* XCRemoteSwiftPackageReference "Files" */,
-				E107060E2942F57D00646DAF /* XCRemoteSwiftPackageReference "Pulse" */,
-				E107061F294450F900646DAF /* XCRemoteSwiftPackageReference "async-plus" */,
-				E1070622294464C000646DAF /* XCRemoteSwiftPackageReference "Then" */,
+				E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -2844,6 +2847,7 @@
 				E11E376D293E9CC1009EF240 /* ItemVideoPlayerCoordinator.swift in Sources */,
 				E1575E6F293E77B5001665B1 /* GestureAction.swift in Sources */,
 				E18A8E7E28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
+				E152107D2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				E1E1643E28BB074000323B0A /* SelectorView.swift in Sources */,
 				E1A1529128FD23D600600579 /* PlaybackSettingsCoordinator.swift in Sources */,
@@ -2919,7 +2923,7 @@
 				E1575E91293E7B1E001665B1 /* URLExtensions.swift in Sources */,
 				53ABFDE6267974EF00886593 /* SettingsViewModel.swift in Sources */,
 				E111D8F628D03B7500400001 /* PagingLibraryViewModel.swift in Sources */,
-				E1575E87293E7A00001665B1 /* InverseAppIcon.swift in Sources */,
+				E1575E87293E7A00001665B1 /* InvertedDarkAppIcon.swift in Sources */,
 				C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */,
 				62E632F4267D54030063E547 /* ItemViewModel.swift in Sources */,
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
@@ -3223,6 +3227,7 @@
 				E1EA9F6A28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */,
 				E12F038C28F8B0B100976CC3 /* EdgeInsetsExtensions.swift in Sources */,
 				6267B3D626710B8900A7371D /* CollectionExtensions.swift in Sources */,
+				E152107C2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
 				E168BD15289A4162001A6922 /* HomeErrorView.swift in Sources */,
 				E1A1528228FD126C00600579 /* VerticalAlignmentExtensions.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
@@ -3240,7 +3245,7 @@
 				53649AB1269CFB1900A2D8B7 /* LogManager.swift in Sources */,
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				E1937A3B288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
-				E1401CA5293813F400E8B599 /* InverseAppIcon.swift in Sources */,
+				E1401CA5293813F400E8B599 /* InvertedDarkAppIcon.swift in Sources */,
 				E1C8CE7C28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */,
 				62E632E9267D3FF50063E547 /* SeasonItemViewModel.swift in Sources */,
 				E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */,
@@ -3530,7 +3535,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -3718,7 +3723,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3890,6 +3895,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 7.0.0;
+			};
+		};
+		E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Pulse";
+			requirement = {
+				kind = revision;
+				revision = 48541b9a1ff292f2d471321f6bc9fce0c3778d1f;
 			};
 		};
 		E1575E3A293C6B15001665B1 /* XCRemoteSwiftPackageReference "Files" */ = {
@@ -4071,6 +4084,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		E15210532946DF1B00375CC2 /* Pulse */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */;
+			productName = Pulse;
+		};
+		E15210552946DF1B00375CC2 /* PulseLogHandler */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */;
+			productName = PulseLogHandler;
+		};
+		E15210572946DF1B00375CC2 /* PulseUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */;
+			productName = PulseUI;
 		};
 		E1575E3B293C6B15001665B1 /* Files */ = {
 			isa = XCSwiftPackageProductDependency;

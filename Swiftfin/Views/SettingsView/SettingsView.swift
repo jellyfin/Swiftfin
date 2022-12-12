@@ -107,6 +107,11 @@ struct SettingsView: View {
                 .onSelect {
                     router.route(to: \.about)
                 }
+            
+            ChevronButton(title: "Logs")
+                .onSelect {
+                    router.route(to: \.log)
+                }
         }
         .navigationBarTitle(L10n.settings, displayMode: .inline)
         .navigationCloseButton(accentColor: $accentColor) {

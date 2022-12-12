@@ -30,14 +30,20 @@ struct AppIconSelectorView: View {
                 }
             }
             
-            Section("Inverse") {
-                ForEach(InverseAppIcon.allCases) { icon in
+            Section("Light") {
+                ForEach(LightAppIcon.allCases) { icon in
                     AppIconRow(viewModel: viewModel, icon: icon)
                 }
             }
             
-            Section("Light") {
-                ForEach(LightAppIcon.allCases) { icon in
+            Section("Inverted Dark") {
+                ForEach(InvertedDarkAppIcon.allCases) { icon in
+                    AppIconRow(viewModel: viewModel, icon: icon)
+                }
+            }
+            
+            Section("Inverted Light") {
+                ForEach(InvertedLightAppIcon.allCases) { icon in
                     AppIconRow(viewModel: viewModel, icon: icon)
                 }
             }

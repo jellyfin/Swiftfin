@@ -87,6 +87,11 @@ extension String {
     }
 
     static var emptyDash = "--"
+    
+    var shortFileName: String {
+        (split(separator: "/").last?.description ?? self)
+            .replacingOccurrences(of: ".swift", with: "")
+    }
 }
 
 public extension CharacterSet {

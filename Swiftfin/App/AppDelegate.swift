@@ -23,14 +23,30 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-
-        CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         
-        LoggingSystem.bootstrap { id in
-            MultiplexLogHandler([
-                PersistentLogHandler(label: id).settingTrace(),
-//                MyLogHandler(label: id)
-            ])
+        Experimental.swizzleURLSession()
+        
+        LoggingSystem.bootstrap { label in
+            
+            var loggers: [LogHandler] = [PersistentLogHandler(label: label)]
+            
+            #if DEBUG
+            loggers.append(SwiftfinConsoleLogger())
+            #endif
+            
+            return MultiplexLogHandler(loggers)
+        }
+        
+        CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
+        CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
+        
+        URLSessionProxyDelegate.enableAutomaticRegistration()
+
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(.playback)
+        } catch {
+            print("setting category AVAudioSessionCategoryPlayback failed")
         }
 
 //        let audioSession = AVAudioSession.sharedInstance()
