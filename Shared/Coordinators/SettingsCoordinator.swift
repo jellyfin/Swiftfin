@@ -8,6 +8,7 @@
 
 import Files
 import Foundation
+import PulseUI
 import Stinsen
 import SwiftUI
 
@@ -97,8 +98,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
     
     @ViewBuilder
-    func makeLog(file: File) -> some View {
-        TextFileView(file: file)
+    func makeLog() -> some View {
+        ConsoleView()
     }
     
     @ViewBuilder

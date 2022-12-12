@@ -176,7 +176,6 @@ enum SwiftfinStore {
             entities: [
                 Entity<SwiftfinStore.Models.StoredServer>("Server"),
                 Entity<SwiftfinStore.Models.StoredUser>("User"),
-                Entity<SwiftfinStore.Models.StoredAccessToken>("AccessToken"),
             ],
             versionLock: [
                 "AccessToken": [

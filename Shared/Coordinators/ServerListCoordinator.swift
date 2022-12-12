@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PulseUI
 import Stinsen
 import SwiftUI
 
@@ -31,8 +32,12 @@ final class ServerListCoordinator: NavigationCoordinatable {
         UserListCoordinator(viewModel: .init(server: server))
     }
 
-    func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
-        NavigationViewCoordinator(BasicAppSettingsCoordinator())
+//    func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
+//        NavigationViewCoordinator(BasicAppSettingsCoordinator())
+//    }
+    
+    func makeBasicAppSettings() -> some View {
+        MainView()
     }
 
     @ViewBuilder

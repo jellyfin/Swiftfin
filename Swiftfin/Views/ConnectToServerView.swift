@@ -44,18 +44,7 @@ struct ConnectToServerView: View {
                     }
                 } else {
                     Button {
-//                        viewModel.connectToServer(uri: uri)
-                        
-                        Task {
-                            do {
-                                let server = try await viewModel.connectToServer(uri: uri)
-                                self.router.route(to: \.userSignIn, server)
-                            } catch {
-                                print(error)
-                            }
-                            
-                            
-                        }
+                        viewModel.connectToServer(uri: uri)
                     } label: {
                         HStack {
                             L10n.connect.text
@@ -94,7 +83,7 @@ struct ConnectToServerView: View {
                         ForEach(viewModel.discoveredServers, id: \.id) { server in
                             Button {
                                 uri = server.currentURI
-//                                viewModel.connectToServer(uri: server.currentURI)
+                                viewModel.connectToServer(uri: server.currentURI)
                             } label: {
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(server.name)

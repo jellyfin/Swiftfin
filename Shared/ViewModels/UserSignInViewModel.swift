@@ -46,7 +46,7 @@ final class UserSignInViewModel: ViewModel {
     }
 
     func signIn(username: String, password: String) {
-        logger.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
+        logger.debug("Attempting to login to server at \"\(server.currentURI)\"")
 
         let username = username.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)

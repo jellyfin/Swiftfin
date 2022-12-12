@@ -92,9 +92,6 @@ struct VideoPlayer: View {
     private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
-    
-    @ObservedObject
-    private var updateViewProxy: UpdateViewProxy = .init()
 
     @State
     private var aspectFilled: Bool = false
@@ -110,6 +107,7 @@ struct VideoPlayer: View {
     private var subtitleOffset: Int = 0
     
     private let gestureStateHandler: GestureStateHandler = .init()
+    private var updateViewProxy: UpdateViewProxy = .init()
     private var overlay: () -> any VideoPlayerOverlay
 
     init(manager: VideoPlayerManager) {

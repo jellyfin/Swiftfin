@@ -7,7 +7,11 @@
 //
 
 import AVFAudio
+import CoreStore
 import Defaults
+import Logging
+import Pulse
+import PulseLogHandler
 import SwiftUI
 import UIKit
 
@@ -19,9 +23,24 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-
-        // Lazily initialize datastack
-        _ = SwiftfinStore.dataStack
+        
+        Experimental.swizzleURLSession()
+        
+        LoggingSystem.bootstrap { label in
+            
+            var loggers: [LogHandler] = [PersistentLogHandler(label: label)]
+            
+            #if DEBUG
+            loggers.append(SwiftfinConsoleLogger())
+            #endif
+            
+            return MultiplexLogHandler(loggers)
+        }
+        
+        CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
+        CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
+        
+        URLSessionProxyDelegate.enableAutomaticRegistration()
 
         let audioSession = AVAudioSession.sharedInstance()
         do {

@@ -6,67 +6,128 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CoreStore
 import Factory
 import Foundation
-import Puppy
+import Logging
 
 class LogManager {
-
-    static let service = Factory<Puppy>(scope: .singleton) {
-        Puppy.swiftfinInstance()
+    
+    static let service = Factory<Logger>(scope: .singleton) {
+        .init(label: "Swiftfin")
     }
 }
 
-class LogFormatter: LogFormattable {
-    func formatMessage(
-        _ level: LogLevel,
-        message: String,
-        tag: String,
-        function: String,
-        file: String,
-        line: UInt,
-        swiftLogInfo: [String: String],
-        label: String,
-        date: Date,
-        threadID: UInt64
-    ) -> String {
-        let file = shortFileName(file).replacingOccurrences(of: ".swift", with: "")
-        return " [\(level.emoji) \(level)] \(file)#\(line):\(function) \(message)"
-    }
-}
-
-private extension Puppy {
-    static func swiftfinInstance() -> Puppy {
-
-        let logger = Puppy()
-
-        #if !os(tvOS)
-        let logsDirectory = URL.documents.appendingPathComponent("logs", isDirectory: true)
-
-        do {
-            try FileManager.default.createDirectory(
-                atPath: logsDirectory.path,
-                withIntermediateDirectories: true,
-                attributes: nil
-            )
-        } catch {
-            // logs directory already created
+struct SwiftfinConsoleLogger: LogHandler {
+    
+    var logLevel: Logger.Level = .trace
+    var metadata: Logger.Metadata = [:]
+    
+    subscript(metadataKey key: String) -> Logger.Metadata.Value? {
+        get {
+            return metadata[key]
         }
+        set(newValue) {
+            metadata[key] = newValue
+        }
+    }
+    
+    func log(
+        level: Logger.Level,
+        message: Logger.Message,
+        metadata: Logger.Metadata?,
+        source: String,
+        file: String,
+        function: String,
+        line: UInt
+    ) {
+        print("[\(level.emoji) \(level.rawValue.capitalized)] \(file.shortFileName)#\(line):\(function) \(message)")
+    }
+}
 
-        let logFileURL = logsDirectory.appendingPathComponent("swiftfin_log.log")
-
-        let fileRotationLogger = try! FileRotationLogger(
-            "org.jellyfin.swiftfin.logger.file-rotation",
-            fileURL: logFileURL
+struct SwiftfinCorestoreLogger: CoreStoreLogger {
+    
+    @Injected(LogManager.service)
+    private var logger
+    
+    func log(
+        error: CoreStoreError,
+        message: String,
+        fileName: StaticString,
+        lineNumber: Int,
+        functionName: StaticString
+    ) {
+        logger.error(
+            "\(message)",
+            metadata: nil,
+            source: "Corestore",
+            file: fileName.description,
+            function: functionName.description,
+            line: UInt(lineNumber)
         )
-        fileRotationLogger.format = LogFormatter()
-        logger.add(fileRotationLogger, withLevel: .debug)
-        #endif
+    }
+    
+    func log(
+        level: LogLevel,
+        message: String,
+        fileName: StaticString,
+        lineNumber: Int,
+        functionName: StaticString
+    ) {
+        logger.log(
+            level: level.asSwiftLog,
+            "\(message)",
+            metadata: nil,
+            source: "Corestore",
+            file: fileName.description,
+            function: functionName.description,
+            line: UInt(lineNumber)
+        )
+    }
+    
+    func assert(
+        _ condition: @autoclosure () -> Bool,
+        message: @autoclosure () -> String,
+        fileName: StaticString,
+        lineNumber: Int,
+        functionName: StaticString
+    ) {
+        
+    }
+}
 
-        let consoleLogger = ConsoleLogger("org.jellyfin.swiftfin.logger.console")
-        consoleLogger.format = LogFormatter()
+extension Logger.Level {
+    var emoji: String {
+        switch self {
+        case .trace:
+            return "🟣"
+        case .debug:
+            return "🔵"
+        case .info:
+            return "🟢"
+        case .notice:
+            return "🟠"
+        case .warning:
+            return "🟡"
+        case .error:
+            return "🔴"
+        case .critical:
+            return "💥"
+        }
+    }
+}
 
-        logger.add(consoleLogger, withLevel: .debug)
-        return logger
+extension CoreStore.LogLevel {
+    var asSwiftLog: Logger.Level {
+        switch self {
+        case .trace:
+            return .trace
+        case .notice:
+            return .debug
+        case .warning:
+            return .warning
+        case .fatal:
+            return .critical
+        }
     }
 }

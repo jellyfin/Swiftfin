@@ -48,11 +48,10 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
                     NativeVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
                 }
             }
-            .prefersHomeIndicatorAutoHidden(true)
             .overrideViewPreference(.dark)
-            .iOS16HideSystemOverlays()
         }
         .ignoresSafeArea()
+        .iOS16HideSystemOverlays()
         .onAppear {
             AppDelegate.changeOrientation(.landscape)
         }

@@ -11,7 +11,6 @@ import CoreStore
 import Factory
 import Foundation
 import JellyfinAPI
-//import JellyfinAPILegacy
 import Stinsen
 import UIKit
 
@@ -57,110 +56,53 @@ final class ConnectToServerViewModel: ViewModel {
         return message
     }
 
-    func connectToServer(uri: String, redirectCount: Int = 0) async throws -> SwiftfinStore.State.Server {
-
-        let uri = uri.trimmingCharacters(in: .whitespacesAndNewlines)
-            .trimmingCharacters(in: .objectReplacement)
-
-        logger.debug("Attempting to connect to server at \"\(uri)\"", tag: "connectToServer")
-        
-        guard let url = URL(string: uri) else { throw JellyfinAPIError("Invalid URL") }
-        
-        var deviceName = await UIDevice.current.name.folding(options: .diacriticInsensitive, locale: .current)
-        deviceName = String(deviceName.unicodeScalars.filter { CharacterSet.urlQueryAllowed.contains($0) })
-        
-        let client = JellyfinClient(
-            configuration: .init(url: url,
-                                 client: "Jellyfin iOS",
-                                 deviceName: deviceName,
-                                 deviceID: "iOS_\(await UIDevice.vendorUUIDString)_\(String(Date().timeIntervalSince1970))",
-                                 version: "0.0.1"))
-        
-        let systemInfo = try await client.send(Paths.getPublicSystemInfo)
-        
-        guard let name = systemInfo.value.serverName,
-              let id = systemInfo.value.id,
-              let os = systemInfo.value.operatingSystem,
-              let version = systemInfo.value.version else {
-            throw JellyfinAPIError("Missing server data from network call")
-        }
-                
-        try await MainActor.run(body: {
-            if let existingServer = try? SwiftfinStore.dataStack.fetchOne(
-                From<SwiftfinStore.Models.StoredServer>(),
-                [Where<SwiftfinStore.Models.StoredServer>(
-                    "id == %@",
-                    id
-                )]
-            ) {
-                throw SwiftfinStore.Error.existingServer(existingServer.state)
-            }
-        })
-                
-        let transaction = try SwiftfinStore.dataStack.perform { transaction in
-            let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
-            
-            newServer.uris = [uri]
-            newServer.currentURI = uri
-            newServer.name = name
-            newServer.id = id
-            newServer.os = os
-            newServer.version = version
-            newServer.users = []
-            
-            return newServer.state
-        }
-        
-        return transaction
-        
-        
-        
-//        SessionManager.main.connectToServer(with: uri)
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { completion in
-//                // This is disgusting. ViewModel Error handling overall needs to be refactored
-//                switch completion {
-//                case .finished: ()
-//                case let .failure(error):
-//                    switch error {
-//                    case is ErrorResponse:
-//                        let errorResponse = error as! ErrorResponse
-//                        switch errorResponse {
-//                        case let .error(_, _, response, _):
-//                            // a url in the response is the result if a redirect
-//                            if let newURL = response?.url {
-//                                if redirectCount > 2 {
-//                                    self.handleAPIRequestError(displayMessage: L10n.tooManyRedirects, completion: completion)
-//                                } else {
-//                                    self
-//                                        .connectToServer(
-//                                            uri: newURL.absoluteString
-//                                                .removeRegexMatches(pattern: "/web/index.html"),
-//                                            redirectCount: redirectCount + 1
-//                                        )
-//                                }
-//                            } else {
-//                                self.handleAPIRequestError(completion: completion)
-//                            }
-//                        }
-//                    case is SwiftfinStore.Error:
-//                        let swiftfinError = error as! SwiftfinStore.Error
-//                        switch swiftfinError {
-//                        case let .existingServer(server):
-//                            self.addServerURIPayload = AddServerURIPayload(server: server, uri: uri)
-//                            self.backAddServerURIPayload = AddServerURIPayload(server: server, uri: uri)
-//                        default:
-//                            self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-//                        }
-//                    default:
-//                        self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-//                    }
-//                }
-//            }, receiveValue: { server in
-//                self.logger.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
-//                self.router?.route(to: \.userSignIn, server)
-//            })
-//            .store(in: &cancellables)
+    func connectToServer(uri: String, redirectCount: Int = 0) {
+        SessionManager.main.connectToServer(with: uri)
+            .trackActivity(loading)
+            .sink(receiveCompletion: { completion in
+                // This is disgusting. ViewModel Error handling overall needs to be refactored
+                switch completion {
+                case .finished: ()
+                case let .failure(error):
+                    switch error {
+                    case is ErrorResponse:
+                        let errorResponse = error as! ErrorResponse
+                        switch errorResponse {
+                        case let .error(_, _, response, _):
+                            // a url in the response is the result if a redirect
+                            if let newURL = response?.url {
+                                if redirectCount > 2 {
+                                    self.handleAPIRequestError(displayMessage: L10n.tooManyRedirects, completion: completion)
+                                } else {
+                                    self
+                                        .connectToServer(
+                                            uri: newURL.absoluteString
+                                                .removeRegexMatches(pattern: "/web/index.html"),
+                                            redirectCount: redirectCount + 1
+                                        )
+                                }
+                            } else {
+                                self.handleAPIRequestError(completion: completion)
+                            }
+                        }
+                    case is SwiftfinStore.Error:
+                        let swiftfinError = error as! SwiftfinStore.Error
+                        switch swiftfinError {
+                        case let .existingServer(server):
+                            self.addServerURIPayload = AddServerURIPayload(server: server, uri: uri)
+                            self.backAddServerURIPayload = AddServerURIPayload(server: server, uri: uri)
+                        default:
+                            self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
+                        }
+                    default:
+                        self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
+                    }
+                }
+            }, receiveValue: { server in
+                self.logger.debug("Connected to server at \"\(uri)\"")
+                self.router?.route(to: \.userSignIn, server)
+            })
+            .store(in: &cancellables)
     }
 
     func discoverServers() {
