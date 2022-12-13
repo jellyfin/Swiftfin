@@ -8,6 +8,7 @@
 
 import CoreData
 import Defaults
+import Factory
 import Stinsen
 import SwiftUI
 
@@ -19,6 +20,9 @@ struct SettingsView: View {
     private var appAppearance
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+    
+    @Injected(Container.userSession)
+    private var userSession
     
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -33,11 +37,11 @@ struct SettingsView: View {
                 HStack {
                     L10n.user.text
                     Spacer()
-                    Text(viewModel.user.username)
+                    Text(userSession.user.username)
                         .foregroundColor(accentColor)
                 }
                 
-                ChevronButton(title: L10n.server, subtitle: viewModel.server.name)
+                ChevronButton(title: L10n.server, subtitle: userSession.server.name)
                     .onSelect {
                         router.route(to: \.serverDetail)
                     }

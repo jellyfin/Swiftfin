@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -45,4 +46,34 @@ extension BaseItemDto {
 //        }
 //        .eraseToAnyPublisher()
 //    }
+    
+    func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
+        
+        let builder = DeviceProfileBuilder()
+        // TODO: fix bitrate settings
+        let tempOverkillBitrate = 360_000_000
+        builder.setMaxBitrate(bitrate: tempOverkillBitrate)
+        let profile = builder.buildProfile()
+        let segmentContainer = Defaults[.Experimental.usefmp4Hls] ? "mp4" : "ts"
+        
+        let userSession = Container.userSession.callAsFunction()
+        
+        let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
+        let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
+            userID: userSession.user.id,
+            maxStreamingBitrate: tempOverkillBitrate
+        )
+        
+        let request = Paths.getPostedPlaybackInfo(
+            itemID: self.id!,
+            parameters: playbackInfoParameters,
+            playbackInfo
+        )
+
+        let response = try await userSession.client.send(request)
+        
+        guard let matchingMediaSource = response.value.mediaSources?.first(where: { $0.eTag == mediaSource.eTag && $0.id == mediaSource.id }) else { throw JellyfinAPIError("Matching media source not in playback info") }
+        
+        return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!)
+    }
 }

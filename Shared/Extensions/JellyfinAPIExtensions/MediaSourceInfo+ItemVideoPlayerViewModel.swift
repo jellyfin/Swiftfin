@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -15,6 +16,7 @@ extension MediaSourceInfo {
 
     func videoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
         
+        let userSession = Container.userSession.callAsFunction()
         let playbackURL: URL
         let streamType: StreamType
         
@@ -31,15 +33,25 @@ extension MediaSourceInfo {
 //                mediaSourceId: self.id
 //            ).url
             
-            playbackURL = URL(string: "/")!
+            let videoStreamParameters = Paths.GetVideoStreamParameters(
+                isStatic: true,
+                tag: item.etag,
+                playSessionID: playSessionID,
+                mediaSourceID: id
+            )
+            
+            let videoStreamRequest = Paths.getVideoStream(
+                itemID: item.id!,
+                parameters: videoStreamParameters
+            )
+            
+            playbackURL = userSession.client.fullURL(with: videoStreamRequest)
             streamType = .direct
         }
 
         let videoStreams = mediaStreams?.filter({ $0.type == .video }) ?? []
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
-        
-        guard let itemID = item.id, let mediaSourceID = self.id else { throw JellyfinAPIError("Unable to construct HLS stream: invalid item ID or media source ID") }
 
 //        let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(
 //            itemId: itemID,

@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -84,15 +85,20 @@ extension BaseItemDto {
         let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
         let tag = imageTags?[type.rawValue]
         
-        return URL(string: "/")!
+        let client = Container.userSession.callAsFunction().client
+        let imageRequestParameters = Paths.GetItemImageParameters(
+            maxWidth: scaleWidth,
+            maxHeight: scaleHeight,
+            tag: tag
+        )
         
-//        return ImageAPI.getItemImageWithRequestBuilder(
-//            itemId: itemID,
-//            imageType: type,
-//            maxWidth: scaleWidth,
-//            maxHeight: scaleHeight,
-//            tag: tag
-//        ).url
+        let imageRequest = Paths.getItemImage(
+            itemID: itemID,
+            imageType: type.rawValue,
+            parameters: imageRequestParameters
+        )
+        
+        return client.fullURL(with: imageRequest)
     }
 
     fileprivate func _imageSource(_ type: ImageType, maxWidth: Int?, maxHeight: Int?) -> ImageSource {

@@ -26,7 +26,7 @@ extension ItemView {
 
         private var topOpacity: CGFloat {
             let start = UIScreen.main.bounds.height * 0.25
-            let end = UIScreen.main.bounds.height * 0.425
+            let end = UIScreen.main.bounds.height * 0.42
             let diff = end - start
             let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
             return opacity
@@ -93,8 +93,8 @@ extension ItemView {
             .scrollViewOffset($scrollViewOffset)
             .navBarOffset(
                 $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.43,
-                end: UIScreen.main.bounds.height * 0.43 + 50
+                start: UIScreen.main.bounds.height * 0.42,
+                end: UIScreen.main.bounds.height * 0.42 + 50
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
@@ -117,14 +117,6 @@ extension ItemView.CompactLogoScrollView {
         var scrollViewOffset: CGFloat
         @ObservedObject
         var viewModel: ItemViewModel
-
-        private var topOpacity: CGFloat {
-            let start = UIScreen.main.bounds.height * 0.25
-            let end = UIScreen.main.bounds.height * 0.44
-            let diff = end - start
-            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
-            return 1 - opacity
-        }
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {

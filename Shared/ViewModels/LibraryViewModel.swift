@@ -8,12 +8,16 @@
 
 import Combine
 import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 import UIKit
 
 // TODO: Look at refactoring
 final class LibraryViewModel: PagingLibraryViewModel {
+    
+    @Injected(Container.userSession)
+    private var userSession
 
     let filterViewModel: FilterViewModel
 
@@ -45,15 +49,15 @@ final class LibraryViewModel: PagingLibraryViewModel {
         self.saveFilters = saveFilters
         super.init()
 
-//        filterViewModel.$currentFilters
-//            .sink { newFilters in
-//                self.requestItems(with: newFilters, replaceCurrentItems: true)
-//
-//                if self.saveFilters, let id = self.parent?.id {
-//                    Defaults[.libraryFilterStore][id] = newFilters
-//                }
-//            }
-//            .store(in: &cancellables)
+        filterViewModel.$currentFilters
+            .sink { newFilters in
+                self.requestItems(with: newFilters, replaceCurrentItems: true)
+
+                if self.saveFilters, let id = self.parent?.id {
+                    Defaults[.libraryFilterStore][id] = newFilters
+                }
+            }
+            .store(in: &cancellables)
     }
 
     private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
@@ -101,6 +105,29 @@ final class LibraryViewModel: PagingLibraryViewModel {
         let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+        
+        let itemsParameters = Paths.GetItemsParameters(
+            userID: userSession.user.id,
+            excludeItemIDs: excludedIDs,
+            startIndex: currentPage * pageItemSize,
+            limit: pageItemSize,
+            isRecursive: recursive,
+            sortOrder: sortOrder,
+            parentID: libraryID,
+            fields: ItemFields.allCases,
+            includeItemTypes: includeItemTypes,
+            filters: itemFilters,
+            sortBy: sortBy,
+            enableUserData: true,
+            personIDs: personIDs,
+            studioIDs: studioIDs,
+            genreIDs: genreIDs,
+            enableImages: true
+        )
+        
+        Task {
+            try? await _requestItems(parameters: itemsParameters)
+        }
 
 //        ItemsAPI.getItemsByUserId(
 //            userId: "123abc",
@@ -149,5 +176,27 @@ final class LibraryViewModel: PagingLibraryViewModel {
 
     override func _requestNextPage() {
         requestItems(with: filterViewModel.currentFilters)
+    }
+    
+    private func _requestItems(parameters: Paths.GetItemsParameters) async throws {
+        
+        await MainActor.run {
+            self.isLoading = true
+        }
+        
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await userSession.client.send(request)
+        
+        // The way server queries items is not stable and may return duplicate items
+        guard let items = response.value.items?.filter({ !(self.items.contains($0)) }),
+              !items.isEmpty else {
+            self.hasNextPage = false
+            return
+        }
+
+        await MainActor.run {
+            self.isLoading = false
+            self.items.append(contentsOf: items)
+        }
     }
 }

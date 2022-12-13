@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -29,7 +30,19 @@ extension BaseItemPerson: Poster {
 //            tag: primaryImageTag
 //        ).url
         
-        let url = URL(string: "/")!
+        let client = Container.userSession.callAsFunction().client
+        let imageRequestParameters = Paths.GetItemImageParameters(
+            maxWidth: scaleWidth,
+            tag: primaryImageTag
+        )
+        
+        let imageRequest = Paths.getItemImage(
+            itemID: id ?? "",
+            imageType: ImageType.primary.rawValue,
+            parameters: imageRequestParameters
+        )
+        
+        let url = client.fullURL(with: imageRequest)
 
         var blurHash: String?
 

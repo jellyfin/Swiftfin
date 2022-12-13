@@ -49,6 +49,14 @@ class VideoPlayerManager: ViewModel {
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
         super.init()
         
+        Task {
+            let viewModel = try await item.videoPlayerViewModel(with: mediaSource)
+            
+            await MainActor.run {
+                self.currentViewModel = viewModel
+            }
+        }
+        
 //        item.createVideoPlayerViewModel(with: mediaSource)
 //            .sink { completion in
 //                self.handleAPIRequestError(completion: completion)

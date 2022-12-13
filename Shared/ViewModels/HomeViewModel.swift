@@ -91,7 +91,7 @@ final class HomeViewModel: ViewModel {
             let libraries = allLibraries
                 .filter({ $0.collectionType == "movies" || $0.collectionType == "tvshows" })
                 .filter { library in
-                    excludedLibraryIDs.contains(where: { $0 == library.id ?? "" })
+                    !excludedLibraryIDs.contains(where: { $0 == library.id ?? "" })
                 }
             
             await MainActor.run {
@@ -131,6 +131,23 @@ final class HomeViewModel: ViewModel {
     // MARK: Resume Items
 
     private func refreshResumeItems() {
+        Task {
+            let resumeParameters = Paths.GetResumeItemsParameters(
+                limit: 20,
+                fields: ItemFields.minimumCases,
+                enableUserData: true
+            )
+            
+            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: resumeParameters)
+            let response = try await userSession.client.send(request)
+            
+            guard let items = response.value.items else { return }
+            
+            await MainActor.run {
+                self.resumeItems = items
+            }
+        }
+        
 //        ItemsAPI.getResumeItems(
 //            userId: "123abc",
 //            limit: 20,

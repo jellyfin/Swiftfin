@@ -43,9 +43,9 @@ extension HomeView {
 //                        )
 //                    }
 
-//                    ForEach(viewModel.libraries, id: \.self) { library in
-//                        LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
-//                    }
+                    ForEach(viewModel.libraries, id: \.self) { library in
+                        LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
+                    }
                 }
                 .padding(.bottom, 50)
             } onRefresh: {
