@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import AsyncPlus
 import CoreStore
 import Foundation
 import SwiftUI
@@ -56,6 +55,25 @@ final class ServerListViewModel: ViewModel {
 
     @objc
     private func didPurge() {
+        fetchServers()
+    }
+    
+    func purge() {
+        try? SwiftfinStore.dataStack.perform { transaction in
+            let users = try! transaction.fetchAll(From<UserModel>())
+            
+            transaction.delete(users)
+            
+            
+            let servers = try! transaction.fetchAll(From<ServerModel>())
+            
+            for server in servers {
+                transaction.delete(server.users)
+            }
+            
+            transaction.delete(servers)
+        }
+        
         fetchServers()
     }
 }

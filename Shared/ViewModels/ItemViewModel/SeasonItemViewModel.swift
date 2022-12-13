@@ -8,7 +8,7 @@
 
 import Combine
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import Stinsen
 
 final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {

@@ -19,13 +19,16 @@ final class SwiftfinSession {
     let client: JellyfinClient
     let server: ServerState
     let user: UserState
+    let authenticated: Bool
     
     init(
         server: ServerState,
-        user: UserState
+        user: UserState,
+        authenticated: Bool
     ) {
         self.server = server
         self.user = user
+        self.authenticated = authenticated
         
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
@@ -74,14 +77,21 @@ extension Container {
             guard let server = user.server,
                   let existingServer = SwiftfinStore.dataStack.fetchExisting(server)
             else {
-                // TODO: Log and return sample
                 fatalError("No associated server for last user")
             }
             
-            return .init(server: server.state, user: user.state)
+            return .init(
+                server: server.state,
+                user: user.state,
+                authenticated: true
+            )
 
         } else {
-            return .init(server: .sample, user: .sample)
+            return .init(
+                server: .sample,
+                user: .sample,
+                authenticated: true
+            )
         }
     }
 }

@@ -37,7 +37,11 @@ struct QuickConnectView: View {
         .navigationTitle(L10n.quickConnect)
         .onAppear {
             Task {
-                
+                for await result in viewModel.startQuickConnect() {
+                    guard let secret = result.secret else { continue }
+                    try? await viewModel.signIn(quickConnectSecret: secret)
+                    router.dismissCoordinator()
+                }
             }
         }
         .onDisappear {

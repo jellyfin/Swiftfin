@@ -7,7 +7,9 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
+
+typealias APISortOrder = JellyfinAPI.SortOrder
 
 extension APISortOrder {
     // TODO: Localize

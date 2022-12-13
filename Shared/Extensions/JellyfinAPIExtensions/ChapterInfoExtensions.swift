@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 extension ChapterInfo {
 
@@ -31,7 +31,7 @@ extension ChapterInfo: Displayable {
 
 extension ChapterInfo {
 
-    struct FullInfo: Poster, Equatable {
+    struct FullInfo: Poster, Hashable {
 
         let chapterInfo: ChapterInfo
         let imageSource: ImageSource

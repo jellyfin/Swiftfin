@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import Files
 import Foundation
 import UIKit
@@ -81,5 +82,11 @@ final class SettingsViewModel: ViewModel {
                 currentAppIcon = previousAppIcon
             }
         }
+    }
+    
+    func signOut() {
+        Defaults[.lastServerUserID] = nil
+        Container.userSession.reset()
+        Notifications[.didSignOut].post()
     }
 }

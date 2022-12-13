@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 final class QuickConnectSettingsViewModel: ViewModel {
-
+    
     @Published
     var quickConnectCode = ""
     @Published

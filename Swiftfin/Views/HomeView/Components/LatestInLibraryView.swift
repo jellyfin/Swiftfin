@@ -7,20 +7,21 @@
 //
 
 import Defaults
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 extension HomeView {
 
     struct LatestInLibraryView: View {
 
+        @Default(.Customization.latestInLibraryPosterType)
+        private var latestInLibraryPosterType
+        
         @EnvironmentObject
         private var router: HomeCoordinator.Router
+        
         @ObservedObject
         var viewModel: LibraryViewModel
-
-        @Default(.Customization.latestInLibraryPosterType)
-        var latestInLibraryPosterType
 
         private var items: [PosterButtonType<BaseItemDto>] {
             if viewModel.isLoading {

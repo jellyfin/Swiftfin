@@ -9,7 +9,7 @@
 import Defaults
 import Factory
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import Stinsen
 import VLCUI
 import UIKit

@@ -8,22 +8,20 @@
 
 import CollectionView
 import Defaults
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 extension HomeView {
 
     struct ContentView: View {
 
-        @EnvironmentObject
-        private var homeRouter: HomeCoordinator.Router
+        @Default(.Customization.nextUpPosterType)
+        private var nextUpPosterType
+        @Default(.Customization.recentlyAddedPosterType)
+        private var recentlyAddedPosterType
+        
         @ObservedObject
         var viewModel: HomeViewModel
-
-        @Default(.Customization.nextUpPosterType)
-        var nextUpPosterType
-        @Default(.Customization.recentlyAddedPosterType)
-        var recentlyAddedPosterType
 
         var body: some View {
             RefreshableScrollView {
@@ -36,18 +34,18 @@ extension HomeView {
                         NextUpView(viewModel: .init())
                     }
 
-                    if viewModel.hasRecentlyAdded {
-                        RecentlyAddedView(
-                            viewModel: .init(
-                                itemTypes: [.movie, .series],
-                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-                            )
-                        )
-                    }
+//                    if viewModel.hasRecentlyAdded {
+//                        RecentlyAddedView(
+//                            viewModel: .init(
+//                                itemTypes: [.movie, .series],
+//                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
+//                            )
+//                        )
+//                    }
 
-                    ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
-                    }
+//                    ForEach(viewModel.libraries, id: \.self) { library in
+//                        LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
+//                    }
                 }
                 .padding(.bottom, 50)
             } onRefresh: {

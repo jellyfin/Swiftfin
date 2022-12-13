@@ -6,7 +6,6 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import AsyncPlus
 import CoreStore
 import Get
 import Factory
@@ -31,11 +30,6 @@ final class ConnectToServerViewModel: ViewModel {
     
     @Published
     private(set) var isSearching = false
-    
-    @Published
-    var addServerURIPayload: AddServerURIPayload?
-    
-    var backAddServerURIPayload: AddServerURIPayload?
 
     private let discovery = ServerDiscovery()
     

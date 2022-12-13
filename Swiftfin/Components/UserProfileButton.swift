@@ -6,21 +6,26 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 struct UserProfileButton: View {
 
-    let user: UserDto
+    private let client: JellyfinClient
+    private let user: UserDto
     private var onSelect: () -> Void
 
-    init(user: UserDto) {
+    // TODO: Why both?
+    init(user: UserDto, client: JellyfinClient) {
+        self.client = client
         self.user = user
         self.onSelect = {}
     }
 
-    init(user: SwiftfinStore.State.User) {
-        self.init(user: .init(name: user.username, id: user.id))
+    init(user: UserState, client: JellyfinClient) {
+        self.client = client
+        self.user = .init(id: user.id, name: user.username)
+        self.onSelect = {}
     }
 
     var body: some View {
@@ -28,18 +33,18 @@ struct UserProfileButton: View {
             Button {
                 onSelect()
             } label: {
-//                ImageView(user.profileImageSource(maxWidth: 120, maxHeight: 120))
-//                    .failure {
-//                        ZStack {
-//                            Color.secondarySystemFill
-//                                .opacity(0.5)
-//
-//                            Image(systemName: "person.fill")
-//                                .resizable()
-//                                .frame(width: 60, height: 60)
-//                        }
-//                    }
-//                    .clipShape(Circle())
+                ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
+                    .failure {
+                        ZStack {
+                            Color.secondarySystemFill
+                                .opacity(0.5)
+
+                            Image(systemName: "person.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }
+                    }
+                    .clipShape(Circle())
             }
             .frame(width: 120, height: 120)
 

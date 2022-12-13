@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import UIKit
 
 extension BaseItemPerson: Poster {
@@ -22,12 +22,14 @@ extension BaseItemPerson: Poster {
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
         let scaleWidth = UIScreen.main.scale(maxWidth)
-        let url = ImageAPI.getItemImageWithRequestBuilder(
-            itemId: id ?? "",
-            imageType: .primary,
-            maxWidth: scaleWidth,
-            tag: primaryImageTag
-        ).url
+//        let url = ImageAPI.getItemImageWithRequestBuilder(
+//            itemId: id ?? "",
+//            imageType: .primary,
+//            maxWidth: scaleWidth,
+//            tag: primaryImageTag
+//        ).url
+        
+        let url = URL(string: "/")!
 
         var blurHash: String?
 

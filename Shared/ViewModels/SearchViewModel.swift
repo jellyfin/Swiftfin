@@ -8,7 +8,7 @@
 
 import Combine
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 final class SearchViewModel: ViewModel {

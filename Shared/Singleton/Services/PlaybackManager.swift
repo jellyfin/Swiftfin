@@ -9,7 +9,7 @@
 import Combine
 import Factory
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 final class PlaybackManager {
 
@@ -19,57 +19,57 @@ final class PlaybackManager {
 
     private var cancellables = Set<AnyCancellable>()
 
-    func sendStartReport(
-        _ request: ReportPlaybackStartRequest,
-        onSuccess: @escaping () -> Void = {},
-        onFailure: @escaping (Error) -> Void = { _ in }
-    ) {
-        PlaystateAPI.reportPlaybackStart(reportPlaybackStartRequest: request)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    onSuccess()
-                case let .failure(error):
-                    onFailure(error)
-                }
-            } receiveValue: { _ in
-            }
-            .store(in: &cancellables)
-    }
-
-    func sendProgressReport(
-        _ request: ReportPlaybackProgressRequest,
-        onSuccess: @escaping () -> Void = {},
-        onFailure: @escaping (Error) -> Void = { _ in }
-    ) {
-        PlaystateAPI.reportPlaybackProgress(reportPlaybackProgressRequest: request)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    onSuccess()
-                case let .failure(error):
-                    onFailure(error)
-                }
-            } receiveValue: { _ in
-            }
-            .store(in: &cancellables)
-    }
-
-    func sendStopReport(
-        _ request: ReportPlaybackStoppedRequest,
-        onSuccess: @escaping () -> Void = {},
-        onFailure: @escaping (Error) -> Void = { _ in }
-    ) {
-        PlaystateAPI.reportPlaybackStopped(reportPlaybackStoppedRequest: request)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    onSuccess()
-                case let .failure(error):
-                    onFailure(error)
-                }
-            } receiveValue: { _ in
-            }
-            .store(in: &cancellables)
-    }
+//    func sendStartReport(
+//        _ request: ReportPlaybackStartRequest,
+//        onSuccess: @escaping () -> Void = {},
+//        onFailure: @escaping (Error) -> Void = { _ in }
+//    ) {
+//        PlaystateAPI.reportPlaybackStart(reportPlaybackStartRequest: request)
+//            .sink { completion in
+//                switch completion {
+//                case .finished:
+//                    onSuccess()
+//                case let .failure(error):
+//                    onFailure(error)
+//                }
+//            } receiveValue: { _ in
+//            }
+//            .store(in: &cancellables)
+//    }
+//
+//    func sendProgressReport(
+//        _ request: ReportPlaybackProgressRequest,
+//        onSuccess: @escaping () -> Void = {},
+//        onFailure: @escaping (Error) -> Void = { _ in }
+//    ) {
+//        PlaystateAPI.reportPlaybackProgress(reportPlaybackProgressRequest: request)
+//            .sink { completion in
+//                switch completion {
+//                case .finished:
+//                    onSuccess()
+//                case let .failure(error):
+//                    onFailure(error)
+//                }
+//            } receiveValue: { _ in
+//            }
+//            .store(in: &cancellables)
+//    }
+//
+//    func sendStopReport(
+//        _ request: ReportPlaybackStoppedRequest,
+//        onSuccess: @escaping () -> Void = {},
+//        onFailure: @escaping (Error) -> Void = { _ in }
+//    ) {
+//        PlaystateAPI.reportPlaybackStopped(reportPlaybackStoppedRequest: request)
+//            .sink { completion in
+//                switch completion {
+//                case .finished:
+//                    onSuccess()
+//                case let .failure(error):
+//                    onFailure(error)
+//                }
+//            } receiveValue: { _ in
+//            }
+//            .store(in: &cancellables)
+//    }
 }

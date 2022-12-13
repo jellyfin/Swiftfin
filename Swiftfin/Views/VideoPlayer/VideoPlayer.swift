@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import JellyfinAPILegacy
+import JellyfinAPI
 import MediaPlayer
 import Stinsen
 import SwiftUI

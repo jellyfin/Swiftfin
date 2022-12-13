@@ -19,10 +19,11 @@ extension UserDto {
         let path = Paths.getUserImage(
             userID: id ?? "",
             imageType: "Primary",
-            parameters: .init(maxWidth: Int32(scaleWidth), maxHeight: Int32(scaleHeight))
+            parameters: .init(maxWidth: scaleWidth, maxHeight: scaleHeight)
         )
         
         let profileImageURL = client.fullURL(with: path)
+        print("profile image url: \(profileImageURL.absoluteString)")
 
         return ImageSource(url: profileImageURL, blurHash: nil)
     }
@@ -31,6 +32,6 @@ extension UserDto {
 extension JellyfinClient {
     
     func fullURL<T>(with path: Request<T>) -> URL {
-        configuration.url.appendingPathExtension(path.url)
+        configuration.url.appendingPathComponent(path.url)
     }
 }

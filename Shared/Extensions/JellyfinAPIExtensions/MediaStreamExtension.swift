@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import VLCUI
 
 extension MediaStream {
@@ -20,7 +20,7 @@ extension MediaStream {
         while base.last == Character("/") {
             base.removeLast()
         }
-        guard let deliveryURL = deliveryUrl else { return nil }
+        guard let deliveryURL else { return nil }
         return URL(string: base + deliveryURL)
     }
 
@@ -188,11 +188,11 @@ extension MediaStream {
             properties.append(.init(displayTitle: "Delivery Method", subtitle: value.rawValue))
         }
 
-        if let value = deliveryUrl {
+        if let value = deliveryURL {
             properties.append(.init(displayTitle: "URL", subtitle: value))
         }
 
-        if let value = isExternalUrl {
+        if let value = deliveryURL {
             properties.append(.init(displayTitle: "External URL", subtitle: value.description))
         }
 

@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
-extension RequestBuilder where T == URL {
-    var url: URL {
-        URL(string: URLString)!
-    }
-}
+//extension RequestBuilder where T == URL {
+//    var url: URL {
+//        URL(string: URLString)!
+//    }
+//}

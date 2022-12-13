@@ -48,9 +48,9 @@ struct SettingsView: View {
                     }
 
                 Button {
-//                    router.dismissCoordinator {
-//                        SessionManager.main.logout()
-//                    }
+                    router.dismissCoordinator {
+                        viewModel.signOut()
+                    }
                 } label: {
                     L10n.switchUser.text
                         .font(.callout)

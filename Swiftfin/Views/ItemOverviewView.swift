@@ -6,7 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 struct ItemOverviewView: View {

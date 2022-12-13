@@ -9,7 +9,7 @@
 import Combine
 import Factory
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import UIKit
 
 class ItemViewModel: ViewModel {
@@ -63,7 +63,7 @@ class ItemViewModel: ViewModel {
         }
 
         isFavorited = item.userData?.isFavorite ?? false
-        isPlayed = item.userData?.played ?? false
+        isPlayed = item.userData?.isPlayed ?? false
 
         getSimilarItems()
         getSpecialFeatures()
@@ -168,11 +168,11 @@ class ItemViewModel: ViewModel {
         isPlayed.toggle()
         let request: AnyPublisher<UserItemDataDto, Error>
 
-        if current {
-            request = PlaystateAPI.markUnplayedItem(userId: "123abc", itemId: item.id!)
-        } else {
-            request = PlaystateAPI.markPlayedItem(userId: "123abc", itemId: item.id!)
-        }
+//        if current {
+//            request = PlaystateAPI.markUnplayedItem(userId: "123abc", itemId: item.id!)
+//        } else {
+//            request = PlaystateAPI.markPlayedItem(userId: "123abc", itemId: item.id!)
+//        }
 
 //        request
 //            .trackActivity(loading)
@@ -192,11 +192,11 @@ class ItemViewModel: ViewModel {
         isFavorited.toggle()
         let request: AnyPublisher<UserItemDataDto, Error>
 
-        if current {
-            request = UserLibraryAPI.unmarkFavoriteItem(userId: "123abc", itemId: item.id!)
-        } else {
-            request = UserLibraryAPI.markFavoriteItem(userId: "123abc", itemId: item.id!)
-        }
+//        if current {
+//            request = UserLibraryAPI.unmarkFavoriteItem(userId: "123abc", itemId: item.id!)
+//        } else {
+//            request = UserLibraryAPI.markFavoriteItem(userId: "123abc", itemId: item.id!)
+//        }
 
 //        request
 //            .trackActivity(loading)

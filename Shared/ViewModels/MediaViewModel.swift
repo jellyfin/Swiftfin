@@ -8,7 +8,7 @@
 
 import Defaults
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 final class MediaViewModel: ViewModel {
 
@@ -18,11 +18,11 @@ final class MediaViewModel: ViewModel {
     var libraryItems: [MediaItemViewModel] {
         libraries.map({ .init(item: $0) })
             .prepending(
-                .init(item: .init(name: "LiveTV", collectionType: "liveTV")),
+                .init(item: .init(collectionType: "liveTV", name: "LiveTV")),
                 if: Defaults[.Experimental.liveTVAlphaEnabled]
             )
             .prepending(
-                .init(item: .init(name: L10n.favorites, collectionType: "favorites")),
+                .init(item: .init(collectionType: "favorites", name: L10n.favorites)),
                 if: Defaults[.Customization.Library.showFavorites]
             )
     }

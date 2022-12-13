@@ -8,7 +8,7 @@
 
 import Algorithms
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import UIKit
 
 extension BaseItemDto: Displayable {
@@ -17,7 +17,6 @@ extension BaseItemDto: Displayable {
     }
 }
 
-extension BaseItemDto: Identifiable {}
 extension BaseItemDto: LibraryParent {}
 
 extension BaseItemDto {
@@ -206,13 +205,13 @@ extension BaseItemDto {
         var chapterImageURLs: [URL] = []
 
         for chapterIndex in 0 ..< chapters.count {
-            let urlString = ImageAPI.getItemImageWithRequestBuilder(
-                itemId: id ?? "",
-                imageType: .chapter,
-                maxWidth: maxWidth,
-                imageIndex: chapterIndex
-            ).URLString
-            chapterImageURLs.append(URL(string: urlString)!)
+//            let urlString = ImageAPI.getItemImageWithRequestBuilder(
+//                itemId: id ?? "",
+//                imageType: .chapter,
+//                maxWidth: maxWidth,
+//                imageIndex: chapterIndex
+//            ).URLString
+//            chapterImageURLs.append(URL(string: urlString)!)
         }
 
         return chapterImageURLs
@@ -231,13 +230,15 @@ extension BaseItemDto {
             .enumerated()
             .map { index, chapterInfo in
 
-                let imageURL = ImageAPI.getItemImageWithRequestBuilder(
-                    itemId: id ?? "",
-                    imageType: .chapter,
-                    maxWidth: 500,
-                    quality: 90,
-                    imageIndex: index
-                ).url
+//                let imageURL = ImageAPI.getItemImageWithRequestBuilder(
+//                    itemId: id ?? "",
+//                    imageType: .chapter,
+//                    maxWidth: 500,
+//                    quality: 90,
+//                    imageIndex: index
+//                ).url
+                
+                let imageURL = URL(string: "/")!
 
                 let range = ranges.first(where: { $0.first == chapterInfo.startTimeSeconds }) ?? startTimeSeconds ..< startTimeSeconds + 1
 
@@ -248,24 +249,9 @@ extension BaseItemDto {
                 )
             }
     }
-
-    // TODO: Don't use spoof objects as a placeholder or no results
-
-    static var placeHolder: BaseItemDto {
-        .init(
-            name: "Placeholder",
-            id: "1",
-            overview: String(repeating: "a", count: 100),
-            indexNumber: 20
-        )
-    }
-
-    static var noResults: BaseItemDto {
-        .init(name: L10n.noResults)
-    }
 }
 
-extension BaseItemDtoImageBlurHashes {
+extension BaseItemDto.ImageBlurHashes {
     subscript(imageType: ImageType) -> [String: String]? {
         switch imageType {
         case .primary:

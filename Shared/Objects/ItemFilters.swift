@@ -9,7 +9,7 @@
 import Combine
 import Defaults
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 struct ItemFilters: Codable, Defaults.Serializable, Hashable {
 

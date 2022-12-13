@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 final class LiveTVProgramsViewModel: ViewModel {
 
@@ -90,19 +90,19 @@ final class LiveTVProgramsViewModel: ViewModel {
     }
 
     private func getSeries() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: "123abc",
-            hasAired: false,
-            isMovie: false,
-            isSeries: true,
-            isNews: false,
-            isKids: false,
-            isSports: false,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+//        let getProgramsRequest = GetProgramsRequest(
+//            userId: "123abc",
+//            hasAired: false,
+//            isMovie: false,
+//            isSeries: true,
+//            isNews: false,
+//            isKids: false,
+//            isSports: false,
+//            limit: 9,
+//            enableTotalRecordCount: false,
+//            enableImageTypes: [.primary, .thumb],
+//            fields: [.channelInfo, .primaryImageAspectRatio]
+//        )
 
 //        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 //            .trackActivity(loading)
@@ -117,19 +117,19 @@ final class LiveTVProgramsViewModel: ViewModel {
     }
 
     private func getMovies() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: "123abc",
-            hasAired: false,
-            isMovie: true,
-            isSeries: false,
-            isNews: false,
-            isKids: false,
-            isSports: false,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+//        let getProgramsRequest = GetProgramsRequest(
+//            userId: "123abc",
+//            hasAired: false,
+//            isMovie: true,
+//            isSeries: false,
+//            isNews: false,
+//            isKids: false,
+//            isSports: false,
+//            limit: 9,
+//            enableTotalRecordCount: false,
+//            enableImageTypes: [.primary, .thumb],
+//            fields: [.channelInfo, .primaryImageAspectRatio]
+//        )
 
 //        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 //            .trackActivity(loading)
@@ -144,15 +144,15 @@ final class LiveTVProgramsViewModel: ViewModel {
     }
 
     private func getSports() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: "123abc",
-            hasAired: false,
-            isSports: true,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+//        let getProgramsRequest = GetProgramsRequest(
+//            userId: "123abc",
+//            hasAired: false,
+//            isSports: true,
+//            limit: 9,
+//            enableTotalRecordCount: false,
+//            enableImageTypes: [.primary, .thumb],
+//            fields: [.channelInfo, .primaryImageAspectRatio]
+//        )
 
 //        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 //            .trackActivity(loading)
@@ -167,15 +167,15 @@ final class LiveTVProgramsViewModel: ViewModel {
     }
 
     private func getKids() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: "123abc",
-            hasAired: false,
-            isKids: true,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+//        let getProgramsRequest = GetProgramsRequest(
+//            userId: "123abc",
+//            hasAired: false,
+//            isKids: true,
+//            limit: 9,
+//            enableTotalRecordCount: false,
+//            enableImageTypes: [.primary, .thumb],
+//            fields: [.channelInfo, .primaryImageAspectRatio]
+//        )
 
 //        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 //            .trackActivity(loading)
@@ -190,15 +190,15 @@ final class LiveTVProgramsViewModel: ViewModel {
     }
 
     private func getNews() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: "123abc",
-            hasAired: false,
-            isNews: true,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+//        let getProgramsRequest = GetProgramsRequest(
+//            userId: "123abc",
+//            hasAired: false,
+//            isNews: true,
+//            limit: 9,
+//            enableTotalRecordCount: false,
+//            enableImageTypes: [.primary, .thumb],
+//            fields: [.channelInfo, .primaryImageAspectRatio]
+//        )
 
 //        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 //            .trackActivity(loading)

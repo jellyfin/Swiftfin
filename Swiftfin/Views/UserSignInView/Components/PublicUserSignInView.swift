@@ -17,15 +17,18 @@ extension UserSignInView {
         var viewModel: UserSignInViewModel
 
         @State
-        private var enteredPassword: String = ""
+        private var password: String = ""
 
         let publicUser: UserDto
 
         var body: some View {
             DisclosureGroup {
-                SecureField(L10n.password, text: $enteredPassword)
+                SecureField(L10n.password, text: $password)
                 Button {
-//                    viewModel.signIn(username: publicUser.name ?? .emptyDash, password: enteredPassword)
+                    Task {
+                        guard let username = publicUser.name else { return }
+                        try? await viewModel.signIn(username: username, password: password)
+                    }
                 } label: {
                     L10n.signIn.text
                 }

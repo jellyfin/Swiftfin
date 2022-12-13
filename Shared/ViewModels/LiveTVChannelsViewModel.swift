@@ -8,7 +8,7 @@
 
 import Factory
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUICollection
 
 typealias LiveTVChannelRow = CollectionRow<Int, LiveTVChannelRowCell>
@@ -109,19 +109,19 @@ final class LiveTVChannelsViewModel: ViewModel {
 
         let minEndDate = Date.now.addComponentsToDate(hours: -1)
         let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
-
-        let getProgramsRequest = GetProgramsRequest(
-            channelIds: channelIds,
-            userId: "123abc",
-            maxStartDate: maxStartDate,
-            minEndDate: minEndDate,
-            sortBy: ["StartDate"],
-            enableImages: true,
-            enableTotalRecordCount: false,
-            imageTypeLimit: 1,
-            enableImageTypes: [.primary],
-            enableUserData: false
-        )
+        
+//        let getProgramsRequest = GetProgramsRequest(
+//            channelIds: channelIds,
+//            userId: "123abc",
+//            maxStartDate: maxStartDate,
+//            minEndDate: minEndDate,
+//            sortBy: ["StartDate"],
+//            enableImages: true,
+//            enableTotalRecordCount: false,
+//            imageTypeLimit: 1,
+//            enableImageTypes: [.primary],
+//            enableUserData: false
+//        )
 
 //        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
 //            .trackActivity(loading)
@@ -141,7 +141,7 @@ final class LiveTVChannelsViewModel: ViewModel {
         let now = Date()
         for channel in self.channels {
             let prgs = self.programs.filter { item in
-                item.channelId == channel.id
+                item.channelID == channel.id
             }
             DispatchQueue.main.async {
                 self.channelProgramsList[channel] = prgs

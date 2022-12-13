@@ -8,7 +8,7 @@
 
 import Defaults
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import UIKit
 
 class PagingLibraryViewModel: ViewModel {

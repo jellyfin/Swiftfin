@@ -54,10 +54,9 @@ enum SwiftfinStore {
             static var sample: Server {
                 .init(
                     urls: [
-                        .init(string: "https://www.notaurl.com")!,
-                        .init(string: "http://www.maybeaurl.org")!
+                        .init(string: "http://localhost:8096")!
                     ],
-                    currentURL: .init(string: "https://www.notaurl.com")!,
+                    currentURL: .init(string: "http://localhost:8096")!,
                     name: "Johnny's Tree",
                     id: "123abc",
                     os: "macOS",

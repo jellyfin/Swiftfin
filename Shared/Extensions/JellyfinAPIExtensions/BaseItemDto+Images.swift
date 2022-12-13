@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import UIKit
 
 extension BaseItemDto {
@@ -52,15 +52,15 @@ extension BaseItemDto {
     // MARK: Series Images
 
     func seriesImageURL(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> URL {
-        _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
+        _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesID ?? "")
     }
 
     func seriesImageURL(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> URL {
-        _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: seriesId ?? "")
+        _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: seriesID ?? "")
     }
 
     func seriesImageSource(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> ImageSource {
-        let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesId ?? "")
+        let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesID ?? "")
         return ImageSource(url: url, blurHash: nil)
     }
 
@@ -83,13 +83,16 @@ extension BaseItemDto {
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
         let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
         let tag = imageTags?[type.rawValue]
-        return ImageAPI.getItemImageWithRequestBuilder(
-            itemId: itemID,
-            imageType: type,
-            maxWidth: scaleWidth,
-            maxHeight: scaleHeight,
-            tag: tag
-        ).url
+        
+        return URL(string: "/")!
+        
+//        return ImageAPI.getItemImageWithRequestBuilder(
+//            itemId: itemID,
+//            imageType: type,
+//            maxWidth: scaleWidth,
+//            maxHeight: scaleHeight,
+//            tag: tag
+//        ).url
     }
 
     fileprivate func _imageSource(_ type: ImageType, maxWidth: Int?, maxHeight: Int?) -> ImageSource {

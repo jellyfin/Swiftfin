@@ -7,7 +7,7 @@
 //
 
 import Introspect
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 import WidgetKit
 

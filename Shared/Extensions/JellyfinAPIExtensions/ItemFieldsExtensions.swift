@@ -7,14 +7,14 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 extension ItemFields {
     
     static let minimumCases: [ItemFields] = [
         .mediaSources,
         .overview,
-        .parentId,
+        .parentID,
         .taglines,
     ]
 }

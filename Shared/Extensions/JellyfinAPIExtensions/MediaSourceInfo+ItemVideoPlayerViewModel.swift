@@ -8,7 +8,7 @@
 
 import Defaults
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import UIKit
 
 extension MediaSourceInfo {
@@ -18,19 +18,20 @@ extension MediaSourceInfo {
         let playbackURL: URL
         let streamType: StreamType
         
-        if let transcodingUrl, !Defaults[.Experimental.forceDirectPlay] {
-            guard let fullTranscodeURL = URL(string: "".appending(transcodingUrl)) else { throw JellyfinAPIError("Unable to construct transcoded url") }
+        if let transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
+            guard let fullTranscodeURL = URL(string: "".appending(transcodingURL)) else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL
             streamType = .transcode
         } else {
-            playbackURL = VideosAPI.getVideoStreamWithRequestBuilder(
-                itemId: item.id!,
-                _static: true,
-                tag: item.etag,
-                playSessionId: playSessionID,
-                mediaSourceId: self.id
-            ).url
+//            playbackURL = VideosAPI.getVideoStreamWithRequestBuilder(
+//                itemId: item.id!,
+//                _static: true,
+//                tag: item.etag,
+//                playSessionId: playSessionID,
+//                mediaSourceId: self.id
+//            ).url
             
+            playbackURL = URL(string: "/")!
             streamType = .direct
         }
 
@@ -40,30 +41,31 @@ extension MediaSourceInfo {
         
         guard let itemID = item.id, let mediaSourceID = self.id else { throw JellyfinAPIError("Unable to construct HLS stream: invalid item ID or media source ID") }
 
-        let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(
-            itemId: itemID,
-            mediaSourceId: mediaSourceID,
-            _static: true,
-            tag: eTag,
-            playSessionId: playSessionID,
-            segmentContainer: "mp4",
-            minSegments: 2,
-            deviceId: UIDevice.vendorUUIDString,
-            audioCodec: audioStreams
-                .compactMap(\.codec)
-                .joined(separator: ","),
-            breakOnNonKeyFrames: true,
-            requireAvc: false,
-            transcodingMaxAudioChannels: 6,
-            videoCodec: videoStreams
-                .compactMap(\.codec)
-                .joined(separator: ","),
-            videoStreamIndex: videoStreams.first?.index,
-            enableAdaptiveBitrateStreaming: true
-        )
+//        let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(
+//            itemId: itemID,
+//            mediaSourceId: mediaSourceID,
+//            _static: true,
+//            tag: eTag,
+//            playSessionId: playSessionID,
+//            segmentContainer: "mp4",
+//            minSegments: 2,
+//            deviceId: UIDevice.vendorUUIDString,
+//            audioCodec: audioStreams
+//                .compactMap(\.codec)
+//                .joined(separator: ","),
+//            breakOnNonKeyFrames: true,
+//            requireAvc: false,
+//            transcodingMaxAudioChannels: 6,
+//            videoCodec: videoStreams
+//                .compactMap(\.codec)
+//                .joined(separator: ","),
+//            videoStreamIndex: videoStreams.first?.index,
+//            enableAdaptiveBitrateStreaming: true
+//        )
 
-        var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
+//        var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
 //        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
+        var hlsStreamComponents = URLComponents(string: "/")!
         
         return .init(
             playbackURL: playbackURL,

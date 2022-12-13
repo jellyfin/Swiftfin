@@ -10,7 +10,7 @@ import Combine
 import Defaults
 import Factory
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import Nuke
 import Stinsen
 import SwiftUI
@@ -33,11 +33,12 @@ final class MainCoordinator: NavigationCoordinatable {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-//        if SessionManager.main.currentLogin != nil {
-//            self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
-//        } else {
-            self.stack = NavigationStack(initial: \MainCoordinator.serverList)
-//        }
+        
+        if Container.userSession.callAsFunction().authenticated {
+            stack = NavigationStack(initial: \MainCoordinator.mainTab)
+        } else {
+            stack = NavigationStack(initial: \MainCoordinator.serverList)
+        }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk

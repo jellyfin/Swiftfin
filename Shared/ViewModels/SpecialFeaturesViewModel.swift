@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 class SpecialFeaturesViewModel: ViewModel, MenuPosterHStackModel {
 

@@ -12,7 +12,7 @@
 //import Defaults
 //import Factory
 //import Foundation
-//import JellyfinAPILegacy
+//import JellyfinAPI
 //import UIKit
 //
 //typealias CurrentLogin = (server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User)

@@ -8,7 +8,7 @@
 //
 //import AVKit
 //import Combine
-//import JellyfinAPILegacy
+//import JellyfinAPI
 //import UIKit
 //
 //class LegacyNativePlayerViewController: AVPlayerViewController {

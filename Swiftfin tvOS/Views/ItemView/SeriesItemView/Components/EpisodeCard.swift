@@ -7,7 +7,7 @@
 //
 
 import Combine
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 struct EpisodeCard: View {

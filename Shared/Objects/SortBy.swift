@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 public enum SortBy: String, CaseIterable, Displayable {
     case premiereDate = "PremiereDate"

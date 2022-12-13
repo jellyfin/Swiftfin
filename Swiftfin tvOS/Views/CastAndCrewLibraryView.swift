@@ -7,7 +7,7 @@
 //
 
 import CollectionView
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 struct CastAndCrewLibraryView: View {

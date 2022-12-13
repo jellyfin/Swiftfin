@@ -70,7 +70,7 @@ struct ServerListView: View {
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 
-            PrimaryButton(title: L10n.connect.stringValue) {
+            PrimaryButton(title: L10n.connect) {
                 serverListRouter.route(to: \.connectToServer)
             }
             .frame(maxWidth: 300)
@@ -99,6 +99,7 @@ struct ServerListView: View {
         }
     }
 
+    @ViewBuilder
     private var leadingToolbarContent: some View {
         Button {
 //            serverListRouter.route(to: \.basicAppSettings)
@@ -106,6 +107,12 @@ struct ServerListView: View {
         } label: {
             Image(systemName: "gearshape.fill")
                 .accessibilityLabel(L10n.settings)
+        }
+        
+        Button {
+            viewModel.purge()
+        } label: {
+            Text("Purge")
         }
     }
 

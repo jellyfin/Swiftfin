@@ -8,7 +8,7 @@
 
 import Defaults
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import VLCUI
 import UIKit
 
@@ -84,32 +84,33 @@ final class VideoPlayerViewModel: ViewModel {
         
         guard let itemID = item.id, let mediaSourceID = mediaSource.id else { throw JellyfinAPIError("Unable to construct HLS stream: invalid item ID or media source ID") }
 
-        let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(
-            itemId: itemID,
-            mediaSourceId: mediaSourceID,
-            _static: true,
-            tag: mediaSource.eTag,
-            playSessionId: playSessionID,
-            segmentContainer: "mp4",
-            minSegments: 2,
-            deviceId: UIDevice.vendorUUIDString,
-            audioCodec: mediaSource.audioStreams?
-                .compactMap(\.codec)
-                .joined(separator: ","),
-            breakOnNonKeyFrames: true,
-            requireAvc: false,
-            transcodingMaxAudioChannels: 6,
-            videoCodec: mediaSource.videoStreams?
-                .compactMap(\.codec)
-                .joined(separator: ","),
-            videoStreamIndex: mediaSource.videoStreams?.first?.index,
-            enableAdaptiveBitrateStreaming: true
-        )
-
-        var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
-//        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
-
-        return hlsStreamComponents.url!
+//        let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(
+//            itemId: itemID,
+//            mediaSourceId: mediaSourceID,
+//            _static: true,
+//            tag: mediaSource.eTag,
+//            playSessionId: playSessionID,
+//            segmentContainer: "mp4",
+//            minSegments: 2,
+//            deviceId: UIDevice.vendorUUIDString,
+//            audioCodec: mediaSource.audioStreams?
+//                .compactMap(\.codec)
+//                .joined(separator: ","),
+//            breakOnNonKeyFrames: true,
+//            requireAvc: false,
+//            transcodingMaxAudioChannels: 6,
+//            videoCodec: mediaSource.videoStreams?
+//                .compactMap(\.codec)
+//                .joined(separator: ","),
+//            videoStreamIndex: mediaSource.videoStreams?.first?.index,
+//            enableAdaptiveBitrateStreaming: true
+//        )
+//
+//        var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
+////        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
+//
+//        return hlsStreamComponents.url!
+        return URL(string: "/")!
     }
 }
 

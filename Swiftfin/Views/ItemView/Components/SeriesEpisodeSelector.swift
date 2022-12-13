@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import JellyfinAPILegacy
+import JellyfinAPI
 import SwiftUI
 
 struct SeriesEpisodeSelector: View {
@@ -50,7 +50,7 @@ extension SeriesEpisodeSelector {
                         title: progress,
                         progress: (episode.userData?.playedPercentage ?? 0) / 100
                     )
-                } else if episode.userData?.played ?? false {
+                } else if episode.userData?.isPlayed ?? false {
                     ZStack(alignment: .bottomTrailing) {
                         Color.clear
 

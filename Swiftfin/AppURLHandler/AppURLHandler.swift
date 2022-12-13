@@ -8,7 +8,7 @@
 
 import Combine
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import Stinsen
 
 final class AppURLHandler {
@@ -93,17 +93,17 @@ extension AppURLHandler {
 
 extension AppURLHandler {
     func getItem(userID: String, itemID: String, completion: @escaping (BaseItemDto?) -> Void) {
-        UserLibraryAPI.getItem(userId: userID, itemId: itemID)
-            .sink(receiveCompletion: { innerCompletion in
-                switch innerCompletion {
-                case .failure:
-                    completion(nil)
-                default:
-                    break
-                }
-            }, receiveValue: { item in
-                completion(item)
-            })
-            .store(in: &cancellables)
+//        UserLibraryAPI.getItem(userId: userID, itemId: itemID)
+//            .sink(receiveCompletion: { innerCompletion in
+//                switch innerCompletion {
+//                case .failure:
+//                    completion(nil)
+//                default:
+//                    break
+//                }
+//            }, receiveValue: { item in
+//                completion(item)
+//            })
+//            .store(in: &cancellables)
     }
 }

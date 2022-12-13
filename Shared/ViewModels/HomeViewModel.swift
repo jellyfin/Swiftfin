@@ -7,11 +7,15 @@
 //
 
 import Combine
+import Factory
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 import UIKit
 
 final class HomeViewModel: ViewModel {
+    
+    @Injected(Container.userSession)
+    private var userSession
 
     @Published
     var resumeItems: [BaseItemDto] = []
@@ -70,52 +74,37 @@ final class HomeViewModel: ViewModel {
     // MARK: Libraries Latest Items
 
     private func refreshLibrariesLatest() {
-//        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { completion in
-//                switch completion {
-//                case .finished: ()
-//                case .failure:
-//                    self.libraries = []
-//                }
-//
-//                self.handleAPIRequestError(completion: completion)
-//            }, receiveValue: { response in
-//
-//                var newLibraries: [BaseItemDto] = []
-//
-//                response.items!.forEach { item in
-//                    self.logger
-//                        .debug("Retrieved user view: \(item.id!) (\(item.name ?? "nil")) with type \(item.collectionType ?? "nil")")
-//                    if item.collectionType == "movies" || item.collectionType == "tvshows" {
-//                        newLibraries.append(item)
-//                    }
-//                }
-//
-//                UserAPI.getCurrentUser()
-//                    .trackActivity(self.loading)
-//                    .sink(receiveCompletion: { completion in
-//                        switch completion {
-//                        case .finished: ()
-//                        case .failure:
-//                            self.libraries = []
-//                            self.handleAPIRequestError(completion: completion)
-//                        }
-//                    }, receiveValue: { response in
-//                        let excludeIDs = response.configuration?.latestItemsExcludes != nil ? response.configuration!
-//                            .latestItemsExcludes! : []
-//
-//                        for excludeID in excludeIDs {
-//                            newLibraries.removeAll { library in
-//                                library.id == excludeID
-//                            }
-//                        }
-//
-//                        self.libraries = newLibraries
-//                    })
-//                    .store(in: &self.cancellables)
-//            })
-//            .store(in: &cancellables)
+        Task {
+            let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+            let response = try? await userSession.client.send(userViewsPath)
+            
+            guard let allLibraries = response?.value.items else {
+                await MainActor.run {
+                    self.libraries = []
+                }
+                
+                return
+            }
+            
+            let excludedLibraryIDs = await self.getExcludedLibraries()
+            
+            let libraries = allLibraries
+                .filter({ $0.collectionType == "movies" || $0.collectionType == "tvshows" })
+                .filter { library in
+                    excludedLibraryIDs.contains(where: { $0 == library.id ?? "" })
+                }
+            
+            await MainActor.run {
+                self.libraries = libraries
+            }
+        }
+    }
+    
+    private func getExcludedLibraries() async -> [String] {
+        let currentUserPath = Paths.getCurrentUser
+        let response = try? await userSession.client.send(currentUserPath)
+        
+        return response?.value.configuration?.latestItemsExcludes ?? []
     }
 
     // MARK: Recently Added Items

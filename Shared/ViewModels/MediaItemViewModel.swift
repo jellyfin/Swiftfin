@@ -8,7 +8,7 @@
 
 import Defaults
 import Foundation
-import JellyfinAPILegacy
+import JellyfinAPI
 
 final class MediaItemViewModel: ViewModel {
     
