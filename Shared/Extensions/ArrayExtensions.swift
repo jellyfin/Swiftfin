@@ -28,7 +28,7 @@ extension Array {
     func prepending(_ element: Element) -> [Element] {
         [element] + self
     }
-    
+
     func prepending(_ element: Element, if condition: Bool) -> [Element] {
         if condition {
             return [element] + self

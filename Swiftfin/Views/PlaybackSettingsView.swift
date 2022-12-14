@@ -29,13 +29,13 @@ struct PlaybackSettingsView: View {
     @Environment(\.subtitleOffset)
     @Binding
     private var subtitleOffset
-    
+
     private func millisecondFormat(from value: Int) -> String {
         let negative = value < 0
         let value = abs(value)
         let seconds = "\(value / 1000)"
         let milliseconds = "\(value % 1000)".first ?? "0"
-        
+
         return seconds
             .appending(".")
             .appending(milliseconds)
@@ -46,12 +46,12 @@ struct PlaybackSettingsView: View {
     var body: some View {
         Form {
             Section {
-                
+
                 ChevronButton(title: L10n.videoPlayer)
                     .onSelect {
                         router.route(to: \.videoPlayerSettings)
                     }
-                
+
 //                ChevronButton(title: "Playback Information")
 //                    .onSelect {
 //                        router.route(to: \.playbackInformation)
@@ -59,24 +59,24 @@ struct PlaybackSettingsView: View {
             } header: {
                 EmptyView()
             }
-            
+
             // TODO: second formatting
             BasicStepper(
                 title: "Audio Offset",
                 value: _audioOffset.wrappedValue,
-                range: -30_000 ... 30_000,
+                range: -30000 ... 30000,
                 step: 100
             )
             .valueFormatter(millisecondFormat(from:))
-            
+
             BasicStepper(
                 title: "Subtitle Offset",
                 value: _subtitleOffset.wrappedValue,
-                range: -30_000 ... 30_000,
+                range: -30000 ... 30000,
                 step: 100
             )
             .valueFormatter(millisecondFormat(from:))
-            
+
             if !viewModel.videoStreams.isEmpty {
                 Section("Video") {
                     ForEach(viewModel.videoStreams, id: \.displayTitle) { mediaStream in

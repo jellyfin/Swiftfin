@@ -16,7 +16,7 @@ extension ItemView {
 
         @Default(.accentColor)
         private var accentColor
-        
+
         @Injected(LogManager.service)
         private var logger
 
@@ -42,7 +42,7 @@ extension ItemView {
                     HStack {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
-                        
+
                         Text(viewModel.playButtonText())
                             .font(.callout)
                             .fontWeight(.semibold)

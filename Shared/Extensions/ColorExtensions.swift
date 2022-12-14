@@ -11,11 +11,11 @@ import SwiftUI
 extension Color {
 
     static let jellyfinPurple = Color(uiColor: .jellyfinPurple)
-    
+
     var uiColor: UIColor {
         UIColor(self)
     }
-    
+
     var overlayColor: Color {
         Color(uiColor: uiColor.overlayColor)
     }

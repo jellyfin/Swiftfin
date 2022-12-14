@@ -7,36 +7,26 @@
 //
 
 import CoreStore
-import Get
 import Factory
 import Foundation
+import Get
 import JellyfinAPI
 import Pulse
 
-struct AddServerURIPayload: Identifiable {
-
-    let server: ServerState
-    let uri: String
-
-    var id: String {
-        server.id.appending(uri)
-    }
-}
-
 final class ConnectToServerViewModel: ViewModel {
-    
+
     @Published
     private(set) var discoveredServers: [ServerState] = []
-    
+
     @Published
     private(set) var isSearching = false
 
     private let discovery = ServerDiscovery()
-    
+
     var connectToServerTask: Task<ServerState, Error>?
-    
+
     func connectToServer(url: String) async throws -> (server: ServerState, url: URL) {
-        
+
         let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
 
@@ -46,16 +36,17 @@ final class ConnectToServerViewModel: ViewModel {
             configuration: .swiftfinConfiguration(url: url),
             sessionDelegate: URLSessionProxyDelegate()
         )
-        
+
         let response = try await client.send(Paths.getPublicSystemInfo)
-        
+
         guard let name = response.value.serverName,
               let id = response.value.id,
               let os = response.value.operatingSystem,
-              let version = response.value.version else {
+              let version = response.value.version
+        else {
             throw JellyfinAPIError("Missing server data from network call")
         }
-        
+
         let newServerState = ServerState(
             urls: [url],
             currentURL: url,
@@ -65,10 +56,10 @@ final class ConnectToServerViewModel: ViewModel {
             version: version,
             usersIDs: []
         )
-        
+
         return (newServerState, url)
     }
-    
+
     func isDuplicate(server: ServerState) -> Bool {
         if let _ = try? SwiftfinStore.dataStack.fetchOne(
             From<SwiftfinStore.Models.StoredServer>(),
@@ -81,7 +72,7 @@ final class ConnectToServerViewModel: ViewModel {
         }
         return false
     }
-    
+
     func save(server: ServerState) throws {
         try SwiftfinStore.dataStack.perform { transaction in
             let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())

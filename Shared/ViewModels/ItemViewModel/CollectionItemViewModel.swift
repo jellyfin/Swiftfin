@@ -22,18 +22,18 @@ final class CollectionItemViewModel: ItemViewModel {
     }
 
     private func getCollectionItems() {
-//        ItemsAPI.getItems(
-////            userId: "123abc",
-//            userId: "123abc",
-//            parentId: item.id,
-//            fields: ItemFields.allCases
-//        )
-//        .trackActivity(loading)
-//        .sink { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        } receiveValue: { [weak self] response in
-//            self?.collectionItems = response.items ?? []
-//        }
-//        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                parentID: item.id,
+                fields: ItemFields.allCases
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                collectionItems = response.value.items ?? []
+            }
+        }
     }
 }

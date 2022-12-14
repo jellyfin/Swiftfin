@@ -17,7 +17,7 @@ final class ServerListViewModel: ViewModel {
 
     override init() {
         super.init()
-        
+
         // Oct. 15, 2021
         // This is a workaround since Stinsen doesn't have the ability to rebuild a root at the time of writing.
         // Feature request issue: https://github.com/rundfunk47/stinsen/issues/33
@@ -39,17 +39,18 @@ final class ServerListViewModel: ViewModel {
     }
 
     func remove(server: SwiftfinStore.State.Server) {
-        
+
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
             From<SwiftfinStore.Models.StoredServer>(),
             [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]
         )
         else { fatalError("No stored server for state server?") }
-        
+
         try! SwiftfinStore.dataStack.perform { transaction in
+            transaction.delete(storedServer.users)
             transaction.delete(storedServer)
         }
-        
+
         fetchServers()
     }
 
@@ -57,23 +58,22 @@ final class ServerListViewModel: ViewModel {
     private func didPurge() {
         fetchServers()
     }
-    
+
     func purge() {
         try? SwiftfinStore.dataStack.perform { transaction in
             let users = try! transaction.fetchAll(From<UserModel>())
-            
+
             transaction.delete(users)
-            
-            
+
             let servers = try! transaction.fetchAll(From<ServerModel>())
-            
+
             for server in servers {
                 transaction.delete(server.users)
             }
-            
+
             transaction.delete(servers)
         }
-        
+
         fetchServers()
     }
 }

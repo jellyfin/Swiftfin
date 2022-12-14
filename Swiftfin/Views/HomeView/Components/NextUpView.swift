@@ -13,14 +13,15 @@ import SwiftUI
 extension HomeView {
 
     struct NextUpView: View {
+        
+        @Default(.Customization.nextUpPosterType)
+        private var nextUpPosterType
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
+        
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
-
-        @Default(.Customization.nextUpPosterType)
-        private var nextUpPosterType
 
         private var items: [PosterButtonType<BaseItemDto>] {
             if viewModel.isLoading {
@@ -45,7 +46,7 @@ extension HomeView {
             .contextMenu { state in
                 if case let PosterButtonType.item(item) = state {
                     Button {
-//                        viewModel.markItemPlayed(item)
+                        viewModel.markPlayed(item: item)
                     } label: {
                         Label("Played", systemImage: "checkmark.circle")
                     }

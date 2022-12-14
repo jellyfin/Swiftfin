@@ -10,12 +10,12 @@ import Files
 import SwiftUI
 
 struct FileTextView: UIViewRepresentable {
-    
+
     let file: File
-    
+
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
-        
+
         DispatchQueue.main.async { [weak textView] in
             if let fileContents = try? file.readAsString() {
                 textView?.text = fileContents
@@ -23,11 +23,9 @@ struct FileTextView: UIViewRepresentable {
                 textView?.text = "Unable to read file"
             }
         }
-        
+
         return textView
     }
-    
-    func updateUIView(_ uiView: UITextView, context: Context) {
-        
-    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {}
 }

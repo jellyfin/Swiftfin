@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 
 extension ItemFields {
-    
+
     static let minimumCases: [ItemFields] = [
         .mediaSources,
         .overview,

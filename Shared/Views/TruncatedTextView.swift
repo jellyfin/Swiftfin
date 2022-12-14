@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 
 struct TruncatedTextView: View {
-    
+
     @Default(.accentColor)
     private var accentColor
 
@@ -108,16 +108,16 @@ struct TruncatedTextView: View {
 }
 
 extension TruncatedTextView {
-    
+
     init(text: String) {
         self.init(
             font: .body,
             lineLimit: 1000,
             text: text,
-            seeMoreAction: { }
+            seeMoreAction: {}
         )
     }
-    
+
     func font(_ font: Font) -> Self {
         copy(modifying: \.font, with: font)
     }
@@ -125,7 +125,7 @@ extension TruncatedTextView {
     func lineLimit(_ limit: Int) -> Self {
         copy(modifying: \.lineLimit, with: limit)
     }
-    
+
     func seeMoreAction(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.seeMoreAction, with: action)
     }

@@ -37,11 +37,11 @@ final class ServerListCoordinator: NavigationCoordinatable {
 //    func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
 //        NavigationViewCoordinator(BasicAppSettingsCoordinator())
 //    }
-    
+
     func makeBasicAppSettings() -> some View {
         MainView()
     }
-    
+
     @ViewBuilder
     func makePulseConsole() -> some View {
         MainView()

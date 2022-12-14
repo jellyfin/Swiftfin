@@ -10,20 +10,20 @@ import Defaults
 import SwiftUI
 
 struct NativeVideoPlayerSettingsView: View {
-    
+
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
-    
+
     @Default(.VideoPlayer.NativePlayer.useFMP4Container)
     private var useFMP4Container
-    
+
     var body: some View {
         Form {
-            
+
             Toggle("Use fMP4-HLS Media Container", isOn: $useFMP4Container)
-            
+
             Section {
-                
+
                 BasicStepper(
                     title: "Resume Offset",
                     value: $resumeOffset,

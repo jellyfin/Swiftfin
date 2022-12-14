@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 
 struct VideoPlayerSettingsView: View {
-    
+
     // TODO: Organize
 
     @Default(.VideoPlayer.autoPlay)
@@ -25,7 +25,7 @@ struct VideoPlayerSettingsView: View {
     private var playPreviousItem
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
-    
+
     @Default(.VideoPlayer.showAspectFill)
     private var showAspectFill
     @Default(.VideoPlayer.showJumpButtons)
@@ -63,7 +63,7 @@ struct VideoPlayerSettingsView: View {
 
     var body: some View {
         Form {
-            
+
             ChevronButton(title: "Gestures")
                 .onSelect {
                     router.route(to: \.gestureSettings)
@@ -74,7 +74,7 @@ struct VideoPlayerSettingsView: View {
             EnumPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
-                
+
                 BasicStepper(
                     title: "Resume Offset",
                     value: $resumeOffset,
@@ -88,14 +88,14 @@ struct VideoPlayerSettingsView: View {
             Section("Buttons") {
 
                 EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
-                
+
                 Toggle(isOn: $showAspectFill) {
                     HStack {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                         Text("Aspect Fill")
                     }
                 }
-                
+
                 Toggle(isOn: $showAudioTrackMenu) {
                     HStack {
                         Image(systemName: "speaker.wave.2")
@@ -109,7 +109,7 @@ struct VideoPlayerSettingsView: View {
                         L10n.autoPlay.text
                     }
                 }
-                
+
                 Toggle(isOn: $showJumpButtons) {
                     HStack {
                         Image(systemName: "goforward")
@@ -123,7 +123,7 @@ struct VideoPlayerSettingsView: View {
                         Text("Next Item")
                     }
                 }
-                
+
                 Toggle(isOn: $showPlaybackSpeed) {
                     HStack {
                         Image(systemName: "speedometer")
@@ -137,7 +137,7 @@ struct VideoPlayerSettingsView: View {
                         Text("Previous Item")
                     }
                 }
-                
+
                 Toggle(isOn: $showSubtitleTrackMenu) {
                     HStack {
                         Image(systemName: "captions.bubble")
@@ -156,14 +156,14 @@ struct VideoPlayerSettingsView: View {
 
                 EnumPicker(title: "Slider Type", selection: $sliderType)
             }
-            
+
             Section {
 
                 ChevronButton(title: L10n.subtitleFont, subtitle: subtitleFontName)
                     .onSelect {
                         router.route(to: \.fontPicker)
                     }
-                
+
                 BasicStepper(
                     title: L10n.subtitleSize,
                     value: $subtitleSize,
@@ -182,7 +182,7 @@ struct VideoPlayerSettingsView: View {
                 Toggle("Scrub Current Time", isOn: $showCurrentTimeWhileScrubbing)
 
                 EnumPicker(title: "Timestamp Type", selection: $timestampType)
-                
+
                 EnumPicker(title: "Trailing Value", selection: $trailingTimestampType)
             }
         }

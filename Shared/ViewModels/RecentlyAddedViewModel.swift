@@ -19,28 +19,29 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel {
     }
 
     override func _requestNextPage() {
-//        ItemsAPI.getItemsByUserId(
-//            userId: "123abc",
-//            startIndex: currentPage * pageItemSize,
-//            limit: pageItemSize,
-//            recursive: true,
-//            sortOrder: [.descending],
-//            fields: ItemFields.allCases,
-//            includeItemTypes: [.movie, .series],
-//            sortBy: [SortBy.dateAdded.rawValue],
-//            enableUserData: true
-//        )
-//        .trackActivity(loading)
-//        .sink { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        } receiveValue: { [weak self] response in
-//            guard let items = response.items, !items.isEmpty else {
-//                self?.hasNextPage = false
-//                return
-//            }
-//
-//            self?.items.append(contentsOf: items)
-//        }
-//        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                startIndex: currentPage * pageItemSize,
+                limit: pageItemSize,
+                isRecursive: true,
+                sortOrder: [.descending],
+                fields: ItemFields.allCases,
+                includeItemTypes: [.movie, .series],
+                sortBy: [SortBy.dateAdded.rawValue],
+                enableUserData: true
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let items = response.value.items, !items.isEmpty else {
+                hasNextPage = false
+                return
+            }
+
+            await MainActor.run {
+                self.items.append(contentsOf: items)
+            }
+        }
     }
 }

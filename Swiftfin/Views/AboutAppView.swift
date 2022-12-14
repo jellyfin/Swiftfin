@@ -10,10 +10,10 @@ import Files
 import SwiftUI
 
 struct AboutAppView: View {
-    
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: SettingsViewModel
 
@@ -21,7 +21,7 @@ struct AboutAppView: View {
         List {
             Section {
                 VStack(alignment: .center) {
-                    
+
                     Image(uiImage: viewModel.currentAppIcon.iconPreview)
                         .resizable()
                         .frame(width: 150, height: 150)
@@ -38,12 +38,12 @@ struct AboutAppView: View {
             }
 
             Section {
-                
+
                 TextPairView(
                     leading: L10n.version,
                     trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
-                
+
                 ChevronButton(title: L10n.sourceCode)
                     .leadingView {
                         Image("logo.github")
@@ -54,7 +54,7 @@ struct AboutAppView: View {
                     .onSelect {
                         UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin")!)
                     }
-                
+
                 ChevronButton(title: "Bugs and Features")
                     .leadingView {
                         Image(systemName: "plus.circle.fill")
@@ -65,18 +65,18 @@ struct AboutAppView: View {
                     .onSelect {
                         UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
                     }
-                
+
                 HStack {
                     Image("git.commit")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 20, height: 20)
                         .foregroundColor(.primary)
-                    
+
                     Text("git commit")
-                    
+
                     Spacer()
-                    
+
                     Text(Bundle.main.gitCommit ?? .emptyDash)
                         .foregroundColor(.secondary)
                 }

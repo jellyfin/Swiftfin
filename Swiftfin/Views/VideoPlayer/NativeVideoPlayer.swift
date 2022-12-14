@@ -12,22 +12,22 @@ import JellyfinAPI
 import SwiftUI
 
 struct NativeVideoPlayer: View {
-    
+
     @EnvironmentObject
     private var router: ItemVideoPlayerCoordinator.Router
-    
+
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
-    
+
     init(manager: VideoPlayerManager) {
         self.videoPlayerManager = manager
     }
-    
+
     @ViewBuilder
     private func playerView(with viewModel: VideoPlayerViewModel) -> some View {
         NativeVideoPlayerView(videoPlayerManager: videoPlayerManager, viewModel: viewModel)
     }
-    
+
     @ViewBuilder
     private var loadingView: some View {
         ZStack {
@@ -45,7 +45,7 @@ struct NativeVideoPlayer: View {
             }
         }
     }
-    
+
     var body: some View {
         Group {
             if let viewModel = videoPlayerManager.currentViewModel {
@@ -61,17 +61,15 @@ struct NativeVideoPlayer: View {
 }
 
 struct NativeVideoPlayerView: UIViewControllerRepresentable {
-    
+
     let videoPlayerManager: VideoPlayerManager
     let viewModel: VideoPlayerViewModel
-    
+
     func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
         UINativeVideoPlayerViewController(manager: videoPlayerManager, viewModel: viewModel)
     }
-    
-    func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {
-        
-    }
+
+    func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
 }
 
 class UINativeVideoPlayerViewController: AVPlayerViewController {
@@ -96,12 +94,12 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         let time = CMTime(seconds: 0.1, preferredTimescale: 1000)
 
         timeObserverToken = player.addPeriodicTimeObserver(forInterval: time, queue: .main) { [weak self] time in
-            
+
             if time.seconds >= 0 {
                 let milliseconds = Int(time.seconds) * 1000
 //                self?.videoPlayerManager.onTicksUpdated(ticks: milliseconds, playbackInformation: VLCVideoPlayer.)
             }
-            
+
 //            if time.seconds != 0 {
 //                self?.sendProgressReport(seconds: time.seconds)
 //            }
@@ -141,7 +139,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
             }
         )
     }
-    
+
     private func createMetadata() -> [AVMetadataItem] {
         let allMetadata: [AVMetadataIdentifier: Any?] = [
             .commonIdentifierTitle: viewModel.item.displayTitle,
@@ -150,7 +148,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         return allMetadata.compactMap { createMetadataItem(for: $0, value: $1) }
     }
-    
+
     private func createMetadataItem(
         for identifier: AVMetadataIdentifier,
         value: Any?

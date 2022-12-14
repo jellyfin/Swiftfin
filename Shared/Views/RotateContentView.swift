@@ -9,48 +9,46 @@
 import SwiftUI
 
 struct RotateContentView: UIViewRepresentable {
-    
+
     @ObservedObject
     private var proxy: Proxy
-    
+
     func makeUIView(context: Context) -> UIRotateContentView {
         UIRotateContentView(initialView: nil, proxy: proxy)
     }
-    
-    func updateUIView(_ uiView: UIRotateContentView, context: Context) {
-        
-    }
-    
+
+    func updateUIView(_ uiView: UIRotateContentView, context: Context) {}
+
     class Proxy: ObservableObject {
-    
+
         private(set) var hasView: Bool = false
-        
+
         weak var rotateContentView: UIRotateContentView?
-        
+
         func update(_ content: (() -> any View)?) {
             guard let content else {
                 hasView = false
                 rotateContentView?.update(with: nil)
                 return
             }
-            
+
             hasView = true
-            
+
             let newHostingController = UIHostingController(rootView: AnyView(content()), ignoreSafeArea: true)
             newHostingController.view.translatesAutoresizingMaskIntoConstraints = false
             newHostingController.view.backgroundColor = .clear
-            
+
             rotateContentView?.update(with: newHostingController.view)
         }
     }
 }
 
 extension RotateContentView {
-    
+
     init() {
         self.proxy = .init()
     }
-    
+
     func proxy(_ proxy: Proxy) -> Self {
         copy(modifying: \.proxy, with: proxy)
     }
@@ -63,11 +61,11 @@ class UIRotateContentView: UIView {
 
     init(initialView: UIView?, proxy: RotateContentView.Proxy) {
         self.proxy = proxy
-        
+
         super.init(frame: .zero)
-        
+
         proxy.rotateContentView = self
-        
+
         guard let initialView else { return }
 
         initialView.translatesAutoresizingMaskIntoConstraints = false
@@ -90,7 +88,7 @@ class UIRotateContentView: UIView {
     }
 
     func update(with newView: UIView?) {
-        
+
         guard let newView else {
             UIView.animate(withDuration: 0.3) {
                 self.currentView?.alpha = 0
@@ -100,7 +98,7 @@ class UIRotateContentView: UIView {
             }
             return
         }
-        
+
         newView.translatesAutoresizingMaskIntoConstraints = false
         newView.alpha = 0
 
@@ -120,7 +118,7 @@ class UIRotateContentView: UIView {
             self.currentView = newView
         }
     }
-    
+
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         currentView?.hitTest(point, with: event)
     }

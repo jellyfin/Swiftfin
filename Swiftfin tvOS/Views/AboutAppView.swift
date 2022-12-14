@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct AboutAppView: View {
-    
+
     @ObservedObject
     var viewModel: SettingsViewModel
 

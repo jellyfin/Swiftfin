@@ -96,11 +96,11 @@ extension ThumbSlider where TrackMask == Color,
 }
 
 extension ThumbSlider {
-    
+
     func isEditing(_ isEditing: Binding<Bool>) -> Self {
         copy(modifying: \._isEditing, with: isEditing)
     }
-    
+
     func rate(_ rate: Binding<CGFloat>) -> Self {
         copy(modifying: \._rate, with: rate)
     }

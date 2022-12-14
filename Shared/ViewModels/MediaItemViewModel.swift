@@ -11,16 +11,16 @@ import Foundation
 import JellyfinAPI
 
 final class MediaItemViewModel: ViewModel {
-    
+
     @Published
     var imageSources: [ImageSource]?
-    
+
     let item: BaseItemDto
-    
+
     init(item: BaseItemDto) {
         self.item = item
         super.init()
-        
+
         if item.collectionType == "favorites" {
             getRandomItemImageSource(with: [.isFavorite])
         } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
@@ -29,36 +29,39 @@ final class MediaItemViewModel: ViewModel {
             getRandomItemImageSource(with: nil)
         }
     }
-    
+
     private func getRandomItemImageSource(with filters: [ItemFilter]?) {
-//        ItemsAPI.getItemsByUserId(
-//            userId: "123abc",
-//            limit: 3,
-//            recursive: true,
-//            parentId: item.id,
-//            includeItemTypes: [.movie, .series],
-//            filters: filters,
-//            sortBy: ["Random"]
-//        )
-//        .sink(receiveCompletion: { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        }, receiveValue: { [weak self] response in
-//            guard let items = response.items else { return }
-//            self?.imageSources = items.map { $0.imageSource(.backdrop, maxWidth: 500) }
-//        })
-//        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                limit: 1,
+                isRecursive: true,
+                parentID: item.id,
+                includeItemTypes: [.movie, .series],
+                filters: filters,
+                sortBy: ["Random"]
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let item = response.value.items?.first else { return }
+
+            await MainActor.run {
+                imageSources = [item.imageSource(.backdrop, maxWidth: 500)]
+            }
+        }
     }
 }
 
 extension MediaItemViewModel: Equatable {
-    
+
     static func == (lhs: MediaItemViewModel, rhs: MediaItemViewModel) -> Bool {
         lhs.item == rhs.item
     }
 }
 
 extension MediaItemViewModel: Hashable {
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(item)
     }

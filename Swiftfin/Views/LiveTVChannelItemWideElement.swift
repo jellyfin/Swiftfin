@@ -10,7 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 struct LiveTVChannelItemWideElement: View {
-    
+
     @FocusState
     private var focused: Bool
     @State

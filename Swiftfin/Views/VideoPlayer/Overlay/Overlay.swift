@@ -10,11 +10,9 @@ import Defaults
 import SwiftUI
 import VLCUI
 
-protocol VideoPlayerOverlay: View {
-    
-}
+protocol VideoPlayerOverlay: View {}
 
-extension EmptyView: VideoPlayerOverlay { }
+extension EmptyView: VideoPlayerOverlay {}
 
 extension VideoPlayer {
 
@@ -22,7 +20,7 @@ extension VideoPlayer {
 
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
-        
+
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
@@ -31,7 +29,7 @@ extension VideoPlayer {
         private var isScrubbing: Bool
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
-        
+
         @EnvironmentObject
         private var splitContentViewProxy: SplitContentViewProxy
 

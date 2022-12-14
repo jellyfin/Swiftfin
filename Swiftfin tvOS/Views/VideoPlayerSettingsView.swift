@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct VideoPlayerSettingsView: View {
-    
+
     var body: some View {
         Text("")
     }

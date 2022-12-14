@@ -37,7 +37,7 @@ struct SubtitleOffset: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    
+
     var audioOffset: Binding<Int> {
         get { self[AudioOffset.self] }
         set { self[AudioOffset.self] = newValue }
@@ -47,7 +47,7 @@ extension EnvironmentValues {
         get { self[AspectFilled.self] }
         set { self[AspectFilled.self] = newValue }
     }
-    
+
     var currentOverlayType: Binding<VideoPlayer.OverlayType?> {
         get { self[CurrentOverlayType.self] }
         set { self[CurrentOverlayType.self] = newValue }
@@ -61,7 +61,7 @@ extension EnvironmentValues {
     var safeAreaInsets: EdgeInsets {
         self[SafeAreaInsetsKey.self]
     }
-    
+
     var subtitleOffset: Binding<Int> {
         get { self[SubtitleOffset.self] }
         set { self[SubtitleOffset.self] = newValue }

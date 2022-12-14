@@ -19,7 +19,7 @@ extension HomeView {
         private var nextUpPosterType
         @Default(.Customization.recentlyAddedPosterType)
         private var recentlyAddedPosterType
-        
+
         @ObservedObject
         var viewModel: HomeViewModel
 
@@ -34,14 +34,14 @@ extension HomeView {
                         NextUpView(viewModel: .init())
                     }
 
-//                    if viewModel.hasRecentlyAdded {
-//                        RecentlyAddedView(
-//                            viewModel: .init(
-//                                itemTypes: [.movie, .series],
-//                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-//                            )
-//                        )
-//                    }
+                    if viewModel.hasRecentlyAdded {
+                        RecentlyAddedView(
+                            viewModel: .init(
+                                itemTypes: [.movie, .series],
+                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
+                            )
+                        )
+                    }
 
                     ForEach(viewModel.libraries, id: \.self) { library in
                         LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
@@ -49,7 +49,13 @@ extension HomeView {
                 }
                 .padding(.bottom, 50)
             } onRefresh: {
-                viewModel.refresh()
+//                Task {
+//                    do {
+//                        try await viewModel.refresh()
+//                    } catch {
+//                        self.error = error
+//                    }
+//                }
             }
         }
     }

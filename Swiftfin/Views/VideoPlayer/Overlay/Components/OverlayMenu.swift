@@ -12,7 +12,7 @@ import VLCUI
 extension VideoPlayer.Overlay {
 
     struct OverlayMenu: View {
-        
+
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
@@ -88,7 +88,7 @@ extension VideoPlayer.Overlay {
                         }
                     }
                 }
-                
+
                 if !PlaybackSpeed.allCases.map(\.rawValue).contains(where: { $0 == Double(videoPlayerManager.playbackSpeed) }) {
                     Label(videoPlayerManager.playbackSpeed.rateLabel, systemImage: "checkmark")
                 }

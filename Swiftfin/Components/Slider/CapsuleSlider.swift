@@ -86,11 +86,11 @@ extension CapsuleSlider where TrackMask == Color,
 }
 
 extension CapsuleSlider {
-    
+
     func isEditing(_ isEditing: Binding<Bool>) -> Self {
         copy(modifying: \._isEditing, with: isEditing)
     }
-    
+
     func rate(_ rate: Binding<CGFloat>) -> Self {
         copy(modifying: \._rate, with: rate)
     }

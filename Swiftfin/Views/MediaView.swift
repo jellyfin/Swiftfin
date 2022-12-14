@@ -66,18 +66,18 @@ struct MediaView: View {
 }
 
 extension MediaView {
-    
+
     struct LibraryCard: View {
-        
+
         @ObservedObject
         var viewModel: MediaItemViewModel
-        
+
         private var onSelect: () -> Void
-        
+
         private var itemWidth: CGFloat {
             PosterType.landscape.width * (UIDevice.isPhone ? 0.85 : 1)
         }
-        
+
         var body: some View {
             Button {
                 onSelect()
@@ -91,7 +91,8 @@ extension MediaView {
                 }
                 .overlay {
                     if Defaults[.Customization.Library.randomImage] ||
-                        viewModel.item.collectionType == "favorites" {
+                        viewModel.item.collectionType == "favorites"
+                    {
                         ZStack {
                             Color.black
                                 .opacity(0.5)
@@ -113,14 +114,14 @@ extension MediaView {
 }
 
 extension MediaView.LibraryCard {
-    
+
     init(viewModel: MediaItemViewModel) {
         self.init(
             viewModel: viewModel,
             onSelect: {}
         )
     }
-    
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }

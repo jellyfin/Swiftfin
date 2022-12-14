@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 
 struct LandscapePosterProgressBar: View {
-    
+
     @Default(.accentColor)
     private var accentColor
 

@@ -27,7 +27,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     var castAndCrew = makeCastAndCrew
     @Route(.modal)
     var itemOverview = makeItemOverview
-    
+
     #if os(tvOS)
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
@@ -58,7 +58,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
     }
-    
+
     #if os(tvOS)
     func makeVideoPlayer(parameters: ItemVideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
         NavigationViewCoordinator(ItemVideoPlayerCoordinator(parameters: parameters))

@@ -84,21 +84,21 @@ extension BaseItemDto {
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
         let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
         let tag = imageTags?[type.rawValue]
-        
+
         let client = Container.userSession.callAsFunction().client
-        let imageRequestParameters = Paths.GetItemImageParameters(
+        let parameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth,
             maxHeight: scaleHeight,
             tag: tag
         )
-        
-        let imageRequest = Paths.getItemImage(
+
+        let request = Paths.getItemImage(
             itemID: itemID,
             imageType: type.rawValue,
-            parameters: imageRequestParameters
+            parameters: parameters
         )
-        
-        return client.fullURL(with: imageRequest)
+
+        return client.fullURL(with: request)
     }
 
     fileprivate func _imageSource(_ type: ImageType, maxWidth: Int?, maxHeight: Int?) -> ImageSource {

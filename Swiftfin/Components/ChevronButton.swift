@@ -20,10 +20,10 @@ struct ChevronButton: View {
             onSelect()
         } label: {
             HStack {
-                
+
                 leadingView()
                     .eraseToAnyView()
-                
+
                 Text(title)
                     .foregroundColor(.primary)
 
@@ -51,7 +51,7 @@ extension ChevronButton {
             onSelect: {}
         )
     }
-    
+
     func leadingView(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.leadingView, with: content)
     }

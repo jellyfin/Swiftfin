@@ -16,10 +16,10 @@ extension HomeView {
 
         @Default(.Customization.latestInLibraryPosterType)
         private var latestInLibraryPosterType
-        
+
         @EnvironmentObject
         private var router: HomeCoordinator.Router
-        
+
         @ObservedObject
         var viewModel: LibraryViewModel
 

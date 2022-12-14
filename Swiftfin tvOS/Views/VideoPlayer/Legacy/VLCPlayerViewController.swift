@@ -1,3 +1,11 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+//
+
 ////
 //// Swiftfin is subject to the terms of the Mozilla Public
 //// License, v2.0. If a copy of the MPL was not distributed with this
@@ -6,20 +14,20 @@
 //// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 ////
 //
-//import AVFoundation
-//import AVKit
-//import Combine
-//import Defaults
-//import Factory
-//import JellyfinAPI
-//import MediaPlayer
-//import SwiftUI
-//import TVVLCKit
-//import UIKit
+// import AVFoundation
+// import AVKit
+// import Combine
+// import Defaults
+// import Factory
+// import JellyfinAPI
+// import MediaPlayer
+// import SwiftUI
+// import TVVLCKit
+// import UIKit
 //
 //// TODO: Look at making the VLC player layer a view
 //
-//class VLCPlayerViewController: UIViewController {
+// class VLCPlayerViewController: UIViewController {
 //
 //    @Injected(LogManager.service)
 //    private var logger
@@ -392,11 +400,11 @@
 //        // on the current navigation controller pops up, re-hide it
 //        self.navigationController?.isNavigationBarHidden = true
 //    }
-//}
+// }
 //
 //// MARK: setupMediaPlayer
 //
-//extension VLCPlayerViewController {
+// extension VLCPlayerViewController {
 //
 //    /// Main function that handles setting up the media player with the current VideoPlayerViewModel
 //    /// and also takes the role of setting the 'viewModel' property with the given viewModel
@@ -550,11 +558,11 @@
 //            vlcMediaPlayer.jumpBackward(Int32(abs(newPositionOffset)))
 //        }
 //    }
-//}
+// }
 //
 //// MARK: Show/Hide Overlay
 //
-//extension VLCPlayerViewController {
+// extension VLCPlayerViewController {
 //
 //    private func showOverlay() {
 //        guard let overlayHostingController = currentOverlayHostingController else { return }
@@ -609,11 +617,11 @@
 //            currentOverlayContentHostingController.view.alpha = 0
 //        }
 //    }
-//}
+// }
 //
 //// MARK: Show/Hide Jump
 //
-//extension VLCPlayerViewController {
+// extension VLCPlayerViewController {
 //
 //    private func flashJumpBackwardOverlay() {
 //        jumpBackwardOverlayView.layer.removeAllAnimations()
@@ -646,11 +654,11 @@
 //            self.jumpForwardOverlayView.alpha = 0
 //        }
 //    }
-//}
+// }
 //
 //// MARK: Show/Hide Confirm close
 //
-//extension VLCPlayerViewController {
+// extension VLCPlayerViewController {
 //
 //    private func showConfirmCloseOverlay() {
 //        guard let currentConfirmCloseHostingController = currentConfirmCloseHostingController else { return }
@@ -667,11 +675,11 @@
 //            currentConfirmCloseHostingController.view.alpha = 0
 //        }
 //    }
-//}
+// }
 //
 //// MARK: OverlayTimer
 //
-//extension VLCPlayerViewController {
+// extension VLCPlayerViewController {
 //
 //    private func restartOverlayDismissTimer(interval: Double = 5) {
 //        self.overlayDismissTimer?.invalidate()
@@ -692,11 +700,11 @@
 //    private func stopOverlayDismissTimer() {
 //        overlayDismissTimer?.invalidate()
 //    }
-//}
+// }
 //
 //// MARK: Confirm Close Overlay Timer
 //
-//extension VLCPlayerViewController {
+// extension VLCPlayerViewController {
 //
 //    private func restartConfirmCloseDismissTimer() {
 //        self.confirmCloseOverlayDismissTimer?.invalidate()
@@ -717,11 +725,11 @@
 //    private func stopConfirmCloseDismissTimer() {
 //        confirmCloseOverlayDismissTimer?.invalidate()
 //    }
-//}
+// }
 //
 //// MARK: VLCMediaPlayerDelegate
 //
-//extension VLCPlayerViewController: VLCMediaPlayerDelegate {
+// extension VLCPlayerViewController: VLCMediaPlayerDelegate {
 //
 //    // MARK: mediaPlayerStateChanged
 //
@@ -777,11 +785,11 @@
 //            lastProgressReportTicks = currentPlayerTicks
 //        }
 //    }
-//}
+// }
 //
 //// MARK: LegacyPlayerOverlayDelegate
 //
-//extension VLCPlayerViewController: PlayerOverlayDelegate {
+// extension VLCPlayerViewController: PlayerOverlayDelegate {
 //
 //    func didSelectAudioStream(index: Int) {
 //        vlcMediaPlayer.currentAudioTrackIndex = Int32(index)
@@ -922,4 +930,4 @@
 //
 //        viewModel.sendProgressReport()
 //    }
-//}
+// }

@@ -16,7 +16,7 @@ extension CastAndCrewLibraryView {
         @EnvironmentObject
         private var router: CastAndCrewLibraryCoordinator.Router
 
-        let person: BaseItemPerson
+        private let person: BaseItemPerson
         private var onSelect: () -> Void
 
         var body: some View {

@@ -33,7 +33,7 @@ final class MainCoordinator: NavigationCoordinatable {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        
+
         if Container.userSession.callAsFunction().authenticated {
             stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {

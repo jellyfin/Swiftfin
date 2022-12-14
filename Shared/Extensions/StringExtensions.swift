@@ -16,11 +16,11 @@ extension String: Displayable {
 }
 
 extension String {
-    
+
     func appending(_ element: String) -> String {
         self + element
     }
-    
+
     func appending(_ element: String.Element) -> String {
         self + String(element)
     }
@@ -29,6 +29,16 @@ extension String {
         element + self
     }
     
+    func removingFirst(if condition: Bool) -> String {
+        if condition {
+            var copy = self
+            copy.removeFirst()
+            return copy
+        } else {
+            return self
+        }
+    }
+
     func prepending(_ element: String, if condition: Bool) -> String {
         if condition {
             return element + self
@@ -87,7 +97,7 @@ extension String {
     }
 
     static var emptyDash = "--"
-    
+
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)
             .replacingOccurrences(of: ".swift", with: "")

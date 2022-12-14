@@ -15,7 +15,7 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    
+
     #if !os(tvOS)
     @Route(.push)
     var fontPicker = makeFontPicker
@@ -27,7 +27,7 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
         FontPickerView()
             .navigationTitle(L10n.subtitleFont)
     }
-    
+
     @ViewBuilder
     func makeGestureSettings() -> some View {
         GestureSettingsView()
@@ -41,9 +41,9 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     }
 }
 
-//struct VideoPlayerSettingsView: View {
-//    
+// struct VideoPlayerSettingsView: View {
+//
 //    var body: some View {
 //        Text("")
 //    }
-//}
+// }

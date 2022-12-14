@@ -65,6 +65,7 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
                                 onSelect(item)
                             }
                         }
+                        .transition(.slide)
                     }
                 }
                 .padding(.horizontal)

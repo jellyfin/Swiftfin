@@ -9,7 +9,7 @@
 import Foundation
 
 extension FixedWidthInteger {
-    
+
     var timeLabel: String {
         let hours = self / 3600
         let minutes = (self % 3600) / 60
@@ -27,13 +27,13 @@ extension FixedWidthInteger {
 }
 
 extension Int {
-    
+
     var millisecondToSecondLabel: String {
         let negative = self < 0
         let value = abs(self)
         let seconds = "\(value / 1000)"
         let milliseconds = "\(value % 1000)".first ?? "0"
-        
+
         return seconds
             .appending(".")
             .appending(milliseconds)
@@ -41,6 +41,7 @@ extension Int {
             .prepending("-", if: negative)
     }
 }
+
 //
 //    func round(multiple: Int) -> Self {
 //        let remainder = abs(self) % multiple
@@ -53,4 +54,4 @@ extension Int {
 //            return self + multiple - remainder
 //        }
 //    }
-//}
+// }

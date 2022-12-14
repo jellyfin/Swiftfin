@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import JellyfinAPI
 import VLCUI
@@ -15,23 +16,18 @@ extension MediaStream {
     // TODO: Localize
     static var none: MediaStream = .init(displayTitle: "None", index: -1)
 
-    func externalURL(base: String) -> URL? {
-        var base = base
-        while base.last == Character("/") {
-            base.removeLast()
-        }
-        guard let deliveryURL else { return nil }
-        return URL(string: base + deliveryURL)
-    }
-
     var asPlaybackChild: VLCVideoPlayer.PlaybackChild? {
-        return nil
-//        guard let url = externalURL(base: SessionManager.main.currentLogin.server.currentURI) else { return nil }
-//        return .init(
-//            url: url,
-//            type: .subtitle,
-//            enforce: false
-//        )
+        guard let deliveryURL else { return nil }
+        let client = Container.userSession.callAsFunction().client
+        let deliveryPath = deliveryURL.removingFirst(if: client.configuration.url.absoluteString.last == "/")
+        
+        let fullURL = client.fullURL(with: deliveryPath)
+        
+        return .init(
+            url: fullURL,
+            type: .subtitle,
+            enforce: false
+        )
     }
 
     var size: String? {

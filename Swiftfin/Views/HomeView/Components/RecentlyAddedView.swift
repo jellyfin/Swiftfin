@@ -13,14 +13,15 @@ import SwiftUI
 extension HomeView {
 
     struct RecentlyAddedView: View {
+        
+        @Default(.Customization.recentlyAddedPosterType)
+        private var recentlyAddedPosterType
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
+        
         @ObservedObject
         var viewModel: ItemTypeLibraryViewModel
-
-        @Default(.Customization.recentlyAddedPosterType)
-        private var recentlyAddedPosterType
 
         private var items: [PosterButtonType<BaseItemDto>] {
             if viewModel.isLoading {

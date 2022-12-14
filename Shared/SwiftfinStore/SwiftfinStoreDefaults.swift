@@ -23,9 +23,9 @@ extension Defaults.Keys {
     static let defaultHTTPScheme = Key<HTTPScheme>("defaultHTTPScheme", default: .http, suite: .universalSuite)
     static let appAppearance = Key<AppAppearance>("appAppearance", default: .system, suite: .universalSuite)
     static let hapticFeedback: Key<Bool> = .init("hapticFeedback", default: true, suite: .universalSuite)
-    
+
     static let accentColor: Key<Color> = .init("accentColor", default: .jellyfinPurple, suite: .generalSuite)
-    
+
     // General settings
     static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .generalSuite)
     static let inNetworkBandwidth = Key<Int>("InNetworkBandwidth", default: 40_000_000, suite: .generalSuite)
@@ -33,7 +33,7 @@ extension Defaults.Keys {
     static let libraryFilterStore = Key<[String: ItemFilters]>("libraryFilterStore", default: [:], suite: .generalSuite)
 
     enum Customization {
-        
+
         static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactLogo, suite: .generalSuite)
 
         static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: .generalSuite)
@@ -42,7 +42,7 @@ extension Defaults.Keys {
         static let latestInLibraryPosterType = Key<PosterType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
         static let similarPosterType = Key<PosterType>("similarPosterType", default: .portrait, suite: .generalSuite)
         static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
-        
+
         enum CinematicItemViewType {
             static let usePrimaryImage: Key<Bool> = .init("cinematicItemViewType.usePrimaryImage", default: false, suite: .generalSuite)
         }
@@ -60,10 +60,10 @@ extension Defaults.Keys {
     }
 
     enum VideoPlayer {
-        
+
         // TODO: rename buttons to show_
         // TODO: Add to own suite
-        
+
         static let videoPlayerType: Key<VideoPlayerType> = .init("videoPlayerType", default: .swiftfin, suite: .generalSuite)
 
         static let autoPlay: Key<Bool> = .init("autoPlay", default: true, suite: .generalSuite)
@@ -82,22 +82,42 @@ extension Defaults.Keys {
         static let playPreviousItem: Key<Bool> = .init("playPreviousItem", default: true, suite: .generalSuite)
         static let pauseOnBackgrounded: Key<Bool> = .init("pauseOnBackgrounded", default: true, suite: .generalSuite)
         static let resumeOffset: Key<Int> = .init("resumeOffset", default: 0, suite: .generalSuite)
-        
+
         static let showAspectFill: Key<Bool> = .init("videoPlayer.showAspectFill", default: true, suite: .generalSuite)
         static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
-        
+
         static let showAudioTrackMenu: Key<Bool> = .init("showAudioTrackMenu", default: false, suite: .generalSuite)
         static let showPlaybackSpeed: Key<Bool> = .init("showPlaybackSpeed", default: false, suite: .generalSuite)
         static let showSubtitleTrackMenu: Key<Bool> = .init("showSubtitleTrackMenu", default: false, suite: .generalSuite)
-        
+
         enum Gesture {
-            static let horizontalPanGesture: Key<PanAction> = .init("videoPlayer.horizontalPanGesture", default: .none, suite: .generalSuite)
-            static let horizontalSwipeGesture: Key<SwipeAction> = .init("videoPlayer.horizontalSwipeGesture", default: .none, suite: .generalSuite)
-            static let longPressGesture: Key<LongPressAction> = .init("videoPlayer.longPressGesture", default: .gestureLock, suite: .generalSuite)
+            static let horizontalPanGesture: Key<PanAction> = .init(
+                "videoPlayer.horizontalPanGesture",
+                default: .none,
+                suite: .generalSuite
+            )
+            static let horizontalSwipeGesture: Key<SwipeAction> = .init(
+                "videoPlayer.horizontalSwipeGesture",
+                default: .none,
+                suite: .generalSuite
+            )
+            static let longPressGesture: Key<LongPressAction> = .init(
+                "videoPlayer.longPressGesture",
+                default: .gestureLock,
+                suite: .generalSuite
+            )
             static let multiTapGesture: Key<MultiTapAction> = .init("videoPlayer.multiTapGesture", default: .none, suite: .generalSuite)
             static let pinchGesture: Key<PinchAction> = .init("videoPlayer.swipeGesture", default: .aspectFill, suite: .generalSuite)
-            static let verticalPanGestureLeft: Key<PanAction> = .init("videoPlayer.verticalPanGestureLeft", default: .none, suite: .generalSuite)
-            static let verticalPanGestureRight: Key<PanAction> = .init("videoPlayer.verticalPanGestureRight", default: .none, suite: .generalSuite)
+            static let verticalPanGestureLeft: Key<PanAction> = .init(
+                "videoPlayer.verticalPanGestureLeft",
+                default: .none,
+                suite: .generalSuite
+            )
+            static let verticalPanGestureRight: Key<PanAction> = .init(
+                "videoPlayer.verticalPanGestureRight",
+                default: .none,
+                suite: .generalSuite
+            )
         }
 
         enum Overlay {
@@ -112,7 +132,11 @@ extension Defaults.Keys {
             static let sliderType: Key<SliderType> = .init("sliderType", default: .capsule, suite: .generalSuite)
 
             // Timestamp
-            static let trailingTimestampType: Key<TrailingTimestampType> = .init("trailingTimestamp", default: .timeLeft, suite: .generalSuite)
+            static let trailingTimestampType: Key<TrailingTimestampType> = .init(
+                "trailingTimestamp",
+                default: .timeLeft,
+                suite: .generalSuite
+            )
             static let showCurrentTimeWhileScrubbing: Key<Bool> = .init(
                 "showCurrentTimeWhileScrubbing",
                 default: true,
@@ -120,12 +144,12 @@ extension Defaults.Keys {
             )
             static let timestampType: Key<TimestampType> = .init("timestampType", default: .split, suite: .generalSuite)
         }
-        
+
         enum NativePlayer {
-            
+
             static let useFMP4Container: Key<Bool> = .init("nativePlayer.useFMP4Container", default: false, suite: .generalSuite)
         }
-        
+
         enum Subtitle {
 
             static let subtitleFontName: Key<String> = .init(

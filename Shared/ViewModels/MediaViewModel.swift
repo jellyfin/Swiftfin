@@ -14,9 +14,9 @@ final class MediaViewModel: ViewModel {
 
     @Published
     private var libraries: [BaseItemDto] = []
-    
+
     var libraryItems: [MediaItemViewModel] {
-        libraries.map({ .init(item: $0) })
+        libraries.map { .init(item: $0) }
             .prepending(
                 .init(item: .init(collectionType: "liveTV", name: "LiveTV")),
                 if: Defaults[.Experimental.liveTVAlphaEnabled]
@@ -36,16 +36,16 @@ final class MediaViewModel: ViewModel {
     }
 
     func requestLibraries() {
-//        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { completion in
-//                self.handleAPIRequestError(completion: completion)
-//            }, receiveValue: { response in
-//                guard let items = response.items else { return }
-//                let filteredLibraries = items.filter { Self.supportedCollectionTypes.contains($0.collectionType ?? "unknown") }
-//
-//                self.libraries = filteredLibraries
-//            })
-//            .store(in: &cancellables)
+        Task {
+            let request = Paths.getUserViews(userID: userSession.user.id)
+            let response = try await userSession.client.send(request)
+
+            guard let items = response.value.items else { return }
+            let supportedLibraries = items.filter { Self.supportedCollectionTypes.contains($0.collectionType ?? "unknown") }
+
+            await MainActor.run {
+                libraries = supportedLibraries
+            }
+        }
     }
 }

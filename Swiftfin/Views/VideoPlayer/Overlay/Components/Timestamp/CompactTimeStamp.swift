@@ -22,7 +22,7 @@ extension VideoPlayer.Overlay {
         private var currentProgressHandler: CurrentProgressHandler
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
-        
+
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool

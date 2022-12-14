@@ -16,30 +16,30 @@ import SwiftUI
 import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    
+
     static var orientationLock: UIInterfaceOrientationMask = .all
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        
+
         Experimental.swizzleURLSession()
-        
+
         LoggingSystem.bootstrap { label in
-            
+
             var loggers: [LogHandler] = [PersistentLogHandler(label: label)]
-            
+
             #if DEBUG
             loggers.append(SwiftfinConsoleLogger())
             #endif
-            
+
             return MultiplexLogHandler(loggers)
         }
-        
+
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
-        
+
         URLSessionProxyDelegate.enableAutomaticRegistration()
 
         let audioSession = AVAudioSession.sharedInstance()
@@ -62,13 +62,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         AppDelegate.orientationLock
     }
-    
+
     static func changeOrientation(_ orientation: UIInterfaceOrientationMask) {
-        
+
         guard UIDevice.isPhone else { return }
-        
+
         Self.orientationLock = orientation
-        
+
         if #available(iOS 16, *) {
             let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
             windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
@@ -79,7 +79,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 }
 
 extension PersistentLogHandler {
-    
+
     func settingTrace() -> Self {
         var copy = self
         copy.logLevel = .trace
@@ -88,7 +88,7 @@ extension PersistentLogHandler {
 }
 
 extension CoreStore.LogLevel {
-    
+
     var toSwiftLog: Logger.Level {
         switch self {
         case .trace:

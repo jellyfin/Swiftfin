@@ -12,13 +12,13 @@ import SwiftUI
 // TODO: Implement different behavior types, where selected/unselected
 //       items can appear in different sections
 struct SelectorView<Item: Displayable>: View {
-    
+
     @Default(.accentColor)
     private var accentColor
 
     @Binding
     private var selectedItems: [Item]
-    
+
     private let allItems: [Item]
     private let type: SelectorType
 

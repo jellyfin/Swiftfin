@@ -196,7 +196,7 @@ class DeviceProfileBuilder {
             ),
         ]
 
-        codecProfiles.append(CodecProfile( applyConditions: h264CodecConditions, codec: "h264", type: .video))
+        codecProfiles.append(CodecProfile(applyConditions: h264CodecConditions, codec: "h264", type: .video))
 
         if supportsFeature(minimumSupported: .A9) {
             codecProfiles.append(CodecProfile(applyConditions: hevcCodecConditions, codec: "hevc", type: .video))

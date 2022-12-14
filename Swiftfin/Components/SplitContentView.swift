@@ -9,34 +9,34 @@
 import SwiftUI
 
 class SplitContentViewProxy: ObservableObject {
-    
+
     @Published
     private(set) var isPresentingSplitView: Bool = false
-    
+
     func present() {
         isPresentingSplitView = true
     }
-    
+
     func hide() {
         isPresentingSplitView = false
     }
 }
 
 struct SplitContentView<Content: View, SplitContent: View>: View {
-    
+
     @ObservedObject
     private var proxy: SplitContentViewProxy
-    
+
     private var content: () -> Content
     private var splitContent: () -> SplitContent
     private var splitContentWidth: CGFloat
-    
+
     var body: some View {
         HStack(spacing: 0) {
-            
+
             content()
                 .frame(maxWidth: .infinity)
-            
+
             if proxy.isPresentingSplitView {
                 splitContent()
                     .transition(.move(edge: .bottom))
@@ -60,11 +60,11 @@ extension SplitContentView where Content == EmptyView, SplitContent == EmptyView
 }
 
 extension SplitContentView {
-    
-    func proxy(_ proxy:  SplitContentViewProxy) -> Self {
+
+    func proxy(_ proxy: SplitContentViewProxy) -> Self {
         copy(modifying: \.proxy, with: proxy)
     }
-    
+
     func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> SplitContentView<C, SplitContent> {
         .init(
             proxy: proxy,
@@ -73,7 +73,7 @@ extension SplitContentView {
             splitContentWidth: splitContentWidth
         )
     }
-    
+
     func splitContent<C: View>(@ViewBuilder _ splitContent: @escaping () -> C) -> SplitContentView<Content, C> {
         .init(
             proxy: proxy,

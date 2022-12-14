@@ -75,7 +75,7 @@ fileprivate struct ItemDetail: View {
     }
 }
 
-//struct RoundedCorner: Shape {
+// struct RoundedCorner: Shape {
 //
 //    var radius: CGFloat = .infinity
 //    var corners: UIRectCorner = .allCorners
@@ -84,10 +84,10 @@ fileprivate struct ItemDetail: View {
 //        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
 //        return Path(path.cgPath)
 //    }
-//}
+// }
 //
-//extension View {
+// extension View {
 //    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
 //        clipShape(RoundedCorner(radius: radius, corners: corners))
 //    }
-//}
+// }

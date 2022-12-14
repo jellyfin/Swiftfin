@@ -11,8 +11,8 @@ import Factory
 import Foundation
 import JellyfinAPI
 import Stinsen
-import VLCUI
 import UIKit
+import VLCUI
 
 // TODO: Make online/offline
 // TODO: proper error catching
@@ -39,31 +39,24 @@ class VideoPlayerManager: ViewModel {
 //            getAdjacentEpisodes(for: newValue.item)
         }
     }
+
     @Published
     var nextViewModel: VideoPlayerViewModel?
-    
+
     let proxy: VLCVideoPlayer.Proxy = .init()
 
     // MARK: init
 
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
         super.init()
-        
+
         Task {
             let viewModel = try await item.videoPlayerViewModel(with: mediaSource)
-            
+
             await MainActor.run {
                 self.currentViewModel = viewModel
             }
         }
-        
-//        item.createVideoPlayerViewModel(with: mediaSource)
-//            .sink { completion in
-//                self.handleAPIRequestError(completion: completion)
-//            } receiveValue: { viewModel in
-//                self.currentViewModel = viewModel
-//            }
-//            .store(in: &cancellables)
     }
 
     func selectNextViewModel() {
@@ -98,16 +91,22 @@ class VideoPlayerManager: ViewModel {
     func onStateUpdated(state: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         guard self.state != state else { return }
         self.state = state
-        
+
         // TODO: Fix autoplay
-//        if state == .stopped {
-//            if let nextViewModel,
-//               autoPlay,
-//               autoPlayEnabled {
-//                selectNextViewModel()
-//
-//                proxy.playNewMedia(nextViewModel.configuration)
-//            }
-//        }
+        if state == .ended {
+            if let nextViewModel,
+               Defaults[.VideoPlayer.autoPlay],
+               Defaults[.VideoPlayer.autoPlayEnabled] {
+                selectNextViewModel()
+
+                proxy.playNewMedia(nextViewModel.vlcVideoPlayerConfiguration)
+            }
+        }
     }
+}
+
+extension VideoPlayerManager {
+    
+    
+    
 }

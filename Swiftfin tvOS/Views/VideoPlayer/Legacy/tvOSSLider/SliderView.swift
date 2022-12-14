@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-//struct SliderView: UIViewRepresentable {
+// struct SliderView: UIViewRepresentable {
 //
 //    @ObservedObject
 //    var viewModel: VideoPlayerViewModel
@@ -36,4 +36,4 @@ import SwiftUI
 //
 //        return slider
 //    }
-//}
+// }

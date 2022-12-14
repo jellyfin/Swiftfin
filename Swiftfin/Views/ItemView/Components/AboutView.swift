@@ -37,7 +37,7 @@ extension ItemView {
                         )
                         .posterStyle(type: .portrait, width: 130)
                         .accessibilityIgnoresInvertColors()
-                        
+
                         Card(title: viewModel.item.displayTitle)
                             .content {
                                 VStack(alignment: .leading, spacing: 10) {
@@ -57,16 +57,16 @@ extension ItemView {
                             .onSelect {
                                 itemRouter.route(to: \.itemOverview, viewModel.item)
                             }
-                        
+
 //                        Card(title: "Ratings")
 //                            .content {
 //                                VStack(alignment: .leading, spacing: 10) {
-//                                    
+//
 //                                    if let communityRating = viewModel.item.communityRating {
 //                                        HStack {
 //                                            Image(systemName: "star.fill")
 //                                                .foregroundColor(.yellow)
-//                                            
+//
 //                                            Text(String(format: "%.2f", communityRating))
 //                                        }
 //                                    }
@@ -87,13 +87,13 @@ extension ItemView {
 }
 
 extension ItemView.AboutView {
-    
+
     struct Card<Content: View>: View {
-        
+
         private let content: () -> Content
         private var onSelect: () -> Void
         private let title: String
-        
+
         var body: some View {
             Button {
                 onSelect()
@@ -123,7 +123,7 @@ extension ItemView.AboutView {
 }
 
 extension ItemView.AboutView.Card where Content == EmptyView {
-    
+
     init(title: String) {
         self.init(
             content: { EmptyView() },
@@ -134,7 +134,7 @@ extension ItemView.AboutView.Card where Content == EmptyView {
 }
 
 extension ItemView.AboutView.Card {
-    
+
     func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> ItemView.AboutView.Card<C> {
         .init(
             content: content,
@@ -142,7 +142,7 @@ extension ItemView.AboutView.Card {
             title: title
         )
     }
-    
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }

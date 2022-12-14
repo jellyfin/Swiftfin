@@ -42,10 +42,10 @@ extension ItemView {
         var body: some View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    
+
                     VStack {
                         Spacer()
-                        
+
                         OverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
                             .padding(.horizontal)
                             .padding(.bottom)

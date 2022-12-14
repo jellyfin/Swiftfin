@@ -31,15 +31,17 @@ final class FilterViewModel: ViewModel {
     }
 
     private func getQueryFilters() {
-//        FilterAPI.getQueryFilters(
-//            userId: "123abc",
-//            parentId: parent?.id
-//        )
-//        .sink(receiveCompletion: { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        }, receiveValue: { [weak self] queryFilters in
-//            self?.allFilters.genres = queryFilters.genres?.map(\.filter) ?? []
-//        })
-//        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetQueryFiltersParameters(
+                userID: userSession.user.id,
+                parentID: parent?.id
+            )
+            let request = Paths.getQueryFilters(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                allFilters.genres = response.value.genres?.map(\.filter) ?? []
+            }
+        }
     }
 }

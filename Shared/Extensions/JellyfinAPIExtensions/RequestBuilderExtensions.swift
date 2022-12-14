@@ -9,8 +9,8 @@
 import Foundation
 import JellyfinAPI
 
-//extension RequestBuilder where T == URL {
+// extension RequestBuilder where T == URL {
 //    var url: URL {
 //        URL(string: URLString)!
 //    }
-//}
+// }

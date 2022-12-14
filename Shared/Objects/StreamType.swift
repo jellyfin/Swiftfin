@@ -12,7 +12,7 @@ enum StreamType: Displayable {
     case direct
     case transcode
     case hls
-    
+
     var displayTitle: String {
         switch self {
         case .direct:

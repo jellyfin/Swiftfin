@@ -18,7 +18,7 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
     var start = makeStart
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
-    
+
     #if !os(tvOS)
     @Route(.push)
     var mediaStreamInfo = makeMediaStreamInfo
@@ -48,9 +48,9 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
     }
 }
 
-//struct PlaybackSettingsView: View {
-//    
+// struct PlaybackSettingsView: View {
+//
 //    var body: some View {
 //        Text("")
 //    }
-//}
+// }

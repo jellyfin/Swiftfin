@@ -16,12 +16,12 @@ import VLCUI
 // TODO: organize
 
 class CurrentProgressHandler: ObservableObject {
-    
+
     @Published
     var progress: CGFloat = 0
     @Published
     var scrubbedProgress: CGFloat = 0
-    
+
     @Published
     var seconds: Int = 0
     @Published
@@ -29,38 +29,38 @@ class CurrentProgressHandler: ObservableObject {
 }
 
 struct VideoPlayer: View {
-    
+
     enum OverlayType {
         case main
         case chapters
     }
-    
+
     class GestureStateHandler {
-        
+
         var beganPanWithOverlay: Bool = false
         var beginningPanProgress: CGFloat = 0
         var beginningHorizontalPanUnit: CGFloat = 0
-        
+
         var beginningAudioOffset: Int = 0
         var beginningBrightnessValue: CGFloat = 0
         var beginningPlaybackSpeed: Float = 0
         var beginningSubtitleOffset: Int = 0
         var beginningVolumeValue: Float = 0
-        
+
         var jumpBackwardKeyPressActive: Bool = false
         var jumpBackwardKeyPressWorkItem: DispatchWorkItem?
         var jumpBackwardKeyPressAmount: Int = 0
-        
+
         var jumpForwardKeyPressActive: Bool = false
         var jumpForwardKeyPressWorkItem: DispatchWorkItem?
         var jumpForwardKeyPressAmount: Int = 0
     }
-    
+
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardLength)
     private var jumpForwardLength
-    
+
     @Default(.VideoPlayer.Gesture.horizontalPanGesture)
     private var horizontalPanGesture
     @Default(.VideoPlayer.Gesture.horizontalSwipeGesture)
@@ -83,7 +83,7 @@ struct VideoPlayer: View {
 
     @EnvironmentObject
     private var router: ItemVideoPlayerCoordinator.Router
-    
+
     @ObservedObject
     private var currentProgressHandler: CurrentProgressHandler = .init()
     @ObservedObject
@@ -105,7 +105,7 @@ struct VideoPlayer: View {
     private var isScrubbing: Bool = false
     @State
     private var subtitleOffset: Int = 0
-    
+
     private let gestureStateHandler: GestureStateHandler = .init()
     private var updateViewProxy: UpdateViewProxy = .init()
     private var overlay: () -> any VideoPlayerOverlay
@@ -125,7 +125,7 @@ struct VideoPlayer: View {
                         .proxy(videoPlayerManager.proxy)
                         .onTicksUpdated { ticks, playbackInformation in
                             videoPlayerManager.onTicksUpdated(ticks: ticks, playbackInformation: playbackInformation)
-                            
+
                             let newSeconds = ticks / 1000
                             let newProgress = CGFloat(newSeconds) / CGFloat(viewModel.item.runTimeSeconds)
                             currentProgressHandler.progress = newProgress
@@ -151,7 +151,7 @@ struct VideoPlayer: View {
                                 handlePan(action: verticalGestureRight, state: $0, point: -$1.y, velocity: $2, translation: $3)
                             }
                         }
-                    
+
                     Group {
                         overlay()
                             .eraseToAnyView()
@@ -174,12 +174,12 @@ struct VideoPlayer: View {
                 WrappedView {
                     NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
                 }
-                    .cornerRadius(20, corners: [.topLeft, .bottomLeft])
-                    .environmentObject(splitContentViewProxy)
-                    .environmentObject(viewModel)
-                    .environmentObject(videoPlayerManager)
-                    .environment(\.audioOffset, $audioOffset)
-                    .environment(\.subtitleOffset, $subtitleOffset)
+                .cornerRadius(20, corners: [.topLeft, .bottomLeft])
+                .environmentObject(splitContentViewProxy)
+                .environmentObject(viewModel)
+                .environmentObject(videoPlayerManager)
+                .environment(\.audioOffset, $audioOffset)
+                .environment(\.subtitleOffset, $subtitleOffset)
             }
             .onChange(of: currentProgressHandler.scrubbedProgress) { newValue in
                 currentProgressHandler.scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * newValue)
@@ -200,7 +200,8 @@ struct VideoPlayer: View {
                             videoPlayerManager.proxy.play()
                             updateViewProxy.present(systemName: "play.fill", title: "Play")
                         }
-                    }),
+                    }
+                ),
                 .init(
                     title: L10n.jumpForward,
                     input: UIKeyCommand.inputRightArrow,
@@ -208,29 +209,29 @@ struct VideoPlayer: View {
                         if gestureStateHandler.jumpForwardKeyPressActive {
                             gestureStateHandler.jumpForwardKeyPressAmount += 1
                             gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
-                            
+
                             let task = DispatchWorkItem {
                                 gestureStateHandler.jumpForwardKeyPressActive = false
                                 gestureStateHandler.jumpForwardKeyPressAmount = 0
                             }
-                            
+
                             gestureStateHandler.jumpForwardKeyPressWorkItem = task
-                            
+
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
                         } else {
                             gestureStateHandler.jumpForwardKeyPressActive = true
                             gestureStateHandler.jumpForwardKeyPressAmount += 1
-                            
+
                             let task = DispatchWorkItem {
                                 gestureStateHandler.jumpForwardKeyPressActive = false
                                 gestureStateHandler.jumpForwardKeyPressAmount = 0
                             }
-                            
+
                             gestureStateHandler.jumpForwardKeyPressWorkItem = task
-                            
+
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
                         }
-                        
+
                         jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
                     }
                 ),
@@ -241,29 +242,29 @@ struct VideoPlayer: View {
                         if gestureStateHandler.jumpBackwardKeyPressActive {
                             gestureStateHandler.jumpBackwardKeyPressAmount += 1
                             gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
-                            
+
                             let task = DispatchWorkItem {
                                 gestureStateHandler.jumpBackwardKeyPressActive = false
                                 gestureStateHandler.jumpBackwardKeyPressAmount = 0
                             }
-                            
+
                             gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-                            
+
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
                         } else {
                             gestureStateHandler.jumpBackwardKeyPressActive = true
                             gestureStateHandler.jumpBackwardKeyPressAmount += 1
-                            
+
                             let task = DispatchWorkItem {
                                 gestureStateHandler.jumpBackwardKeyPressActive = false
                                 gestureStateHandler.jumpBackwardKeyPressAmount = 0
                             }
-                            
+
                             gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-                            
+
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
                         }
-                        
+
                         jumpAction(unitPoint: .init(x: 0, y: 0), amount: gestureStateHandler.jumpBackwardKeyPressAmount)
                     }
                 ),
@@ -277,7 +278,7 @@ struct VideoPlayer: View {
                             min: 0.25,
                             max: 5.0
                         )
-                        
+
                         updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
                         videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
                     }
@@ -292,7 +293,7 @@ struct VideoPlayer: View {
                             min: 0.25,
                             max: 5.0
                         )
-                        
+
                         updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
                         videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
                     }
@@ -303,7 +304,7 @@ struct VideoPlayer: View {
                     modifierFlags: .command,
                     action: {
                         let clampedPlaybackSpeed: Float = 1
-                        
+
                         updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
                         videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
                     }
@@ -334,10 +335,10 @@ struct VideoPlayer: View {
             Color.black
 
             VStack {
-                
+
                 Text("Retrieving media information")
                     .foregroundColor(.white)
-                
+
                 ProgressView()
 
                 Button {
@@ -403,15 +404,15 @@ struct VideoPlayer: View {
         }
         .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
             guard let newViewModel else { return }
-            
+
             videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
-            
+
             aspectFilled = false
             audioOffset = 0
             subtitleOffset = 0
         }
     }
-    
+
     private func showOverlay(_ type: OverlayType?) {
         withAnimation(.linear(duration: 0.1)) {
             currentOverlayType = type
@@ -420,7 +421,7 @@ struct VideoPlayer: View {
 }
 
 extension VideoPlayer {
-    
+
     func overlay(@ViewBuilder _ content: @escaping () -> any VideoPlayerOverlay) -> Self {
         copy(modifying: \.overlay, with: content)
     }
@@ -429,7 +430,7 @@ extension VideoPlayer {
 // MARK: Gestures
 
 extension VideoPlayer {
-    
+
     private func handlePan(
         action: PanAction,
         state: UIGestureRecognizer.State,
@@ -438,7 +439,7 @@ extension VideoPlayer {
         translation: CGFloat
     ) {
         guard !gestureLocked else { return }
-        
+
         switch action {
         case .none:
             return
@@ -458,14 +459,14 @@ extension VideoPlayer {
             volumeAction(state: state, point: point, velocity: velocity, translation: translation)
         }
     }
-    
+
     private func handleHorizontalSwipe(
         unitPoint: UnitPoint,
         direction: Bool,
         amount: Int
     ) {
         guard !gestureLocked else { return }
-        
+
         switch horizontalSwipeGesture {
         case .none:
             return
@@ -473,7 +474,7 @@ extension VideoPlayer {
             jumpAction(unitPoint: .init(x: direction ? 1 : 0, y: 0), amount: amount)
         }
     }
-    
+
     private func handleLongPress(point: UnitPoint) {
         switch longPressGesture {
         case .none:
@@ -483,10 +484,10 @@ extension VideoPlayer {
             gestureLocked.toggle()
         }
     }
-    
+
     private func handlePinchGesture(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
         guard !gestureLocked else { return }
-        
+
         switch pinchGesture {
         case .none:
             return
@@ -494,13 +495,13 @@ extension VideoPlayer {
             aspectFillAction(state: state, unitPoint: unitPoint, scale: scale)
         }
     }
-    
+
     private func handleTapGesture(unitPoint: UnitPoint, taps: Int) {
         if gestureLocked {
             updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
             return
         }
-        
+
         if taps > 1 && multiTapGesture != .none {
             switch multiTapGesture {
             case .none:
@@ -523,7 +524,7 @@ extension VideoPlayer {
 // TODO: look at having action changes be separated from the calculations, for incremental jumps vs pans
 
 extension VideoPlayer {
-    
+
     private func aspectFillAction(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
         guard state == .began || state == .changed else { return }
         if scale > 1, !aspectFilled {
@@ -538,7 +539,7 @@ extension VideoPlayer {
             }
         }
     }
-    
+
     private func audioOffsetAction(
         state: UIGestureRecognizer.State,
         point: CGFloat,
@@ -552,11 +553,14 @@ extension VideoPlayer {
         } else if state == .ended {
             return
         }
-        
-        let newOffset = gestureStateHandler.beginningAudioOffset - round(Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000), toNearest: 100)
-        audioOffset = clamp(newOffset, min: -30_000, max: 30_000)
+
+        let newOffset = gestureStateHandler.beginningAudioOffset - round(
+            Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000),
+            toNearest: 100
+        )
+        audioOffset = clamp(newOffset, min: -30000, max: 30000)
     }
-    
+
     private func brightnessAction(
         state: UIGestureRecognizer.State,
         point: CGFloat,
@@ -570,11 +574,11 @@ extension VideoPlayer {
         } else if state == .ended {
             return
         }
-        
+
         let newBrightness = gestureStateHandler.beginningBrightnessValue - (gestureStateHandler.beginningHorizontalPanUnit - point)
         let clampedBrightness = clamp(newBrightness, min: 0, max: 1.0)
         let flashPercentage = Int(clampedBrightness * 100)
-        
+
         if flashPercentage >= 67 {
             updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%", iconSize: .init(width: 30, height: 30))
         } else if flashPercentage >= 33 {
@@ -582,12 +586,12 @@ extension VideoPlayer {
         } else {
             updateViewProxy.present(systemName: "sun.min.fill", title: "\(flashPercentage)%", iconSize: .init(width: 20, height: 20))
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
             UIScreen.main.brightness = clampedBrightness
         }
     }
-    
+
     // TODO: decide on overlay behavior?
     private func jumpAction(
         unitPoint: UnitPoint,
@@ -595,15 +599,15 @@ extension VideoPlayer {
     ) {
         if unitPoint.x <= 0.5 {
             videoPlayerManager.proxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-            
+
             updateViewProxy.present(systemName: "gobackward", title: "\(amount * Int(jumpBackwardLength.rawValue))s")
         } else {
             videoPlayerManager.proxy.jumpForward(Int(jumpForwardLength.rawValue))
-            
+
             updateViewProxy.present(systemName: "goforward", title: "\(amount * Int(jumpForwardLength.rawValue))s")
         }
     }
-    
+
     private func playbackSpeedAction(
         state: UIGestureRecognizer.State,
         point: CGFloat,
@@ -617,15 +621,18 @@ extension VideoPlayer {
         } else if state == .ended {
             return
         }
-        
-        let newPlaybackSpeed = round(gestureStateHandler.beginningPlaybackSpeed - Float(gestureStateHandler.beginningHorizontalPanUnit - point) * 2, toNearest: 0.25)
+
+        let newPlaybackSpeed = round(
+            gestureStateHandler.beginningPlaybackSpeed - Float(gestureStateHandler.beginningHorizontalPanUnit - point) * 2,
+            toNearest: 0.25
+        )
         let clampedPlaybackSpeed = clamp(newPlaybackSpeed, min: 0.25, max: 5.0)
-        
+
         updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
-        
+
         videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
     }
-    
+
     private func scrubAction(
         state: UIGestureRecognizer.State,
         point: CGFloat,
@@ -635,7 +642,7 @@ extension VideoPlayer {
     ) {
         if state == .began {
             isScrubbing = true
-            
+
             gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
             gestureStateHandler.beginningHorizontalPanUnit = point
             gestureStateHandler.beganPanWithOverlay = currentOverlayType == .main
@@ -643,16 +650,16 @@ extension VideoPlayer {
             if !gestureStateHandler.beganPanWithOverlay {
                 showOverlay(nil)
             }
-            
+
             isScrubbing = false
-            
+
             return
         }
-        
+
         let newProgress = gestureStateHandler.beginningPanProgress - (gestureStateHandler.beginningHorizontalPanUnit - point) * rate
         currentProgressHandler.scrubbedProgress = clamp(newProgress, min: 0, max: 1)
     }
-    
+
     private func subtitleOffsetAction(
         state: UIGestureRecognizer.State,
         point: CGFloat,
@@ -666,15 +673,18 @@ extension VideoPlayer {
         } else if state == .ended {
             return
         }
-        
-        let newOffset = gestureStateHandler.beginningSubtitleOffset - round(Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000), toNearest: 100)
-        let clampedOffset = clamp(newOffset, min: -30_000, max: 30_000)
-        
+
+        let newOffset = gestureStateHandler.beginningSubtitleOffset - round(
+            Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000),
+            toNearest: 100
+        )
+        let clampedOffset = clamp(newOffset, min: -30000, max: 30000)
+
         updateViewProxy.present(systemName: "speaker.wave.2.fill", title: clampedOffset.millisecondToSecondLabel)
-        
+
         subtitleOffset = clampedOffset
     }
-    
+
     private func volumeAction(
         state: UIGestureRecognizer.State,
         point: CGFloat,
@@ -683,7 +693,7 @@ extension VideoPlayer {
     ) {
         let volumeView = MPVolumeView()
         guard let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider else { return }
-        
+
         if state == .began {
             gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
             gestureStateHandler.beginningHorizontalPanUnit = point
@@ -691,9 +701,9 @@ extension VideoPlayer {
         } else if state == .ended {
             return
         }
-        
+
         let newVolume = gestureStateHandler.beginningVolumeValue - Float(gestureStateHandler.beginningHorizontalPanUnit - point)
-        
+
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
             slider.value = newVolume
         }

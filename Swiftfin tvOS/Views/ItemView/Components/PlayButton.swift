@@ -15,15 +15,15 @@ extension ItemView {
 
         @Injected(LogManager.service)
         private var logger
-        
+
 //        @EnvironmentObject
 //        private var mainRouter: MainCoordinator.Router
         @EnvironmentObject
         private var router: ItemCoordinator.Router
-        
+
         @ObservedObject
         var viewModel: ItemViewModel
-        
+
         @FocusState
         private var isFocused: Bool
 

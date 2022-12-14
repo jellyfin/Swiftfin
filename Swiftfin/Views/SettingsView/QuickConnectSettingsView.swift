@@ -14,35 +14,58 @@ struct QuickConnectSettingsView: View {
     @ObservedObject
     var viewModel: QuickConnectSettingsViewModel
 
+    @State
+    private var code: String = ""
+    @State
+    private var error: Error?
+    @State
+    private var isPresentingError: Bool = false
+    @State
+    private var isPresentingSuccess: Bool = false
+
     var body: some View {
         Form {
             Section(header: L10n.quickConnect.text) {
-                TextField(L10n.quickConnectCode, text: $viewModel.quickConnectCode)
+                TextField(L10n.quickConnectCode, text: $code)
                     .keyboardType(.numberPad)
                     .disabled(viewModel.isLoading)
 
                 Button {
-                    viewModel.sendQuickConnect()
+                    Task {
+                        do {
+                            try await viewModel.authorize(code: code)
+                            isPresentingSuccess = true
+                        } catch {
+                            self.error = error
+                            isPresentingError = true
+                        }
+                    }
                 } label: {
                     L10n.authorize.text
                         .font(.callout)
-                        .disabled((viewModel.quickConnectCode.count != 6) || viewModel.isLoading)
+                        .disabled(code.count != 6 || viewModel.isLoading)
                 }
             }
-            .alert(isPresented: $viewModel.showSuccessMessage) {
-                Alert(
-                    title: L10n.quickConnect.text,
-                    message: L10n.quickConnectSuccessMessage.text,
-                    dismissButton: .default(L10n.ok.text)
-                )
-            }
         }
-//        .alert(item: $viewModel.errorMessage) { _ in
-//            Alert(
-//                title: Text(viewModel.alertTitle),
-//                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-//                dismissButton: .cancel()
-//            )
-//        }
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingError
+        ) {
+            Button(role: .cancel) {} label: {
+                Text("Dismiss")
+            }
+        } message: {
+            Text(error?.localizedDescription ?? .emptyDash)
+        }
+        .alert(
+            L10n.quickConnect,
+            isPresented: $isPresentingSuccess
+        ) {
+            Button(role: .cancel) {} label: {
+                Text("Dismiss")
+            }
+        } message: {
+            L10n.quickConnectSuccessMessage.text
+        }
     }
 }

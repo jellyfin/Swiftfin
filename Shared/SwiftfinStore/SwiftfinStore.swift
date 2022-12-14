@@ -54,7 +54,7 @@ enum SwiftfinStore {
             static var sample: Server {
                 .init(
                     urls: [
-                        .init(string: "http://localhost:8096")!
+                        .init(string: "http://localhost:8096")!,
                     ],
                     currentURL: .init(string: "http://localhost:8096")!,
                     name: "Johnny's Tree",
@@ -67,12 +67,12 @@ enum SwiftfinStore {
         }
 
         struct User: Hashable, Identifiable {
-            
+
             let accessToken: String
             let id: String
             let serverID: String
             let username: String
-            
+
             fileprivate init(
                 accessToken: String,
                 id: String,
@@ -84,7 +84,7 @@ enum SwiftfinStore {
                 self.serverID = serverID
                 self.username = username
             }
-            
+
             static var sample: Self {
                 .init(
                     accessToken: "open-sesame",
@@ -137,7 +137,7 @@ enum SwiftfinStore {
         }
 
         final class StoredUser: CoreStoreObject {
-            
+
             @Field.Stored("accessToken")
             var accessToken: String = ""
 
@@ -173,7 +173,7 @@ enum SwiftfinStore {
     }
 
     // MARK: dataStack
-    
+
     private static let v1Schema = CoreStoreSchema(
         modelVersion: "V1",
         entities: [
@@ -182,16 +182,16 @@ enum SwiftfinStore {
         ],
         versionLock: [
             "Server": [
-                0x4e88201635c2bb5,
-                0x7a785d8a65d177c,
-                0x3fe67b5bd4026eee,
-                0x889316d4188eb136
+                0x4E8_8201_635C_2BB5,
+                0x7A7_85D8_A65D_177C,
+                0x3FE6_7B5B_D402_6EEE,
+                0x8893_16D4_188E_B136,
             ],
             "User": [
-                0x100144f14d4d5a31,
-                0x828f79437d0b4c03,
-                0x38245761b815d61a,
-                0x3c1dbf68e42b1da6
+                0x1001_44F1_4D4D_5A31,
+                0x828F_7943_7D0B_4C03,
+                0x3824_5761_B815_D61A,
+                0x3C1D_BF68_E42B_1DA6,
             ],
         ]
     )

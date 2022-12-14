@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-//enum NetworkError: Error {
+// enum NetworkError: Error {
 //
 //    /// For the case that the ErrorResponse object has a code of -1
 //    case URLError(response: ErrorResponse, displayMessage: String?)
@@ -111,4 +111,4 @@ import JellyfinAPI
 //
 //        return errorMessage
 //    }
-//}
+// }

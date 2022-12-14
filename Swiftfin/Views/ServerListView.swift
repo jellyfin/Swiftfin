@@ -108,7 +108,7 @@ struct ServerListView: View {
             Image(systemName: "gearshape.fill")
                 .accessibilityLabel(L10n.settings)
         }
-        
+
         Button {
             viewModel.purge()
         } label: {

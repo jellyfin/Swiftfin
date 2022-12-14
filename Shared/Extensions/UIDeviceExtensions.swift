@@ -20,7 +20,7 @@ extension UIDevice {
     static var isPhone: Bool {
         UIDevice.current.userInterfaceIdiom == .phone
     }
-    
+
     static var platform: String {
         #if os(tvOS)
         "tvOS"

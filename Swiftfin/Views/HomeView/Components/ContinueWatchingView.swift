@@ -15,6 +15,7 @@ extension HomeView {
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
+        
         @ObservedObject
         var viewModel: HomeViewModel
 
@@ -31,7 +32,7 @@ extension HomeView {
                     } label: {
                         Label("Played", systemImage: "checkmark.circle")
                     }
-                    
+
                     Button(role: .destructive) {
                         viewModel.markItemUnplayed(item)
                     } label: {

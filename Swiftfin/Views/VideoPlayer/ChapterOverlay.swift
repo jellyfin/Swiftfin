@@ -14,7 +14,7 @@ import VLCUI
 extension VideoPlayer.Overlay {
 
     struct ChapterOverlay: View {
-        
+
         @Default(.accentColor)
         private var accentColor
 
@@ -83,7 +83,7 @@ extension VideoPlayer.Overlay {
                     .onSelect { info in
                         let seconds = info.chapterInfo.startTimeSeconds
                         videoPlayerProxy.setTime(.seconds(seconds))
-                        
+
                         if videoPlayerManager.state != .playing {
                             videoPlayerProxy.play()
                         }

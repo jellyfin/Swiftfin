@@ -7,6 +7,7 @@
 //
 
 import Algorithms
+import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -107,54 +108,6 @@ extension BaseItemDto {
         return 0
     }
 
-    // MARK: ItemDetail
-
-    struct ItemDetail {
-        let title: String
-        let content: String
-    }
-
-    func createInformationItems() -> [ItemDetail] {
-        var informationItems: [ItemDetail] = []
-
-        if let productionYear = productionYear {
-            informationItems.append(ItemDetail(title: L10n.released, content: "\(productionYear)"))
-        }
-
-        if let rating = officialRating {
-            informationItems.append(ItemDetail(title: L10n.rated, content: "\(rating)"))
-        }
-
-        if let runtime = getItemRuntime() {
-            informationItems.append(ItemDetail(title: L10n.runtime, content: runtime))
-        }
-
-        return informationItems
-    }
-
-    func createMediaItems() -> [ItemDetail] {
-        var mediaItems: [ItemDetail] = []
-
-        if let mediaStreams = mediaStreams {
-            let audioStreams = mediaStreams.filter { $0.type == .audio }
-            let subtitleStreams = mediaStreams.filter { $0.type == .subtitle }
-
-            if !audioStreams.isEmpty {
-                let audioList = audioStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                    .joined(separator: "\n")
-                mediaItems.append(ItemDetail(title: L10n.audio, content: audioList))
-            }
-
-            if !subtitleStreams.isEmpty {
-                let subtitleList = subtitleStreams.compactMap { "\($0.displayTitle ?? L10n.noTitle) (\($0.codec ?? L10n.noCodec))" }
-                    .joined(separator: "\n")
-                mediaItems.append(ItemDetail(title: L10n.subtitles, content: subtitleList))
-            }
-        }
-
-        return mediaItems
-    }
-
     var subtitleStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .subtitle } ?? []
     }
@@ -165,7 +118,7 @@ extension BaseItemDto {
 
     // MARK: Missing and Unaired
 
-    var missing: Bool {
+    var isMissing: Bool {
         locationType == .virtual
     }
 
@@ -199,24 +152,6 @@ extension BaseItemDto {
 
     // MARK: Chapter Images
 
-    func getChapterImage(maxWidth: Int) -> [URL] {
-        guard let chapters = chapters, !chapters.isEmpty else { return [] }
-
-        var chapterImageURLs: [URL] = []
-
-        for chapterIndex in 0 ..< chapters.count {
-//            let urlString = ImageAPI.getItemImageWithRequestBuilder(
-//                itemId: id ?? "",
-//                imageType: .chapter,
-//                maxWidth: maxWidth,
-//                imageIndex: chapterIndex
-//            ).URLString
-//            chapterImageURLs.append(URL(string: urlString)!)
-        }
-
-        return chapterImageURLs
-    }
-
     var fullChapterInfo: [ChapterInfo.FullInfo] {
         guard let chapters else { return [] }
 
@@ -229,16 +164,20 @@ extension BaseItemDto {
         return chapters
             .enumerated()
             .map { index, chapterInfo in
-
-//                let imageURL = ImageAPI.getItemImageWithRequestBuilder(
-//                    itemId: id ?? "",
-//                    imageType: .chapter,
-//                    maxWidth: 500,
-//                    quality: 90,
-//                    imageIndex: index
-//                ).url
                 
-                let imageURL = URL(string: "/")!
+                let client = Container.userSession.callAsFunction().client
+                let parameters = Paths.GetItemImageParameters(
+                    maxWidth: 500,
+                    quality: 90,
+                    imageIndex: index
+                )
+                let request = Paths.getItemImage(
+                    itemID: id ?? "",
+                    imageType: ImageType.chapter.rawValue,
+                    parameters: parameters
+                )
+
+                let imageURL = client.fullURL(with: request)
 
                 let range = ranges.first(where: { $0.first == chapterInfo.startTimeSeconds }) ?? startTimeSeconds ..< startTimeSeconds + 1
 
@@ -251,35 +190,4 @@ extension BaseItemDto {
     }
 }
 
-extension BaseItemDto.ImageBlurHashes {
-    subscript(imageType: ImageType) -> [String: String]? {
-        switch imageType {
-        case .primary:
-            return primary
-        case .art:
-            return art
-        case .backdrop:
-            return backdrop
-        case .banner:
-            return banner
-        case .logo:
-            return logo
-        case .thumb:
-            return thumb
-        case .disc:
-            return disc
-        case .box:
-            return box
-        case .screenshot:
-            return screenshot
-        case .menu:
-            return menu
-        case .chapter:
-            return chapter
-        case .boxRear:
-            return boxRear
-        case .profile:
-            return profile
-        }
-    }
-}
+

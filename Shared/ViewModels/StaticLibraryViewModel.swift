@@ -14,6 +14,6 @@ class StaticLibraryViewModel: PagingLibraryViewModel {
     init(items: [BaseItemDto]) {
         super.init()
 
-        self.items = items
+        self.items.elements = items
     }
 }

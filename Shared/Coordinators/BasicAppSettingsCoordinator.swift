@@ -24,7 +24,7 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
         #if os(tvOS)
         Text("")
         #else
-        AboutAppView(viewModel: .init(server: .sample, user: .sample))
+        AboutAppView(viewModel: .init())
         #endif
     }
 

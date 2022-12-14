@@ -10,19 +10,19 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
-    
+
     struct OverviewView: View {
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
-        
+
         let item: BaseItemDto
         private var overviewLineLimit: Int
         private var taglineLineLimit: Int
-        
+
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
-                
+
                 if let firstTagline = item.taglines?.first {
                     Text(firstTagline)
                         .font(.body)
@@ -45,7 +45,7 @@ extension ItemView {
 }
 
 extension ItemView.OverviewView {
-    
+
     init(item: BaseItemDto) {
         self.init(
             item: item,
@@ -53,11 +53,11 @@ extension ItemView.OverviewView {
             taglineLineLimit: 1000
         )
     }
-    
+
     func overviewLineLimit(_ limit: Int) -> Self {
         copy(modifying: \.overviewLineLimit, with: limit)
     }
-    
+
     func taglineLineLimit(_ limit: Int) -> Self {
         copy(modifying: \.taglineLineLimit, with: limit)
     }

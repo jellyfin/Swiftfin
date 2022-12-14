@@ -10,7 +10,7 @@ import Files
 import SwiftUI
 
 struct ActivityView: UIViewControllerRepresentable {
-    
+
     let file: File
 
     func makeUIViewController(context: Context) -> UIActivityViewController {

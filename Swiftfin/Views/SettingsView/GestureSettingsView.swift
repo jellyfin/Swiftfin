@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 
 struct GestureSettingsView: View {
-    
+
     @Default(.VideoPlayer.Gesture.horizontalPanGesture)
     private var horizontalPanGesture
     @Default(.VideoPlayer.Gesture.horizontalSwipeGesture)
@@ -25,26 +25,26 @@ struct GestureSettingsView: View {
     private var verticalPanGestureLeft
     @Default(.VideoPlayer.Gesture.verticalPanGestureRight)
     private var verticalPanGestureRight
-    
+
     var body: some View {
         Form {
-            
+
             Section {
 
                 EnumPicker(title: "Horizontal Pan", selection: $horizontalPanGesture)
                     .disabled(horizontalSwipeGesture != .none && horizontalPanGesture == .none)
-                
+
                 EnumPicker(title: "Horizontal Swipe", selection: $horizontalSwipeGesture)
                     .disabled(horizontalPanGesture != .none && horizontalSwipeGesture == .none)
-                
+
                 EnumPicker(title: "Long Press", selection: $longPressGesture)
-                
+
                 EnumPicker(title: "Multi Tap", selection: $multiTapGesture)
-                
+
                 EnumPicker(title: "Pinch", selection: $pinchGesture)
-                
+
                 EnumPicker(title: "Left Vertical Pan", selection: $verticalPanGestureLeft)
-                
+
                 EnumPicker(title: "Right Vertical Pan", selection: $verticalPanGestureRight)
             }
         }

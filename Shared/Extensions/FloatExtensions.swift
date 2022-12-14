@@ -9,8 +9,8 @@
 import Foundation
 
 extension Float {
-    
-    var rateLabel : String {
+
+    var rateLabel: String {
         String(format: "%.2f", self).appending("x")
     }
 }

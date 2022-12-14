@@ -23,51 +23,25 @@ final class EpisodeItemViewModel: ItemViewModel {
     }
 
     override func updateItem() {
-//        ItemsAPI.getItems(
-////            userId: "123abc",
-//            userId: "123abc",
-//            limit: 1,
-//            fields: [
-//                .primaryImageAspectRatio,
-//                .seriesPrimaryImage,
-//                .seasonUserData,
-//                .overview,
-//                .genres,
-//                .people,
-//                .chapters,
-//            ],
-//            enableUserData: true,
-//            ids: [item.id ?? ""]
-//        )
-//        .sink { completion in
-//            self.handleAPIRequestError(completion: completion)
-//        } receiveValue: { response in
-//            if let item = response.items?.first {
-//                self.item = item
-//                self.playButtonItem = item
-//            }
-//        }
-//        .store(in: &cancellables)
+        
     }
 
     private func getSeriesItem() {
-//        guard let seriesID = item.seriesId else { return }
-//
-//        ItemsAPI.getItems(
-////            userId: "123abc",
-//            userId: "123abc",
-//            limit: 1,
-//            fields: ItemFields.allCases,
-//            enableUserData: true,
-//            ids: [seriesID]
-//        )
-//        .trackActivity(loading)
-//        .sink(receiveCompletion: { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        }, receiveValue: { [weak self] response in
-//            guard let firstItem = response.items?.first else { return }
-//            self?.seriesItem = firstItem
-//        })
-//        .store(in: &cancellables)
+        guard let seriesID = item.seriesID else { return }
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                limit: 1,
+                fields: ItemFields.allCases,
+                enableUserData: true,
+                ids: [seriesID]
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                seriesItem = response.value.items?.first
+            }
+        }
     }
 }

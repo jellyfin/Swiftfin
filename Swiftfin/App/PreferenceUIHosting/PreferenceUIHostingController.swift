@@ -12,7 +12,7 @@ import UIKit
 // MARK: PreferenceUIHostingController
 
 class PreferenceUIHostingController: UIHostingController<AnyView> {
-    
+
     init<V: View>(@ViewBuilder wrappedView: @escaping () -> V) {
         let box = Box()
         super.init(rootView: AnyView(
@@ -78,41 +78,41 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
             overrideUserInterfaceStyle = _viewPreference
         }
     }
-    
+
     public var _keyCommands: [KeyCommandAction] = []
-    
+
     override var keyCommands: [UIKeyCommand]? {
-        let castedCommands: [UIKeyCommand] = _keyCommands.map({ .init(
+        let castedCommands: [UIKeyCommand] = _keyCommands.map { .init(
             title: $0.title,
             action: #selector(keyCommandHit),
             input: $0.input,
             modifierFlags: $0.modifierFlags
-        )})
-        
-        castedCommands.forEach({ $0.wantsPriorityOverSystemBehavior = true })
-        
+        ) }
+
+        castedCommands.forEach { $0.wantsPriorityOverSystemBehavior = true }
+
         return castedCommands
     }
-    
+
     @objc
     private func keyCommandHit(keyCommand: UIKeyCommand) {
         guard let action = _keyCommands.first(where: { $0.input == keyCommand.input }) else { return }
-        
+
         action.action()
     }
 }
 
 struct KeyCommandAction: Equatable {
-    
+
     static func == (lhs: KeyCommandAction, rhs: KeyCommandAction) -> Bool {
         lhs.input == rhs.input
     }
-    
+
     let title: String
     let input: String
     let modifierFlags: UIKeyModifierFlags
     let action: () -> Void
-    
+
     init(
         title: String,
         input: String,
@@ -129,7 +129,7 @@ struct KeyCommandAction: Equatable {
 // MARK: Preference Keys
 
 struct KeyCommandsPreferenceKey: PreferenceKey {
-    
+
     static var defaultValue: [KeyCommandAction] = []
 
     static func reduce(value: inout [KeyCommandAction], nextValue: () -> [KeyCommandAction]) {
@@ -168,7 +168,7 @@ struct ViewPreferenceKey: PreferenceKey {
 // MARK: Preference Key View Extension
 
 extension View {
-    
+
     func keyCommands(_ commands: [KeyCommandAction]) -> some View {
         preference(key: KeyCommandsPreferenceKey.self, value: commands)
     }

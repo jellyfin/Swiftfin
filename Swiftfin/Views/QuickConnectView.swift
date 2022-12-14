@@ -12,7 +12,7 @@ struct QuickConnectView: View {
 
     @EnvironmentObject
     private var router: QuickConnectCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: UserSignInViewModel
 
@@ -59,10 +59,10 @@ struct QuickConnectView: View {
     }
 }
 
-//public static func updates<Value: Serializable>(
+// public static func updates<Value: Serializable>(
 //    _ key: Key<Value>,
 //    initial: Bool = true
-//) -> AsyncStream<Value> { // TODO: Make this `some AsyncSequence<Value>` when Swift 6 is out.
+// ) -> AsyncStream<Value> { // TODO: Make this `some AsyncSequence<Value>` when Swift 6 is out.
 //    .init { continuation in
 //        let observation = UserDefaultsKeyObservation(object: key.suite, key: key.name) { change in
 //            // TODO: Use the `.deserialize` method directly.
@@ -76,6 +76,6 @@ struct QuickConnectView: View {
 //            observation.invalidate()
 //        }
 //    }
-//}
+// }
 
-//for await newValue in Defaults.updates(.accentColor) {
+// for await newValue in Defaults.updates(.accentColor) {

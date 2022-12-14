@@ -15,12 +15,12 @@ import JellyfinAPI
 import UIKit
 
 final class SwiftfinSession {
-    
+
     let client: JellyfinClient
     let server: ServerState
     let user: UserState
     let authenticated: Bool
-    
+
     init(
         server: ServerState,
         user: UserState,
@@ -29,28 +29,28 @@ final class SwiftfinSession {
         self.server = server
         self.user = user
         self.authenticated = authenticated
-        
+
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
             accessToken: user.accessToken
         )
-        
+
         self.client = client
     }
 }
 
 final class BasicServerSession {
-    
+
     let client: JellyfinClient
     let server: ServerState
-    
+
     init(server: ServerState) {
         self.server = server
-        
+
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL)
         )
-        
+
         self.client = client
     }
 }
@@ -61,13 +61,13 @@ extension Container.Scope {
 }
 
 extension Container {
-    
+
     static let basicServerSessionScope = ParameterFactory<ServerState, BasicServerSession>(scope: .basicServerSessionScope) {
         .init(server: $0)
     }
-    
+
     static let userSession = Factory<SwiftfinSession>(scope: .userSessionScope) {
-        
+
         if let lastUserID = Defaults[.lastServerUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(
                From<SwiftfinStore.Models.StoredUser>(),
@@ -79,7 +79,7 @@ extension Container {
             else {
                 fatalError("No associated server for last user")
             }
-            
+
             return .init(
                 server: server.state,
                 user: user.state,
@@ -90,25 +90,25 @@ extension Container {
             return .init(
                 server: .sample,
                 user: .sample,
-                authenticated: true
+                authenticated: false
             )
         }
     }
 }
 
 extension JellyfinClient.Configuration {
-    
+
     static func swiftfinConfiguration(url: URL) -> Self {
-        
+
         let client = "Swiftfin \(UIDevice.platform)"
         let deviceName = UIDevice.current.name
             .folding(options: .diacriticInsensitive, locale: .current)
             .unicodeScalars
-            .filter({ CharacterSet.urlQueryAllowed.contains($0) })
+            .filter { CharacterSet.urlQueryAllowed.contains($0) }
             .description
         let deviceID = "\(UIDevice.platform)_\(UIDevice.vendorUUIDString)"
         let version = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "0.0.1"
-        
+
         return .init(
             url: url,
             client: client,

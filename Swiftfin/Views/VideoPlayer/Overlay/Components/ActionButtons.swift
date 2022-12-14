@@ -13,17 +13,17 @@ import VLCUI
 extension VideoPlayer.Overlay {
 
     struct ActionButtons: View {
-        
+
         // TODO: organize
 
         @Default(.VideoPlayer.showAudioTrackMenu)
         private var showAudioTrackMenu
         @Default(.VideoPlayer.showSubtitleTrackMenu)
         private var showSubtitleTrackMenu
-        
+
         @Default(.VideoPlayer.showPlaybackSpeed)
         private var showPlaybackSpeed
-        
+
         @Default(.VideoPlayer.showAspectFill)
         private var showAspectFill
         @Default(.VideoPlayer.autoPlay)
@@ -45,7 +45,7 @@ extension VideoPlayer.Overlay {
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
-        
+
         @ViewBuilder
         private var aspectFillButton: some View {
             Button {
@@ -71,7 +71,7 @@ extension VideoPlayer.Overlay {
                 .frame(width: 50, height: 50)
             }
         }
-        
+
         @ViewBuilder
         private var autoPlayButton: some View {
             Button {
@@ -87,7 +87,7 @@ extension VideoPlayer.Overlay {
                 .frame(width: 50, height: 50)
             }
         }
-        
+
         @ViewBuilder
         private var audioTrackMenu: some View {
             Menu {
@@ -106,7 +106,7 @@ extension VideoPlayer.Overlay {
                 Image(systemName: "speaker.wave.2")
             }
         }
-        
+
         @ViewBuilder
         private var nextItemButton: some View {
             Button {
@@ -118,7 +118,7 @@ extension VideoPlayer.Overlay {
             .disabled(videoPlayerManager.nextViewModel == nil)
             .foregroundColor(videoPlayerManager.nextViewModel == nil ? .gray : .white)
         }
-        
+
         @ViewBuilder
         private var playbackSpeedMenu: some View {
             Menu {
@@ -133,7 +133,7 @@ extension VideoPlayer.Overlay {
                         }
                     }
                 }
-                
+
                 if !PlaybackSpeed.allCases.map(\.rawValue).contains(where: { $0 == Double(videoPlayerManager.playbackSpeed) }) {
                     Label(String(format: "%.2f", videoPlayerManager.playbackSpeed).appending("x"), systemImage: "checkmark")
                 }
@@ -142,7 +142,7 @@ extension VideoPlayer.Overlay {
             }
             .frame(width: 50, height: 50)
         }
-        
+
         @ViewBuilder
         private var previousItemButton: some View {
             Button {
@@ -154,7 +154,7 @@ extension VideoPlayer.Overlay {
             .disabled(videoPlayerManager.previousViewModel == nil)
             .foregroundColor(videoPlayerManager.previousViewModel == nil ? .gray : .white)
         }
-        
+
         @ViewBuilder
         private var subtitleTrackMenu: some View {
             Menu {
@@ -191,15 +191,15 @@ extension VideoPlayer.Overlay {
                         autoPlayButton
                     }
                 }
-                
+
                 if showPlaybackSpeed {
                     playbackSpeedMenu
                 }
-                
+
                 if !viewModel.audioStreams.isEmpty && showAudioTrackMenu {
                     audioTrackMenu
                 }
-                
+
                 if !viewModel.subtitleStreams.isEmpty && showSubtitleTrackMenu {
                     subtitleTrackMenu
                 }

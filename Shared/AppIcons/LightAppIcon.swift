@@ -9,14 +9,14 @@
 import Foundation
 
 enum LightAppIcon: String, AppIcon {
-    
+
     case blue
     case green
     case orange
     case red
     case yellow
     case jellyfin
-    
+
     var displayTitle: String {
         switch self {
         case .blue:
@@ -33,6 +33,6 @@ enum LightAppIcon: String, AppIcon {
             return "Jellyfin"
         }
     }
-    
+
     static let tag: String = "light"
 }

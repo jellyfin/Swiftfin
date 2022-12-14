@@ -14,11 +14,14 @@ class ViewModel: ObservableObject {
 
     @Injected(LogManager.service)
     var logger
-    
+
+    @Injected(Container.userSession)
+    var userSession
+
     @Published
     var isLoading = false
 
     var cancellables = Set<AnyCancellable>()
 
-    init() { }
+    init() {}
 }

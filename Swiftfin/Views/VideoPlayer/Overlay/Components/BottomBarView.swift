@@ -27,7 +27,7 @@ extension VideoPlayer.Overlay {
         private var sliderType
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
-        
+
         @Default(.Experimental.lastChapterNextItem)
         private var lastChapterNextItem
 
@@ -157,7 +157,7 @@ extension VideoPlayer.Overlay {
                 }
                 .padding(.leading, 5)
                 .padding(.bottom, 15)
-                
+
                 Group {
                     switch sliderType {
                     case .capsule: capsuleSlider
@@ -173,7 +173,7 @@ extension VideoPlayer.Overlay {
                     if isScrubbing && Defaults[.hapticFeedback] {
                         UIDevice.impact(.light)
                     }
-                    
+
                     self.currentChapter = newChapter
                 }
             }

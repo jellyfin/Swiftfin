@@ -9,15 +9,15 @@
 import Foundation
 
 enum PrimaryAppIcon: String, AppIcon {
-    
+
     case primary
-    
+
     var displayTitle: String {
         switch self {
         case .primary:
             return "Primary"
         }
     }
-    
+
     static let tag: String = "primary"
 }

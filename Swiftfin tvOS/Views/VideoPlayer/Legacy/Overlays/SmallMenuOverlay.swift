@@ -1,3 +1,11 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+//
+
 ////
 //// Swiftfin is subject to the terms of the Mozilla Public
 //// License, v2.0. If a copy of the MPL was not distributed with this
@@ -6,11 +14,11 @@
 //// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 ////
 //
-//import JellyfinAPI
-//import SwiftUI
+// import JellyfinAPI
+// import SwiftUI
 //
 //// TODO: Needs replacement/reworking
-//struct SmallMediaStreamSelectionView: View {
+// struct SmallMediaStreamSelectionView: View {
 //
 //    enum Layer: Hashable {
 //        case subtitles
@@ -365,4 +373,4 @@
 //            }
 //        }
 //    }
-//}
+// }

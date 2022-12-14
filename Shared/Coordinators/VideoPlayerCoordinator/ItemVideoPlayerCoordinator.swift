@@ -13,12 +13,12 @@ import Stinsen
 import SwiftUI
 
 final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
-    
+
     struct Parameters {
         let item: BaseItemDto
         let mediaSource: MediaSourceInfo
     }
-    
+
     @Default(.Experimental.nativePlayer)
     private var nativePlayer
 
@@ -36,7 +36,7 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         #if os(iOS)
-        
+
         PreferenceUIHostingControllerView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
@@ -55,18 +55,18 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
         .onAppear {
             AppDelegate.changeOrientation(.landscape)
         }
-        
+
         #else
-        
+
         VideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
             .ignoresSafeArea()
-        
+
         #endif
     }
 }
 
 extension View {
-    
+
     @ViewBuilder
     func iOS16HideSystemOverlays() -> some View {
         if #available(iOS 16, tvOS 16, *) {

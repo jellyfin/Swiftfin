@@ -33,7 +33,7 @@ extension EpisodeItemView {
                 }
 
                 // MARK: Overview
-                
+
                 ItemView.OverviewView(item: viewModel.item)
                     .overviewLineLimit(4)
                     .padding(.horizontal)

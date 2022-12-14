@@ -53,7 +53,7 @@ extension VideoPlayer.Overlay {
                 .font(.system(size: 24))
                 .tint(Color.white)
                 .foregroundColor(Color.white)
-                
+
                 if let subtitle = viewModel.item.subtitle {
                     Text(subtitle)
                         .font(.subheadline)

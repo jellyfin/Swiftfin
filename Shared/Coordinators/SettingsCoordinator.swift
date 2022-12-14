@@ -13,12 +13,12 @@ import Stinsen
 import SwiftUI
 
 final class SettingsCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \SettingsCoordinator.start)
 
     @Root
     var start = makeStart
-    
+
     @Route(.push)
     var about = makeAbout
     #if !os(tvOS)
@@ -46,36 +46,35 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var shareFile = makeShareFile
     #endif
-    
+
     private let viewModel: SettingsViewModel
-    
+
     init() {
-//        viewModel = .init(server: SessionManager.main.currentLogin.server, user: SessionManager.main.currentLogin.user)
-        viewModel = .init(server: .sample, user: .sample)
+        viewModel = .init()
     }
-    
+
     @ViewBuilder
     func makeAbout() -> some View {
         AboutAppView(viewModel: viewModel)
     }
-    
+
     #if !os(tvOS)
     @ViewBuilder
     func makeAppIconSelector() -> some View {
         AppIconSelectorView(viewModel: viewModel)
     }
     #endif
-    
+
     @ViewBuilder
     func makeCustomizeViewsSettings() -> some View {
         CustomizeViewsSettings()
     }
-    
+
     @ViewBuilder
     func makeExperimentalSettings() -> some View {
         ExperimentalSettingsView()
     }
-    
+
     #if !os(tvOS)
     @ViewBuilder
     func makeNativePlayerSettings() -> some View {
@@ -85,8 +84,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeServerDetail() -> some View {
-//        ServerDetailView(viewModel: .init(server: SessionManager.main.currentLogin.server))
-        Text("")
+        ServerDetailView(viewModel: .init(server: .sample))
     }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
@@ -98,12 +96,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeQuickConnectSettings() -> some View {
         QuickConnectSettingsView(viewModel: .init())
     }
-    
+
     @ViewBuilder
     func makeLog() -> some View {
         ConsoleView()
     }
-    
+
     @ViewBuilder
     func makeShareFile(file: File) -> some View {
         ActivityView(file: file)

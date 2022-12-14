@@ -25,7 +25,7 @@ extension VideoPlayer.Overlay {
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
-        
+
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
@@ -36,7 +36,7 @@ extension VideoPlayer.Overlay {
             }
             .contentShape(Rectangle())
         }
-        
+
         @ViewBuilder
         private var playButton: some View {
             Button {
@@ -62,7 +62,7 @@ extension VideoPlayer.Overlay {
             }
             .contentShape(Rectangle())
         }
-        
+
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
@@ -76,7 +76,7 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             HStack(spacing: 0) {
-                
+
                 Spacer(minLength: 100)
 
                 if showJumpButtons {
@@ -85,11 +85,11 @@ extension VideoPlayer.Overlay {
 
                 playButton
                     .frame(minWidth: 100, maxWidth: 300)
-                
+
                 if showJumpButtons {
                     jumpForwardButton
                 }
-                
+
                 Spacer(minLength: 100)
             }
             .tint(Color.white)

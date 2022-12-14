@@ -125,7 +125,7 @@ extension ItemView.iPadOSCinematicScrollView {
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.white)
                     }
-                    
+
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(3)
                         .taglineLineLimit(1)

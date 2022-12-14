@@ -12,10 +12,19 @@ import SwiftUI
 
 struct BasicAppSettingsView: View {
 
+    @Default(.accentColor)
+    private var accentColor
+    @Default(.appAppearance)
+    private var appAppearance
+    @Default(.defaultHTTPScheme)
+    private var defaultHTTPScheme
+    
     @EnvironmentObject
     private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
+    
     @ObservedObject
     var viewModel: BasicAppSettingsViewModel
+    
     @State
     var resetUserSettingsTapped: Bool = false
     @State
@@ -23,16 +32,9 @@ struct BasicAppSettingsView: View {
     @State
     var removeAllUsersTapped: Bool = false
 
-    @Default(.accentColor)
-    private var accentColor
-    @Default(.appAppearance)
-    var appAppearance
-    @Default(.defaultHTTPScheme)
-    var defaultHTTPScheme
-
     var body: some View {
         Form {
-            
+
             ColorPicker("Accent Color", selection: $accentColor, supportsOpacity: false)
 
             Button {

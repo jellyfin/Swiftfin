@@ -19,9 +19,9 @@ struct OverlaySettingsView: View {
 //    var shouldShowAutoPlay
 
     var body: some View {
-        
+
         Text("")
-        
+
 //        Form {
 //            Section(header: L10n.overlay.text) {
 //

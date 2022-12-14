@@ -10,12 +10,12 @@ import Files
 import SwiftUI
 
 struct TextFileView: View {
-    
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-    
+
     let file: File
-    
+
     var body: some View {
         FileTextView(file: file)
             .navigationTitle(file.name)

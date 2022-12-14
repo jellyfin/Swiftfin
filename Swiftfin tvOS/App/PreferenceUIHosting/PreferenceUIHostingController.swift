@@ -12,7 +12,7 @@ import UIKit
 // MARK: PreferenceUIHostingController
 
 class PreferenceUIHostingController: UIHostingController<AnyView> {
-    
+
     init<V: View>(@ViewBuilder wrappedView: @escaping () -> V) {
         let box = Box()
         super.init(rootView: AnyView(
@@ -25,7 +25,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
                 }
         ))
         box.value = self
-        
+
         addButtonPressRecognizer(pressType: .menu, action: #selector(didPressMenuSelector))
     }
 
@@ -45,9 +45,9 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
             overrideUserInterfaceStyle = _viewPreference
         }
     }
-    
+
     var didPressMenuAction: ActionHolder = .init(action: {})
-    
+
 //    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
 //        guard let pressType = presses.first?.type else { return }
 //
@@ -59,14 +59,14 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 //        default: ()
 //        }
 //    }
-    
+
     private func addButtonPressRecognizer(pressType: UIPress.PressType, action: Selector) {
         let pressRecognizer = UITapGestureRecognizer()
         pressRecognizer.addTarget(self, action: action)
         pressRecognizer.allowedPressTypes = [NSNumber(value: pressType.rawValue)]
         view.addGestureRecognizer(pressRecognizer)
     }
-    
+
     @objc
     private func didPressMenuSelector() {
         didPressMenuAction.action()
@@ -74,7 +74,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 }
 
 struct ActionHolder: Equatable {
-    
+
     static func == (lhs: ActionHolder, rhs: ActionHolder) -> Bool {
         lhs.uuid == rhs.uuid
     }
@@ -96,9 +96,9 @@ struct ViewPreferenceKey: PreferenceKey {
 }
 
 struct DidPressMenuPreferenceKey: PreferenceKey {
-    
+
     static var defaultValue: ActionHolder = .init(action: {})
-    
+
     static func reduce(value: inout ActionHolder, nextValue: () -> ActionHolder) {
         value = nextValue()
     }
@@ -111,7 +111,7 @@ extension View {
     func overrideViewPreference(_ viewPreference: UIUserInterfaceStyle) -> some View {
         preference(key: ViewPreferenceKey.self, value: viewPreference)
     }
-    
+
     func onMenuPressed(_ action: @escaping () -> Void) -> some View {
         preference(key: DidPressMenuPreferenceKey.self, value: ActionHolder(action: action))
     }

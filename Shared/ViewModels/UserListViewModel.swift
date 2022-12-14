@@ -41,13 +41,13 @@ class UserListViewModel: ViewModel {
     }
 
     func fetchUsers() {
-        
+
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
             From<SwiftfinStore.Models.StoredServer>(),
             Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)
         )
         else { fatalError("No stored server associated with given state server?") }
-        
+
         users = storedServer.users.map(\.state).sorted(by: { $0.username < $1.username })
     }
 

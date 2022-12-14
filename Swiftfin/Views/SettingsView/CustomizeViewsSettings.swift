@@ -38,7 +38,7 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     var useSeriesLandscapeBackdrop
-    
+
     @Default(.Customization.Library.showFavorites)
     private var showFavorites
     @Default(.Customization.Library.randomImage)
@@ -46,12 +46,12 @@ struct CustomizeViewsSettings: View {
 
     var body: some View {
         List {
-            
+
             if UIDevice.isPhone {
                 Section {
                     EnumPicker(title: L10n.items, selection: $itemViewType)
                 }
-                
+
                 if itemViewType == .cinematic {
                     Section {
                         Toggle("Use Primary Image", isOn: $cinematicItemViewTypeUsePrimaryImage)
@@ -95,10 +95,10 @@ struct CustomizeViewsSettings: View {
                 // TODO: localize after organization
                 Text("Episode Landscape Poster")
             }
-            
+
             Section {
                 Toggle("Random Image", isOn: $libraryRandomImage)
-                
+
                 Toggle("Show Favorites", isOn: $showFavorites)
             } header: {
                 Text("Library")

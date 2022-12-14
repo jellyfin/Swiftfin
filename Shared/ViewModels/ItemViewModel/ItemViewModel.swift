@@ -19,13 +19,13 @@ class ItemViewModel: ViewModel {
         willSet {
             switch item.type {
             case .episode, .movie:
-                if !item.missing && !item.unaired {
-                    playButtonItem = newValue
-                }
+                guard !item.isMissing else { return }
+                playButtonItem = newValue
             default: ()
             }
         }
     }
+
     @Published
     var playButtonItem: BaseItemDto? {
         willSet {
@@ -49,45 +49,36 @@ class ItemViewModel: ViewModel {
     init(item: BaseItemDto) {
         self.item = item
         super.init()
-        
-        self.selectedMediaSource = item.mediaSources?.first
-        
-        getFullItem()
 
-        switch item.type {
-        case .episode, .movie:
-            if !item.missing && !item.unaired {
-                self.playButtonItem = item
-            }
-        default: ()
-        }
+        getFullItem()
 
         isFavorited = item.userData?.isFavorite ?? false
         isPlayed = item.userData?.isPlayed ?? false
 
         getSimilarItems()
         getSpecialFeatures()
-        refreshItemVideoPlayerViewModel(for: item)
 
         Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
     }
-    
+
     private func getFullItem() {
-        guard let itemID = item.id else { logger.error("Unable to retrieve full item: no item ID"); return }
-        
-//        ItemsAPI.getItemsByUserId(
-//            userId: "123abc",
-//            fields: ItemFields.allCases,
-//            enableUserData: true,
-//            ids: [itemID]
-//        )
-//        .sink { completion in
-//            self.handleAPIRequestError(completion: completion)
-//        } receiveValue: { [weak self] response in
-//            guard let self, let fullItem = response.items?.first else { self?.logger.error("Unable to retrieve full item: item not in response"); return }
-//            self.item = fullItem
-//        }
-//        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                fields: ItemFields.allCases,
+                enableUserData: true,
+                ids: [item.id!]
+            )
+
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let fullItem = response.value.items?.first else { return }
+
+            await MainActor.run {
+                self.item = fullItem
+            }
+        }
     }
 
     @objc
@@ -103,27 +94,13 @@ class ItemViewModel: ViewModel {
         }
     }
 
-    func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
-        guard item.type == .episode || item.type == .movie,
-              !item.missing else { return }
-
-//        item.createItemVideoPlayerViewModel()
-//            .sink { completion in
-//                self.handleAPIRequestError(completion: completion)
-//            } receiveValue: { viewModels in
-//                self.videoPlayerViewModels = viewModels
-//                self.selectedVideoPlayerViewModel = viewModels.first
-//            }
-//            .store(in: &cancellables)
-    }
-
     func playButtonText() -> String {
 
         if item.unaired {
             return L10n.unaired
         }
 
-        if item.missing {
+        if item.isMissing {
             return L10n.missing
         }
 
@@ -135,32 +112,36 @@ class ItemViewModel: ViewModel {
     }
 
     func getSimilarItems() {
-//        LibraryAPI.getSimilarItems(
-//            itemId: item.id!,
-//            userId: "123abc",
-//            limit: 20,
-//            fields: ItemFields.minimumCases
-//        )
-//        .trackActivity(loading)
-//        .sink(receiveCompletion: { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        }, receiveValue: { [weak self] response in
-//            self?.similarItems = response.items ?? []
-//        })
-//        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetSimilarItemsParameters(
+                userID: userSession.user.id,
+                limit: 20,
+                fields: ItemFields.minimumCases
+            )
+            let request = Paths.getSimilarItems(
+                itemID: item.id!,
+                parameters: parameters
+            )
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                similarItems = response.value.items ?? []
+            }
+        }
     }
 
     func getSpecialFeatures() {
-//        UserLibraryAPI.getSpecialFeatures(
-//            userId: "123abc",
-//            itemId: item.id!
-//        )
-//        .sink { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        } receiveValue: { [weak self] items in
-//            self?.specialFeatures = items.filter { $0.specialFeatureType?.isVideo ?? false }
-//        }
-//        .store(in: &cancellables)
+        Task {
+            let request = Paths.getSpecialFeatures(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                specialFeatures = response.value.filter { $0.specialFeatureType?.isVideo ?? false }
+            }
+        }
     }
 
     func toggleWatchState() {

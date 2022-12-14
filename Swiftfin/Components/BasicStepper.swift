@@ -9,22 +9,22 @@
 import SwiftUI
 
 struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
-    
+
     @Binding
     private var value: Value
-    
+
     private let title: String
     private let range: ClosedRange<Value>
     private let step: Value.Stride
     private var formatter: (Value) -> String
-    
+
     var body: some View {
         Stepper(value: $value, in: range, step: step) {
             HStack {
                 Text(title)
-                
+
                 Spacer()
-                
+
                 formatter(value).text
                     .foregroundColor(.secondary)
             }
@@ -33,7 +33,7 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
 }
 
 extension BasicStepper {
-    
+
     init(
         title: String,
         value: Binding<Value>,
@@ -46,7 +46,7 @@ extension BasicStepper {
         self._value = value
         self.formatter = { $0.description }
     }
-    
+
     func valueFormatter(_ formatter: @escaping (Value) -> String) -> Self {
         copy(modifying: \.formatter, with: formatter)
     }

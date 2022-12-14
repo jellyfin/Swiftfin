@@ -59,10 +59,11 @@ extension ItemView {
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
-                
+
                 if let playButtonItem = viewModel.playButtonItem,
-                    let mediaSources = playButtonItem.mediaSources,
-                    mediaSources.count > 1 {
+                   let mediaSources = playButtonItem.mediaSources,
+                   mediaSources.count > 1
+                {
                     Menu {
                         ForEach(mediaSources, id: \.hashValue) { mediaSource in
                             Button {

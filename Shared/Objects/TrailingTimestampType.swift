@@ -10,10 +10,10 @@ import Defaults
 import Foundation
 
 enum TrailingTimestampType: String, CaseIterable, Displayable, Defaults.Serializable {
-    
+
     case timeLeft
     case totalTime
-    
+
     var displayTitle: String {
         switch self {
         case .timeLeft:

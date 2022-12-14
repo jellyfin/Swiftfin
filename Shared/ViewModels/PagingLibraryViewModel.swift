@@ -9,6 +9,7 @@
 import Defaults
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 import UIKit
 
 class PagingLibraryViewModel: ViewModel {
@@ -17,7 +18,7 @@ class PagingLibraryViewModel: ViewModel {
     private var libraryGridPosterType
 
     @Published
-    var items: [BaseItemDto] = []
+    var items: OrderedSet<BaseItemDto> = []
 
     var currentPage = 0
     var hasNextPage = true
@@ -25,6 +26,15 @@ class PagingLibraryViewModel: ViewModel {
     var pageItemSize: Int {
         let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
         return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
+    }
+    
+    func refresh() {
+        currentPage = 0
+        hasNextPage = true
+        
+        items = []
+        
+        requestNextPage()
     }
 
     func requestNextPage() {

@@ -10,10 +10,10 @@ import Defaults
 import Foundation
 
 enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
-    
+
     case native
     case swiftfin
-    
+
     var displayTitle: String {
         switch self {
         case .native:

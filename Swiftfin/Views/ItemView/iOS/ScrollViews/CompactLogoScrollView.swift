@@ -52,10 +52,10 @@ extension ItemView {
         var body: some View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    
+
                     VStack {
                         Spacer()
-                        
+
                         OverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
                             .padding(.horizontal)
                             .padding(.bottom)
@@ -78,7 +78,7 @@ extension ItemView {
                             }
                     }
                     .frame(height: UIScreen.main.bounds.height * 0.5)
-                    
+
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)

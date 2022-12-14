@@ -11,13 +11,13 @@ import Foundation
 
 // TODO: look at optional values for defaults to remove .none
 
-protocol GestureAction: CaseIterable, Codable, Defaults.Serializable, Displayable { }
+protocol GestureAction: CaseIterable, Codable, Defaults.Serializable, Displayable {}
 
 enum LongPressAction: String, GestureAction {
-    
+
     case none
     case gestureLock
-    
+
     var displayTitle: String {
         switch self {
         case .none:
@@ -29,10 +29,10 @@ enum LongPressAction: String, GestureAction {
 }
 
 enum MultiTapAction: String, GestureAction {
-    
+
     case none
     case jump
-    
+
     var displayTitle: String {
         switch self {
         case .none:
@@ -44,7 +44,7 @@ enum MultiTapAction: String, GestureAction {
 }
 
 enum PanAction: String, GestureAction {
-    
+
     case none
     case audioffset
     case brightness
@@ -53,7 +53,7 @@ enum PanAction: String, GestureAction {
     case slowScrub
     case subtitleOffset
     case volume
-    
+
     var displayTitle: String {
         switch self {
         case .none:
@@ -77,10 +77,10 @@ enum PanAction: String, GestureAction {
 }
 
 enum PinchAction: String, GestureAction {
-    
+
     case none
     case aspectFill
-    
+
     var displayTitle: String {
         switch self {
         case .none:
@@ -92,10 +92,10 @@ enum PinchAction: String, GestureAction {
 }
 
 enum SwipeAction: String, GestureAction {
-    
+
     case none
     case jump
-    
+
     var displayTitle: String {
         switch self {
         case .none:

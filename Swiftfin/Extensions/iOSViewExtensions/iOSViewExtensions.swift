@@ -48,7 +48,7 @@ extension View {
             )
         )
     }
-    
+
     func navigationCloseButton(accentColor: Binding<Color>, _ action: @escaping () -> Void) -> some View {
         self.toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {

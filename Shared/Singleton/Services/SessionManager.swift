@@ -1,138 +1,9 @@
-////
-//// Swiftfin is subject to the terms of the Mozilla Public
-//// License, v2.0. If a copy of the MPL was not distributed with this
-//// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-////
-//// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
-////
 //
-//import Combine
-//import CoreData
-//import CoreStore
-//import Defaults
-//import Factory
-//import Foundation
-//import JellyfinAPI
-//import UIKit
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-//typealias CurrentLogin = (server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User)
-//
-//// MARK: NewSessionManager
-//
-//final class SessionManager {
-//
-//    // MARK: currentLogin
-//
-//    fileprivate(set) var currentLogin: CurrentLogin!
-//
-//    // MARK: main
-//
-//    static let main = SessionManager()
-//
-//    // MARK: init
-//
-//    private init() {
-//        setAuthHeader(with: "")
-//
-//        if let lastUserID = Defaults[.lastServerUserID],
-//           let user = try? SwiftfinStore.dataStack.fetchOne(
-//               From<SwiftfinStore.Models.StoredUser>(),
-//               [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)]
-//           )
-//        {
-//
-//            guard let server = user.server,
-//                  let accessToken = user.accessToken else { fatalError("No associated server or access token for last user?") }
-//            guard let existingServer = SwiftfinStore.dataStack.fetchExisting(server) else { return }
-//
-//            JellyfinAPIAPI.basePath = server.currentURI
-//            setAuthHeader(with: accessToken.value)
-//            currentLogin = (server: existingServer.state, user: user.state)
-//        }
-//    }
-//
-//    // MARK: fetchServers
-//
-//    func fetchServers() -> [SwiftfinStore.State.Server] {
-//        let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.StoredServer>())
-//        return servers.map(\.state)
-//    }
-//
-//    // MARK: fetchUsers
-//
-//    func fetchUsers(for server: SwiftfinStore.State.Server) -> [SwiftfinStore.State.User] {
-//        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
-//            From<SwiftfinStore.Models.StoredServer>(),
-//            Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)
-//        )
-//        else { fatalError("No stored server associated with given state server?") }
-//        return storedServer.users.map(\.state).sorted(by: { $0.username < $1.username })
-//    }
-//
-//    // MARK: connectToServer publisher
-//
-//    // Connects to a server at the given uri, storing if successful
-//    func connectToServer(with uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
-//        var uriComponents = URLComponents(string: uri) ?? URLComponents()
-//
-//        if uriComponents.scheme == nil {
-//            uriComponents.scheme = Defaults[.defaultHTTPScheme].rawValue
-//        }
-//
-//        var uri = uriComponents.string ?? ""
-//
-//        if uri.last == "/" {
-//            uri = String(uri.dropLast())
-//        }
-//
-//        JellyfinAPIAPI.basePath = uri
-//
-//        return SystemAPI.getPublicSystemInfo()
-//            .tryMap { response -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
-//
-//                let transaction = SwiftfinStore.dataStack.beginUnsafe()
-//                let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
-//
-//                guard let name = response.serverName,
-//                      let id = response.id,
-//                      let os = response.operatingSystem,
-//                      let version = response.version else { throw JellyfinAPIError("Missing server data from network call") }
-//
-//                newServer.uris = [uri]
-//                newServer.currentURI = uri
-//                newServer.name = name
-//                newServer.id = id
-//                newServer.os = os
-//                newServer.version = version
-//                newServer.users = []
-//
-//                // Check for existing server on device
-//                if let existingServer = try? SwiftfinStore.dataStack.fetchOne(
-//                    From<SwiftfinStore.Models.StoredServer>(),
-//                    [Where<SwiftfinStore.Models.StoredServer>(
-//                        "id == %@",
-//                        newServer.id
-//                    )]
-//                ) {
-//                    throw SwiftfinStore.Error.existingServer(existingServer.state)
-//                }
-//
-//                return (newServer, transaction)
-//            }
-//            .handleEvents(receiveOutput: { _, transaction in
-//                try? transaction.commitAndWait()
-//            })
-//            .map { server, _ in
-//                server.state
-//            }
-//            .eraseToAnyPublisher()
-//    }
-//
-//    // MARK: addURIToServer publisher
-//
-//    func addURIToServer(server: SwiftfinStore.State.Server, uri: String) -> AnyPublisher<SwiftfinStore.State.Server, Error> {
-//        Just(server)
-//            .tryMap { server -> (SwiftfinStore.Models.StoredServer, UnsafeDataTransaction) in
+// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
 //            }
@@ -301,7 +172,7 @@
 //
 //        JellyfinAPIAPI.customHeaders["X-Emby-Authorization"] = header
 //    }
-//}
+// }
 //
 ////extension AnyPublisher where Output == AuthenticationResult {
 ////    func processAuthenticationRequest(
@@ -310,8 +181,8 @@
 ////    ) -> AnyPublisher<SwiftfinStore.State.User, Error> {
 ////        Just(.sample)
 ////            .eraseToAnyPublisher()
-////        
-////        
+////
+////
 ////        self
 ////            .tryMap { response -> (SwiftfinStore.Models.StoredServer, SwiftfinStore.Models.StoredUser, UnsafeDataTransaction) in
 ////

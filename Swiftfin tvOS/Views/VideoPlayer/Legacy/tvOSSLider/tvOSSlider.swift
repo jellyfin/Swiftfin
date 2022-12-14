@@ -244,7 +244,7 @@ public final class TvOSSlider: UIControl {
 //        super.init(frame: .zero)
 //        setUpView()
 //    }
-    
+
     init() {
         super.init(frame: .zero)
         setUpView()

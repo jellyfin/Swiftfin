@@ -13,7 +13,7 @@ import SwiftUI
 extension ItemView {
 
     struct CinematicScrollView<Content: View>: View {
-        
+
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
         private var cinematicItemViewTypeUsePrimaryImage
 
@@ -42,18 +42,18 @@ extension ItemView {
                 cinematicItemViewTypeUsePrimaryImage ? .primary : .backdrop,
                 maxWidth: UIScreen.main.bounds.width
             ))
-                .frame(height: UIScreen.main.bounds.height * 0.6)
-                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
-                .onAppear {
-                    if let headerBlurHash = viewModel.item.blurHash(.backdrop) {
-                        let bottomRGB = BlurHash(string: headerBlurHash)!.averageLinearRGB
-                        blurHashBottomEdgeColor = Color(
-                            red: Double(bottomRGB.0),
-                            green: Double(bottomRGB.1),
-                            blue: Double(bottomRGB.2)
-                        )
-                    }
+            .frame(height: UIScreen.main.bounds.height * 0.6)
+            .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+            .onAppear {
+                if let headerBlurHash = viewModel.item.blurHash(.backdrop) {
+                    let bottomRGB = BlurHash(string: headerBlurHash)!.averageLinearRGB
+                    blurHashBottomEdgeColor = Color(
+                        red: Double(bottomRGB.0),
+                        green: Double(bottomRGB.1),
+                        blue: Double(bottomRGB.2)
+                    )
                 }
+            }
         }
 
         var body: some View {
@@ -113,7 +113,7 @@ extension ItemView {
 extension ItemView.CinematicScrollView {
 
     struct OverlayView: View {
-        
+
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
         private var cinematicItemViewTypeUsePrimaryImage
 
@@ -173,7 +173,7 @@ extension ItemView.CinematicScrollView {
                         .foregroundColor(.white)
                 }
                 .frame(maxWidth: .infinity)
-                
+
                 ItemView.OverviewView(item: viewModel.item)
                     .overviewLineLimit(4)
                     .taglineLineLimit(2)

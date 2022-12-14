@@ -10,9 +10,9 @@ import Defaults
 import SwiftUI
 
 extension FilterDrawerHStack {
-    
+
     struct FilterDrawerButton: View {
-        
+
         @Default(.accentColor)
         private var accentColor
 

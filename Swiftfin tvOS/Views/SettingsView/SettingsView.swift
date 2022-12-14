@@ -17,7 +17,7 @@ struct SettingsView: View {
     private var settingsRouter: SettingsCoordinator.Router
     @ObservedObject
     var viewModel: SettingsViewModel
-    
+
     var body: some View {
         Text("")
     }

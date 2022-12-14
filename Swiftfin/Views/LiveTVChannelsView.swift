@@ -14,15 +14,15 @@ import SwiftUI
 typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 
 struct LiveTVChannelsView: View {
-    
+
     @EnvironmentObject
     private var liveTVRouter: LiveTVCoordinator.Router
     @EnvironmentObject
     private var mainRouter: MainCoordinator.Router
-    
+
     @StateObject
     var viewModel = LiveTVChannelsViewModel()
-    
+
     @ViewBuilder
     private func channelCell(for channelProgram: LiveTVChannelProgram) -> some View {
         let channel = channelProgram.channel
@@ -37,7 +37,7 @@ struct LiveTVChannelsView: View {
             }
             return start > currentStart
         }
-        
+
         LiveTVChannelItemWideElement(
             channel: channel,
             currentProgram: channelProgram.currentProgram,
@@ -46,7 +46,7 @@ struct LiveTVChannelsView: View {
                 nextItems: nextItems,
                 timeFormatter: viewModel.timeFormatter
             ),
-            onSelect: { loadingAction in
+            onSelect: { _ in
                 mainRouter.route(to: \.videoPlayer, .init(item: channel, mediaSource: channel.mediaSources!.first!))
 //                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
 //                    self.liveTVRouter.route(to: \.videoPlayer, playerViewModel)
@@ -59,11 +59,11 @@ struct LiveTVChannelsView: View {
     }
 
     var body: some View {
-        
+
         if viewModel.isLoading {
             ProgressView()
         } else if !viewModel.channelPrograms.isEmpty {
-            
+
             CollectionView(items: viewModel.channelPrograms) { _, program, _ in
                 channelCell(for: program)
             }
@@ -73,7 +73,7 @@ struct LiveTVChannelsView: View {
                     layoutMode: .adaptive(withMinItemSize: 250),
                     itemSpacing: 16,
                     lineSpacing: 4,
-                    itemSize: .fractionalWidth(1/3)
+                    itemSize: .fractionalWidth(1 / 3)
                 )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

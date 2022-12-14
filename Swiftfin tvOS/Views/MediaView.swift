@@ -42,13 +42,13 @@ struct MediaView: View {
 //                        Color.black
 //                            .opacity(0.5)
 //
-////                        Text(item.library.displayTitle)
-////                            .foregroundColor(.white)
-////                            .font(.title2)
-////                            .fontWeight(.semibold)
-////                            .lineLimit(2)
-////                            .multilineTextAlignment(.center)
-////                            .frame(alignment: .center)
+        ////                        Text(item.library.displayTitle)
+        ////                            .foregroundColor(.white)
+        ////                            .font(.title2)
+        ////                            .fontWeight(.semibold)
+        ////                            .lineLimit(2)
+        ////                            .multilineTextAlignment(.center)
+        ////                            .frame(alignment: .center)
 //                    }
 //                }
 //        }

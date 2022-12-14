@@ -33,7 +33,7 @@ struct ExperimentalSettingsView: View {
                 Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
 
                 Toggle("Last Chapter Next Item Button", isOn: $lastChapterNextItem)
-                
+
             } header: {
                 L10n.experimental.text
             }

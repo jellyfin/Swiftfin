@@ -7,15 +7,15 @@
 //
 
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
-import VLCUI
 import UIKit
+import VLCUI
 
 final class VideoPlayerViewModel: ViewModel {
-    
+
     let playbackURL: URL
-    let hlsPlaybackURL: URL
     let item: BaseItemDto
     let mediaSource: MediaSourceInfo
     let playSessionID: String
@@ -27,6 +27,39 @@ final class VideoPlayerViewModel: ViewModel {
     let chapters: [ChapterInfo.FullInfo]
     let streamType: StreamType
     
+    var hlsPlaybackURL: URL {
+        let userSession = Container.userSession.callAsFunction()
+        let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
+            isStatic: true,
+            tag: mediaSource.eTag,
+            playSessionID: playSessionID,
+            segmentContainer: "mp4",
+            minSegments: 2,
+            mediaSourceID: mediaSource.id!,
+            deviceID: UIDevice.vendorUUIDString,
+            audioCodec: mediaSource.audioStreams?
+                .compactMap(\.codec)
+                .joined(separator: ","),
+            isBreakOnNonKeyFrames: true,
+            requireAvc: false,
+            transcodingMaxAudioChannels: 6,
+            videoCodec: videoStreams
+                .compactMap(\.codec)
+                .joined(separator: ","),
+            videoStreamIndex: videoStreams.first?.index,
+            enableAdaptiveBitrateStreaming: true
+        )
+        let request = Paths.getMasterHlsVideoPlaylist(
+            itemID: item.id!,
+            parameters: parameters
+        )
+        
+        var hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request), resolvingAgainstBaseURL: false)!
+        hlsStreamComponents.addQueryItem(name: "api_key", value: userSession.user.accessToken)
+        
+        return hlsStreamComponents.url!
+    }
+
     var vlcVideoPlayerConfiguration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
@@ -45,10 +78,9 @@ final class VideoPlayerViewModel: ViewModel {
 
         return configuration
     }
-    
+
     init(
         playbackURL: URL,
-        hlsPlaybackURL: URL,
         item: BaseItemDto,
         mediaSource: MediaSourceInfo,
         playSessionID: String,
@@ -64,7 +96,6 @@ final class VideoPlayerViewModel: ViewModel {
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.playbackURL = playbackURL
-        self.hlsPlaybackURL = hlsPlaybackURL
         self.videoStreams = videoStreams
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
@@ -75,49 +106,16 @@ final class VideoPlayerViewModel: ViewModel {
         self.streamType = streamType
         super.init()
     }
-    
+
     func chapter(from seconds: Int) -> ChapterInfo.FullInfo? {
         chapters.first(where: { $0.secondsRange.contains(seconds) })
-    }
-    
-    func constructHLSPlaybackURL() throws -> URL {
-        
-        guard let itemID = item.id, let mediaSourceID = mediaSource.id else { throw JellyfinAPIError("Unable to construct HLS stream: invalid item ID or media source ID") }
-
-//        let hlsStreamBuilder = DynamicHlsAPI.getMasterHlsVideoPlaylistWithRequestBuilder(
-//            itemId: itemID,
-//            mediaSourceId: mediaSourceID,
-//            _static: true,
-//            tag: mediaSource.eTag,
-//            playSessionId: playSessionID,
-//            segmentContainer: "mp4",
-//            minSegments: 2,
-//            deviceId: UIDevice.vendorUUIDString,
-//            audioCodec: mediaSource.audioStreams?
-//                .compactMap(\.codec)
-//                .joined(separator: ","),
-//            breakOnNonKeyFrames: true,
-//            requireAvc: false,
-//            transcodingMaxAudioChannels: 6,
-//            videoCodec: mediaSource.videoStreams?
-//                .compactMap(\.codec)
-//                .joined(separator: ","),
-//            videoStreamIndex: mediaSource.videoStreams?.first?.index,
-//            enableAdaptiveBitrateStreaming: true
-//        )
-//
-//        var hlsStreamComponents = URLComponents(string: hlsStreamBuilder.URLString)!
-////        hlsStreamComponents.addQueryItem(name: "api_key", value: SessionManager.main.currentLogin.user.accessToken)
-//
-//        return hlsStreamComponents.url!
-        return URL(string: "/")!
     }
 }
 
 extension VideoPlayerViewModel: Equatable {
-    
+
     static func == (lhs: VideoPlayerViewModel, rhs: VideoPlayerViewModel) -> Bool {
         lhs.item == rhs.item &&
-        lhs.playbackURL == rhs.playbackURL
+            lhs.playbackURL == rhs.playbackURL
     }
 }

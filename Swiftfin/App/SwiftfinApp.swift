@@ -16,7 +16,7 @@ struct SwiftfinApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self)
     var appDelegate
-    
+
     init() {
         Task {
             for await newValue in Defaults.updates(.accentColor) {
@@ -24,7 +24,7 @@ struct SwiftfinApp: App {
                 Self.setupNavigationBackButton(accentColor: newValue.uiColor)
             }
         }
-        
+
         Task {
             for await newValue in Defaults.updates(.appAppearance) {
                 Self.setupAppearance(with: newValue.style)
@@ -45,11 +45,11 @@ struct SwiftfinApp: App {
             }
         }
     }
-    
+
     private static func setupAppearance(with appearance: UIUserInterfaceStyle) {
         UIApplication.shared.keyWindow?.overrideUserInterfaceStyle = appearance
     }
-    
+
     private static func setupNavigationBackButton(accentColor: UIColor) {
         let config = UIImage.SymbolConfiguration(paletteColors: [accentColor.overlayColor, accentColor])
         let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill", withConfiguration: config)
@@ -57,7 +57,7 @@ struct SwiftfinApp: App {
         barAppearance.backIndicatorImage = backButtonBackgroundImage
         barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
     }
-    
+
     private static func setupAccentColor(with accentColor: UIColor) {
         UIApplication.shared.keyWindow?.tintColor = accentColor
     }

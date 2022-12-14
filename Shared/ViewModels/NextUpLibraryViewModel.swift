@@ -19,33 +19,45 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel {
     }
 
     override func _requestNextPage() {
+        Task {
 
-//        TvShowsAPI.getNextUp(
-//            userId: "123abc",
-//            startIndex: currentPage * pageItemSize,
-//            limit: pageItemSize,
-//            fields: [
-//                .primaryImageAspectRatio,
-//                .seriesPrimaryImage,
-//                .seasonUserData,
-//                .overview,
-//                .genres,
-//                .people,
-//                .chapters,
-//            ],
-//            enableUserData: true
-//        )
-//        .trackActivity(loading)
-//        .sink { [weak self] completion in
-//            self?.handleAPIRequestError(completion: completion)
-//        } receiveValue: { [weak self] response in
-//            guard let items = response.items, !items.isEmpty else {
-//                self?.hasNextPage = false
-//                return
-//            }
-//
-//            self?.items.append(contentsOf: items)
-//        }
-//        .store(in: &cancellables)
+            await MainActor.run {
+                self.isLoading = true
+            }
+
+            let parameters = Paths.GetNextUpParameters(
+                userID: userSession.user.id,
+                limit: pageItemSize,
+                fields: ItemFields.minimumCases,
+                enableUserData: true
+            )
+            let request = Paths.getNextUp(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let items = response.value.items, !items.isEmpty else {
+                hasNextPage = false
+                return
+            }
+
+            await MainActor.run {
+                self.isLoading = false
+                self.items.append(contentsOf: items)
+            }
+        }
+    }
+    
+    func markPlayed(item: BaseItemDto) {
+        Task {
+            
+            let request = Paths.markPlayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+            let _ = try await userSession.client.send(request)
+            
+            await MainActor.run {
+                refresh()
+            }
+        }
     }
 }

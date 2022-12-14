@@ -13,10 +13,10 @@ struct UserSignInView: View {
 
     @EnvironmentObject
     private var router: UserSignInCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: UserSignInViewModel
-    
+
     @State
     private var isPresentingSignInError: Bool = false
     @State
@@ -27,7 +27,7 @@ struct UserSignInView: View {
     private var signInTask: Task<Void, Never>?
     @State
     private var username: String = ""
-    
+
     @ViewBuilder
     private var signInSection: some View {
         Section {
@@ -50,14 +50,14 @@ struct UserSignInView: View {
                 Button {
                     let task = Task {
                         viewModel.isLoading = true
-                        
+
                         do {
                             try await viewModel.signIn(username: username, password: password)
                         } catch {
                             signInError = error
                             isPresentingSignInError = true
                         }
-                        
+
                         viewModel.isLoading = false
                     }
                     signInTask = task
@@ -70,7 +70,7 @@ struct UserSignInView: View {
             L10n.signInToServer(viewModel.server.name).text
         }
     }
-    
+
     @ViewBuilder
     private var publicUsersSection: some View {
         Section {
@@ -108,7 +108,7 @@ struct UserSignInView: View {
         List {
 
             signInSection
-            
+
             if viewModel.quickConnectEnabled {
                 Button {
                     router.route(to: \.quickConnect)
@@ -121,15 +121,14 @@ struct UserSignInView: View {
         }
         .alert(
             L10n.error,
-            isPresented: $isPresentingSignInError) {
-                Button(role: .cancel) {
-                    
-                } label: {
-                    Text("Dismiss")
-                }
-            } message: {
-                Text(signInError?.localizedDescription ?? .emptyDash)
+            isPresented: $isPresentingSignInError
+        ) {
+            Button(role: .cancel) {} label: {
+                Text("Dismiss")
             }
+        } message: {
+            Text(signInError?.localizedDescription ?? .emptyDash)
+        }
         .navigationTitle(L10n.signIn)
         .onAppear {
             Task {

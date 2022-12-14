@@ -14,10 +14,10 @@ struct ConnectToServerView: View {
 
     @EnvironmentObject
     private var router: ConnectToServerCoodinator.Router
-    
+
     @StateObject
     var viewModel: ConnectToServerViewModel
-    
+
     @State
     private var connectionError: Error?
     @State
@@ -34,15 +34,15 @@ struct ConnectToServerView: View {
     private var isPresentingError: Bool = false
     @State
     private var url = "\(Defaults[.defaultHTTPScheme])://"
-    
+
     private func connectToServer() {
         let task = Task {
             isConnecting = true
             connectionError = nil
-            
+
             do {
                 let serverConnection = try await viewModel.connectToServer(url: url)
-                
+
                 if viewModel.isDuplicate(server: serverConnection.server) {
                     duplicateServer = serverConnection
                     isPresentingDuplicateServerAlert = true
@@ -54,13 +54,13 @@ struct ConnectToServerView: View {
                 connectionError = error
                 isPresentingConnectionError = true
             }
-            
+
             isConnecting = false
         }
-        
+
         connectionTask = task
     }
-    
+
     @ViewBuilder
     private var connectSection: some View {
         Section {
@@ -88,7 +88,7 @@ struct ConnectToServerView: View {
             L10n.connectToJellyfinServer.text
         }
     }
-    
+
     @ViewBuilder
     private var publicServerSection: some View {
         Section {
@@ -111,7 +111,7 @@ struct ConnectToServerView: View {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(server.name)
                                     .font(.title3)
-                                
+
                                 Text(server.currentURL.absoluteString)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
@@ -141,44 +141,42 @@ struct ConnectToServerView: View {
         List {
 
             connectSection
-            
+
             publicServerSection
         }
         .alert(
             L10n.error,
-            isPresented: $isPresentingConnectionError) {
-                Button(role: .cancel) {
-                    
-                } label: {
-                    Text("Dismiss")
-                }
-            } message: {
-                Text(connectionError?.localizedDescription ?? .emptyDash)
+            isPresented: $isPresentingConnectionError
+        ) {
+            Button(role: .cancel) {} label: {
+                Text("Dismiss")
             }
+        } message: {
+            Text(connectionError?.localizedDescription ?? .emptyDash)
+        }
         .alert(
             L10n.existingServer,
-            isPresented: $isPresentingDuplicateServerAlert) {
-                Button {
-                    guard let duplicateServer else { return }
-                    viewModel.add(
-                        url: duplicateServer.url,
-                        server: duplicateServer.server
-                    )
-                    router.dismissCoordinator()
-                } label: {
-                    L10n.addURL.text
-                }
-                
-                Button(role: .cancel) {
-                    
-                } label: {
-                    Text("Dismiss")
-                }
-            } message: {
-                if let duplicateServer {
-                    L10n.serverAlreadyExistsPrompt(duplicateServer.server.name).text
-                }
+            isPresented: $isPresentingDuplicateServerAlert
+        ) {
+            Button {
+                guard let duplicateServer else { return }
+                viewModel.add(
+                    url: duplicateServer.url,
+                    server: duplicateServer.server
+                )
+                router.dismissCoordinator()
+            } label: {
+                L10n.addURL.text
             }
+
+            Button(role: .cancel) {} label: {
+                Text("Dismiss")
+            }
+        } message: {
+            if let duplicateServer {
+                L10n.serverAlreadyExistsPrompt(duplicateServer.server.name).text
+            }
+        }
         .navigationTitle(L10n.connect)
         .onAppear {
             viewModel.discoverServers()

@@ -26,9 +26,9 @@ struct LiveTVProgramsView: View {
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
 //                            {
-////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-////                                }
+                    ////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                    ////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                    ////                                }
 //                            }
 //                        }
                 }
@@ -40,9 +40,9 @@ struct LiveTVProgramsView: View {
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
 //                            {
-////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-////                                }
+                    ////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                    ////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                    ////                                }
 //                            }
 //                        }
                 }
@@ -54,9 +54,9 @@ struct LiveTVProgramsView: View {
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
 //                            {
-////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-////                                }
+                    ////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                    ////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                    ////                                }
 //                            }
 //                        }
                 }
@@ -68,9 +68,9 @@ struct LiveTVProgramsView: View {
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
 //                            {
-////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-////                                }
+                    ////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                    ////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                    ////                                }
 //                            }
 //                        }
                 }
@@ -82,9 +82,9 @@ struct LiveTVProgramsView: View {
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
 //                            {
-////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-////                                }
+                    ////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                    ////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                    ////                                }
 //                            }
 //                        }
                 }
@@ -96,9 +96,9 @@ struct LiveTVProgramsView: View {
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
 //                            {
-////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-////                                }
+                    ////                                self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
+                    ////                                    self.programsRouter.route(to: \.videoPlayer, playerViewModel)
+                    ////                                }
 //                            }
 //                        }
                 }

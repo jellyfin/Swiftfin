@@ -109,7 +109,7 @@ final class LiveTVChannelsViewModel: ViewModel {
 
         let minEndDate = Date.now.addComponentsToDate(hours: -1)
         let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
-        
+
 //        let getProgramsRequest = GetProgramsRequest(
 //            channelIds: channelIds,
 //            userId: "123abc",

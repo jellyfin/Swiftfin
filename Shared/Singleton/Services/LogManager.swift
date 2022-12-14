@@ -12,26 +12,26 @@ import Foundation
 import Logging
 
 class LogManager {
-    
+
     static let service = Factory<Logger>(scope: .singleton) {
         .init(label: "Swiftfin")
     }
 }
 
 struct SwiftfinConsoleLogger: LogHandler {
-    
+
     var logLevel: Logger.Level = .trace
     var metadata: Logger.Metadata = [:]
-    
+
     subscript(metadataKey key: String) -> Logger.Metadata.Value? {
         get {
-            return metadata[key]
+            metadata[key]
         }
         set(newValue) {
             metadata[key] = newValue
         }
     }
-    
+
     func log(
         level: Logger.Level,
         message: Logger.Message,
@@ -46,10 +46,10 @@ struct SwiftfinConsoleLogger: LogHandler {
 }
 
 struct SwiftfinCorestoreLogger: CoreStoreLogger {
-    
+
     @Injected(LogManager.service)
     private var logger
-    
+
     func log(
         error: CoreStoreError,
         message: String,
@@ -66,7 +66,7 @@ struct SwiftfinCorestoreLogger: CoreStoreLogger {
             line: UInt(lineNumber)
         )
     }
-    
+
     func log(
         level: LogLevel,
         message: String,
@@ -84,16 +84,14 @@ struct SwiftfinCorestoreLogger: CoreStoreLogger {
             line: UInt(lineNumber)
         )
     }
-    
+
     func assert(
         _ condition: @autoclosure () -> Bool,
         message: @autoclosure () -> String,
         fileName: StaticString,
         lineNumber: Int,
         functionName: StaticString
-    ) {
-        
-    }
+    ) {}
 }
 
 extension Logger.Level {

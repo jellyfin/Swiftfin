@@ -26,7 +26,7 @@ struct PlaybackInformationView: View {
 //            )
 //        }
 //    }
-    
+
     var body: some View {
         Text("-")
     }
