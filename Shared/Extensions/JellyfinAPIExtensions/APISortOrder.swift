@@ -11,9 +11,9 @@ import JellyfinAPI
 
 typealias APISortOrder = JellyfinAPI.SortOrder
 
-extension APISortOrder {
+extension APISortOrder: Displayable {
     // TODO: Localize
-    var localized: String {
+    var displayTitle: String {
         switch self {
         case .ascending:
             return "Ascending"
@@ -21,8 +21,11 @@ extension APISortOrder {
             return "Descending"
         }
     }
+}
+
+extension APISortOrder {
 
     var filter: ItemFilters.Filter {
-        .init(displayTitle: localized, filterName: rawValue)
+        .init(displayTitle: displayTitle, filterName: rawValue)
     }
 }

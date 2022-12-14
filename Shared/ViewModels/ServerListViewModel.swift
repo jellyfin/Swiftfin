@@ -75,5 +75,8 @@ final class ServerListViewModel: ViewModel {
         }
 
         fetchServers()
+
+        UserDefaults.generalSuite.removeAll()
+        UserDefaults.universalSuite.removeAll()
     }
 }

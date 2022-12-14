@@ -43,8 +43,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var quickConnect = makeQuickConnectSettings
     @Route(.push)
     var log = makeLog
-    @Route(.modal)
-    var shareFile = makeShareFile
+    @Route(.push)
+    var userProfile = makeUserProfile
     #endif
 
     private let viewModel: SettingsViewModel
@@ -103,8 +103,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeShareFile(file: File) -> some View {
-        ActivityView(file: file)
+    func makeUserProfile() -> some View {
+        UserProfileView()
     }
     #endif
 

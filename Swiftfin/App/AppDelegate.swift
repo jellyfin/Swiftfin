@@ -24,8 +24,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        Experimental.swizzleURLSession()
-
         LoggingSystem.bootstrap { label in
 
             var loggers: [LogHandler] = [PersistentLogHandler(label: label)]

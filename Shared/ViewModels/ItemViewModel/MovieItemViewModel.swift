@@ -12,7 +12,5 @@ import JellyfinAPI
 
 final class MovieItemViewModel: ItemViewModel {
 
-    override func updateItem() {
-        
-    }
+    override func updateItem() {}
 }

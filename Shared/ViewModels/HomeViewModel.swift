@@ -22,12 +22,12 @@ final class HomeViewModel: ViewModel {
     var hasRecentlyAdded: Bool = false
     @Published
     var libraries: [BaseItemDto] = []
-    
+
     private var hasInitiallyLoaded: Bool = false
 
 //    override init() {
 //        super.init()
-//        
+//
 //        Task {
 //            try await refresh()
 //        }
@@ -35,27 +35,27 @@ final class HomeViewModel: ViewModel {
 
     @objc
     func refresh() async throws {
-        
+
         logger.debug("Refreshing")
-        
+
         await MainActor.run {
             isLoading = true
         }
-        
+
         refreshHasRecentlyAddedItems()
         refreshResumeItems()
         refreshHasNextUp()
-        
+
         do {
             try await refreshLibrariesLatest()
         } catch {
             await MainActor.run {
                 isLoading = false
             }
-            
+
             throw error
         }
-        
+
         await MainActor.run {
             isLoading = false
         }
@@ -121,12 +121,12 @@ final class HomeViewModel: ViewModel {
                 fields: ItemFields.minimumCases,
                 enableUserData: true
             )
-            
+
             let request = Paths.getResumeItems(userID: userSession.user.id, parameters: resumeParameters)
             let response = try await userSession.client.send(request)
-            
+
             guard let items = response.value.items else { return }
-            
+
             await MainActor.run {
                 resumeItems = items
             }
@@ -159,9 +159,9 @@ final class HomeViewModel: ViewModel {
             let _ = try await userSession.client.send(request)
 
 //            async let a = refreshResumeItems()
-            
+
 //            await [try refreshResumeItems(), try refreshHasNextUp()]
-            
+
 //            try await refreshResumeItems()
 //            try await refreshHasNextUp()
         }

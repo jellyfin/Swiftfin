@@ -28,7 +28,7 @@ extension String {
     func prepending(_ element: String) -> String {
         element + self
     }
-    
+
     func removingFirst(if condition: Bool) -> String {
         if condition {
             var copy = self

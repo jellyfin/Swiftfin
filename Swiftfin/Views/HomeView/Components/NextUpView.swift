@@ -13,13 +13,13 @@ import SwiftUI
 extension HomeView {
 
     struct NextUpView: View {
-        
+
         @Default(.Customization.nextUpPosterType)
         private var nextUpPosterType
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
-        
+
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
 

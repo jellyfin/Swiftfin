@@ -13,14 +13,15 @@ import SwiftUI
 
 struct PagingLibraryView: View {
 
-    @ObservedObject
-    var viewModel: PagingLibraryViewModel
-    private var onSelect: (BaseItemDto) -> Void
-
     @Default(.Customization.Library.gridPosterType)
     private var libraryGridPosterType
     @Default(.Customization.Library.viewType)
     private var libraryViewType
+
+    @ObservedObject
+    var viewModel: PagingLibraryViewModel
+
+    private var onSelect: (BaseItemDto) -> Void
 
     private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
         if libraryGridPosterType == .landscape && UIDevice.isPhone {

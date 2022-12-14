@@ -12,6 +12,7 @@ import JellyfinAPI
 extension ItemFields {
 
     static let minimumCases: [ItemFields] = [
+        .chapters,
         .mediaSources,
         .overview,
         .parentID,

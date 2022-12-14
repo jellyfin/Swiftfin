@@ -27,13 +27,13 @@ class PagingLibraryViewModel: ViewModel {
         let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
         return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
     }
-    
+
     func refresh() {
         currentPage = 0
         hasNextPage = true
-        
+
         items = []
-        
+
         requestNextPage()
     }
 

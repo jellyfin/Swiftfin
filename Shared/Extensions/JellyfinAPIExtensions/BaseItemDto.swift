@@ -164,7 +164,7 @@ extension BaseItemDto {
         return chapters
             .enumerated()
             .map { index, chapterInfo in
-                
+
                 let client = Container.userSession.callAsFunction().client
                 let parameters = Paths.GetItemImageParameters(
                     maxWidth: 500,
@@ -189,5 +189,3 @@ extension BaseItemDto {
             }
     }
 }
-
-

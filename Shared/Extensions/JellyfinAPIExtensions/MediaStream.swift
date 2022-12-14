@@ -20,9 +20,9 @@ extension MediaStream {
         guard let deliveryURL else { return nil }
         let client = Container.userSession.callAsFunction().client
         let deliveryPath = deliveryURL.removingFirst(if: client.configuration.url.absoluteString.last == "/")
-        
+
         let fullURL = client.fullURL(with: deliveryPath)
-        
+
         return .init(
             url: fullURL,
             type: .subtitle,

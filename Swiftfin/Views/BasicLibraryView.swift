@@ -18,7 +18,7 @@ struct BasicLibraryView: View {
 
     @EnvironmentObject
     private var router: BasicLibraryCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: PagingLibraryViewModel
 

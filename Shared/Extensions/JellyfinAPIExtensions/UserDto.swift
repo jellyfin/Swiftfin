@@ -39,7 +39,7 @@ extension JellyfinClient {
 
         return components.url ?? fullPath
     }
-    
+
     func fullURL(with path: String) -> URL {
         configuration.url.appendingPathComponent(path)
     }

@@ -6,11 +6,11 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-import JellyfinAPI
+import SwiftUI
 
-// extension RequestBuilder where T == URL {
-//    var url: URL {
-//        URL(string: URLString)!
-//    }
-// }
+struct UserProfileView: View {
+
+    var body: some View {
+        Text("")
+    }
+}

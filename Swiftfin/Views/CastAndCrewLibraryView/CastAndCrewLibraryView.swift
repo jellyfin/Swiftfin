@@ -18,7 +18,7 @@ struct CastAndCrewLibraryView: View {
 
     @EnvironmentObject
     private var router: CastAndCrewLibraryCoordinator.Router
-    
+
     let people: [BaseItemPerson]
 
     @ViewBuilder

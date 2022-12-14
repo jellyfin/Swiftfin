@@ -13,10 +13,10 @@ struct HomeView: View {
 
     @EnvironmentObject
     private var router: HomeCoordinator.Router
-    
+
     @StateObject
     var viewModel: HomeViewModel
-    
+
     @State
     private var errorMessage: String?
     @State
@@ -43,7 +43,7 @@ struct HomeView: View {
         }
         .onAppear {
             guard !hasInitiallyLoaded else { return }
-            
+
             hasInitiallyLoaded = true
             Task {
                 do {

@@ -18,13 +18,13 @@ struct BasicAppSettingsView: View {
     private var appAppearance
     @Default(.defaultHTTPScheme)
     private var defaultHTTPScheme
-    
+
     @EnvironmentObject
     private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: BasicAppSettingsViewModel
-    
+
     @State
     var resetUserSettingsTapped: Bool = false
     @State

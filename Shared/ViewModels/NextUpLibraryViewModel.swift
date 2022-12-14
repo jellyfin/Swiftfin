@@ -45,16 +45,16 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel {
             }
         }
     }
-    
+
     func markPlayed(item: BaseItemDto) {
         Task {
-            
+
             let request = Paths.markPlayedItem(
                 userID: userSession.user.id,
                 itemID: item.id!
             )
             let _ = try await userSession.client.send(request)
-            
+
             await MainActor.run {
                 refresh()
             }

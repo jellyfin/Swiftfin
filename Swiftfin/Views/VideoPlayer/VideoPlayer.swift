@@ -107,7 +107,7 @@ struct VideoPlayer: View {
     private var subtitleOffset: Int = 0
 
     private let gestureStateHandler: GestureStateHandler = .init()
-    private var updateViewProxy: UpdateViewProxy = .init()
+    private let updateViewProxy: UpdateViewProxy = .init()
     private var overlay: () -> any VideoPlayerOverlay
 
     init(manager: VideoPlayerManager) {
@@ -116,25 +116,25 @@ struct VideoPlayer: View {
     }
 
     @ViewBuilder
-    private func playerView(with viewModel: VideoPlayerViewModel) -> some View {
+    private func playerView() -> some View {
         SplitContentView()
             .proxy(splitContentViewProxy)
             .content {
                 ZStack {
-                    VLCVideoPlayer(configuration: viewModel.vlcVideoPlayerConfiguration)
+                    VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
                         .proxy(videoPlayerManager.proxy)
                         .onTicksUpdated { ticks, playbackInformation in
                             videoPlayerManager.onTicksUpdated(ticks: ticks, playbackInformation: playbackInformation)
 
                             let newSeconds = ticks / 1000
-                            let newProgress = CGFloat(newSeconds) / CGFloat(viewModel.item.runTimeSeconds)
+                            let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
                             currentProgressHandler.progress = newProgress
                             currentProgressHandler.seconds = newSeconds
 
                             guard !isScrubbing else { return }
                             currentProgressHandler.scrubbedProgress = newProgress
                         }
-                        .onStateUpdated(videoPlayerManager.onStateUpdated(state:playbackInformation:))
+                        .onStateUpdated(videoPlayerManager.onStateUpdated)
 
                     GestureView()
                         .onHorizontalPan {
@@ -176,13 +176,13 @@ struct VideoPlayer: View {
                 }
                 .cornerRadius(20, corners: [.topLeft, .bottomLeft])
                 .environmentObject(splitContentViewProxy)
-                .environmentObject(viewModel)
                 .environmentObject(videoPlayerManager)
+                .environmentObject(videoPlayerManager.currentViewModel)
                 .environment(\.audioOffset, $audioOffset)
                 .environment(\.subtitleOffset, $subtitleOffset)
             }
             .onChange(of: currentProgressHandler.scrubbedProgress) { newValue in
-                currentProgressHandler.scrubbedSeconds = Int(CGFloat(viewModel.item.runTimeSeconds) * newValue)
+                currentProgressHandler.scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
             }
             .overlay(alignment: .top) {
                 UpdateView(proxy: updateViewProxy)
@@ -358,9 +358,8 @@ struct VideoPlayer: View {
 
     var body: some View {
         Group {
-            if let viewModel = videoPlayerManager.currentViewModel {
-                playerView(with: viewModel)
-                    .prefersHomeIndicatorAutoHidden(true)
+            if let _ = videoPlayerManager.currentViewModel {
+                playerView()
             } else {
                 loadingView
             }

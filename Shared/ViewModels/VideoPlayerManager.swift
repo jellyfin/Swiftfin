@@ -36,7 +36,7 @@ class VideoPlayerManager: ViewModel {
     var currentViewModel: VideoPlayerViewModel! {
         willSet {
             guard let newValue else { return }
-//            getAdjacentEpisodes(for: newValue.item)
+            getAdjacentEpisodes(for: newValue.item)
         }
     }
 
@@ -88,15 +88,16 @@ class VideoPlayerManager: ViewModel {
         }
     }
 
-    func onStateUpdated(state: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-        guard self.state != state else { return }
-        self.state = state
+    func onStateUpdated(newState: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
+        guard state != newState else { return }
+        state = newState
 
-        // TODO: Fix autoplay
-        if state == .ended {
+        if newState == .ended {
+            print("state ended")
             if let nextViewModel,
                Defaults[.VideoPlayer.autoPlay],
-               Defaults[.VideoPlayer.autoPlayEnabled] {
+               Defaults[.VideoPlayer.autoPlayEnabled]
+            {
                 selectNextViewModel()
 
                 proxy.playNewMedia(nextViewModel.vlcVideoPlayerConfiguration)
@@ -106,7 +107,61 @@ class VideoPlayerManager: ViewModel {
 }
 
 extension VideoPlayerManager {
-    
-    
-    
+
+    func getAdjacentEpisodes(for item: BaseItemDto) {
+        Task { @MainActor in
+            guard let seriesID = item.seriesID, item.type == .episode else { return }
+
+            let parameters = Paths.GetEpisodesParameters(
+                userID: userSession.user.id,
+                fields: ItemFields.minimumCases,
+                adjacentTo: item.id!,
+                limit: 3
+            )
+            let request = Paths.getEpisodes(seriesID: seriesID, parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            // 4 possible states:
+            //  1 - only current episode
+            //  2 - two episodes with next episode
+            //  3 - two episodes with previous episode
+            //  4 - three episodes with current in middle
+
+            // 1
+            guard let items = response.value.items, items.count > 1 else { return }
+
+            var previousItem: BaseItemDto?
+            var nextItem: BaseItemDto?
+
+            if items.count == 2 {
+                if items[0].id == item.id {
+                    // 2
+                    nextItem = items[1]
+
+                } else {
+                    // 3
+                    previousItem = items[0]
+                }
+            } else {
+                nextItem = items[2]
+                previousItem = items[0]
+            }
+
+            var nextViewModel: VideoPlayerViewModel?
+            var previousViewModel: VideoPlayerViewModel?
+
+            if let nextItem, let nextItemMediaSource = nextItem.mediaSources?.first {
+                nextViewModel = try await nextItem.videoPlayerViewModel(with: nextItemMediaSource)
+            }
+
+            if let previousItem, let previousItemMediaSource = previousItem.mediaSources?.first {
+                previousViewModel = try await previousItem.videoPlayerViewModel(with: previousItemMediaSource)
+            }
+
+            await MainActor.run {
+                self.nextViewModel = nextViewModel
+                self.previousViewModel = previousViewModel
+            }
+        }
+    }
 }

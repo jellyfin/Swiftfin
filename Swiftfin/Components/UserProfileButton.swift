@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: remove client passing and mirror how other images are made
+
 struct UserProfileButton: View {
 
     private let client: JellyfinClient

@@ -145,9 +145,9 @@ class ItemViewModel: ViewModel {
     }
 
     func toggleWatchState() {
-        let current = isPlayed
-        isPlayed.toggle()
-        let request: AnyPublisher<UserItemDataDto, Error>
+//        let current = isPlayed
+//        isPlayed.toggle()
+//        let request: AnyPublisher<UserItemDataDto, Error>
 
 //        if current {
 //            request = PlaystateAPI.markUnplayedItem(userId: "123abc", itemId: item.id!)
@@ -169,9 +169,9 @@ class ItemViewModel: ViewModel {
     }
 
     func toggleFavoriteState() {
-        let current = isFavorited
-        isFavorited.toggle()
-        let request: AnyPublisher<UserItemDataDto, Error>
+//        let current = isFavorited
+//        isFavorited.toggle()
+//        let request: AnyPublisher<UserItemDataDto, Error>
 
 //        if current {
 //            request = UserLibraryAPI.unmarkFavoriteItem(userId: "123abc", itemId: item.id!)

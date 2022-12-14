@@ -14,7 +14,7 @@ struct LibraryItemRow: View {
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
 
-    let item: BaseItemDto
+    private let item: BaseItemDto
     private var onSelect: () -> Void
 
     var body: some View {

@@ -26,6 +26,7 @@ struct Slider<
 
     @Binding
     private var progress: CGFloat
+
     @State
     private var isEditing: Bool = false
     @State

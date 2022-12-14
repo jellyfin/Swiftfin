@@ -13,7 +13,7 @@ import JellyfinAPI
 import UIKit
 import VLCUI
 
-final class VideoPlayerViewModel: ViewModel {
+class VideoPlayerViewModel: ViewModel {
 
     let playbackURL: URL
     let item: BaseItemDto
@@ -26,7 +26,7 @@ final class VideoPlayerViewModel: ViewModel {
     let selectedSubtitleStreamIndex: Int
     let chapters: [ChapterInfo.FullInfo]
     let streamType: StreamType
-    
+
     var hlsPlaybackURL: URL {
         let userSession = Container.userSession.callAsFunction()
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
@@ -53,10 +53,10 @@ final class VideoPlayerViewModel: ViewModel {
             itemID: item.id!,
             parameters: parameters
         )
-        
+
         var hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request), resolvingAgainstBaseURL: false)!
         hlsStreamComponents.addQueryItem(name: "api_key", value: userSession.user.accessToken)
-        
+
         return hlsStreamComponents.url!
     }
 
