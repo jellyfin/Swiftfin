@@ -33,6 +33,8 @@ extension VideoPlayer.Overlay {
             } label: {
                 Image(systemName: jumpBackwardLength.backwardImageLabel)
                     .font(.system(size: 36, weight: .regular, design: .default))
+                    .padding()
+                    .contentShape(Rectangle())
             }
             .contentShape(Rectangle())
         }
@@ -59,6 +61,8 @@ extension VideoPlayer.Overlay {
                     }
                 }
                 .font(.system(size: 56, weight: .bold, design: .default))
+                .padding()
+                .contentShape(Rectangle())
             }
             .contentShape(Rectangle())
         }
@@ -70,6 +74,8 @@ extension VideoPlayer.Overlay {
             } label: {
                 Image(systemName: jumpForwardLength.forwardImageLabel)
                     .font(.system(size: 36, weight: .regular, design: .default))
+                    .padding()
+                    .contentShape(Rectangle())
             }
             .contentShape(Rectangle())
         }

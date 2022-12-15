@@ -63,16 +63,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
     static func changeOrientation(_ orientation: UIInterfaceOrientationMask) {
 
-        guard UIDevice.isPhone else { return }
-
-        Self.orientationLock = orientation
-
-        if #available(iOS 16, *) {
-            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-            windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
-        } else {
-            UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-        }
+//        guard UIDevice.isPhone else { return }
+//
+//        Self.orientationLock = orientation
+//
+//        if #available(iOS 16, *) {
+//            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+//            windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
+//        } else {
+//            UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+//        }
     }
 }
 

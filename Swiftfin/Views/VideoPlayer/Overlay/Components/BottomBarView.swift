@@ -28,9 +28,6 @@ extension VideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
 
-        @Default(.Experimental.lastChapterNextItem)
-        private var lastChapterNextItem
-
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType

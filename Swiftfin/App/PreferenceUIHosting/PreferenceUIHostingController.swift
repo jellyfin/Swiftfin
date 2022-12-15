@@ -57,7 +57,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
         didSet {
             print("didset orientations: \(_orientations)")
             if #available(iOS 16.0, *) {
-                setNeedsUpdateOfSupportedInterfaceOrientations()
+//                setNeedsUpdateOfSupportedInterfaceOrientations()
             } else {
                 // Fallback on earlier versions
             }

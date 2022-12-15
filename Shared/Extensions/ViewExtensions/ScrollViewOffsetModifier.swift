@@ -33,7 +33,7 @@ struct ScrollViewOffsetModifier: ViewModifier {
         var parent: ScrollViewOffsetModifier?
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            parent?.scrollViewOffset = scrollView.contentOffset.y
+            parent?._scrollViewOffset.wrappedValue = scrollView.contentOffset.y
         }
     }
 }

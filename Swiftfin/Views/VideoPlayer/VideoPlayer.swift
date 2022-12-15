@@ -138,13 +138,11 @@ struct VideoPlayer: View {
                             videoPlayerManager.onStateUpdated(newState: state, playbackInformation: playbackInformation)
                             
                             if state == .ended {
-                                if let nextViewModel = videoPlayerManager.nextViewModel,
+                                if let _ = videoPlayerManager.nextViewModel,
                                    Defaults[.VideoPlayer.autoPlay],
                                    Defaults[.VideoPlayer.autoPlayEnabled]
                                 {
                                     videoPlayerManager.selectNextViewModel()
-
-                                    videoPlayerManager.proxy.playNewMedia(nextViewModel.vlcVideoPlayerConfiguration)
                                 } else {
                                     router.dismissCoordinator {
                                         AppDelegate.changeOrientation(.portrait)
@@ -407,7 +405,7 @@ struct VideoPlayer: View {
         }
         .onChange(of: overlayTimer.isActive) { newValue in
             guard !newValue else { return }
-            showOverlay(nil)
+            showOverlay(nil, duration: 0.4)
         }
         .onChange(of: subtitleFontName) { newValue in
             videoPlayerManager.proxy.setSubtitleFont(newValue)
@@ -429,8 +427,8 @@ struct VideoPlayer: View {
         }
     }
 
-    private func showOverlay(_ type: OverlayType?) {
-        withAnimation(.linear(duration: 0.1)) {
+    private func showOverlay(_ type: OverlayType?, duration: Double = 0.1) {
+        withAnimation(.linear(duration: duration)) {
             currentOverlayType = type
         }
     }
