@@ -103,7 +103,11 @@ extension VideoPlayer.Overlay {
                     }
                 }
             } label: {
-                Image(systemName: "speaker.wave.2")
+                if videoPlayerManager.audioTrackIndex == -1 {
+                    Image(systemName: "speaker.wave.2")
+                } else {
+                    Image(systemName: "speaker.wave.2.fill")
+                }
             }
         }
 
@@ -170,7 +174,11 @@ extension VideoPlayer.Overlay {
                     }
                 }
             } label: {
-                Image(systemName: "captions.bubble")
+                if videoPlayerManager.subtitleTrackIndex == -1 {
+                    Image(systemName: "captions.bubble")
+                } else {
+                    Image(systemName: "captions.bubble.fill")
+                }
             }
             .frame(width: 50, height: 50)
         }

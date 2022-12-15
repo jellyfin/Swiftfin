@@ -46,7 +46,11 @@ extension VideoPlayer.Overlay {
                 }
             } label: {
                 HStack {
-                    Image(systemName: "captions.bubble")
+                    if videoPlayerManager.subtitleTrackIndex == -1 {
+                        Image(systemName: "captions.bubble")
+                    } else {
+                        Image(systemName: "captions.bubble.fill")
+                    }
                     L10n.subtitles.text
                 }
             }
@@ -68,7 +72,11 @@ extension VideoPlayer.Overlay {
                 }
             } label: {
                 HStack {
-                    Image(systemName: "speaker.wave.2")
+                    if videoPlayerManager.audioTrackIndex == -1 {
+                        Image(systemName: "speaker.wave.2")
+                    } else {
+                        Image(systemName: "speaker.wave.2.fill")
+                    }
                     L10n.audio.text
                 }
             }

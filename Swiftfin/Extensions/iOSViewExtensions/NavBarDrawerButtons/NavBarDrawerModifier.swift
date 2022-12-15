@@ -8,17 +8,18 @@
 
 import SwiftUI
 
-struct NavBarDrawerModifier<Drawer: View>: ViewModifier {
+struct NavBarDrawerModifier: ViewModifier {
 
-    let drawer: () -> Drawer
+    let drawer: () -> any View
 
-    init(@ViewBuilder drawer: @escaping () -> Drawer) {
+    init(@ViewBuilder drawer: @escaping () -> any View) {
         self.drawer = drawer
     }
 
     func body(content: Content) -> some View {
         NavBarDrawerView {
             drawer()
+                .eraseToAnyView()
                 .ignoresSafeArea()
         } content: {
             content

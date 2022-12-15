@@ -10,15 +10,15 @@ import SwiftUI
 
 // TODO: Look at something better for accomadating loading/noResults/other types
 
-struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
+struct PosterButton<Item: Poster>: View {
 
     private var state: PosterButtonType<Item>
     private var type: PosterType
     private var itemScale: CGFloat
     private var horizontalAlignment: HorizontalAlignment
-    private var content: (PosterButtonType<Item>) -> Content
-    private var imageOverlay: (PosterButtonType<Item>) -> ImageOverlay
-    private var contextMenu: (PosterButtonType<Item>) -> ContextMenu
+    private var content: (PosterButtonType<Item>) -> any View
+    private var imageOverlay: (PosterButtonType<Item>) -> any View
+    private var contextMenu: (PosterButtonType<Item>) -> any View
     private var onSelect: () -> Void
     private var singleImage: Bool
 
@@ -39,7 +39,7 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     }
 
     @ViewBuilder
-    private func poster(from item: Item) -> some View {
+    private func poster(from item: any Poster) -> some View {
         Group {
             switch type {
             case .portrait:
@@ -58,6 +58,7 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
 
     var body: some View {
         VStack(alignment: horizontalAlignment) {
+            
             Button {
                 onSelect()
             } label: {
@@ -73,42 +74,44 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                 }
                 .overlay {
                     imageOverlay(state)
+                        .eraseToAnyView()
                         .posterStyle(type: type, width: itemWidth)
                 }
             }
             .contextMenu(menuItems: {
                 contextMenu(state)
+                    .eraseToAnyView()
             })
             .posterStyle(type: type, width: itemWidth)
             .posterShadow()
 
             content(state)
+                .eraseToAnyView()
         }
         .frame(width: itemWidth)
     }
 }
 
-extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
-    ImageOverlay == EmptyView,
-    ContextMenu == EmptyView
-{
+extension PosterButton {
 
-    init(state: PosterButtonType<Item>, type: PosterType, singleImage: Bool = false) {
+    init(
+        state: PosterButtonType<Item>,
+        type: PosterType,
+        singleImage: Bool = false
+    ) {
         self.init(
             state: state,
             type: type,
             itemScale: 1,
             horizontalAlignment: .leading,
-            content: { PosterButtonDefaultContentView(state: $0) },
+            content: { DefaultContentView(state: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             onSelect: {},
             singleImage: singleImage
         )
     }
-}
-
-extension PosterButton {
+    
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
     }
@@ -117,49 +120,16 @@ extension PosterButton {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    func content<C: View>(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> C)
-    -> PosterButton<Item, C, ImageOverlay, ContextMenu> {
-        .init(
-            state: state,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            singleImage: singleImage
-        )
+    func content(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.content, with: content)
     }
 
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (PosterButtonType<Item>) -> O)
-    -> PosterButton<Item, Content, O, ContextMenu> {
-        .init(
-            state: state,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            singleImage: singleImage
-        )
+    func imageOverlay(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.imageOverlay, with: content)
     }
 
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (PosterButtonType<Item>) -> M)
-    -> PosterButton<Item, Content, ImageOverlay, M> {
-        .init(
-            state: state,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            singleImage: singleImage
-        )
+    func contextMenu(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.contextMenu, with: content)
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
@@ -167,61 +137,64 @@ extension PosterButton {
     }
 }
 
-// MARK: default content view
+// MARK: DefaultContentView
 
-struct PosterButtonDefaultContentView<Item: Poster>: View {
+extension PosterButton {
+    
+    struct DefaultContentView: View {
 
-    let state: PosterButtonType<Item>
+        let state: PosterButtonType<Item>
 
-    @ViewBuilder
-    private var title: some View {
-        Group {
-            switch state {
-            case .loading:
-                String(repeating: "a", count: Int.random(in: 5 ..< 8)).text
-                    .redacted(reason: .placeholder)
-            case .noResult:
-                L10n.noResults.text
-            case let .item(item):
-                if item.showTitle {
-                    Text(item.displayTitle)
-                } else {
-                    EmptyView()
+        @ViewBuilder
+        private var title: some View {
+            Group {
+                switch state {
+                case .loading:
+                    String(repeating: "a", count: Int.random(in: 5 ..< 8)).text
+                        .redacted(reason: .placeholder)
+                case .noResult:
+                    L10n.noResults.text
+                case let .item(item):
+                    if item.showTitle {
+                        Text(item.displayTitle)
+                    } else {
+                        EmptyView()
+                    }
                 }
             }
+            .font(.footnote.weight(.regular))
+            .foregroundColor(.primary)
+            .lineLimit(2)
         }
-        .font(.footnote.weight(.regular))
-        .foregroundColor(.primary)
-        .lineLimit(2)
-    }
 
-    @ViewBuilder
-    private var subtitle: some View {
-        Group {
-            switch state {
-            case .loading:
-                String(repeating: "a", count: Int.random(in: 8 ..< 15)).text
-                    .redacted(reason: .placeholder)
-            case .noResult:
-                L10n.noResults.text
-            case let .item(item):
-                if let subtitle = item.subtitle {
-                    Text(subtitle)
-                } else {
-                    EmptyView()
+        @ViewBuilder
+        private var subtitle: some View {
+            Group {
+                switch state {
+                case .loading:
+                    String(repeating: "a", count: Int.random(in: 8 ..< 15)).text
+                        .redacted(reason: .placeholder)
+                case .noResult:
+                    L10n.noResults.text
+                case let .item(item):
+                    if let subtitle = item.subtitle {
+                        Text(subtitle)
+                    } else {
+                        EmptyView()
+                    }
                 }
             }
+            .font(.caption.weight(.medium))
+            .foregroundColor(.secondary)
+            .lineLimit(2)
         }
-        .font(.caption.weight(.medium))
-        .foregroundColor(.secondary)
-        .lineLimit(2)
-    }
 
-    var body: some View {
-        VStack(alignment: .leading) {
-            title
+        var body: some View {
+            VStack(alignment: .leading) {
+                title
 
-            subtitle
+                subtitle
+            }
         }
     }
 }

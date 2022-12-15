@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverlay: View, ContextMenu: View>: View {
+struct MenuPosterHStack<Model: MenuPosterHStackModel>: View {
 
     @ObservedObject
     private var manager: Model
@@ -17,9 +17,9 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
     private let type: PosterType
     private var itemScale: CGFloat
     private let singleImage: Bool
-    private var content: (PosterButtonType<Model.Item>) -> Content
-    private var imageOverlay: (PosterButtonType<Model.Item>) -> ImageOverlay
-    private var contextMenu: (PosterButtonType<Model.Item>) -> ContextMenu
+    private var content: (PosterButtonType<Model.Item>) -> any View
+    private var imageOverlay: (PosterButtonType<Model.Item>) -> any View
+    private var contextMenu: (PosterButtonType<Model.Item>) -> any View
     private var onSelect: (Model.Item) -> Void
 
     @ViewBuilder
@@ -75,10 +75,7 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel, Content: View, ImageOverla
     }
 }
 
-extension MenuPosterHStack where Content == PosterButtonDefaultContentView<Model.Item>,
-    ImageOverlay == EmptyView,
-    ContextMenu == EmptyView
-{
+extension MenuPosterHStack {
 
     init(
         type: PosterType,
@@ -90,7 +87,7 @@ extension MenuPosterHStack where Content == PosterButtonDefaultContentView<Model
             type: type,
             itemScale: 1,
             singleImage: singleImage,
-            content: { PosterButtonDefaultContentView(state: $0) },
+            content: { _ in EmptyView() },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             onSelect: { _ in }
@@ -104,46 +101,46 @@ extension MenuPosterHStack {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    func content<C: View>(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> C)
-    -> MenuPosterHStack<Model, C, ImageOverlay, ContextMenu> {
-        .init(
-            manager: manager,
-            type: type,
-            itemScale: itemScale,
-            singleImage: singleImage,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect
-        )
+    func content(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
+        copy(modifying: \.content, with: content)
+//        .init(
+//            manager: manager,
+//            type: type,
+//            itemScale: itemScale,
+//            singleImage: singleImage,
+//            content: content,
+//            imageOverlay: imageOverlay,
+//            contextMenu: contextMenu,
+//            onSelect: onSelect
+//        )
     }
 
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (PosterButtonType<Model.Item>) -> O)
-    -> MenuPosterHStack<Model, Content, O, ContextMenu> {
-        .init(
-            manager: manager,
-            type: type,
-            itemScale: itemScale,
-            singleImage: singleImage,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect
-        )
+    func imageOverlay(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
+        copy(modifying: \.imageOverlay, with: content)
+//        .init(
+//            manager: manager,
+//            type: type,
+//            itemScale: itemScale,
+//            singleImage: singleImage,
+//            content: content,
+//            imageOverlay: imageOverlay,
+//            contextMenu: contextMenu,
+//            onSelect: onSelect
+//        )
     }
 
-    func contextMenu<C: View>(@ViewBuilder _ contextMenu: @escaping (PosterButtonType<Model.Item>) -> C)
-    -> MenuPosterHStack<Model, Content, ImageOverlay, C> {
-        .init(
-            manager: manager,
-            type: type,
-            itemScale: itemScale,
-            singleImage: singleImage,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect
-        )
+    func contextMenu(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
+        copy(modifying: \.contextMenu, with: content)
+//        .init(
+//            manager: manager,
+//            type: type,
+//            itemScale: itemScale,
+//            singleImage: singleImage,
+//            content: content,
+//            imageOverlay: imageOverlay,
+//            contextMenu: contextMenu,
+//            onSelect: onSelect
+//        )
     }
 
     func onSelect(_ action: @escaping (Model.Item) -> Void) -> Self {

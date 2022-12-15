@@ -10,7 +10,7 @@ import SwiftUI
 
 // TODO: Remove `Header` and `TrailingContent` and create `HeaderPosterHStack`
 
-struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
+struct PosterHStack<Item: Poster>: View {
 
     private var header: () -> any View
     private var title: String?
@@ -18,30 +18,23 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
     private var items: [PosterButtonType<Item>]
     private var singleImage: Bool
     private var itemScale: CGFloat
-    private var content: (PosterButtonType<Item>) -> Content
-    private var imageOverlay: (PosterButtonType<Item>) -> ImageOverlay
-    private var contextMenu: (PosterButtonType<Item>) -> ContextMenu
-    private var trailingContent: () -> TrailingContent
+    private var content: (PosterButtonType<Item>) -> any View
+    private var imageOverlay: (PosterButtonType<Item>) -> any View
+    private var contextMenu: (PosterButtonType<Item>) -> any View
+    private var trailingContent: () -> any View
     private var onSelect: (Item) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {
 
             HStack {
-//                if header().eraseToAnyView() is EmptyView {
-//                    if let title = title {
-//                        Text(title)
-//                            .font(.title2)
-//                            .fontWeight(.semibold)
-//                            .accessibility(addTraits: [.isHeader])
-//                    }
-//                } else {
-                    header().eraseToAnyView()
-//                }
+                header()
+                    .eraseToAnyView()
 
                 Spacer()
 
                 trailingContent()
+                    .eraseToAnyView()
             }
             .padding(.horizontal)
             .if(UIDevice.isIPad) { view in
@@ -57,9 +50,9 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
                             singleImage: singleImage
                         )
                         .scaleItem(itemScale)
-                        .content { content($0) }
-                        .imageOverlay { imageOverlay($0) }
-                        .contextMenu { contextMenu($0) }
+                        .content { content($0).eraseToAnyView() }
+                        .imageOverlay { imageOverlay($0).eraseToAnyView() }
+                        .contextMenu { contextMenu($0).eraseToAnyView() }
                         .onSelect {
                             if case let PosterButtonType.item(item) = item {
                                 onSelect(item)
@@ -77,12 +70,7 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
     }
 }
 
-extension PosterHStack where Header == EmptyView,
-    Content == PosterButtonDefaultContentView<Item>,
-    ImageOverlay == EmptyView,
-    ContextMenu == EmptyView,
-    TrailingContent == EmptyView
-{
+extension PosterHStack {
 
     // TODO: Remove
     init(
@@ -92,13 +80,13 @@ extension PosterHStack where Header == EmptyView,
         singleImage: Bool = false
     ) {
         self.init(
-            header: { EmptyView() },
+            header: { DefaultHeader(title: title) },
             title: title,
             type: type,
             items: items.map { PosterButtonType.item($0) },
             singleImage: singleImage,
             itemScale: 1,
-            content: { PosterButtonDefaultContentView(state: $0) },
+            content: { PosterButton.DefaultContentView(state: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -113,13 +101,13 @@ extension PosterHStack where Header == EmptyView,
         singleImage: Bool = false
     ) {
         self.init(
-            header: { EmptyView() },
+            header: { DefaultHeader(title: title) },
             title: title,
             type: type,
             items: items,
             singleImage: singleImage,
             itemScale: 1,
-            content: { PosterButtonDefaultContentView(state: $0) },
+            content: { PosterButton.DefaultContentView(state: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -133,25 +121,21 @@ extension PosterHStack where Header == EmptyView,
         singleImage: Bool = false
     ) {
         self.init(
-            header: { EmptyView() },
+            header: { DefaultHeader(title: nil) },
             title: nil,
             type: type,
             items: items,
             singleImage: singleImage,
             itemScale: 1,
-            content: { PosterButtonDefaultContentView(state: $0) },
+            content: { PosterButton.DefaultContentView(state: $0) },
             imageOverlay: { _ in EmptyView() },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in }
         )
     }
-}
-
-extension PosterHStack {
-
-    func header(@ViewBuilder _ header: @escaping () -> any View)
-    -> PosterHStack<Header, Item, Content, ImageOverlay, ContextMenu, TrailingContent> {
+    
+    func header(@ViewBuilder _ header: @escaping () -> any View) -> Self {
         copy(modifying: \.header, with: header)
     }
 
@@ -159,75 +143,42 @@ extension PosterHStack {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    func content<C: View>(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> C)
-    -> PosterHStack<Header, Item, C, ImageOverlay, ContextMenu, TrailingContent> {
-        .init(
-            header: header,
-            title: title,
-            type: type,
-            items: items,
-            singleImage: singleImage,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func content(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.content, with: content)
     }
 
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (PosterButtonType<Item>) -> O)
-    -> PosterHStack<Header, Item, Content, O, ContextMenu, TrailingContent> {
-        .init(
-            header: header,
-            title: title,
-            type: type,
-            items: items,
-            singleImage: singleImage,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func imageOverlay(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.imageOverlay, with: content)
     }
 
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (PosterButtonType<Item>) -> M)
-    -> PosterHStack<Header, Item, Content, ImageOverlay, M, TrailingContent> {
-        .init(
-            header: header,
-            title: title,
-            type: type,
-            items: items,
-            singleImage: singleImage,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func contextMenu(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.contextMenu, with: content)
     }
 
-    func trailing<T: View>(@ViewBuilder _ trailingContent: @escaping () -> T)
-    -> PosterHStack<Header, Item, Content, ImageOverlay, ContextMenu, T> {
-        .init(
-            header: header,
-            title: title,
-            type: type,
-            items: items,
-            singleImage: singleImage,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func trailing(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.trailingContent, with: content)
     }
 
     func onSelect(_ action: @escaping (Item) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
+    }
+}
+
+// MARK: DefaultHeader
+
+extension PosterHStack {
+    
+    struct DefaultHeader: View {
+        
+        let title: String?
+        
+        var body: some View {
+            if let title {
+                Text(title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .accessibility(addTraits: [.isHeader])
+            }
+        }
     }
 }

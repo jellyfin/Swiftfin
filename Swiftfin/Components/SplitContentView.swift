@@ -22,23 +22,25 @@ class SplitContentViewProxy: ObservableObject {
     }
 }
 
-struct SplitContentView<Content: View, SplitContent: View>: View {
+struct SplitContentView: View {
 
     @ObservedObject
     private var proxy: SplitContentViewProxy
 
-    private var content: () -> Content
-    private var splitContent: () -> SplitContent
+    private var content: () -> any View
+    private var splitContent: () -> any View
     private var splitContentWidth: CGFloat
 
     var body: some View {
         HStack(spacing: 0) {
 
             content()
+                .eraseToAnyView()
                 .frame(maxWidth: .infinity)
 
             if proxy.isPresentingSplitView {
                 splitContent()
+                    .eraseToAnyView()
                     .transition(.move(edge: .bottom))
                     .frame(width: splitContentWidth)
                     .zIndex(100)
@@ -48,7 +50,8 @@ struct SplitContentView<Content: View, SplitContent: View>: View {
     }
 }
 
-extension SplitContentView where Content == EmptyView, SplitContent == EmptyView {
+extension SplitContentView {
+    
     init() {
         self.init(
             proxy: .init(),
@@ -57,29 +60,16 @@ extension SplitContentView where Content == EmptyView, SplitContent == EmptyView
             splitContentWidth: 400
         )
     }
-}
-
-extension SplitContentView {
-
+    
     func proxy(_ proxy: SplitContentViewProxy) -> Self {
         copy(modifying: \.proxy, with: proxy)
     }
 
-    func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> SplitContentView<C, SplitContent> {
-        .init(
-            proxy: proxy,
-            content: content,
-            splitContent: splitContent,
-            splitContentWidth: splitContentWidth
-        )
+    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.content, with: content)
     }
 
-    func splitContent<C: View>(@ViewBuilder _ splitContent: @escaping () -> C) -> SplitContentView<Content, C> {
-        .init(
-            proxy: proxy,
-            content: content,
-            splitContent: splitContent,
-            splitContentWidth: splitContentWidth
-        )
+    func splitContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.splitContent, with: content)
     }
 }

@@ -10,30 +10,30 @@ import SwiftUI
 
 private let drawerHeight: CGFloat = 36
 
-struct NavBarDrawerView<Buttons: View, Content: View>: UIViewControllerRepresentable {
+struct NavBarDrawerView: UIViewControllerRepresentable {
 
-    private let buttons: () -> Buttons
-    private let content: () -> Content
+    private let buttons: () -> any View
+    private let content: () -> any View
 
     init(
-        @ViewBuilder buttons: @escaping () -> Buttons,
-        @ViewBuilder content: @escaping () -> Content
+        @ViewBuilder buttons: @escaping () -> any View,
+        @ViewBuilder content: @escaping () -> any View
     ) {
         self.buttons = buttons
         self.content = content
     }
 
-    func makeUIViewController(context: Context) -> UINavBarDrawerHostingController<Buttons, Content> {
+    func makeUIViewController(context: Context) -> UINavBarDrawerHostingController {
         UINavBarDrawerHostingController(buttons: buttons, content: content)
     }
 
-    func updateUIViewController(_ uiViewController: UINavBarDrawerHostingController<Buttons, Content>, context: Context) {}
+    func updateUIViewController(_ uiViewController: UINavBarDrawerHostingController, context: Context) {}
 }
 
-class UINavBarDrawerHostingController<Buttons: View, Content: View>: UIViewController {
+class UINavBarDrawerHostingController: UIViewController {
 
-    private let buttons: () -> Buttons
-    private let content: () -> Content
+    private let buttons: () -> any View
+    private let content: () -> any View
 
     private lazy var navBarBlurView: UIVisualEffectView = {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
@@ -41,23 +41,23 @@ class UINavBarDrawerHostingController<Buttons: View, Content: View>: UIViewContr
         return blurView
     }()
 
-    private lazy var contentView: UIHostingController<Content> = {
-        let contentView = UIHostingController(rootView: content())
+    private lazy var contentView: UIHostingController<AnyView> = {
+        let contentView = UIHostingController(rootView: content().eraseToAnyView())
         contentView.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.view.backgroundColor = nil
         return contentView
     }()
 
-    private lazy var drawerButtonsView: UIHostingController<Buttons> = {
-        let drawerButtonsView = UIHostingController(rootView: buttons())
+    private lazy var drawerButtonsView: UIHostingController<AnyView> = {
+        let drawerButtonsView = UIHostingController(rootView: buttons().eraseToAnyView())
         drawerButtonsView.view.translatesAutoresizingMaskIntoConstraints = false
         drawerButtonsView.view.backgroundColor = nil
         return drawerButtonsView
     }()
 
     init(
-        buttons: @escaping () -> Buttons,
-        content: @escaping () -> Content
+        buttons: @escaping () -> any View,
+        content: @escaping () -> any View
     ) {
         self.buttons = buttons
         self.content = content
@@ -106,14 +106,14 @@ class UINavBarDrawerHostingController<Buttons: View, Content: View>: UIViewContr
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        self.navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        navigationController?.navigationBar.shadowImage = nil
     }
 
     override var additionalSafeAreaInsets: UIEdgeInsets {

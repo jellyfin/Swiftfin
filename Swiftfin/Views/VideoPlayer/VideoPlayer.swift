@@ -572,6 +572,8 @@ extension VideoPlayer {
             Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000),
             toNearest: 100
         )
+        
+        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondToSecondLabel)
         audioOffset = clamp(newOffset, min: -30000, max: 30000)
     }
 
@@ -694,7 +696,7 @@ extension VideoPlayer {
         )
         let clampedOffset = clamp(newOffset, min: -30000, max: 30000)
 
-        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: clampedOffset.millisecondToSecondLabel)
+        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondToSecondLabel)
 
         subtitleOffset = clampedOffset
     }

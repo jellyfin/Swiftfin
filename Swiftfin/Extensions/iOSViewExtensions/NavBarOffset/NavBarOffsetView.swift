@@ -8,41 +8,50 @@
 
 import SwiftUI
 
-struct NavBarOffsetView<Content: View>: UIViewControllerRepresentable {
+struct NavBarOffsetView: UIViewControllerRepresentable {
 
     @Binding
     private var scrollViewOffset: CGFloat
 
     private let start: CGFloat
     private let end: CGFloat
-    private let content: () -> Content
+    private let content: () -> any View
 
-    init(scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        scrollViewOffset: Binding<CGFloat>,
+        start: CGFloat,
+        end: CGFloat,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
         self._scrollViewOffset = scrollViewOffset
         self.start = start
         self.end = end
         self.content = content
     }
 
-    init(start: CGFloat, end: CGFloat, @ViewBuilder body: @escaping () -> Content) {
+    init(
+        start: CGFloat,
+        end: CGFloat,
+        @ViewBuilder body: @escaping () -> any View
+    ) {
         self._scrollViewOffset = Binding(get: { 0 }, set: { _ in })
         self.start = start
         self.end = end
         self.content = body
     }
 
-    func makeUIViewController(context: Context) -> UINavBarOffsetHostingController<Content> {
-        let a = UINavBarOffsetHostingController(rootView: content())
+    func makeUIViewController(context: Context) -> UINavBarOffsetHostingController {
+        let a = UINavBarOffsetHostingController(rootView: content().eraseToAnyView())
         a.additionalSafeAreaInsets = .zero
         return a
     }
 
-    func updateUIViewController(_ uiViewController: UINavBarOffsetHostingController<Content>, context: Context) {
+    func updateUIViewController(_ uiViewController: UINavBarOffsetHostingController, context: Context) {
         uiViewController.scrollViewDidScroll(scrollViewOffset, start: start, end: end)
     }
 }
 
-class UINavBarOffsetHostingController<Content: View>: UIHostingController<Content> {
+class UINavBarOffsetHostingController: UIHostingController<AnyView> {
 
     private var lastScrollViewOffset: CGFloat = 0
 
@@ -73,7 +82,7 @@ class UINavBarOffsetHostingController<Content: View>: UIHostingController<Conten
         let currentProgress = (offset - start) / diff
         let offset = min(max(currentProgress, 0), 1)
 
-        self.navigationController?.navigationBar
+        navigationController?.navigationBar
             .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(offset)]
         navBarBlurView.alpha = offset
         lastScrollViewOffset = offset
@@ -81,16 +90,16 @@ class UINavBarOffsetHostingController<Content: View>: UIHostingController<Conten
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar
+        navigationController?.navigationBar
             .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(lastScrollViewOffset)]
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
-        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        self.navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
+        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        navigationController?.navigationBar.shadowImage = nil
     }
 }
