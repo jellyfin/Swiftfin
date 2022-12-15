@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 extension View {
+    
     @inlinable
     func eraseToAnyView() -> AnyView {
         AnyView(self)

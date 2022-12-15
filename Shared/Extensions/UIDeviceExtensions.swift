@@ -9,6 +9,7 @@
 import UIKit
 
 extension UIDevice {
+    
     static var vendorUUIDString: String {
         current.identifierForVendor!.uuidString
     }
@@ -25,7 +26,11 @@ extension UIDevice {
         #if os(tvOS)
         "tvOS"
         #else
-        "iOS"
+        if UIDevice.isIPad {
+            return "iPadOS"
+        } else {
+            return "iOS"
+        }
         #endif
     }
 

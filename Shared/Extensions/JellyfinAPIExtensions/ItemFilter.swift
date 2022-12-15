@@ -9,13 +9,9 @@
 import Foundation
 import JellyfinAPI
 
-extension ItemFilter {
-    static var supportedCases: [ItemFilter] {
-        [.isUnplayed, .isPlayed, .isFavorite, .likes]
-    }
-
+extension ItemFilter: Displayable {
     // TODO: Localize
-    var localized: String {
+    var displayTitle: String {
         switch self {
         case .isUnplayed:
             return "Unplayed"
@@ -29,8 +25,15 @@ extension ItemFilter {
             return ""
         }
     }
+}
+
+extension ItemFilter {
+    
+    static var supportedCases: [ItemFilter] {
+        [.isUnplayed, .isPlayed, .isFavorite, .likes]
+    }
 
     var filter: ItemFilters.Filter {
-        .init(displayTitle: localized, filterName: rawValue)
+        .init(displayTitle: displayTitle, filterName: rawValue)
     }
 }

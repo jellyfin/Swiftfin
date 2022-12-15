@@ -10,6 +10,7 @@ import Foundation
 import JellyfinAPI
 
 public enum SortBy: String, CaseIterable, Displayable {
+    
     case premiereDate = "PremiereDate"
     case name = "SortName"
     case dateAdded = "DateCreated"

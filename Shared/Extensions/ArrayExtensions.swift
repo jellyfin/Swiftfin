@@ -9,6 +9,7 @@
 import Foundation
 
 extension Array {
+    
     func appending(_ element: Element) -> [Element] {
         self + [element]
     }

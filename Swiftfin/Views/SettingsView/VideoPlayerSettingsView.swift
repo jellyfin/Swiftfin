@@ -119,7 +119,7 @@ struct VideoPlayerSettingsView: View {
 
                 Toggle(isOn: $playNextItem) {
                     HStack {
-                        Image(systemName: "chevron.left.circle")
+                        Image(systemName: "chevron.right.circle")
                         Text("Next Item")
                     }
                 }
@@ -133,7 +133,7 @@ struct VideoPlayerSettingsView: View {
 
                 Toggle(isOn: $playPreviousItem) {
                     HStack {
-                        Image(systemName: "chevron.right.circle")
+                        Image(systemName: "chevron.left.circle")
                         Text("Previous Item")
                     }
                 }

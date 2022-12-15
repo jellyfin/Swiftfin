@@ -26,7 +26,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         LoggingSystem.bootstrap { label in
 
-            var loggers: [LogHandler] = [PersistentLogHandler(label: label)]
+            var loggers: [LogHandler] = [PersistentLogHandler(label: label).settingTrace()]
 
             #if DEBUG
             loggers.append(SwiftfinConsoleLogger())

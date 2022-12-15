@@ -9,19 +9,6 @@
 import Foundation
 
 public extension URL {
-    /// Dictionary of the URL's query parameters
-    var queryParameters: [String: String]? {
-        guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
-              let queryItems = components.queryItems else { return nil }
-
-        var items: [String: String] = [:]
-
-        for queryItem in queryItems {
-            items[queryItem.name] = queryItem.value
-        }
-
-        return items
-    }
 
     static var documents: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]

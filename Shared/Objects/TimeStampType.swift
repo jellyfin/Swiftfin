@@ -10,6 +10,7 @@ import Defaults
 import Foundation
 
 enum TimestampType: String, CaseIterable, Defaults.Serializable, Displayable {
+    
     case split
     case compact
 

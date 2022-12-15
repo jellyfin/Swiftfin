@@ -65,21 +65,6 @@ struct AboutAppView: View {
                     .onSelect {
                         UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
                     }
-
-                HStack {
-                    Image("git.commit")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20)
-                        .foregroundColor(.primary)
-
-                    Text("git commit")
-
-                    Spacer()
-
-                    Text(Bundle.main.gitCommit ?? .emptyDash)
-                        .foregroundColor(.secondary)
-                }
             }
         }
     }

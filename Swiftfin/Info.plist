@@ -31,8 +31,6 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CFBundledisplayTitle</key>
 	<string>Swiftfin</string>
-	<key>GIT_COMMIT_HASH</key>
-	<string>9710ba86</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

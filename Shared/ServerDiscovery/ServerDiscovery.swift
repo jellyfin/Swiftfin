@@ -10,26 +10,26 @@ import Factory
 import Foundation
 import UDPBroadcast
 
-public class ServerDiscovery {
+class ServerDiscovery {
 
     @Injected(LogManager.service)
     private var logger
 
-    public struct ServerLookupResponse: Codable, Hashable, Identifiable {
+    struct ServerLookupResponse: Codable, Hashable, Identifiable {
 
-        public func hash(into hasher: inout Hasher) {
+        func hash(into hasher: inout Hasher) {
             hasher.combine(id)
         }
 
         private let address: String
-        public let id: String
-        public let name: String
+        let id: String
+        let name: String
 
-        public var url: URL {
+        var url: URL {
             URL(string: self.address)!
         }
 
-        public var host: String {
+        var host: String {
             let components = URLComponents(string: self.address)
             if let host = components?.host {
                 return host
@@ -37,7 +37,7 @@ public class ServerDiscovery {
             return self.address
         }
 
-        public var port: Int {
+        var port: Int {
             let components = URLComponents(string: self.address)
             if let port = components?.port {
                 return port
@@ -56,7 +56,7 @@ public class ServerDiscovery {
 
     init() {}
 
-    public func locateServer(completion: @escaping (ServerLookupResponse?) -> Void) {
+    func locateServer(completion: @escaping (ServerLookupResponse?) -> Void) {
 
         func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
             do {

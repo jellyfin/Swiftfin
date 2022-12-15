@@ -9,12 +9,12 @@
 import Defaults
 import UIKit
 
-// TODO: Convert to Int
-enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable, Displayable {
-    case thirty = 30
-    case fifteen = 15
-    case ten = 10
+enum VideoPlayerJumpLength: Int, CaseIterable, Defaults.Serializable, Displayable {
+    
     case five = 5
+    case ten = 10
+    case fifteen = 15
+    case thirty = 30
 
     var displayTitle: String {
         "\(rawValue)s"

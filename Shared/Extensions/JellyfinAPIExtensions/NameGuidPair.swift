@@ -9,16 +9,18 @@
 import Foundation
 import JellyfinAPI
 
-extension NameGuidPair {
-    var filter: ItemFilters.Filter {
-        .init(displayTitle: displayTitle, id: id, filterName: displayTitle)
-    }
-}
-
 extension NameGuidPair: Displayable {
+    
     var displayTitle: String {
-        self.name ?? .emptyDash
+        name ?? .emptyDash
     }
 }
 
 extension NameGuidPair: LibraryParent {}
+
+extension NameGuidPair {
+    
+    var filter: ItemFilters.Filter {
+        .init(displayTitle: displayTitle, id: id, filterName: displayTitle)
+    }
+}

@@ -9,7 +9,8 @@
 import SwiftUI
 
 extension Font {
-    func toUIFont() -> UIFont {
+    
+    var uiFont: UIFont {
         switch self {
         #if !os(tvOS)
         case .largeTitle:

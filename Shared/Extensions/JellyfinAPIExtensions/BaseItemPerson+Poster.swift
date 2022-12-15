@@ -23,13 +23,6 @@ extension BaseItemPerson: Poster {
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
         let scaleWidth = UIScreen.main.scale(maxWidth)
-//        let url = ImageAPI.getItemImageWithRequestBuilder(
-//            itemId: id ?? "",
-//            imageType: .primary,
-//            maxWidth: scaleWidth,
-//            tag: primaryImageTag
-//        ).url
-
         let client = Container.userSession.callAsFunction().client
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth,

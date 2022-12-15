@@ -9,6 +9,13 @@
 import Foundation
 import JellyfinAPI
 
+extension ChapterInfo: Displayable {
+
+    var displayTitle: String {
+        name ?? .emptyDash
+    }
+}
+
 extension ChapterInfo {
 
     var timestampLabel: String {
@@ -19,13 +26,6 @@ extension ChapterInfo {
     var startTimeSeconds: Int {
         let playbackPositionTicks = startPositionTicks ?? 0
         return Int(playbackPositionTicks / 10_000_000)
-    }
-}
-
-extension ChapterInfo: Displayable {
-
-    var displayTitle: String {
-        name ?? .emptyDash
     }
 }
 

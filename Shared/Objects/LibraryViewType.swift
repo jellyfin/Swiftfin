@@ -10,6 +10,7 @@ import Defaults
 import Foundation
 
 enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
+    
     case grid
     case list
 

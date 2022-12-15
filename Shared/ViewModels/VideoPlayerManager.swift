@@ -44,6 +44,8 @@ class VideoPlayerManager: ViewModel {
     var nextViewModel: VideoPlayerViewModel?
 
     let proxy: VLCVideoPlayer.Proxy = .init()
+    
+    var hasSentStart = false
 
     // MARK: init
 
@@ -162,6 +164,41 @@ extension VideoPlayerManager {
                 self.nextViewModel = nextViewModel
                 self.previousViewModel = previousViewModel
             }
+        }
+    }
+    
+    func sendStartReport() {
+        Task {
+            let startInfo = PlaybackStartInfo(
+                audioStreamIndex: audioTrackIndex,
+                canSeek: true,
+                itemID: currentViewModel.item.id,
+                mediaSourceID: currentViewModel.mediaSource.id,
+                playbackStartTimeTicks: Int(Date().timeIntervalSince1970) * 10_000_000,
+                sessionID: currentViewModel.playSessionID,
+                subtitleStreamIndex: subtitleTrackIndex
+            )
+            
+            let request = Paths.reportPlaybackStart(startInfo)
+            let response = try await userSession.client.send(request)
+            
+            logger.log(level: .info, "Playback start sent for item: \(currentViewModel.item.name ?? .emptyDash)")
+        }
+    }
+    
+    func sendStopReport() {
+        Task {
+            let stopInfo = PlaybackStopInfo(
+                itemID: currentViewModel.item.id,
+                mediaSourceID: currentViewModel.mediaSource.id,
+                positionTicks: 10_000_000 * 120,
+                sessionID: currentViewModel.playSessionID
+            )
+            
+            let request = Paths.reportPlaybackStopped(stopInfo)
+            let response = try await userSession.client.send(request)
+            
+            logger.log(level: .info, "Playback stop sent for item: \(currentViewModel.item.name ?? .emptyDash)")
         }
     }
 }

@@ -45,6 +45,10 @@ struct SwiftfinApp: App {
             }
         }
     }
+    
+    private static func setupAccentColor(with accentColor: UIColor) {
+        UIApplication.shared.keyWindow?.tintColor = accentColor
+    }
 
     private static func setupAppearance(with appearance: UIUserInterfaceStyle) {
         UIApplication.shared.keyWindow?.overrideUserInterfaceStyle = appearance
@@ -56,10 +60,6 @@ struct SwiftfinApp: App {
         let barAppearance = UINavigationBar.appearance()
         barAppearance.backIndicatorImage = backButtonBackgroundImage
         barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
-    }
-
-    private static func setupAccentColor(with accentColor: UIColor) {
-        UIApplication.shared.keyWindow?.tintColor = accentColor
     }
 }
 

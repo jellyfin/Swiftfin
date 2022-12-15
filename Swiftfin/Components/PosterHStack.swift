@@ -12,7 +12,7 @@ import SwiftUI
 
 struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
 
-    private var header: () -> Header
+    private var header: () -> any View
     private var title: String?
     private var type: PosterType
     private var items: [PosterButtonType<Item>]
@@ -28,16 +28,16 @@ struct PosterHStack<Header: View, Item: Poster, Content: View, ImageOverlay: Vie
         VStack(alignment: .leading) {
 
             HStack {
-                if header() is EmptyView {
-                    if let title = title {
-                        Text(title)
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .accessibility(addTraits: [.isHeader])
-                    }
-                } else {
-                    header()
-                }
+//                if header().eraseToAnyView() is EmptyView {
+//                    if let title = title {
+//                        Text(title)
+//                            .font(.title2)
+//                            .fontWeight(.semibold)
+//                            .accessibility(addTraits: [.isHeader])
+//                    }
+//                } else {
+                    header().eraseToAnyView()
+//                }
 
                 Spacer()
 
@@ -150,21 +150,9 @@ extension PosterHStack where Header == EmptyView,
 
 extension PosterHStack {
 
-    func header<H: View>(@ViewBuilder _ header: @escaping () -> H)
-    -> PosterHStack<H, Item, Content, ImageOverlay, ContextMenu, TrailingContent> {
-        .init(
-            header: header,
-            title: title,
-            type: type,
-            items: items,
-            singleImage: singleImage,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func header(@ViewBuilder _ header: @escaping () -> any View)
+    -> PosterHStack<Header, Item, Content, ImageOverlay, ContextMenu, TrailingContent> {
+        copy(modifying: \.header, with: header)
     }
 
     func scaleItems(_ scale: CGFloat) -> Self {

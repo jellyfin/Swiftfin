@@ -46,9 +46,9 @@ struct TruncatedTextView: View {
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
-                                .frame(width: seeMoreText.widthOfString(usingFont: font.toUIFont()) + 15)
+                                .frame(width: seeMoreText.widthOfString(usingFont: font.uiFont) + 15)
                             }
-                            .frame(height: seeMoreText.heightOfString(usingFont: font.toUIFont()))
+                            .frame(height: seeMoreText.heightOfString(usingFont: font.uiFont))
                         }
                     }
                 }

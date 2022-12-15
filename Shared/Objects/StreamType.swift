@@ -9,6 +9,7 @@
 import Foundation
 
 enum StreamType: Displayable {
+    
     case direct
     case transcode
     case hls
