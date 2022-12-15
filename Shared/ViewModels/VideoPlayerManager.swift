@@ -93,18 +93,6 @@ class VideoPlayerManager: ViewModel {
     func onStateUpdated(newState: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         guard state != newState else { return }
         state = newState
-
-        if newState == .ended {
-            print("state ended")
-            if let nextViewModel,
-               Defaults[.VideoPlayer.autoPlay],
-               Defaults[.VideoPlayer.autoPlayEnabled]
-            {
-                selectNextViewModel()
-
-                proxy.playNewMedia(nextViewModel.vlcVideoPlayerConfiguration)
-            }
-        }
     }
 }
 
@@ -167,38 +155,38 @@ extension VideoPlayerManager {
         }
     }
     
-    func sendStartReport() {
-        Task {
-            let startInfo = PlaybackStartInfo(
-                audioStreamIndex: audioTrackIndex,
-                canSeek: true,
-                itemID: currentViewModel.item.id,
-                mediaSourceID: currentViewModel.mediaSource.id,
-                playbackStartTimeTicks: Int(Date().timeIntervalSince1970) * 10_000_000,
-                sessionID: currentViewModel.playSessionID,
-                subtitleStreamIndex: subtitleTrackIndex
-            )
-            
-            let request = Paths.reportPlaybackStart(startInfo)
-            let response = try await userSession.client.send(request)
-            
-            logger.log(level: .info, "Playback start sent for item: \(currentViewModel.item.name ?? .emptyDash)")
-        }
-    }
-    
-    func sendStopReport() {
-        Task {
-            let stopInfo = PlaybackStopInfo(
-                itemID: currentViewModel.item.id,
-                mediaSourceID: currentViewModel.mediaSource.id,
-                positionTicks: 10_000_000 * 120,
-                sessionID: currentViewModel.playSessionID
-            )
-            
-            let request = Paths.reportPlaybackStopped(stopInfo)
-            let response = try await userSession.client.send(request)
-            
-            logger.log(level: .info, "Playback stop sent for item: \(currentViewModel.item.name ?? .emptyDash)")
-        }
-    }
+//    func sendStartReport() {
+//        Task {
+//            let startInfo = PlaybackStartInfo(
+//                audioStreamIndex: audioTrackIndex,
+//                canSeek: true,
+//                itemID: currentViewModel.item.id,
+//                mediaSourceID: currentViewModel.mediaSource.id,
+//                playbackStartTimeTicks: Int(Date().timeIntervalSince1970) * 10_000_000,
+//                sessionID: currentViewModel.playSessionID,
+//                subtitleStreamIndex: subtitleTrackIndex
+//            )
+//            
+//            let request = Paths.reportPlaybackStart(startInfo)
+//            let response = try await userSession.client.send(request)
+//            
+//            logger.log(level: .info, "Playback start sent for item: \(currentViewModel.item.name ?? .emptyDash)")
+//        }
+//    }
+//    
+//    func sendStopReport() {
+//        Task {
+//            let stopInfo = PlaybackStopInfo(
+//                itemID: currentViewModel.item.id,
+//                mediaSourceID: currentViewModel.mediaSource.id,
+//                positionTicks: 10_000_000 * 120,
+//                sessionID: currentViewModel.playSessionID
+//            )
+//            
+//            let request = Paths.reportPlaybackStopped(stopInfo)
+//            let response = try await userSession.client.send(request)
+//            
+//            logger.log(level: .info, "Playback stop sent for item: \(currentViewModel.item.name ?? .emptyDash)")
+//        }
+//    }
 }

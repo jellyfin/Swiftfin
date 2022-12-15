@@ -52,9 +52,9 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
         }
         .ignoresSafeArea()
         .iOS16HideSystemOverlays()
-        .onAppear {
-            AppDelegate.changeOrientation(.landscape)
-        }
+//        .onAppear {
+//            AppDelegate.changeOrientation(.landscape)
+//        }
 
         #else
 

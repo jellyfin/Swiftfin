@@ -15,11 +15,11 @@ extension View {
     }
 
     func navBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
-        self.modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
+        modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
 
     func navBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
-        self.modifier(NavBarDrawerModifier(drawer: drawer))
+        modifier(NavBarDrawerModifier(drawer: drawer))
     }
 
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
@@ -50,7 +50,7 @@ extension View {
     }
 
     func navigationCloseButton(accentColor: Binding<Color>, _ action: @escaping () -> Void) -> some View {
-        self.toolbar {
+        toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 Button {
                     action()

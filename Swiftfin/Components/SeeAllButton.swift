@@ -26,6 +26,7 @@ struct SeeAllButton: View {
 }
 
 extension SeeAllButton {
+    
     init() {
         self.onSelect = {}
     }

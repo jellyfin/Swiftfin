@@ -134,7 +134,24 @@ struct VideoPlayer: View {
                             guard !isScrubbing else { return }
                             currentProgressHandler.scrubbedProgress = newProgress
                         }
-                        .onStateUpdated(videoPlayerManager.onStateUpdated)
+                        .onStateUpdated { state, playbackInformation in
+                            videoPlayerManager.onStateUpdated(newState: state, playbackInformation: playbackInformation)
+                            
+                            if state == .ended {
+                                if let nextViewModel = videoPlayerManager.nextViewModel,
+                                   Defaults[.VideoPlayer.autoPlay],
+                                   Defaults[.VideoPlayer.autoPlayEnabled]
+                                {
+                                    videoPlayerManager.selectNextViewModel()
+
+                                    videoPlayerManager.proxy.playNewMedia(nextViewModel.vlcVideoPlayerConfiguration)
+                                } else {
+                                    router.dismissCoordinator {
+                                        AppDelegate.changeOrientation(.portrait)
+                                    }
+                                }
+                            }
+                        }
 
                     GestureView()
                         .onHorizontalPan {

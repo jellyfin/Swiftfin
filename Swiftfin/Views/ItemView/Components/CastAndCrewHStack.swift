@@ -15,6 +15,7 @@ extension ItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+        
         let people: [BaseItemPerson]
 
         var body: some View {
