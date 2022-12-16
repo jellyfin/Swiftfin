@@ -82,7 +82,7 @@ struct VideoPlayer: View {
     private var subtitleSize
 
     @EnvironmentObject
-    private var router: ItemVideoPlayerCoordinator.Router
+    private var router: VideoPlayerCoordinator.Router
 
     @ObservedObject
     private var currentProgressHandler: CurrentProgressHandler = .init()
@@ -108,7 +108,7 @@ struct VideoPlayer: View {
 
     private let gestureStateHandler: GestureStateHandler = .init()
     private let updateViewProxy: UpdateViewProxy = .init()
-    private var overlay: () -> any VideoPlayerOverlay
+    private var overlay: () -> any View
 
     init(manager: VideoPlayerManager) {
         self.videoPlayerManager = manager
@@ -211,40 +211,12 @@ struct VideoPlayer: View {
             )
     }
 
-    // TODO: Better and localize
-    @ViewBuilder
-    private var loadingView: some View {
-        ZStack {
-            Color.black
-
-            VStack {
-
-                Text("Retrieving media information")
-                    .foregroundColor(.white)
-
-                ProgressView()
-
-                Button {
-                    router.dismissCoordinator()
-                } label: {
-                    Text("Cancel")
-                        .foregroundColor(.red)
-                        .padding()
-                        .overlay {
-                            Capsule()
-                                .stroke(Color.red, lineWidth: 1)
-                        }
-                }
-            }
-        }
-    }
-
     var body: some View {
         Group {
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
-                loadingView
+                LoadingView()
             }
         }
         .navigationBarHidden(true)
@@ -304,7 +276,7 @@ struct VideoPlayer: View {
 
 extension VideoPlayer {
 
-    func overlay(@ViewBuilder _ content: @escaping () -> any VideoPlayerOverlay) -> Self {
+    func overlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.overlay, with: content)
     }
 }

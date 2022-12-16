@@ -12,7 +12,7 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
+final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     struct Parameters {
         let item: BaseItemDto
@@ -22,7 +22,7 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
     @Default(.Experimental.nativePlayer)
     private var nativePlayer
 
-    let stack = NavigationStack(initial: \ItemVideoPlayerCoordinator.start)
+    let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
 
     @Root
     var start = makeStart
@@ -51,7 +51,7 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
             .overrideViewPreference(.dark)
         }
         .ignoresSafeArea()
-        .iOS16HideSystemOverlays()
+        .hideSystemOverlays()
 //        .onAppear {
 //            AppDelegate.changeOrientation(.landscape)
 //        }
@@ -62,17 +62,5 @@ final class ItemVideoPlayerCoordinator: NavigationCoordinatable {
             .ignoresSafeArea()
 
         #endif
-    }
-}
-
-extension View {
-
-    @ViewBuilder
-    func iOS16HideSystemOverlays() -> some View {
-        if #available(iOS 16, tvOS 16, *) {
-            self.persistentSystemOverlays(.hidden)
-        } else {
-            self
-        }
     }
 }

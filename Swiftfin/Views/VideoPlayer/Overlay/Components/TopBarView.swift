@@ -17,7 +17,7 @@ extension VideoPlayer.Overlay {
     struct TopBarView: View {
 
         @EnvironmentObject
-        private var router: ItemVideoPlayerCoordinator.Router
+        private var router: VideoPlayerCoordinator.Router
         @EnvironmentObject
         private var splitContentViewProxy: SplitContentViewProxy
         @EnvironmentObject

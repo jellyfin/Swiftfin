@@ -10,13 +10,9 @@ import Defaults
 import SwiftUI
 import VLCUI
 
-protocol VideoPlayerOverlay: View {}
-
-extension EmptyView: VideoPlayerOverlay {}
-
 extension VideoPlayer {
 
-    struct Overlay: VideoPlayerOverlay {
+    struct Overlay: View {
 
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType

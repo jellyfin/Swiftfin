@@ -12,7 +12,7 @@ import VLCUI
 struct VideoPlayer: View {
 
     @EnvironmentObject
-    private var router: ItemVideoPlayerCoordinator.Router
+    private var router: VideoPlayerCoordinator.Router
 
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager

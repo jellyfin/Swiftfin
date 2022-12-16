@@ -69,7 +69,7 @@ final class MainCoordinator: NavigationCoordinatable {
         LiveTVTabCoordinator()
     }
 
-    func makeVideoPlayer(parameters: ItemVideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<ItemVideoPlayerCoordinator> {
-        NavigationViewCoordinator(ItemVideoPlayerCoordinator(parameters: parameters))
+    func makeVideoPlayer(parameters: VideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+        NavigationViewCoordinator(VideoPlayerCoordinator(parameters: parameters))
     }
 }

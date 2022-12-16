@@ -9,6 +9,8 @@
 import Foundation
 import SwiftUI
 
+// TODO: organize
+
 extension View {
 
     @inlinable
@@ -158,5 +160,14 @@ extension View {
         var copy = self
         copy[keyPath: keyPath] = newValue
         return copy
+    }
+    
+    @ViewBuilder
+    func hideSystemOverlays() -> some View {
+        if #available(iOS 16, tvOS 16, *) {
+            self.persistentSystemOverlays(.hidden)
+        } else {
+            self
+        }
     }
 }
