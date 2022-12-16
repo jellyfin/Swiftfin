@@ -12,8 +12,9 @@ struct ServerDetailView: View {
 
     @ObservedObject
     var viewModel: ServerDetailViewModel
+
     @State
-    var currentServerURI: String = ""
+    private var currentServerURI: String = ""
 
     init(viewModel: ServerDetailViewModel) {
         self.viewModel = viewModel

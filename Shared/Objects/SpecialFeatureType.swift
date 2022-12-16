@@ -11,7 +11,7 @@ import JellyfinAPI
 
 // TODO: Move to jellyfin-api-swift
 enum SpecialFeatureType: String, CaseIterable, Displayable {
-    
+
     case unknown = "Unknown"
     case clip = "Clip"
     case trailer = "Trailer"

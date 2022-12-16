@@ -16,6 +16,7 @@ struct MediaView: View {
 
     @EnvironmentObject
     private var router: MediaCoordinator.Router
+
     @ObservedObject
     var viewModel: MediaViewModel
 

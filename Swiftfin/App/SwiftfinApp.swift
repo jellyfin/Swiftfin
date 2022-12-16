@@ -45,7 +45,7 @@ struct SwiftfinApp: App {
             }
         }
     }
-    
+
     private static func setupAccentColor(with accentColor: UIColor) {
         UIApplication.shared.keyWindow?.tintColor = accentColor
     }

@@ -14,7 +14,8 @@ extension ItemView {
     struct AboutView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
 
@@ -55,7 +56,7 @@ extension ItemView {
                                 }
                             }
                             .onSelect {
-                                itemRouter.route(to: \.itemOverview, viewModel.item)
+                                router.route(to: \.itemOverview, viewModel.item)
                             }
 
 //                        Card(title: "Ratings")
@@ -73,7 +74,7 @@ extension ItemView {
 //                                }
 //                            }
 //                            .onSelect {
-//                                itemRouter.route(to: \.remoteImages)
+//                                router.route(to: \.remoteImages)
 //                            }
                     }
                     .padding(.horizontal)

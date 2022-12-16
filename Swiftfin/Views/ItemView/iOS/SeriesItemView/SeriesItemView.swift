@@ -12,10 +12,11 @@ import SwiftUI
 
 struct SeriesItemView: View {
 
-    @ObservedObject
-    var viewModel: SeriesItemViewModel
     @Default(.Customization.itemViewType)
     private var itemViewType
+
+    @ObservedObject
+    var viewModel: SeriesItemViewModel
 
     var body: some View {
         switch itemViewType {

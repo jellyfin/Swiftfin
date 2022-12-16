@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension Font {
-    
+
     var uiFont: UIFont {
         switch self {
         #if !os(tvOS)

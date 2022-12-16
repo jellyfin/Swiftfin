@@ -12,11 +12,13 @@ import SwiftUI
 struct EpisodeItemView: View {
 
     @EnvironmentObject
-    private var itemRouter: ItemCoordinator.Router
-    @State
-    private var scrollViewOffset: CGFloat = 0
+    private var router: ItemCoordinator.Router
+
     @ObservedObject
     var viewModel: EpisodeItemViewModel
+
+    @State
+    private var scrollViewOffset: CGFloat = 0
 
     var body: some View {
         ScrollView(showsIndicators: false) {

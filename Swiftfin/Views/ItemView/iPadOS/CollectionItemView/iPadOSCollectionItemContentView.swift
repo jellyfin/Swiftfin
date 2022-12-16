@@ -14,7 +14,8 @@ extension iPadOSCollectionItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: CollectionItemViewModel
 
@@ -53,7 +54,7 @@ extension iPadOSCollectionItemView {
                     items: items
                 )
                 .onSelect { item in
-                    itemRouter.route(to: \.item, item)
+                    router.route(to: \.item, item)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

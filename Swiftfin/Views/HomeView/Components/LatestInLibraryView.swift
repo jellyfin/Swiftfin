@@ -27,7 +27,7 @@ extension HomeView {
 //            if viewModel.isLoading {
 //                return PosterButtonType.loading.random(in: 3 ..< 8)
 //            } else {
-                return viewModel.items.prefix(20).asArray.map { .item($0) }
+            viewModel.items.prefix(20).asArray.map { .item($0) }
 //            }
         }
 

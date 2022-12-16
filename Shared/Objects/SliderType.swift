@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 
 enum SliderType: String, CaseIterable, Displayable, Defaults.Serializable {
-    
+
     case thumb
     case capsule
 

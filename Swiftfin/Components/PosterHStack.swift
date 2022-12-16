@@ -134,7 +134,7 @@ extension PosterHStack {
             onSelect: { _ in }
         )
     }
-    
+
     func header(@ViewBuilder _ header: @escaping () -> any View) -> Self {
         copy(modifying: \.header, with: header)
     }
@@ -167,11 +167,11 @@ extension PosterHStack {
 // MARK: DefaultHeader
 
 extension PosterHStack {
-    
+
     struct DefaultHeader: View {
-        
+
         let title: String?
-        
+
         var body: some View {
             if let title {
                 Text(title)

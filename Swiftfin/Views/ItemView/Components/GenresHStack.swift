@@ -15,6 +15,7 @@ extension ItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+
         let genres: [NameGuidPair]
 
         var body: some View {

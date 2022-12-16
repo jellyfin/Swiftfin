@@ -10,12 +10,14 @@ import Foundation
 
 extension URLComponents {
 
-    mutating func addQueryItem(name: String, value: String?) {
-        if let _ = self.queryItems {
-            self.queryItems?.append(URLQueryItem(name: name, value: value))
-        } else {
-            self.queryItems = []
-            self.queryItems?.append(URLQueryItem(name: name, value: value))
+    func addingQueryItem(key: String, value: String?) -> Self {
+        var copy = self
+
+        if copy.queryItems == nil {
+            copy.queryItems = []
         }
+
+        copy.queryItems?.append(.init(name: key, value: value))
+        return copy
     }
 }

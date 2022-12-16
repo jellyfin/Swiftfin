@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 
 enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
-    
+
     case portrait
     case landscape
 

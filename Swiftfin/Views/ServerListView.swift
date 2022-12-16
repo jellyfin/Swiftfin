@@ -12,7 +12,8 @@ import SwiftUI
 struct ServerListView: View {
 
     @EnvironmentObject
-    private var serverListRouter: ServerListCoordinator.Router
+    private var router: ServerListCoordinator.Router
+
     @ObservedObject
     var viewModel: ServerListViewModel
 
@@ -21,7 +22,7 @@ struct ServerListView: View {
             LazyVStack {
                 ForEach(viewModel.servers, id: \.id) { server in
                     Button {
-                        serverListRouter.route(to: \.userList, server)
+                        router.route(to: \.userList, server)
                     } label: {
                         ZStack(alignment: Alignment.leading) {
                             Rectangle()
@@ -71,7 +72,7 @@ struct ServerListView: View {
                 .multilineTextAlignment(.center)
 
             PrimaryButton(title: L10n.connect) {
-                serverListRouter.route(to: \.connectToServer)
+                router.route(to: \.connectToServer)
             }
             .frame(maxWidth: 300)
             .frame(height: 50)
@@ -92,7 +93,7 @@ struct ServerListView: View {
     private var trailingToolbarContent: some View {
         if !viewModel.servers.isEmpty {
             Button {
-                serverListRouter.route(to: \.connectToServer)
+                router.route(to: \.connectToServer)
             } label: {
                 Image(systemName: "plus.circle.fill")
             }
@@ -103,7 +104,7 @@ struct ServerListView: View {
     private var leadingToolbarContent: some View {
         Button {
 //            serverListRouter.route(to: \.basicAppSettings)
-            serverListRouter.route(to: \.pulseConsole)
+            router.route(to: \.pulseConsole)
         } label: {
             Image(systemName: "gearshape.fill")
                 .accessibilityLabel(L10n.settings)

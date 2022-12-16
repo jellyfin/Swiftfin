@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 
 extension BaseItemDto.ImageBlurHashes {
-    
+
     subscript(imageType: ImageType) -> [String: String]? {
         switch imageType {
         case .primary:

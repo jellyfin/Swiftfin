@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 extension String: Displayable {
+
     var displayTitle: String {
         self
     }

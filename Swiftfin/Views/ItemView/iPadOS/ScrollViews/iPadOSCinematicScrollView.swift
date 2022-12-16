@@ -13,11 +13,13 @@ extension ItemView {
     struct iPadOSCinematicScrollView<Content: View>: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
-        @State
-        private var scrollViewOffset: CGFloat = 0
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
+
+        @State
+        private var scrollViewOffset: CGFloat = 0
 
         let content: () -> Content
 
@@ -99,7 +101,8 @@ extension ItemView.iPadOSCinematicScrollView {
     struct OverlayView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
 

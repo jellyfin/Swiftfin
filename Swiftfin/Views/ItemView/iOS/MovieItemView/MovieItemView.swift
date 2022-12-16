@@ -12,10 +12,11 @@ import SwiftUI
 
 struct MovieItemView: View {
 
-    @ObservedObject
-    var viewModel: MovieItemViewModel
     @Default(.Customization.itemViewType)
     private var itemViewType
+
+    @ObservedObject
+    var viewModel: MovieItemViewModel
 
     var body: some View {
         switch itemViewType {

@@ -116,7 +116,7 @@ struct VideoPlayer: View {
     }
 
     @ViewBuilder
-    private func playerView() -> some View {
+    private var playerView: some View {
         SplitContentView()
             .proxy(splitContentViewProxy)
             .content {
@@ -136,7 +136,7 @@ struct VideoPlayer: View {
                         }
                         .onStateUpdated { state, playbackInformation in
                             videoPlayerManager.onStateUpdated(newState: state, playbackInformation: playbackInformation)
-                            
+
                             if state == .ended {
                                 if let _ = videoPlayerManager.nextViewModel,
                                    Defaults[.VideoPlayer.autoPlay],
@@ -186,6 +186,7 @@ struct VideoPlayer: View {
                 }
             }
             .splitContent {
+                // Wrapped due to navigation controller popping due to published changes
                 WrappedView {
                     NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
                 }
@@ -203,144 +204,11 @@ struct VideoPlayer: View {
                 UpdateView(proxy: updateViewProxy)
                     .padding(.top)
             }
-            .keyCommands([
-                .init(
-                    title: L10n.playAndPause,
-                    input: " ",
-                    action: {
-                        if videoPlayerManager.state == .playing {
-                            videoPlayerManager.proxy.pause()
-                            updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-                        } else {
-                            videoPlayerManager.proxy.play()
-                            updateViewProxy.present(systemName: "play.fill", title: "Play")
-                        }
-                    }
-                ),
-                .init(
-                    title: L10n.jumpForward,
-                    input: UIKeyCommand.inputRightArrow,
-                    action: {
-                        if gestureStateHandler.jumpForwardKeyPressActive {
-                            gestureStateHandler.jumpForwardKeyPressAmount += 1
-                            gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
-
-                            let task = DispatchWorkItem {
-                                gestureStateHandler.jumpForwardKeyPressActive = false
-                                gestureStateHandler.jumpForwardKeyPressAmount = 0
-                            }
-
-                            gestureStateHandler.jumpForwardKeyPressWorkItem = task
-
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                        } else {
-                            gestureStateHandler.jumpForwardKeyPressActive = true
-                            gestureStateHandler.jumpForwardKeyPressAmount += 1
-
-                            let task = DispatchWorkItem {
-                                gestureStateHandler.jumpForwardKeyPressActive = false
-                                gestureStateHandler.jumpForwardKeyPressAmount = 0
-                            }
-
-                            gestureStateHandler.jumpForwardKeyPressWorkItem = task
-
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                        }
-
-                        jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
-                    }
-                ),
-                .init(
-                    title: L10n.jumpBackward,
-                    input: UIKeyCommand.inputLeftArrow,
-                    action: {
-                        if gestureStateHandler.jumpBackwardKeyPressActive {
-                            gestureStateHandler.jumpBackwardKeyPressAmount += 1
-                            gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
-
-                            let task = DispatchWorkItem {
-                                gestureStateHandler.jumpBackwardKeyPressActive = false
-                                gestureStateHandler.jumpBackwardKeyPressAmount = 0
-                            }
-
-                            gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                        } else {
-                            gestureStateHandler.jumpBackwardKeyPressActive = true
-                            gestureStateHandler.jumpBackwardKeyPressAmount += 1
-
-                            let task = DispatchWorkItem {
-                                gestureStateHandler.jumpBackwardKeyPressActive = false
-                                gestureStateHandler.jumpBackwardKeyPressAmount = 0
-                            }
-
-                            gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                        }
-
-                        jumpAction(unitPoint: .init(x: 0, y: 0), amount: gestureStateHandler.jumpBackwardKeyPressAmount)
-                    }
-                ),
-                .init(
-                    title: "Decrease Playback Speed",
-                    input: "[",
-                    modifierFlags: .command,
-                    action: {
-                        let clampedPlaybackSpeed = clamp(
-                            videoPlayerManager.playbackSpeed - 0.25,
-                            min: 0.25,
-                            max: 5.0
-                        )
-
-                        updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
-                        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
-                    }
-                ),
-                .init(
-                    title: "Increase Playback Speed",
-                    input: "]",
-                    modifierFlags: .command,
-                    action: {
-                        let clampedPlaybackSpeed = clamp(
-                            videoPlayerManager.playbackSpeed + 0.25,
-                            min: 0.25,
-                            max: 5.0
-                        )
-
-                        updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
-                        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
-                    }
-                ),
-                .init(
-                    title: "Reset Playback Speed",
-                    input: "\\",
-                    modifierFlags: .command,
-                    action: {
-                        let clampedPlaybackSpeed: Float = 1
-
-                        updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
-                        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
-                    }
-                ),
-                .init(
-                    title: L10n.nextItem,
-                    input: UIKeyCommand.inputRightArrow,
-                    modifierFlags: .command,
-                    action: {
-                        videoPlayerManager.selectNextViewModel()
-                    }
-                ),
-                .init(
-                    title: L10n.nextItem,
-                    input: UIKeyCommand.inputLeftArrow,
-                    modifierFlags: .command,
-                    action: {
-                        videoPlayerManager.selectPreviousViewModel()
-                    }
-                ),
-            ])
+            .videoPlayerKeyCommands(
+                gestureStateHandler: gestureStateHandler,
+                videoPlayerManager: videoPlayerManager,
+                updateViewProxy: updateViewProxy
+            )
     }
 
     // TODO: Better and localize
@@ -374,7 +242,7 @@ struct VideoPlayer: View {
     var body: some View {
         Group {
             if let _ = videoPlayerManager.currentViewModel {
-                playerView()
+                playerView
             } else {
                 loadingView
             }
@@ -572,7 +440,7 @@ extension VideoPlayer {
             Int((gestureStateHandler.beginningHorizontalPanUnit - point) * 2000),
             toNearest: 100
         )
-        
+
         updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondToSecondLabel)
         audioOffset = clamp(newOffset, min: -30000, max: 30000)
     }

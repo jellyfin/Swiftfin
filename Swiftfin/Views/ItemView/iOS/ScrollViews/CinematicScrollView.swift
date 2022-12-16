@@ -18,13 +18,15 @@ extension ItemView {
         private var cinematicItemViewTypeUsePrimaryImage
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
+        @ObservedObject
+        var viewModel: ItemViewModel
+
         @State
         private var scrollViewOffset: CGFloat = 0
         @State
         private var blurHashBottomEdgeColor: Color = .secondarySystemFill
-        @ObservedObject
-        var viewModel: ItemViewModel
 
         let content: () -> Content
 
@@ -118,7 +120,7 @@ extension ItemView.CinematicScrollView {
         private var cinematicItemViewTypeUsePrimaryImage
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 

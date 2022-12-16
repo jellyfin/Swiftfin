@@ -61,7 +61,7 @@ extension ItemView {
 //                    Button {
 //                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
 //                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-//                            itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+//                            router.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
 //                        } else {
 //                            logger.error("Attempted to play item but no playback information available")
 //                        }

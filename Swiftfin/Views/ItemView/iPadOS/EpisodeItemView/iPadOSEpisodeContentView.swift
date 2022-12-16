@@ -15,6 +15,7 @@ extension iPadOSEpisodeItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 

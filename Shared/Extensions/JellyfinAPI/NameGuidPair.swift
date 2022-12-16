@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 
 extension NameGuidPair: Displayable {
-    
+
     var displayTitle: String {
         name ?? .emptyDash
     }
@@ -19,7 +19,7 @@ extension NameGuidPair: Displayable {
 extension NameGuidPair: LibraryParent {}
 
 extension NameGuidPair {
-    
+
     var filter: ItemFilters.Filter {
         .init(displayTitle: displayTitle, id: id, filterName: displayTitle)
     }

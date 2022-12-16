@@ -13,13 +13,15 @@ import SwiftUI
 
 struct SearchView: View {
 
+    @Default(.Customization.searchPosterType)
+    private var searchPosterType
+
     @EnvironmentObject
     private var router: SearchCoordinator.Router
+
     @ObservedObject
     var viewModel: SearchViewModel
 
-    @Default(.Customization.searchPosterType)
-    private var searchPosterType
     @State
     private var searchText = ""
 

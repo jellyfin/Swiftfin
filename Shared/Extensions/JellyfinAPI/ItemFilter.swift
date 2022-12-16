@@ -28,7 +28,7 @@ extension ItemFilter: Displayable {
 }
 
 extension ItemFilter {
-    
+
     static var supportedCases: [ItemFilter] {
         [.isUnplayed, .isPlayed, .isFavorite, .likes]
     }

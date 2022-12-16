@@ -21,17 +21,18 @@ extension VideoPlayer {
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
 
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets
+
+        @EnvironmentObject
+        private var splitContentViewProxy: SplitContentViewProxy
+
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
-
-        @EnvironmentObject
-        private var splitContentViewProxy: SplitContentViewProxy
 
         var body: some View {
             ZStack {

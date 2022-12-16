@@ -70,7 +70,7 @@ extension EpisodeItemView.ContentView {
         }
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @FocusState
         private var focusedLayer: CinematicHeaderFocusLayer?
         @ObservedObject

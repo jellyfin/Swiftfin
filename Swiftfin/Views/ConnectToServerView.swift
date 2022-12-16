@@ -15,7 +15,7 @@ struct ConnectToServerView: View {
     @EnvironmentObject
     private var router: ConnectToServerCoodinator.Router
 
-    @StateObject
+    @ObservedObject
     var viewModel: ConnectToServerViewModel
 
     @State

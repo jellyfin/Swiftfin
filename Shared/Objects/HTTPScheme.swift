@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 
 enum HTTPScheme: String, CaseIterable, Displayable, Defaults.Serializable {
-    
+
     case http
     case https
 

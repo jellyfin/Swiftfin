@@ -14,6 +14,7 @@ struct SeriesEpisodeSelector: View {
 
     @EnvironmentObject
     private var mainRouter: MainCoordinator.Router
+
     @ObservedObject
     var viewModel: SeriesItemViewModel
 

@@ -58,7 +58,7 @@ struct PosterButton<Item: Poster>: View {
 
     var body: some View {
         VStack(alignment: horizontalAlignment) {
-            
+
             Button {
                 onSelect()
             } label: {
@@ -111,7 +111,7 @@ extension PosterButton {
             singleImage: singleImage
         )
     }
-    
+
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
     }
@@ -140,7 +140,7 @@ extension PosterButton {
 // MARK: DefaultContentView
 
 extension PosterButton {
-    
+
     struct DefaultContentView: View {
 
         let state: PosterButtonType<Item>

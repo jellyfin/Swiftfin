@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 
 enum OverlayType: String, CaseIterable, Defaults.Serializable {
-    
+
     case normal
     case compact
 

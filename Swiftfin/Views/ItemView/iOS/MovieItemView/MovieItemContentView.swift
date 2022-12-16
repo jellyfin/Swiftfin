@@ -16,6 +16,7 @@ extension MovieItemView {
 
         @EnvironmentObject
         private var mainRouter: MainCoordinator.Router
+
         @ObservedObject
         var viewModel: MovieItemViewModel
 

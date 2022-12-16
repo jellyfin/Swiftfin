@@ -13,6 +13,7 @@ struct ItemOverviewView: View {
 
     @EnvironmentObject
     private var itemOverviewRouter: ItemOverviewCoordinator.Router
+
     let item: BaseItemDto
 
     var body: some View {

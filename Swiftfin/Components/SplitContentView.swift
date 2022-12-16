@@ -51,7 +51,7 @@ struct SplitContentView: View {
 }
 
 extension SplitContentView {
-    
+
     init() {
         self.init(
             proxy: .init(),
@@ -60,7 +60,7 @@ extension SplitContentView {
             splitContentWidth: 400
         )
     }
-    
+
     func proxy(_ proxy: SplitContentViewProxy) -> Self {
         copy(modifying: \.proxy, with: proxy)
     }

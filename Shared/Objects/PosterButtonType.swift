@@ -9,7 +9,7 @@
 import Foundation
 
 enum PosterButtonType<Item: Poster>: Hashable, Identifiable {
-    
+
     case loading
     case noResult
     case item(Item)

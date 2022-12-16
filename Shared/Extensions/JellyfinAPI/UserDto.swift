@@ -13,7 +13,7 @@ import JellyfinAPI
 import UIKit
 
 extension UserDto {
-    
+
     func profileImageSource(client: JellyfinClient, maxWidth: CGFloat, maxHeight: CGFloat) -> ImageSource {
         let scaleWidth = UIScreen.main.scale(maxWidth)
         let scaleHeight = UIScreen.main.scale(maxHeight)
@@ -23,7 +23,7 @@ extension UserDto {
             imageType: "Primary",
             parameters: .init(maxWidth: scaleWidth, maxHeight: scaleHeight)
         )
-        
+
         let profileImageURL = client.fullURL(with: request)
 
         return ImageSource(url: profileImageURL, blurHash: nil)

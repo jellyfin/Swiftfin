@@ -10,7 +10,7 @@ import Defaults
 import UIKit
 
 enum VideoPlayerJumpLength: Int, CaseIterable, Defaults.Serializable, Displayable {
-    
+
     case five = 5
     case ten = 10
     case fifteen = 15

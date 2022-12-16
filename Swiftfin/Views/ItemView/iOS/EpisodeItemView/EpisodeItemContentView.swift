@@ -15,6 +15,7 @@ extension EpisodeItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 
@@ -82,7 +83,7 @@ extension EpisodeItemView.ContentView {
     struct ShelfView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 

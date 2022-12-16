@@ -14,6 +14,7 @@ extension ItemView {
 
         @ObservedObject
         private var viewModel: ItemViewModel
+
         private let equalSpacing: Bool
 
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {

@@ -56,7 +56,7 @@ struct UserProfileButton: View {
 }
 
 extension UserProfileButton {
-    
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }

@@ -25,6 +25,9 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
                     box.value?._viewPreference = $0
                 }.onPreferenceChange(KeyCommandsPreferenceKey.self) {
                     box.value?._keyCommands = $0
+                }.onPreferenceChange(AddingKeyCommandPreferenceKey.self) {
+                    guard let newAction = $0 else { return }
+                    box.value?._keyCommands.append(newAction)
                 }
         ))
         box.value = self
@@ -128,6 +131,17 @@ struct KeyCommandAction: Equatable {
 
 // MARK: Preference Keys
 
+// TODO: look at namespacing?
+
+struct AddingKeyCommandPreferenceKey: PreferenceKey {
+
+    static var defaultValue: KeyCommandAction?
+
+    static func reduce(value: inout KeyCommandAction?, nextValue: () -> KeyCommandAction?) {
+        value = nextValue()
+    }
+}
+
 struct KeyCommandsPreferenceKey: PreferenceKey {
 
     static var defaultValue: [KeyCommandAction] = []
@@ -171,6 +185,18 @@ extension View {
 
     func keyCommands(_ commands: [KeyCommandAction]) -> some View {
         preference(key: KeyCommandsPreferenceKey.self, value: commands)
+    }
+
+    func addingKeyCommand(
+        title: String,
+        input: String,
+        modifierFlags: UIKeyModifierFlags = [],
+        action: @escaping () -> Void
+    ) -> some View {
+        preference(
+            key: AddingKeyCommandPreferenceKey.self,
+            value: .init(title: title, input: input, modifierFlags: modifierFlags, action: action)
+        )
     }
 
     func prefersHomeIndicatorAutoHidden(_ value: Bool) -> some View {

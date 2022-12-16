@@ -19,6 +19,7 @@ extension ItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+
         let items: [BaseItemDto]
 
         var body: some View {

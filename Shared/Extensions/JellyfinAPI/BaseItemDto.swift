@@ -13,7 +13,7 @@ import JellyfinAPI
 import UIKit
 
 extension BaseItemDto: Displayable {
-    
+
     var displayTitle: String {
         name ?? .emptyDash
     }

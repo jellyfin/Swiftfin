@@ -13,13 +13,14 @@ import SwiftUI
 
 struct LibraryView: View {
 
-    @EnvironmentObject
-    private var router: LibraryCoordinator.Router
-    @ObservedObject
-    var viewModel: LibraryViewModel
-
     @Default(.Customization.Library.viewType)
     private var libraryViewType
+
+    @EnvironmentObject
+    private var router: LibraryCoordinator.Router
+
+    @ObservedObject
+    var viewModel: LibraryViewModel
 
     @ViewBuilder
     private var loadingView: some View {

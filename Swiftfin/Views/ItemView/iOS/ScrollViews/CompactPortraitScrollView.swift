@@ -14,13 +14,15 @@ extension ItemView {
     struct CompactPosterScrollView<Content: View>: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
+        @ObservedObject
+        var viewModel: ItemViewModel
+
         @State
         private var scrollViewOffset: CGFloat = 0
         @State
         private var blurHashBottomEdgeColor: Color = .secondarySystemFill
-        @ObservedObject
-        var viewModel: ItemViewModel
 
         let content: () -> Content
 
@@ -46,7 +48,7 @@ extension ItemView {
                     VStack {
                         Spacer()
 
-                        OverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
+                        OverlayView(viewModel: viewModel, scrollViewOffset: $scrollViewOffset)
                             .padding(.horizontal)
                             .padding(.bottom)
                             .background {
@@ -113,11 +115,13 @@ extension ItemView.CompactPosterScrollView {
     struct OverlayView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
-        @Binding
-        var scrollViewOffset: CGFloat
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
+
+        @Binding
+        var scrollViewOffset: CGFloat
 
         @ViewBuilder
         private var rightShelfView: some View {

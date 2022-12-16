@@ -15,6 +15,7 @@ extension ItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+
         let studios: [NameGuidPair]
 
         var body: some View {

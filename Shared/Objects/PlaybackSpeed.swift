@@ -9,7 +9,7 @@
 import Foundation
 
 enum PlaybackSpeed: Double, CaseIterable, Displayable {
-    
+
     case quarter = 0.25
     case half = 0.5
     case threeQuarter = 0.75
