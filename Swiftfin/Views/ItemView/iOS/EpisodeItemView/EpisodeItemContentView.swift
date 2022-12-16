@@ -73,6 +73,8 @@ extension EpisodeItemView {
                             router.route(to: \.item, item)
                         }
                 }
+
+                ItemView.AboutView(viewModel: viewModel)
             }
         }
     }
@@ -84,6 +86,7 @@ extension EpisodeItemView.ContentView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 

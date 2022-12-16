@@ -10,12 +10,12 @@ import Stinsen
 import SwiftUI
 
 extension VideoPlayer {
-    
+
     struct LoadingView: View {
-        
+
         @EnvironmentObject
         private var router: VideoPlayerCoordinator.Router
-        
+
         var body: some View {
             ZStack {
                 Color.black

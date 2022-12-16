@@ -52,12 +52,12 @@ struct SplitContentView: View {
 
 extension SplitContentView {
 
-    init() {
+    init(splitContentWidth: CGFloat = 400) {
         self.init(
             proxy: .init(),
             content: { EmptyView() },
             splitContent: { EmptyView() },
-            splitContentWidth: 400
+            splitContentWidth: splitContentWidth
         )
     }
 

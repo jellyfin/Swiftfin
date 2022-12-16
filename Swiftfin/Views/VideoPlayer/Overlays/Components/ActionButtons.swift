@@ -40,6 +40,8 @@ extension VideoPlayer.Overlay {
         private var aspectFilled: Bool
 
         @EnvironmentObject
+        private var timerProxy: TimerProxy
+        @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
@@ -49,6 +51,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var aspectFillButton: some View {
             Button {
+                timerProxy.start(5)
                 if aspectFilled {
                     aspectFilled = false
                     UIView.animate(withDuration: 0.2) {
@@ -68,7 +71,8 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
                 }
-                .frame(width: 50, height: 50)
+                .frame(width: 40, height: 40)
+                .contentShape(Rectangle())
             }
         }
 
@@ -76,6 +80,7 @@ extension VideoPlayer.Overlay {
         private var autoPlayButton: some View {
             Button {
                 autoPlayEnabled.toggle()
+                timerProxy.start(5)
             } label: {
                 Group {
                     if autoPlayEnabled {
@@ -84,7 +89,8 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "stop.circle")
                     }
                 }
-                .frame(width: 50, height: 50)
+                .frame(width: 40, height: 40)
+                .contentShape(Rectangle())
             }
         }
 
@@ -103,11 +109,15 @@ extension VideoPlayer.Overlay {
                     }
                 }
             } label: {
-                if videoPlayerManager.audioTrackIndex == -1 {
-                    Image(systemName: "speaker.wave.2")
-                } else {
-                    Image(systemName: "speaker.wave.2.fill")
+                Group {
+                    if videoPlayerManager.audioTrackIndex == -1 {
+                        Image(systemName: "speaker.wave.2")
+                    } else {
+                        Image(systemName: "speaker.wave.2.fill")
+                    }
                 }
+                .frame(width: 40, height: 40)
+                .contentShape(Rectangle())
             }
         }
 
@@ -115,9 +125,11 @@ extension VideoPlayer.Overlay {
         private var nextItemButton: some View {
             Button {
                 videoPlayerManager.selectNextViewModel()
+                timerProxy.start(5)
             } label: {
                 Image(systemName: "chevron.right.circle")
-                    .frame(width: 50, height: 50)
+                    .frame(width: 40, height: 40)
+                    .contentShape(Rectangle())
             }
             .disabled(videoPlayerManager.nextViewModel == nil)
             .foregroundColor(videoPlayerManager.nextViewModel == nil ? .gray : .white)
@@ -143,17 +155,20 @@ extension VideoPlayer.Overlay {
                 }
             } label: {
                 Image(systemName: "speedometer")
+                    .frame(width: 40, height: 40)
+                    .contentShape(Rectangle())
             }
-            .frame(width: 50, height: 50)
         }
 
         @ViewBuilder
         private var previousItemButton: some View {
             Button {
                 videoPlayerManager.selectPreviousViewModel()
+                timerProxy.start(5)
             } label: {
                 Image(systemName: "chevron.left.circle")
-                    .frame(width: 50, height: 50)
+                    .frame(width: 40, height: 40)
+                    .contentShape(Rectangle())
             }
             .disabled(videoPlayerManager.previousViewModel == nil)
             .foregroundColor(videoPlayerManager.previousViewModel == nil ? .gray : .white)
@@ -174,13 +189,16 @@ extension VideoPlayer.Overlay {
                     }
                 }
             } label: {
-                if videoPlayerManager.subtitleTrackIndex == -1 {
-                    Image(systemName: "captions.bubble")
-                } else {
-                    Image(systemName: "captions.bubble.fill")
+                Group {
+                    if videoPlayerManager.subtitleTrackIndex == -1 {
+                        Image(systemName: "captions.bubble")
+                    } else {
+                        Image(systemName: "captions.bubble.fill")
+                    }
                 }
+                .frame(width: 40, height: 40)
+                .contentShape(Rectangle())
             }
-            .frame(width: 50, height: 50)
         }
 
         var body: some View {
@@ -204,11 +222,11 @@ extension VideoPlayer.Overlay {
                     playbackSpeedMenu
                 }
 
-                if !viewModel.audioStreams.isEmpty && showAudioTrackMenu {
+                if showAudioTrackMenu {
                     audioTrackMenu
                 }
 
-                if !viewModel.subtitleStreams.isEmpty && showSubtitleTrackMenu {
+                if showSubtitleTrackMenu {
                     subtitleTrackMenu
                 }
 

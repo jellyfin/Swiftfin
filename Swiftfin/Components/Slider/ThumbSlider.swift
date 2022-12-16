@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-struct ThumbSlider<TrackMask: View, TopContent: View, BottomContent: View, LeadingContent: View, TrailingContent: View>: View {
+struct ThumbSlider: View {
 
     @Default(.VideoPlayer.Overlay.sliderColor)
     private var sliderColor
@@ -18,25 +18,16 @@ struct ThumbSlider<TrackMask: View, TopContent: View, BottomContent: View, Leadi
     private var isEditing: Bool
     @Binding
     private var progress: CGFloat
-    @Binding
-    private var rate: CGFloat
 
-    private var trackMask: () -> TrackMask
-    private var topContent: () -> TopContent
-    private var bottomContent: () -> BottomContent
-    private var leadingContent: () -> LeadingContent
-    private var trailingContent: () -> TrailingContent
+    private var trackMask: () -> any View
+    private var topContent: () -> any View
+    private var bottomContent: () -> any View
+    private var leadingContent: () -> any View
+    private var trailingContent: () -> any View
 
     var body: some View {
         Slider(progress: $progress)
             .gestureBehavior(.thumb)
-            .rate { pointOffset in
-                if abs(pointOffset.y) > 50 {
-                    return 0.01
-                } else {
-                    return 1
-                }
-            }
             .onEditingChanged { isEditing in
                 self.isEditing = isEditing
             }
@@ -74,18 +65,12 @@ struct ThumbSlider<TrackMask: View, TopContent: View, BottomContent: View, Leadi
     }
 }
 
-extension ThumbSlider where TrackMask == Color,
-    TopContent == EmptyView,
-    BottomContent == EmptyView,
-    LeadingContent == EmptyView,
-    TrailingContent == EmptyView
-{
+extension ThumbSlider {
 
     init(progress: Binding<CGFloat>) {
         self.init(
             isEditing: .constant(false),
             progress: progress,
-            rate: .constant(1),
             trackMask: { Color.white },
             topContent: { EmptyView() },
             bottomContent: { EmptyView() },
@@ -93,85 +78,28 @@ extension ThumbSlider where TrackMask == Color,
             trailingContent: { EmptyView() }
         )
     }
-}
-
-extension ThumbSlider {
 
     func isEditing(_ isEditing: Binding<Bool>) -> Self {
         copy(modifying: \._isEditing, with: isEditing)
     }
 
-    func rate(_ rate: Binding<CGFloat>) -> Self {
-        copy(modifying: \._rate, with: rate)
+    func trackMask(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.trackMask, with: content)
     }
 
-    func trackMask<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<C, TopContent, BottomContent, LeadingContent, TrailingContent> {
-        .init(
-            isEditing: $isEditing,
-            progress: $progress,
-            rate: $rate,
-            trackMask: content,
-            topContent: topContent,
-            bottomContent: bottomContent,
-            leadingContent: leadingContent,
-            trailingContent: trailingContent
-        )
+    func topContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.topContent, with: content)
     }
 
-    func topContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<TrackMask, C, BottomContent, LeadingContent, TrailingContent> {
-        .init(
-            isEditing: $isEditing,
-            progress: $progress,
-            rate: $rate,
-            trackMask: trackMask,
-            topContent: content,
-            bottomContent: bottomContent,
-            leadingContent: leadingContent,
-            trailingContent: trailingContent
-        )
+    func bottomContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.bottomContent, with: content)
     }
 
-    func bottomContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<TrackMask, TopContent, C, LeadingContent, TrailingContent> {
-        .init(
-            isEditing: $isEditing,
-            progress: $progress,
-            rate: $rate,
-            trackMask: trackMask,
-            topContent: topContent,
-            bottomContent: content,
-            leadingContent: leadingContent,
-            trailingContent: trailingContent
-        )
+    func leadingContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.leadingContent, with: content)
     }
 
-    func leadingContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<TrackMask, TopContent, BottomContent, C, TrailingContent> {
-        .init(
-            isEditing: $isEditing,
-            progress: $progress,
-            rate: $rate,
-            trackMask: trackMask,
-            topContent: topContent,
-            bottomContent: bottomContent,
-            leadingContent: content,
-            trailingContent: trailingContent
-        )
-    }
-
-    func trailingContent<C: View>(@ViewBuilder _ content: @escaping () -> C)
-    -> ThumbSlider<TrackMask, TopContent, BottomContent, LeadingContent, C> {
-        .init(
-            isEditing: $isEditing,
-            progress: $progress,
-            rate: $rate,
-            trackMask: trackMask,
-            topContent: topContent,
-            bottomContent: bottomContent,
-            leadingContent: leadingContent,
-            trailingContent: content
-        )
+    func trailingContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.trailingContent, with: content)
     }
 }

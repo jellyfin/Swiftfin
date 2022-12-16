@@ -14,26 +14,59 @@ extension VideoPlayer {
 
     struct Overlay: View {
 
+        @Environment(\.isPresentingOverlay)
+        @Binding
+        private var isPresentingOverlay
+
+        @State
+        private var currentOverlayType: VideoPlayer.OverlayType = .main
+
+        var body: some View {
+            ZStack {
+
+                MainOverlay()
+                    .opacity(currentOverlayType == .main ? 1 : 0)
+
+                ChapterOverlay()
+                    .opacity(currentOverlayType == .chapters ? 1 : 0)
+            }
+            .environment(\.currentOverlayType, $currentOverlayType)
+            .animation(.linear(duration: 0.1), value: currentOverlayType)
+            .onChange(of: isPresentingOverlay) { newValue in
+                guard newValue else { return }
+                currentOverlayType = .main
+            }
+        }
+    }
+
+    struct MainOverlay: View {
+
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
 
+        @Environment(\.currentOverlayType)
+        @Binding
+        private var currentOverlayType
+
+        @Environment(\.isPresentingOverlay)
+        @Binding
+        private var isPresentingOverlay
+        @Environment(\.isScrubbing)
+        @Binding
+        private var isScrubbing: Bool
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
         @EnvironmentObject
         private var splitContentViewProxy: SplitContentViewProxy
 
-        @Environment(\.currentOverlayType)
-        @Binding
-        private var currentOverlayType
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
+        @StateObject
+        private var overlayTimer: TimerProxy = .init()
 
         var body: some View {
             ZStack {
                 VStack {
-                    TopBarView()
+                    Overlay.TopBarView()
                         .if(UIDevice.isPhone) { view in
                             view.padding(safeAreaInsets.mutating(\.trailing, to: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
@@ -53,12 +86,12 @@ extension VideoPlayer {
                             )
                             .opacity(playbackButtonType == .compact ? 1 : 0)
                         }
-                        .opacity(!isScrubbing && currentOverlayType == .main ? 1 : 0)
+                        .opacity(!isScrubbing && isPresentingOverlay ? 1 : 0)
 
                     Spacer()
                         .allowsHitTesting(false)
 
-                    BottomBarView()
+                    Overlay.BottomBarView()
                         .if(UIDevice.isPhone) { view in
                             view.padding(safeAreaInsets.mutating(\.trailing, to: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
@@ -79,20 +112,45 @@ extension VideoPlayer {
                             )
                             .opacity(isScrubbing || playbackButtonType == .compact ? 1 : 0)
                         }
-                        .opacity(isScrubbing || currentOverlayType == .main ? 1 : 0)
+                        .background {
+                            Color.clear
+                                .allowsHitTesting(true)
+                                .contentShape(Rectangle())
+                                .allowsHitTesting(true)
+                        }
+                        .opacity(isScrubbing || isPresentingOverlay ? 1 : 0)
                 }
 
                 if playbackButtonType == .large {
-                    LargePlaybackButtons()
-                        .opacity(!isScrubbing && currentOverlayType == .main ? 1 : 0)
+                    Overlay.LargePlaybackButtons()
+                        .opacity(!isScrubbing && isPresentingOverlay ? 1 : 0)
                 }
             }
+            .environmentObject(overlayTimer)
             .background {
                 Color.black
-                    .opacity(!isScrubbing && playbackButtonType == .large && currentOverlayType == .main ? 0.5 : 0)
+                    .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
                     .allowsHitTesting(false)
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
+            .onChange(of: isPresentingOverlay) { newValue in
+                guard newValue, !isScrubbing else { return }
+                overlayTimer.start(5)
+            }
+            .onChange(of: isScrubbing) { newValue in
+                if newValue {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.start(5)
+                }
+            }
+            .onChange(of: overlayTimer.isActive) { newValue in
+                guard !newValue, !isScrubbing else { return }
+
+                withAnimation(.linear(duration: 0.3)) {
+                    isPresentingOverlay = false
+                }
+            }
         }
     }
 }

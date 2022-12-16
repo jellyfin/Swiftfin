@@ -87,20 +87,18 @@ struct VideoPlayer: View {
     @ObservedObject
     private var currentProgressHandler: CurrentProgressHandler = .init()
     @ObservedObject
-    private var overlayTimer: TimerProxy = .init()
-    @ObservedObject
     private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
 
     @State
-    private var aspectFilled: Bool = false
-    @State
     private var audioOffset: Int = 0
     @State
-    private var currentOverlayType: OverlayType?
+    private var isAspectFilled: Bool = false
     @State
-    private var gestureLocked: Bool = false
+    private var isGestureLocked: Bool = false
+    @State
+    private var isPresentingOverlay: Bool = false
     @State
     private var isScrubbing: Bool = false
     @State
@@ -117,7 +115,7 @@ struct VideoPlayer: View {
 
     @ViewBuilder
     private var playerView: some View {
-        SplitContentView()
+        SplitContentView(splitContentWidth: 400)
             .proxy(splitContentViewProxy)
             .content {
                 ZStack {
@@ -172,17 +170,13 @@ struct VideoPlayer: View {
                             .eraseToAnyView()
                     }
                     .environmentObject(currentProgressHandler)
-                    .environmentObject(overlayTimer)
                     .environmentObject(splitContentViewProxy)
                     .environmentObject(videoPlayerManager)
                     .environmentObject(videoPlayerManager.proxy)
                     .environmentObject(videoPlayerManager.currentViewModel!)
-                    .environment(\.aspectFilled, $aspectFilled)
-                    .environment(\.currentOverlayType, $currentOverlayType)
+                    .environment(\.aspectFilled, $isAspectFilled)
+                    .environment(\.isPresentingOverlay, $isPresentingOverlay)
                     .environment(\.isScrubbing, $isScrubbing)
-                }
-                .onTapGesture {
-                    overlayTimer.start(5)
                 }
             }
             .splitContent {
@@ -225,7 +219,7 @@ struct VideoPlayer: View {
         .onChange(of: audioOffset) { newValue in
             videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
         }
-        .onChange(of: gestureLocked) { newValue in
+        .onChange(of: isGestureLocked) { newValue in
             if newValue {
                 updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
             } else {
@@ -233,19 +227,8 @@ struct VideoPlayer: View {
             }
         }
         .onChange(of: isScrubbing) { newValue in
-
-            if newValue {
-                overlayTimer.stop()
-            } else {
-                overlayTimer.start(5)
-            }
-
             guard !newValue else { return }
             videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
-        }
-        .onChange(of: overlayTimer.isActive) { newValue in
-            guard !newValue else { return }
-            showOverlay(nil, duration: 0.4)
         }
         .onChange(of: subtitleFontName) { newValue in
             videoPlayerManager.proxy.setSubtitleFont(newValue)
@@ -261,15 +244,9 @@ struct VideoPlayer: View {
 
             videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
 
-            aspectFilled = false
+            isAspectFilled = false
             audioOffset = 0
             subtitleOffset = 0
-        }
-    }
-
-    private func showOverlay(_ type: OverlayType?, duration: Double = 0.1) {
-        withAnimation(.linear(duration: duration)) {
-            currentOverlayType = type
         }
     }
 }
@@ -292,7 +269,7 @@ extension VideoPlayer {
         velocity: CGFloat,
         translation: CGFloat
     ) {
-        guard !gestureLocked else { return }
+        guard !isGestureLocked else { return }
 
         switch action {
         case .none:
@@ -319,7 +296,7 @@ extension VideoPlayer {
         direction: Bool,
         amount: Int
     ) {
-        guard !gestureLocked else { return }
+        guard !isGestureLocked else { return }
 
         switch horizontalSwipeGesture {
         case .none:
@@ -334,13 +311,13 @@ extension VideoPlayer {
         case .none:
             return
         case .gestureLock:
-            guard currentOverlayType == nil else { return }
-            gestureLocked.toggle()
+            guard !isPresentingOverlay else { return }
+            isGestureLocked.toggle()
         }
     }
 
     private func handlePinchGesture(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
-        guard !gestureLocked else { return }
+        guard !isGestureLocked else { return }
 
         switch pinchGesture {
         case .none:
@@ -351,12 +328,17 @@ extension VideoPlayer {
     }
 
     private func handleTapGesture(unitPoint: UnitPoint, taps: Int) {
-        if gestureLocked {
+        if isGestureLocked {
             updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
             return
         }
 
         if taps > 1 && multiTapGesture != .none {
+
+            withAnimation(.linear(duration: 0.1)) {
+                isPresentingOverlay = false
+            }
+
             switch multiTapGesture {
             case .none:
                 return
@@ -364,10 +346,8 @@ extension VideoPlayer {
                 jumpAction(unitPoint: unitPoint, amount: taps - 1)
             }
         } else {
-            if currentOverlayType == nil {
-                showOverlay(.main)
-            } else {
-                showOverlay(nil)
+            withAnimation(.linear(duration: 0.1)) {
+                isPresentingOverlay = !isPresentingOverlay
             }
         }
     }
@@ -375,19 +355,19 @@ extension VideoPlayer {
 
 // MARK: Gesture Actions
 
-// TODO: look at having action changes be separated from the calculations, for incremental jumps vs pans
+// TODO: have action changes be separated from the calculations, for incremental jumps vs pans
 
 extension VideoPlayer {
 
     private func aspectFillAction(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
         guard state == .began || state == .changed else { return }
-        if scale > 1, !aspectFilled {
-            aspectFilled = true
+        if scale > 1, !isAspectFilled {
+            isAspectFilled = true
             UIView.animate(withDuration: 0.2) {
                 videoPlayerManager.proxy.aspectFill(1)
             }
-        } else if scale < 1, aspectFilled {
-            aspectFilled = false
+        } else if scale < 1, isAspectFilled {
+            isAspectFilled = false
             UIView.animate(withDuration: 0.2) {
                 videoPlayerManager.proxy.aspectFill(0)
             }
@@ -501,10 +481,10 @@ extension VideoPlayer {
 
             gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
             gestureStateHandler.beginningHorizontalPanUnit = point
-            gestureStateHandler.beganPanWithOverlay = currentOverlayType == .main
+            gestureStateHandler.beganPanWithOverlay = isPresentingOverlay
         } else if state == .ended {
             if !gestureStateHandler.beganPanWithOverlay {
-                showOverlay(nil)
+                isPresentingOverlay = false
             }
 
             isScrubbing = false

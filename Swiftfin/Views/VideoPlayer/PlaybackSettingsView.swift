@@ -118,8 +118,8 @@ struct PlaybackSettingsView: View {
                     splitContentViewProxy.hide()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-//                        .resizable()
-//                        .frame(width: 44, height: 50)
+                        .resizable()
+                        .frame(width: 24, height: 24)
                 }
             }
         }

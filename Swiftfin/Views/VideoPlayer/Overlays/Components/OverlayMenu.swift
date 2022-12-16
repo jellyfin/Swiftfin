@@ -126,7 +126,6 @@ extension VideoPlayer.Overlay {
         private var advancedButton: some View {
             Button {
                 splitContentViewProxy.present()
-                overlayTimer.start(3)
             } label: {
                 HStack {
                     Text("Advanced")
@@ -153,12 +152,6 @@ extension VideoPlayer.Overlay {
                 }
 
                 advancedButton
-                    .onAppear {
-                        overlayTimer.stop()
-                    }
-                    .onDisappear {
-                        overlayTimer.start(3)
-                    }
             } label: {
                 Image(systemName: "ellipsis.circle")
             }

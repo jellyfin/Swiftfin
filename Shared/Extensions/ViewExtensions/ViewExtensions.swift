@@ -161,7 +161,7 @@ extension View {
         copy[keyPath: keyPath] = newValue
         return copy
     }
-    
+
     @ViewBuilder
     func hideSystemOverlays() -> some View {
         if #available(iOS 16, tvOS 16, *) {

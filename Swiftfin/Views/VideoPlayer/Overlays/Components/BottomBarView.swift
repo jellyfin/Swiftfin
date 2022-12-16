@@ -31,6 +31,10 @@ extension VideoPlayer.Overlay {
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
+
+        @Environment(\.isPresentingOverlay)
+        @Binding
+        private var isPresentingOverlay
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -47,17 +51,12 @@ extension VideoPlayer.Overlay {
         private var viewModel: VideoPlayerViewModel
 
         @State
-        private var isShowingNextItem: Bool = false
-        @State
-        private var scrubbingRate: CGFloat = 1
-        @State
         private var currentChapter: ChapterInfo.FullInfo?
 
         @ViewBuilder
         private var capsuleSlider: some View {
             CapsuleSlider(progress: $currentProgressHandler.scrubbedProgress)
                 .isEditing(_isScrubbing.wrappedValue)
-                .rate($scrubbingRate)
                 .trackMask {
                     if chapterSlider && !(viewModel.item.chapters?.isEmpty ?? true) {
                         ChapterTrack()
@@ -82,11 +81,6 @@ extension VideoPlayer.Overlay {
                         SmallPlaybackButtons()
                             .padding(.trailing)
                             .disabled(isScrubbing)
-                    }
-                }
-                .onChange(of: isScrubbing) { newValue in
-                    if newValue {
-                        scrubbingRate = 1
                     }
                 }
                 .frame(height: 50)
@@ -96,7 +90,6 @@ extension VideoPlayer.Overlay {
         private var thumbSlider: some View {
             ThumbSlider(progress: $currentProgressHandler.scrubbedProgress)
                 .isEditing(_isScrubbing.wrappedValue)
-                .rate($scrubbingRate)
                 .trackMask {
                     if chapterSlider && !(viewModel.item.chapters?.isEmpty ?? true) {
                         ChapterTrack()
@@ -123,17 +116,12 @@ extension VideoPlayer.Overlay {
                             .disabled(isScrubbing)
                     }
                 }
-                .onChange(of: isScrubbing) { newValue in
-                    if newValue {
-                        scrubbingRate = 1
-                    }
-                }
         }
 
         var body: some View {
             VStack(spacing: 0) {
                 HStack {
-                    if let currentChapter {
+                    if chapterSlider, let currentChapter {
                         Button {
                             currentOverlayType = .chapters
                             overlayTimer.stop()
@@ -162,9 +150,8 @@ extension VideoPlayer.Overlay {
                     }
                 }
             }
-            .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.linear(duration: 0.1), value: scrubbingRate)
             .onChange(of: currentProgressHandler.scrubbedSeconds) { newValue in
+                guard chapterSlider else { return }
                 let newChapter = viewModel.chapter(from: newValue)
                 if newChapter != currentChapter {
                     if isScrubbing && Defaults[.hapticFeedback] {

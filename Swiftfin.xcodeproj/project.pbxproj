@@ -1772,13 +1772,14 @@
 			path = ItemViewModel;
 			sourceTree = "<group>";
 		};
-		E11245B228D97D4A00D8A977 /* Overlay */ = {
+		E11245B228D97D4A00D8A977 /* Overlays */ = {
 			isa = PBXGroup;
 			children = (
+				E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */,
 				E11245B028D919CD00D8A977 /* Overlay.swift */,
 				E11245B528D97EC200D8A977 /* Components */,
 			);
-			path = Overlay;
+			path = Overlays;
 			sourceTree = "<group>";
 		};
 		E11245B528D97EC200D8A977 /* Components */ = {
@@ -2239,10 +2240,9 @@
 		E193D5452719418B00900D82 /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */,
 				E170D102294CE8BF0017224C /* LoadingView.swift */,
 				E1D842162932AB8F00D1041A /* NativeVideoPlayer.swift */,
-				E11245B228D97D4A00D8A977 /* Overlay */,
+				E11245B228D97D4A00D8A977 /* Overlays */,
 				E19F6C5E28F5193B00C5197E /* PlaybackInformationView.swift */,
 				E129429A28F4A5E300796AC6 /* PlaybackSettingsView.swift */,
 				E18A8E8228D60BC400333B9A /* VideoPlayer.swift */,

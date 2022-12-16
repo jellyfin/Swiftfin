@@ -108,6 +108,7 @@ extension VideoPlayer.Overlay {
                     startPoint: .top,
                     endPoint: .bottom
                 )
+                .allowsHitTesting(false)
             }
         }
     }

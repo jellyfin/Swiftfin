@@ -9,43 +9,38 @@
 import SwiftUI
 
 // TODO: Rename to something more generic, non-proxy
-// TODO: change from timer to DispatchWorkItem
 class TimerProxy: ObservableObject {
 
     @Published
     var isActive = false
-    @Published
-    var wasForceStopped = false
 
-    private var dismissTimer: Timer?
+    private var stopWorkitem: DispatchWorkItem?
 
     func start(_ interval: Double) {
-        print("Started timer")
         isActive = true
-        wasForceStopped = false
         restartOverlayDismissTimer(interval: interval)
     }
 
     func stop() {
-        print("Force stopped timer")
-        dismissTimer?.invalidate()
-        wasForceStopped = true
+        isActive = false
+    }
+
+    // stop the current work item but don't trigger an update
+    func pause() {
+        stopWorkitem?.cancel()
     }
 
     private func restartOverlayDismissTimer(interval: Double) {
-        dismissTimer?.invalidate()
-        dismissTimer = Timer.scheduledTimer(
-            timeInterval: interval,
-            target: self,
-            selector: #selector(dismissTimerFired),
-            userInfo: nil,
-            repeats: false
-        )
-    }
+        stopWorkitem?.cancel()
 
-    @objc
-    private func dismissTimerFired() {
-        isActive = false
-        wasForceStopped = false
+        isActive = true
+
+        let newWorkItem = DispatchWorkItem {
+            self.stop()
+        }
+
+        stopWorkitem = newWorkItem
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + interval, execute: newWorkItem)
     }
 }
