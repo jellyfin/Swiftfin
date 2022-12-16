@@ -15,7 +15,7 @@ struct MediaStreamInfoView: View {
 
     var body: some View {
         Form {
-            Section(mediaStream.displayTitle ?? .emptyDash) {
+            Section {
                 ForEach(mediaStream.metadataProperties) { property in
                     TextPairView(property)
                 }
@@ -37,5 +37,6 @@ struct MediaStreamInfoView: View {
                 }
             }
         }
+        .navigationTitle(mediaStream.displayTitle ?? .emptyDash)
     }
 }

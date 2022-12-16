@@ -117,7 +117,8 @@ struct SettingsView: View {
                     router.route(to: \.log)
                 }
         }
-        .navigationBarTitle(L10n.settings, displayMode: .inline)
+        .navigationBarTitle(L10n.settings)
+        .navigationBarTitleDisplayMode(.inline)
         .navigationCloseButton(accentColor: $accentColor) {
             router.dismissCoordinator()
         }

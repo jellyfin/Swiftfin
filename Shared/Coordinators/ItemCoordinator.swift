@@ -27,6 +27,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     var castAndCrew = makeCastAndCrew
     @Route(.modal)
     var itemOverview = makeItemOverview
+    @Route(.modal)
+    var mediaSourceInfo = makeMediaSourceInfo
 
     #if os(tvOS)
     @Route(.fullScreen)
@@ -57,6 +59,10 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
+    }
+
+    func makeMediaSourceInfo(mediaSourceInfo: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
+        NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: mediaSourceInfo))
     }
 
     #if os(tvOS)

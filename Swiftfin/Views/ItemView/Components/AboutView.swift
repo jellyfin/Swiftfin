@@ -6,12 +6,16 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
 
     struct AboutView: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -41,41 +45,52 @@ extension ItemView {
 
                         Card(title: viewModel.item.displayTitle)
                             .content {
-                                VStack(alignment: .leading, spacing: 10) {
-
-                                    if let overview = viewModel.item.overview {
-                                        Text(overview)
-                                            .lineLimit(4)
-                                            .font(.footnote)
-                                            .foregroundColor(.secondary)
-                                    } else {
-                                        L10n.noOverviewAvailable.text
-                                            .font(.footnote)
-                                            .foregroundColor(.secondary)
-                                    }
+                                if let overview = viewModel.item.overview {
+                                    TruncatedTextView(text: overview)
+                                        .lineLimit(4)
+                                        .font(.footnote)
+                                        .seeMoreAction {
+                                            router.route(to: \.itemOverview, viewModel.item)
+                                        }
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    L10n.noOverviewAvailable.text
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
                                 }
                             }
                             .onSelect {
                                 router.route(to: \.itemOverview, viewModel.item)
                             }
 
-//                        Card(title: "Ratings")
-//                            .content {
-//                                VStack(alignment: .leading, spacing: 10) {
-//
-//                                    if let communityRating = viewModel.item.communityRating {
-//                                        HStack {
-//                                            Image(systemName: "star.fill")
-//                                                .foregroundColor(.yellow)
-//
-//                                            Text(String(format: "%.2f", communityRating))
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            .onSelect {
-//                                router.route(to: \.remoteImages)
-//                            }
+                        if viewModel.item.type == .episode ||
+                            viewModel.item.type == .movie,
+                            let mediaSources = viewModel.item.mediaSources
+                        {
+                            ForEach(mediaSources) { source in
+                                Card(title: "Media", subtitle: mediaSources.count > 1 ? source.displayTitle : nil)
+                                    .content {
+                                        VStack(alignment: .leading) {
+                                            ForEach((source.mediaStreams ?? []).prefix(4), id: \.index) { mediaStream in
+                                                Text(mediaStream.displayTitle ?? .emptyDash)
+                                                    .lineLimit(1)
+                                                    .font(.footnote)
+                                                    .foregroundColor(.secondary)
+                                            }
+
+                                            if (source.mediaStreams ?? []).count > 4 {
+                                                L10n.seeMore.text
+                                                    .font(.footnote)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(accentColor)
+                                            }
+                                        }
+                                    }
+                                    .onSelect {
+                                        router.route(to: \.mediaSourceInfo, source)
+                                    }
+                            }
+                        }
                     }
                     .padding(.horizontal)
                     .if(UIDevice.isIPad) { view in
@@ -89,30 +104,37 @@ extension ItemView {
 
 extension ItemView.AboutView {
 
-    struct Card<Content: View>: View {
+    struct Card: View {
 
-        private let content: () -> Content
+        private var content: () -> any View
         private var onSelect: () -> Void
         private let title: String
+        private let subtitle: String?
 
         var body: some View {
             Button {
                 onSelect()
             } label: {
-                ZStack {
+                ZStack(alignment: .leading) {
 
                     Color.secondarySystemFill
                         .cornerRadius(10)
 
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 5) {
                         Text(title)
                             .font(.title2)
                             .fontWeight(.semibold)
 
+                        if let subtitle {
+                            Text(subtitle)
+                                .font(.subheadline)
+                        }
+
                         Spacer()
+                            .frame(maxWidth: .infinity)
 
                         content()
-                            .frame(maxWidth: .infinity)
+                            .eraseToAnyView()
                     }
                     .padding()
                 }
@@ -123,25 +145,19 @@ extension ItemView.AboutView {
     }
 }
 
-extension ItemView.AboutView.Card where Content == EmptyView {
+extension ItemView.AboutView.Card {
 
-    init(title: String) {
+    init(title: String, subtitle: String? = nil) {
         self.init(
             content: { EmptyView() },
             onSelect: {},
-            title: title
+            title: title,
+            subtitle: subtitle
         )
     }
-}
 
-extension ItemView.AboutView.Card {
-
-    func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> ItemView.AboutView.Card<C> {
-        .init(
-            content: content,
-            onSelect: onSelect,
-            title: title
-        )
+    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.content, with: content)
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
