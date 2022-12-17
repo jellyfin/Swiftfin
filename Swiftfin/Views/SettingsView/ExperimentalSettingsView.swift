@@ -21,8 +21,6 @@ struct ExperimentalSettingsView: View {
     var liveTVForceDirectPlay
     @Default(.Experimental.liveTVNativePlayer)
     var liveTVNativePlayer
-    @Default(.Experimental.lastChapterNextItem)
-    var lastChapterNextItem
 
     var body: some View {
         Form {
@@ -31,8 +29,6 @@ struct ExperimentalSettingsView: View {
                 Toggle("Force Direct Play", isOn: $forceDirectPlay)
 
                 Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
-
-                Toggle("Last Chapter Next Item Button", isOn: $lastChapterNextItem)
 
             } header: {
                 L10n.experimental.text

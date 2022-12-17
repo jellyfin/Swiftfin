@@ -12,7 +12,10 @@ import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
+import Pulse
 import UIKit
+
+// TODO: cleanup
 
 final class SwiftfinSession {
 
@@ -32,6 +35,7 @@ final class SwiftfinSession {
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
+            sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger.callAsFunction()),
             accessToken: user.accessToken
         )
 
@@ -48,7 +52,8 @@ final class BasicServerSession {
         self.server = server
 
         let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.currentURL)
+            configuration: .swiftfinConfiguration(url: server.currentURL),
+            sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger.callAsFunction())
         )
 
         self.client = client

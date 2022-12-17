@@ -40,7 +40,7 @@ extension VideoPlayer.Overlay {
         private var isScrubbing: Bool
 
         @EnvironmentObject
-        private var currentProgressHandler: CurrentProgressHandler
+        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject

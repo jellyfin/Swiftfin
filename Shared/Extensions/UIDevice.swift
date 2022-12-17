@@ -15,11 +15,15 @@ extension UIDevice {
     }
 
     static var isIPad: Bool {
-        UIDevice.current.userInterfaceIdiom == .pad
+        current.userInterfaceIdiom == .pad
     }
 
     static var isPhone: Bool {
-        UIDevice.current.userInterfaceIdiom == .phone
+        current.userInterfaceIdiom == .phone
+    }
+
+    static var hasNotch: Bool {
+        (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0) > 0
     }
 
     static var platform: String {
@@ -36,11 +40,11 @@ extension UIDevice {
 
     #if os(iOS)
     static var isPortrait: Bool {
-        UIDevice.current.orientation.isPortrait
+        current.orientation.isPortrait
     }
 
     static var isLandscape: Bool {
-        isIPad || UIDevice.current.orientation.isLandscape
+        isIPad || current.orientation.isLandscape
     }
 
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {

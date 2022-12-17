@@ -15,19 +15,6 @@ import VLCUI
 
 // TODO: organize
 
-class CurrentProgressHandler: ObservableObject {
-
-    @Published
-    var progress: CGFloat = 0
-    @Published
-    var scrubbedProgress: CGFloat = 0
-
-    @Published
-    var seconds: Int = 0
-    @Published
-    var scrubbedSeconds: Int = 0
-}
-
 struct VideoPlayer: View {
 
     enum OverlayType {
@@ -85,8 +72,8 @@ struct VideoPlayer: View {
     private var router: VideoPlayerCoordinator.Router
 
     @ObservedObject
-    private var currentProgressHandler: CurrentProgressHandler = .init()
-    @ObservedObject
+    private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
+    @StateObject
     private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
@@ -110,6 +97,7 @@ struct VideoPlayer: View {
 
     init(manager: VideoPlayerManager) {
         self.videoPlayerManager = manager
+        self.currentProgressHandler = manager.currentProgressHandler
         self.overlay = { EmptyView() }
     }
 
@@ -169,7 +157,7 @@ struct VideoPlayer: View {
                         overlay()
                             .eraseToAnyView()
                     }
-                    .environmentObject(currentProgressHandler)
+                    .environmentObject(videoPlayerManager.currentProgressHandler)
                     .environmentObject(splitContentViewProxy)
                     .environmentObject(videoPlayerManager)
                     .environmentObject(videoPlayerManager.proxy)
@@ -191,8 +179,11 @@ struct VideoPlayer: View {
                 .environment(\.audioOffset, $audioOffset)
                 .environment(\.subtitleOffset, $subtitleOffset)
             }
-            .onChange(of: currentProgressHandler.scrubbedProgress) { newValue in
-                currentProgressHandler.scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
+            .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
+                DispatchQueue.main.async {
+                    videoPlayerManager.currentProgressHandler
+                        .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
+                }
             }
             .overlay(alignment: .top) {
                 UpdateView(proxy: updateViewProxy)
@@ -203,6 +194,9 @@ struct VideoPlayer: View {
                 videoPlayerManager: videoPlayerManager,
                 updateViewProxy: updateViewProxy
             )
+            .onAppWillTerminate {
+                videoPlayerManager.sendStopReport()
+            }
     }
 
     var body: some View {
@@ -259,6 +253,9 @@ extension VideoPlayer {
 }
 
 // MARK: Gestures
+
+// TODO: refactor to be split into other files
+// TODO: refactor so that actions are separate from the gesture calculations, so that actions are more general
 
 extension VideoPlayer {
 
@@ -353,9 +350,7 @@ extension VideoPlayer {
     }
 }
 
-// MARK: Gesture Actions
-
-// TODO: have action changes be separated from the calculations, for incremental jumps vs pans
+// MARK: Actions
 
 extension VideoPlayer {
 

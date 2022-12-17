@@ -43,8 +43,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var quickConnect = makeQuickConnectSettings
     @Route(.push)
     var log = makeLog
-    @Route(.push)
-    var userProfile = makeUserProfile
     #endif
 
     private let viewModel: SettingsViewModel
@@ -100,11 +98,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeLog() -> some View {
         ConsoleView()
-    }
-
-    @ViewBuilder
-    func makeUserProfile() -> some View {
-        UserProfileView()
     }
     #endif
 

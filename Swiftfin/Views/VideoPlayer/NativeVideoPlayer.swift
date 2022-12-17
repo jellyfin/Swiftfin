@@ -8,6 +8,7 @@
 
 import AVKit
 import Combine
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -24,34 +25,16 @@ struct NativeVideoPlayer: View {
     }
 
     @ViewBuilder
-    private func playerView(with viewModel: VideoPlayerViewModel) -> some View {
-        NativeVideoPlayerView(videoPlayerManager: videoPlayerManager, viewModel: viewModel)
-    }
-
-    @ViewBuilder
-    private var loadingView: some View {
-        ZStack {
-            Color.black
-
-            VStack {
-                ProgressView()
-
-                Button {
-                    router.dismissCoordinator()
-                } label: {
-                    Text("Cancel")
-                        .foregroundColor(.red)
-                }
-            }
-        }
+    private var playerView: some View {
+        NativeVideoPlayerView(videoPlayerManager: videoPlayerManager)
     }
 
     var body: some View {
         Group {
-            if let viewModel = videoPlayerManager.currentViewModel {
-                playerView(with: viewModel)
+            if let _ = videoPlayerManager.currentViewModel {
+                playerView
             } else {
-                loadingView
+                VideoPlayer.LoadingView()
             }
         }
         .navigationBarHidden(true)
@@ -63,10 +46,9 @@ struct NativeVideoPlayer: View {
 struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
     let videoPlayerManager: VideoPlayerManager
-    let viewModel: VideoPlayerViewModel
 
     func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
-        UINativeVideoPlayerViewController(manager: videoPlayerManager, viewModel: viewModel)
+        UINativeVideoPlayerViewController(manager: videoPlayerManager)
     }
 
     func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
@@ -75,40 +57,39 @@ struct NativeVideoPlayerView: UIViewControllerRepresentable {
 class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     let videoPlayerManager: VideoPlayerManager
-    let viewModel: VideoPlayerViewModel
 
     private var timeObserverToken: Any!
 
-    init(manager: VideoPlayerManager, viewModel: VideoPlayerViewModel) {
+    init(manager: VideoPlayerManager) {
 
         self.videoPlayerManager = manager
-        self.viewModel = viewModel
 
         super.init(nibName: nil, bundle: nil)
 
-        let player: AVPlayer = .init(url: viewModel.hlsPlaybackURL)
+        let newPlayer: AVPlayer = .init(url: manager.currentViewModel.hlsPlaybackURL)
 
-        player.appliesMediaSelectionCriteriaAutomatically = false
-        player.currentItem?.externalMetadata = createMetadata()
+        newPlayer.allowsExternalPlayback = true
+        newPlayer.appliesMediaSelectionCriteriaAutomatically = false
+        newPlayer.currentItem?.externalMetadata = createMetadata()
 
         let time = CMTime(seconds: 0.1, preferredTimescale: 1000)
 
-        timeObserverToken = player.addPeriodicTimeObserver(forInterval: time, queue: .main) { [weak self] time in
+        timeObserverToken = newPlayer.addPeriodicTimeObserver(forInterval: time, queue: .main) { [weak self] time in
+
+            guard let self else { return }
 
             if time.seconds >= 0 {
-                let milliseconds = Int(time.seconds) * 1000
-//                self?.videoPlayerManager.onTicksUpdated(ticks: milliseconds, playbackInformation: VLCVideoPlayer.)
-            }
+                let newSeconds = Int(time.seconds)
+                let progress = CGFloat(newSeconds) / CGFloat(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
 
-//            if time.seconds != 0 {
-//                self?.sendProgressReport(seconds: time.seconds)
-//            }
+                self.videoPlayerManager.currentProgressHandler.progress = progress
+                self.videoPlayerManager.currentProgressHandler.scrubbedProgress = progress
+                self.videoPlayerManager.currentProgressHandler.seconds = newSeconds
+                self.videoPlayerManager.currentProgressHandler.scrubbedSeconds = newSeconds
+            }
         }
 
-        self.player = player
-
-        self.allowsPictureInPicturePlayback = true
-        self.player?.allowsExternalPlayback = true
+        player = newPlayer
     }
 
     @available(*, unavailable)
@@ -124,6 +105,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         super.viewWillDisappear(animated)
 
         stop()
+        guard let timeObserverToken else { return }
         player?.removeTimeObserver(timeObserverToken)
     }
 
@@ -131,7 +113,10 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         super.viewDidAppear(animated)
 
         player?.seek(
-            to: CMTimeMake(value: Int64(viewModel.item.startTimeSeconds), timescale: 1),
+            to: CMTimeMake(
+                value: Int64(videoPlayerManager.currentViewModel.item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]),
+                timescale: 1
+            ),
             toleranceBefore: .zero,
             toleranceAfter: .zero,
             completionHandler: { _ in
@@ -142,8 +127,8 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     private func createMetadata() -> [AVMetadataItem] {
         let allMetadata: [AVMetadataIdentifier: Any?] = [
-            .commonIdentifierTitle: viewModel.item.displayTitle,
-            .iTunesMetadataTrackSubTitle: viewModel.item.subtitle,
+            .commonIdentifierTitle: videoPlayerManager.currentViewModel.item.displayTitle,
+            .iTunesMetadataTrackSubTitle: videoPlayerManager.currentViewModel.item.subtitle,
         ]
 
         return allMetadata.compactMap { createMetadataItem(for: $0, value: $1) }
@@ -164,9 +149,13 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     private func play() {
         player?.play()
+
+        videoPlayerManager.sendStartReport()
     }
 
     private func stop() {
-        self.player?.pause()
+        player?.pause()
+
+        videoPlayerManager.sendStopReport()
     }
 }

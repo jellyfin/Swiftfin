@@ -70,19 +70,20 @@ extension ItemView {
                             ForEach(mediaSources) { source in
                                 Card(title: "Media", subtitle: mediaSources.count > 1 ? source.displayTitle : nil)
                                     .content {
-                                        VStack(alignment: .leading) {
-                                            ForEach((source.mediaStreams ?? []).prefix(4), id: \.index) { mediaStream in
-                                                Text(mediaStream.displayTitle ?? .emptyDash)
-                                                    .lineLimit(1)
-                                                    .font(.footnote)
-                                                    .foregroundColor(.secondary)
-                                            }
+                                        if let mediaStreams = source.mediaStreams {
+                                            VStack(alignment: .leading) {
+                                                ForEach(mediaStreams.prefix(4), id: \.index) { mediaStream in
+                                                    Text(mediaStream.displayTitle ?? .emptyDash)
+                                                        .lineLimit(1)
+                                                        .font(.footnote)
+                                                        .foregroundColor(.secondary)
+                                                }
 
-                                            if (source.mediaStreams ?? []).count > 4 {
-                                                L10n.seeMore.text
-                                                    .font(.footnote)
-                                                    .fontWeight(.medium)
-                                                    .foregroundColor(accentColor)
+                                                if mediaStreams.count > 4 {
+                                                    L10n.seeMore.text
+                                                        .font(.footnote)
+                                                        .foregroundColor(accentColor)
+                                                }
                                             }
                                         }
                                     }
@@ -124,6 +125,7 @@ extension ItemView.AboutView {
                         Text(title)
                             .font(.title2)
                             .fontWeight(.semibold)
+                            .lineLimit(2)
 
                         if let subtitle {
                             Text(subtitle)
@@ -131,7 +133,6 @@ extension ItemView.AboutView {
                         }
 
                         Spacer()
-                            .frame(maxWidth: .infinity)
 
                         content()
                             .eraseToAnyView()

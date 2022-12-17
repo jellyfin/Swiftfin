@@ -147,10 +147,6 @@ extension VideoPlayer.Overlay {
 
                 playbackSpeedMenu
 
-                if !viewModel.chapters.isEmpty {
-                    chaptersButton
-                }
-
                 advancedButton
             } label: {
                 Image(systemName: "ellipsis.circle")

@@ -36,6 +36,8 @@ struct VideoPlayerSettingsView: View {
     private var showSubtitleTrackMenu
     @Default(.VideoPlayer.showPlaybackSpeed)
     private var showPlaybackSpeed
+    @Default(.VideoPlayer.showChapters)
+    private var showChapters
 
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
@@ -107,6 +109,13 @@ struct VideoPlayerSettingsView: View {
                     HStack {
                         Image(systemName: "play.circle.fill")
                         L10n.autoPlay.text
+                    }
+                }
+
+                Toggle(isOn: $showChapters) {
+                    HStack {
+                        Image(systemName: "list.dash")
+                        L10n.chapters.text
                     }
                 }
 

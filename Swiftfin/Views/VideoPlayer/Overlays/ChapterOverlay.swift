@@ -18,8 +18,14 @@ extension VideoPlayer.Overlay {
         @Default(.accentColor)
         private var accentColor
 
+        @Environment(\.currentOverlayType)
+        @Binding
+        private var currentOverlayType
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets
+
         @EnvironmentObject
-        private var currentProgressHandler: CurrentProgressHandler
+        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
@@ -29,72 +35,97 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 
+        @State
+        private var scrollViewProxy: ScrollViewProxy? = nil
+
         var body: some View {
             VStack {
                 Spacer()
                     .allowsHitTesting(false)
 
-                ScrollViewReader { proxy in
-                    PosterHStack(
-                        title: L10n.chapters,
-                        type: .landscape,
-                        items: viewModel.chapters
-                    )
-                    .imageOverlay { type in
-                        if case let PosterButtonType.item(info) = type, info.secondsRange.contains(currentProgressHandler.seconds) {
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(accentColor, lineWidth: 8)
-                        }
-                    }
-                    .content { type in
-                        if case let PosterButtonType.item(info) = type {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(info.chapterInfo.displayTitle)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(1)
-                                    .foregroundColor(.white)
+                HStack {
+                    L10n.chapters.text
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .accessibility(addTraits: [.isHeader])
 
-                                Text(info.chapterInfo.timestampLabel)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color(UIColor.systemBlue))
-                                    .padding(.vertical, 2)
-                                    .padding(.horizontal, 4)
-                                    .background {
-                                        Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
-                                    }
+                    Spacer()
+
+                    Button {
+                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
+                            withAnimation {
+                                scrollViewProxy?.scrollTo(currentChapter.hashValue, anchor: .center)
                             }
                         }
+                    } label: {
+                        Text("Current")
+                            .font(.title2)
+                            .foregroundColor(accentColor)
                     }
-                    .trailing {
-                        Button {
-                            if let currentChapter = viewModel.chapters
-                                .first(where: { $0.secondsRange.contains(currentProgressHandler.seconds) })
-                            {
-                                withAnimation {
-                                    proxy.scrollTo(currentChapter.hashValue, anchor: .center)
+                }
+                .padding(.leading, safeAreaInsets.leading)
+                .padding(.trailing, safeAreaInsets.trailing)
+
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(alignment: .top, spacing: 15) {
+                            ForEach(viewModel.chapters, id: \.hashValue) { chapter in
+                                PosterButton(
+                                    state: .item(chapter),
+                                    type: .landscape
+                                )
+                                .imageOverlay { type in
+                                    if case let PosterButtonType.item(info) = type,
+                                       info.secondsRange.contains(currentProgressHandler.seconds)
+                                    {
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(accentColor, lineWidth: 8)
+                                    }
+                                }
+                                .content { type in
+                                    if case let PosterButtonType.item(info) = type {
+                                        VStack(alignment: .leading, spacing: 5) {
+                                            Text(info.chapterInfo.displayTitle)
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .lineLimit(1)
+                                                .foregroundColor(.white)
+
+                                            Text(info.chapterInfo.timestampLabel)
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(UIColor.systemBlue))
+                                                .padding(.vertical, 2)
+                                                .padding(.horizontal, 4)
+                                                .background {
+                                                    Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
+                                                }
+                                        }
+                                    }
+                                }
+                                .onSelect {
+                                    let seconds = chapter.chapterInfo.startTimeSeconds
+                                    videoPlayerProxy.setTime(.seconds(seconds))
+
+                                    if videoPlayerManager.state != .playing {
+                                        videoPlayerProxy.play()
+                                    }
                                 }
                             }
-                        } label: {
-                            Text("Current")
+                        }
+                        .padding(.leading, safeAreaInsets.leading)
+                        .padding(.trailing, safeAreaInsets.trailing)
+                        .padding(.bottom)
+                    }
+                    .onChange(of: currentOverlayType) { newValue in
+                        guard newValue == .chapters else { return }
+                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
+                            scrollViewProxy?.scrollTo(currentChapter.hashValue, anchor: .center)
                         }
                     }
-                    .onSelect { info in
-                        let seconds = info.chapterInfo.startTimeSeconds
-                        videoPlayerProxy.setTime(.seconds(seconds))
-
-                        if videoPlayerManager.state != .playing {
-                            videoPlayerProxy.play()
-                        }
-                    }
-                    .foregroundColor(.white)
                     .onAppear {
-                        if let currentChapter = viewModel.chapters
-                            .first(where: { $0.secondsRange.contains(currentProgressHandler.seconds) })
-                        {
-                            proxy.scrollTo(currentChapter.hashValue, anchor: .center)
-                        }
+                        scrollViewProxy = proxy
                     }
                 }
             }

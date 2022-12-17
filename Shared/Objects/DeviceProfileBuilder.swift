@@ -44,7 +44,7 @@ class DeviceProfileBuilder {
     }
 
     public func buildProfile() -> DeviceProfile {
-        let segmentContainer = Defaults[.Experimental.usefmp4Hls] ? "mp4" : "ts"
+        let segmentContainer = "mp4"
         let maxStreamingBitrate = bitrate
         let maxStaticBitrate = bitrate
         let musicStreamingTranscodingBitrate = bitrate

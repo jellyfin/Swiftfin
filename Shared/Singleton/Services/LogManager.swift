@@ -10,11 +10,35 @@ import CoreStore
 import Factory
 import Foundation
 import Logging
+import Pulse
+
+// TODO: cleanup
 
 class LogManager {
 
     static let service = Factory<Logger>(scope: .singleton) {
         .init(label: "Swiftfin")
+    }
+
+    static let pulseNetworkLogger = Factory<NetworkLogger>(scope: .singleton) {
+        var configuration = NetworkLogger.Configuration()
+        configuration.willHandleEvent = { event -> LoggerStore.Event? in
+            switch event {
+            case let .networkTaskCreated(networkTask):
+                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
+                    return nil
+                }
+            case let .networkTaskCompleted(networkTask):
+                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
+                    return nil
+                }
+            default: ()
+            }
+
+            return event
+        }
+
+        return NetworkLogger(configuration: configuration)
     }
 }
 

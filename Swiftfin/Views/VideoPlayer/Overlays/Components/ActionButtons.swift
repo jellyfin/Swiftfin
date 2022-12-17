@@ -20,6 +20,8 @@ extension VideoPlayer.Overlay {
         private var showAudioTrackMenu
         @Default(.VideoPlayer.showSubtitleTrackMenu)
         private var showSubtitleTrackMenu
+        @Default(.VideoPlayer.showChapters)
+        private var showChapters
 
         @Default(.VideoPlayer.showPlaybackSpeed)
         private var showPlaybackSpeed
@@ -38,9 +40,12 @@ extension VideoPlayer.Overlay {
         @Environment(\.aspectFilled)
         @Binding
         private var aspectFilled: Bool
+        @Environment(\.currentOverlayType)
+        @Binding
+        private var currentOverlayType
 
         @EnvironmentObject
-        private var timerProxy: TimerProxy
+        private var overlayTimer: TimerProxy
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
@@ -51,7 +56,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var aspectFillButton: some View {
             Button {
-                timerProxy.start(5)
+                overlayTimer.start(5)
                 if aspectFilled {
                     aspectFilled = false
                     UIView.animate(withDuration: 0.2) {
@@ -71,7 +76,7 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
                 }
-                .frame(width: 40, height: 40)
+                .frame(width: 45, height: 45)
                 .contentShape(Rectangle())
             }
         }
@@ -80,7 +85,7 @@ extension VideoPlayer.Overlay {
         private var autoPlayButton: some View {
             Button {
                 autoPlayEnabled.toggle()
-                timerProxy.start(5)
+                overlayTimer.start(5)
             } label: {
                 Group {
                     if autoPlayEnabled {
@@ -89,7 +94,7 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "stop.circle")
                     }
                 }
-                .frame(width: 40, height: 40)
+                .frame(width: 45, height: 45)
                 .contentShape(Rectangle())
             }
         }
@@ -116,8 +121,20 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "speaker.wave.2.fill")
                     }
                 }
-                .frame(width: 40, height: 40)
+                .frame(width: 45, height: 45)
                 .contentShape(Rectangle())
+            }
+        }
+
+        @ViewBuilder
+        private var chaptersButton: some View {
+            Button {
+                currentOverlayType = .chapters
+                overlayTimer.stop()
+            } label: {
+                Image(systemName: "list.dash")
+                    .frame(width: 45, height: 45)
+                    .contentShape(Rectangle())
             }
         }
 
@@ -125,10 +142,10 @@ extension VideoPlayer.Overlay {
         private var nextItemButton: some View {
             Button {
                 videoPlayerManager.selectNextViewModel()
-                timerProxy.start(5)
+                overlayTimer.start(5)
             } label: {
                 Image(systemName: "chevron.right.circle")
-                    .frame(width: 40, height: 40)
+                    .frame(width: 45, height: 45)
                     .contentShape(Rectangle())
             }
             .disabled(videoPlayerManager.nextViewModel == nil)
@@ -155,7 +172,7 @@ extension VideoPlayer.Overlay {
                 }
             } label: {
                 Image(systemName: "speedometer")
-                    .frame(width: 40, height: 40)
+                    .frame(width: 45, height: 45)
                     .contentShape(Rectangle())
             }
         }
@@ -164,10 +181,10 @@ extension VideoPlayer.Overlay {
         private var previousItemButton: some View {
             Button {
                 videoPlayerManager.selectPreviousViewModel()
-                timerProxy.start(5)
+                overlayTimer.start(5)
             } label: {
                 Image(systemName: "chevron.left.circle")
-                    .frame(width: 40, height: 40)
+                    .frame(width: 45, height: 45)
                     .contentShape(Rectangle())
             }
             .disabled(videoPlayerManager.previousViewModel == nil)
@@ -196,7 +213,7 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "captions.bubble.fill")
                     }
                 }
-                .frame(width: 40, height: 40)
+                .frame(width: 45, height: 45)
                 .contentShape(Rectangle())
             }
         }
@@ -228,6 +245,10 @@ extension VideoPlayer.Overlay {
 
                 if showSubtitleTrackMenu {
                     subtitleTrackMenu
+                }
+
+                if showChapters {
+                    chaptersButton
                 }
 
                 if showAspectFill {

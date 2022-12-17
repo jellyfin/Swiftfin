@@ -6,11 +6,9 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Factory
+import Combine
 import Foundation
 import JellyfinAPI
-import Stinsen
 import UIKit
 import VLCUI
 
@@ -18,6 +16,19 @@ import VLCUI
 // TODO: proper error catching
 
 class VideoPlayerManager: ViewModel {
+
+    class CurrentProgressHandler: ObservableObject {
+
+        @Published
+        var progress: CGFloat = 0
+        @Published
+        var scrubbedProgress: CGFloat = 0
+
+        @Published
+        var seconds: Int = 0
+        @Published
+        var scrubbedSeconds: Int = 0
+    }
 
     @Published
     var audioTrackIndex: Int = -1
@@ -36,6 +47,7 @@ class VideoPlayerManager: ViewModel {
     var currentViewModel: VideoPlayerViewModel! {
         willSet {
             guard let newValue else { return }
+            hasSentStart = false
             getAdjacentEpisodes(for: newValue.item)
         }
     }
@@ -43,9 +55,11 @@ class VideoPlayerManager: ViewModel {
     @Published
     var nextViewModel: VideoPlayerViewModel?
 
+    var currentProgressHandler: CurrentProgressHandler = .init()
     let proxy: VLCVideoPlayer.Proxy = .init()
 
-    var hasSentStart = false
+    private var currentProgressWorkItem: DispatchWorkItem?
+    private var hasSentStart = false
 
     // MARK: init
 
@@ -82,7 +96,7 @@ class VideoPlayerManager: ViewModel {
         }
 
         if playbackSpeed != playbackInformation.playbackRate {
-            self.playbackSpeed = playbackInformation.playbackRate
+            playbackSpeed = playbackInformation.playbackRate
         }
 
         if subtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
@@ -93,6 +107,20 @@ class VideoPlayerManager: ViewModel {
     func onStateUpdated(newState: VLCVideoPlayer.State, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
         guard state != newState else { return }
         state = newState
+
+        if !hasSentStart, newState == .playing {
+            hasSentStart = true
+            sendStartReport()
+        }
+
+        if hasSentStart, newState == .paused {
+            hasSentStart = false
+            sendPauseReport()
+        }
+
+        if newState == .stopped || newState == .ended {
+            sendStopReport()
+        }
     }
 }
 
@@ -154,39 +182,96 @@ extension VideoPlayerManager {
             }
         }
     }
+}
 
-//    func sendStartReport() {
-//        Task {
-//            let startInfo = PlaybackStartInfo(
-//                audioStreamIndex: audioTrackIndex,
-//                canSeek: true,
-//                itemID: currentViewModel.item.id,
-//                mediaSourceID: currentViewModel.mediaSource.id,
-//                playbackStartTimeTicks: Int(Date().timeIntervalSince1970) * 10_000_000,
-//                sessionID: currentViewModel.playSessionID,
-//                subtitleStreamIndex: subtitleTrackIndex
-//            )
-//
-//            let request = Paths.reportPlaybackStart(startInfo)
-//            let response = try await userSession.client.send(request)
-//
-//            logger.log(level: .info, "Playback start sent for item: \(currentViewModel.item.name ?? .emptyDash)")
-//        }
-//    }
-//
-//    func sendStopReport() {
-//        Task {
-//            let stopInfo = PlaybackStopInfo(
-//                itemID: currentViewModel.item.id,
-//                mediaSourceID: currentViewModel.mediaSource.id,
-//                positionTicks: 10_000_000 * 120,
-//                sessionID: currentViewModel.playSessionID
-//            )
-//
-//            let request = Paths.reportPlaybackStopped(stopInfo)
-//            let response = try await userSession.client.send(request)
-//
-//            logger.log(level: .info, "Playback stop sent for item: \(currentViewModel.item.name ?? .emptyDash)")
-//        }
-//    }
+// MARK: Progress
+
+// TODO: should view controllers handle their own progress?
+
+extension VideoPlayerManager {
+
+    func sendStartReport() {
+        Task {
+            let startInfo = PlaybackStartInfo(
+                audioStreamIndex: audioTrackIndex,
+                itemID: currentViewModel.item.id,
+                mediaSourceID: currentViewModel.mediaSource.id,
+                playbackStartTimeTicks: Int(Date().timeIntervalSince1970) * 10_000_000,
+                positionTicks: currentProgressHandler.seconds * 10_000_000,
+                sessionID: currentViewModel.playSessionID,
+                subtitleStreamIndex: subtitleTrackIndex
+            )
+
+            let request = Paths.reportPlaybackStart(startInfo)
+            let _ = try await userSession.client.send(request)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.sendProgressReport()
+            }
+        }
+    }
+
+    func sendStopReport() {
+
+        currentProgressWorkItem?.cancel()
+
+        Task {
+            let stopInfo = PlaybackStopInfo(
+                itemID: currentViewModel.item.id,
+                mediaSourceID: currentViewModel.mediaSource.id,
+                positionTicks: currentProgressHandler.seconds * 10_000_000,
+                sessionID: currentViewModel.playSessionID
+            )
+
+            let request = Paths.reportPlaybackStopped(stopInfo)
+            let _ = try await userSession.client.send(request)
+        }
+    }
+
+    func sendPauseReport() {
+
+        currentProgressWorkItem?.cancel()
+
+        Task {
+            let startInfo = PlaybackStartInfo(
+                audioStreamIndex: audioTrackIndex,
+                isPaused: true,
+                itemID: currentViewModel.item.id,
+                mediaSourceID: currentViewModel.mediaSource.id,
+                positionTicks: currentProgressHandler.seconds * 10_000_000,
+                sessionID: currentViewModel.playSessionID,
+                subtitleStreamIndex: subtitleTrackIndex
+            )
+
+            let request = Paths.reportPlaybackStart(startInfo)
+            let _ = try await userSession.client.send(request)
+        }
+    }
+
+    func sendProgressReport() {
+
+        let progressTask = DispatchWorkItem {
+            self.sendProgressReport()
+        }
+
+        currentProgressWorkItem = progressTask
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: progressTask)
+
+        Task {
+            let progressInfo = PlaybackProgressInfo(
+                audioStreamIndex: audioTrackIndex,
+                isPaused: false,
+                itemID: currentViewModel.item.id,
+                mediaSourceID: currentViewModel.item.id,
+                playSessionID: currentViewModel.playSessionID,
+                positionTicks: currentProgressHandler.seconds * 10_000_000,
+                sessionID: currentViewModel.playSessionID,
+                subtitleStreamIndex: subtitleTrackIndex
+            )
+
+            let request = Paths.reportPlaybackProgress(progressInfo)
+            let _ = try await userSession.client.send(request)
+        }
+    }
 }

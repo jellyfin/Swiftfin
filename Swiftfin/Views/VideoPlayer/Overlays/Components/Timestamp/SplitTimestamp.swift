@@ -19,7 +19,7 @@ extension VideoPlayer.Overlay {
         private var trailingTimestampType
 
         @EnvironmentObject
-        private var currentProgressHandler: CurrentProgressHandler
+        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 

@@ -87,6 +87,7 @@ extension Defaults.Keys {
         static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
 
         static let showAudioTrackMenu: Key<Bool> = .init("showAudioTrackMenu", default: false, suite: .generalSuite)
+        static let showChapters: Key<Bool> = .init("showChapters", default: false, suite: .generalSuite)
         static let showPlaybackSpeed: Key<Bool> = .init("showPlaybackSpeed", default: false, suite: .generalSuite)
         static let showSubtitleTrackMenu: Key<Bool> = .init("showSubtitleTrackMenu", default: false, suite: .generalSuite)
 
@@ -145,11 +146,6 @@ extension Defaults.Keys {
             static let timestampType: Key<TimestampType> = .init("timestampType", default: .split, suite: .generalSuite)
         }
 
-        enum NativePlayer {
-
-            static let useFMP4Container: Key<Bool> = .init("nativePlayer.useFMP4Container", default: false, suite: .generalSuite)
-        }
-
         enum Subtitle {
 
             static let subtitleFontName: Key<String> = .init(
@@ -174,11 +170,10 @@ extension Defaults.Keys {
         )
         static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: .generalSuite)
         static let nativePlayer = Key<Bool>("nativePlayer", default: false, suite: .generalSuite)
-        static let usefmp4Hls = Key<Bool>("usefmp4Hls", default: false, suite: .generalSuite)
+
         static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: .generalSuite)
         static let liveTVForceDirectPlay = Key<Bool>("liveTVForceDirectPlay", default: false, suite: .generalSuite)
         static let liveTVNativePlayer = Key<Bool>("liveTVNativePlayer", default: false, suite: .generalSuite)
-        static let lastChapterNextItem: Key<Bool> = .init("lastChapterNextItem", default: false, suite: .generalSuite)
     }
 
     // tvos specific
