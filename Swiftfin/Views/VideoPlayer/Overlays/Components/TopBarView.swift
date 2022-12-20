@@ -48,7 +48,7 @@ extension VideoPlayer.Overlay {
 
                     Spacer()
 
-                    VideoPlayer.Overlay.ActionButtons()
+                    VideoPlayer.Overlay.BarActionButtons()
                 }
                 .font(.system(size: 24))
                 .tint(Color.white)

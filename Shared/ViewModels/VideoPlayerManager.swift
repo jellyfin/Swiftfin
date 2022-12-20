@@ -191,87 +191,87 @@ extension VideoPlayerManager {
 extension VideoPlayerManager {
 
     func sendStartReport() {
-        Task {
-            let startInfo = PlaybackStartInfo(
-                audioStreamIndex: audioTrackIndex,
-                itemID: currentViewModel.item.id,
-                mediaSourceID: currentViewModel.mediaSource.id,
-                playbackStartTimeTicks: Int(Date().timeIntervalSince1970) * 10_000_000,
-                positionTicks: currentProgressHandler.seconds * 10_000_000,
-                sessionID: currentViewModel.playSessionID,
-                subtitleStreamIndex: subtitleTrackIndex
-            )
-
-            let request = Paths.reportPlaybackStart(startInfo)
-            let _ = try await userSession.client.send(request)
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                self.sendProgressReport()
-            }
-        }
+//        Task {
+//            let startInfo = PlaybackStartInfo(
+//                audioStreamIndex: audioTrackIndex,
+//                itemID: currentViewModel.item.id,
+//                mediaSourceID: currentViewModel.mediaSource.id,
+//                playbackStartTimeTicks: Int(Date().timeIntervalSince1970) * 10_000_000,
+//                positionTicks: currentProgressHandler.seconds * 10_000_000,
+//                sessionID: currentViewModel.playSessionID,
+//                subtitleStreamIndex: subtitleTrackIndex
+//            )
+//
+//            let request = Paths.reportPlaybackStart(startInfo)
+//            let _ = try await userSession.client.send(request)
+//
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+//                self.sendProgressReport()
+//            }
+//        }
     }
 
     func sendStopReport() {
-
-        currentProgressWorkItem?.cancel()
-
-        Task {
-            let stopInfo = PlaybackStopInfo(
-                itemID: currentViewModel.item.id,
-                mediaSourceID: currentViewModel.mediaSource.id,
-                positionTicks: currentProgressHandler.seconds * 10_000_000,
-                sessionID: currentViewModel.playSessionID
-            )
-
-            let request = Paths.reportPlaybackStopped(stopInfo)
-            let _ = try await userSession.client.send(request)
-        }
+//
+//        currentProgressWorkItem?.cancel()
+//
+//        Task {
+//            let stopInfo = PlaybackStopInfo(
+//                itemID: currentViewModel.item.id,
+//                mediaSourceID: currentViewModel.mediaSource.id,
+//                positionTicks: currentProgressHandler.seconds * 10_000_000,
+//                sessionID: currentViewModel.playSessionID
+//            )
+//
+//            let request = Paths.reportPlaybackStopped(stopInfo)
+//            let _ = try await userSession.client.send(request)
+//        }
     }
 
     func sendPauseReport() {
-
-        currentProgressWorkItem?.cancel()
-
-        Task {
-            let startInfo = PlaybackStartInfo(
-                audioStreamIndex: audioTrackIndex,
-                isPaused: true,
-                itemID: currentViewModel.item.id,
-                mediaSourceID: currentViewModel.mediaSource.id,
-                positionTicks: currentProgressHandler.seconds * 10_000_000,
-                sessionID: currentViewModel.playSessionID,
-                subtitleStreamIndex: subtitleTrackIndex
-            )
-
-            let request = Paths.reportPlaybackStart(startInfo)
-            let _ = try await userSession.client.send(request)
-        }
+//
+//        currentProgressWorkItem?.cancel()
+//
+//        Task {
+//            let startInfo = PlaybackStartInfo(
+//                audioStreamIndex: audioTrackIndex,
+//                isPaused: true,
+//                itemID: currentViewModel.item.id,
+//                mediaSourceID: currentViewModel.mediaSource.id,
+//                positionTicks: currentProgressHandler.seconds * 10_000_000,
+//                sessionID: currentViewModel.playSessionID,
+//                subtitleStreamIndex: subtitleTrackIndex
+//            )
+//
+//            let request = Paths.reportPlaybackStart(startInfo)
+//            let _ = try await userSession.client.send(request)
+//        }
     }
 
     func sendProgressReport() {
-
-        let progressTask = DispatchWorkItem {
-            self.sendProgressReport()
-        }
-
-        currentProgressWorkItem = progressTask
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: progressTask)
-
-        Task {
-            let progressInfo = PlaybackProgressInfo(
-                audioStreamIndex: audioTrackIndex,
-                isPaused: false,
-                itemID: currentViewModel.item.id,
-                mediaSourceID: currentViewModel.item.id,
-                playSessionID: currentViewModel.playSessionID,
-                positionTicks: currentProgressHandler.seconds * 10_000_000,
-                sessionID: currentViewModel.playSessionID,
-                subtitleStreamIndex: subtitleTrackIndex
-            )
-
-            let request = Paths.reportPlaybackProgress(progressInfo)
-            let _ = try await userSession.client.send(request)
-        }
+//
+//        let progressTask = DispatchWorkItem {
+//            self.sendProgressReport()
+//        }
+//
+//        currentProgressWorkItem = progressTask
+//
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: progressTask)
+//
+//        Task {
+//            let progressInfo = PlaybackProgressInfo(
+//                audioStreamIndex: audioTrackIndex,
+//                isPaused: false,
+//                itemID: currentViewModel.item.id,
+//                mediaSourceID: currentViewModel.item.id,
+//                playSessionID: currentViewModel.playSessionID,
+//                positionTicks: currentProgressHandler.seconds * 10_000_000,
+//                sessionID: currentViewModel.playSessionID,
+//                subtitleStreamIndex: subtitleTrackIndex
+//            )
+//
+//            let request = Paths.reportPlaybackProgress(progressInfo)
+//            let _ = try await userSession.client.send(request)
+//        }
     }
 }

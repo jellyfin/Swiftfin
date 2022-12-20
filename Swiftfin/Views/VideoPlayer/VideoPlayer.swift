@@ -125,7 +125,6 @@ struct VideoPlayer: View {
 
                             if state == .ended {
                                 if let _ = videoPlayerManager.nextViewModel,
-                                   Defaults[.VideoPlayer.autoPlay],
                                    Defaults[.VideoPlayer.autoPlayEnabled]
                                 {
                                     videoPlayerManager.selectNextViewModel()

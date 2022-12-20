@@ -13,31 +13,23 @@ struct VideoPlayerSettingsView: View {
 
     // TODO: Organize
 
-    @Default(.VideoPlayer.autoPlay)
-    private var autoPlay
+    @Default(.VideoPlayer.autoPlayEnabled)
+    private var autoPlayEnabled
+
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardLength)
     private var jumpForwardLength
-    @Default(.VideoPlayer.playNextItem)
-    private var playNextItem
-    @Default(.VideoPlayer.playPreviousItem)
-    private var playPreviousItem
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
-    @Default(.VideoPlayer.showAspectFill)
-    private var showAspectFill
     @Default(.VideoPlayer.showJumpButtons)
     private var showJumpButtons
-    @Default(.VideoPlayer.showAudioTrackMenu)
-    private var showAudioTrackMenu
-    @Default(.VideoPlayer.showSubtitleTrackMenu)
-    private var showSubtitleTrackMenu
-    @Default(.VideoPlayer.showPlaybackSpeed)
-    private var showPlaybackSpeed
-    @Default(.VideoPlayer.showChapters)
-    private var showChapters
+
+    @Default(.VideoPlayer.barActionButtons)
+    private var barActionButtons
+    @Default(.VideoPlayer.menuActionButtons)
+    private var menuActionButtons
 
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
@@ -91,68 +83,22 @@ struct VideoPlayerSettingsView: View {
 
                 EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
 
-                Toggle(isOn: $showAspectFill) {
-                    HStack {
-                        Image(systemName: "arrow.up.left.and.arrow.down.right")
-                        Text("Aspect Fill")
-                    }
-                }
+//                Toggle(isOn: $showJumpButtons) {
+//                    HStack {
+//                        Image(systemName: "goforward")
+//                        Text("Jump")
+//                    }
+//                }
 
-                Toggle(isOn: $showAudioTrackMenu) {
-                    HStack {
-                        Image(systemName: "speaker.wave.2")
-                        Text("Audio Tracks")
+                ChevronButton(title: "Bar Buttons")
+                    .onSelect {
+                        router.route(to: \.actionButtonSelector, $barActionButtons)
                     }
-                }
 
-                Toggle(isOn: $autoPlay) {
-                    HStack {
-                        Image(systemName: "play.circle.fill")
-                        L10n.autoPlay.text
+                ChevronButton(title: "Menu Buttons")
+                    .onSelect {
+                        router.route(to: \.actionButtonSelector, $menuActionButtons)
                     }
-                }
-
-                Toggle(isOn: $showChapters) {
-                    HStack {
-                        Image(systemName: "list.dash")
-                        L10n.chapters.text
-                    }
-                }
-
-                Toggle(isOn: $showJumpButtons) {
-                    HStack {
-                        Image(systemName: "goforward")
-                        Text("Jump")
-                    }
-                }
-
-                Toggle(isOn: $playNextItem) {
-                    HStack {
-                        Image(systemName: "chevron.right.circle")
-                        Text("Next Item")
-                    }
-                }
-
-                Toggle(isOn: $showPlaybackSpeed) {
-                    HStack {
-                        Image(systemName: "speedometer")
-                        Text("Playback Speed")
-                    }
-                }
-
-                Toggle(isOn: $playPreviousItem) {
-                    HStack {
-                        Image(systemName: "chevron.left.circle")
-                        Text("Previous Item")
-                    }
-                }
-
-                Toggle(isOn: $showSubtitleTrackMenu) {
-                    HStack {
-                        Image(systemName: "captions.bubble")
-                        Text("Subtitle Tracks")
-                    }
-                }
             }
 
             Section("Slider") {
@@ -196,5 +142,11 @@ struct VideoPlayerSettingsView: View {
             }
         }
         .navigationTitle("Video Player")
+        .onChange(of: barActionButtons) { newValue in
+            autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
+        }
+        .onChange(of: menuActionButtons) { newValue in
+            autoPlayEnabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
+        }
     }
 }

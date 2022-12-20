@@ -11,7 +11,7 @@ import SwiftUI
 
 // TODO: Implement different behavior types, where selected/unselected
 //       items can appear in different sections
-struct SelectorView<Item: Displayable>: View {
+struct SelectorView<Item: Displayable & Identifiable>: View {
 
     @Default(.accentColor)
     private var accentColor
@@ -20,17 +20,12 @@ struct SelectorView<Item: Displayable>: View {
     private var selectedItems: [Item]
 
     private let allItems: [Item]
+    private var label: (Item) -> any View
     private let type: SelectorType
-
-    init(type: SelectorType, allItems: [Item], selectedItems: Binding<[Item]>) {
-        self.type = type
-        self.allItems = allItems
-        self._selectedItems = selectedItems
-    }
 
     var body: some View {
         List {
-            ForEach(allItems, id: \.displayTitle) { item in
+            ForEach(allItems) { item in
                 Button {
                     switch type {
                     case .single:
@@ -40,12 +35,11 @@ struct SelectorView<Item: Displayable>: View {
                     }
                 } label: {
                     HStack {
-                        Text(item.displayTitle)
-                            .foregroundColor(.primary)
+                        label(item).eraseToAnyView()
 
                         Spacer()
 
-                        if selectedItems.contains { $0.displayTitle == item.displayTitle } {
+                        if selectedItems.contains { $0.id == item.id } {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(accentColor)
                         } else {
@@ -63,10 +57,26 @@ struct SelectorView<Item: Displayable>: View {
     }
 
     private func handleMultiSelect(with item: Item) {
-        if selectedItems.contains(where: { $0.displayTitle == item.displayTitle }) {
-            selectedItems.removeAll(where: { $0.displayTitle == item.displayTitle })
+        if selectedItems.contains(where: { $0.id == item.id }) {
+            selectedItems.removeAll(where: { $0.id == item.id })
         } else {
             selectedItems.append(item)
         }
+    }
+}
+
+extension SelectorView {
+
+    init(type: SelectorType, allItems: [Item], selectedItems: Binding<[Item]>) {
+        self.init(
+            selectedItems: selectedItems,
+            allItems: allItems,
+            label: { Text($0.displayTitle).foregroundColor(.primary) },
+            type: type
+        )
+    }
+
+    func label(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+        copy(modifying: \.label, with: content)
     }
 }

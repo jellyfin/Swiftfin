@@ -12,55 +12,46 @@ import VLCUI
 
 extension VideoPlayer.Overlay {
 
-    struct OverlayMenu: View {
+    enum ActionButtons {}
+}
 
-        @Default(.VideoPlayer.menuActionButtons)
-        private var menuActionButtons
+extension VideoPlayer.Overlay {
 
-        @EnvironmentObject
-        private var splitContentViewProxy: SplitContentViewProxy
+    struct BarActionButtons: View {
+
+        @Default(.VideoPlayer.barActionButtons)
+        private var barActionButtons
+
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 
         @ViewBuilder
-        private var advancedButton: some View {
-            Button {
-                splitContentViewProxy.present()
-            } label: {
-                HStack {
-                    Text("Advanced")
-
-                    Image(systemName: "gearshape.fill")
-                }
-            }
-        }
-
-        @ViewBuilder
         private var aspectFillButton: some View {
             ActionButtons.AspectFill { isAspectFilled in
-                HStack {
-                    Text("Aspect Fill")
-
+                Group {
                     if isAspectFilled {
                         Image(systemName: "arrow.down.right.and.arrow.up.left")
                     } else {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
                 }
+                .frame(width: 45, height: 45)
+                .contentShape(Rectangle())
             }
         }
 
         @ViewBuilder
         private var audioTrackMenu: some View {
             ActionButtons.Audio { audioTrackSelected in
-                HStack {
+                Group {
                     if audioTrackSelected {
                         Image(systemName: "speaker.wave.2.fill")
                     } else {
                         Image(systemName: "speaker.wave.2")
                     }
-                    L10n.audio.text
                 }
+                .frame(width: 45, height: 45)
+                .contentShape(Rectangle())
             }
         }
 
@@ -68,15 +59,15 @@ extension VideoPlayer.Overlay {
         private var autoPlayButton: some View {
             if viewModel.item.type == .episode {
                 ActionButtons.AutoPlay { autoPlayEnabled in
-                    HStack {
+                    Group {
                         if autoPlayEnabled {
                             Image(systemName: "play.circle.fill")
                         } else {
                             Image(systemName: "stop.circle")
                         }
-
-                        L10n.autoPlay.text
                     }
+                    .frame(width: 45, height: 45)
+                    .contentShape(Rectangle())
                 }
             }
         }
@@ -84,22 +75,18 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var chaptersButton: some View {
             ActionButtons.Chapters {
-                HStack {
-                    Image(systemName: "list.dash")
-
-                    L10n.chapters.text
-                }
+                Image(systemName: "list.dash")
+                    .frame(width: 45, height: 45)
+                    .contentShape(Rectangle())
             }
         }
 
         @ViewBuilder
         private var playbackSpeedMenu: some View {
             ActionButtons.PlaybackSpeedMenu {
-                HStack {
-                    Image(systemName: "speedometer")
-
-                    L10n.playbackSpeed.text
-                }
+                Image(systemName: "speedometer")
+                    .frame(width: 45, height: 45)
+                    .contentShape(Rectangle())
             }
         }
 
@@ -107,11 +94,9 @@ extension VideoPlayer.Overlay {
         private var playNextItemButton: some View {
             if viewModel.item.type == .episode {
                 ActionButtons.PlayNextItem {
-                    HStack {
-                        Image(systemName: "chevron.right.circle")
-
-                        Text("Play Next Item")
-                    }
+                    Image(systemName: "chevron.right.circle")
+                        .frame(width: 45, height: 45)
+                        .contentShape(Rectangle())
                 }
             }
         }
@@ -120,11 +105,9 @@ extension VideoPlayer.Overlay {
         private var playPreviousItemButton: some View {
             if viewModel.item.type == .episode {
                 ActionButtons.PlayPreviousItem {
-                    HStack {
-                        Image(systemName: "chevron.left.circle")
-
-                        Text("Play Previous Item")
-                    }
+                    Image(systemName: "chevron.left.circle")
+                        .frame(width: 45, height: 45)
+                        .contentShape(Rectangle())
                 }
             }
         }
@@ -132,21 +115,21 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var subtitleTrackMenu: some View {
             ActionButtons.Subtitles { subtitleTrackSelected in
-                HStack {
+                Group {
                     if subtitleTrackSelected {
                         Image(systemName: "captions.bubble.fill")
                     } else {
                         Image(systemName: "captions.bubble")
                     }
-
-                    L10n.subtitles.text
                 }
+                .frame(width: 45, height: 45)
+                .contentShape(Rectangle())
             }
         }
 
         var body: some View {
-            Menu {
-                ForEach(menuActionButtons) { actionButton in
+            HStack(spacing: 0) {
+                ForEach(barActionButtons) { actionButton in
                     switch actionButton {
                     case .aspectFill:
                         aspectFillButton
@@ -167,11 +150,8 @@ extension VideoPlayer.Overlay {
                     }
                 }
 
-                advancedButton
-            } label: {
-                Image(systemName: "ellipsis.circle")
+                OverlayMenu()
             }
-            .frame(width: 50, height: 50)
         }
     }
 }

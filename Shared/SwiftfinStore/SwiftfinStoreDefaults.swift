@@ -66,7 +66,6 @@ extension Defaults.Keys {
 
         static let videoPlayerType: Key<VideoPlayerType> = .init("videoPlayerType", default: .swiftfin, suite: .generalSuite)
 
-        static let autoPlay: Key<Bool> = .init("autoPlay", default: true, suite: .generalSuite)
         static let autoPlayEnabled: Key<Bool> = .init("autoPlayEnabled", default: true, suite: .generalSuite)
         static let jumpBackwardLength: Key<VideoPlayerJumpLength> = .init(
             "jumpBackwardLength",
@@ -78,18 +77,21 @@ extension Defaults.Keys {
             default: .fifteen,
             suite: .generalSuite
         )
-        static let playNextItem: Key<Bool> = .init("playNextItem", default: true, suite: .generalSuite)
-        static let playPreviousItem: Key<Bool> = .init("playPreviousItem", default: true, suite: .generalSuite)
         static let pauseOnBackgrounded: Key<Bool> = .init("pauseOnBackgrounded", default: true, suite: .generalSuite)
         static let resumeOffset: Key<Int> = .init("resumeOffset", default: 0, suite: .generalSuite)
 
-        static let showAspectFill: Key<Bool> = .init("videoPlayer.showAspectFill", default: true, suite: .generalSuite)
         static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
 
-        static let showAudioTrackMenu: Key<Bool> = .init("showAudioTrackMenu", default: false, suite: .generalSuite)
-        static let showChapters: Key<Bool> = .init("showChapters", default: false, suite: .generalSuite)
-        static let showPlaybackSpeed: Key<Bool> = .init("showPlaybackSpeed", default: false, suite: .generalSuite)
-        static let showSubtitleTrackMenu: Key<Bool> = .init("showSubtitleTrackMenu", default: false, suite: .generalSuite)
+        static let barActionButtons: Key<[VideoPlayerActionButton]> = .init(
+            "barActionButtons",
+            default: VideoPlayerActionButton.defaultBarActionButtons,
+            suite: .generalSuite
+        )
+        static let menuActionButtons: Key<[VideoPlayerActionButton]> = .init(
+            "menuActionButtons",
+            default: VideoPlayerActionButton.defaultMenuActionButtons,
+            suite: .generalSuite
+        )
 
         enum Gesture {
             static let horizontalPanGesture: Key<PanAction> = .init(
