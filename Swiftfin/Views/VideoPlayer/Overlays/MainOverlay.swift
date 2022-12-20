@@ -55,9 +55,9 @@ extension VideoPlayer {
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
-                            .opacity(playbackButtonType == .compact ? 1 : 0)
+                            .visible(playbackButtonType == .compact)
                         }
-                        .opacity(!isScrubbing && isPresentingOverlay ? 1 : 0)
+                        .visible(!isScrubbing && isPresentingOverlay)
 
                     Spacer()
                         .allowsHitTesting(false)
@@ -81,7 +81,7 @@ extension VideoPlayer {
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
-                            .opacity(isScrubbing || playbackButtonType == .compact ? 1 : 0)
+                            .visible(isScrubbing || playbackButtonType == .compact)
                         }
                         .background {
                             Color.clear
@@ -89,12 +89,12 @@ extension VideoPlayer {
                                 .contentShape(Rectangle())
                                 .allowsHitTesting(true)
                         }
-                        .opacity(isScrubbing || isPresentingOverlay ? 1 : 0)
+                        .visible(isScrubbing || isPresentingOverlay)
                 }
 
                 if playbackButtonType == .large {
                     Overlay.LargePlaybackButtons()
-                        .opacity(!isScrubbing && isPresentingOverlay ? 1 : 0)
+                        .visible(!isScrubbing && isPresentingOverlay)
                 }
             }
             .environmentObject(overlayTimer)

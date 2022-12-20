@@ -170,4 +170,9 @@ extension View {
             self
         }
     }
+    
+    @inlinable
+    func visible(_ isVisible: Bool) -> some View {
+        modifier(VisibilityModifier(isVisible: isVisible))
+    }
 }
