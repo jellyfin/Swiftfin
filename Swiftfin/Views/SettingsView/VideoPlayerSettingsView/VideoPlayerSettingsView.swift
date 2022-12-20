@@ -83,12 +83,12 @@ struct VideoPlayerSettingsView: View {
 
                 EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
 
-//                Toggle(isOn: $showJumpButtons) {
-//                    HStack {
-//                        Image(systemName: "goforward")
-//                        Text("Jump")
-//                    }
-//                }
+                Toggle(isOn: $showJumpButtons) {
+                    HStack {
+                        Image(systemName: "goforward")
+                        Text("Jump")
+                    }
+                }
 
                 ChevronButton(title: "Bar Buttons")
                     .onSelect {

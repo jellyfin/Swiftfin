@@ -21,9 +21,20 @@ extension VideoPlayer.Overlay {
 
         @Default(.VideoPlayer.barActionButtons)
         private var barActionButtons
+        @Default(.VideoPlayer.menuActionButtons)
+        private var menuActionButtons
 
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
+        
+        @ViewBuilder
+        private var advancedButton: some View {
+            ActionButtons.Advanced {
+                Image(systemName: "gearshape.fill")
+                    .frame(width: 45, height: 45)
+                    .contentShape(Rectangle())
+            }
+        }
 
         @ViewBuilder
         private var aspectFillButton: some View {
@@ -131,6 +142,8 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 0) {
                 ForEach(barActionButtons) { actionButton in
                     switch actionButton {
+                    case .advanced:
+                        advancedButton
                     case .aspectFill:
                         aspectFillButton
                     case .audio:
@@ -150,7 +163,9 @@ extension VideoPlayer.Overlay {
                     }
                 }
 
-                OverlayMenu()
+                if !menuActionButtons.isEmpty {
+                    OverlayMenu()
+                }
             }
         }
     }

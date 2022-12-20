@@ -11,6 +11,7 @@ import Foundation
 
 enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
 
+    case advanced
     case aspectFill
     case audio
     case autoPlay
@@ -22,6 +23,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
 
     var displayTitle: String {
         switch self {
+        case .advanced:
+            return "Advanced"
         case .aspectFill:
             return "Aspect Fill"
         case .audio:
@@ -47,6 +50,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
 
     var settingsSystemImage: String {
         switch self {
+        case .advanced:
+            return "gearshape.fill"
         case .aspectFill:
             return "arrow.up.left.and.arrow.down.right"
         case .audio:
@@ -71,7 +76,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
             .aspectFill,
             .autoPlay,
             .playPreviousItem,
-            .playNextItem,
+            .playNextItem
         ]
     }
 
@@ -81,6 +86,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
             .subtitles,
             .playbackSpeed,
             .chapters,
+            .advanced
         ]
     }
 }

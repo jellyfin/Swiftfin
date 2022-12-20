@@ -28,9 +28,9 @@ extension VideoPlayer.Overlay {
                 splitContentViewProxy.present()
             } label: {
                 HStack {
-                    Text("Advanced")
-
                     Image(systemName: "gearshape.fill")
+                    
+                    Text("Advanced")
                 }
             }
         }
@@ -39,13 +39,13 @@ extension VideoPlayer.Overlay {
         private var aspectFillButton: some View {
             ActionButtons.AspectFill { isAspectFilled in
                 HStack {
-                    Text("Aspect Fill")
-
                     if isAspectFilled {
                         Image(systemName: "arrow.down.right.and.arrow.up.left")
                     } else {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
+                    
+                    Text("Aspect Fill")
                 }
             }
         }
@@ -59,6 +59,7 @@ extension VideoPlayer.Overlay {
                     } else {
                         Image(systemName: "speaker.wave.2")
                     }
+                    
                     L10n.audio.text
                 }
             }
@@ -148,6 +149,8 @@ extension VideoPlayer.Overlay {
             Menu {
                 ForEach(menuActionButtons) { actionButton in
                     switch actionButton {
+                    case .advanced:
+                        advancedButton
                     case .aspectFill:
                         aspectFillButton
                     case .audio:
