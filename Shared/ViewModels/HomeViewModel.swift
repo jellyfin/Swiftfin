@@ -15,49 +15,56 @@ import UIKit
 final class HomeViewModel: ViewModel {
 
     @Published
-    var resumeItems: [BaseItemDto] = []
+    var errorMessage: String?
     @Published
     var hasNextUp: Bool = false
     @Published
     var hasRecentlyAdded: Bool = false
     @Published
     var libraries: [BaseItemDto] = []
+    @Published
+    var resumeItems: [BaseItemDto] = []
 
-    private var hasInitiallyLoaded: Bool = false
-
-//    override init() {
-//        super.init()
-//
-//        Task {
-//            try await refresh()
-//        }
-//    }
+    override init() {
+        super.init()
+        
+        refresh()
+    }
 
     @objc
-    func refresh() async throws {
+    func refresh() {
+        
+        hasNextUp = false
+        hasRecentlyAdded = false
+        libraries = []
+        resumeItems = []
+        
+        Task {
+            logger.debug("Refreshing")
 
-        logger.debug("Refreshing")
-
-        await MainActor.run {
-            isLoading = true
-        }
-
-        refreshHasRecentlyAddedItems()
-        refreshResumeItems()
-        refreshHasNextUp()
-
-        do {
-            try await refreshLibrariesLatest()
-        } catch {
             await MainActor.run {
-                isLoading = false
+                isLoading = true
             }
 
-            throw error
-        }
+            refreshHasRecentlyAddedItems()
+            refreshResumeItems()
+            refreshHasNextUp()
 
-        await MainActor.run {
-            isLoading = false
+            do {
+                try await refreshLibrariesLatest()
+            } catch {
+                await MainActor.run {
+                    isLoading = false
+                    errorMessage = error.localizedDescription
+                }
+                
+                return
+            }
+
+            await MainActor.run {
+                isLoading = false
+                errorMessage = nil
+            }
         }
     }
 
@@ -65,9 +72,9 @@ final class HomeViewModel: ViewModel {
 
     private func refreshLibrariesLatest() async throws {
         let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
-        let response = try? await userSession.client.send(userViewsPath)
+        let response = try await userSession.client.send(userViewsPath)
 
-        guard let allLibraries = response?.value.items else {
+        guard let allLibraries = response.value.items else {
             await MainActor.run {
                 libraries = []
             }

@@ -29,6 +29,11 @@ final class ItemCoordinator: NavigationCoordinatable {
     var itemOverview = makeItemOverview
     @Route(.modal)
     var mediaSourceInfo = makeMediaSourceInfo
+    
+    #if os(iOS)
+    @Route(.modal)
+    var downloadTask = makeDownloadTask
+    #endif
 
     #if os(tvOS)
     @Route(.fullScreen)
@@ -64,6 +69,12 @@ final class ItemCoordinator: NavigationCoordinatable {
     func makeMediaSourceInfo(mediaSourceInfo: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
         NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: mediaSourceInfo))
     }
+    
+    #if os(iOS)
+    func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
+        NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
+    }
+    #endif
 
     #if os(tvOS)
     func makeVideoPlayer(parameters: VideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<VideoPlayerCoordinator> {

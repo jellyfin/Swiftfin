@@ -96,6 +96,13 @@ extension ItemView {
             ) {
                 headerView
             }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+                }
+            }
             .onAppear {
                 if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
                     let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB

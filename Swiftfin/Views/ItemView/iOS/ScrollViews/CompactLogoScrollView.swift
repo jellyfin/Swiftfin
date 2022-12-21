@@ -105,6 +105,13 @@ extension ItemView {
             ) {
                 headerView
             }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+                }
+            }
         }
     }
 }

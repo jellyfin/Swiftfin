@@ -26,6 +26,10 @@ struct IsScrubbing: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
 
+struct PlaybackSpeedKey: EnvironmentKey {
+    static let defaultValue: Binding<Float> = .constant(1)
+}
+
 struct SafeAreaInsetsKey: EnvironmentKey {
     static var defaultValue: EdgeInsets {
         UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
@@ -66,7 +70,12 @@ extension EnvironmentValues {
         get { self[IsScrubbing.self] }
         set { self[IsScrubbing.self] = newValue }
     }
-
+    
+    var playbackSpeed: Binding<Float> {
+        get { self[PlaybackSpeedKey.self] }
+        set { self[PlaybackSpeedKey.self] = newValue }
+    }
+    
     var safeAreaInsets: EdgeInsets {
         self[SafeAreaInsetsKey.self]
     }

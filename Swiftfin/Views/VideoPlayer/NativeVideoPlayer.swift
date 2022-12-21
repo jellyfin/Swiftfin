@@ -58,6 +58,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     let videoPlayerManager: VideoPlayerManager
 
+    private var rateObserver: NSKeyValueObservation!
     private var timeObserverToken: Any!
 
     init(manager: VideoPlayerManager) {
@@ -71,6 +72,16 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
         newPlayer.currentItem?.externalMetadata = createMetadata()
+        
+        rateObserver = newPlayer.observe(\.rate, options: .new) { _, change in
+            guard let newValue = change.newValue else { return }
+            
+            if newValue == 0 {
+                self.videoPlayerManager.onStateUpdated(newState: .paused)
+            } else {
+                self.videoPlayerManager.onStateUpdated(newState: .playing)
+            }
+        }
 
         let time = CMTime(seconds: 0.1, preferredTimescale: 1000)
 
@@ -150,7 +161,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
     private func play() {
         player?.play()
 
-        videoPlayerManager.sendStartReport()
+//        videoPlayerManager.sendStartReport()
     }
 
     private func stop() {

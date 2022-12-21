@@ -38,7 +38,7 @@ extension VideoPlayer {
             ZStack {
                 VStack {
                     Overlay.TopBarView()
-                        .if(UIDevice.isPhone) { view in
+                        .if(UIDevice.hasNotch) { view in
                             view.padding(safeAreaInsets.mutating(\.trailing, to: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
@@ -63,7 +63,7 @@ extension VideoPlayer {
                         .allowsHitTesting(false)
 
                     Overlay.BottomBarView()
-                        .if(UIDevice.isPhone) { view in
+                        .if(UIDevice.hasNotch) { view in
                             view.padding(safeAreaInsets.mutating(\.trailing, to: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }

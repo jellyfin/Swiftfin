@@ -169,8 +169,6 @@ extension VideoPlayer.Overlay {
                         subtitleTrackMenu
                     }
                 }
-
-                advancedButton
             } label: {
                 Image(systemName: "ellipsis.circle")
             }

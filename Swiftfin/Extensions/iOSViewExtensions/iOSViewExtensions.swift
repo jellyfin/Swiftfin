@@ -49,6 +49,7 @@ extension View {
         )
     }
 
+    // TODO: remove accent color binding and just use binding directly via modifier
     func navigationCloseButton(accentColor: Binding<Color>, _ action: @escaping () -> Void) -> some View {
         toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {

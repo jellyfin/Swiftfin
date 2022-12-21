@@ -222,4 +222,18 @@ extension [MediaStream] {
 
         return mediaStreams
     }
+    
+    func adjustAudioForExternalSubtitles(externalMediaStreamCount: Int) -> [MediaStream] {
+        guard allSatisfy({ $0.type == .audio }) else { return self}
+        
+        var mediaStreams = self
+        
+        for (i, mediaStream) in mediaStreams.enumerated() {
+            var copy = mediaStream
+            copy.index = (copy.index ?? 0) - externalMediaStreamCount
+            mediaStreams[i] = copy
+        }
+        
+        return mediaStreams
+    }
 }

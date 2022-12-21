@@ -63,6 +63,11 @@ class ItemViewModel: ViewModel {
 
     private func getFullItem() {
         Task {
+            
+            await MainActor.run {
+                isLoading = true
+            }
+            
             let parameters = Paths.GetItemsParameters(
                 userID: userSession.user.id,
                 fields: ItemFields.allCases,
@@ -77,6 +82,7 @@ class ItemViewModel: ViewModel {
 
             await MainActor.run {
                 self.item = fullItem
+                isLoading = false
             }
         }
     }

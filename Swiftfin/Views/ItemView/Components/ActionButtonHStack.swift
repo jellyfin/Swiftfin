@@ -6,12 +6,19 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
 
     struct ActionButtonHStack: View {
+        
+        @EnvironmentObject
+        private var router: ItemCoordinator.Router
 
+        @ObservedObject
+        private var downloadManager: DownloadManager
         @ObservedObject
         private var viewModel: ItemViewModel
 
@@ -20,6 +27,8 @@ extension ItemView {
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
             self.viewModel = viewModel
             self.equalSpacing = equalSpacing
+            
+            self.downloadManager = Container.downloadManager.callAsFunction()
         }
 
         var body: some View {
@@ -85,7 +94,64 @@ extension ItemView {
                         view.frame(maxWidth: .infinity)
                     }
                 }
+                
+                DownloadTaskButton(item: viewModel.item)
+                   .onSelect { task in
+                       router.route(to: \.downloadTask, task)
+                   }
+                   .buttonStyle(.plain)
+                   .frame(width: 25, height: 25)
+                   .if(equalSpacing) { view in
+                       view.frame(maxWidth: .infinity)
+                   }
             }
         }
+    }
+}
+
+struct DownloadTaskButton: View {
+    
+    @ObservedObject
+    private var downloadManager: DownloadManager
+    @ObservedObject
+    private var downloadTask: DownloadTask
+    
+    private var onSelect: (DownloadTask) -> Void
+    
+    var body: some View {
+        Button {
+            onSelect(downloadTask)
+        } label: {
+            switch downloadTask.state {
+            case .cancelled:
+                Image(systemName: "exclamationmark.circle.fill")
+                    .foregroundColor(.red)
+            case .complete:
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+            case .downloading(let progress):
+                CircularProgressView(progress: progress)
+            case .error:
+                Image(systemName: "exclamationmark.circle.fill")
+                    .foregroundColor(.red)
+            case .ready:
+                Image(systemName: "arrow.down.circle")
+            }
+        }
+    }
+}
+
+extension DownloadTaskButton {
+    
+    init(item: BaseItemDto) {
+        let downloadManager = Container.downloadManager.callAsFunction()
+        
+        self.downloadTask = downloadManager.task(for: item) ?? .init(item: item)
+        self.onSelect = { _ in }
+        self.downloadManager = downloadManager
+    }
+    
+    func onSelect(_ action: @escaping (DownloadTask) -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

@@ -30,5 +30,12 @@ struct EpisodeItemView: View {
             start: 0,
             end: 30
         )
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+            }
+        }
     }
 }

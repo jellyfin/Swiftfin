@@ -8,9 +8,46 @@
 
 import Foundation
 
-public extension URL {
+extension URL {
 
     static var documents: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    }
+    
+    static var tmp: URL {
+        URL(string: NSTemporaryDirectory())!
+    }
+    
+    func isDirectoryAndReachable() throws -> Bool {
+        guard try resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true else {
+            return false
+        }
+        return try checkResourceIsReachable()
+    }
+    
+    func directoryTotalAllocatedSize(includingSubfolders: Bool = false) throws -> Int? {
+        guard try isDirectoryAndReachable() else { return nil }
+
+        if includingSubfolders {
+            guard
+                let urls = FileManager.default.enumerator(at: self, includingPropertiesForKeys: nil)?.allObjects as? [URL] else { return nil }
+            return try urls.lazy.reduce(0) {
+                    (try $1.resourceValues(forKeys: [.totalFileAllocatedSizeKey]).totalFileAllocatedSize ?? 0) + $0
+            }
+        }
+
+        return try FileManager.default.contentsOfDirectory(at: self, includingPropertiesForKeys: nil).lazy.reduce(0) {
+                 (try $1.resourceValues(forKeys: [.totalFileAllocatedSizeKey])
+                    .totalFileAllocatedSize ?? 0) + $0
+        }
+    }
+    
+    var sizeOnDisk: Int {
+        do {
+            guard let size = try directoryTotalAllocatedSize(includingSubfolders: true) else { return -1 }
+            return size
+        } catch {
+            return -1
+        }
     }
 }

@@ -14,9 +14,6 @@ extension MovieItemView {
 
     struct ContentView: View {
 
-        @EnvironmentObject
-        private var mainRouter: MainCoordinator.Router
-
         @ObservedObject
         var viewModel: MovieItemViewModel
 

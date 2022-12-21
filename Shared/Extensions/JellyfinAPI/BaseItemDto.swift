@@ -52,6 +52,7 @@ extension BaseItemDto {
 
     // MARK: Calculations
 
+    // TODO: make computed var
     func getItemRuntime() -> String? {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()

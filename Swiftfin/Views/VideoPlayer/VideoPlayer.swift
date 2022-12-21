@@ -89,6 +89,8 @@ struct VideoPlayer: View {
     @State
     private var isScrubbing: Bool = false
     @State
+    private var playbackSpeed: Float = 1
+    @State
     private var subtitleOffset: Int = 0
 
     private let gestureStateHandler: GestureStateHandler = .init()
@@ -110,7 +112,6 @@ struct VideoPlayer: View {
                     VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
                         .proxy(videoPlayerManager.proxy)
                         .onTicksUpdated { ticks, playbackInformation in
-                            videoPlayerManager.onTicksUpdated(ticks: ticks, playbackInformation: playbackInformation)
 
                             let newSeconds = ticks / 1000
                             let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
@@ -121,7 +122,8 @@ struct VideoPlayer: View {
                             currentProgressHandler.scrubbedProgress = newProgress
                         }
                         .onStateUpdated { state, playbackInformation in
-                            videoPlayerManager.onStateUpdated(newState: state, playbackInformation: playbackInformation)
+                            
+                            videoPlayerManager.onStateUpdated(newState: state)
 
                             if state == .ended {
                                 if let _ = videoPlayerManager.nextViewModel,
@@ -164,6 +166,7 @@ struct VideoPlayer: View {
                     .environment(\.aspectFilled, $isAspectFilled)
                     .environment(\.isPresentingOverlay, $isPresentingOverlay)
                     .environment(\.isScrubbing, $isScrubbing)
+                    .environment(\.playbackSpeed, $playbackSpeed)
                 }
             }
             .splitContent {
@@ -193,9 +196,6 @@ struct VideoPlayer: View {
                 videoPlayerManager: videoPlayerManager,
                 updateViewProxy: updateViewProxy
             )
-            .onAppWillTerminate {
-                videoPlayerManager.sendStopReport()
-            }
     }
 
     var body: some View {
@@ -447,7 +447,7 @@ extension VideoPlayer {
         if state == .began {
             gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
             gestureStateHandler.beginningHorizontalPanUnit = point
-            gestureStateHandler.beginningPlaybackSpeed = videoPlayerManager.playbackSpeed
+            gestureStateHandler.beginningPlaybackSpeed = playbackSpeed
         } else if state == .ended {
             return
         }
@@ -460,6 +460,7 @@ extension VideoPlayer {
 
         updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
 
+        playbackSpeed = clampedPlaybackSpeed
         videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
     }
 

@@ -49,13 +49,7 @@ extension HomeView {
                 }
                 .padding(.bottom, 50)
             } onRefresh: {
-//                Task {
-//                    do {
-//                        try await viewModel.refresh()
-//                    } catch {
-//                        self.error = error
-//                    }
-//                }
+                viewModel.refresh()
             }
         }
     }
