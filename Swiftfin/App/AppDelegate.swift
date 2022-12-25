@@ -38,8 +38,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
 
-//        URLSessionProxyDelegate.enableAutomaticRegistration()
-
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(.playback)

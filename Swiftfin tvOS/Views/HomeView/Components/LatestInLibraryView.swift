@@ -15,6 +15,7 @@ extension HomeView {
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
+        
         @StateObject
         var viewModel: LibraryViewModel
 
@@ -22,7 +23,7 @@ extension HomeView {
             PosterHStack(
                 title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                 type: .portrait,
-                items: viewModel.items
+                items: viewModel.items.prefix(20).asArray
             )
             .trailing {
                 SeeAllPoster(type: .portrait)

@@ -27,10 +27,10 @@ final class ItemCoordinator: NavigationCoordinatable {
     var castAndCrew = makeCastAndCrew
     @Route(.modal)
     var itemOverview = makeItemOverview
-    @Route(.modal)
-    var mediaSourceInfo = makeMediaSourceInfo
     
     #if os(iOS)
+    @Route(.modal)
+    var mediaSourceInfo = makeMediaSourceInfo
     @Route(.modal)
     var downloadTask = makeDownloadTask
     #endif
@@ -65,20 +65,20 @@ final class ItemCoordinator: NavigationCoordinatable {
     func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
     }
-
+    
+    #if os(iOS)
     func makeMediaSourceInfo(mediaSourceInfo: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
         NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: mediaSourceInfo))
     }
     
-    #if os(iOS)
     func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
         NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
     }
     #endif
 
     #if os(tvOS)
-    func makeVideoPlayer(parameters: VideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(parameters: parameters))
+    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+        NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
     }
     #endif
 

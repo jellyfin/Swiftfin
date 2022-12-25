@@ -27,6 +27,7 @@ extension VideoPlayer.Overlay.ActionButtons {
             Menu {
                 ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in
                     Button {
+                        videoPlayerManager.subtitleTrackIndex = subtitleTrack.index ?? -1
                         videoPlayerProxy.setSubtitleTrack(.absolute(subtitleTrack.index ?? -1))
                     } label: {
                         if videoPlayerManager.subtitleTrackIndex == subtitleTrack.index ?? -1 {

@@ -60,7 +60,7 @@ struct LandscapeItemElement: View {
                 .ignoresSafeArea()
                 .overlay(
                     ZStack {
-                        if item.userData?.played ?? false {
+                        if item.userData?.isPlayed ?? false {
                             Image(systemName: "circle.fill")
                                 .foregroundColor(.white)
                             Image(systemName: "checkmark.circle.fill")

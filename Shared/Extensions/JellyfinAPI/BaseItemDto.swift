@@ -117,6 +117,10 @@ extension BaseItemDto {
     var audioStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .audio } ?? []
     }
+    
+    var videoStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .video } ?? []
+    }
 
     // MARK: Missing and Unaired
 
@@ -189,5 +193,32 @@ extension BaseItemDto {
                     secondsRange: range
                 )
             }
+    }
+    
+    // TODO: series-season-episode hierarchy for episodes
+    // TODO: user hierarchy for downloads
+    var downloadFolder: URL? {
+        guard let type, let id else { return nil }
+        
+        let root = URL.downloads
+//            .appendingPathComponent(userSession.user.id)
+        
+        switch type {
+        case .movie, .episode:
+            return root
+                .appendingPathComponent(id)
+//        case .episode:
+//            guard let seasonID = seasonID,
+//                  let seriesID = seriesID
+//            else {
+//                return nil
+//            }
+//            return root
+//                .appendingPathComponent(seriesID)
+//                .appendingPathComponent(seasonID)
+//                .appendingPathComponent(id)
+        default:
+            return nil
+        }
     }
 }

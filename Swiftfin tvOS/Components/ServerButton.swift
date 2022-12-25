@@ -27,10 +27,10 @@ struct ServerButton: View {
                         .font(.title2)
                         .foregroundColor(.primary)
 
-                    Text(server.currentURI)
-                        .font(.footnote)
-                        .disabled(true)
-                        .foregroundColor(.secondary)
+//                    Text(server.currentURI)
+//                        .font(.footnote)
+//                        .disabled(true)
+//                        .foregroundColor(.secondary)
                 }
 
                 Spacer()

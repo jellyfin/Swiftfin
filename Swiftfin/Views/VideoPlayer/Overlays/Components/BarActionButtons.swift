@@ -85,10 +85,12 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var chaptersButton: some View {
-            ActionButtons.Chapters {
-                Image(systemName: "list.dash")
-                    .frame(width: 45, height: 45)
-                    .contentShape(Rectangle())
+            if !viewModel.chapters.isEmpty {
+                ActionButtons.Chapters {
+                    Image(systemName: "list.dash")
+                        .frame(width: 45, height: 45)
+                        .contentShape(Rectangle())
+                }
             }
         }
 

@@ -12,8 +12,9 @@ import JellyfinAPI
 import UIKit
 import VLCUI
 
-// TODO: Make online/offline
+// TODO: better online/offline handling
 // TODO: proper error catching
+// TODO: better solution for previous/next
 
 class VideoPlayerManager: ViewModel {
 
@@ -46,7 +47,7 @@ class VideoPlayerManager: ViewModel {
         willSet {
             guard let newValue else { return }
             hasSentStart = false
-//            getAdjacentEpisodes(for: newValue.item)
+            getAdjacentEpisodes(for: newValue.item)
         }
     }
 
@@ -58,20 +59,6 @@ class VideoPlayerManager: ViewModel {
 
     private var currentProgressWorkItem: DispatchWorkItem?
     private var hasSentStart = false
-
-    // MARK: init
-
-    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
-        super.init()
-
-        Task {
-            let viewModel = try await item.videoPlayerViewModel(with: mediaSource)
-
-            await MainActor.run {
-                self.currentViewModel = viewModel
-            }
-        }
-    }
 
     func selectNextViewModel() {
         guard let nextViewModel else { return }
@@ -97,10 +84,6 @@ class VideoPlayerManager: ViewModel {
             subtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
         }
     }
-    
-    func onChanged(seconds: Int) {
-        
-    }
 
     func onStateUpdated(newState: VLCVideoPlayer.State) {
         guard state != newState else { return }
@@ -120,9 +103,6 @@ class VideoPlayerManager: ViewModel {
             sendStopReport()
         }
     }
-}
-
-extension VideoPlayerManager {
 
     func getAdjacentEpisodes(for item: BaseItemDto) {
         Task { @MainActor in
@@ -180,15 +160,10 @@ extension VideoPlayerManager {
             }
         }
     }
-}
-
-// MARK: Progress
-
-// TODO: should view controllers handle their own progress?
-
-extension VideoPlayerManager {
 
     func sendStartReport() {
+        
+        currentProgressWorkItem?.cancel()
         
         print("sent start report")
         
@@ -281,6 +256,72 @@ extension VideoPlayerManager {
 
             let request = Paths.reportPlaybackProgress(progressInfo)
             let _ = try await userSession.client.send(request)
+            
+            print("sent progress task")
         }
+    }
+}
+
+// TODO: move to own file
+class OnlineVideoPlayerManager: VideoPlayerManager {
+    
+    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
+        super.init()
+
+        Task {
+            let viewModel = try await item.videoPlayerViewModel(with: mediaSource)
+
+            await MainActor.run {
+                self.currentViewModel = viewModel
+            }
+        }
+    }
+}
+
+// TODO: move to own file
+class DownloadVideoPlayerManager: VideoPlayerManager {
+    
+    init(downloadTask: DownloadTask) {
+        super.init()
+        
+        guard let playbackURL = downloadTask.getMediaURL() else {
+            logger.error("Download task does not have media url for item: \(downloadTask.item.displayTitle)")
+            
+            return
+        }
+        
+        self.currentViewModel = .init(
+            playbackURL: playbackURL,
+            item: downloadTask.item,
+            mediaSource: .init(),
+            playSessionID: "",
+            videoStreams: downloadTask.item.videoStreams,
+            audioStreams: downloadTask.item.audioStreams,
+            subtitleStreams: downloadTask.item.subtitleStreams,
+            selectedAudioStreamIndex: 1,
+            selectedSubtitleStreamIndex: 1,
+            chapters: downloadTask.item.fullChapterInfo,
+            streamType: .direct
+        )
+    }
+    
+    override func getAdjacentEpisodes(for item: BaseItemDto) {
+        
+    }
+    
+    override func sendStartReport() {
+        
+    }
+    
+    override func sendPauseReport() {
+        
+    }
+    
+    override func sendStopReport() {
+        
+    }
+    
+    override func sendProgressReport() {
+        
     }
 }

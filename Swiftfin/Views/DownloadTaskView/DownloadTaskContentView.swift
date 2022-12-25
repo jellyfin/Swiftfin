@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import JellyfinAPI
 import SwiftUI
@@ -14,11 +15,22 @@ extension DownloadTaskView {
     
     struct ContentView: View {
         
+        @Default(.accentColor)
+        private var accentColor
+        
         @Injected(Container.downloadManager)
         private var downloadManager
         
+        @EnvironmentObject
+        private var mainCoordinator: MainCoordinator.Router
+        @EnvironmentObject
+        private var router: DownloadTaskCoordinator.Router
+        
         @ObservedObject
         var downloadTask: DownloadTask
+        
+        @State
+        private var isPresentingVideoPlayerTypeError: Bool = false
         
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
@@ -32,39 +44,76 @@ extension DownloadTaskView {
                         .posterShadow()
                     
                     ShelfView(downloadTask: downloadTask)
-                }
-                
-                if case DownloadTask.State.ready = downloadTask.state {
-                    PrimaryButton(title: "Download") {
-                        downloadManager.download(task: downloadTask)
-                    }
-                } else if case let DownloadTask.State.downloading(progress) = downloadTask.state {
-                    HStack {
-                        CircularProgressView(progress: progress)
-                            .buttonStyle(.plain)
-                            .frame(width: 30, height: 30)
-                        
-                        Spacer()
-                        
-                        Button {
-                            print("should cancel")
-                        } label: {
-                            Image(systemName: "stop.circle")
-                                .foregroundColor(.red)
+                    
+                    // TODO: Break into subview
+                    switch downloadTask.state {
+                    case .ready, .cancelled:
+                        PrimaryButton(title: "Download") {
+                            downloadManager.download(task: downloadTask)
                         }
+                        .frame(maxWidth: 300)
+                        .frame(height: 50)
+                    case .downloading(let progress):
+                        HStack {
+                            CircularProgressView(progress: progress)
+                                .buttonStyle(.plain)
+                                .frame(width: 30, height: 30)
+                            
+                            Text("\(Int(progress * 100))%")
+                                .foregroundColor(.secondary)
+                            
+                            Spacer()
+                            
+                            Button {
+                                downloadManager.cancel(task: downloadTask)
+                            } label: {
+                                Image(systemName: "stop.circle")
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .padding(.horizontal)
+                    case .error(let error):
+                        VStack {
+                            PrimaryButton(title: "Retry") {
+                                downloadManager.download(task: downloadTask)
+                            }
+                            .frame(maxWidth: 300)
+                            .frame(height: 50)
+                            
+                            Text("Error: \(error.localizedDescription)")
+                                .padding(.horizontal)
+                        }
+                    case .complete:
+                        PrimaryButton(title: "Play") {
+                            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                                router.dismissCoordinator {
+                                    mainCoordinator.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: downloadTask))
+                                }
+                            } else {
+                                isPresentingVideoPlayerTypeError = true
+                            }
+                        }
+                        .frame(maxWidth: 300)
+                        .frame(height: 50)
                     }
-                    .padding(.horizontal)
-                } else {
-                    Text("something else")
                 }
                 
-                Text("Media Info")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal)
-                
-                
+//                Text("Media Info")
+//                    .font(.title2)
+//                    .fontWeight(.semibold)
+//                    .padding(.horizontal)
             }
+            .alert(
+                L10n.error,
+                isPresented: $isPresentingVideoPlayerTypeError) {
+                    Button {
+                        isPresentingVideoPlayerTypeError = false
+                    } label: {
+                        Text("Dismiss")
+                    }
+                } message: {
+                    Text("Downloaded items are only playable through the Swiftfin video player.")
+                }
         }
     }
 }
@@ -102,8 +151,8 @@ extension DownloadTaskView.ContentView {
                             Text(episodeLocation)
                         }
                     } else {
-                        if let productionYear = downloadTask.item.productionYear {
-                            Text(String(productionYear))
+                        if let firstGenre = downloadTask.item.genres?.first {
+                            Text(firstGenre)
                         }
                     }
 

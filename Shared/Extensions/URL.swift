@@ -14,6 +14,10 @@ extension URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
     
+    static var downloads: URL {
+        documents.appendingPathComponent("Downloads")
+    }
+    
     static var tmp: URL {
         URL(string: NSTemporaryDirectory())!
     }

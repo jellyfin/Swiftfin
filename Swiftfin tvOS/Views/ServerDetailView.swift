@@ -19,30 +19,30 @@ struct ServerDetailView: View {
                 HStack {
                     L10n.name.text
                     Spacer()
-                    Text(SessionManager.main.currentLogin.server.name)
-                        .foregroundColor(.secondary)
+//                    Text(SessionManager.main.currentLogin.server.name)
+//                        .foregroundColor(.secondary)
                 }
                 .focusable()
 
                 HStack {
                     L10n.url.text
                     Spacer()
-                    Text(SessionManager.main.currentLogin.server.currentURI)
-                        .foregroundColor(.secondary)
+//                    Text(SessionManager.main.currentLogin.server.currentURI)
+//                        .foregroundColor(.secondary)
                 }
 
                 HStack {
                     L10n.version.text
                     Spacer()
-                    Text(SessionManager.main.currentLogin.server.version)
-                        .foregroundColor(.secondary)
+//                    Text(SessionManager.main.currentLogin.server.version)
+//                        .foregroundColor(.secondary)
                 }
 
                 HStack {
                     L10n.operatingSystem.text
                     Spacer()
-                    Text(SessionManager.main.currentLogin.server.os)
-                        .foregroundColor(.secondary)
+//                    Text(SessionManager.main.currentLogin.server.os)
+//                        .foregroundColor(.secondary)
                 }
             }
         }

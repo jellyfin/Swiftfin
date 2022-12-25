@@ -10,16 +10,13 @@ import Factory
 import Files
 import Foundation
 import JellyfinAPI
-import Nuke
 
 extension Container {
     
     static let downloadManager = Factory(scope: .singleton) {
-        let a = DownloadManager()
-        
-        a.clearTmp()
-        
-        return a
+        let manager = DownloadManager()
+        manager.clearTmp()
+        return manager
     }
 }
 
@@ -31,13 +28,26 @@ class DownloadManager: ObservableObject {
     @Published
     private(set) var downloads: [DownloadTask] = []
     
-    func canDownload(mediaSource: MediaSourceInfo) throws {
+    fileprivate init() {
         
+        createDownloadDirectory()
+    }
+    
+    private func createDownloadDirectory() {
+        
+        try? FileManager.default.createDirectory(
+            at: URL.downloads,
+            withIntermediateDirectories: true
+        )
     }
     
     func clearTmp() {
         do {
-            try Folder(path: URL.tmp.absoluteString).files.delete()
+            try Folder(path: URL.tmp.path).files.delete()
+            
+            // There was a bug in Get that wouldn't put downloads in the correct directory, manually delete
+            try? Folder(path: URL.tmp.appendingPathComponent("com.github.kean.get").path).files.delete()
+            
             logger.trace("Cleared tmp directory")
         } catch {
             logger.error("Unable to clear tmp directory: \(error.localizedDescription)")
@@ -53,115 +63,55 @@ class DownloadManager: ObservableObject {
     }
     
     func task(for item: BaseItemDto) -> DownloadTask? {
-        downloads.first(where: { $0.item == item })
+        if let currentlyDownloading = downloads.first(where: { $0.item == item }){
+            return currentlyDownloading
+        } else {
+            var isDir: ObjCBool = true
+            guard let downloadFolder = item.downloadFolder else { return nil }
+            guard FileManager.default.fileExists(atPath: downloadFolder.path, isDirectory: &isDir) else { return nil }
+            
+            return parseDownloadItem(with: item.id!)
+        }
     }
     
-    func stop(task: DownloadTask) {
+    func cancel(task: DownloadTask) {
         guard downloads.contains(where: { $0.item == task.item }) else { return }
         
-        task.stop()
+        task.cancel()
         
+        remove(task: task)
+    }
+    
+    func remove(task: DownloadTask) {
         downloads.removeAll(where: { $0.item == task.item })
     }
     
-    fileprivate func didComplete(task: DownloadTask, at url: URL) {
-        let downloads = URL.documents.appendingPathComponent("Downloads")
-        
-        try? FileManager.default.createDirectory(
-            at: downloads,
-            withIntermediateDirectories: true
-        )
-        
-        let itemURL = downloads.appendingPathComponent(task.item.displayTitle, isDirectory: true)
-        
-        try! FileManager.default.moveItem(atPath: url.path, toPath: itemURL.path)
-        try! FileManager.default.removeItem(at: url)
-    }
-}
-
-class DownloadTask: NSObject, ObservableObject {
-    
-    enum DownloadError: Error {
-        
-        case notEnoughStorage
-        
-        var localizedDescription: String {
-            switch self {
-            case .notEnoughStorage:
-                return "Not enough storage"
-            }
-        }
-    }
-    
-    enum State {
-        
-        case cancelled
-        case complete
-        case downloading(Double)
-        case error(Error)
-        case ready
-    }
-    
-    @Injected(Container.userSession)
-    private var userSession
-    
-    @Published
-    private(set) var state: State = .ready
-    
-    private var downloadTask: Task<Void, Never>?
-    
-    let item: BaseItemDto
-    
-    init(item: BaseItemDto) {
-        self.item = item
-    }
-    
-    fileprivate func download() {
-        let task = Task {
-            let request = Paths.getDownload(itemID: item.id!)
-            let a = try? await userSession.client.download(for: request, delegate: self)
+    func downloadedItems() -> [DownloadTask] {
+        do {
+            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+            return downloadContents.compactMap(parseDownloadItem(with:))
+        } catch {
+            logger.error("Error retrieving all downloads: \(error.localizedDescription)")
             
-            print("download complete: \(a?.value.absoluteString)")
+            return []
         }
+    }
+    
+    private func parseDownloadItem(with id: String) -> DownloadTask? {
         
-        self.downloadTask = task
-    }
-    
-    fileprivate func stop() {
-        self.downloadTask?.cancel()
-    }
-}
-
-extension DownloadTask: URLSessionDownloadDelegate {
-    
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
+        let itemMetadataFile = URL.downloads
+            .appendingPathComponent(id)
+            .appendingPathComponent("Metadata")
+            .appendingPathComponent("Item.json")
         
-        DispatchQueue.main.async {
-            self.state = .downloading(progress)
-        }
-    }
-    
-    func urlSession(_ session: URLSession, didCreateTask task: URLSessionTask) {
-        print("here")
-    }
-    
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        DispatchQueue.main.async {
-            self.state = .complete
-            
-            Container.downloadManager.callAsFunction()
-                .didComplete(task: self, at: location)
-        }
-    }
-    
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        guard let error else { return }
-        self.state = .error(error)
-    }
-    
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard let error else { return }
-        self.state = .error(error)
+        guard let itemMetadataData = FileManager.default.contents(atPath: itemMetadataFile.path) else { return nil }
+        
+        let jsonDecoder = JSONDecoder()
+        
+        guard let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemMetadataData) else { return nil }
+        
+        let task = DownloadTask(item: offlineItem)
+        task.state = .complete
+        return task
     }
 }

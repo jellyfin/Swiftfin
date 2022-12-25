@@ -25,6 +25,10 @@ final class MediaViewModel: ViewModel {
                 .init(item: .init(collectionType: "favorites", name: L10n.favorites)),
                 if: Defaults[.Customization.Library.showFavorites]
             )
+            .prepending(
+                .init(item: .init(collectionType: "downloads", name: "Downloads")),
+                if: Defaults[.Experimental.downloads]
+            )
     }
 
     private static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "unknown"]

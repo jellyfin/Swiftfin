@@ -63,6 +63,8 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Gesture.verticalPanGestureRight)
     private var verticalGestureRight
 
+    @Default(.VideoPlayer.Subtitle.subtitleColor)
+    private var subtitleColor
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
     @Default(.VideoPlayer.Subtitle.subtitleSize)
@@ -222,6 +224,9 @@ struct VideoPlayer: View {
         .onChange(of: isScrubbing) { newValue in
             guard !newValue else { return }
             videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+        }
+        .onChange(of: subtitleColor) { newValue in
+            videoPlayerManager.proxy.setSubtitleColor(.absolute(newValue.uiColor))
         }
         .onChange(of: subtitleFontName) { newValue in
             videoPlayerManager.proxy.setSubtitleFont(newValue)

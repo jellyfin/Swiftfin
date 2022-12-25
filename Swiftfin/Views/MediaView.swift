@@ -33,6 +33,8 @@ struct MediaView: View {
             LibraryCard(viewModel: viewModel)
                 .onSelect {
                     switch viewModel.item.collectionType {
+                    case "downloads":
+                        router.route(to: \.downloads)
                     case "favorites":
                         router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .favorites))
                     case "folders":
@@ -92,7 +94,8 @@ extension MediaView {
                 }
                 .overlay {
                     if Defaults[.Customization.Library.randomImage] ||
-                        viewModel.item.collectionType == "favorites"
+                        viewModel.item.collectionType == "favorites" ||
+                        viewModel.item.collectionType == "downloads"
                     {
                         ZStack {
                             Color.black

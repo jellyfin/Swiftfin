@@ -58,7 +58,7 @@ extension VideoPlayer.Overlay {
             CapsuleSlider(progress: $currentProgressHandler.scrubbedProgress)
                 .isEditing(_isScrubbing.wrappedValue)
                 .trackMask {
-                    if chapterSlider && !(viewModel.item.chapters?.isEmpty ?? true) {
+                    if chapterSlider && !viewModel.chapters.isEmpty {
                         ChapterTrack()
                             .clipShape(Capsule())
                     } else {
@@ -91,7 +91,7 @@ extension VideoPlayer.Overlay {
             ThumbSlider(progress: $currentProgressHandler.scrubbedProgress)
                 .isEditing(_isScrubbing.wrappedValue)
                 .trackMask {
-                    if chapterSlider && !(viewModel.item.chapters?.isEmpty ?? true) {
+                    if chapterSlider && !viewModel.chapters.isEmpty {
                         ChapterTrack()
                             .clipShape(Capsule())
                     } else {

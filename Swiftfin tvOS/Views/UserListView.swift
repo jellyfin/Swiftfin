@@ -66,8 +66,8 @@ struct UserListView: View {
 
     var body: some View {
         ZStack {
-            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
-                .ignoresSafeArea()
+//            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
+//                .ignoresSafeArea()
 
             Color.black
                 .opacity(0.9)

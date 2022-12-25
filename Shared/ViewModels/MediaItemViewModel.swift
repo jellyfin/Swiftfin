@@ -23,8 +23,10 @@ final class MediaItemViewModel: ViewModel {
 
         if item.collectionType == "favorites" {
             getRandomItemImageSource(with: [.isFavorite])
+        } else if item.collectionType == "downloads" {
+            imageSources = nil
         } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
-            self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
+            imageSources = [item.imageSource(.primary, maxWidth: 500)]
         } else {
             getRandomItemImageSource(with: nil)
         }

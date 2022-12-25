@@ -17,7 +17,7 @@ final class MainCoordinator: NavigationCoordinatable {
     @Injected(LogManager.service)
     private var logger
 
-    var stack = Stinsen.NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
+    var stack: Stinsen.NavigationStack<MainCoordinator>
 
     @Root
     var mainTab = makeMainTab
@@ -25,14 +25,15 @@ final class MainCoordinator: NavigationCoordinatable {
     var serverList = makeServerList
     @Root
     var liveTV = makeLiveTV
-    @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
+//    @Route(.fullScreen)
+//    var videoPlayer = makeVideoPlayer
 
     init() {
-        if SessionManager.main.currentLogin != nil {
-            self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
+        
+        if Container.userSession.callAsFunction().authenticated {
+            stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
-            self.stack = NavigationStack(initial: \MainCoordinator.serverList)
+            stack = NavigationStack(initial: \MainCoordinator.serverList)
         }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
@@ -69,7 +70,7 @@ final class MainCoordinator: NavigationCoordinatable {
         LiveTVTabCoordinator()
     }
 
-    func makeVideoPlayer(parameters: VideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(parameters: parameters))
-    }
+//    func makeVideoPlayer(parameters: VideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+//        NavigationViewCoordinator(VideoPlayerCoordinator(parameters: parameters))
+//    }
 }

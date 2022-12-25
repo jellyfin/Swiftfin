@@ -273,7 +273,6 @@
 		E133328F2953B71000EE76AB /* DownloadTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328E2953B71000EE76AB /* DownloadTaskView.swift */; };
 		E13332912953B91000EE76AB /* DownloadTaskCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */; };
 		E13332942953BAA100EE76AB /* DownloadTaskContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13332932953BAA100EE76AB /* DownloadTaskContentView.swift */; };
-		E1347DB6279E3CA500BC6161 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = E1347DB5279E3CA500BC6161 /* Puppy */; };
 		E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1384943278036C70024FB48 /* VLCPlayerViewController.swift */; };
 		E1388A42293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1388A40293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift */; };
 		E1388A43293F0AAD009721B1 /* PreferenceUIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1388A41293F0AAD009721B1 /* PreferenceUIHostingController.swift */; };
@@ -292,8 +291,8 @@
 		E13DD3C827164B1E009D4DAF /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C727164B1E009D4DAF /* UIDevice.swift */; };
 		E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3CC27164CA7009D4DAF /* CoreStore */; };
 		E13DD3D327168E65009D4DAF /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3D227168E65009D4DAF /* Defaults */; };
-		E13DD3D5271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3D4271693CD009D4DAF /* SwiftfinStoreDefaults.swift */; };
-		E13DD3D6271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3D4271693CD009D4DAF /* SwiftfinStoreDefaults.swift */; };
+		E13DD3D5271693CD009D4DAF /* SwiftfinDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3D4271693CD009D4DAF /* SwiftfinDefaults.swift */; };
+		E13DD3D6271693CD009D4DAF /* SwiftfinDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3D4271693CD009D4DAF /* SwiftfinDefaults.swift */; };
 		E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E027176BD3009D4DAF /* ServerListViewModel.swift */; };
 		E13DD3E227176BD3009D4DAF /* ServerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E027176BD3009D4DAF /* ServerListViewModel.swift */; };
 		E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3E427177D15009D4DAF /* ServerListView.swift */; };
@@ -429,6 +428,14 @@
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
+		E17AC9672954CA25003D2BC2 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9662954CA25003D2BC2 /* DownloadTask.swift */; };
+		E17AC9682954CA25003D2BC2 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9662954CA25003D2BC2 /* DownloadTask.swift */; };
+		E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9692954D00E003D2BC2 /* URLResponse.swift */; };
+		E17AC96B2954D00E003D2BC2 /* URLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9692954D00E003D2BC2 /* URLResponse.swift */; };
+		E17AC96D2954E9CA003D2BC2 /* DownloadListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC96C2954E9CA003D2BC2 /* DownloadListView.swift */; };
+		E17AC96F2954EE4B003D2BC2 /* DownloadListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */; };
+		E17AC9712954F636003D2BC2 /* DownloadListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */; };
+		E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */; };
 		E17FB54F28C1197700311DFE /* SelectorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB54E28C1197700311DFE /* SelectorType.swift */; };
 		E17FB55228C119D400311DFE /* Displayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55128C119D400311DFE /* Displayable.swift */; };
 		E17FB55528C1250B00311DFE /* SimilarItemsHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */; };
@@ -552,6 +559,13 @@
 		E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */; };
 		E1B5784128F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
 		E1B5784228F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
+		E1B5F7A529577BB8004B26CF /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A429577BB8004B26CF /* JellyfinAPI */; };
+		E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A629577BCE004B26CF /* Pulse */; };
+		E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A829577BCE004B26CF /* PulseLogHandler */; };
+		E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AA29577BCE004B26CF /* PulseUI */; };
+		E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AC29577BDD004B26CF /* OrderedCollections */; };
+		E1B5F7AE29577CC7004B26CF /* VisibilityModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF3182952641300CC0294 /* VisibilityModifier.swift */; };
+		E1B5F7B029577DCC004B26CF /* PlaybackSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5F7AF29577DCC004B26CF /* PlaybackSettingsView.swift */; };
 		E1BDE359278E9ED2004E4022 /* MissingItemsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDE358278E9ED2004E4022 /* MissingItemsSettingsView.swift */; };
 		E1BDF2E52951475300CC0294 /* VideoPlayerActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */; };
 		E1BDF2E62951475300CC0294 /* VideoPlayerActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */; };
@@ -927,7 +941,7 @@
 		E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E13DD3C127164941009D4DAF /* SwiftfinStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinStore.swift; sourceTree = "<group>"; };
 		E13DD3C727164B1E009D4DAF /* UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDevice.swift; sourceTree = "<group>"; };
-		E13DD3D4271693CD009D4DAF /* SwiftfinStoreDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinStoreDefaults.swift; sourceTree = "<group>"; };
+		E13DD3D4271693CD009D4DAF /* SwiftfinDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinDefaults.swift; sourceTree = "<group>"; };
 		E13DD3E027176BD3009D4DAF /* ServerListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListViewModel.swift; sourceTree = "<group>"; };
 		E13DD3E427177D15009D4DAF /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		E13DD3E827177ED6009D4DAF /* ServerListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListCoordinator.swift; sourceTree = "<group>"; };
@@ -989,6 +1003,12 @@
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSVLCOverlay.swift; sourceTree = "<group>"; };
 		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
+		E17AC9662954CA25003D2BC2 /* DownloadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
+		E17AC9692954D00E003D2BC2 /* URLResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLResponse.swift; sourceTree = "<group>"; };
+		E17AC96C2954E9CA003D2BC2 /* DownloadListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListView.swift; sourceTree = "<group>"; };
+		E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListViewModel.swift; sourceTree = "<group>"; };
+		E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListCoordinator.swift; sourceTree = "<group>"; };
+		E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskButton.swift; sourceTree = "<group>"; };
 		E17FB54E28C1197700311DFE /* SelectorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectorType.swift; sourceTree = "<group>"; };
 		E17FB55128C119D400311DFE /* Displayable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Displayable.swift; sourceTree = "<group>"; };
 		E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
@@ -1077,6 +1097,7 @@
 		E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayMenu.swift; sourceTree = "<group>"; };
 		E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargePlaybackButtons.swift; sourceTree = "<group>"; };
 		E1B5784028F8AFCB00D42911 /* Wrapped View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Wrapped View.swift"; sourceTree = "<group>"; };
+		E1B5F7AF29577DCC004B26CF /* PlaybackSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackSettingsView.swift; sourceTree = "<group>"; };
 		E1BDE358278E9ED2004E4022 /* MissingItemsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingItemsSettingsView.swift; sourceTree = "<group>"; };
 		E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerActionButton.swift; sourceTree = "<group>"; };
 		E1BDF2E82951490400CC0294 /* ActionButtonSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonSelectorView.swift; sourceTree = "<group>"; };
@@ -1179,6 +1200,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1575E56293E7650001665B1 /* VLCUI in Frameworks */,
+				E1B5F7A529577BB8004B26CF /* JellyfinAPI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				C409CE9C284EA6EA00CABC12 /* SwiftUICollection in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
@@ -1193,12 +1215,16 @@
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
 				E1575E58293E7685001665B1 /* Files in Frameworks */,
+				E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */,
 				E13AF3BA28A0C598009093AB /* NukeUI in Frameworks */,
+				E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */,
+				E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */,
 				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
 				E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
+				E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */,
 				E1ECD8F528C1BA10008B9DC6 /* UDPBroadcast.xcframework in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				E1734D7E28B9578100C66367 /* CollectionView in Frameworks */,
@@ -1209,7 +1235,6 @@
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
-				E1347DB6279E3CA500BC6161 /* Puppy in Frameworks */,
 				E192608828D2E5F0002314B4 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1287,6 +1312,7 @@
 			children = (
 				E1D4BF7D2719D1DC00A11E64 /* BasicAppSettingsViewModel.swift */,
 				625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */,
+				E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */,
 				E113133928BEB71D00930F75 /* FilterViewModel.swift */,
 				625CB5722678C32A00530A6E /* HomeViewModel.swift */,
 				C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */,
@@ -1396,7 +1422,6 @@
 				091B5A852683142E00D78B61 /* ServerDiscovery */,
 				E1C8CE7A28FEF8A500DF5D7B /* Services */,
 				6286F09F271C0AA500C40ED5 /* Strings */,
-				E13DD3C0271648EC009D4DAF /* SwiftfinStore */,
 				532175392671BCED005491E6 /* ViewModels */,
 				E1AD105326D96F5A003E4A08 /* Views */,
 			);
@@ -1727,11 +1752,11 @@
 				E10EAA4E277BBCC4000269ED /* CGSize.swift */,
 				6267B3D526710B8900A7371D /* Collection.swift */,
 				E173DA5126D04AAF00CC4EB7 /* Color.swift */,
-				E133328729538D8D00EE76AB /* Files.swift */,
-				E15756312935642A00976E1F /* Float.swift */,
 				E12F038B28F8B0B100976CC3 /* EdgeInsets.swift */,
 				E16DEAC128EFCF590058F196 /* EnvironmentValue.swift */,
 				E1B33EAF28EA890D0073B0FD /* Equatable.swift */,
+				E133328729538D8D00EE76AB /* Files.swift */,
+				E15756312935642A00976E1F /* Float.swift */,
 				E11CEB8C28999B4A003E74C7 /* Font.swift */,
 				E139CC1E28EC83E400688DE2 /* Int.swift */,
 				E1AD105226D96D5F003E4A08 /* JellyfinAPI */,
@@ -1741,8 +1766,9 @@
 				E13DD3C727164B1E009D4DAF /* UIDevice.swift */,
 				E1937A3D288F0D3D00CB80AA /* UIScreen.swift */,
 				E18E0239288749540022598C /* UIScrollView.swift */,
-				E1C812C4277A90B200918266 /* URLComponents.swift */,
 				62E1DCC2273CE19800C9AE76 /* URL.swift */,
+				E1C812C4277A90B200918266 /* URLComponents.swift */,
+				E17AC9692954D00E003D2BC2 /* URLResponse.swift */,
 				E1A1528128FD126C00600579 /* VerticalAlignment.swift */,
 				E11895A22893409D0042947B /* ViewExtensions */,
 			);
@@ -1764,6 +1790,7 @@
 				E12CC1B428D1124400678D5D /* BasicLibraryCoordinator.swift */,
 				E1D3043B28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift */,
 				62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */,
+				E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */,
 				E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */,
 				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
 				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
@@ -1925,8 +1952,8 @@
 			children = (
 				E1A2C15F279A7DCA005EC829 /* AboutAppView.swift */,
 				E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */,
-				E1D3043E28D18F5700587289 /* CastAndCrewLibraryView.swift */,
 				E12CC1C028D12B0A00678D5D /* BasicLibraryView.swift */,
+				E1D3043E28D18F5700587289 /* CastAndCrewLibraryView.swift */,
 				53ABFDEA2679753200886593 /* ConnectToServerView.swift */,
 				E1A42E4D28CBD3B200A14DCB /* HomeView */,
 				E193D54E271942C000900D82 /* ItemView */,
@@ -1936,6 +1963,7 @@
 				C4BE078D27298817003F4AD1 /* LiveTVHomeView.swift */,
 				C4BE07732725EB66003F4AD1 /* LiveTVProgramsView.swift */,
 				C4E508172703E8190045C9AB /* MediaView.swift */,
+				E1B5F7AF29577DCC004B26CF /* PlaybackSettingsView.swift */,
 				E1E1643928BAC2EF00323B0A /* SearchView.swift */,
 				E193D54F2719430400900D82 /* ServerDetailView.swift */,
 				E193D54A271941D300900D82 /* ServerListView.swift */,
@@ -1988,15 +2016,6 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		E13DD3C0271648EC009D4DAF /* SwiftfinStore */ = {
-			isa = PBXGroup;
-			children = (
-				E13DD3C127164941009D4DAF /* SwiftfinStore.swift */,
-				E13DD3D4271693CD009D4DAF /* SwiftfinStoreDefaults.swift */,
-			);
-			path = SwiftfinStore;
-			sourceTree = "<group>";
-		};
 		E13DD3D027165886009D4DAF /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -2006,6 +2025,7 @@
 				E12CC1B828D11A1D00678D5D /* BasicLibraryView.swift */,
 				E1D3044028D1974700587289 /* CastAndCrewLibraryView */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
+				E17AC96C2954E9CA003D2BC2 /* DownloadListView.swift */,
 				E13332922953BA9400EE76AB /* DownloadTaskView */,
 				E113133128BDC72000930F75 /* FilterView.swift */,
 				62C83B07288C6A630004ED0C /* FontPicker.swift */,
@@ -2285,6 +2305,7 @@
 				E18E01D9288747230022598C /* ActionButtonHStack.swift */,
 				E18E01D7288747230022598C /* AttributeHStack.swift */,
 				E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */,
+				E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */,
 				E17FB55A28C1266400311DFE /* GenresHStack.swift */,
 				E170D104294D21FA0017224C /* MediaSourceInfoView.swift */,
 				E1D8424E2932F7C400D1041A /* OverviewView.swift */,
@@ -2437,11 +2458,14 @@
 			isa = PBXGroup;
 			children = (
 				E133328429537E6600EE76AB /* DownloadManager.swift */,
+				E17AC9662954CA25003D2BC2 /* DownloadTask.swift */,
 				53649AB0269CFB1900A2D8B7 /* LogManager.swift */,
 				E12B93082947CDE300CE0BD9 /* NewSessionManager.swift */,
 				E12D581328D3BBEE00A36FFF /* PlaybackManager.swift */,
 				62EC352E267666A5000E9F2D /* SessionManager.swift */,
+				E13DD3D4271693CD009D4DAF /* SwiftfinDefaults.swift */,
 				E13DD3EE27178F87009D4DAF /* SwiftfinNotificationCenter.swift */,
+				E13DD3C127164941009D4DAF /* SwiftfinStore.swift */,
 			);
 			name = Services;
 			path = Singleton/Services;
@@ -2600,7 +2624,6 @@
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
 				E1002B6A2793E36600E47059 /* Algorithms */,
-				E1347DB5279E3CA500BC6161 /* Puppy */,
 				C409CE9B284EA6EA00CABC12 /* SwiftUICollection */,
 				E13AF3B528A0C598009093AB /* Nuke */,
 				E13AF3B728A0C598009093AB /* NukeExtensions */,
@@ -2611,6 +2634,11 @@
 				E1575E55293E7650001665B1 /* VLCUI */,
 				E1575E57293E7685001665B1 /* Files */,
 				E1388A45293F0ABA009721B1 /* SwizzleSwift */,
+				E1B5F7A429577BB8004B26CF /* JellyfinAPI */,
+				E1B5F7A629577BCE004B26CF /* Pulse */,
+				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
+				E1B5F7AA29577BCE004B26CF /* PulseUI */,
+				E1B5F7AC29577BDD004B26CF /* OrderedCollections */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -2832,6 +2860,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1B5F7B029577DCC004B26CF /* PlaybackSettingsView.swift in Sources */,
 				E193D53627193F8500900D82 /* LibraryCoordinator.swift in Sources */,
 				E1CCC3D228C858A50020ED54 /* UserProfileButton.swift in Sources */,
 				C4BE07742725EB66003F4AD1 /* LiveTVProgramsView.swift in Sources */,
@@ -2911,6 +2940,7 @@
 				E1B5784228F8AFCB00D42911 /* Wrapped View.swift in Sources */,
 				E11895AA289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
 				E1575E76293E77B5001665B1 /* VideoPlayerType.swift in Sources */,
+				E17AC96B2954D00E003D2BC2 /* URLResponse.swift in Sources */,
 				E1EF473A289A0F610034046B /* TruncatedTextView.swift in Sources */,
 				E1C926112887565C002A7A66 /* ActionButtonHStack.swift in Sources */,
 				E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */,
@@ -2937,6 +2967,7 @@
 				E1575E9C293E7B1E001665B1 /* Collection.swift in Sources */,
 				E1C9260F2887565C002A7A66 /* AttributeHStack.swift in Sources */,
 				E11CEB9428999D9E003E74C7 /* EpisodeItemContentView.swift in Sources */,
+				E1B5F7AE29577CC7004B26CF /* VisibilityModifier.swift in Sources */,
 				E12A9EF929499E0100731C3A /* JellyfinClient.swift in Sources */,
 				E17885A02780F55C0094FBCF /* tvOSVLCOverlay.swift in Sources */,
 				E148128328C1443D003B8787 /* NameGuidPair.swift in Sources */,
@@ -2987,10 +3018,11 @@
 				53649AB2269D019100A2D8B7 /* LogManager.swift in Sources */,
 				E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */,
 				E12B930A2947CDE300CE0BD9 /* NewSessionManager.swift in Sources */,
-				E13DD3D6271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
+				E13DD3D6271693CD009D4DAF /* SwiftfinDefaults.swift in Sources */,
 				E193D549271941CC00900D82 /* UserSignInView.swift in Sources */,
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
 				E148128628C15475003B8787 /* APISortOrder.swift in Sources */,
+				E17AC9682954CA25003D2BC2 /* DownloadTask.swift in Sources */,
 				E1E1E24E28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
 				E1575E9B293E7B1E001665B1 /* EnvironmentValue.swift in Sources */,
 				E133328929538D8D00EE76AB /* Files.swift in Sources */,
@@ -3079,11 +3111,13 @@
 				E1D4BF7E2719D1DD00A11E64 /* BasicAppSettingsViewModel.swift in Sources */,
 				E1B33ECF28EB6EA90073B0FD /* OverlayMenu.swift in Sources */,
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
+				E17AC96D2954E9CA003D2BC2 /* DownloadListView.swift in Sources */,
 				E1A1528828FD229500600579 /* ChevronButton.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
 				E18E01DB288747230022598C /* iPadOSEpisodeItemView.swift in Sources */,
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* String.swift in Sources */,
+				E17AC96F2954EE4B003D2BC2 /* DownloadListViewModel.swift in Sources */,
 				E10706172943F2F900646DAF /* (null) in Sources */,
 				62C83B08288C6A630004ED0C /* FontPicker.swift in Sources */,
 				E122A9132788EAAD0060FA63 /* MediaStream.swift in Sources */,
@@ -3111,6 +3145,7 @@
 				E168BD11289A4162001A6922 /* HomeContentView.swift in Sources */,
 				E18E01AA288746AF0022598C /* RefreshableScrollView.swift in Sources */,
 				E18E0208288749200022598C /* BlurView.swift in Sources */,
+				E17AC9672954CA25003D2BC2 /* DownloadTask.swift in Sources */,
 				E18E01E7288747230022598C /* CollectionItemContentView.swift in Sources */,
 				E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */,
 				E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */,
@@ -3124,6 +3159,7 @@
 				E129429828F4785200796AC6 /* EnumPicker.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
+				E17AC9712954F636003D2BC2 /* DownloadListCoordinator.swift in Sources */,
 				E10EAA4F277BBCC4000269ED /* CGSize.swift in Sources */,
 				E18E01EB288747230022598C /* MovieItemContentView.swift in Sources */,
 				E17FB55B28C1266400311DFE /* GenresHStack.swift in Sources */,
@@ -3134,6 +3170,7 @@
 				E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */,
 				E13DD3EC27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				E12CC1BE28D11F4500678D5D /* RecentlyAddedView.swift in Sources */,
+				E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */,
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				C4BE07852728446F003F4AD1 /* LiveTVChannelsViewModel.swift in Sources */,
 				E133328829538D8D00EE76AB /* Files.swift in Sources */,
@@ -3231,6 +3268,7 @@
 				6267B3D626710B8900A7371D /* Collection.swift in Sources */,
 				E152107C2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
 				E168BD15289A4162001A6922 /* HomeErrorView.swift in Sources */,
+				E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */,
 				E1A1528228FD126C00600579 /* VerticalAlignment.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
@@ -3344,7 +3382,7 @@
 				E18E01F1288747230022598C /* PlayButton.swift in Sources */,
 				E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */,
 				E1D5C39928DF914700CDBEFB /* CapsuleSlider.swift in Sources */,
-				E13DD3D5271693CD009D4DAF /* SwiftfinStoreDefaults.swift in Sources */,
+				E13DD3D5271693CD009D4DAF /* SwiftfinDefaults.swift in Sources */,
 				62E1DCC3273CE19800C9AE76 /* URL.swift in Sources */,
 				E170D0E4294CC8AB0017224C /* VideoPlayer+KeyCommands.swift in Sources */,
 				E1267D3E271A1F46003C492E /* PreferenceUIHostingController.swift in Sources */,
@@ -3858,14 +3896,6 @@
 				kind = branch;
 			};
 		};
-		E1347DB0279E3C6200BC6161 /* XCRemoteSwiftPackageReference "Puppy" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/Puppy";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
@@ -4019,11 +4049,6 @@
 			package = E12B930B2948329D00CE0BD9 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
 			productName = JellyfinAPI;
 		};
-		E1347DB5279E3CA500BC6161 /* Puppy */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1347DB0279E3C6200BC6161 /* XCRemoteSwiftPackageReference "Puppy" */;
-			productName = Puppy;
-		};
 		E1388A45293F0ABA009721B1 /* SwizzleSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */;
@@ -4138,6 +4163,31 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */;
 			productName = BlurHashKit;
+		};
+		E1B5F7A429577BB8004B26CF /* JellyfinAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E12B930B2948329D00CE0BD9 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
+			productName = JellyfinAPI;
+		};
+		E1B5F7A629577BCE004B26CF /* Pulse */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */;
+			productName = Pulse;
+		};
+		E1B5F7A829577BCE004B26CF /* PulseLogHandler */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */;
+			productName = PulseLogHandler;
+		};
+		E1B5F7AA29577BCE004B26CF /* PulseUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */;
+			productName = PulseUI;
+		};
+		E1B5F7AC29577BDD004B26CF /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

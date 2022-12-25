@@ -27,41 +27,39 @@ class VideoPlayerViewModel: ViewModel {
     let selectedSubtitleStreamIndex: Int
     let chapters: [ChapterInfo.FullInfo]
     let streamType: StreamType
-
-    let hlsPlaybackURL: URL = URL(string: "\(Folder.documents!.path)Downloads/Contrapasso.mp4")!
     
-//    var hlsPlaybackURL: URL {
-//        let userSession = Container.userSession.callAsFunction()
-//        let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
-//            isStatic: true,
-//            tag: mediaSource.eTag,
-//            playSessionID: playSessionID,
-//            segmentContainer: "mp4",
-//            minSegments: 2,
-//            mediaSourceID: mediaSource.id!,
-//            deviceID: UIDevice.vendorUUIDString,
-//            audioCodec: mediaSource.audioStreams?
-//                .compactMap(\.codec)
-//                .joined(separator: ","),
-//            isBreakOnNonKeyFrames: true,
-//            requireAvc: false,
-//            transcodingMaxAudioChannels: 6,
-//            videoCodec: videoStreams
-//                .compactMap(\.codec)
-//                .joined(separator: ","),
-//            videoStreamIndex: videoStreams.first?.index,
-//            enableAdaptiveBitrateStreaming: true
-//        )
-//        let request = Paths.getMasterHlsVideoPlaylist(
-//            itemID: item.id!,
-//            parameters: parameters
-//        )
-//
-//        let hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request), resolvingAgainstBaseURL: false)!
-//            .addingQueryItem(key: "api_key", value: userSession.user.accessToken)
-//
-//        return hlsStreamComponents.url!
-//    }
+    var hlsPlaybackURL: URL {
+        let userSession = Container.userSession.callAsFunction()
+        let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
+            isStatic: true,
+            tag: mediaSource.eTag,
+            playSessionID: playSessionID,
+            segmentContainer: "mp4",
+            minSegments: 2,
+            mediaSourceID: mediaSource.id!,
+            deviceID: UIDevice.vendorUUIDString,
+            audioCodec: mediaSource.audioStreams?
+                .compactMap(\.codec)
+                .joined(separator: ","),
+            isBreakOnNonKeyFrames: true,
+            requireAvc: false,
+            transcodingMaxAudioChannels: 6,
+            videoCodec: videoStreams
+                .compactMap(\.codec)
+                .joined(separator: ","),
+            videoStreamIndex: videoStreams.first?.index,
+            enableAdaptiveBitrateStreaming: true
+        )
+        let request = Paths.getMasterHlsVideoPlaylist(
+            itemID: item.id!,
+            parameters: parameters
+        )
+
+        let hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request), resolvingAgainstBaseURL: false)!
+            .addingQueryItem(key: "api_key", value: userSession.user.accessToken)
+
+        return hlsStreamComponents.url!
+    }
 
     var vlcVideoPlayerConfiguration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
@@ -70,6 +68,7 @@ class VideoPlayerViewModel: ViewModel {
         configuration.audioIndex = .absolute(selectedAudioStreamIndex)
         configuration.subtitleIndex = .absolute(selectedSubtitleStreamIndex)
         configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
+        configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
 
         if let font = UIFont(name: Defaults[.VideoPlayer.Subtitle.subtitleFontName], size: 0) {
             configuration.subtitleFont = .absolute(font)
@@ -98,7 +97,7 @@ class VideoPlayerViewModel: ViewModel {
         self.item = item
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
-        self.playbackURL = URL(string: "\(Folder.documents!.path)Downloads/Contrapasso.mp4")!
+        self.playbackURL = playbackURL
         self.videoStreams = videoStreams
         self.audioStreams = audioStreams
             .adjustAudioForExternalSubtitles(externalMediaStreamCount: subtitleStreams.filter({ $0.isExternal ?? false }).count)

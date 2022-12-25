@@ -150,6 +150,11 @@ extension Defaults.Keys {
 
         enum Subtitle {
 
+            static let subtitleColor: Key<Color> = .init(
+                "subtitleColor",
+                default: .white,
+                suite: .generalSuite
+            )
             static let subtitleFontName: Key<String> = .init(
                 "subtitleFontName",
                 default: UIFont.systemFont(ofSize: 14).fontName,
@@ -165,6 +170,11 @@ extension Defaults.Keys {
 
     // Experimental settings
     enum Experimental {
+        static let downloads: Key<Bool> = .init(
+            "experimental.downloads",
+            default: true,
+            suite: .generalSuite
+        )
         static let syncSubtitleStateWithAdjacent = Key<Bool>(
             "experimental.syncSubtitleState",
             default: false,

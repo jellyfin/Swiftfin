@@ -84,11 +84,13 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var chaptersButton: some View {
-            ActionButtons.Chapters {
-                HStack {
-                    Image(systemName: "list.dash")
+            if !viewModel.chapters.isEmpty {
+                ActionButtons.Chapters {
+                    HStack {
+                        Image(systemName: "list.dash")
 
-                    L10n.chapters.text
+                        L10n.chapters.text
+                    }
                 }
             }
         }

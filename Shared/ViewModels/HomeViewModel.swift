@@ -7,6 +7,7 @@
 //
 
 import Combine
+import CoreStore
 import Factory
 import Foundation
 import JellyfinAPI

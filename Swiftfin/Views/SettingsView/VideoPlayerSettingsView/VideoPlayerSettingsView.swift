@@ -35,6 +35,8 @@ struct VideoPlayerSettingsView: View {
     private var subtitleFontName
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
+    @Default(.VideoPlayer.Subtitle.subtitleColor)
+    private var subtitleColor
 
     @Default(.VideoPlayer.Overlay.chapterSlider)
     private var chapterSlider
@@ -125,11 +127,15 @@ struct VideoPlayerSettingsView: View {
                     range: 8 ... 24,
                     step: 1
                 )
+                
+                ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
+                    Text("Subtitle Color")
+                }
             } header: {
                 Text("Subtitle")
             } footer: {
                 // TODO: better wording
-                Text("Only text based subtitles are affected")
+                Text("Settings only affect some subtitle types")
             }
 
             Section("Timestamp") {

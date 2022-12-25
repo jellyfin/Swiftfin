@@ -24,6 +24,8 @@ final class MediaCoordinator: NavigationCoordinatable {
     var library = makeLibrary
     @Route(.push)
     var liveTV = makeLiveTV
+    @Route(.push)
+    var downloads = makeDownloads
     #endif
 
     #if os(tvOS)
@@ -38,6 +40,10 @@ final class MediaCoordinator: NavigationCoordinatable {
 
     func makeLiveTV() -> LiveTVCoordinator {
         LiveTVCoordinator()
+    }
+    
+    func makeDownloads() -> DownloadListCoordinator {
+        DownloadListCoordinator()
     }
     #endif
 

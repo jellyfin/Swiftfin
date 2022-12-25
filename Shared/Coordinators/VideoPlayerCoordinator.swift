@@ -14,11 +14,6 @@ import SwiftUI
 
 final class VideoPlayerCoordinator: NavigationCoordinatable {
 
-    struct Parameters {
-        let item: BaseItemDto
-        let mediaSource: MediaSourceInfo
-    }
-
     @Default(.Experimental.nativePlayer)
     private var nativePlayer
 
@@ -27,10 +22,10 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    let parameters: Parameters
+    let videoPlayerManager: VideoPlayerManager
 
-    init(parameters: Parameters) {
-        self.parameters = parameters
+    init(manager: VideoPlayerManager) {
+        self.videoPlayerManager = manager
     }
 
     @ViewBuilder
@@ -40,12 +35,12 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         PreferenceUIHostingControllerView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
+                    VideoPlayer(manager: self.videoPlayerManager)
                         .overlay {
                             VideoPlayer.Overlay()
                         }
                 } else {
-                    NativeVideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
+                    NativeVideoPlayer(manager: self.videoPlayerManager)
                 }
             }
             .overrideViewPreference(.dark)
@@ -58,7 +53,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
         #else
 
-        VideoPlayer(manager: .init(item: self.parameters.item, mediaSource: self.parameters.mediaSource))
+        VideoPlayer(manager: self.videoPlayerManager)
             .ignoresSafeArea()
 
         #endif

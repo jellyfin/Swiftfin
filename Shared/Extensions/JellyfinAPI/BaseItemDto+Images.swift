@@ -81,6 +81,7 @@ extension BaseItemDto {
         maxHeight: Int?,
         itemID: String
     ) -> URL {
+        // TODO: See if the scaling is actually right so that it isn't so big
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
         let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
         let tag = imageTags?[type.rawValue]

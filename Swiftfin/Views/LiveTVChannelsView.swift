@@ -47,7 +47,7 @@ struct LiveTVChannelsView: View {
                 timeFormatter: viewModel.timeFormatter
             ),
             onSelect: { _ in
-                mainRouter.route(to: \.videoPlayer, .init(item: channel, mediaSource: channel.mediaSources!.first!))
+                mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: channel.mediaSources!.first!))
 //                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
 //                    self.liveTVRouter.route(to: \.videoPlayer, playerViewModel)
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

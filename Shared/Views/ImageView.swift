@@ -7,12 +7,14 @@
 //
 
 import BlurHashKit
+import JellyfinAPI
 import Nuke
 import NukeUI
 import SwiftUI
 import UIKit
 
 struct ImageSource: Hashable {
+    
     let url: URL?
     let blurHash: String?
 

@@ -6,11 +6,15 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct UserProfileButton: View {
 
+    @Injected(Container.userSession)
+    private var userSession
+    
     @FocusState
     private var isFocused: Bool
 
@@ -22,8 +26,8 @@ struct UserProfileButton: View {
         self.action = {}
     }
 
-    init(user: SwiftfinStore.State.User) {
-        self.init(user: .init(name: user.username, id: user.id))
+    init(user: UserState) {
+        self.init(user: .init(id: user.id, name: user.username))
     }
 
     var body: some View {
@@ -31,13 +35,13 @@ struct UserProfileButton: View {
             Button {
                 action()
             } label: {
-                ImageView(user.profileImageSource(maxWidth: 250, maxHeight: 250))
-                    .failure {
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .padding2()
-                    }
-                    .frame(width: 200, height: 200)
+//                ImageView(user.profileImageSource(maxWidth: 250, maxHeight: 250))
+//                    .failure {
+//                        Image(systemName: "person.fill")
+//                            .resizable()
+//                            .padding2()
+//                    }
+//                    .frame(width: 200, height: 200)
             }
             .buttonStyle(.card)
             .focused($isFocused)

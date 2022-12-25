@@ -17,8 +17,8 @@ struct ExperimentalSettingsView: View {
     var syncSubtitleStateWithAdjacent
     @Default(.Experimental.nativePlayer)
     var nativePlayer
-    @Default(.Experimental.usefmp4Hls)
-    var usefmp4Hls
+//    @Default(.Experimental.usefmp4Hls)
+//    var usefmp4Hls
 
     @Default(.Experimental.liveTVAlphaEnabled)
     var liveTVAlphaEnabled
@@ -37,7 +37,7 @@ struct ExperimentalSettingsView: View {
 
                 Toggle("Native Player", isOn: $nativePlayer)
 
-                Toggle("Use fmp4 with HLS", isOn: $usefmp4Hls)
+//                Toggle("Use fmp4 with HLS", isOn: $usefmp4Hls)
 
             } header: {
                 L10n.experimental.text

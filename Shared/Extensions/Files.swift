@@ -8,6 +8,7 @@
 
 import Foundation
 
+#if os(iOS)
 extension FileManager {
     
     var availableStorage: Int {
@@ -30,3 +31,4 @@ extension FileManager {
         return Int(availableStorage)
     }
 }
+#endif

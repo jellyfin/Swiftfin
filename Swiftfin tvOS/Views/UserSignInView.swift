@@ -45,7 +45,7 @@ struct UserSignInView: View {
                     .focused($focusedField, equals: .password)
 
                 Button {
-                    viewModel.signIn(username: username, password: password)
+//                    viewModel.signIn(username: username, password: password)
                 } label: {
                     HStack {
                         if viewModel.isLoading {
@@ -149,18 +149,18 @@ struct UserSignInView: View {
                 .buttonStyle(.plain)
             }
         }
-        .onAppear {
-            viewModel.startQuickConnect {}
-        }
-        .onDisappear {
-            viewModel.stopQuickConnectAuthCheck()
-        }
+//        .onAppear {
+//            viewModel.startQuickConnect {}
+//        }
+//        .onDisappear {
+//            viewModel.stopQuickConnectAuthCheck()
+//        }
     }
 
     var body: some View {
         ZStack {
-            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
-                .ignoresSafeArea()
+//            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
+//                .ignoresSafeArea()
 
             Color.black
                 .opacity(0.9)
@@ -176,13 +176,13 @@ struct UserSignInView: View {
             .edgesIgnoringSafeArea(.bottom)
         }
         .navigationTitle(L10n.signIn)
-        .alert(item: $viewModel.errorMessage) { _ in
-            Alert(
-                title: Text(viewModel.alertTitle),
-                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-                dismissButton: .cancel()
-            )
-        }
+//        .alert(item: $viewModel.errorMessage) { _ in
+//            Alert(
+//                title: Text(viewModel.alertTitle),
+//                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
+//                dismissButton: .cancel()
+//            )
+//        }
         .fullScreenCover(isPresented: $presentQuickConnect, onDismiss: nil) {
             quickConnect
         }

@@ -21,7 +21,7 @@ struct PagingLibraryView: View {
     private var libraryPosterType
 
     var body: some View {
-        CollectionView(items: viewModel.items) { _, item, _ in
+        CollectionView(items: viewModel.items.elements) { _, item, _ in
             PosterButton(item: item, type: libraryPosterType)
                 .onSelect {
                     onSelect(item)
