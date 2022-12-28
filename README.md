@@ -1,5 +1,5 @@
 <p align="center">
-      <img alt="Swiftfin" height="125" src="https://github.com/jellyfin/Swiftfin/blob/main/Swiftfin/Assets.xcassets/AppIcon.appiconset/152.png">
+      <img alt="Swiftfin" height="125" style="border-radius: 25px;" src="https://github.com/jellyfin/Swiftfin/blob/main/Swiftfin/Assets.xcassets/AppIcons/Primary/AppIcon-primary-primary.appiconset/AppIcon-primary-primary.png">
   <h2 align="center">Swiftfin</h2>
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
@@ -16,8 +16,6 @@
 </p>
 
 ## ⚡️ TestFlight
-
-**✨New! Updated TestFlight Link**
 
 <a href='https://testflight.apple.com/join/oZd0QzWv'><img height='70' alt='Join the Beta on TestFlight' src='https://anotherlens.app/testflight-badge.png'/></a>
 
