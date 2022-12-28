@@ -1,6 +1,11 @@
-<p align="center" style="background-color:#020B23;">
-      <img alt="Swiftfin" height="125" style="padding:10px;" src="./Swiftfin/Assets.xcassets/jellyfin-blob-blue.imageset/jellyfin-blob.svg">
-  <h2 align="center">Swiftfin</h2>
+<div align="center">
+  <img alt="Swiftfin" height="125" src="./Swiftfin/Assets.xcassets/jellyfin-blob-blue.imageset/jellyfin-blob.svg">
+
+  <a href="https://github.com/sindresorhus/css-in-readme-like-wat/blame/main/header.svg">
+    <img src="header.svg" width="800" height="400" alt="Click to see the source">
+  </a>
+
+  <h2>Swiftfin</h2>
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
   </a>
@@ -10,7 +15,8 @@
   <a href="https://discord.gg/zHBxVSXdBV">
     <img src="https://img.shields.io/badge/Talk%20on-Discord-brightgreen">
   </a>
-</p>
+</div>
+
 <p align="center">
   <b>Swiftfin</b> is a modern video client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
