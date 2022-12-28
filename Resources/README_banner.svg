@@ -3,11 +3,11 @@
 		<div xmlns="http://www.w3.org/1999/xhtml">
 			<style>
 				.container {
-					background-color: white;
+					background-color: red;
 				}
 			</style>
 			<div class="container">
-				<img alt="Swiftfin" height="125" src="../Swiftfin/Assets.xcassets/jellyfin-blob-blue.imageset/jellyfin-blob.svg"></img>
+  				<use height="125" href="jellyfin-blob.svg"></use>
 			</div>
 		</div>
 	</foreignObject>
