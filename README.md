@@ -1,11 +1,9 @@
 <div align="center">
   <img alt="Swiftfin" height="125" src="./Swiftfin/Assets.xcassets/jellyfin-blob-blue.imageset/jellyfin-blob.svg">
 
-  <a href="https://github.com/sindresorhus/css-in-readme-like-wat/blame/main/header.svg">
-    <img src="header.svg" width="800" height="400" alt="Click to see the source">
-  </a>
+  <img alt="Swiftfin" height="125" src="./Resources/README_banner.svg">
 
-  <h2>Swiftfin</h2>
+  <h1>Swiftfin</h1>
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
   </a>
