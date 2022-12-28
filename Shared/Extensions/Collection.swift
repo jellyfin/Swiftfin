@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension Collection {
+extension Collection {
 
     var asArray: [Element] {
         Array(self)

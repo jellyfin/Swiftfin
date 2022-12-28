@@ -105,6 +105,6 @@ extension String {
     }
 }
 
-public extension CharacterSet {
+extension CharacterSet {
     static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
 }

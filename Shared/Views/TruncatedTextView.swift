@@ -25,7 +25,7 @@ struct TruncatedTextView: View {
     private var seeMoreAction: () -> Void
     private let seeMoreText = "... \(L10n.seeMore)"
 
-    public var body: some View {
+    var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Text(text)
                 .font(font)

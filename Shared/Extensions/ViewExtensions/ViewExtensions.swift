@@ -18,7 +18,7 @@ extension View {
         AnyView(self)
     }
 
-    public func inverseMask<M: View>(_ mask: M) -> some View {
+    func inverseMask<M: View>(_ mask: M) -> some View {
         // exchange foreground and background
         let inversed = mask
             .foregroundColor(.black) // hide foreground
