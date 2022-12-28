@@ -1,5 +1,5 @@
-<p align="center">
-      <img alt="Swiftfin" height="125" style="border-radius: 25px;" src="./Swiftfin/Assets.xcassets/AppIcons/Primary/AppIcon-primary-primary.appiconset/AppIcon-primary-primary.png">
+<p align="center" style="background-color:#020B23;">
+      <img alt="Swiftfin" height="125" style="padding:10px;" src="./Swiftfin/Assets.xcassets/jellyfin-blob-blue.imageset/jellyfin-blob.svg">
   <h2 align="center">Swiftfin</h2>
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
@@ -14,6 +14,10 @@
 <p align="center">
   <b>Swiftfin</b> is a modern video client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Redesigned in Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
+
+## ⚙️ Development
+
+Thank you for your interest in Swiftfin! Please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/blob/main/contributing.md) to get started.
 
 ## ⚡️ TestFlight
 
@@ -32,7 +36,3 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 <a href="https://translate.jellyfin.org/engage/swiftfin/">
 <img src="https://translate.jellyfin.org/widgets/swiftfin/-/multi-auto.svg"/>
 </a>
-
-## ⚙️ Development
-
-Thank you for your interest in Swiftfin! Please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/blob/main/contributing.md) to get started.
