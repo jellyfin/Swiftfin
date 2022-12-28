@@ -16,7 +16,7 @@ $ brew install carthage swiftformat swiftgen
 $ carthage update --use-xcframeworks
 ```
 
-In the event that all of the Swift Packages cannot be installed, either clean the Swift Packages cache or close and reopen Xcode to restart the process.
+In the event that all of the Swift Packages cannot be installed, clean the Swift Packages cache or close and reopen Xcode to restart the process.
 
 ## Git Flow
 
@@ -40,7 +40,7 @@ Documentation for advanced or complex features and other implementation reasonin
 
 ## Architecture
 
-Swiftfin is developed using SwiftUI with some UIKit components where deemed necessary. Swiftfin consists of both the iOS and tvOS Jellyfin clients with a shared backend with each client containing their respective views. Due to this architecture, working on both clients at once may be necessary.
+Swiftfin is developed using SwiftUI. The iOS and tvOS Jellyfin clients share the same backend with each client containing their respective views. Due to this architecture, working on both clients at once may be necessary.
 
 Playback is done with [VLCKit](https://code.videolan.org/videolan/VLCKit) for its great codec support. Becoming familiar with VLCKit will be necessary for video playback development and debugging.
 
@@ -50,13 +50,21 @@ While there are no design guidelines for UI/UX features, Swiftfin has the goal t
 
 User customizable UI/UX features are welcome and intended, however not all customization may be accepted for code maintainability and to also establish a distinct Swiftfin design. Taking inspiration, but not always copying, from other applications is encouraged.
 
+## App Icons
+
+Ideas for new icons and minor tweaks to existing icons can be presented however may not be accepted. Overall, app icons must follow these rules:
+
+- Must feature the Jellyfin logo.
+- Must be for general usage (i.e: holiday, hacker theme). Ideas for individual preferences or logos will not be accepted.
+- Must be unique. (i.e: cannot have two blue icons just with different gradients)
+
 ## New Features
 
-If you would like to develop a new feature or `Developer` issue, create an issue with a description of the feature so that a discussion can be made for its possibility, whether it belongs in Swiftfin, and finally its general implementation. Leave a comment when you start working to prevent conflicts.
+If you would like to develop a new feature, create a Feature Request to discuss the feature's possibility and implementation. Leave a comment when you start working to prevent conflicts. If the implementation of a feature is large or complex, creating a Draft PR is acceptable to surface progress and to receive feedback.
 
 ## Other Code Work
 
-Other code work like bug fixes, issues with `Developer` tags, localizations, and accessibility efforts are welcome to be picked up at any time. Just leave a comment when you start work on a bug fix or `Developer` issue.
+Other code work like bug fixes, issues with `Developer` tags, localizations, and accessibility efforts are welcome to be picked up at any time.
 
 If you notice undesirable behavior, would like to make a UI/UX tweak, or have a question about implementations, create an issue or ask in the iOS Matrix/Discord channel for insights.
 
