@@ -10,47 +10,138 @@ import JellyfinAPI
 import SwiftUI
 
 extension HomeView {
-
     struct ContentView: View {
-
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
-        @ObservedObject
-        var viewModel: HomeViewModel
+        @ObservedObject var viewModel: HomeViewModel
+        
+        @FocusState private var focusedSection: FocusSection?
+        @FocusState private var focusedImage: String?
+        
+        @State private var enlargedItem: BaseItemDto?
+        @State private var hasHero = true
+        @State private var heroVisible = true
+        
+        let recentlyAddedViewModel = ItemTypeLibraryViewModel(itemTypes: [.movie, .series], filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter]))
 
         var body: some View {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0) {
-
-                    if viewModel.resumeItems.isEmpty {
-                        CinematicRecentlyAddedView(viewModel: .init(
-                            itemTypes: [.movie, .series],
-                            filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-                        ))
-
-                        if viewModel.hasNextUp {
-                            NextUpView(viewModel: .init())
+            GeometryReader { geoReader in
+                ScrollView(.vertical) {
+                    ScrollViewReader { scrollView in
+                        let heroContent: [BaseItemDto] = viewModel.resumeItems + viewModel.nextUpItems
+                        
+                        if hasHero {
+                            // Hero section
+                            Spacer(minLength: UIScreen.main.bounds.height - ((HomeItemRow.Columns.five.rawValue / (16 / 9)) * 1.11 + (heroVisible ? 190 : 125) - 20))
+                                .id(FocusSection.spacer)
+                            
+                            VStack {
+                                // TODO: only set increaseOffset to true when the focus is directly below it
+                                HomeSectionText(title: L10n.nextUp, visible: !heroVisible, increaseOffset: focusedImage?.starts(with: "hero") ?? false)
+                                HomeItemRow(items: heroContent, size: .five, focusPrefix: "hero", focusedImage: $focusedImage)
+                            }
+                            .id(FocusSection.hero)
+                            .focused($focusedSection, equals: .hero)
+                            .focusSection()
+                            .padding(.bottom, -20)
+                            .onAppear {
+                                hasHero = !heroContent.isEmpty
+                                
+                                if hasHero {
+                                    enlargedItem = heroContent[0]
+                                }
+                            }
                         }
-                    } else {
-                        CinematicResumeView(viewModel: viewModel)
-
-                        if viewModel.hasNextUp {
-                            NextUpView(viewModel: .init())
+                        
+                        // Content section
+                        Group {                            
+                            HomeRecentlyAdded(viewModel: recentlyAddedViewModel, hasHero: $hasHero, heroVisible: $heroVisible, focusedImage: $focusedImage)
                         }
-
-                        if viewModel.hasRecentlyAdded {
-                            RecentlyAddedView(viewModel: .init(
-                                itemTypes: [.movie, .series],
-                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-                            ))
+                        .id(FocusSection.content)
+                        .focused($focusedSection, equals: .content)
+                        .focusSection()
+                        
+                        // Add safe area if required
+                        .padding(.bottom, geoReader.safeAreaInsets.bottom)
+                        .padding(.top, hasHero ? 0 : geoReader.safeAreaInsets.top)
+                        
+                        // Change the enlarged inage when the focues image changes
+                        .onChange(of: focusedImage) { image in
+                            guard let image = image else {
+                                return
+                            }
+                            guard let id: String = {
+                                let parts = image.components(separatedBy: "::")
+                                if parts.count != 2 {
+                                    return nil
+                                }
+                                
+                                return parts[1]
+                            }() else {
+                                return
+                            }
+                            
+                            if image.starts(with: "hero") {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                                    if focusedImage != image {
+                                        return
+                                    }
+                                    
+                                    let heroContent: [BaseItemDto] = viewModel.resumeItems + viewModel.nextUpItems
+                                    enlargedItem = heroContent.filter {
+                                        $0.id == id
+                                    }.first
+                                }
+                            }
                         }
-                    }
-
-                    ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
+                        // Focus the right area of the screen when the user navigates
+                        .onChange(of: focusedSection) { section in
+                            guard let focusedSection = focusedSection else {
+                                return
+                            }
+                            let focusedHero = focusedSection == .hero
+                            
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                scrollView.scrollTo(FocusSection.hero, anchor: focusedHero ? .bottom : .top)
+                                heroVisible = focusedHero
+                            }
+                        }
                     }
                 }
+                .background {
+                    ZStack(alignment: .bottom) {
+                        if heroVisible, let enlargedItem = enlargedItem {
+                            // I know that .id prevents .animation form working but ImageView does not react to changes.
+                            // The alternative would be to make ImageView react to changes (i can not be bothered) or to use AsyncImage but i think it is prefered to use the custom ImageView
+                            ImageView(enlargedItem.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width))
+                                .id(enlargedItem.id)
+                                .animation(.easeInOut(duration: 0.25), value: enlargedItem)
+                        }
+                     
+                        LinearGradient
+                            .linearGradient(
+                                Gradient(colors: [.black.opacity(0.75), .black.opacity(0)]),
+                                startPoint: .bottom,
+                                endPoint: .center)
+                    }
+                }
+                .ignoresSafeArea()
+                .environment(\.safeAreaInsets, geoReader.safeAreaInsets)
             }
         }
+        
+        private enum FocusSection: Hashable {
+            case spacer
+            case hero
+            case content
+        }
+    }
+}
+
+private struct SafeAreaInsetsKey: EnvironmentKey {
+    static let defaultValue: EdgeInsets = .init(top: 0, leading: 25, bottom: 0, trailing: 25)
+}
+extension EnvironmentValues {
+    var safeAreaInsets: EdgeInsets {
+        get { self[SafeAreaInsetsKey.self] }
+        set { self[SafeAreaInsetsKey.self] = newValue }
     }
 }

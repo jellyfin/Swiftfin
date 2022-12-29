@@ -37,6 +37,7 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
+                // I am not sure, but i think LazyHStack would improve performance considerably
                 HStack(alignment: .top, spacing: 30) {
                     ForEach(items, id: \.hashValue) { item in
                         PosterButton(item: item, type: type)

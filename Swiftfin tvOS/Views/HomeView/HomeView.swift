@@ -29,7 +29,5 @@ struct HomeView: View {
                 ContentView(viewModel: viewModel)
             }
         }
-        .edgesIgnoringSafeArea(.top)
-        .edgesIgnoringSafeArea(.horizontal)
     }
 }

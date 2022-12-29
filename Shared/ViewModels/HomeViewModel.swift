@@ -13,16 +13,11 @@ import JellyfinAPI
 
 final class HomeViewModel: ViewModel {
 
-    @Published
-    var resumeItems: [BaseItemDto] = []
-    @Published
-    var hasNextUp: Bool = false
-    @Published
-    var hasRecentlyAdded: Bool = false
-    @Published
-    var librariesShowRecentlyAddedIDs: [String] = []
-    @Published
-    var libraries: [BaseItemDto] = []
+    @Published var resumeItems: [BaseItemDto] = []
+    @Published var nextUpItems: [BaseItemDto] = []
+    @Published var hasRecentlyAdded: Bool = false
+    @Published var librariesShowRecentlyAddedIDs: [String] = []
+    @Published var libraries: [BaseItemDto] = []
 
     override init() {
         super.init()
@@ -121,23 +116,23 @@ final class HomeViewModel: ViewModel {
     // MARK: Recently Added Items
 
     private func refreshLatestAddedItems() {
-        UserLibraryAPI.getLatestMedia(
-            userId: SessionManager.main.currentLogin.user.id,
-            includeItemTypes: [.movie, .series],
-            limit: 1
-        )
-        .sink { completion in
-            switch completion {
-            case .finished: ()
-            case .failure:
-                self.hasRecentlyAdded = false
-                self.handleAPIRequestError(completion: completion)
+            UserLibraryAPI.getLatestMedia(
+                userId: SessionManager.main.currentLogin.user.id,
+                includeItemTypes: [.movie, .series],
+                limit: 1
+            )
+            .sink { completion in
+                switch completion {
+                case .finished: ()
+                case .failure:
+                    self.hasRecentlyAdded = false
+                    self.handleAPIRequestError(completion: completion)
+                }
+            } receiveValue: { items in
+                self.hasRecentlyAdded = items.count > 0
             }
-        } receiveValue: { items in
-            self.hasRecentlyAdded = items.count > 0
+            .store(in: &cancellables)
         }
-        .store(in: &cancellables)
-    }
 
     // MARK: Resume Items
 
@@ -193,18 +188,20 @@ final class HomeViewModel: ViewModel {
     private func refreshNextUpItems() {
         TvShowsAPI.getNextUp(
             userId: SessionManager.main.currentLogin.user.id,
-            limit: 1
+            limit: 20
         )
         .trackActivity(loading)
         .sink(receiveCompletion: { completion in
             switch completion {
             case .finished: ()
             case .failure:
-                self.hasNextUp = false
+                self.nextUpItems = []
                 self.handleAPIRequestError(completion: completion)
             }
         }, receiveValue: { response in
-            self.hasNextUp = (response.items ?? []).count > 0
+            self.logger.debug("Retrieved \(String(response.items!.count)) resume items")
+
+            self.nextUpItems = response.items ?? []
         })
         .store(in: &cancellables)
     }
