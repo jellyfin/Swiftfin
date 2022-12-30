@@ -49,13 +49,27 @@ struct HomeItemRow: View {
                                     router.route(to: \.item, item)
                                 }
                             
-                            Text(item.displayName)
-                                .fixedSize()
-                                .font(.system(.caption, design: .rounded))
-                                .padding(.horizontal)
-                                .offset(y: focusPrefix != "hero" && focusedImage.wrappedValue == focusName ? 10 : 0)
-                                .animation(.easeInOut(duration: 0.25), value: focusedImage.wrappedValue)
-                                .foregroundColor(focusedImage.wrappedValue == focusName ? Color.primary : Color.gray)
+                            HStack(spacing: 0) {
+                                Text(item.displayName)
+                                    .foregroundColor(focusedImage.wrappedValue == focusName ? Color.primary : Color.gray)
+                                
+                                if item.parentIndexNumber != nil || item.indexNumber != nil {
+                                    Text("•")
+                                        .padding(.horizontal, 2)
+                                }
+                                if let parentIndexNumber = item.parentIndexNumber {
+                                    Text("S\(parentIndexNumber)")
+                                }
+                                if let indexNumber = item.indexNumber {
+                                    Text("E\(indexNumber)")
+                                }
+                            }
+                            .fixedSize()
+                            .font(.system(.caption, design: .rounded))
+                            .padding(.horizontal, 20)
+                            .offset(y: focusPrefix != "hero" && focusedImage.wrappedValue == focusName ? 10 : 0)
+                            .animation(.easeInOut(duration: 0.25), value: focusedImage.wrappedValue)
+                            .foregroundColor(Color.gray)
                         }
                         .frame(width: size.rawValue)
                     }

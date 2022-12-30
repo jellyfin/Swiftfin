@@ -20,7 +20,7 @@ extension HomeView {
         @State private var hasHero = true
         @State private var heroVisible = true
         
-        let recentlyAddedViewModel = ItemTypeLibraryViewModel(itemTypes: [.movie, .series], filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter]))
+        let recentlyAddedViewModel = ItemTypeLibraryViewModel(itemTypes: [.movie, .series], filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter]), pageItemSize: 20)
 
         var body: some View {
             GeometryReader { geoReader in
@@ -28,9 +28,11 @@ extension HomeView {
                     ScrollViewReader { scrollView in
                         let heroContent: [BaseItemDto] = viewModel.resumeItems + viewModel.nextUpItems
                         
+                        // Hero section
                         if hasHero {
-                            // Hero section
-                            Spacer(minLength: UIScreen.main.bounds.height - ((HomeItemRow.Columns.five.rawValue / (16 / 9)) * 1.11 + (heroVisible ? 190 : 125) - 20))
+                            // Substract the hight of the first column plus the hight of its text (20) and a bit of spacing from the hight of the screen
+                            // Because all tvOS devices are 16:9 and use the same amount of points at any resolution this is fine
+                            Spacer(minLength: UIScreen.main.bounds.height - ((HomeItemRow.Columns.five.rawValue / (16 / 9)) * 1.11 + (heroVisible ? 200 : 125) - 20))
                                 .id(FocusSection.spacer)
                             
                             VStack {
@@ -41,7 +43,7 @@ extension HomeView {
                             .id(FocusSection.hero)
                             .focused($focusedSection, equals: .hero)
                             .focusSection()
-                            .padding(.bottom, -20)
+                            .padding(.bottom, -25)
                             .onAppear {
                                 hasHero = !heroContent.isEmpty
                                 
@@ -110,8 +112,8 @@ extension HomeView {
                     ZStack(alignment: .bottom) {
                         if heroVisible, let enlargedItem = enlargedItem {
                             // I know that .id prevents .animation form working but ImageView does not react to changes.
-                            // The alternative would be to make ImageView react to changes (i can not be bothered) or to use AsyncImage but i think it is prefered to use the custom ImageView
-                            ImageView(enlargedItem.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width))
+                            // The alternative would be to make ImageView react to changes (i can't be bothered) or to use AsyncImage but i think it is prefered to use the custom ImageView
+                            ImageView(enlargedItem.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width, single: true))
                                 .id(enlargedItem.id)
                                 .animation(.easeInOut(duration: 0.25), value: enlargedItem)
                         }
