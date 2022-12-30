@@ -13,11 +13,16 @@ import JellyfinAPI
 
 final class HomeViewModel: ViewModel {
 
-    @Published var resumeItems: [BaseItemDto] = []
-    @Published var nextUpItems: [BaseItemDto] = []
-    @Published var hasRecentlyAdded: Bool = false
-    @Published var librariesShowRecentlyAddedIDs: [String] = []
-    @Published var libraries: [BaseItemDto] = []
+    @Published
+    var resumeItems: [BaseItemDto] = []
+    @Published
+    var nextUpItems: [BaseItemDto] = []
+    @Published
+    var hasRecentlyAdded: Bool = false
+    @Published
+    var librariesShowRecentlyAddedIDs: [String] = []
+    @Published
+    var libraries: [BaseItemDto] = []
 
     override init() {
         super.init()
@@ -116,23 +121,23 @@ final class HomeViewModel: ViewModel {
     // MARK: Recently Added Items
 
     private func refreshLatestAddedItems() {
-            UserLibraryAPI.getLatestMedia(
-                userId: SessionManager.main.currentLogin.user.id,
-                includeItemTypes: [.movie, .series],
-                limit: 1
-            )
-            .sink { completion in
-                switch completion {
-                case .finished: ()
-                case .failure:
-                    self.hasRecentlyAdded = false
-                    self.handleAPIRequestError(completion: completion)
-                }
-            } receiveValue: { items in
-                self.hasRecentlyAdded = items.count > 0
+        UserLibraryAPI.getLatestMedia(
+            userId: SessionManager.main.currentLogin.user.id,
+            includeItemTypes: [.movie, .series],
+            limit: 1
+        )
+        .sink { completion in
+            switch completion {
+            case .finished: ()
+            case .failure:
+                self.hasRecentlyAdded = false
+                self.handleAPIRequestError(completion: completion)
             }
-            .store(in: &cancellables)
+        } receiveValue: { items in
+            self.hasRecentlyAdded = items.count > 0
         }
+        .store(in: &cancellables)
+    }
 
     // MARK: Resume Items
 

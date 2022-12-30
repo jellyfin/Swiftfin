@@ -41,7 +41,8 @@ class ViewModel: ObservableObject {
                 switch errorResponse {
                 case .error(-1, _, _, _):
                     networkError = .URLError(response: errorResponse, displayMessage: displayMessage)
-                    // Use the errorResponse description for debugging, rather than the user-facing friendly description which may not be implemented
+                    // Use the errorResponse description for debugging, rather than the user-facing friendly description which may not be
+                    // implemented
                     logger
                         .error(
                             "Request failed: URL request failed with error \(networkError.errorMessage.code): \(errorResponse.localizedDescription)"

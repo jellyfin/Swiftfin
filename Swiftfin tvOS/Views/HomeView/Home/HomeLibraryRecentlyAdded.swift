@@ -6,22 +6,29 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 extension HomeView {
     struct HomeLibraryRecentlyAdded: View {
-        @EnvironmentObject private var router: HomeCoordinator.Router
-        @ObservedObject public var viewModel: LibraryViewModel
-        
+        @EnvironmentObject
+        private var router: HomeCoordinator.Router
+        @ObservedObject
+        public var viewModel: LibraryViewModel
+
         public let focusedImage: FocusState<String?>.Binding
-        
+
         var body: some View {
             Group {
                 HomeSectionText(title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash)) {
                     router.route(to: \.library, viewModel.libraryCoordinatorParameters)
                 }
-                HomeItemRow(items: viewModel.items, size: .five, focusPrefix: "lib_\(viewModel.parent?.id ?? "XXX")", focusedImage: focusedImage)
+                HomeItemRow(
+                    items: viewModel.items,
+                    size: .five,
+                    focusPrefix: "lib_\(viewModel.parent?.id ?? "XXX")",
+                    focusedImage: focusedImage
+                )
             }
         }
     }

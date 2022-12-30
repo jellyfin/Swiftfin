@@ -12,10 +12,10 @@ extension HomeView {
     struct HomeGeneralRow: View {
         public let viewModel: ItemTypeLibraryViewModel
         public let focusedImage: FocusState<String?>.Binding
-        
+
         public let title: String
         public let subtitle: String?
-        
+
         var body: some View {
             Group {
                 HomeSectionText(title: title, subtitle: subtitle)

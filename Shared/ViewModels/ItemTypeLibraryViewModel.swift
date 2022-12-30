@@ -39,7 +39,7 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
         let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-        
+
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,
             startIndex: currentPage * pageItemSize,

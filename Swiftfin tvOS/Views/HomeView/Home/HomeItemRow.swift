@@ -6,35 +6,37 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 extension HomeView {
     struct HomeItemRow: View {
-        @EnvironmentObject private var router: HomeCoordinator.Router
-        @Environment(\.safeAreaInsets) private var edgeInsets: EdgeInsets
-        
+        @EnvironmentObject
+        private var router: HomeCoordinator.Router
+        @Environment(\.safeAreaInsets)
+        private var edgeInsets: EdgeInsets
+
         public let items: [BaseItemDto]
         public let size: Columns
         public let focusPrefix: String
         public let focusedImage: FocusState<String?>.Binding
-        
+
         var body: some View {
             ZStack(alignment: .top) {
                 ScrollView(.horizontal) {
                     let isHero = focusPrefix == "hero"
-                    
+
                     LazyHStack(alignment: isHero ? .bottom : .center, spacing: 40) {
                         ForEach(items, id: \.id) { item in
                             let focusName = "\(focusPrefix)::\(item.id!)"
                             let isFocused = focusedImage.wrappedValue == focusName
-                            
+
                             VStack {
                                 ImageView(item.landscapePosterImageSources(maxWidth: size.rawValue))
                                     .aspectRatio(16 / 9, contentMode: .fit)
                                     .cornerRadius(7.5)
-                                    .frame(width: size.rawValue, height: (size.rawValue / (16 / 9)))
-                                
+                                    .frame(width: size.rawValue, height: size.rawValue / (16 / 9))
+
                                     .focusable()
                                     .focused(focusedImage, equals: focusName)
                                     .scaleEffect(isFocused ? 1.11 : 1, anchor: isHero ? .bottom : .center)
@@ -52,11 +54,11 @@ extension HomeView {
                                     .onTapGesture {
                                         router.route(to: \.item, item)
                                     }
-                                
+
                                 HStack(spacing: 0) {
                                     Text(item.displayName)
                                         .foregroundColor(isFocused ? Color.primary : Color.gray)
-                                    
+
                                     if item.parentIndexNumber != nil || item.indexNumber != nil {
                                         Text("•")
                                             .padding(.horizontal, 4)
@@ -73,6 +75,7 @@ extension HomeView {
                                 .offset(y: !isHero && isFocused ? 10 : 0)
                                 .animation(.easeInOut(duration: 0.25), value: focusedImage.wrappedValue)
                                 .foregroundColor(Color.gray)
+                                .lineLimit(1)
                             }
                             .frame(width: size.rawValue)
                         }
@@ -83,7 +86,7 @@ extension HomeView {
                 }
             }
         }
-        
+
         public enum Columns: CGFloat {
             case four = 410
             case five = 320

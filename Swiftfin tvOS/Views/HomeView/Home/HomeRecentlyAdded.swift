@@ -6,19 +6,23 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 extension HomeView {
     struct HomeRecentlyAdded: View {
-        @EnvironmentObject private var router: HomeCoordinator.Router
-        @ObservedObject public var viewModel: ItemTypeLibraryViewModel
-        
-        @Binding var hasHero: Bool
-        @Binding var heroVisible: Bool
-        
-        public let focusedImage: FocusState<String?>.Binding
-        
+        @EnvironmentObject
+        private var router: HomeCoordinator.Router
+
+        @Environment(\.hasHero)
+        private var hasHero: Bool
+        @Environment(\.heroVisible)
+        private var heroVisible: Bool
+
+        @ObservedObject
+        public var viewModel: ItemTypeLibraryViewModel
+        public var focusedImage: FocusState<String?>.Binding
+
         var body: some View {
             Group {
                 if hasHero {
@@ -29,11 +33,11 @@ extension HomeView {
                 } else {
                     HomeSectionText(title: L10n.recentlyAdded, subtitle: L10n.recentlyAddedText, visible: !heroVisible, callback: callback)
                 }
-                
+
                 HomeItemRow(items: viewModel.items, size: .four, focusPrefix: "recentlyadded", focusedImage: focusedImage)
             }
         }
-        
+
         private func callback() {
             router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
         }
