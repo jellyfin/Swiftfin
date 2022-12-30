@@ -62,6 +62,8 @@ extension HomeView {
                             ForEach(recentlyAddedLibrariesViewModels.sorted(by: { $0.key < $1.key }), id: \.key) {
                                 HomeLibraryRecentlyAdded(viewModel: $1, focusedImage: $focusedImage)
                             }
+                            
+                            HomeGeneralRow(viewModel: ItemTypeLibraryViewModel(itemTypes: [.movie], filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.communityRating.filter])), focusedImage: $focusedImage, title: L10n.topRated, subtitle: L10n.topRatedText)
                         }
                         .id(FocusSection.content)
                         .focused($focusedSection, equals: .content)
@@ -133,7 +135,7 @@ extension HomeView {
                 }
                 .onAppear {
                     if viewModel.hasRecentlyAdded {
-                        recentlyAddedViewModel = ItemTypeLibraryViewModel(itemTypes: [.movie, .series], filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter]), pageItemSize: 20)
+                        recentlyAddedViewModel = ItemTypeLibraryViewModel(itemTypes: [.movie, .series], filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter]))
                     }
                     
                     viewModel.libraries.forEach { library in

@@ -21,7 +21,7 @@ extension HomeView {
                 HomeSectionText(title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash)) {
                     router.route(to: \.library, viewModel.libraryCoordinatorParameters)
                 }
-                HomeItemRow(items: viewModel.items, size: .five, focusPrefix: "nextup", focusedImage: focusedImage)
+                HomeItemRow(items: viewModel.items, size: .five, focusPrefix: "lib_\(viewModel.parent?.id ?? "XXX")", focusedImage: focusedImage)
             }
         }
     }

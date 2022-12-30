@@ -294,6 +294,8 @@ internal enum L10n {
   internal static let rated = L10n.tr("Localizable", "rated", fallback: "Rated")
   /// Recently Added
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
+  /// Recently added items from all libraries
+  internal static let recentlyAddedText = L10n.tr("Localizable", "recentlyAddedText", fallback: "Recently added items from all libraries")
   /// Recommended
   internal static let recommended = L10n.tr("Localizable", "recommended", fallback: "Recommended")
   /// Refresh
@@ -424,6 +426,10 @@ internal enum L10n {
   internal static let tags = L10n.tr("Localizable", "tags", fallback: "Tags")
   /// Too Many Redirects
   internal static let tooManyRedirects = L10n.tr("Localizable", "tooManyRedirects", fallback: "Too Many Redirects")
+  /// Top rated
+  internal static let topRated = L10n.tr("Localizable", "topRated", fallback: "Top rated")
+  /// Most critically acclaimed movies according to IMDb
+  internal static let topRatedText = L10n.tr("Localizable", "topRatedText", fallback: "Most critically acclaimed movies according to IMDb")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "tryAgain", fallback: "Try again")
   /// TV Shows

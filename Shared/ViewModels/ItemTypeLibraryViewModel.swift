@@ -14,15 +14,10 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
 
     let itemTypes: [BaseItemKind]
     let filterViewModel: FilterViewModel
-    let pageItemSizeOverride: Int?
 
-    convenience init(itemTypes: [BaseItemKind], filters: ItemFilters) {
-        self.init(itemTypes: itemTypes, filters: filters, pageItemSize: nil)
-    }
-    init(itemTypes: [BaseItemKind], filters: ItemFilters, pageItemSize: Int?) {
+    init(itemTypes: [BaseItemKind], filters: ItemFilters) {
         self.itemTypes = itemTypes
         self.filterViewModel = .init(parent: nil, currentFilters: filters)
-        self.pageItemSizeOverride = pageItemSize
         super.init()
 
         filterViewModel.$currentFilters
@@ -44,7 +39,6 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
         let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-        let pageItemSize = pageItemSizeOverride ?? pageItemSize
         
         ItemsAPI.getItemsByUserId(
             userId: SessionManager.main.currentLogin.user.id,

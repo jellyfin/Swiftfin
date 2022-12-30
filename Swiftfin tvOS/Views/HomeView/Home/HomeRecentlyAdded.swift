@@ -22,12 +22,12 @@ extension HomeView {
         var body: some View {
             Group {
                 if hasHero {
-                    HomeSectionText(title: L10n.recentlyAdded, subtitle: "Recently added items from all libraries", callback: callback)
+                    HomeSectionText(title: L10n.recentlyAdded, subtitle: L10n.recentlyAddedText, callback: callback)
                         .frame(height: heroVisible && hasHero ? 0 : .infinity)
                         .animation(.easeInOut(duration: 0.25), value: heroVisible)
                         .opacity(heroVisible && hasHero ? 0 : 1)
                 } else {
-                    HomeSectionText(title: L10n.recentlyAdded, subtitle: "Recently added items from all libraries", visible: !heroVisible, callback: callback)
+                    HomeSectionText(title: L10n.recentlyAdded, subtitle: L10n.recentlyAddedText, visible: !heroVisible, callback: callback)
                 }
                 
                 HomeItemRow(items: viewModel.items, size: .four, focusPrefix: "recentlyadded", focusedImage: focusedImage)

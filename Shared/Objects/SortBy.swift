@@ -14,6 +14,7 @@ public enum SortBy: String, Codable, CaseIterable {
     case name = "SortName"
     case dateAdded = "DateCreated"
     case random = "Random"
+    case communityRating = "CommunityRating"
 
     // TODO: Localize
     var localized: String {
@@ -26,6 +27,8 @@ public enum SortBy: String, Codable, CaseIterable {
             return "Date added"
         case .random:
             return "Random"
+        case .communityRating:
+            return "IMDb rating"
         }
     }
 
