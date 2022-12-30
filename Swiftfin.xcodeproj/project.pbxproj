@@ -15,6 +15,7 @@
 		3AB136F2295DCEE5008431C9 /* HomeItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB136F1295DCEE5008431C9 /* HomeItemRow.swift */; };
 		3AB136F6295DD007008431C9 /* HomeSectionText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB136F5295DD007008431C9 /* HomeSectionText.swift */; };
 		3AB136F8295DFA1D008431C9 /* HomeRecentlyAdded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB136F7295DFA1D008431C9 /* HomeRecentlyAdded.swift */; };
+		3AB136FA295EFA82008431C9 /* HomeLibraryRecentlyAdded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB136F9295EFA82008431C9 /* HomeLibraryRecentlyAdded.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		531690F7267ACC00005D8AB9 /* LandscapeItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */; };
 		53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
@@ -610,6 +611,7 @@
 		3AB136F1295DCEE5008431C9 /* HomeItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeItemRow.swift; sourceTree = "<group>"; };
 		3AB136F5295DD007008431C9 /* HomeSectionText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSectionText.swift; sourceTree = "<group>"; };
 		3AB136F7295DFA1D008431C9 /* HomeRecentlyAdded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecentlyAdded.swift; sourceTree = "<group>"; };
+		3AB136F9295EFA82008431C9 /* HomeLibraryRecentlyAdded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLibraryRecentlyAdded.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531690F6267ACC00005D8AB9 /* LandscapeItemElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapeItemElement.swift; sourceTree = "<group>"; };
 		531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlainNavigationLinkButton.swift; sourceTree = "<group>"; };
@@ -1100,6 +1102,7 @@
 				3AB136F1295DCEE5008431C9 /* HomeItemRow.swift */,
 				3AB136F5295DD007008431C9 /* HomeSectionText.swift */,
 				3AB136F7295DFA1D008431C9 /* HomeRecentlyAdded.swift */,
+				3AB136F9295EFA82008431C9 /* HomeLibraryRecentlyAdded.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -1270,7 +1273,6 @@
 		536D3D77267BB9650004248C /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				3AB136EF295DCEC2008431C9 /* Home */,
 				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
 				E1E5D5432783BB5100692DFE /* ItemDetailsView.swift */,
@@ -2082,6 +2084,7 @@
 		E1A42E4D28CBD3B200A14DCB /* HomeView */ = {
 			isa = PBXGroup;
 			children = (
+				3AB136EF295DCEC2008431C9 /* Home */,
 				E12CC1C328D12D6300678D5D /* Components */,
 				E1A42E4B28CBD39300A14DCB /* HomeContentView.swift */,
 				E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */,
@@ -2667,6 +2670,7 @@
 				E193D53C27193F9500900D82 /* UserListCoordinator.swift in Sources */,
 				E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E18CE0B528A22EDD0092E7F1 /* RepeatingTimer.swift in Sources */,
+				3AB136FA295EFA82008431C9 /* HomeLibraryRecentlyAdded.swift in Sources */,
 				E13DD3C927164B1E009D4DAF /* UIDeviceExtensions.swift in Sources */,
 				E193D53A27193F9000900D82 /* ServerListCoordinator.swift in Sources */,
 				6220D0AE26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
@@ -3098,7 +3102,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = N8AA4S3S96;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Swiftfin tvOS/Info.plist";
@@ -3107,7 +3111,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.jellyfin.swiftfin-rfk";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
@@ -3127,7 +3131,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = N8AA4S3S96;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Swiftfin tvOS/Info.plist";
@@ -3136,7 +3140,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.jellyfin.swiftfin-rfk";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_EMIT_LOC_STRINGS = YES;

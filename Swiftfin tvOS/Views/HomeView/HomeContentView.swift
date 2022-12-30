@@ -20,7 +20,8 @@ extension HomeView {
         @State private var hasHero = true
         @State private var heroVisible = true
         
-        let recentlyAddedViewModel = ItemTypeLibraryViewModel(itemTypes: [.movie, .series], filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter]), pageItemSize: 20)
+        @State var recentlyAddedViewModel: ItemTypeLibraryViewModel?
+        @State var recentlyAddedLibrariesViewModels: [String: LibraryViewModel] = [:]
 
         var body: some View {
             GeometryReader { geoReader in
@@ -32,18 +33,17 @@ extension HomeView {
                         if hasHero {
                             // Substract the hight of the first column plus the hight of its text (20) and a bit of spacing from the hight of the screen
                             // Because all tvOS devices are 16:9 and use the same amount of points at any resolution this is fine
-                            Spacer(minLength: UIScreen.main.bounds.height - ((HomeItemRow.Columns.five.rawValue / (16 / 9)) * 1.11 + (heroVisible ? 200 : 125) - 20))
+                            Spacer(minLength: UIScreen.main.bounds.height - ((HomeItemRow.Columns.five.rawValue / (16 / 9)) * 1.11 + (heroVisible ? 230 : 125) - 20))
                                 .id(FocusSection.spacer)
                             
                             VStack {
-                                // TODO: only set increaseOffset to true when the focus is directly below it
-                                HomeSectionText(title: L10n.nextUp, visible: !heroVisible, increaseOffset: focusedImage?.starts(with: "hero") ?? false)
+                                HomeSectionText(title: L10n.nextUp, visible: !heroVisible)
                                 HomeItemRow(items: heroContent, size: .five, focusPrefix: "hero", focusedImage: $focusedImage)
                             }
                             .id(FocusSection.hero)
                             .focused($focusedSection, equals: .hero)
                             .focusSection()
-                            .padding(.bottom, -25)
+                            .padding(.bottom, heroVisible ? -25 : 0)
                             .onAppear {
                                 hasHero = !heroContent.isEmpty
                                 
@@ -54,8 +54,14 @@ extension HomeView {
                         }
                         
                         // Content section
-                        Group {                            
-                            HomeRecentlyAdded(viewModel: recentlyAddedViewModel, hasHero: $hasHero, heroVisible: $heroVisible, focusedImage: $focusedImage)
+                        Group {
+                            if let recentlyAddedViewModel = recentlyAddedViewModel {
+                                HomeRecentlyAdded(viewModel: recentlyAddedViewModel, hasHero: $hasHero, heroVisible: $heroVisible, focusedImage: $focusedImage)
+                            }
+                            
+                            ForEach(recentlyAddedLibrariesViewModels.sorted(by: { $0.key < $1.key }), id: \.key) {
+                                HomeLibraryRecentlyAdded(viewModel: $1, focusedImage: $focusedImage)
+                            }
                         }
                         .id(FocusSection.content)
                         .focused($focusedSection, equals: .content)
@@ -123,6 +129,15 @@ extension HomeView {
                                 Gradient(colors: [.black.opacity(0.75), .black.opacity(0)]),
                                 startPoint: .bottom,
                                 endPoint: .center)
+                    }
+                }
+                .onAppear {
+                    if viewModel.hasRecentlyAdded {
+                        recentlyAddedViewModel = ItemTypeLibraryViewModel(itemTypes: [.movie, .series], filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter]), pageItemSize: 20)
+                    }
+                    
+                    viewModel.libraries.forEach { library in
+                        recentlyAddedLibrariesViewModels[library.id!] = LibraryViewModel(parent: library, type: .library, filters: .recent)
                     }
                 }
                 .ignoresSafeArea()
