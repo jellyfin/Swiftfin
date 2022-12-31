@@ -48,12 +48,13 @@ extension HomeView {
                             // fine
                             Spacer(
                                 minLength: UIScreen.main.bounds
-                                    .height - ((HomeItemRow.Columns.five.rawValue / (16 / 9)) * 1.11 + (heroVisible ? 230 : 125) - 20)
+                                    .height - ((HomeItemRow.Columns.five.rawValue / (16 / 9)) * 1.11 + (heroVisible ? 220 : 125) - 20)
                             )
                             .id(FocusSection.spacer)
 
                             VStack {
                                 HomeSectionText(title: L10n.nextUp, visible: !heroVisible)
+                                    .padding(.bottom, -10)
                                 HomeItemRow(items: heroContent, size: .five, focusPrefix: "hero", focusedImage: $focusedImage)
                             }
                             .id(FocusSection.hero)
@@ -160,7 +161,7 @@ extension HomeView {
                     }
                 }
                 .onAppear {
-                    if viewModel.hasRecentlyAdded && recentlyAddedViewModel != nil {
+                    if viewModel.hasRecentlyAdded && recentlyAddedViewModel == nil {
                         recentlyAddedViewModel = ItemTypeLibraryViewModel(
                             itemTypes: [.movie, .series],
                             filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])

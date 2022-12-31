@@ -304,6 +304,10 @@ internal enum L10n {
   internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
   /// Released
   internal static let released = L10n.tr("Localizable", "released", fallback: "Released")
+  /// %@ remaining
+  internal static func remaining(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "remaining", String(describing: p1), fallback: "%@ remaining")
+  }
   /// Remaining Time
   internal static let remainingTime = L10n.tr("Localizable", "remainingTime", fallback: "Remaining Time")
   /// Remove

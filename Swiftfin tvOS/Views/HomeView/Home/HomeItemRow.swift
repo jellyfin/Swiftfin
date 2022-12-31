@@ -32,28 +32,49 @@ extension HomeView {
                             let isFocused = focusedImage.wrappedValue == focusName
 
                             VStack {
-                                ImageView(item.landscapePosterImageSources(maxWidth: size.rawValue))
-                                    .aspectRatio(16 / 9, contentMode: .fit)
-                                    .cornerRadius(7.5)
-                                    .frame(width: size.rawValue, height: size.rawValue / (16 / 9))
+                                Button {
+                                    router.route(to: \.item, item)
+                                } label: {
+                                    ImageView(item.landscapePosterImageSources(maxWidth: size.rawValue))
+                                        .aspectRatio(16 / 9, contentMode: .fit)
+                                        .cornerRadius(7.5)
+                                        .frame(width: size.rawValue, height: size.rawValue / (16 / 9))
+                                        .overlay {
+                                            if let progress = item.userData?.playedPercentage, progress != 0 {
+                                                ZStack(alignment: .bottom) {
+                                                    LinearGradient
+                                                        .linearGradient(
+                                                            Gradient(colors: [.black.opacity(0.75), .black.opacity(0)]),
+                                                            startPoint: .bottom,
+                                                            endPoint: .center
+                                                        )
+                                                        .animation(.easeInOut(duration: 0.25), value: isFocused)
+                                                        .opacity(isFocused ? 1 : 0)
 
-                                    .focusable()
-                                    .focused(focusedImage, equals: focusName)
-                                    .scaleEffect(isFocused ? 1.11 : 1, anchor: isHero ? .bottom : .center)
-                                    .animation(.easeInOut(duration: 0.25), value: focusedImage.wrappedValue)
-                                    .overlay {
-                                        if let progress = item.userData?.playedPercentage, progress != 0 {
-                                            VStack {
-                                                Spacer()
-                                                ProgressBar(progress: progress / 100)
-                                                    .frame(height: 5)
+                                                    VStack(alignment: .leading) {
+                                                        Spacer()
+
+                                                        Text(L10n.remaining(item.progress ?? "?"))
+                                                            .bold()
+                                                            .font(.caption2)
+                                                            .textCase(.uppercase)
+                                                            .padding(.bottom, -15)
+                                                            .animation(.easeInOut(duration: 0.25), value: isFocused)
+                                                            .opacity(isFocused ? 1 : 0)
+
+                                                        ProgressBar(progress: progress / 100)
+                                                            .frame(height: 5)
+                                                    }
+                                                    .padding(10)
+                                                }
                                             }
-                                            .padding(10)
                                         }
-                                    }
-                                    .onTapGesture {
-                                        router.route(to: \.item, item)
-                                    }
+                                }
+                                // This should apply
+                                .buttonStyle(CardButtonStyle())
+                                .focused(focusedImage, equals: focusName)
+                                .animation(.easeInOut(duration: 0.25), value: focusedImage.wrappedValue)
+                                .padding(.bottom, isFocused && isHero ? 11 : 0)
 
                                 HStack(spacing: 0) {
                                     Text(item.displayName)
@@ -70,8 +91,7 @@ extension HomeView {
                                         Text("E\(indexNumber)")
                                     }
                                 }
-                                // .frame(width: size.rawValue, height: 30)
-                                .font(.system(.caption, design: .rounded))
+                                .font(.caption)
                                 .offset(y: !isHero && isFocused ? 10 : 0)
                                 .animation(.easeInOut(duration: 0.25), value: focusedImage.wrappedValue)
                                 .foregroundColor(Color.gray)
