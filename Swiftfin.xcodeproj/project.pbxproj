@@ -906,6 +906,7 @@
 		E193D54A271941D300900D82 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		E193D54F2719430400900D82 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainTabCoordinator.swift; sourceTree = "<group>"; };
+		E1998B2B295B8BB50015F535 /* Swiftfin tvOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Swiftfin tvOS.entitlements"; sourceTree = "<group>"; };
 		E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomEdgeGradientModifier.swift; sourceTree = "<group>"; };
 		E1A16C9C2889AF1E00EA4679 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		E1A16CA0288A7CFD00EA4679 /* AboutViewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewCard.swift; sourceTree = "<group>"; };
@@ -1191,6 +1192,7 @@
 				536D3D77267BB9650004248C /* Components */,
 				535870702669D21700D05A09 /* Info.plist */,
 				E185920B28CEF23F00326F80 /* Objects */,
+				E1998B2B295B8BB50015F535 /* Swiftfin tvOS.entitlements */,
 				535870682669D21700D05A09 /* Preview Content */,
 				E12186E02718F23B0010884C /* Views */,
 			);
@@ -3075,6 +3077,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Dev App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Swiftfin tvOS/Swiftfin tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
@@ -3104,6 +3107,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Swiftfin tvOS/Swiftfin tvOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
