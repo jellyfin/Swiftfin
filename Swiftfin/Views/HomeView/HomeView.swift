@@ -22,7 +22,7 @@ struct HomeView: View {
             if let errorMessage = viewModel.errorMessage {
                 ErrorView(
                     viewModel: viewModel,
-                    errorMessage: .init(code: -1, title: L10n.error, message: errorMessage)
+                    errorMessage: .init(message: errorMessage, code: -1)
                 )
             } else if viewModel.isLoading {
                 ProgressView()

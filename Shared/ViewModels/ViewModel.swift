@@ -17,6 +17,9 @@ class ViewModel: ObservableObject {
 
     @Injected(Container.userSession)
     var userSession
+    
+    @Published
+    var error: ErrorMessage? = nil
 
     @Published
     var isLoading = false

@@ -24,7 +24,6 @@
 		534D4FF726A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEB26A7D7CC000A7A48 /* Localizable.strings */; };
 		535870632669D21600D05A09 /* SwiftfinApp_tvOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870622669D21600D05A09 /* SwiftfinApp_tvOS.swift */; };
 		535870672669D21700D05A09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870662669D21700D05A09 /* Assets.xcassets */; };
-		5358706A2669D21700D05A09 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870692669D21700D05A09 /* Preview Assets.xcassets */; };
 		5358707E2669D64F00D05A09 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		535870912669D7A800D05A09 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 535870902669D7A800D05A09 /* Introspect */; };
 		535870AD2669D8DD00D05A09 /* ItemFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* ItemFilters.swift */; };
@@ -34,7 +33,6 @@
 		536D3D78267BD5C30004248C /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625CB57B2678CE1000530A6E /* ViewModel.swift */; };
 		5377CBF5263B596A003A4E83 /* SwiftfinApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5377CBF4263B596A003A4E83 /* SwiftfinApp.swift */; };
 		5377CBF9263B596B003A4E83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
-		5377CBFC263B596B003A4E83 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBFB263B596B003A4E83 /* Preview Assets.xcassets */; };
 		53913BEF26D323FE00EB3286 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53913BC926D323FE00EB3286 /* Localizable.strings */; };
 		53913BF026D323FE00EB3286 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53913BC926D323FE00EB3286 /* Localizable.strings */; };
 		53913BF226D323FE00EB3286 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53913BCC26D323FE00EB3286 /* Localizable.strings */; };
@@ -741,7 +739,6 @@
 		535870602669D21600D05A09 /* Swiftfin tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		535870622669D21600D05A09 /* SwiftfinApp_tvOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinApp_tvOS.swift; sourceTree = "<group>"; };
 		535870662669D21700D05A09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		535870692669D21700D05A09 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		535870702669D21700D05A09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		535870AC2669D8DD00D05A09 /* ItemFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemFilters.swift; sourceTree = "<group>"; };
 		535BAE9E2649E569005FA86D /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
@@ -766,7 +763,6 @@
 		5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5377CBF4263B596A003A4E83 /* SwiftfinApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfinApp.swift; sourceTree = "<group>"; };
 		5377CBF8263B596B003A4E83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5377CBFB263B596B003A4E83 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5377CC02263B596B003A4E83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		53913BCA26D323FE00EB3286 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Localizable.strings; sourceTree = "<group>"; };
 		53913BCD26D323FE00EB3286 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = Localizable.strings; sourceTree = "<group>"; };
@@ -1397,18 +1393,9 @@
 				536D3D77267BB9650004248C /* Components */,
 				535870702669D21700D05A09 /* Info.plist */,
 				E185920B28CEF23F00326F80 /* Objects */,
-				535870682669D21700D05A09 /* Preview Content */,
 				E12186E02718F23B0010884C /* Views */,
 			);
 			path = "Swiftfin tvOS";
-			sourceTree = "<group>";
-		};
-		535870682669D21700D05A09 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				535870692669D21700D05A09 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		535870752669D60C00D05A09 /* Shared */ = {
@@ -1519,18 +1506,9 @@
 				E1DD1127271E7D15005BE12F /* Objects */,
 				E13D02842788B634000FCB04 /* Swiftfin.entitlements */,
 				E11CEB85289984F5003E74C7 /* Extensions */,
-				5377CBFA263B596B003A4E83 /* Preview Content */,
 				E13DD3D027165886009D4DAF /* Views */,
 			);
 			path = Swiftfin;
-			sourceTree = "<group>";
-		};
-		5377CBFA263B596B003A4E83 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				5377CBFB263B596B003A4E83 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		53913BC826D323FE00EB3286 /* fr.lproj */ = {
@@ -2774,7 +2752,6 @@
 				534D4FF726A7D7CC000A7A48 /* Localizable.strings in Resources */,
 				53913BF326D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913BF626D323FE00EB3286 /* Localizable.strings in Resources */,
-				5358706A2669D21700D05A09 /* Preview Assets.xcassets in Resources */,
 				53913C0526D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913BFF26D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913C0E26D323FE00EB3286 /* Localizable.strings in Resources */,
@@ -2798,7 +2775,6 @@
 				53913C0126D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913C1326D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913BF826D323FE00EB3286 /* Localizable.strings in Resources */,
-				5377CBFC263B596B003A4E83 /* Preview Assets.xcassets in Resources */,
 				534D4FF626A7D7CC000A7A48 /* Localizable.strings in Resources */,
 				53913BF226D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913BF526D323FE00EB3286 /* Localizable.strings in Resources */,
@@ -3563,7 +3539,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
-				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -3592,7 +3568,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
-				DEVELOPMENT_ASSET_PATHS = "\"Swiftfin tvOS/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";

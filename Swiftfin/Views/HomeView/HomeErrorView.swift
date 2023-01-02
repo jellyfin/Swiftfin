@@ -30,7 +30,9 @@ extension HomeView {
                         .frame(width: 100, height: 100)
                 }
 
-                Text("\(errorMessage.code)")
+                if let code = errorMessage.code {
+                    Text("\(code)")
+                }
 
                 Text(errorMessage.message)
                     .frame(minWidth: 50, maxWidth: 240)
