@@ -21,28 +21,29 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @Route(.push)
     var about = makeAbout
-    #if !os(tvOS)
-    @Route(.push)
-    var appIconSelector = makeAppIconSelector
-    #endif
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
-    #if !os(tvOS)
-    @Route(.push)
-    var nativePlayerSettings = makeNativePlayerSettings
-    #endif
     @Route(.push)
     var serverDetail = makeServerDetail
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
 
-    #if !os(tvOS)
+    #if os(iOS)
     @Route(.push)
-    var quickConnect = makeQuickConnectSettings
+    var appIconSelector = makeAppIconSelector
     @Route(.push)
     var log = makeLog
+    @Route(.push)
+    var nativePlayerSettings = makeNativePlayerSettings
+    @Route(.push)
+    var quickConnect = makeQuickConnectSettings
+    #endif
+    
+    #if os(tvOS)
+    @Route(.modal)
+    var appearanceSelector = makeAppearanceSelector
     #endif
 
     private let viewModel: SettingsViewModel
@@ -56,13 +57,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
         AboutAppView(viewModel: viewModel)
     }
 
-    #if !os(tvOS)
-    @ViewBuilder
-    func makeAppIconSelector() -> some View {
-        AppIconSelectorView(viewModel: viewModel)
-    }
-    #endif
-
     @ViewBuilder
     func makeCustomizeViewsSettings() -> some View {
         CustomizeViewsSettings()
@@ -73,13 +67,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
         ExperimentalSettingsView()
     }
 
-    #if !os(tvOS)
-    @ViewBuilder
-    func makeNativePlayerSettings() -> some View {
-        NativeVideoPlayerSettingsView()
-    }
-    #endif
-
     @ViewBuilder
     func makeServerDetail() -> some View {
         ServerDetailView(viewModel: .init(server: .sample))
@@ -89,15 +76,34 @@ final class SettingsCoordinator: NavigationCoordinatable {
         VideoPlayerSettingsCoordinator()
     }
 
-    #if !os(tvOS)
+    #if os(iOS)
     @ViewBuilder
-    func makeQuickConnectSettings() -> some View {
-        QuickConnectSettingsView(viewModel: .init())
+    func makeAppIconSelector() -> some View {
+        AppIconSelectorView(viewModel: viewModel)
     }
 
     @ViewBuilder
     func makeLog() -> some View {
         ConsoleView()
+    }
+    
+    @ViewBuilder
+    func makeNativePlayerSettings() -> some View {
+        NativeVideoPlayerSettingsView()
+    }
+    
+    @ViewBuilder
+    func makeQuickConnectSettings() -> some View {
+        QuickConnectSettingsView(viewModel: .init())
+    }
+    #endif
+
+    #if os(tvOS)
+    @ViewBuilder
+    func makeAppearanceSelector() -> some View {
+        NavigationView {
+            AppAppearanceSelector()
+        }
     }
     #endif
 

@@ -46,7 +46,7 @@ final class UserSignInViewModel: ViewModel {
             .trimmingCharacters(in: .objectReplacement)
 
         let response = try await client.signIn(username: username, password: password)
-        let user = try createLocalUser(response: response)
+        let user = try await createLocalUser(response: response)
 
         Defaults[.lastServerUserID] = user.id
         Container.userSession.reset()
@@ -120,14 +120,15 @@ final class UserSignInViewModel: ViewModel {
     func signIn(quickConnectSecret: String) async throws {
         let quickConnectPath = Paths.authenticateWithQuickConnect(.init(secret: quickConnectSecret))
         let response = try await client.send(quickConnectPath)
-        let user = try createLocalUser(response: response.value)
+        let user = try await createLocalUser(response: response.value)
 
         Defaults[.lastServerUserID] = user.id
         Container.userSession.reset()
         Notifications[.didSignIn].post()
     }
 
-    private func createLocalUser(response: AuthenticationResult) throws -> UserState {
+    @MainActor
+    private func createLocalUser(response: AuthenticationResult) async throws -> UserState {
         guard let accessToken = response.accessToken,
               let username = response.user?.name,
               let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }

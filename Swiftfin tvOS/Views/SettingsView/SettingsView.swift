@@ -8,153 +8,72 @@
 
 import CoreData
 import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct SettingsView: View {
+    
+    @Injected(Container.userSession)
+    private var userSession
 
     @EnvironmentObject
-    private var settingsRouter: SettingsCoordinator.Router
+    private var router: SettingsCoordinator.Router
+    
     @ObservedObject
     var viewModel: SettingsViewModel
 
     var body: some View {
-        Text("")
+        SplitFormWindowView()
+            .descriptionView {
+                Image(uiImage: UIImage(named: "App Icon")!)
+                    .resizable()
+                    .aspectRatio(1.667, contentMode: .fit)
+                    .cornerRadius(30)
+                    .shadow(radius: 10, x: 0, y: 10)
+                    .padding()
+            }
+            .contentView {
+                Section {
+                    
+                    Button {} label: {
+                        TextPairView(
+                            leading: L10n.user,
+                            trailing: userSession.user.username
+                        )
+                    }
+                    
+                    ChevronButton(
+                        title: L10n.server,
+                        subtitle: userSession.server.name
+                    )
+//                    .onSelect {
+//                        router.route(to: \.serverDetail)
+//                    }
+                    
+                    Button {
+                        
+                    } label: {
+                        L10n.switchUser.text
+                            .foregroundColor(.jellyfinPurple)
+                    }
+                }
+                
+                Section {
+                    ChevronButton(title: L10n.appearance)
+                        .onSelect {
+                            router.route(to: \.appearanceSelector)
+                        }
+                } header: {
+                    L10n.appearance.text
+                }
+            }
     }
+}
 
-//    @Default(.videoPlayerJumpForward)
-//    var jumpForwardLength
-//    @Default(.videoPlayerJumpBackward)
-//    var jumpBackwardLength
-//    @Default(.downActionShowsMenu)
-//    var downActionShowsMenu
-//    @Default(.confirmClose)
-//    var confirmClose
-//    @Default(.resumeOffset)
-//    var resumeOffset
-//    @Default(.subtitleSize)
-//    var subtitleSize
-//
-//    var body: some View {
-//        GeometryReader { reader in
-//            HStack {
-//
-//                Image(uiImage: UIImage(named: "App Icon")!)
-//                    .cornerRadius(30)
-//                    .scaleEffect(2)
-//                    .frame(width: reader.size.width / 2)
-//
-//                Form {
-//                    Section(header: EmptyView()) {
-//
-//                        Button {} label: {
-//                            HStack {
-//                                L10n.user.text
-//                                Spacer()
-//                                Text(viewModel.user.username)
-//                                    .foregroundColor(.jellyfinPurple)
-//                            }
-//                        }
-//
-//                        Button {
-//                            settingsRouter.route(to: \.serverDetail)
-//                        } label: {
-//                            HStack {
-//                                L10n.server.text
-//                                    .foregroundColor(.primary)
-//                                Spacer()
-//                                Text(viewModel.server.name)
-//                                    .foregroundColor(.jellyfinPurple)
-//
-//                                Image(systemName: "chevron.right")
-//                                    .foregroundColor(.jellyfinPurple)
-//                            }
-//                        }
-//
-//                        Button {
-//                            SessionManager.main.logout()
-//                        } label: {
-//                            L10n.switchUser.text
-//                                .foregroundColor(Color.jellyfinPurple)
-//                                .font(.callout)
-//                        }
-//                    }
-//
-//                    Section(header: L10n.videoPlayer.text) {
-//                        Picker(L10n.jumpForwardLength, selection: $jumpForwardLength) {
-//                            ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
-//                                Text(length.label).tag(length.rawValue)
-//                            }
-//                        }
-//
-//                        Picker(L10n.jumpBackwardLength, selection: $jumpBackwardLength) {
-//                            ForEach(VideoPlayerJumpLength.allCases, id: \.self) { length in
-//                                Text(length.label).tag(length.rawValue)
-//                            }
-//                        }
-//
-//                        Toggle(L10n.resume5SecondOffset, isOn: $resumeOffset)
-//
-//                        Toggle(L10n.pressDownForMenu, isOn: $downActionShowsMenu)
-//
-//                        Toggle(L10n.confirmClose, isOn: $confirmClose)
-//
-//                        Button {
-//                            settingsRouter.route(to: \.overlaySettings)
-//                        } label: {
-//                            HStack {
-//                                L10n.overlay.text
-//                                    .foregroundColor(.primary)
-//                                Spacer()
-//                                Image(systemName: "chevron.right")
-//                            }
-//                        }
-//
-//                        Button {
-//                            settingsRouter.route(to: \.experimentalSettings)
-//                        } label: {
-//                            HStack {
-//                                L10n.experimental.text
-//                                    .foregroundColor(.primary)
-//                                Spacer()
-//                                Image(systemName: "chevron.right")
-//                            }
-//                        }
-//                    }
-//
-//                    Section(header: L10n.accessibility.text) {
-//                        Button {
-//                            settingsRouter.route(to: \.customizeViewsSettings)
-//                        } label: {
-//                            HStack {
-//                                L10n.customize.text
-//                                    .foregroundColor(.primary)
-//                                Spacer()
-//                                Image(systemName: "chevron.right")
-//                            }
-//                        }
-//
-//                        Picker(L10n.subtitleSize, selection: $subtitleSize) {
-//                            ForEach(SubtitleSize.allCases, id: \.self) { size in
-//                                Text(size.label).tag(size.rawValue)
-//                            }
-//                        }
-//                    }
-//
-//                    Section {
-//                        Button {} label: {
-//                            HStack {
-//                                L10n.version.text
-//                                Spacer()
-//                                Text("\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))")
-//                                    .foregroundColor(.secondary)
-//                            }
-//                        }
-//                    } header: {
-//                        L10n.about.text
-//                    }
-//                }
-//            }
-//        }
-//    }
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsView(viewModel: .init())
+            .preferredColorScheme(.light)
+    }
 }

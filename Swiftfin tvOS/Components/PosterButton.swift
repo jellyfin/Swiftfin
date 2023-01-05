@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
+struct PosterButton<Item: Poster>: View {
 
     @FocusState
     private var isFocused: Bool
@@ -17,9 +17,9 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var type: PosterType
     private var itemScale: CGFloat
     private var horizontalAlignment: HorizontalAlignment
-    private var content: () -> Content
-    private var imageOverlay: () -> ImageOverlay
-    private var contextMenu: () -> ContextMenu
+    private var content: () -> any View
+    private var imageOverlay: () -> any View
+    private var contextMenu: () -> any View
     private var onSelect: () -> Void
     private var onFocus: () -> Void
     private var singleImage: Bool
@@ -51,17 +51,20 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                 }
                 .overlay {
                     imageOverlay()
+                        .eraseToAnyView()
                         .posterStyle(type: type, width: itemWidth)
                 }
             }
             .buttonStyle(.card)
             .contextMenu(menuItems: {
                 contextMenu()
+                    .eraseToAnyView()
             })
             .posterShadow()
             .focused($isFocused)
 
             content()
+                .eraseToAnyView()
                 .zIndex(-1)
         }
         .frame(width: itemWidth)
@@ -72,17 +75,14 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     }
 }
 
-extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
-    ImageOverlay == EmptyView,
-    ContextMenu == EmptyView
-{
+extension PosterButton {
     init(item: Item, type: PosterType, singleImage: Bool = false) {
         self.init(
             item: item,
             type: type,
             itemScale: 1,
             horizontalAlignment: .leading,
-            content: { PosterButtonDefaultContentView(item: item) },
+            content: { DefaultContentView(item: item) },
             imageOverlay: { EmptyView() },
             contextMenu: { EmptyView() },
             onSelect: {},
@@ -93,6 +93,7 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
 }
 
 extension PosterButton {
+    
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
     }
@@ -102,51 +103,54 @@ extension PosterButton {
     }
 
     @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> PosterButton<Item, C, ImageOverlay, ContextMenu> {
-        PosterButton<Item, C, ImageOverlay, ContextMenu>(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            onFocus: onFocus,
-            singleImage: singleImage
-        )
+    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.content, with: content)
+//        PosterButton<Item, C, ImageOverlay, ContextMenu>(
+//            item: item,
+//            type: type,
+//            itemScale: itemScale,
+//            horizontalAlignment: horizontalAlignment,
+//            content: content,
+//            imageOverlay: imageOverlay,
+//            contextMenu: contextMenu,
+//            onSelect: onSelect,
+//            onFocus: onFocus,
+//            singleImage: singleImage
+//        )
     }
 
     @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping () -> O) -> PosterButton<Item, Content, O, ContextMenu> {
-        PosterButton<Item, Content, O, ContextMenu>(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            onFocus: onFocus,
-            singleImage: singleImage
-        )
+    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.imageOverlay, with: content)
+//        PosterButton<Item, Content, O, ContextMenu>(
+//            item: item,
+//            type: type,
+//            itemScale: itemScale,
+//            horizontalAlignment: horizontalAlignment,
+//            content: content,
+//            imageOverlay: imageOverlay,
+//            contextMenu: contextMenu,
+//            onSelect: onSelect,
+//            onFocus: onFocus,
+//            singleImage: singleImage
+//        )
     }
 
     @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping () -> M) -> PosterButton<Item, Content, ImageOverlay, M> {
-        PosterButton<Item, Content, ImageOverlay, M>(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            onFocus: onFocus,
-            singleImage: singleImage
-        )
+    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.contextMenu, with: content)
+//        PosterButton<Item, Content, ImageOverlay, M>(
+//            item: item,
+//            type: type,
+//            itemScale: itemScale,
+//            horizontalAlignment: horizontalAlignment,
+//            content: content,
+//            imageOverlay: imageOverlay,
+//            contextMenu: contextMenu,
+//            onSelect: onSelect,
+//            onFocus: onFocus,
+//            singleImage: singleImage
+//        )
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
@@ -160,26 +164,29 @@ extension PosterButton {
 
 // MARK: default content view
 
-struct PosterButtonDefaultContentView<Item: Poster>: View {
+extension PosterButton {
+    
+    struct DefaultContentView: View {
 
-    let item: Item
+        let item: Item
 
-    var body: some View {
-        VStack(alignment: .leading) {
-            if item.showTitle {
-                Text(item.displayTitle)
-                    .font(.footnote)
-                    .fontWeight(.regular)
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
-            }
+        var body: some View {
+            VStack(alignment: .leading) {
+                if item.showTitle {
+                    Text(item.displayTitle)
+                        .font(.footnote)
+                        .fontWeight(.regular)
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                }
 
-            if let description = item.subtitle {
-                Text(description)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
+                if let description = item.subtitle {
+                    Text(description)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
             }
         }
     }

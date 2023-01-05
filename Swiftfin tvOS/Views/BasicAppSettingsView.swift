@@ -38,17 +38,6 @@ struct BasicAppSettingsView: View {
                 L10n.about.text
             }
 
-            // TODO: Implement once design is theme appearance friendly
-            //			Section {
-            //				Picker(L10n.appearance, selection: $appAppearance) {
-            //					ForEach(self.viewModel.appearances, id: \.self) { appearance in
-            //						Text(appearance.localizedName).tag(appearance.rawValue)
-            //					}
-            //				}
-            //			} header: {
-            //				L10n.accessibility.text
-            //			}
-
             Button {
                 resetTapped = true
             } label: {

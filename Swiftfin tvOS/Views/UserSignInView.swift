@@ -20,12 +20,17 @@ struct UserSignInView: View {
 
     @ObservedObject
     var viewModel: UserSignInViewModel
+    
     @State
-    private var username: String = ""
+    private var isPresentingQuickConnect: Bool = false
     @State
     private var password: String = ""
     @State
-    private var presentQuickConnect: Bool = false
+    private var signInError: Error?
+    @State
+    private var signInTask: Task<Void, Never>?
+    @State
+    private var username: String = ""
 
     @FocusState
     private var focusedField: FocusedField?
@@ -45,7 +50,19 @@ struct UserSignInView: View {
                     .focused($focusedField, equals: .password)
 
                 Button {
-//                    viewModel.signIn(username: username, password: password)
+                    let task = Task {
+                        viewModel.isLoading = true
+                        
+                        do {
+                            try await viewModel.signIn(username: username, password: password)
+                        } catch {
+                            signInError = error
+                        }
+                        
+                        viewModel.isLoading = false
+                    }
+                    
+                    signInTask = task
                 } label: {
                     HStack {
                         if viewModel.isLoading {
@@ -64,7 +81,7 @@ struct UserSignInView: View {
                 .buttonStyle(.card)
 
                 Button {
-                    presentQuickConnect = true
+                    isPresentingQuickConnect = true
                 } label: {
                     L10n.quickConnect.text
                         .frame(height: 75)
@@ -141,7 +158,7 @@ struct UserSignInView: View {
                     .frame(maxWidth: .infinity)
 
                 Button {
-                    presentQuickConnect = false
+                    isPresentingQuickConnect = false
                 } label: {
                     L10n.close.text
                         .frame(width: 400, height: 75)
@@ -183,7 +200,7 @@ struct UserSignInView: View {
 //                dismissButton: .cancel()
 //            )
 //        }
-        .fullScreenCover(isPresented: $presentQuickConnect, onDismiss: nil) {
+        .fullScreenCover(isPresented: $isPresentingQuickConnect, onDismiss: nil) {
             quickConnect
         }
     }

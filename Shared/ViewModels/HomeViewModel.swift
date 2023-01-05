@@ -127,7 +127,8 @@ final class HomeViewModel: ViewModel {
             let resumeParameters = Paths.GetResumeItemsParameters(
                 limit: 20,
                 fields: ItemFields.minimumCases,
-                enableUserData: true
+                enableUserData: true,
+                includeItemTypes: [.movie, .episode]
             )
 
             let request = Paths.getResumeItems(userID: userSession.user.id, parameters: resumeParameters)

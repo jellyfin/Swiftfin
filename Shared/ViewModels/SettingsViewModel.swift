@@ -15,7 +15,7 @@ import UIKit
 final class SettingsViewModel: ViewModel {
 
     @Published
-    var currentAppIcon: any AppIcon
+    var currentAppIcon: any AppIcon = PrimaryAppIcon.primary
 
     override init() {
 
@@ -54,8 +54,6 @@ final class SettingsViewModel: ViewModel {
             super.init()
             return
         }
-
-        currentAppIcon = PrimaryAppIcon.primary
 
         super.init()
     }

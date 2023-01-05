@@ -64,7 +64,7 @@ struct ConnectToServerView: View {
     @ViewBuilder
     private var connectForm: some View {
         VStack(alignment: .leading) {
-//            Section {
+            Section {
                 TextField(L10n.serverURL, text: $url)
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
@@ -76,6 +76,11 @@ struct ConnectToServerView: View {
                         isConnecting = false
                     } label: {
                         L10n.cancel.text
+                            .foregroundColor(.red)
+                            .bold()
+                            .font(.callout)
+                            .frame(height: 75)
+                            .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.card)
                 } else {
@@ -98,9 +103,11 @@ struct ConnectToServerView: View {
                     .disabled(isConnecting || url.isEmpty)
                     .buttonStyle(.card)
                 }
-//            } header: {
-//                L10n.connectToJellyfinServer.text
-//            }
+            
+                Spacer()
+            } header: {
+                L10n.connectToJellyfinServer.text
+            }
         }
     }
 
