@@ -542,6 +542,10 @@
 		E1B33EB028EA890D0073B0FD /* Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33EAF28EA890D0073B0FD /* Equatable.swift */; };
 		E1B33ECF28EB6EA90073B0FD /* OverlayMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */; };
 		E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */; };
+		E1B490442967E26300D3EDCE /* PersistenLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490432967E26300D3EDCE /* PersistenLogHandler.swift */; };
+		E1B490452967E26300D3EDCE /* PersistenLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490432967E26300D3EDCE /* PersistenLogHandler.swift */; };
+		E1B490472967E2E500D3EDCE /* CoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490462967E2E500D3EDCE /* CoreStore.swift */; };
+		E1B490482967E2E500D3EDCE /* CoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490462967E2E500D3EDCE /* CoreStore.swift */; };
 		E1B5784128F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
 		E1B5784228F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
 		E1B5F7A529577BB8004B26CF /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A429577BB8004B26CF /* JellyfinAPI */; };
@@ -1092,6 +1096,8 @@
 		E1B33EAF28EA890D0073B0FD /* Equatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Equatable.swift; sourceTree = "<group>"; };
 		E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayMenu.swift; sourceTree = "<group>"; };
 		E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargePlaybackButtons.swift; sourceTree = "<group>"; };
+		E1B490432967E26300D3EDCE /* PersistenLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenLogHandler.swift; sourceTree = "<group>"; };
+		E1B490462967E2E500D3EDCE /* CoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreStore.swift; sourceTree = "<group>"; };
 		E1B5784028F8AFCB00D42911 /* Wrapped View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Wrapped View.swift"; sourceTree = "<group>"; };
 		E1B5F7AF29577DCC004B26CF /* PlaybackSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackSettingsView.swift; sourceTree = "<group>"; };
 		E1BDE358278E9ED2004E4022 /* MissingItemsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingItemsSettingsView.swift; sourceTree = "<group>"; };
@@ -1742,6 +1748,7 @@
 				E10EAA4E277BBCC4000269ED /* CGSize.swift */,
 				6267B3D526710B8900A7371D /* Collection.swift */,
 				E173DA5126D04AAF00CC4EB7 /* Color.swift */,
+				E1B490462967E2E500D3EDCE /* CoreStore.swift */,
 				E12F038B28F8B0B100976CC3 /* EdgeInsets.swift */,
 				E16DEAC128EFCF590058F196 /* EnvironmentValue.swift */,
 				E1B33EAF28EA890D0073B0FD /* Equatable.swift */,
@@ -1750,6 +1757,7 @@
 				E11CEB8C28999B4A003E74C7 /* Font.swift */,
 				E139CC1E28EC83E400688DE2 /* Int.swift */,
 				E1AD105226D96D5F003E4A08 /* JellyfinAPI */,
+				E1B490432967E26300D3EDCE /* PersistenLogHandler.swift */,
 				621338922660107500A81A2A /* String.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplication.swift */,
 				E1401CB029386C9200E8B599 /* UIColor.swift */,
@@ -2854,6 +2862,7 @@
 				E1CCC3D228C858A50020ED54 /* UserProfileButton.swift in Sources */,
 				C4BE07742725EB66003F4AD1 /* LiveTVProgramsView.swift in Sources */,
 				E18845F626DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */,
+				E1B490452967E26300D3EDCE /* PersistenLogHandler.swift in Sources */,
 				E193D53327193F7D00900D82 /* FilterCoordinator.swift in Sources */,
 				E18E021E2887492B0022598C /* Divider.swift in Sources */,
 				E107BB9427880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
@@ -2975,6 +2984,7 @@
 				E1575E7B293E77B5001665B1 /* HTTPScheme.swift in Sources */,
 				E1F59F35295CD86D001AA6FB /* SwiftfinNotificationCenter.swift in Sources */,
 				E1575E69293E77B5001665B1 /* SortBy.swift in Sources */,
+				E1B490482967E2E500D3EDCE /* CoreStore.swift in Sources */,
 				E1DA656A28E78B5900592A73 /* SpecialFeaturesViewModel.swift in Sources */,
 				E1C925F928875647002A7A66 /* LatestInLibraryView.swift in Sources */,
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
@@ -3107,6 +3117,7 @@
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				E17AC96D2954E9CA003D2BC2 /* DownloadListView.swift in Sources */,
 				E1A1528828FD229500600579 /* ChevronButton.swift in Sources */,
+				E1B490472967E2E500D3EDCE /* CoreStore.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
 				E18E01DB288747230022598C /* iPadOSEpisodeItemView.swift in Sources */,
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
@@ -3376,6 +3387,7 @@
 				E18A8E7D28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
 				E18E01F1288747230022598C /* PlayButton.swift in Sources */,
 				E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */,
+				E1B490442967E26300D3EDCE /* PersistenLogHandler.swift in Sources */,
 				E1D5C39928DF914700CDBEFB /* CapsuleSlider.swift in Sources */,
 				62E1DCC3273CE19800C9AE76 /* URL.swift in Sources */,
 				E170D0E4294CC8AB0017224C /* VideoPlayer+KeyCommands.swift in Sources */,

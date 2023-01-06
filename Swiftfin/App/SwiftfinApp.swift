@@ -6,9 +6,11 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CoreStore
 import Defaults
-import MessageUI
-import Stinsen
+import Logging
+import Pulse
+import PulseLogHandler
 import SwiftUI
 
 @main
@@ -18,20 +20,39 @@ struct SwiftfinApp: App {
     var appDelegate
 
     init() {
+        
+        // Defaults
         Task {
             for await newValue in Defaults.updates(.accentColor) {
-                Self.setupAccentColor(with: newValue.uiColor)
-                Self.setupNavigationBackButton(accentColor: newValue.uiColor)
+                UIApplication.shared.setAccentColor(newValue.uiColor)
+                UIApplication.shared.setNavigationBackButtonAccentColor(newValue.uiColor)
             }
         }
 
         Task {
             for await newValue in Defaults.updates(.appAppearance) {
-                Self.setupAppearance(with: newValue.style)
+                UIApplication.shared.setAppearance(newValue.style)
             }
         }
+        
+        // Logging
+        LoggingSystem.bootstrap { label in
+
+            var loggers: [LogHandler] = [PersistentLogHandler(label: label).withLogLevel(.trace)]
+
+            #if DEBUG
+            loggers.append(SwiftfinConsoleLogger())
+            #endif
+
+            return MultiplexLogHandler(loggers)
+        }
+
+        CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
+        CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
     }
 
+    // MARK: body
+    
     var body: some Scene {
         WindowGroup {
             PreferenceUIHostingControllerView {
@@ -45,25 +66,10 @@ struct SwiftfinApp: App {
             }
         }
     }
-
-    private static func setupAccentColor(with accentColor: UIColor) {
-        UIApplication.shared.keyWindow?.tintColor = accentColor
-    }
-
-    private static func setupAppearance(with appearance: UIUserInterfaceStyle) {
-        UIApplication.shared.keyWindow?.overrideUserInterfaceStyle = appearance
-    }
-
-    private static func setupNavigationBackButton(accentColor: UIColor) {
-        let config = UIImage.SymbolConfiguration(paletteColors: [accentColor.overlayColor, accentColor])
-        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill", withConfiguration: config)
-        let barAppearance = UINavigationBar.appearance()
-        barAppearance.backIndicatorImage = backButtonBackgroundImage
-        barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
-    }
 }
 
 extension UINavigationController {
+    
     // Remove back button text
     override open func viewWillLayoutSubviews() {
         navigationBar.topItem?.backButtonDisplayMode = .minimal

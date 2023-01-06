@@ -26,11 +26,11 @@ struct BasicAppSettingsView: View {
     var viewModel: BasicAppSettingsViewModel
 
     @State
-    var resetUserSettingsTapped: Bool = false
+    private var resetUserSettingsTapped: Bool = false
     @State
-    var resetAppSettingsTapped: Bool = false
+    private var resetAppSettingsTapped: Bool = false
     @State
-    var removeAllUsersTapped: Bool = false
+    private var removeAllUsersTapped: Bool = false
 
     var body: some View {
         Form {

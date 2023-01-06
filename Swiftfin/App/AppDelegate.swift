@@ -24,20 +24,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        LoggingSystem.bootstrap { label in
-
-            var loggers: [LogHandler] = [PersistentLogHandler(label: label).settingTrace()]
-
-            #if DEBUG
-            loggers.append(SwiftfinConsoleLogger())
-            #endif
-
-            return MultiplexLogHandler(loggers)
-        }
-
-        CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
-        CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
-
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(.playback)
@@ -64,30 +50,5 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //        } else {
 //            UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
 //        }
-    }
-}
-
-extension PersistentLogHandler {
-
-    func settingTrace() -> Self {
-        var copy = self
-        copy.logLevel = .trace
-        return copy
-    }
-}
-
-extension CoreStore.LogLevel {
-
-    var toSwiftLog: Logger.Level {
-        switch self {
-        case .trace:
-            return .trace
-        case .notice:
-            return .info
-        case .warning:
-            return .warning
-        case .fatal:
-            return .critical
-        }
     }
 }
