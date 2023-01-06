@@ -14,9 +14,6 @@ import SwiftUI
 
 final class VideoPlayerCoordinator: NavigationCoordinatable {
 
-    @Default(.Experimental.nativePlayer)
-    private var nativePlayer
-
     let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
 
     @Root

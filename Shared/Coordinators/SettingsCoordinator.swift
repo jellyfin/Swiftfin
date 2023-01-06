@@ -42,7 +42,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #endif
     
     #if os(tvOS)
-    @Route(.modal)
+    @Route(.push)
     var appearanceSelector = makeAppearanceSelector
     #endif
 
@@ -101,9 +101,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #if os(tvOS)
     @ViewBuilder
     func makeAppearanceSelector() -> some View {
-        NavigationView {
-            AppAppearanceSelector()
-        }
+        AppAppearanceSelector()
     }
     #endif
 

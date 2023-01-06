@@ -19,17 +19,15 @@ extension UserDefaults {
 }
 
 extension Defaults.Keys {
+    
     // Universal settings
-    static let defaultHTTPScheme = Key<HTTPScheme>("defaultHTTPScheme", default: .http, suite: .universalSuite)
+    static let accentColor: Key<Color> = .init("accentColor", default: .jellyfinPurple, suite: .universalSuite)
     static let appAppearance = Key<AppAppearance>("appAppearance", default: .system, suite: .universalSuite)
+    static let defaultHTTPScheme = Key<HTTPScheme>("defaultHTTPScheme", default: .http, suite: .universalSuite)
     static let hapticFeedback: Key<Bool> = .init("hapticFeedback", default: true, suite: .universalSuite)
-
-    static let accentColor: Key<Color> = .init("accentColor", default: .jellyfinPurple, suite: .generalSuite)
-
-    // General settings
-    static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .generalSuite)
-    static let inNetworkBandwidth = Key<Int>("InNetworkBandwidth", default: 40_000_000, suite: .generalSuite)
-    static let outOfNetworkBandwidth = Key<Int>("OutOfNetworkBandwidth", default: 40_000_000, suite: .generalSuite)
+    static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .universalSuite)
+    
+    // TODO: Replace with a cache
     static let libraryFilterStore = Key<[String: ItemFilters]>("libraryFilterStore", default: [:], suite: .generalSuite)
 
     enum Customization {
@@ -40,33 +38,38 @@ extension Defaults.Keys {
         static let nextUpPosterType = Key<PosterType>("nextUpPosterType", default: .portrait, suite: .generalSuite)
         static let recentlyAddedPosterType = Key<PosterType>("recentlyAddedPosterType", default: .portrait, suite: .generalSuite)
         static let latestInLibraryPosterType = Key<PosterType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
+        static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
+        static let shouldShowMissingEpisodes = Key<Bool>("shouldShowMissingEpisodes", default: true, suite: .generalSuite)
         static let similarPosterType = Key<PosterType>("similarPosterType", default: .portrait, suite: .generalSuite)
         static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
 
         enum CinematicItemViewType {
+            
             static let usePrimaryImage: Key<Bool> = .init("cinematicItemViewType.usePrimaryImage", default: false, suite: .generalSuite)
         }
 
         enum Episodes {
+            
             static let useSeriesLandscapeBackdrop = Key<Bool>("useSeriesBackdrop", default: true, suite: .generalSuite)
         }
 
         enum Library {
-            static let showFavorites: Key<Bool> = .init("Customization.Library.showFavorites", default: true, suite: .generalSuite)
-            static let viewType = Key<LibraryViewType>("Customization.Library.viewType", default: .grid, suite: .generalSuite)
+            
             static let gridPosterType = Key<PosterType>("Customization.Library.gridPosterType", default: .portrait, suite: .generalSuite)
             static let randomImage: Key<Bool> = .init("Customization.Library.randomImage", default: true, suite: .generalSuite)
+            static let showFavorites: Key<Bool> = .init("Customization.Library.showFavorites", default: true, suite: .generalSuite)
+            static let viewType = Key<LibraryViewType>("Customization.Library.viewType", default: .grid, suite: .generalSuite)
         }
     }
 
     enum VideoPlayer {
 
-        // TODO: rename buttons to show_
-        // TODO: Add to own suite
-
-        static let videoPlayerType: Key<VideoPlayerType> = .init("videoPlayerType", default: .swiftfin, suite: .generalSuite)
-
         static let autoPlayEnabled: Key<Bool> = .init("autoPlayEnabled", default: true, suite: .generalSuite)
+        static let barActionButtons: Key<[VideoPlayerActionButton]> = .init(
+            "barActionButtons",
+            default: VideoPlayerActionButton.defaultBarActionButtons,
+            suite: .generalSuite
+        )
         static let jumpBackwardLength: Key<VideoPlayerJumpLength> = .init(
             "jumpBackwardLength",
             default: .fifteen,
@@ -77,23 +80,17 @@ extension Defaults.Keys {
             default: .fifteen,
             suite: .generalSuite
         )
-        static let pauseOnBackgrounded: Key<Bool> = .init("pauseOnBackgrounded", default: true, suite: .generalSuite)
-        static let resumeOffset: Key<Int> = .init("resumeOffset", default: 0, suite: .generalSuite)
-
-        static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
-
-        static let barActionButtons: Key<[VideoPlayerActionButton]> = .init(
-            "barActionButtons",
-            default: VideoPlayerActionButton.defaultBarActionButtons,
-            suite: .generalSuite
-        )
         static let menuActionButtons: Key<[VideoPlayerActionButton]> = .init(
             "menuActionButtons",
             default: VideoPlayerActionButton.defaultMenuActionButtons,
             suite: .generalSuite
         )
+        static let resumeOffset: Key<Int> = .init("resumeOffset", default: 0, suite: .generalSuite)
+        static let showJumpButtons: Key<Bool> = .init("showJumpButtons", default: true, suite: .generalSuite)
+        static let videoPlayerType: Key<VideoPlayerType> = .init("videoPlayerType", default: .swiftfin, suite: .generalSuite)
 
         enum Gesture {
+            
             static let horizontalPanGesture: Key<PanAction> = .init(
                 "videoPlayer.horizontalPanGesture",
                 default: .none,
@@ -121,6 +118,11 @@ extension Defaults.Keys {
                 default: .none,
                 suite: .generalSuite
             )
+        }
+        
+        enum Native {
+            
+            static let fMP4Container: Key<Bool> = .init("fmp4Container", default: false, suite: .generalSuite)
         }
 
         enum Overlay {
@@ -164,28 +166,19 @@ extension Defaults.Keys {
         }
     }
 
-    // Should show missing seasons and episodes
-    static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
-    static let shouldShowMissingEpisodes = Key<Bool>("shouldShowMissingEpisodes", default: true, suite: .generalSuite)
-
     // Experimental settings
     enum Experimental {
-        static let downloads: Key<Bool> = .init(
-            "experimental.downloads",
-            default: true,
-            suite: .generalSuite
-        )
+        
+        static let downloads: Key<Bool> = .init("experimental.downloads", default: false, suite: .generalSuite)
         static let syncSubtitleStateWithAdjacent = Key<Bool>(
             "experimental.syncSubtitleState",
             default: false,
             suite: .generalSuite
         )
         static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: .generalSuite)
-        static let nativePlayer = Key<Bool>("nativePlayer", default: false, suite: .generalSuite)
 
         static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: .generalSuite)
         static let liveTVForceDirectPlay = Key<Bool>("liveTVForceDirectPlay", default: false, suite: .generalSuite)
-        static let liveTVNativePlayer = Key<Bool>("liveTVNativePlayer", default: false, suite: .generalSuite)
     }
 
     // tvos specific

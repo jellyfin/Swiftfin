@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import JellyfinAPI
 import SwiftUI
@@ -95,8 +96,9 @@ extension ItemView {
                     }
                 }
                 
-                if viewModel.item.type == .movie ||
-                    viewModel.item.type == .episode {
+                if (viewModel.item.type == .movie ||
+                    viewModel.item.type == .episode),
+                   Defaults[.Experimental.downloads] {
                     DownloadTaskButton(item: viewModel.item)
                        .onSelect { task in
                            router.route(to: \.downloadTask, task)

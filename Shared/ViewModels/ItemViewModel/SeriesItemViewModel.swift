@@ -133,7 +133,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         Task {
             let parameters = Paths.GetSeasonsParameters(
                 userID: userSession.user.id,
-                isMissing: Defaults[.shouldShowMissingSeasons] ? nil : false
+                isMissing: Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
             )
             let request = Paths.getSeasons(seriesID: item.id!, parameters: parameters)
             let response = try await userSession.client.send(request)
@@ -161,7 +161,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
                 userID: userSession.user.id,
                 fields: ItemFields.minimumCases,
                 seasonID: season.id!,
-                isMissing: Defaults[.shouldShowMissingEpisodes] ? nil : false,
+                isMissing: Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false,
                 enableUserData: true
             )
             let request = Paths.getEpisodes(seriesID: item.id!, parameters: parameters)

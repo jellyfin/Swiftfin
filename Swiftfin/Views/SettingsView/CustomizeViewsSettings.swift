@@ -16,9 +16,9 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
     private var cinematicItemViewTypeUsePrimaryImage
 
-    @Default(.shouldShowMissingSeasons)
+    @Default(.Customization.shouldShowMissingSeasons)
     var shouldShowMissingSeasons
-    @Default(.shouldShowMissingEpisodes)
+    @Default(.Customization.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
 
     @Default(.Customization.showPosterLabels)

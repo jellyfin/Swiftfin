@@ -12,15 +12,13 @@ import SwiftUI
 struct ExperimentalSettingsView: View {
 
     @Default(.Experimental.forceDirectPlay)
-    var forceDirectPlay
+    private var forceDirectPlay
     @Default(.Experimental.syncSubtitleStateWithAdjacent)
-    var syncSubtitleStateWithAdjacent
+    private var syncSubtitleStateWithAdjacent
     @Default(.Experimental.liveTVAlphaEnabled)
-    var liveTVAlphaEnabled
+    private var liveTVAlphaEnabled
     @Default(.Experimental.liveTVForceDirectPlay)
-    var liveTVForceDirectPlay
-    @Default(.Experimental.liveTVNativePlayer)
-    var liveTVNativePlayer
+    private var liveTVForceDirectPlay
 
     var body: some View {
         Form {
@@ -39,8 +37,6 @@ struct ExperimentalSettingsView: View {
                 Toggle("Live TV (Alpha)", isOn: $liveTVAlphaEnabled)
 
                 Toggle("Live TV Force Direct Play", isOn: $liveTVForceDirectPlay)
-
-                Toggle("Live TV Native Player", isOn: $liveTVNativePlayer)
 
             } header: {
                 Text("Live TV")

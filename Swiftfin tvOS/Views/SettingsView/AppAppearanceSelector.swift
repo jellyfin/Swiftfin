@@ -43,14 +43,11 @@ struct AppAppearanceSelector: View {
     }
     
     var body: some View {
-        NavigationView {
-            EnumPickerView(selection: $appAppearance)
-                .descriptionView {
-                    descriptionImage
-                        .frame(width: 300, height: 300)
-                        .navigationTitle(L10n.appearance)
-                }
-                .animation(.linear(duration: 0.1), value: appAppearance)
-        }
+        EnumPickerView(title: "Appearance", selection: $appAppearance)
+            .descriptionView {
+                descriptionImage
+                    .frame(width: 300, height: 300)
+            }
+            .animation(.linear(duration: 0.1), value: appAppearance)
     }
 }

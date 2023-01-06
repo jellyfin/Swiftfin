@@ -16,7 +16,7 @@ struct SwiftfinApp: App {
     init() {
         Task {
             for await newValue in Defaults.updates(.appAppearance) {
-                Self.setupAppearance(with: newValue.style)
+//                Self.setupAppearance(with: newValue.style)
             }
         }
     }

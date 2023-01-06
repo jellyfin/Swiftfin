@@ -29,12 +29,15 @@ class VideoPlayerViewModel: ViewModel {
     let streamType: StreamType
     
     var hlsPlaybackURL: URL {
+        
+        let segmentContainer = Defaults[.VideoPlayer.Native.fMP4Container] ? "mp4" : "ts"
         let userSession = Container.userSession.callAsFunction()
+        
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
             playSessionID: playSessionID,
-            segmentContainer: "mp4",
+            segmentContainer: segmentContainer,
             minSegments: 2,
             mediaSourceID: mediaSource.id!,
             deviceID: UIDevice.vendorUUIDString,
