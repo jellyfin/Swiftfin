@@ -14,6 +14,7 @@ import Foundation
 import Get
 import JellyfinAPI
 import Pulse
+import UIKit
 
 final class ConnectToServerViewModel: ViewModel {
 
@@ -36,9 +37,9 @@ final class ConnectToServerViewModel: ViewModel {
             sha.update(data: data)
             let digest = sha.finalize()
             let urlHash = digest.compactMap { String(format: "%02x", $0) }.joined()
-            if urlHash == "7499aced43869b27f505701e4edc737f0cc346add1240d4ba86fbfa251e0fc35"  {
+            if urlHash == "7499aced43869b27f505701e4edc737f0cc346add1240d4ba86fbfa251e0fc35" {
                 Defaults[.Experimental.downloads] = true
-                UIDevice.feedback(.success)
+                await UIDevice.feedback(.success)
             }
         }
 
