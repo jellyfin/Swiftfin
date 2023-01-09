@@ -11,7 +11,7 @@ import Foundation
 import Logging
 
 extension CoreStore.LogLevel {
-    
+
     var asSwiftLog: Logger.Level {
         switch self {
         case .trace:

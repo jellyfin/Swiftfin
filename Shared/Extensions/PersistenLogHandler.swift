@@ -11,7 +11,7 @@ import Logging
 import PulseLogHandler
 
 extension PersistentLogHandler {
-    
+
     func withLogLevel(_ level: Logger.Level) -> Self {
         var copy = self
         copy.logLevel = level

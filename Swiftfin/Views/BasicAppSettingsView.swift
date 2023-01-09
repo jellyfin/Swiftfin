@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -16,14 +16,12 @@ struct BasicAppSettingsView: View {
     private var accentColor
     @Default(.appAppearance)
     private var appAppearance
-    @Default(.defaultHTTPScheme)
-    private var defaultHTTPScheme
 
     @EnvironmentObject
-    private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
+    private var router: BasicAppSettingsCoordinator.Router
 
     @ObservedObject
-    var viewModel: BasicAppSettingsViewModel
+    var viewModel: SettingsViewModel
 
     @State
     private var resetUserSettingsTapped: Bool = false
@@ -35,10 +33,8 @@ struct BasicAppSettingsView: View {
     var body: some View {
         Form {
 
-            ColorPicker("Accent Color", selection: $accentColor, supportsOpacity: false)
-
             Button {
-                basicAppSettingsRouter.route(to: \.about)
+                router.route(to: \.about)
             } label: {
                 HStack {
                     L10n.about.text
@@ -50,15 +46,25 @@ struct BasicAppSettingsView: View {
 
             Section {
                 EnumPicker(title: L10n.appearance, selection: $appAppearance)
+
+                ChevronButton(title: "App Icon")
+                    .onSelect {
+                        router.route(to: \.appIconSelector)
+                    }
             } header: {
                 L10n.accessibility.text
             }
 
             Section {
-                EnumPicker(title: L10n.defaultScheme, selection: $defaultHTTPScheme)
-            } header: {
-                L10n.networking.text
+                ColorPicker("Accent Color", selection: $accentColor, supportsOpacity: false)
+            } footer: {
+                Text("Some views may need an app restart to update.")
             }
+
+            ChevronButton(title: "Logs")
+                .onSelect {
+                    router.route(to: \.log)
+                }
 
             Button {
                 resetUserSettingsTapped = true
@@ -80,34 +86,29 @@ struct BasicAppSettingsView: View {
         }
         .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsTapped, actions: {
             Button(role: .destructive) {
-                viewModel.resetUserSettings()
+//                viewModel.resetUserSettings()
             } label: {
                 L10n.reset.text
             }
         })
         .alert(L10n.resetAppSettings, isPresented: $resetAppSettingsTapped, actions: {
             Button(role: .destructive) {
-                viewModel.resetAppSettings()
+//                viewModel.resetAppSettings()
             } label: {
                 L10n.reset.text
             }
         })
         .alert(L10n.removeAllUsers, isPresented: $removeAllUsersTapped, actions: {
             Button(role: .destructive) {
-                viewModel.removeAllUsers()
+//                viewModel.removeAllUsers()
             } label: {
                 L10n.reset.text
             }
         })
-        .navigationBarTitle(L10n.settings, displayMode: .inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button {
-                    basicAppSettingsRouter.dismissCoordinator()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-            }
+        .navigationBarTitle(L10n.settings)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationCloseButton(accentColor: $accentColor) {
+            router.dismissCoordinator()
         }
     }
 }

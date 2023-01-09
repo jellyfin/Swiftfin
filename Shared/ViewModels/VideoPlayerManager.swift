@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -162,11 +162,11 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendStartReport() {
-        
+
         currentProgressWorkItem?.cancel()
-        
+
         print("sent start report")
-        
+
         Task {
             let startInfo = PlaybackStartInfo(
                 audioStreamIndex: audioTrackIndex,
@@ -192,7 +192,7 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendStopReport() {
-        
+
         print("sent stop report")
 
         currentProgressWorkItem?.cancel()
@@ -211,7 +211,7 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendPauseReport() {
-        
+
         print("sent pause report")
 
         currentProgressWorkItem?.cancel()
@@ -256,7 +256,7 @@ class VideoPlayerManager: ViewModel {
 
             let request = Paths.reportPlaybackProgress(progressInfo)
             let _ = try await userSession.client.send(request)
-            
+
             print("sent progress task")
         }
     }
@@ -264,7 +264,7 @@ class VideoPlayerManager: ViewModel {
 
 // TODO: move to own file
 class OnlineVideoPlayerManager: VideoPlayerManager {
-    
+
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
         super.init()
 
@@ -280,16 +280,16 @@ class OnlineVideoPlayerManager: VideoPlayerManager {
 
 // TODO: move to own file
 class DownloadVideoPlayerManager: VideoPlayerManager {
-    
+
     init(downloadTask: DownloadTask) {
         super.init()
-        
+
         guard let playbackURL = downloadTask.getMediaURL() else {
             logger.error("Download task does not have media url for item: \(downloadTask.item.displayTitle)")
-            
+
             return
         }
-        
+
         self.currentViewModel = .init(
             playbackURL: playbackURL,
             item: downloadTask.item,
@@ -304,24 +304,14 @@ class DownloadVideoPlayerManager: VideoPlayerManager {
             streamType: .direct
         )
     }
-    
-    override func getAdjacentEpisodes(for item: BaseItemDto) {
-        
-    }
-    
-    override func sendStartReport() {
-        
-    }
-    
-    override func sendPauseReport() {
-        
-    }
-    
-    override func sendStopReport() {
-        
-    }
-    
-    override func sendProgressReport() {
-        
-    }
+
+    override func getAdjacentEpisodes(for item: BaseItemDto) {}
+
+    override func sendStartReport() {}
+
+    override func sendPauseReport() {}
+
+    override func sendStopReport() {}
+
+    override func sendProgressReport() {}
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Algorithms
@@ -117,7 +117,7 @@ extension BaseItemDto {
     var audioStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .audio } ?? []
     }
-    
+
     var videoStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .video } ?? []
     }
@@ -194,15 +194,15 @@ extension BaseItemDto {
                 )
             }
     }
-    
+
     // TODO: series-season-episode hierarchy for episodes
     // TODO: user hierarchy for downloads
     var downloadFolder: URL? {
         guard let type, let id else { return nil }
-        
+
         let root = URL.downloads
 //            .appendingPathComponent(userSession.user.id)
-        
+
         switch type {
         case .movie, .episode:
             return root

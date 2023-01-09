@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -63,11 +63,11 @@ class ItemViewModel: ViewModel {
 
     private func getFullItem() {
         Task {
-            
+
             await MainActor.run {
                 isLoading = true
             }
-            
+
             let parameters = Paths.GetItemsParameters(
                 userID: userSession.user.id,
                 fields: ItemFields.allCases,

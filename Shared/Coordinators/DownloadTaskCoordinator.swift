@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 #if os(iOS)
@@ -12,18 +12,18 @@ import Stinsen
 import SwiftUI
 
 final class DownloadTaskCoordinator: NavigationCoordinatable {
-    
+
     let stack = NavigationStack(initial: \DownloadTaskCoordinator.start)
-    
+
     @Root
     var start = makeStart
-    
+
     let downloadTask: DownloadTask
-    
+
     init(downloadTask: DownloadTask) {
         self.downloadTask = downloadTask
     }
-    
+
     @ViewBuilder
     private func makeStart() -> DownloadTaskView {
         DownloadTaskView(downloadTask: downloadTask)

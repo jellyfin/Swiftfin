@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -222,18 +222,18 @@ extension [MediaStream] {
 
         return mediaStreams
     }
-    
+
     func adjustAudioForExternalSubtitles(externalMediaStreamCount: Int) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .audio }) else { return self}
-        
+        guard allSatisfy({ $0.type == .audio }) else { return self }
+
         var mediaStreams = self
-        
+
         for (i, mediaStream) in mediaStreams.enumerated() {
             var copy = mediaStream
             copy.index = (copy.index ?? 0) - externalMediaStreamCount
             mediaStreams[i] = copy
         }
-        
+
         return mediaStreams
     }
 }

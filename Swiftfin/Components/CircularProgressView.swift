@@ -3,21 +3,21 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 
 struct CircularProgressView: View {
-    
+
     @Environment(\.colorScheme)
     private var colorScheme
-    
+
     @State
     private var lineWidth: CGFloat = 1
-    
+
     let progress: Double
-    
+
     var body: some View {
         ZStack {
             Circle()

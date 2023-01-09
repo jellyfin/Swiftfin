@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -170,7 +170,7 @@ extension View {
             self
         }
     }
-    
+
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
         modifier(VisibilityModifier(isVisible: isVisible))

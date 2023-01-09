@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -93,7 +93,7 @@ extension PosterButton {
 }
 
 extension PosterButton {
-    
+
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
     }
@@ -165,7 +165,7 @@ extension PosterButton {
 // MARK: default content view
 
 extension PosterButton {
-    
+
     struct DefaultContentView: View {
 
         let item: Item

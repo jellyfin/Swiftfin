@@ -3,11 +3,9 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import Files
-import Foundation
 import PulseUI
 import Stinsen
 import SwiftUI
@@ -21,14 +19,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @Route(.push)
     var about = makeAbout
-    @Route(.push)
-    var customizeViewsSettings = makeCustomizeViewsSettings
-    @Route(.push)
-    var experimentalSettings = makeExperimentalSettings
-    @Route(.push)
-    var serverDetail = makeServerDetail
-    @Route(.push)
-    var videoPlayerSettings = makeVideoPlayerSettings
 
     #if os(iOS)
     @Route(.push)
@@ -39,11 +29,26 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
     var quickConnect = makeQuickConnectSettings
-    #endif
-    
-    #if os(tvOS)
+
     @Route(.push)
-    var appearanceSelector = makeAppearanceSelector
+    var customizeViewsSettings = makeCustomizeViewsSettings
+    @Route(.push)
+    var experimentalSettings = makeExperimentalSettings
+    @Route(.push)
+    var serverDetail = makeServerDetail
+    @Route(.push)
+    var videoPlayerSettings = makeVideoPlayerSettings
+    #endif
+
+    #if os(tvOS)
+    @Route(.modal)
+    var customizeViewsSettings = makeCustomizeViewsSettings
+    @Route(.modal)
+    var experimentalSettings = makeExperimentalSettings
+    @Route(.modal)
+    var serverDetail = makeServerDetail
+    @Route(.modal)
+    var videoPlayerSettings = makeVideoPlayerSettings
     #endif
 
     private let viewModel: SettingsViewModel
@@ -55,6 +60,27 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeAbout() -> some View {
         AboutAppView(viewModel: viewModel)
+    }
+
+    #if os(iOS)
+    @ViewBuilder
+    func makeAppIconSelector() -> some View {
+        AppIconSelectorView(viewModel: viewModel)
+    }
+
+    @ViewBuilder
+    func makeLog() -> some View {
+        ConsoleView()
+    }
+
+    @ViewBuilder
+    func makeNativePlayerSettings() -> some View {
+        NativeVideoPlayerSettingsView()
+    }
+
+    @ViewBuilder
+    func makeQuickConnectSettings() -> some View {
+        QuickConnectSettingsView(viewModel: .init())
     }
 
     @ViewBuilder
@@ -75,33 +101,29 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
     }
-
-    #if os(iOS)
-    @ViewBuilder
-    func makeAppIconSelector() -> some View {
-        AppIconSelectorView(viewModel: viewModel)
-    }
-
-    @ViewBuilder
-    func makeLog() -> some View {
-        ConsoleView()
-    }
-    
-    @ViewBuilder
-    func makeNativePlayerSettings() -> some View {
-        NativeVideoPlayerSettingsView()
-    }
-    
-    @ViewBuilder
-    func makeQuickConnectSettings() -> some View {
-        QuickConnectSettingsView(viewModel: .init())
-    }
     #endif
 
     #if os(tvOS)
+    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator(
+            BasicNavigationViewCoordinator {
+                CustomizeViewsSettings()
+            }
+        )
+    }
+
     @ViewBuilder
-    func makeAppearanceSelector() -> some View {
-        AppAppearanceSelector()
+    func makeExperimentalSettings() -> some View {
+        ExperimentalSettingsView()
+    }
+
+    @ViewBuilder
+    func makeServerDetail() -> some View {
+        ServerDetailView(viewModel: .init(server: .sample))
+    }
+
+    func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {
+        NavigationViewCoordinator(VideoPlayerSettingsCoordinator())
     }
     #endif
 

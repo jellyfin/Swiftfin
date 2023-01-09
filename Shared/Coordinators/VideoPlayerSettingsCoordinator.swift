@@ -3,9 +3,10 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Stinsen
 import SwiftUI
 
@@ -15,20 +16,26 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-
-    #if !os(tvOS)
     @Route(.push)
     var fontPicker = makeFontPicker
+
+    #if os(iOS)
     @Route(.push)
     var gestureSettings = makeGestureSettings
     @Route(.push)
     var actionButtonSelector = makeActionButtonSelector
+    #endif
 
-    @ViewBuilder
-    func makeFontPicker() -> some View {
-        FontPickerView()
+    #if os(tvOS)
+
+    #endif
+
+    func makeFontPicker(selection: Binding<String>) -> some View {
+        FontPickerView(selection: selection)
             .navigationTitle(L10n.subtitleFont)
     }
+
+    #if os(iOS)
 
     @ViewBuilder
     func makeGestureSettings() -> some View {
@@ -41,15 +48,12 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     }
     #endif
 
+    #if os(tvOS)
+
+    #endif
+
     @ViewBuilder
     func makeStart() -> some View {
         VideoPlayerSettingsView()
     }
 }
-
-// struct VideoPlayerSettingsView: View {
-//
-//    var body: some View {
-//        Text("")
-//    }
-// }

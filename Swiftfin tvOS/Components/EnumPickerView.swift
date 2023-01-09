@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct EnumPickerView<EnumType: CaseIterable & Displayable & Hashable & RawRepresentable>: View {
-    
+
     @Binding
     private var selection: EnumType
 
@@ -18,7 +18,6 @@ struct EnumPickerView<EnumType: CaseIterable & Displayable & Hashable & RawRepre
 
     var body: some View {
         SplitFormWindowView()
-            .description(title)
             .descriptionView(descriptionView)
             .contentView {
                 Section {
@@ -28,9 +27,9 @@ struct EnumPickerView<EnumType: CaseIterable & Displayable & Hashable & RawRepre
                         } label: {
                             HStack {
                                 Text(item.displayTitle)
-                                
+
                                 Spacer()
-                                
+
                                 if selection == item {
                                     Image(systemName: "checkmark.circle.fill")
                                 }
@@ -43,7 +42,7 @@ struct EnumPickerView<EnumType: CaseIterable & Displayable & Hashable & RawRepre
 }
 
 extension EnumPickerView {
-    
+
     init(
         title: String? = nil,
         selection: Binding<EnumType>
@@ -51,9 +50,10 @@ extension EnumPickerView {
         self.init(
             selection: selection,
             descriptionView: { EmptyView() },
-            title: title)
+            title: title
+        )
     }
-    
+
     func descriptionView(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.descriptionView, with: content)
     }

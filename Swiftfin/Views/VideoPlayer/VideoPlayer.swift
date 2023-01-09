@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -113,7 +113,7 @@ struct VideoPlayer: View {
                 ZStack {
                     VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
                         .proxy(videoPlayerManager.proxy)
-                        .onTicksUpdated { ticks, playbackInformation in
+                        .onTicksUpdated { ticks, _ in
 
                             let newSeconds = ticks / 1000
                             let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
@@ -123,8 +123,8 @@ struct VideoPlayer: View {
                             guard !isScrubbing else { return }
                             currentProgressHandler.scrubbedProgress = newProgress
                         }
-                        .onStateUpdated { state, playbackInformation in
-                            
+                        .onStateUpdated { state, _ in
+
                             videoPlayerManager.onStateUpdated(newState: state)
 
                             if state == .ended {

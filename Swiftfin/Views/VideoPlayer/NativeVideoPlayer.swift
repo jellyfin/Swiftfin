@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import AVKit
@@ -72,10 +72,10 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
         newPlayer.currentItem?.externalMetadata = createMetadata()
-        
+
         rateObserver = newPlayer.observe(\.rate, options: .new) { _, change in
             guard let newValue = change.newValue else { return }
-            
+
             if newValue == 0 {
                 self.videoPlayerManager.onStateUpdated(newState: .paused)
             } else {

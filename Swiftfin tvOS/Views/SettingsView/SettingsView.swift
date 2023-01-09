@@ -3,23 +3,25 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import CoreData
 import Defaults
 import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct SettingsView: View {
-    
+
+    @Default(.VideoPlayer.videoPlayerType)
+    private var videoPlayerType
+
     @Injected(Container.userSession)
     private var userSession
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: SettingsViewModel
 
@@ -35,14 +37,14 @@ struct SettingsView: View {
             }
             .contentView {
                 Section {
-                    
+
                     Button {} label: {
                         TextPairView(
                             leading: L10n.user,
                             trailing: userSession.user.username
                         )
                     }
-                    
+
                     ChevronButton(
                         title: L10n.server,
                         subtitle: userSession.server.name
@@ -50,30 +52,40 @@ struct SettingsView: View {
 //                    .onSelect {
 //                        router.route(to: \.serverDetail)
 //                    }
-                    
-                    Button {
-                        
-                    } label: {
+
+                    Button {} label: {
                         L10n.switchUser.text
                             .foregroundColor(.jellyfinPurple)
                     }
                 }
-                
+
                 Section {
-                    ChevronButton(title: L10n.appearance)
+
+                    InlineEnumToggle(title: "Video Player Type", selection: $videoPlayerType)
+
+                    ChevronButton(title: L10n.videoPlayer)
                         .onSelect {
-                            router.route(to: \.appearanceSelector)
+                            router.route(to: \.videoPlayerSettings)
                         }
                 } header: {
-                    L10n.appearance.text
+                    L10n.videoPlayer.text
+                }
+
+                Section {
+
+                    ChevronButton(title: L10n.customize)
+                        .onSelect {
+                            router.route(to: \.customizeViewsSettings)
+                        }
+
+                    ChevronButton(title: L10n.experimental)
+                        .onSelect {
+                            router.route(to: \.experimentalSettings)
+                        }
+
+                } header: {
+                    L10n.accessibility.text
                 }
             }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView(viewModel: .init())
-            .preferredColorScheme(.light)
     }
 }

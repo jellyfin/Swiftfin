@@ -3,11 +3,11 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import CryptoKit
 import CoreStore
+import CryptoKit
 import Defaults
 import Factory
 import Foundation
@@ -29,7 +29,7 @@ final class ConnectToServerViewModel: ViewModel {
     var connectToServerTask: Task<ServerState, Error>?
 
     func connectToServer(url: String) async throws -> (server: ServerState, url: URL) {
-        
+
         // shhhh
         // TODO: remove
         if let data = url.data(using: .utf8) {
@@ -39,7 +39,9 @@ final class ConnectToServerViewModel: ViewModel {
             let urlHash = digest.compactMap { String(format: "%02x", $0) }.joined()
             if urlHash == "7499aced43869b27f505701e4edc737f0cc346add1240d4ba86fbfa251e0fc35" {
                 Defaults[.Experimental.downloads] = true
+                #if os(iOS)
                 await UIDevice.feedback(.success)
+                #endif
             }
         }
 

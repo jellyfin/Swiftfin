@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
@@ -103,17 +103,10 @@ struct ServerListView: View {
     @ViewBuilder
     private var leadingToolbarContent: some View {
         Button {
-//            serverListRouter.route(to: \.basicAppSettings)
-            router.route(to: \.pulseConsole)
+            router.route(to: \.basicAppSettings)
         } label: {
             Image(systemName: "gearshape.fill")
                 .accessibilityLabel(L10n.settings)
-        }
-
-        Button {
-            viewModel.purge()
-        } label: {
-            Text("Purge")
         }
     }
 
@@ -125,11 +118,11 @@ struct ServerListView: View {
                     trailingToolbarContent
                 }
             }
-            .toolbar(content: {
+            .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     leadingToolbarContent
                 }
-            })
+            }
             .onAppear {
                 viewModel.fetchServers()
             }

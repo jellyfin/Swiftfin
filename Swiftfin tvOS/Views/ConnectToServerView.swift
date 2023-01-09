@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -33,8 +33,8 @@ struct ConnectToServerView: View {
     @State
     private var isPresentingError: Bool = false
     @State
-    private var url = "\(Defaults[.defaultHTTPScheme])://"
-    
+    private var url = "http://"
+
     private func connectToServer() {
         let task = Task {
             isConnecting = true
@@ -103,7 +103,7 @@ struct ConnectToServerView: View {
                     .disabled(isConnecting || url.isEmpty)
                     .buttonStyle(.card)
                 }
-            
+
                 Spacer()
             } header: {
                 L10n.connectToJellyfinServer.text

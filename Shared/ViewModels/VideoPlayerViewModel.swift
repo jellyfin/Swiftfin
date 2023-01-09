@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -27,12 +27,12 @@ class VideoPlayerViewModel: ViewModel {
     let selectedSubtitleStreamIndex: Int
     let chapters: [ChapterInfo.FullInfo]
     let streamType: StreamType
-    
+
     var hlsPlaybackURL: URL {
-        
+
         let segmentContainer = Defaults[.VideoPlayer.Native.fMP4Container] ? "mp4" : "ts"
         let userSession = Container.userSession.callAsFunction()
-        
+
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
@@ -103,7 +103,7 @@ class VideoPlayerViewModel: ViewModel {
         self.playbackURL = playbackURL
         self.videoStreams = videoStreams
         self.audioStreams = audioStreams
-            .adjustAudioForExternalSubtitles(externalMediaStreamCount: subtitleStreams.filter({ $0.isExternal ?? false }).count)
+            .adjustAudioForExternalSubtitles(externalMediaStreamCount: subtitleStreams.filter { $0.isExternal ?? false }.count)
         self.subtitleStreams = subtitleStreams
             .adjustExternalSubtitleIndexes(audioStreamCount: audioStreams.count)
         self.selectedAudioStreamIndex = selectedAudioStreamIndex

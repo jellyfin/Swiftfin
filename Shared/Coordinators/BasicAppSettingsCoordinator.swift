@@ -3,10 +3,10 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import PulseUI
 import Stinsen
 import SwiftUI
 
@@ -19,17 +19,38 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var about = makeAbout
 
-    @ViewBuilder
-    func makeAbout() -> some View {
-        #if os(tvOS)
-        Text("")
-        #else
-        AboutAppView(viewModel: .init())
-        #endif
+    #if os(iOS)
+    @Route(.push)
+    var appIconSelector = makeAppIconSelector
+    @Route(.push)
+    var log = makeLog
+    #endif
+
+    private let viewModel: SettingsViewModel
+
+    init() {
+        viewModel = .init()
     }
 
     @ViewBuilder
+    func makeAbout() -> some View {
+        AboutAppView(viewModel: viewModel)
+    }
+
+    #if os(iOS)
+    @ViewBuilder
+    func makeAppIconSelector() -> some View {
+        AppIconSelectorView(viewModel: viewModel)
+    }
+
+    @ViewBuilder
+    func makeLog() -> some View {
+        ConsoleView()
+    }
+    #endif
+
+    @ViewBuilder
     func makeStart() -> some View {
-        BasicAppSettingsView(viewModel: BasicAppSettingsViewModel())
+        BasicAppSettingsView(viewModel: viewModel)
     }
 }

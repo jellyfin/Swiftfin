@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -14,7 +14,7 @@ import SwiftUI
 extension ItemView {
 
     struct ActionButtonHStack: View {
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
@@ -28,7 +28,7 @@ extension ItemView {
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
             self.viewModel = viewModel
             self.equalSpacing = equalSpacing
-            
+
             self.downloadManager = Container.downloadManager.callAsFunction()
         }
 
@@ -95,19 +95,20 @@ extension ItemView {
                         view.frame(maxWidth: .infinity)
                     }
                 }
-                
-                if (viewModel.item.type == .movie ||
-                    viewModel.item.type == .episode),
-                   Defaults[.Experimental.downloads] {
+
+                if viewModel.item.type == .movie ||
+                    viewModel.item.type == .episode,
+                    Defaults[.Experimental.downloads]
+                {
                     DownloadTaskButton(item: viewModel.item)
-                       .onSelect { task in
-                           router.route(to: \.downloadTask, task)
-                       }
-                       .buttonStyle(.plain)
-                       .frame(width: 25, height: 25)
-                       .if(equalSpacing) { view in
-                           view.frame(maxWidth: .infinity)
-                       }
+                        .onSelect { task in
+                            router.route(to: \.downloadTask, task)
+                        }
+                        .buttonStyle(.plain)
+                        .frame(width: 25, height: 25)
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
+                        }
                 }
             }
         }

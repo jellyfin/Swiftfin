@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -19,14 +19,13 @@ extension UserDefaults {
 }
 
 extension Defaults.Keys {
-    
+
     // Universal settings
     static let accentColor: Key<Color> = .init("accentColor", default: .jellyfinPurple, suite: .universalSuite)
     static let appAppearance = Key<AppAppearance>("appAppearance", default: .system, suite: .universalSuite)
-    static let defaultHTTPScheme = Key<HTTPScheme>("defaultHTTPScheme", default: .http, suite: .universalSuite)
     static let hapticFeedback: Key<Bool> = .init("hapticFeedback", default: true, suite: .universalSuite)
     static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .universalSuite)
-    
+
     // TODO: Replace with a cache
     static let libraryFilterStore = Key<[String: ItemFilters]>("libraryFilterStore", default: [:], suite: .generalSuite)
 
@@ -44,17 +43,17 @@ extension Defaults.Keys {
         static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
 
         enum CinematicItemViewType {
-            
+
             static let usePrimaryImage: Key<Bool> = .init("cinematicItemViewType.usePrimaryImage", default: false, suite: .generalSuite)
         }
 
         enum Episodes {
-            
+
             static let useSeriesLandscapeBackdrop = Key<Bool>("useSeriesBackdrop", default: true, suite: .generalSuite)
         }
 
         enum Library {
-            
+
             static let gridPosterType = Key<PosterType>("Customization.Library.gridPosterType", default: .portrait, suite: .generalSuite)
             static let randomImage: Key<Bool> = .init("Customization.Library.randomImage", default: true, suite: .generalSuite)
             static let showFavorites: Key<Bool> = .init("Customization.Library.showFavorites", default: true, suite: .generalSuite)
@@ -90,7 +89,7 @@ extension Defaults.Keys {
         static let videoPlayerType: Key<VideoPlayerType> = .init("videoPlayerType", default: .swiftfin, suite: .generalSuite)
 
         enum Gesture {
-            
+
             static let horizontalPanGesture: Key<PanAction> = .init(
                 "videoPlayer.horizontalPanGesture",
                 default: .none,
@@ -119,9 +118,9 @@ extension Defaults.Keys {
                 suite: .generalSuite
             )
         }
-        
+
         enum Native {
-            
+
             static let fMP4Container: Key<Bool> = .init("fmp4Container", default: false, suite: .generalSuite)
         }
 
@@ -168,7 +167,7 @@ extension Defaults.Keys {
 
     // Experimental settings
     enum Experimental {
-        
+
         static let downloads: Key<Bool> = .init("experimental.downloads", default: false, suite: .generalSuite)
         static let syncSubtitleStateWithAdjacent = Key<Bool>(
             "experimental.syncSubtitleState",

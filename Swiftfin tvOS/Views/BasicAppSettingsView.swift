@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -15,7 +15,8 @@ struct BasicAppSettingsView: View {
     @EnvironmentObject
     private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
     @ObservedObject
-    var viewModel: BasicAppSettingsViewModel
+    var viewModel: SettingsViewModel
+
     @State
     var resetTapped: Bool = false
 
@@ -46,7 +47,7 @@ struct BasicAppSettingsView: View {
         }
         .alert(L10n.reset, isPresented: $resetTapped, actions: {
             Button(role: .destructive) {
-                viewModel.resetAppSettings()
+//                viewModel.resetAppSettings()
                 basicAppSettingsRouter.dismissCoordinator()
             } label: {
                 L10n.reset.text
