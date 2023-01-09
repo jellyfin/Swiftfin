@@ -28,12 +28,11 @@ struct SettingsView: View {
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
-                Image(uiImage: UIImage(named: "App Icon")!)
+//                Image(uiImage: UIImage(named: "App Icon")!)
+                Image("jellyfin-blob-blue")
                     .resizable()
-                    .aspectRatio(1.667, contentMode: .fit)
-                    .cornerRadius(30)
-                    .shadow(radius: 10, x: 0, y: 10)
-                    .padding()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
             }
             .contentView {
                 Section {

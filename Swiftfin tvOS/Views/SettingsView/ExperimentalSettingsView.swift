@@ -50,5 +50,6 @@ struct ExperimentalSettingsView: View {
                     Text("Live TV")
                 }
             }
+            .navigationTitle(L10n.experimental)
     }
 }

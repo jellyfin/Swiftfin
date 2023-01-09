@@ -112,9 +112,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
         )
     }
 
-    @ViewBuilder
-    func makeExperimentalSettings() -> some View {
-        ExperimentalSettingsView()
+    func makeExperimentalSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator>{
+        NavigationViewCoordinator(
+            BasicNavigationViewCoordinator {
+                ExperimentalSettingsView()
+            }
+        )
     }
 
     @ViewBuilder
