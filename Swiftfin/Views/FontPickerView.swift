@@ -10,25 +10,23 @@ import Defaults
 import SwiftUI
 import UIKit
 
-// TODO: Fix updating view with Binding
 struct FontPickerView: View {
-    
+
     @Binding
     private var selection: String
-    
+
     @State
-    private var updateSelection: [String]
-    
+    private var updateSelection: String
+
     init(selection: Binding<String>) {
         self._selection = selection
-        self.updateSelection = [selection.wrappedValue]
+        self.updateSelection = selection.wrappedValue
     }
-    
+
     var body: some View {
         SelectorView(
             selection: $updateSelection,
-            allItems: UIFont.familyNames,
-            type: .single
+            allItems: UIFont.familyNames
         )
         .label { fontFamily in
             Text(fontFamily)
@@ -36,7 +34,7 @@ struct FontPickerView: View {
                 .font(.custom(fontFamily, size: 18))
         }
         .onChange(of: updateSelection) { newValue in
-            selection = updateSelection[0]
+            selection = newValue
         }
     }
 }

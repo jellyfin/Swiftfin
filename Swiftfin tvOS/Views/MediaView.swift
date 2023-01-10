@@ -18,7 +18,7 @@ struct MediaView: View {
     private var tabRouter: MainCoordinator.Router
     @EnvironmentObject
     private var router: MediaCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: MediaViewModel
 

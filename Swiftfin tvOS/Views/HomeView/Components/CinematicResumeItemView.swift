@@ -61,7 +61,7 @@ extension HomeView {
                 }
                 .itemImageOverlay { item in
                     LandscapePosterProgressBar(
-                        title: item.progress ?? L10n.continue,
+                        title: item.progressLabel ?? L10n.continue,
                         progress: (item.userData?.playedPercentage ?? 0) / 100
                     )
                 }

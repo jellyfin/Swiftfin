@@ -67,7 +67,7 @@ extension BaseItemDto {
         return text
     }
 
-    var progress: String? {
+    var progressLabel: String? {
         guard let playbackPositionTicks = userData?.playbackPositionTicks,
               let totalTicks = runTimeTicks,
               playbackPositionTicks != 0,

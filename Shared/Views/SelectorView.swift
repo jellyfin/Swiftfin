@@ -40,10 +40,10 @@ struct SelectorView<Item: Displayable & Identifiable>: View {
 
                     if selection.contains { $0.id == item.id } {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(accentColor)
-                    } else {
-                        Image(systemName: "circle")
-                            .foregroundColor(.secondary)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                            .accentSymbolRendering()
                     }
                 }
             }
@@ -71,6 +71,15 @@ extension SelectorView {
             allItems: allItems,
             label: { Text($0.displayTitle).foregroundColor(.primary) },
             type: type
+        )
+    }
+    
+    init(selection: Binding<Item>, allItems: [Item]) {
+        self.init(
+            selection: .init(get: { [selection.wrappedValue] }, set: { selection.wrappedValue = $0[0] }),
+            allItems: allItems,
+            label: { Text($0.displayTitle).foregroundColor(.primary) },
+            type: .single
         )
     }
 

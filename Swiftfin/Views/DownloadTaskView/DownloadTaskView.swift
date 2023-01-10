@@ -11,9 +11,6 @@ import SwiftUI
 
 struct DownloadTaskView: View {
 
-    @Default(.accentColor)
-    private var accentColor
-
     @EnvironmentObject
     private var router: DownloadTaskCoordinator.Router
 
@@ -24,7 +21,7 @@ struct DownloadTaskView: View {
         ScrollView(showsIndicators: false) {
             ContentView(downloadTask: downloadTask)
         }
-        .navigationCloseButton(accentColor: $accentColor) {
+        .navigationCloseButton() {
             router.dismissCoordinator()
         }
     }

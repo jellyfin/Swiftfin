@@ -15,7 +15,7 @@
       "location" : "https://github.com/LePips/CollectionView",
       "state" : {
         "branch" : "main",
-        "revision" : "b05ad718700cc99a4b88009ede6cf04c7326cd99"
+        "revision" : "70a44bd1a8864f88213be69613554a9d5a8fb779"
       }
     },
     {
@@ -86,7 +86,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "48541b9a1ff292f2d471321f6bc9fce0c3778d1f"
+        "revision" : "3f13427fdc7886bb071a0979396dcd0ca4571f61",
+        "version" : "3.0.0"
+      }
+    },
+    {
+      "identity" : "pulseloghandler",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/PulseLogHandler",
+      "state" : {
+        "branch" : "main",
+        "revision" : "2baa44b40a9f41f97763adbaccdad9d277e32eb5"
       }
     },
     {

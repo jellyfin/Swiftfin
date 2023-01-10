@@ -23,7 +23,7 @@ extension ItemView {
                     Group {
                         if viewModel.isPlayed {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.jellyfinPurple)
+                                .accentSymbolRendering(accentColor: .white)
                         } else {
                             Image(systemName: "checkmark.circle")
                         }
@@ -39,10 +39,11 @@ extension ItemView {
                 } label: {
                     Group {
                         if viewModel.isFavorited {
-                            Image(systemName: "heart.fill")
-                                .foregroundColor(.red)
+                            Image(systemName: "heart.circle.fill")
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(.white, .pink)
                         } else {
-                            Image(systemName: "heart")
+                            Image(systemName: "heart.circle")
                         }
                     }
                     .font(.title3)

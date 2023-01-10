@@ -87,7 +87,7 @@ extension PosterHStack {
             singleImage: singleImage,
             itemScale: 1,
             content: { PosterButton.DefaultContentView(state: $0) },
-            imageOverlay: { _ in EmptyView() },
+            imageOverlay: { PosterButton.DefaultOverlay(state: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in }
@@ -108,7 +108,7 @@ extension PosterHStack {
             singleImage: singleImage,
             itemScale: 1,
             content: { PosterButton.DefaultContentView(state: $0) },
-            imageOverlay: { _ in EmptyView() },
+            imageOverlay: { PosterButton.DefaultOverlay(state: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in }
@@ -128,7 +128,7 @@ extension PosterHStack {
             singleImage: singleImage,
             itemScale: 1,
             content: { PosterButton.DefaultContentView(state: $0) },
-            imageOverlay: { _ in EmptyView() },
+            imageOverlay: { PosterButton.DefaultOverlay(state: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in }

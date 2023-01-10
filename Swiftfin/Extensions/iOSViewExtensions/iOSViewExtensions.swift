@@ -6,6 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension View {
@@ -50,15 +51,14 @@ extension View {
     }
 
     // TODO: remove accent color binding and just use binding directly via modifier
-    func navigationCloseButton(accentColor: Binding<Color>, _ action: @escaping () -> Void) -> some View {
+    func navigationCloseButton(accentColor: Color = Defaults[.accentColor], _ action: @escaping () -> Void) -> some View {
         toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 Button {
                     action()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(accentColor.wrappedValue.overlayColor, accentColor.wrappedValue)
+                        .accentSymbolRendering(accentColor: accentColor)
                 }
             }
         }

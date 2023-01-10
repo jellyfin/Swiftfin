@@ -43,6 +43,9 @@ struct CustomizeViewsSettings: View {
     private var showFavorites
     @Default(.Customization.Library.randomImage)
     private var libraryRandomImage
+    
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
 
     var body: some View {
         List {
@@ -69,6 +72,11 @@ struct CustomizeViewsSettings: View {
             }
 
             Section {
+                
+                ChevronButton(title: "Indicators")
+                    .onSelect {
+                        router.route(to: \.indicatorSettings)
+                    }
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 

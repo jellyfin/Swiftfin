@@ -7,13 +7,18 @@
 //
 
 import CollectionView
+import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct UserListView: View {
 
+    @Injected(Container.userSession)
+    private var userSession
+
     @EnvironmentObject
-    private var userListRouter: UserListCoordinator.Router
+    private var router: UserListCoordinator.Router
+
     @ObservedObject
     var viewModel: UserListViewModel
 
@@ -52,7 +57,7 @@ struct UserListView: View {
                 .font(.body)
 
             Button {
-                userListRouter.route(to: \.userSignIn, viewModel.server)
+                router.route(to: \.userSignIn, viewModel.server)
             } label: {
                 L10n.signIn.text
                     .bold()
@@ -66,8 +71,9 @@ struct UserListView: View {
 
     var body: some View {
         ZStack {
-//            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
-//                .ignoresSafeArea()
+
+            ImageView(userSession.client.fullURL(with: Paths.getSplashscreen()))
+                .ignoresSafeArea()
 
             Color.black
                 .opacity(0.9)
@@ -85,14 +91,13 @@ struct UserListView: View {
             view.toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        userListRouter.route(to: \.userSignIn, viewModel.server)
+                        router.route(to: \.userSignIn, viewModel.server)
                     } label: {
                         Image(systemName: "person.crop.circle.fill.badge.plus")
                     }
                 }
             }
         }
-
         .alert(item: $longPressedUser) { user in
             Alert(
                 title: Text(user.username),

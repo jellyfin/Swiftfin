@@ -100,6 +100,7 @@ class ItemViewModel: ViewModel {
         }
     }
 
+    // TODO: remove and have views handle
     func playButtonText() -> String {
 
         if item.unaired {
@@ -110,7 +111,7 @@ class ItemViewModel: ViewModel {
             return L10n.missing
         }
 
-        if let itemProgressString = item.progress {
+        if let itemProgressString = item.progressLabel {
             return itemProgressString
         }
 

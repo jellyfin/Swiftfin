@@ -43,7 +43,7 @@ extension HomeView {
             .imageOverlay { state in
                 if case let PosterButtonType.item(item) = state {
                     LandscapePosterProgressBar(
-                        title: item.progress ?? L10n.continue,
+                        title: item.progressLabel ?? L10n.continue,
                         progress: (item.userData?.playedPercentage ?? 0) / 100
                     )
                 }

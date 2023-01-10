@@ -44,6 +44,10 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
+        #if os(iOS)
         PlaybackSettingsView()
+        #else
+        EmptyView()
+        #endif
     }
 }

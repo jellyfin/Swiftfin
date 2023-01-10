@@ -51,10 +51,23 @@ extension Defaults.Keys {
 
             static let useSeriesLandscapeBackdrop = Key<Bool>("useSeriesBackdrop", default: true, suite: .generalSuite)
         }
+        
+        enum Indicators {
+            
+            static let showFavorited: Key<Bool> = .init("indicators.showFavorited", default: true, suite: .generalSuite)
+            static let showProgress: Key<Bool> = .init("indicators.showProgress", default: true, suite: .generalSuite)
+            static let showUnwatched: Key<Bool> = .init("indicators.showUnwatched", default: true, suite: .generalSuite)
+            static let showWatched: Key<Bool> = .init("indicators.showWatched", default: true, suite: .generalSuite)
+        }
 
         enum Library {
 
             static let gridPosterType = Key<PosterType>("Customization.Library.gridPosterType", default: .portrait, suite: .generalSuite)
+            static let cinematicBackground: Key<Bool> = .init(
+                "Customization.Library.cinematicBackground",
+                default: true,
+                suite: .generalSuite
+            )
             static let randomImage: Key<Bool> = .init("Customization.Library.randomImage", default: true, suite: .generalSuite)
             static let showFavorites: Key<Bool> = .init("Customization.Library.showFavorites", default: true, suite: .generalSuite)
             static let viewType = Key<LibraryViewType>("Customization.Library.viewType", default: .grid, suite: .generalSuite)

@@ -86,14 +86,8 @@ extension AppIconSelectorView {
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25)
-                            .foregroundColor(accentColor)
-                    } else {
-                        Image(systemName: "circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25)
-                            .foregroundColor(.secondary)
+                            .frame(width: 20, height: 20)
+                            .accentSymbolRendering()
                     }
                 }
             }

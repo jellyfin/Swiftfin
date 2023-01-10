@@ -37,7 +37,7 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
     func makeAbout() -> some View {
         AboutAppView(viewModel: viewModel)
     }
-    
+
     @ViewBuilder
     func makeAppIconSelector() -> some View {
         AppIconSelectorView(viewModel: viewModel)

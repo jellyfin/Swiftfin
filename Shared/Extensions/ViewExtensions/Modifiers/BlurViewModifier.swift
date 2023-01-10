@@ -8,9 +8,14 @@
 
 import SwiftUI
 
-struct PlaybackSettingsView: View {
+struct BlurViewModifier: ViewModifier {
 
-    var body: some View {
-        Text("")
+    let style: UIBlurEffect.Style
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                BlurView(style: style)
+            }
     }
 }

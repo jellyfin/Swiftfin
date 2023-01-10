@@ -14,9 +14,6 @@ extension ItemView {
 
     struct MediaSourceInfoView: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @EnvironmentObject
         private var router: MediaSourceInfoCoordinator.Router
 
@@ -65,7 +62,7 @@ extension ItemView {
             }
             .navigationTitle(mediaSource.displayTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationCloseButton(accentColor: $accentColor) {
+            .navigationCloseButton() {
                 router.dismissCoordinator()
             }
         }

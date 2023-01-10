@@ -46,9 +46,9 @@ extension SeriesEpisodeSelector {
 
         var body: some View {
             if case let PosterButtonType.item(episode) = type {
-                if let progress = episode.progress {
+                if let progressLabel = episode.progressLabel {
                     LandscapePosterProgressBar(
-                        title: progress,
+                        title: progressLabel,
                         progress: (episode.userData?.playedPercentage ?? 0) / 100
                     )
                 } else if episode.userData?.isPlayed ?? false {

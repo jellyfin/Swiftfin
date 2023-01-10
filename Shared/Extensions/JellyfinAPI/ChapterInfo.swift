@@ -37,6 +37,13 @@ extension ChapterInfo {
         let imageSource: ImageSource
         let secondsRange: Range<Int>
 
+        var displayTitle: String {
+            chapterInfo.displayTitle
+        }
+
+        var subtitle: String?
+        var showTitle: Bool = true
+        
         init(
             chapterInfo: ChapterInfo,
             imageSource: ImageSource,
@@ -46,13 +53,6 @@ extension ChapterInfo {
             self.imageSource = imageSource
             self.secondsRange = secondsRange
         }
-
-        var displayTitle: String {
-            chapterInfo.displayTitle
-        }
-
-        var subtitle: String?
-        var showTitle: Bool = true
 
         func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
             .init()

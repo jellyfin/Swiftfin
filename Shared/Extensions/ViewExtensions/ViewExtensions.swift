@@ -6,6 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import SwiftUI
 
@@ -174,5 +175,14 @@ extension View {
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
         modifier(VisibilityModifier(isVisible: isVisible))
+    }
+
+    func blurred(style: UIBlurEffect.Style = .regular) -> some View {
+        modifier(BlurViewModifier(style: style))
+    }
+    
+    func accentSymbolRendering(accentColor: Color = Defaults[.accentColor]) -> some View {
+        symbolRenderingMode(.palette)
+            .foregroundStyle(accentColor.overlayColor, accentColor)
     }
 }

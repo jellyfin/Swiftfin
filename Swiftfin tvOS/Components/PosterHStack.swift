@@ -92,7 +92,7 @@ extension PosterHStack {
             items: items,
             itemScale: 1,
             content: { PosterButton.DefaultContentView(item: $0) },
-            imageOverlay: { _ in EmptyView() },
+            imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in },

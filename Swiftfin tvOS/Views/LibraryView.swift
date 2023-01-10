@@ -15,7 +15,7 @@ struct LibraryView: View {
 
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: LibraryViewModel
 

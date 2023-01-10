@@ -11,13 +11,10 @@ import Stinsen
 import SwiftUI
 
 struct BasicAppSettingsView: View {
-    
-    @Default(.appAppearance)
-    var appAppearance
 
     @EnvironmentObject
-    private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
-    
+    private var router: BasicAppSettingsCoordinator.Router
+
     @ObservedObject
     var viewModel: SettingsViewModel
 
@@ -49,7 +46,7 @@ struct BasicAppSettingsView: View {
         .alert(L10n.reset, isPresented: $resetTapped, actions: {
             Button(role: .destructive) {
 //                viewModel.resetAppSettings()
-                basicAppSettingsRouter.dismissCoordinator()
+                router.dismissCoordinator()
             } label: {
                 L10n.reset.text
             }

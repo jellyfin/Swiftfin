@@ -6,12 +6,32 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import CoreStore
+import Logging
+import Pulse
+import PulseLogHandler
 import SwiftUI
-import UIKit
 
 @main
 struct SwiftfinApp: App {
+
+    init() {
+
+        // Logging
+        LoggingSystem.bootstrap { label in
+
+            var loggers: [LogHandler] = [PersistentLogHandler(label: label).withLogLevel(.trace)]
+
+            #if DEBUG
+            loggers.append(SwiftfinConsoleLogger())
+            #endif
+
+            return MultiplexLogHandler(loggers)
+        }
+
+        CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
+        CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
+    }
 
     var body: some Scene {
         WindowGroup {

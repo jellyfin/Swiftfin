@@ -31,10 +31,15 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.Library.gridPosterType)
     private var libraryGridPosterType
 
-    @Default(.Customization.Library.showFavorites)
-    private var showFavorites
+    @Default(.Customization.Library.cinematicBackground)
+    private var cinematicBackground
     @Default(.Customization.Library.randomImage)
     private var libraryRandomImage
+    @Default(.Customization.Library.showFavorites)
+    private var showFavorites
+    
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
 
     var body: some View {
         SplitFormWindowView()
@@ -56,6 +61,11 @@ struct CustomizeViewsSettings: View {
                 }
 
                 Section {
+                    
+                    ChevronButton(title: "Indicators")
+                        .onSelect {
+                            router.route(to: \.indicatorSettings)
+                        }
 
                     Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
@@ -76,6 +86,8 @@ struct CustomizeViewsSettings: View {
                 }
 
                 Section {
+
+                    Toggle("Cinematic Background", isOn: $cinematicBackground)
 
                     Toggle("Random Image", isOn: $libraryRandomImage)
 

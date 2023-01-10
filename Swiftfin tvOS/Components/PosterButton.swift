@@ -6,6 +6,8 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct PosterButton<Item: Poster>: View {
@@ -88,7 +90,7 @@ extension PosterButton {
             itemScale: 1,
             horizontalAlignment: .leading,
             content: { DefaultContentView(item: item) },
-            imageOverlay: { EmptyView() },
+            imageOverlay: { DefaultOverlay(item: item) },
             contextMenu: { EmptyView() },
             onSelect: {},
             singleImage: singleImage,
@@ -152,6 +154,47 @@ extension PosterButton {
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
                         .lineLimit(2)
+                }
+            }
+        }
+    }
+    
+    struct DefaultOverlay: View {
+        
+        @Default(.accentColor)
+        private var accentColor
+        @Default(.Customization.Indicators.showFavorited)
+        private var showFavorited
+        @Default(.Customization.Indicators.showProgress)
+        private var showProgress
+        @Default(.Customization.Indicators.showUnwatched)
+        private var showUnwatched
+        @Default(.Customization.Indicators.showWatched)
+        private var showWatched
+        
+        let item: Item
+        
+        var body: some View {
+            ZStack {
+                if let item = item as? BaseItemDto {
+                    if item.userData?.isPlayed ?? false {
+                        WatchedIndicator(size: 45)
+                            .visible(showWatched)
+                    } else {
+                        if (item.userData?.playbackPositionTicks ?? 0) > 0 {
+                            ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 10)
+                                .visible(showProgress)
+                        } else {
+                            UnwatchedIndicator(size: 45)
+                                .foregroundColor(accentColor)
+                                .visible(showUnwatched)
+                        }
+                    }
+                    
+                    if item.userData?.isFavorite ?? false {
+                        FavoriteIndicator(size: 45)
+                            .visible(showFavorited)
+                    }
                 }
             }
         }

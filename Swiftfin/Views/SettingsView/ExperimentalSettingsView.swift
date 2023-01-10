@@ -28,8 +28,6 @@ struct ExperimentalSettingsView: View {
 
                 Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
 
-            } header: {
-                L10n.experimental.text
             }
 
             Section {
@@ -42,5 +40,6 @@ struct ExperimentalSettingsView: View {
                 Text("Live TV")
             }
         }
+        .navigationTitle(L10n.experimental)
     }
 }

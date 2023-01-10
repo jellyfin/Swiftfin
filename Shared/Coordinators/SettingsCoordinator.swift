@@ -34,6 +34,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
     @Route(.push)
+    var indicatorSettings = makeIndicatorSettings
+    @Route(.push)
     var serverDetail = makeServerDetail
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
@@ -44,6 +46,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
+    @Route(.modal)
+    var indicatorSettings = makeIndicatorSettings
     @Route(.modal)
     var log = makeLog
     @Route(.modal)
@@ -63,7 +67,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeAbout() -> some View {
         AboutAppView(viewModel: viewModel)
     }
-    
+
     @ViewBuilder
     func makeAppIconSelector() -> some View {
         AppIconSelectorView(viewModel: viewModel)
@@ -93,6 +97,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeExperimentalSettings() -> some View {
         ExperimentalSettingsView()
     }
+    
+    @ViewBuilder
+    func makeIndicatorSettings() -> some View {
+        IndicatorSettingsView()
+    }
 
     @ViewBuilder
     func makeServerDetail() -> some View {
@@ -117,6 +126,14 @@ final class SettingsCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(
             BasicNavigationViewCoordinator {
                 ExperimentalSettingsView()
+            }
+        )
+    }
+    
+    func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator(
+            BasicNavigationViewCoordinator {
+                IndicatorSettingsView()
             }
         )
     }

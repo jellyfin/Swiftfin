@@ -9,6 +9,7 @@
 import Foundation
 
 protocol Poster: Displayable, Hashable {
+    
     var subtitle: String? { get }
     var showTitle: Bool { get }
 
