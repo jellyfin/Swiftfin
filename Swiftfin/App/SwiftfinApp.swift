@@ -49,6 +49,9 @@ struct SwiftfinApp: App {
 
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
+        
+        // Don't let the tab bar disappear when a new view is pushed
+        UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance.init(idiom: .unspecified)
     }
 
     // MARK: body

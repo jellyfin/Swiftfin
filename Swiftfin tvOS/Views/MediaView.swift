@@ -7,6 +7,7 @@
 //
 
 import CollectionView
+import Defaults
 import JellyfinAPI
 import Stinsen
 import SwiftUI
@@ -17,15 +18,14 @@ struct MediaView: View {
     private var tabRouter: MainCoordinator.Router
     @EnvironmentObject
     private var router: MediaCoordinator.Router
+    
     @ObservedObject
     var viewModel: MediaViewModel
 
     var body: some View {
-        Text("")
-//        CollectionView(items: viewModel.libraryItems) { _, item, _ in
-//            PosterButton(item: item, type: .landscape)
-//                .scaleItem(1.12)
-//                .onSelect {
+        CollectionView(items: viewModel.libraryItems) { _, viewModel, _ in
+            LibraryCard(viewModel: viewModel)
+                .onSelect {
 //                    switch item.library.collectionType {
 //                    case "favorites":
 //                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .favorites))
@@ -36,31 +36,95 @@ struct MediaView: View {
 //                    default:
 //                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .init()))
 //                    }
-//                }
+                }
 //                .imageOverlay {
 //                    ZStack {
 //                        Color.black
 //                            .opacity(0.5)
 //
-        ////                        Text(item.library.displayTitle)
-        ////                            .foregroundColor(.white)
-        ////                            .font(.title2)
-        ////                            .fontWeight(.semibold)
-        ////                            .lineLimit(2)
-        ////                            .multilineTextAlignment(.center)
-        ////                            .frame(alignment: .center)
+//        //                        Text(item.library.displayTitle)
+//        //                            .foregroundColor(.white)
+//        //                            .font(.title2)
+//        //                            .fontWeight(.semibold)
+//        //                            .lineLimit(2)
+//        //                            .multilineTextAlignment(.center)
+//        //                            .frame(alignment: .center)
 //                    }
 //                }
-//        }
-//        .layout { _, layoutEnvironment in
-//            .grid(
-//                layoutEnvironment: layoutEnvironment,
-//                layoutMode: .adaptive(withMinItemSize: 400),
-//                lineSpacing: 50,
-//                itemSize: .estimated(400),
-//                sectionInsets: .zero
-//            )
-//        }
-//        .ignoresSafeArea()
+        }
+        .layout { _, layoutEnvironment in
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: .adaptive(withMinItemSize: 400),
+                lineSpacing: 50,
+                itemSize: .estimated(400),
+                sectionInsets: .zero
+            )
+        }
+        .ignoresSafeArea()
+    }
+}
+
+extension MediaView {
+
+    struct LibraryCard: View {
+
+        @ObservedObject
+        var viewModel: MediaItemViewModel
+
+        private var onSelect: () -> Void
+
+        private var itemWidth: CGFloat {
+            PosterType.landscape.width * (UIDevice.isPhone ? 0.85 : 1)
+        }
+
+        var body: some View {
+            Button {
+                onSelect()
+            } label: {
+                Group {
+                    if let imageSources = viewModel.imageSources {
+                        ImageView(imageSources)
+                    } else {
+                        ImageView(nil)
+                    }
+                }
+                .overlay {
+                    if Defaults[.Customization.Library.randomImage] ||
+                        viewModel.item.collectionType == "favorites" ||
+                        viewModel.item.collectionType == "downloads"
+                    {
+                        ZStack {
+                            Color.black
+                                .opacity(0.5)
+
+                            Text(viewModel.item.displayTitle)
+                                .foregroundColor(.white)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.center)
+                                .frame(alignment: .center)
+                        }
+                    }
+                }
+                .posterStyle(type: .landscape, width: itemWidth)
+            }
+            .buttonStyle(.card)
+        }
+    }
+}
+
+extension MediaView.LibraryCard {
+
+    init(viewModel: MediaItemViewModel) {
+        self.init(
+            viewModel: viewModel,
+            onSelect: {}
+        )
+    }
+
+    func onSelect(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

@@ -41,14 +41,11 @@ struct FilterView: View {
     }
 
     var body: some View {
-
-        VStack {
-            SelectorView(
-                type: selectorType,
-                allItems: viewModel.allFilters[keyPath: filter],
-                selectedItems: selectedFiltersBinding
-            )
-        }
+        SelectorView(
+            selection: selectedFiltersBinding,
+            allItems: viewModel.allFilters[keyPath: filter],
+            type: selectorType
+        )
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

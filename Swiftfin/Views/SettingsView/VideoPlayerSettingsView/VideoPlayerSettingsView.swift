@@ -118,7 +118,7 @@ struct VideoPlayerSettingsView: View {
 
                 ChevronButton(title: L10n.subtitleFont, subtitle: subtitleFontName)
                     .onSelect {
-                        router.route(to: \.fontPicker)
+                        router.route(to: \.fontPicker, $subtitleFontName)
                     }
 
                 BasicStepper(

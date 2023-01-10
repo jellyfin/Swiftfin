@@ -17,10 +17,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
+    #if os(iOS)
     @Route(.push)
     var about = makeAbout
-
-    #if os(iOS)
     @Route(.push)
     var appIconSelector = makeAppIconSelector
     @Route(.push)
@@ -59,12 +58,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
         viewModel = .init()
     }
 
+    #if os(iOS)
     @ViewBuilder
     func makeAbout() -> some View {
         AboutAppView(viewModel: viewModel)
     }
-
-    #if os(iOS)
+    
     @ViewBuilder
     func makeAppIconSelector() -> some View {
         AppIconSelectorView(viewModel: viewModel)

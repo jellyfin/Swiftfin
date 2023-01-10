@@ -69,8 +69,7 @@ struct CustomizeViewsSettings: View {
 
                     InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
 
-                    // TODO: fix library collection views to handle landscape
-//                    InlineEnumToggle(title: L10n.library, selection: $libraryGridPosterType)
+                    InlineEnumToggle(title: L10n.library, selection: $libraryGridPosterType)
 
                 } header: {
                     Text("Posters")

@@ -15,6 +15,7 @@ struct BasicLibraryView: View {
 
     @EnvironmentObject
     private var router: BasicLibraryCoordinator.Router
+    
     @ObservedObject
     var viewModel: PagingLibraryViewModel
 
@@ -23,6 +24,7 @@ struct BasicLibraryView: View {
         ProgressView()
     }
 
+    // TODO: add retry
     @ViewBuilder
     private var noResultsView: some View {
         L10n.noResults.text

@@ -16,6 +16,13 @@ extension String: Displayable {
     }
 }
 
+extension String: Identifiable {
+    
+    public var id: String {
+        self
+    }
+}
+
 extension String {
 
     func appending(_ element: String) -> String {

@@ -17,35 +17,33 @@ struct SelectorView<Item: Displayable & Identifiable>: View {
     private var accentColor
 
     @Binding
-    private var selectedItems: [Item]
+    private var selection: [Item]
 
     private let allItems: [Item]
     private var label: (Item) -> any View
     private let type: SelectorType
 
     var body: some View {
-        List {
-            ForEach(allItems) { item in
-                Button {
-                    switch type {
-                    case .single:
-                        handleSingleSelect(with: item)
-                    case .multi:
-                        handleMultiSelect(with: item)
-                    }
-                } label: {
-                    HStack {
-                        label(item).eraseToAnyView()
+        List(allItems) { item in
+            Button {
+                switch type {
+                case .single:
+                    handleSingleSelect(with: item)
+                case .multi:
+                    handleMultiSelect(with: item)
+                }
+            } label: {
+                HStack {
+                    label(item).eraseToAnyView()
 
-                        Spacer()
+                    Spacer()
 
-                        if selectedItems.contains { $0.id == item.id } {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(accentColor)
-                        } else {
-                            Image(systemName: "circle")
-                                .foregroundColor(.secondary)
-                        }
+                    if selection.contains { $0.id == item.id } {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(accentColor)
+                    } else {
+                        Image(systemName: "circle")
+                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -53,23 +51,23 @@ struct SelectorView<Item: Displayable & Identifiable>: View {
     }
 
     private func handleSingleSelect(with item: Item) {
-        selectedItems = [item]
+        selection = [item]
     }
 
     private func handleMultiSelect(with item: Item) {
-        if selectedItems.contains(where: { $0.id == item.id }) {
-            selectedItems.removeAll(where: { $0.id == item.id })
+        if selection.contains(where: { $0.id == item.id }) {
+            selection.removeAll(where: { $0.id == item.id })
         } else {
-            selectedItems.append(item)
+            selection.append(item)
         }
     }
 }
 
 extension SelectorView {
 
-    init(type: SelectorType, allItems: [Item], selectedItems: Binding<[Item]>) {
+    init(selection: Binding<[Item]>, allItems: [Item], type: SelectorType) {
         self.init(
-            selectedItems: selectedItems,
+            selection: selection,
             allItems: allItems,
             label: { Text($0.displayTitle).foregroundColor(.primary) },
             type: type

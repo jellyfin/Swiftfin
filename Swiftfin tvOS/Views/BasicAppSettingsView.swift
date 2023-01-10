@@ -11,17 +11,18 @@ import Stinsen
 import SwiftUI
 
 struct BasicAppSettingsView: View {
+    
+    @Default(.appAppearance)
+    var appAppearance
 
     @EnvironmentObject
     private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
+    
     @ObservedObject
     var viewModel: SettingsViewModel
 
     @State
-    var resetTapped: Bool = false
-
-    @Default(.appAppearance)
-    var appAppearance
+    private var resetTapped: Bool = false
 
     var body: some View {
         Form {

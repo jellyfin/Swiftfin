@@ -10,27 +10,33 @@ import Defaults
 import SwiftUI
 import UIKit
 
-struct FontPickerView: UIViewControllerRepresentable {
-
-    func makeUIViewController(context: Context) -> UIFontPickerViewController {
-        let configuration = UIFontPickerViewController.Configuration()
-        configuration.includeFaces = false
-
-        let fontViewController = UIFontPickerViewController(configuration: configuration)
-        fontViewController.delegate = context.coordinator
-        return fontViewController
+// TODO: Fix updating view with Binding
+struct FontPickerView: View {
+    
+    @Binding
+    private var selection: String
+    
+    @State
+    private var updateSelection: [String]
+    
+    init(selection: Binding<String>) {
+        self._selection = selection
+        self.updateSelection = [selection.wrappedValue]
     }
-
-    func updateUIViewController(_ uiViewController: UIFontPickerViewController, context: Context) {}
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    class Coordinator: NSObject, UIFontPickerViewControllerDelegate {
-        func fontPickerViewControllerDidPickFont(_ viewController: UIFontPickerViewController) {
-            guard let descriptor = viewController.selectedFontDescriptor else { return }
-            Defaults[.VideoPlayer.Subtitle.subtitleFontName] = descriptor.postscriptName
+    
+    var body: some View {
+        SelectorView(
+            selection: $updateSelection,
+            allItems: UIFont.familyNames,
+            type: .single
+        )
+        .label { fontFamily in
+            Text(fontFamily)
+                .foregroundColor(.white)
+                .font(.custom(fontFamily, size: 18))
+        }
+        .onChange(of: updateSelection) { newValue in
+            selection = updateSelection[0]
         }
     }
 }

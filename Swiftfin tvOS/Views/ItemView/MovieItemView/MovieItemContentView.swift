@@ -26,6 +26,10 @@ extension MovieItemView {
                     .padding(.bottom, 50)
 
                 ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
+                
+                if !viewModel.specialFeatures.isEmpty {
+                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
+                }
 
                 ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 

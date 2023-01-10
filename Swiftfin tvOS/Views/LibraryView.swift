@@ -15,6 +15,7 @@ struct LibraryView: View {
 
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
+    
     @ObservedObject
     var viewModel: LibraryViewModel
 
@@ -23,6 +24,7 @@ struct LibraryView: View {
         ProgressView()
     }
 
+    // TODO: add retry
     @ViewBuilder
     private var noResultsView: some View {
         L10n.noResults.text
