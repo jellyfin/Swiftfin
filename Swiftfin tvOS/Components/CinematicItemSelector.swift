@@ -11,23 +11,19 @@ import JellyfinAPI
 import Nuke
 import SwiftUI
 
-struct CinematicItemSelector<
-    Item: Poster,
-    TopContent: View,
-    ItemContent: View,
-    ItemImageOverlay: View,
-    ItemContextMenu: View,
-    TrailingContent: View
->: View {
+struct CinematicItemSelector<Item: Poster>: View {
 
-    @ObservedObject
+    @State
+    private var focusedItem: Item?
+
+    @StateObject
     private var viewModel: CinematicBackgroundView.ViewModel = .init()
 
-    private var topContent: (Item) -> TopContent
-    private var itemContent: (Item) -> ItemContent
-    private var itemImageOverlay: (Item) -> ItemImageOverlay
-    private var itemContextMenu: (Item) -> ItemContextMenu
-    private var trailingContent: () -> TrailingContent
+    private var topContent: (Item) -> any View
+    private var itemContent: (Item) -> any View
+    private var itemImageOverlay: (Item) -> any View
+    private var itemContextMenu: (Item) -> any View
+    private var trailingContent: () -> any View
     private var onSelect: (Item) -> Void
 
     let items: [Item]
@@ -63,7 +59,9 @@ struct CinematicItemSelector<
             VStack(alignment: .leading, spacing: 10) {
                 if let currentItem = viewModel.currentItem {
                     topContent(currentItem)
-                        .id(currentItem.displayTitle)
+                        .eraseToAnyView()
+                        .id(currentItem.hashValue)
+                        .transition(.opacity)
                 }
 
                 PosterHStack(type: .landscape, items: items)
@@ -72,19 +70,22 @@ struct CinematicItemSelector<
                     .contextMenu(itemContextMenu)
                     .trailing(trailingContent)
                     .onSelect(onSelect)
-                    .onFocus { item in
-                        viewModel.select(item: item)
-                    }
+                    .focusedItem($focusedItem)
             }
         }
         .frame(height: UIScreen.main.bounds.height - 75)
         .frame(maxWidth: .infinity)
+        .onChange(of: focusedItem) { newValue in
+            guard let newValue else { return }
+            viewModel.select(item: newValue)
+        }
     }
 
     struct CinematicBackgroundView: UIViewRepresentable {
 
         @ObservedObject
         var viewModel: ViewModel
+
         var initialItem: Item?
 
         @ViewBuilder
@@ -106,8 +107,8 @@ struct CinematicItemSelector<
 
             @Published
             var currentItem: Item?
-            private var cancellables = Set<AnyCancellable>()
 
+            private var cancellables = Set<AnyCancellable>()
             private var currentItemSubject = CurrentValueSubject<Item?, Never>(nil)
 
             init() {
@@ -175,12 +176,7 @@ struct CinematicItemSelector<
     }
 }
 
-extension CinematicItemSelector where TopContent == EmptyView,
-    ItemContent == EmptyView,
-    ItemImageOverlay == EmptyView,
-    ItemContextMenu == EmptyView,
-    TrailingContent == EmptyView
-{
+extension CinematicItemSelector {
     init(items: [Item]) {
         self.init(
             topContent: { _ in EmptyView() },
@@ -196,74 +192,24 @@ extension CinematicItemSelector where TopContent == EmptyView,
 
 extension CinematicItemSelector {
 
-    @ViewBuilder
-    func topContent<T: View>(@ViewBuilder _ content: @escaping (Item) -> T)
-    -> CinematicItemSelector<Item, T, ItemContent, ItemImageOverlay, ItemContextMenu, TrailingContent> {
-        CinematicItemSelector<Item, T, ItemContent, ItemImageOverlay, ItemContextMenu, TrailingContent>(
-            topContent: content,
-            itemContent: itemContent,
-            itemImageOverlay: itemImageOverlay,
-            itemContextMenu: itemContextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect,
-            items: items
-        )
+    func topContent(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+        copy(modifying: \.topContent, with: content)
     }
 
-    @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
-    -> CinematicItemSelector<Item, TopContent, C, ItemImageOverlay, ItemContextMenu, TrailingContent> {
-        CinematicItemSelector<Item, TopContent, C, ItemImageOverlay, ItemContextMenu, TrailingContent>(
-            topContent: topContent,
-            itemContent: content,
-            itemImageOverlay: itemImageOverlay,
-            itemContextMenu: itemContextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect,
-            items: items
-        )
+    func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+        copy(modifying: \.itemContent, with: content)
     }
 
-    @ViewBuilder
-    func itemImageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O)
-    -> CinematicItemSelector<Item, TopContent, ItemContent, O, ItemContextMenu, TrailingContent> {
-        CinematicItemSelector<Item, TopContent, ItemContent, O, ItemContextMenu, TrailingContent>(
-            topContent: topContent,
-            itemContent: itemContent,
-            itemImageOverlay: imageOverlay,
-            itemContextMenu: itemContextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect,
-            items: items
-        )
+    func itemImageOverlay(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+        copy(modifying: \.itemImageOverlay, with: content)
     }
 
-    @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
-    -> CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, M, TrailingContent> {
-        CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, M, TrailingContent>(
-            topContent: topContent,
-            itemContent: itemContent,
-            itemImageOverlay: itemImageOverlay,
-            itemContextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect,
-            items: items
-        )
+    func contextMenu<M: View>(@ViewBuilder _ content: @escaping (Item) -> M) -> Self {
+        copy(modifying: \.itemContextMenu, with: content)
     }
 
-    @ViewBuilder
-    func trailingContent<T: View>(@ViewBuilder _ content: @escaping () -> T)
-    -> CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, ItemContextMenu, T> {
-        CinematicItemSelector<Item, TopContent, ItemContent, ItemImageOverlay, ItemContextMenu, T>(
-            topContent: topContent,
-            itemContent: itemContent,
-            itemImageOverlay: itemImageOverlay,
-            itemContextMenu: itemContextMenu,
-            trailingContent: content,
-            onSelect: onSelect,
-            items: items
-        )
+    func trailingContent<T: View>(@ViewBuilder _ content: @escaping () -> T) -> Self {
+        copy(modifying: \.trailingContent, with: content)
     }
 
     func onSelect(_ action: @escaping (Item) -> Void) -> Self {

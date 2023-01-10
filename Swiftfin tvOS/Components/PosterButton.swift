@@ -21,8 +21,11 @@ struct PosterButton<Item: Poster>: View {
     private var imageOverlay: () -> any View
     private var contextMenu: () -> any View
     private var onSelect: () -> Void
-    private var onFocus: () -> Void
     private var singleImage: Bool
+
+    // Setting the .focused() modifier causes significant performance issues.
+    // Only set if desiring focus changes
+    private var onFocusChanged: ((Bool) -> Void)?
 
     private var itemWidth: CGFloat {
         type.width * itemScale
@@ -61,17 +64,19 @@ struct PosterButton<Item: Poster>: View {
                     .eraseToAnyView()
             })
             .posterShadow()
-            .focused($isFocused)
+            .if(onFocusChanged != nil) { view in
+                view
+                    .focused($isFocused)
+                    .onChange(of: isFocused) { newValue in
+                        onFocusChanged?(newValue)
+                    }
+            }
 
             content()
                 .eraseToAnyView()
                 .zIndex(-1)
         }
         .frame(width: itemWidth)
-        .onChange(of: isFocused) { newValue in
-            guard newValue else { return }
-            onFocus()
-        }
     }
 }
 
@@ -86,8 +91,8 @@ extension PosterButton {
             imageOverlay: { EmptyView() },
             contextMenu: { EmptyView() },
             onSelect: {},
-            onFocus: {},
-            singleImage: singleImage
+            singleImage: singleImage,
+            onFocusChanged: nil
         )
     }
 }
@@ -102,63 +107,24 @@ extension PosterButton {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    @ViewBuilder
     func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.content, with: content)
-//        PosterButton<Item, C, ImageOverlay, ContextMenu>(
-//            item: item,
-//            type: type,
-//            itemScale: itemScale,
-//            horizontalAlignment: horizontalAlignment,
-//            content: content,
-//            imageOverlay: imageOverlay,
-//            contextMenu: contextMenu,
-//            onSelect: onSelect,
-//            onFocus: onFocus,
-//            singleImage: singleImage
-//        )
     }
 
-    @ViewBuilder
     func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
-//        PosterButton<Item, Content, O, ContextMenu>(
-//            item: item,
-//            type: type,
-//            itemScale: itemScale,
-//            horizontalAlignment: horizontalAlignment,
-//            content: content,
-//            imageOverlay: imageOverlay,
-//            contextMenu: contextMenu,
-//            onSelect: onSelect,
-//            onFocus: onFocus,
-//            singleImage: singleImage
-//        )
     }
 
-    @ViewBuilder
     func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
-//        PosterButton<Item, Content, ImageOverlay, M>(
-//            item: item,
-//            type: type,
-//            itemScale: itemScale,
-//            horizontalAlignment: horizontalAlignment,
-//            content: content,
-//            imageOverlay: imageOverlay,
-//            contextMenu: contextMenu,
-//            onSelect: onSelect,
-//            onFocus: onFocus,
-//            singleImage: singleImage
-//        )
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
 
-    func onFocus(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onFocus, with: action)
+    func onFocusChanged(_ action: @escaping (Bool) -> Void) -> Self {
+        copy(modifying: \.onFocusChanged, with: action)
     }
 }
 

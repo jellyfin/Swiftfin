@@ -28,7 +28,6 @@ struct SettingsView: View {
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
-//                Image(uiImage: UIImage(named: "App Icon")!)
                 Image("jellyfin-blob-blue")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -84,6 +83,14 @@ struct SettingsView: View {
 
                 } header: {
                     L10n.accessibility.text
+                }
+
+                Section {
+
+                    ChevronButton(title: "Logs")
+                        .onSelect {
+                            router.route(to: \.log)
+                        }
                 }
             }
     }

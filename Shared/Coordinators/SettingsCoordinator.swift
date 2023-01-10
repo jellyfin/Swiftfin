@@ -46,6 +46,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
     @Route(.modal)
+    var log = makeLog
+    @Route(.modal)
     var serverDetail = makeServerDetail
     @Route(.modal)
     var videoPlayerSettings = makeVideoPlayerSettings
@@ -112,12 +114,17 @@ final class SettingsCoordinator: NavigationCoordinatable {
         )
     }
 
-    func makeExperimentalSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator>{
+    func makeExperimentalSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator(
             BasicNavigationViewCoordinator {
                 ExperimentalSettingsView()
             }
         )
+    }
+
+    @ViewBuilder
+    private func makeLog() -> some View {
+        ConsoleView()
     }
 
     @ViewBuilder

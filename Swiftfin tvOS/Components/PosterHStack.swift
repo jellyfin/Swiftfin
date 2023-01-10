@@ -19,7 +19,9 @@ struct PosterHStack<Item: Poster>: View {
     private var contextMenu: (Item) -> any View
     private var trailingContent: () -> any View
     private var onSelect: (Item) -> Void
-    private var onFocus: (Item) -> Void
+
+    // See PosterButton for implementation reason
+    private var focusedItem: Binding<Item?>?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -45,7 +47,11 @@ struct PosterHStack<Item: Poster>: View {
                             .imageOverlay { imageOverlay(item).eraseToAnyView() }
                             .contextMenu { contextMenu(item).eraseToAnyView() }
                             .onSelect { onSelect(item) }
-                            .onFocus { onFocus(item) }
+                            .if(focusedItem != nil) { view in
+                                view.onFocusChanged { isFocused in
+                                    if isFocused { focusedItem?.wrappedValue = item }
+                                }
+                            }
                     }
 
                     trailingContent()
@@ -74,6 +80,7 @@ struct PosterHStack<Item: Poster>: View {
 }
 
 extension PosterHStack {
+
     init(
         title: String? = nil,
         type: PosterType,
@@ -89,7 +96,7 @@ extension PosterHStack {
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in },
-            onFocus: { _ in }
+            focusedItem: nil
         )
     }
 }
@@ -100,22 +107,18 @@ extension PosterHStack {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    @ViewBuilder
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
         copy(modifying: \.content, with: content)
     }
 
-    @ViewBuilder
     func imageOverlay(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
     }
 
-    @ViewBuilder
     func contextMenu(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
     }
 
-    @ViewBuilder
     func trailing(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.trailingContent, with: content)
     }
@@ -124,7 +127,7 @@ extension PosterHStack {
         copy(modifying: \.onSelect, with: action)
     }
 
-    func onFocus(_ action: @escaping (Item) -> Void) -> Self {
-        copy(modifying: \.onFocus, with: action)
+    func focusedItem(_ binding: Binding<Item?>) -> Self {
+        copy(modifying: \.focusedItem, with: binding)
     }
 }

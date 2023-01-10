@@ -156,7 +156,6 @@
 		C409CE9C284EA6EA00CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9B284EA6EA00CABC12 /* SwiftUICollection */; };
 		C409CE9E285044C800CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9D285044C800CABC12 /* SwiftUICollection */; };
 		C40CD926271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */; };
-		C4464953281616AE00DDB461 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
 		C45942C527F67DA400C54FE7 /* LiveTVCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942C427F67DA400C54FE7 /* LiveTVCoordinator.swift */; };
 		C45942C627F695FB00C54FE7 /* LiveTVProgramsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE07702725EB06003F4AD1 /* LiveTVProgramsCoordinator.swift */; };
 		C45942D027F69C2400C54FE7 /* LiveTVChannelsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE07872728448B003F4AD1 /* LiveTVChannelsCoordinator.swift */; };
@@ -2770,7 +2769,6 @@
 				53913C0526D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913BFF26D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913C0E26D323FE00EB3286 /* Localizable.strings in Resources */,
-				C4464953281616AE00DDB461 /* Assets.xcassets in Resources */,
 				53913BF026D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913C0826D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913C1126D323FE00EB3286 /* Localizable.strings in Resources */,

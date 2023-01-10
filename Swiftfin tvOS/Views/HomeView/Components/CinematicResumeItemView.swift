@@ -15,6 +15,7 @@ extension HomeView {
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
+
         @ObservedObject
         var viewModel: HomeViewModel
 
