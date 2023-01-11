@@ -53,6 +53,7 @@ extension View {
     // TODO: Simplify plethora of calls
     // TODO: Centralize math
     // TODO: Move poster stuff to own file
+    // TODO: Figure out proper handling of corner radius for tvOS buttons
     func posterStyle(type: PosterType, width: CGFloat) -> some View {
         Group {
             switch type {
@@ -77,9 +78,7 @@ extension View {
 
     private func portraitPoster(width: CGFloat) -> some View {
         frame(width: width, height: width * 1.5)
-            #if !os(tvOS)
             .cornerRadius((width * 1.5) / 40)
-            #endif
     }
 
     private func landscapePoster(width: CGFloat) -> some View {

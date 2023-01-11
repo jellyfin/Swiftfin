@@ -65,7 +65,7 @@ struct EpisodeCard: View {
                     L10n.seeMore.text
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(Color(UIColor.systemCyan))
+                        .foregroundColor(.jellyfinPurple)
                 }
                 .frame(width: 510, height: 220)
                 .padding()

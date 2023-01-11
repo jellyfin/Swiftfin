@@ -51,7 +51,9 @@ struct SettingsView: View {
 //                        router.route(to: \.serverDetail)
 //                    }
 
-                    Button {} label: {
+                    Button {
+                        viewModel.signOut()
+                    } label: {
                         L10n.switchUser.text
                             .foregroundColor(.jellyfinPurple)
                     }

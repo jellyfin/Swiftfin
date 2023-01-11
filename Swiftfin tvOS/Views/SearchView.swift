@@ -13,6 +13,7 @@ struct SearchView: View {
 
     @EnvironmentObject
     private var router: SearchCoordinator.Router
+    
     @ObservedObject
     var viewModel: SearchViewModel
 
