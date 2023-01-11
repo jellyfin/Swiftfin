@@ -14,8 +14,9 @@ extension SeriesItemView {
 
     struct ContentView: View {
 
-        @ObservedObject
+        @StateObject
         private var focusGuide = FocusGuide()
+        
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
@@ -27,7 +28,7 @@ extension SeriesItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                SeriesEpisodesView(viewModel: viewModel)
+                SeriesEpisodeSelector(viewModel: viewModel)
                     .environmentObject(focusGuide)
 
                 ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])

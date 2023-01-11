@@ -159,10 +159,9 @@ extension PosterButton {
         }
     }
     
+    // TODO: Find better way for these indicators, see EpisodeCard
     struct DefaultOverlay: View {
         
-        @Default(.accentColor)
-        private var accentColor
         @Default(.Customization.Indicators.showFavorited)
         private var showFavorited
         @Default(.Customization.Indicators.showProgress)
@@ -186,7 +185,7 @@ extension PosterButton {
                                 .visible(showProgress)
                         } else {
                             UnwatchedIndicator(size: 45)
-                                .foregroundColor(accentColor)
+                                .foregroundColor(.jellyfinPurple)
                                 .visible(showUnwatched)
                         }
                     }

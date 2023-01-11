@@ -221,4 +221,19 @@ extension BaseItemDto {
             return nil
         }
     }
+    
+    // TODO: Don't use spoof objects as a placeholder or no results
+
+    static var placeHolder: BaseItemDto {
+        .init(
+            id: "1",
+            name: "Placeholder",
+            overview: String(repeating: "a", count: 100)
+//            indexNumber: 20
+        )
+    }
+
+    static var noResults: BaseItemDto {
+        .init(name: L10n.noResults)
+    }
 }

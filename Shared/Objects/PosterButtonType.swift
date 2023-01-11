@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: Remove
+
 enum PosterButtonType<Item: Poster>: Hashable, Identifiable {
 
     case loading
@@ -20,6 +22,15 @@ enum PosterButtonType<Item: Poster>: Hashable, Identifiable {
             return UUID().hashValue
         case let .item(item):
             return item.hashValue
+        }
+    }
+    
+    var _item: Item? {
+        switch self {
+        case .item(let item):
+            return item
+        default:
+            return nil
         }
     }
 }

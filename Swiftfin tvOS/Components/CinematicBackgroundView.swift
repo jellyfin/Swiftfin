@@ -22,6 +22,12 @@ struct CinematicBackgroundView<Item: Poster>: UIViewRepresentable {
     @ViewBuilder
     private func imageView(for item: Item?) -> some View {
         ImageView(item?.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width, single: false) ?? [])
+            .placeholder {
+                Color.clear
+            }
+            .failure {
+                Color.clear
+            }
     }
 
     func makeUIView(context: Context) -> UIRotateImageView {

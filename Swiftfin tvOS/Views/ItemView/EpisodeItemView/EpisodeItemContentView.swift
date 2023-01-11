@@ -21,7 +21,7 @@ extension EpisodeItemView {
         var body: some View {
             VStack(spacing: 0) {
 
-                Self.EpisodeCinematicHeaderView(viewModel: viewModel)
+                EpisodeCinematicHeaderView(viewModel: viewModel)
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
@@ -104,7 +104,7 @@ extension EpisodeItemView.ContentView {
                         if let overview = viewModel.item.overview {
                             Text(overview)
                                 .font(.subheadline)
-                                .lineLimit(4)
+                                .lineLimit(3)
                         } else {
                             L10n.noOverviewAvailable.text
                         }

@@ -76,31 +76,34 @@ extension View {
     }
 
     private func portraitPoster(width: CGFloat) -> some View {
-        self.frame(width: width, height: width * 1.5)
+        frame(width: width, height: width * 1.5)
+            #if !os(tvOS)
             .cornerRadius((width * 1.5) / 40)
+            #endif
     }
 
     private func landscapePoster(width: CGFloat) -> some View {
-        self.frame(width: width, height: width / 1.77)
+        frame(width: width, height: width / 1.77)
+            #if !os(tvOS)
             .cornerRadius(width / 30)
+            #endif
     }
 
     private func portraitPoster(height: CGFloat) -> some View {
-        self.portraitPoster(width: height / 1.5)
+        portraitPoster(width: height / 1.5)
     }
 
     private func landscapePoster(height: CGFloat) -> some View {
-        self.landscapePoster(width: height * 1.77)
+        landscapePoster(width: height * 1.77)
     }
 
     @inlinable
     func padding2(_ edges: Edge.Set = .all) -> some View {
-        self.padding(edges)
-            .padding(edges)
+        padding(edges).padding(edges)
     }
 
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
-        self.modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
+        modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
 
     func backgroundParallaxHeader<Header: View>(
@@ -109,15 +112,15 @@ extension View {
         multiplier: CGFloat = 1,
         @ViewBuilder header: @escaping () -> Header
     ) -> some View {
-        self.modifier(BackgroundParallaxHeaderModifier(scrollViewOffset, height: height, multiplier: multiplier, header: header))
+        modifier(BackgroundParallaxHeaderModifier(scrollViewOffset, height: height, multiplier: multiplier, header: header))
     }
 
     func bottomEdgeGradient(bottomColor: Color) -> some View {
-        self.modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
+        modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
 
     func posterShadow() -> some View {
-        self.shadow(radius: 4, y: 2)
+        shadow(radius: 4, y: 2)
     }
 
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {

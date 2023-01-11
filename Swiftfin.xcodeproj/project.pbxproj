@@ -2529,8 +2529,8 @@
 		E1C926062887565C002A7A66 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E1C926072887565C002A7A66 /* SeriesEpisodesView.swift */,
 				E1C926092887565C002A7A66 /* EpisodeCard.swift */,
+				E1C926072887565C002A7A66 /* SeriesEpisodesView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
