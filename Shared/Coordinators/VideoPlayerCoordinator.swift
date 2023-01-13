@@ -54,7 +54,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                 VideoPlayer(manager: self.videoPlayerManager)
             } else {
-                Text("TODO: implement native player :/")
+                NativeVideoPlayer(manager: self.videoPlayerManager)
 //                NativeVideoPlayer(manager: self.videoPlayerManager)
             }
         }

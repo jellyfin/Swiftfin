@@ -27,24 +27,33 @@ struct VideoPlayer: View {
     }
 
     @ViewBuilder
-    private func playerView(with viewModel: VideoPlayerViewModel) -> some View {
+    private var playerView: some View {
         PreferenceUIHostingControllerView {
             ZStack {
-                VLCVideoPlayer(configuration: viewModel.vlcVideoPlayerConfiguration)
+//                VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
 
-//                if presentingConfirmClose {
-                ConfirmCloseOverlay()
-//                        .transition(.opacity)
-//                }
+                Color.red
+                    .opacity(0.5)
+                    .visible(presentingConfirmClose)
+                
+                
+//                ConfirmCloseOverlay()
+//                    .visible(presentingConfirmClose)
             }
             .onMenuPressed {
+                confirmCloseWorkItem?.cancel()
+                
                 if presentingConfirmClose {
                     router.dismissCoordinator()
                 } else {
-                    presentingConfirmClose = true
+                    withAnimation {
+                        presentingConfirmClose = true
+                    }
 
                     let task = DispatchWorkItem {
-                        self.presentingConfirmClose = false
+                        withAnimation {
+                            self.presentingConfirmClose = false
+                        }
                     }
 
                     confirmCloseWorkItem = task
@@ -64,8 +73,8 @@ struct VideoPlayer: View {
 
     var body: some View {
         Group {
-            if let viewModel = videoPlayerManager.currentViewModel {
-                playerView(with: viewModel)
+            if let _ = videoPlayerManager.currentViewModel {
+                playerView
             } else {
                 loadingView
             }

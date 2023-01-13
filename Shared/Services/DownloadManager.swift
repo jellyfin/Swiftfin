@@ -45,9 +45,6 @@ class DownloadManager: ObservableObject {
         do {
             try Folder(path: URL.tmp.path).files.delete()
 
-            // There was a bug in Get that wouldn't put downloads in the correct directory, manually delete
-            try? Folder(path: URL.tmp.appendingPathComponent("com.github.kean.get").path).files.delete()
-
             logger.trace("Cleared tmp directory")
         } catch {
             logger.error("Unable to clear tmp directory: \(error.localizedDescription)")

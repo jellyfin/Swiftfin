@@ -20,7 +20,7 @@ struct WatchedIndicator: View {
                 .resizable()
                 .frame(width: size, height: size)
                 .accentSymbolRendering(accentColor: .white)
-                .padding()
+                .padding(3)
         }
     }
 }

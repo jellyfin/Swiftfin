@@ -28,9 +28,9 @@ extension ItemView {
 
         private var topOpacity: CGFloat {
             let start = UIScreen.main.bounds.height * 0.25
-            let end = UIScreen.main.bounds.height * 0.42
+            let end = UIScreen.main.bounds.height * 0.42 - 50
             let diff = end - start
-            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
         }
 
@@ -95,8 +95,8 @@ extension ItemView {
             .scrollViewOffset($scrollViewOffset)
             .navBarOffset(
                 $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.42,
-                end: UIScreen.main.bounds.height * 0.42 + 50
+                start: UIScreen.main.bounds.height * 0.42 - 50,
+                end: UIScreen.main.bounds.height * 0.42
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,

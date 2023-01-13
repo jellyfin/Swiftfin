@@ -69,7 +69,9 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     @objc
     private func didPressMenuSelector() {
-        didPressMenuAction.action()
+        DispatchQueue.main.async {
+            self.didPressMenuAction.action()
+        }
     }
 }
 

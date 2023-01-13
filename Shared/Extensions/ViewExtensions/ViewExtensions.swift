@@ -176,7 +176,8 @@ extension View {
 
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
-        modifier(VisibilityModifier(isVisible: isVisible))
+        opacity(isVisible ? 1 : 0)
+//        modifier(VisibilityModifier(isVisible: isVisible))
     }
 
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {

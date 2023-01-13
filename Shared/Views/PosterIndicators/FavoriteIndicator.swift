@@ -21,7 +21,7 @@ struct FavoriteIndicator: View {
                 .frame(width: size, height: size)
                 .symbolRenderingMode(.palette)
                 .foregroundStyle(.white, .pink)
-                .padding()
+                .padding(3)
         }
     }
 }
