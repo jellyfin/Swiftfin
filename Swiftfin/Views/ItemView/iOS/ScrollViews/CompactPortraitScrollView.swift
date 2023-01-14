@@ -30,7 +30,7 @@ extension ItemView {
             let start = UIScreen.main.bounds.height * 0.20
             let end = UIScreen.main.bounds.height * 0.4
             let diff = end - start
-            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
         }
 
