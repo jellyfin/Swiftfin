@@ -47,14 +47,8 @@ struct QuickConnectView: View {
         .onDisappear {
             viewModel.stopQuickConnectAuthCheck()
         }
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button {
-                    router.dismissCoordinator()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-            }
+        .navigationCloseButton {
+            router.dismissCoordinator()
         }
     }
 }

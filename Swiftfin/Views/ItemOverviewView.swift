@@ -12,7 +12,7 @@ import SwiftUI
 struct ItemOverviewView: View {
 
     @EnvironmentObject
-    private var itemOverviewRouter: ItemOverviewCoordinator.Router
+    private var router: ItemOverviewCoordinator.Router
 
     let item: BaseItemDto
 
@@ -21,15 +21,10 @@ struct ItemOverviewView: View {
             ItemView.OverviewView(item: item)
                 .padding()
         }
-        .navigationBarTitle(L10n.overview, displayMode: .inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button {
-                    itemOverviewRouter.dismissCoordinator()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-            }
+        .navigationTitle(L10n.overview)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationCloseButton {
+            router.dismissCoordinator()
         }
     }
 }

@@ -168,7 +168,7 @@ extension View {
     @ViewBuilder
     func hideSystemOverlays() -> some View {
         if #available(iOS 16, tvOS 16, *) {
-            self.persistentSystemOverlays(.hidden)
+            persistentSystemOverlays(.hidden)
         } else {
             self
         }
@@ -187,5 +187,14 @@ extension View {
     func accentSymbolRendering(accentColor: Color = Defaults[.accentColor]) -> some View {
         symbolRenderingMode(.palette)
             .foregroundStyle(accentColor.overlayColor, accentColor)
+    }
+    
+    @ViewBuilder
+    func navigationBarHidden() -> some View {
+        if #available(iOS 16, tvOS 16, *) {
+            toolbar(.hidden, for: .navigationBar)
+        } else {
+            navigationBarHidden(true)
+        }
     }
 }

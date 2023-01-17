@@ -37,8 +37,8 @@ struct NativeVideoPlayer: View {
                 VideoPlayer.LoadingView()
             }
         }
-        .navigationBarHidden(true)
-        .statusBar(hidden: true)
+        .navigationBarHidden()
+        .statusBarHidden()
         .ignoresSafeArea()
     }
 }

@@ -48,14 +48,8 @@ struct FilterView: View {
         )
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button {
-                    router.dismissCoordinator()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-            }
+        .navigationCloseButton {
+            router.dismissCoordinator()
         }
     }
 }

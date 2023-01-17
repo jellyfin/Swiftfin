@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000px" height="230px" viewBox="0 0 1000 230" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>primary-wide</title>
+    <defs>
+        <linearGradient x1="19.1597758%" y1="40.8257212%" x2="100.812783%" y2="88.6971024%" id="linearGradient-1">
+            <stop stop-color="#1F4EA7" offset="0%"></stop>
+            <stop stop-color="#00DDFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Primary" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="primary-wide" fill-rule="nonzero">
+            <rect id="solid-background" fill="#020B23" x="0" y="0" width="1000" height="230" rx="20"></rect>
+            <path d="M500.518106,50.0373832 C517.730037,50.0373832 573.016591,151.407713 564.66481,168.29667 C556.313029,185.185626 444.832119,185.382664 436.388161,168.29667 C427.944204,151.210676 483.322935,50.0373832 500.518106,50.0373832 Z M500.534866,76.6849844 C489.264151,76.6849844 452.979993,142.976953 458.513397,154.171516 C464.046801,165.366079 537.087174,165.242226 542.559127,154.171516 C548.03108,143.09799 511.80558,76.6849844 500.534866,76.6849844 Z M500.435223,100.667024 C506.155805,100.669836 524.502468,134.278318 521.730208,139.880669 C518.957947,145.48302 481.943239,145.544893 479.140238,139.880669 C476.337237,134.216444 494.723025,100.667024 500.435223,100.667024 Z" id="Combined-Shape" fill="url(#linearGradient-1)"></path>
+        </g>
+    </g>
+</svg>
