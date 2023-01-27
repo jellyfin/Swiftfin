@@ -39,7 +39,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
     }
 
     private func requestEpisodes() {
-        LogManager.log
+        logger
             .debug("Getting episodes in season \(item.id!) (\(item.name!)) of show \(item.seriesId!) (\(item.seriesName!))")
         TvShowsAPI.getEpisodes(
             seriesId: item.seriesId ?? "",
@@ -78,7 +78,7 @@ final class SeasonItemViewModel: ItemViewModel, EpisodesRowManager {
                 !episode.unaired && !episode.missing && episode.seasonId ?? "" == self.item.id!
             }) {
                 self.playButtonItem = nextUpItem
-                LogManager.log.debug("Nextup in season \(self.item.id!) (\(self.item.name!)): \(nextUpItem.id!)")
+                self.logger.debug("Nextup in season \(self.item.id!) (\(self.item.name!)): \(nextUpItem.id!)")
             }
 
             //				if self.playButtonItem == nil && !self.episodes.isEmpty {

@@ -12,8 +12,8 @@ extension Font {
     func toUIFont() -> UIFont {
         switch self {
         #if !os(tvOS)
-            case .largeTitle:
-                return UIFont.preferredFont(forTextStyle: .largeTitle)
+        case .largeTitle:
+            return UIFont.preferredFont(forTextStyle: .largeTitle)
         #endif
         case .title:
             return UIFont.preferredFont(forTextStyle: .title1)

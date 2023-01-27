@@ -14,9 +14,9 @@ import JellyfinAPI
 import UIKit
 
 #if os(tvOS)
-    import TVVLCKit
+import TVVLCKit
 #else
-    import MobileVLCKit
+import MobileVLCKit
 #endif
 
 final class VideoPlayerViewModel: ViewModel {
@@ -511,7 +511,7 @@ extension VideoPlayerViewModel {
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
-                LogManager.log.debug("Start report sent for item: \(self.item.id ?? "No ID")")
+                self.logger.debug("Start report sent for item: \(self.item.id ?? "No ID")")
             }
             .store(in: &cancellables)
     }
@@ -547,7 +547,7 @@ extension VideoPlayerViewModel {
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
-                LogManager.log.debug("Pause report sent for item: \(self.item.id ?? "No ID")")
+                self.logger.debug("Pause report sent for item: \(self.item.id ?? "No ID")")
             }
             .store(in: &cancellables)
     }
@@ -592,7 +592,7 @@ extension VideoPlayerViewModel {
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
-                LogManager.log.debug("Playback progress sent for item: \(self.item.id ?? "No ID")")
+                self.logger.debug("Playback progress sent for item: \(self.item.id ?? "No ID")")
             }
             .store(in: &cancellables)
 
@@ -619,7 +619,7 @@ extension VideoPlayerViewModel {
             .sink { completion in
                 self.handleAPIRequestError(completion: completion)
             } receiveValue: { _ in
-                LogManager.log.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
+                self.logger.debug("Stop report sent for item: \(self.item.id ?? "No ID")")
                 Notifications[.didSendStopReport].post(object: self.item.id)
             }
             .store(in: &cancellables)
@@ -643,6 +643,23 @@ extension VideoPlayerViewModel {
         newURL.addQueryItem(name: "SubtitleStreamIndex", value: "\(subtitleStream.index ?? -1)")
 
         return newURL.url!
+    }
+}
+
+// MARK: Subtitle Streams
+
+extension VideoPlayerViewModel {
+    func videoSubtitleStreamIndex(of subtitleStreamIndex: Int) -> Int32 {
+        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
+
+        guard let externalSubtitleStreamIndex = externalSubtitleStreams.firstIndex(where: { $0.index == subtitleStreamIndex }) else {
+            return Int32(subtitleStreamIndex)
+        }
+
+        let embeddedSubtitleStreamCount = subtitleStreams.count - externalSubtitleStreams.count
+        let embeddedStreamCount = 1 + audioStreams.count + embeddedSubtitleStreamCount
+
+        return Int32(embeddedStreamCount + externalSubtitleStreamIndex)
     }
 }
 

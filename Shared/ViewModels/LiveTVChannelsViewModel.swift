@@ -6,6 +6,7 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import JellyfinAPI
 import SwiftUICollection
@@ -69,7 +70,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] _ in
-                LogManager.log.debug("Received Guide Info")
+                self?.logger.debug("Received Guide Info")
                 guard let self = self else { return }
                 self.getChannels()
             })
@@ -89,7 +90,7 @@ final class LiveTVChannelsViewModel: ViewModel {
         .sink(receiveCompletion: { [weak self] completion in
             self?.handleAPIRequestError(completion: completion)
         }, receiveValue: { [weak self] response in
-            LogManager.log.debug("Received \(response.items?.count ?? 0) Channels")
+            self?.logger.debug("Received \(response.items?.count ?? 0) Channels")
             guard let self = self else { return }
             self.channels = response.items ?? []
             self.getPrograms()
@@ -100,7 +101,7 @@ final class LiveTVChannelsViewModel: ViewModel {
     private func getPrograms() {
         // http://192.168.1.50:8096/LiveTv/Programs
         guard !channels.isEmpty else {
-            LogManager.log.debug("Cannot get programs, channels list empty. ")
+            logger.debug("Cannot get programs, channels list empty. ")
             return
         }
         let channelIds = channels.compactMap(\.id)
@@ -126,7 +127,7 @@ final class LiveTVChannelsViewModel: ViewModel {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.handleAPIRequestError(completion: completion)
             }, receiveValue: { [weak self] response in
-                LogManager.log.debug("Received \(response.items?.count ?? 0) Programs")
+                self?.logger.debug("Received \(response.items?.count ?? 0) Programs")
                 guard let self = self else { return }
                 self.programs = response.items ?? []
                 self.channelPrograms = self.processChannelPrograms()
@@ -178,7 +179,7 @@ final class LiveTVChannelsViewModel: ViewModel {
         }
         timer = Timer(fire: nextMinute, interval: 60 * 10, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-            LogManager.log.debug("LiveTVChannels schedule check...")
+            self.logger.debug("LiveTVChannels schedule check...")
             DispatchQueue.global(qos: .background).async {
                 let newChanPrgs = self.processChannelPrograms()
                 DispatchQueue.main.async {

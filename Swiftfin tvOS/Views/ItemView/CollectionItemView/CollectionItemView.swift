@@ -14,8 +14,8 @@ struct CollectionItemView: View {
     var viewModel: CollectionItemViewModel
 
     var body: some View {
-        ItemView.CinematicScrollView(viewModel: viewModel) { scrollViewProxy in
-            ContentView(viewModel: viewModel, scrollViewProxy: scrollViewProxy)
+        ItemView.CinematicScrollView(viewModel: viewModel) {
+            ContentView(viewModel: viewModel)
         }
     }
 }

@@ -6,11 +6,10 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import ASCollectionView
+import CollectionView
 import Foundation
 import JellyfinAPI
 import SwiftUI
-import SwiftUICollection
 
 typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 
@@ -37,12 +36,13 @@ struct LiveTVChannelsView: View {
         if viewModel.isLoading == true {
             ProgressView()
         } else if !viewModel.channelPrograms.isEmpty {
-            ASCollectionView(data: viewModel.channelPrograms, dataID: \.self) { channelProgram, _ in
-                makeCellView(channelProgram)
+            CollectionView(items: viewModel.channelPrograms) { _, program, _ in
+                makeCellView(program)
             }
-            .layout {
+            .layout { _, layoutEnvironment in
                 .grid(
-                    layoutMode: .fixedNumberOfColumns(columns),
+                    layoutEnvironment: layoutEnvironment,
+                    layoutMode: .adaptive(withMinItemSize: 144),
                     itemSpacing: 16,
                     lineSpacing: 4,
                     itemSize: .absolute(144)

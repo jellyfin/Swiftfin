@@ -8,11 +8,21 @@
 
 import SwiftUI
 
-struct PillHStack<Item: PillStackable>: View {
+struct PillHStack<Item: Displayable>: View {
 
-    let title: String
-    let items: [Item]
-    let selectedAction: (Item) -> Void
+    private var title: String
+    private var items: [Item]
+    private var onSelect: (Item) -> Void
+
+    private init(
+        title: String,
+        items: [Item],
+        onSelect: @escaping (Item) -> Void
+    ) {
+        self.title = title
+        self.items = items
+        self.onSelect = onSelect
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -27,23 +37,19 @@ struct PillHStack<Item: PillStackable>: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(items, id: \.title) { item in
+                    ForEach(items, id: \.displayName) { item in
                         Button {
-                            selectedAction(item)
+                            onSelect(item)
                         } label: {
-                            ZStack {
-                                Color(UIColor.systemFill)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .cornerRadius(10)
-
-                                Text(item.title)
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .fixedSize()
-                                    .padding(10)
-                            }
-                            .fixedSize()
+                            Text(item.displayName)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                                .padding(10)
+                                .background {
+                                    Color.systemFill
+                                        .cornerRadius(10)
+                                }
                         }
                     }
                 }
@@ -53,5 +59,18 @@ struct PillHStack<Item: PillStackable>: View {
                 }
             }
         }
+    }
+}
+
+extension PillHStack {
+
+    init(title: String, items: [Item]) {
+        self.init(title: title, items: items, onSelect: { _ in })
+    }
+
+    func onSelect(_ onSelect: @escaping (Item) -> Void) -> Self {
+        var copy = self
+        copy.onSelect = onSelect
+        return copy
     }
 }

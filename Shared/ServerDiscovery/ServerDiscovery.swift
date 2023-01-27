@@ -6,10 +6,15 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import UDPBroadcast
 
 public class ServerDiscovery {
+
+    @Injected(LogManager.service)
+    private var logger
+
     public struct ServerLookupResponse: Codable, Hashable, Identifiable {
 
         public func hash(into hasher: inout Hasher) {
@@ -56,7 +61,7 @@ public class ServerDiscovery {
         func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
             do {
                 let response = try JSONDecoder().decode(ServerLookupResponse.self, from: data)
-                LogManager.log.debug("Received JellyfinServer from \"\(response.name)\"", tag: "ServerDiscovery")
+                logger.debug("Received JellyfinServer from \"\(response.name)\"", tag: "ServerDiscovery")
                 completion(response)
             } catch {
                 completion(nil)
@@ -64,15 +69,15 @@ public class ServerDiscovery {
         }
 
         func errorHandler(error: UDPBroadcastConnection.ConnectionError) {
-            LogManager.log.error("Error handling response: \(error.localizedDescription)", tag: "ServerDiscovery")
+            logger.error("Error handling response: \(error.localizedDescription)", tag: "ServerDiscovery")
         }
 
         do {
             self.connection = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
             try self.connection?.sendBroadcast("Who is JellyfinServer?")
-            LogManager.log.debug("Discovery broadcast sent", tag: "ServerDiscovery")
+            logger.debug("Discovery broadcast sent", tag: "ServerDiscovery")
         } catch {
-            LogManager.log.error("Error sending discovery broadcast", tag: "ServerDiscovery")
+            logger.error("Error sending discovery broadcast", tag: "ServerDiscovery")
         }
     }
 }

@@ -18,8 +18,8 @@ struct InitialFailureView: View {
 
     var body: some View {
         ZStack {
-            Rectangle()
-                .foregroundColor(Color(UIColor.darkGray))
+            Color.secondarySystemFill
+                .opacity(0.5)
 
             Text(initials)
                 .font(.largeTitle)

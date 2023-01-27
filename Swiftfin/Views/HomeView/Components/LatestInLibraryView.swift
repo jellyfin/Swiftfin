@@ -6,34 +6,36 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
+import Defaults
 import SwiftUI
 
-struct LatestInLibraryView: View {
+extension HomeView {
 
-    @EnvironmentObject
-    private var homeRouter: HomeCoordinator.Router
-    @ObservedObject
-    var viewModel: LatestMediaViewModel
+    struct LatestInLibraryView: View {
 
-    var body: some View {
-        PortraitPosterHStack(
-            title: L10n.latestWithString(viewModel.library.displayName),
-            items: viewModel.items,
-            itemWidth: UIDevice.isIPad ? 130 : 110
-        ) {
-            Button {
-                let libraryViewModel = LibraryViewModel(parentID: viewModel.library.id, filters: HomeViewModel.recentFilterSet)
-                homeRouter.route(to: \.library, (viewModel: libraryViewModel, title: viewModel.library.displayName))
-            } label: {
-                HStack {
-                    L10n.seeAll.text
-                    Image(systemName: "chevron.right")
-                }
-                .font(.subheadline.bold())
+        @EnvironmentObject
+        private var router: HomeCoordinator.Router
+        @ObservedObject
+        var viewModel: LibraryViewModel
+
+        @Default(.Customization.latestInLibraryPosterType)
+        var latestInLibraryPosterType
+
+        var body: some View {
+            PosterHStack(
+                title: L10n.latestWithString(viewModel.parent?.displayName ?? .emptyDash),
+                type: latestInLibraryPosterType,
+                items: viewModel.items.prefix(20).asArray
+            )
+            .trailing {
+                SeeAllButton()
+                    .onSelect {
+                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
+                    }
             }
-        } selectedAction: { item in
-            homeRouter.route(to: \.item, item)
+            .onSelect { item in
+                router.route(to: \.item, item)
+            }
         }
     }
 }

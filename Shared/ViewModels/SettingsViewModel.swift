@@ -24,6 +24,7 @@ final class SettingsViewModel: ViewModel {
 
         self.server = server
         self.user = user
+        super.init()
 
         // Bitrates
         let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!
@@ -33,10 +34,10 @@ final class SettingsViewModel: ViewModel {
             do {
                 self.bitrates = try JSONDecoder().decode([Bitrates].self, from: jsonData)
             } catch {
-                LogManager.log.error("Error converting processed JSON into Swift compatible schema.")
+                logger.error("Error converting processed JSON into Swift compatible schema.")
             }
         } catch {
-            LogManager.log.error("Error processing JSON file `bitrates.json`")
+            logger.error("Error processing JSON file `bitrates.json`")
         }
 
         // Track languages

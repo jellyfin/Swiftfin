@@ -18,7 +18,7 @@ enum SwiftfinStore {
     // Relationships are represented by the related object's IDs or value
     enum State {
 
-        struct Server {
+        struct Server: Hashable, Identifiable {
             let uris: Set<String>
             let currentURI: String
             let name: String
@@ -27,7 +27,7 @@ enum SwiftfinStore {
             let version: String
             let userIDs: [String]
 
-            fileprivate init(
+            init(
                 uris: Set<String>,
                 currentURI: String,
                 name: String,
@@ -58,7 +58,7 @@ enum SwiftfinStore {
             }
         }
 
-        struct User {
+        struct User: Hashable, Identifiable {
             let username: String
             let id: String
             let serverID: String

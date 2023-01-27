@@ -23,25 +23,15 @@ extension iPadOSCollectionItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(
-                        title: L10n.genres,
-                        items: genres
-                    ) { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
+                    ItemView.GenresHStack(genres: genres)
 
                     Divider()
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios {
-                    PillHStack(
-                        title: L10n.studios,
-                        items: studios
-                    ) { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
+                if let studios = viewModel.item.studios, !studios.isEmpty {
+                    ItemView.StudiosHStack(studios: studios)
 
                     Divider()
                 }
@@ -49,13 +39,10 @@ extension iPadOSCollectionItemView {
                 // MARK: Items
 
                 if !viewModel.collectionItems.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.items,
-                        items: viewModel.collectionItems,
-                        itemWidth: 130
-                    ) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
+                    PosterHStack(title: L10n.items, type: .portrait, items: viewModel.collectionItems)
+                        .onSelect { item in
+                            itemRouter.route(to: \.item, item)
+                        }
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

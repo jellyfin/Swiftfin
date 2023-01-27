@@ -21,6 +21,7 @@ class DeviceProfileBuilder {
     }
 
     public func buildProfile() -> ClientCapabilitiesDeviceProfile {
+        let segmentContainer = Defaults[.Experimental.usefmp4Hls] ? "mp4" : "ts"
         let maxStreamingBitrate = bitrate
         let maxStaticBitrate = bitrate
         let musicStreamingTranscodingBitrate = bitrate
@@ -51,7 +52,7 @@ class DeviceProfileBuilder {
 
             // Build transcoding profiles
             transcodingProfiles = [TranscodingProfile(
-                container: "ts",
+                container: segmentContainer,
                 type: .video,
                 videoCodec: videoCodecString,
                 audioCodec: audioCodecString,
@@ -89,7 +90,7 @@ class DeviceProfileBuilder {
 
             // Build transcoding profiles
             transcodingProfiles = [TranscodingProfile(
-                container: "ts",
+                container: segmentContainer,
                 type: .video,
                 videoCodec: videoCodecString+"vc1,vp9,av1,mpeg2video",
                 audioCodec: audioCodecString+"dts,mp2,mp1",

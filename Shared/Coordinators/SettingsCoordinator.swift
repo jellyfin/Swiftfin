@@ -24,21 +24,18 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
-    var missingSettings = makeMissingSettings
-    @Route(.push)
     var about = makeAbout
 
     #if !os(tvOS)
-        @Route(.push)
-        var quickConnect = makeQuickConnectSettings
-        @Route(.push)
-        var fontPicker = makeFontPicker
+    @Route(.push)
+    var quickConnect = makeQuickConnectSettings
+    @Route(.push)
+    var fontPicker = makeFontPicker
     #endif
 
     @ViewBuilder
     func makeServerDetail() -> some View {
-        let viewModel = ServerDetailViewModel(server: SessionManager.main.currentLogin.server)
-        ServerDetailView(viewModel: viewModel)
+        ServerDetailView(viewModel: .init(server: SessionManager.main.currentLogin.server))
     }
 
     @ViewBuilder
@@ -57,27 +54,22 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeMissingSettings() -> some View {
-        MissingItemsSettingsView()
-    }
-
-    @ViewBuilder
     func makeAbout() -> some View {
         AboutAppView()
     }
 
     #if !os(tvOS)
-        @ViewBuilder
-        func makeQuickConnectSettings() -> some View {
-            let viewModel = QuickConnectSettingsViewModel()
-            QuickConnectSettingsView(viewModel: viewModel)
-        }
+    @ViewBuilder
+    func makeQuickConnectSettings() -> some View {
+        let viewModel = QuickConnectSettingsViewModel()
+        QuickConnectSettingsView(viewModel: viewModel)
+    }
 
-        @ViewBuilder
-        func makeFontPicker() -> some View {
-            FontPickerView()
-                .navigationTitle(L10n.subtitleFont)
-        }
+    @ViewBuilder
+    func makeFontPicker() -> some View {
+        FontPickerView()
+            .navigationTitle(L10n.subtitleFont)
+    }
     #endif
 
     @ViewBuilder

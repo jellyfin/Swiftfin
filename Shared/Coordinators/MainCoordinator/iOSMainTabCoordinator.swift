@@ -13,13 +13,16 @@ import SwiftUI
 final class MainTabCoordinator: TabCoordinatable {
     var child = TabChild(startingItems: [
         \MainTabCoordinator.home,
-        \MainTabCoordinator.allMedia,
+        \MainTabCoordinator.search,
+        \MainTabCoordinator.media,
     ])
 
     @Route(tabItem: makeHomeTab, onTapped: onHomeTapped)
     var home = makeHome
-    @Route(tabItem: makeAllMediaTab, onTapped: onMediaTapped)
-    var allMedia = makeAllMedia
+    @Route(tabItem: makeSearchTab, onTapped: onSearchTapped)
+    var search = makeSearch
+    @Route(tabItem: makeMediaTab, onTapped: onMediaTapped)
+    var media = makeMedia
 
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
         NavigationViewCoordinator(HomeCoordinator())
@@ -37,20 +40,36 @@ final class MainTabCoordinator: TabCoordinatable {
         L10n.home.text
     }
 
-    func makeAllMedia() -> NavigationViewCoordinator<LibraryListCoordinator> {
-        NavigationViewCoordinator(LibraryListCoordinator(viewModel: LibraryListViewModel()))
+    func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
+        NavigationViewCoordinator(SearchCoordinator())
     }
 
-    func onMediaTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<LibraryListCoordinator>) {
+    func onSearchTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<SearchCoordinator>) {
         if isRepeat {
             coordinator.child.popToRoot()
         }
     }
 
     @ViewBuilder
-    func makeAllMediaTab(isActive: Bool) -> some View {
-        Image(systemName: "folder")
-        L10n.allMedia.text
+    func makeSearchTab(isActive: Bool) -> some View {
+        Image(systemName: "magnifyingglass")
+        L10n.search.text
+    }
+
+    func makeMedia() -> NavigationViewCoordinator<MediaCoordinator> {
+        NavigationViewCoordinator(MediaCoordinator())
+    }
+
+    func onMediaTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<MediaCoordinator>) {
+        if isRepeat {
+            coordinator.child.popToRoot()
+        }
+    }
+
+    @ViewBuilder
+    func makeMediaTab(isActive: Bool) -> some View {
+        Image(systemName: "rectangle.stack.fill")
+        L10n.media.text
     }
 
     @ViewBuilder

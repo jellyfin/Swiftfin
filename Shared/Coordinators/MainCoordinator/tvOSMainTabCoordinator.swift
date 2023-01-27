@@ -13,20 +13,23 @@ import SwiftUI
 final class MainTabCoordinator: TabCoordinatable {
     var child = TabChild(startingItems: [
         \MainTabCoordinator.home,
-        \MainTabCoordinator.tv,
+        \MainTabCoordinator.tvShows,
         \MainTabCoordinator.movies,
-        \MainTabCoordinator.other,
+        \MainTabCoordinator.search,
+        \MainTabCoordinator.media,
         \MainTabCoordinator.settings,
     ])
 
     @Route(tabItem: makeHomeTab)
     var home = makeHome
     @Route(tabItem: makeTvTab)
-    var tv = makeTv
+    var tvShows = makeTVShows
     @Route(tabItem: makeMoviesTab)
     var movies = makeMovies
-    @Route(tabItem: makeOtherTab)
-    var other = makeOther
+    @Route(tabItem: makeSearchTab)
+    var search = makeSearch
+    @Route(tabItem: makeMediaTab)
+    var media = makeMedia
     @Route(tabItem: makeSettingsTab)
     var settings = makeSettings
 
@@ -42,8 +45,12 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeTv() -> NavigationViewCoordinator<TVLibrariesCoordinator> {
-        NavigationViewCoordinator(TVLibrariesCoordinator(viewModel: TVLibrariesViewModel(), title: L10n.tvShows))
+    func makeTVShows() -> NavigationViewCoordinator<BasicLibraryCoordinator> {
+        let parameters = BasicLibraryCoordinator.Parameters(
+            title: nil,
+            viewModel: ItemTypeLibraryViewModel(itemTypes: [.series], filters: .init())
+        )
+        return NavigationViewCoordinator(BasicLibraryCoordinator(parameters: parameters))
     }
 
     @ViewBuilder
@@ -54,8 +61,12 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeMovies() -> NavigationViewCoordinator<MovieLibrariesCoordinator> {
-        NavigationViewCoordinator(MovieLibrariesCoordinator(viewModel: MovieLibrariesViewModel(), title: L10n.movies))
+    func makeMovies() -> NavigationViewCoordinator<BasicLibraryCoordinator> {
+        let parameters = BasicLibraryCoordinator.Parameters(
+            title: nil,
+            viewModel: ItemTypeLibraryViewModel(itemTypes: [.movie], filters: .init())
+        )
+        return NavigationViewCoordinator(BasicLibraryCoordinator(parameters: parameters))
     }
 
     @ViewBuilder
@@ -66,15 +77,27 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeOther() -> NavigationViewCoordinator<LibraryListCoordinator> {
-        NavigationViewCoordinator(LibraryListCoordinator(viewModel: LibraryListViewModel()))
+    func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
+        NavigationViewCoordinator(SearchCoordinator())
     }
 
     @ViewBuilder
-    func makeOtherTab(isActive: Bool) -> some View {
+    func makeSearchTab(isActive: Bool) -> some View {
         HStack {
-            Image(systemName: "folder")
-            L10n.other.text
+            Image(systemName: "magnifyingglass")
+            L10n.search.text
+        }
+    }
+
+    func makeMedia() -> NavigationViewCoordinator<MediaCoordinator> {
+        NavigationViewCoordinator(MediaCoordinator())
+    }
+
+    @ViewBuilder
+    func makeMediaTab(isActive: Bool) -> some View {
+        HStack {
+            Image(systemName: "rectangle.stack")
+            L10n.media.text
         }
     }
 

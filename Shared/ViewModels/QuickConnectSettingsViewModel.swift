@@ -32,13 +32,13 @@ final class QuickConnectSettingsViewModel: ViewModel {
                 self.handleAPIRequestError(displayMessage: L10n.quickConnectInvalidError, completion: completion)
                 switch completion {
                 case .failure:
-                    LogManager.log.debug("Invalid Quick Connect code entered")
+                    self.logger.debug("Invalid Quick Connect code entered")
                 default:
                     break
                 }
             }, receiveValue: { _ in
                 // receiving a successful HTTP response indicates a valid code
-                LogManager.log.debug("Valid Quick connect code entered")
+                self.logger.debug("Valid Quick connect code entered")
                 self.showSuccessMessage = true
             })
             .store(in: &cancellables)

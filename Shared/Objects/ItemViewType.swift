@@ -14,7 +14,7 @@ enum ItemViewType: String, CaseIterable, Defaults.Serializable {
     case compactLogo
     case cinematic
 
-    var label: String {
+    var localizedName: String {
         switch self {
         case .compactPoster:
             return L10n.compactPoster

@@ -22,22 +22,22 @@ extension UIDevice {
     }
 
     #if os(iOS)
-        static var isPortrait: Bool {
-            UIDevice.current.orientation.isPortrait
-        }
+    static var isPortrait: Bool {
+        UIDevice.current.orientation.isPortrait
+    }
 
-        static var isLandscape: Bool {
-            isIPad || UIDevice.current.orientation.isLandscape
-        }
+    static var isLandscape: Bool {
+        isIPad || UIDevice.current.orientation.isLandscape
+    }
 
-        static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(type)
-        }
+    static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(type)
+    }
 
-        static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
-            let generator = UIImpactFeedbackGenerator(style: type)
-            generator.impactOccurred()
-        }
+    static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
+        let generator = UIImpactFeedbackGenerator(style: type)
+        generator.impactOccurred()
+    }
     #endif
 }

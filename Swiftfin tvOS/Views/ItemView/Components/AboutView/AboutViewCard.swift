@@ -10,17 +10,17 @@ import SwiftUI
 
 extension ItemView.AboutView {
 
-    struct AboutViewCard: View {
+    struct InformationCard: View {
 
-        @Binding
-        var isShowingAlert: Bool
+        @State
+        private var presentingAlert: Bool = false
 
         let title: String
-        let text: String
+        let content: String
 
         var body: some View {
             Button {
-                isShowingAlert = true
+                presentingAlert = true
             } label: {
                 VStack(alignment: .leading) {
                     title.text
@@ -30,14 +30,23 @@ extension ItemView.AboutView {
 
                     Spacer()
 
-                    TruncatedTextView(text: text, seeMoreAction: {})
+                    TruncatedTextView(text: content, seeMoreAction: {})
                         .font(.subheadline)
                         .lineLimit(4)
                 }
                 .padding2()
                 .frame(width: 700, height: 405)
             }
-            .buttonStyle(CardButtonStyle())
+            .buttonStyle(.card)
+            .alert(title, isPresented: $presentingAlert) {
+                Button {
+                    presentingAlert = false
+                } label: {
+                    L10n.close.text
+                }
+            } message: {
+                Text(content)
+            }
         }
     }
 }

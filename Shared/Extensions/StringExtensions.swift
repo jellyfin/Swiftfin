@@ -42,4 +42,26 @@ extension String {
         let initials = self.split(separator: " ").compactMap(\.first)
         return String(initials)
     }
+
+    func heightOfString(usingFont font: UIFont) -> CGFloat {
+        let fontAttributes = [NSAttributedString.Key.font: font]
+        let textSize = self.size(withAttributes: fontAttributes)
+        return textSize.height
+    }
+
+    func widthOfString(usingFont font: UIFont) -> CGFloat {
+        let fontAttributes = [NSAttributedString.Key.font: font]
+        let textSize = self.size(withAttributes: fontAttributes)
+        return textSize.width
+    }
+
+    var filter: ItemFilters.Filter {
+        .init(displayName: self, id: self, filterName: self)
+    }
+
+    static var emptyDash = "--"
+}
+
+public extension CharacterSet {
+    static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
 }

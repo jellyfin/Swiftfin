@@ -6,62 +6,98 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-typealias LibraryCoordinatorParams = (viewModel: LibraryViewModel, title: String)
-
 final class LibraryCoordinator: NavigationCoordinatable {
+
+    struct Parameters {
+        let parent: LibraryParent?
+        let type: LibraryParentType
+        let filters: ItemFilters
+
+        init(
+            parent: LibraryParent,
+            type: LibraryParentType,
+            filters: ItemFilters
+        ) {
+            self.parent = parent
+            self.type = type
+            self.filters = filters
+        }
+
+        init(filters: ItemFilters) {
+            self.parent = nil
+            self.type = .library
+            self.filters = filters
+        }
+    }
 
     let stack = NavigationStack(initial: \LibraryCoordinator.start)
 
     @Root
     var start = makeStart
-    @Route(.push)
-    var search = makeSearch
-    @Route(.modal)
-    var filter = makeFilter
 
     #if os(tvOS)
-        @Route(.modal)
-        var item = makeModalItem
+    @Route(.modal)
+    var item = makeItem
+    @Route(.push)
+    var library = makeLibrary
     #else
-        @Route(.push)
-        var item = makeItem
+    @Route(.push)
+    var item = makeItem
+    @Route(.push)
+    var library = makeLibrary
+    @Route(.modal)
+    var filter = makeFilter
     #endif
 
-    let viewModel: LibraryViewModel
-    let title: String
+    private let parameters: Parameters
 
-    init(viewModel: LibraryViewModel, title: String) {
-        self.viewModel = viewModel
-        self.title = title
+    init(parameters: Parameters) {
+        self.parameters = parameters
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryView(viewModel: self.viewModel, title: title)
+        if let parent = parameters.parent {
+            if parameters.filters == .init(), let id = parent.id, let storedFilters = Defaults[.libraryFilterStore][id] {
+                LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters, saveFilters: true))
+            } else {
+                LibraryView(viewModel: LibraryViewModel(
+                    parent: parent,
+                    type: parameters.type,
+                    filters: parameters.filters,
+                    saveFilters: false
+                ))
+            }
+        } else {
+            LibraryView(viewModel: LibraryViewModel(filters: parameters.filters, saveFilters: false))
+        }
     }
 
-    func makeSearch(viewModel: LibrarySearchViewModel) -> SearchCoordinator {
-        SearchCoordinator(viewModel: viewModel)
+    #if os(tvOS)
+    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        NavigationViewCoordinator(ItemCoordinator(item: item))
     }
 
-    func makeFilter(params: FilterCoordinatorParams) -> NavigationViewCoordinator<FilterCoordinator> {
-        NavigationViewCoordinator(FilterCoordinator(
-            filters: params.filters,
-            enabledFilterType: params.enabledFilterType,
-            parentId: params.parentId
-        ))
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
     }
-
+    #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
 
-    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        NavigationViewCoordinator(ItemCoordinator(item: item))
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parameters: parameters)
     }
+
+    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
+        NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
+    }
+    #endif
 }

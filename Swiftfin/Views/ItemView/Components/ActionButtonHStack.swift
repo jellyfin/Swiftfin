@@ -36,10 +36,9 @@ extension ItemView {
                             )
                     } else {
                         Image(systemName: "checkmark.circle")
-                            .foregroundStyle(.white)
                     }
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -54,10 +53,9 @@ extension ItemView {
                             .foregroundStyle(Color.red)
                     } else {
                         Image(systemName: "heart")
-                            .foregroundStyle(.white)
                     }
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }

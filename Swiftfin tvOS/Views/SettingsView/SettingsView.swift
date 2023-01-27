@@ -18,8 +18,6 @@ struct SettingsView: View {
     @ObservedObject
     var viewModel: SettingsViewModel
 
-    @Default(.autoSelectAudioLangCode)
-    var autoSelectAudioLangcode
     @Default(.videoPlayerJumpForward)
     var jumpForwardLength
     @Default(.videoPlayerJumpBackward)
@@ -28,8 +26,6 @@ struct SettingsView: View {
     var downActionShowsMenu
     @Default(.confirmClose)
     var confirmClose
-    @Default(.showPosterLabels)
-    var showPosterLabels
     @Default(.resumeOffset)
     var resumeOffset
     @Default(.subtitleSize)
@@ -134,17 +130,6 @@ struct SettingsView: View {
                             }
                         }
 
-                        Button {
-                            settingsRouter.route(to: \.missingSettings)
-                        } label: {
-                            HStack {
-                                L10n.missingItems.text
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                            }
-                        }
-
                         Picker(L10n.subtitleSize, selection: $subtitleSize) {
                             ForEach(SubtitleSize.allCases, id: \.self) { size in
                                 Text(size.label).tag(size.rawValue)
@@ -157,7 +142,7 @@ struct SettingsView: View {
                             HStack {
                                 L10n.version.text
                                 Spacer()
-                                Text("\(UIApplication.appVersion ?? "--") (\(UIApplication.bundleVersion ?? "--"))")
+                                Text("\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))")
                                     .foregroundColor(.secondary)
                             }
                         }
@@ -167,11 +152,5 @@ struct SettingsView: View {
                 }
             }
         }
-    }
-}
-
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView(viewModel: SettingsViewModel(server: .sample, user: .sample))
     }
 }

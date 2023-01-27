@@ -46,10 +46,47 @@ extension View {
         }
     }
 
-    /// Applies Portrait Poster frame with proper corner radius ratio against the width
-    func portraitPoster(width: CGFloat) -> some View {
+    // TODO: Simplify plethora of calls
+    // TODO: Centralize math
+    // TODO: Move poster stuff to own file
+    func posterStyle(type: PosterType, width: CGFloat) -> some View {
+        Group {
+            switch type {
+            case .portrait:
+                self.portraitPoster(width: width)
+            case .landscape:
+                self.landscapePoster(width: width)
+            }
+        }
+    }
+
+    func posterStyle(type: PosterType, height: CGFloat) -> some View {
+        Group {
+            switch type {
+            case .portrait:
+                self.portraitPoster(height: height)
+            case .landscape:
+                self.landscapePoster(height: height)
+            }
+        }
+    }
+
+    private func portraitPoster(width: CGFloat) -> some View {
         self.frame(width: width, height: width * 1.5)
             .cornerRadius((width * 1.5) / 40)
+    }
+
+    private func landscapePoster(width: CGFloat) -> some View {
+        self.frame(width: width, height: width / 1.77)
+            .cornerRadius(width / 30)
+    }
+
+    private func portraitPoster(height: CGFloat) -> some View {
+        self.portraitPoster(width: height / 1.5)
+    }
+
+    private func landscapePoster(height: CGFloat) -> some View {
+        self.landscapePoster(width: height * 1.77)
     }
 
     @inlinable
@@ -73,5 +110,9 @@ extension View {
 
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         self.modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
+    }
+
+    func posterShadow() -> some View {
+        self.shadow(radius: 4, y: 2)
     }
 }

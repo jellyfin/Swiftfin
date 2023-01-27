@@ -19,30 +19,21 @@
       }
     },
     {
-      "identity" : "ascollectionview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apptekstudios/ASCollectionView",
-      "state" : {
-        "revision" : "4288744ba484c1062c109c0f28d72b629d321d55",
-        "version" : "2.1.1"
-      }
-    },
-    {
       "identity" : "blurhashkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/BlurHashKit",
       "state" : {
-        "revision" : "ee9f34f4f8fc03f3d67622e2a6eeb65f5108f2a3",
-        "version" : "1.0.0"
+        "revision" : "3c23237f1f2b62741bce70bd2e4ef2aa7799ea85",
+        "version" : "1.1.0"
       }
     },
     {
-      "identity" : "combineext",
+      "identity" : "collectionview",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CombineCommunity/CombineExt",
+      "location" : "https://github.com/LePips/CollectionView",
       "state" : {
-        "revision" : "581849239060948b626d1173eb0e5926818e7f8c",
-        "version" : "1.7.0"
+        "branch" : "main",
+        "revision" : "b05ad718700cc99a4b88009ede6cf04c7326cd99"
       }
     },
     {
@@ -50,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "496145761ab30e8cf1c44220c0882b95e6b41077",
-        "version" : "8.1.0"
+        "revision" : "25593754913d228777f14634bc6f493dbeb4e9fb",
+        "version" : "9.0.0"
       }
     },
     {
@@ -64,12 +55,12 @@
       }
     },
     {
-      "identity" : "differencekit",
+      "identity" : "factory",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ra1028/DifferenceKit",
+      "location" : "https://github.com/hmlongco/Factory",
       "state" : {
-        "revision" : "073b9671ce2b9b5b96398611427a1f929927e428",
-        "version" : "1.3.0"
+        "revision" : "8557426f3286e20b631ecdac8115242f888656e0",
+        "version" : "1.2.8"
       }
     },
     {

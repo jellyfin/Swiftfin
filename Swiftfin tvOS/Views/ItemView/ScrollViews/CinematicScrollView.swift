@@ -16,7 +16,7 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        let content: (ScrollViewProxy) -> Content
+        let content: () -> Content
 
         var body: some View {
             ZStack {
@@ -27,9 +27,7 @@ extension ItemView {
                 }
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    ScrollViewReader { scrollViewProxy in
-                        content(scrollViewProxy)
-                    }
+                    content()
                 }
             }
             .ignoresSafeArea()
@@ -50,8 +48,6 @@ extension ItemView {
         private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
-        @EnvironmentObject
-        var focusGuide: FocusGuide
         @FocusState
         private var focusedLayer: CinematicHeaderFocusLayer?
 
@@ -66,19 +62,24 @@ extension ItemView {
 
                     VStack(alignment: .leading, spacing: 20) {
 
-                        ImageView(
-                            viewModel.item.imageSource(.logo, maxWidth: 500),
-                            resizingMode: .aspectFit,
-                            failureView: {
-                                Text(viewModel.item.displayName)
-                                    .font(.largeTitle)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
-                                    .foregroundColor(.white)
-                            }
-                        )
-                        .frame(maxWidth: 500, maxHeight: 200)
+                        ImageView(viewModel.item.imageSource(
+                            .logo,
+                            maxWidth: UIScreen.main.bounds.width * 0.4,
+                            maxHeight: 250
+                        ))
+                        .resizingMode(.bottomLeft)
+                        .placeholder {
+                            EmptyView()
+                        }
+                        .failure {
+                            Text(viewModel.item.displayName)
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.bottom)
 
                         Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
                             .font(.subheadline)

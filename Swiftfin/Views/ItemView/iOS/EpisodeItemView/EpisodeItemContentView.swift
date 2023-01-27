@@ -14,7 +14,7 @@ extension EpisodeItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 
@@ -35,7 +35,7 @@ extension EpisodeItemView {
 
                 if let itemOverview = viewModel.item.overview {
                     TruncatedTextView(text: itemOverview) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
+                        router.route(to: \.itemOverview, viewModel.item)
                     }
                     .font(.footnote)
                     .lineLimit(5)
@@ -45,39 +45,36 @@ extension EpisodeItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(
-                        title: L10n.genres,
-                        items: genres,
-                        selectedAction: { genre in
-                            itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                        }
-                    )
+                    ItemView.GenresHStack(genres: genres)
 
                     Divider()
                 }
+
+                // MARK: Studios
 
                 if let studios = viewModel.item.studios, !studios.isEmpty {
-                    PillHStack(
-                        title: L10n.studios,
-                        items: studios
-                    ) { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
+                    ItemView.StudiosHStack(studios: studios)
 
                     Divider()
                 }
 
-                if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
+                // MARK: Cast and Crew
+
+                if let castAndCrew = viewModel.item.people,
                    !castAndCrew.isEmpty
                 {
-                    PortraitPosterHStack(
-                        title: L10n.castAndCrew,
-                        items: castAndCrew
-                    ) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
 
                     Divider()
+                }
+
+                // MARK: Series
+
+                if let seriesItem = viewModel.seriesItem {
+                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
+                        .onSelect { item in
+                            router.route(to: \.item, item)
+                        }
                 }
 
                 // MARK: Details
@@ -102,7 +99,7 @@ extension EpisodeItemView.ContentView {
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                Text(viewModel.item.seriesName ?? "--")
+                Text(viewModel.item.seriesName ?? .emptyDash)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .multilineTextAlignment(.center)
@@ -143,6 +140,7 @@ extension EpisodeItemView.ContentView {
                 ItemView.ActionButtonHStack(viewModel: viewModel)
                     .font(.title)
                     .frame(maxWidth: 300)
+                    .foregroundStyle(.primary)
             }
         }
     }

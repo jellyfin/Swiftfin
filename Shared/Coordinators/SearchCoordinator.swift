@@ -17,21 +17,39 @@ final class SearchCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    @Route(.push)
+    @Route(.modal)
     var item = makeItem
+    @Route(.push)
+    var library = makeLibrary
+    #if !os(tvOS)
+    @Route(.modal)
+    var filter = makeFilter
+    #endif
 
-    let viewModel: LibrarySearchViewModel
-
-    init(viewModel: LibrarySearchViewModel) {
-        self.viewModel = viewModel
+    #if os(tvOS)
+    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+        NavigationViewCoordinator(ItemCoordinator(item: item))
     }
 
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
+    }
+    #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {
         ItemCoordinator(item: item)
     }
 
+    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parameters: parameters)
+    }
+
+    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
+        NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
+    }
+    #endif
+
     @ViewBuilder
     func makeStart() -> some View {
-        LibrarySearchView(viewModel: self.viewModel)
+        SearchView(viewModel: .init())
     }
 }

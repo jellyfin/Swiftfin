@@ -8,40 +8,6 @@
 
 import SwiftUI
 
-extension TruncatedTextView {
-    func font(_ font: Font) -> TruncatedTextView {
-        var result = self
-        result.font = font
-        return result
-    }
-
-    func lineLimit(_ lineLimit: Int) -> TruncatedTextView {
-        var result = self
-        result.lineLimit = lineLimit
-        return result
-    }
-
-    func foregroundColor(_ color: Color) -> TruncatedTextView {
-        var result = self
-        result.foregroundColor = color
-        return result
-    }
-}
-
-extension String {
-    func heightOfString(usingFont font: UIFont) -> CGFloat {
-        let fontAttributes = [NSAttributedString.Key.font: font]
-        let textSize = self.size(withAttributes: fontAttributes)
-        return textSize.height
-    }
-
-    func widthOfString(usingFont font: UIFont) -> CGFloat {
-        let fontAttributes = [NSAttributedString.Key.font: font]
-        let textSize = self.size(withAttributes: fontAttributes)
-        return textSize.width
-    }
-}
-
 struct TruncatedTextView: View {
 
     @State
@@ -93,17 +59,17 @@ struct TruncatedTextView: View {
 
             if truncated {
                 #if os(tvOS)
+                Text(seeMoreText)
+                    .font(font)
+                    .foregroundColor(.purple)
+                #else
+                Button {
+                    seeMoreAction()
+                } label: {
                     Text(seeMoreText)
                         .font(font)
                         .foregroundColor(.purple)
-                #else
-                    Button {
-                        seeMoreAction()
-                    } label: {
-                        Text(seeMoreText)
-                            .font(font)
-                            .foregroundColor(.purple)
-                    }
+                }
                 #endif
             }
         }
@@ -142,5 +108,25 @@ struct TruncatedTextView: View {
             }
             .hidden()
         }
+    }
+}
+
+extension TruncatedTextView {
+    func font(_ font: Font) -> Self {
+        var result = self
+        result.font = font
+        return result
+    }
+
+    func lineLimit(_ lineLimit: Int) -> Self {
+        var result = self
+        result.lineLimit = lineLimit
+        return result
+    }
+
+    func foregroundColor(_ color: Color) -> Self {
+        var result = self
+        result.foregroundColor = color
+        return result
     }
 }

@@ -6,6 +6,9 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
+import Defaults
+import JellyfinAPI
 import SwiftUI
 
 extension HomeView {
@@ -17,6 +20,11 @@ extension HomeView {
         @ObservedObject
         var viewModel: HomeViewModel
 
+        @Default(.Customization.nextUpPosterType)
+        var nextUpPosterType
+        @Default(.Customization.recentlyAddedPosterType)
+        var recentlyAddedPosterType
+
         var body: some View {
             RefreshableScrollView {
                 VStack(alignment: .leading, spacing: 20) {
@@ -24,28 +32,21 @@ extension HomeView {
                         ContinueWatchingView(viewModel: viewModel)
                     }
 
-                    if !viewModel.nextUpItems.isEmpty {
-                        PortraitPosterHStack(
-                            title: L10n.nextUp,
-                            items: viewModel.nextUpItems,
-                            itemWidth: UIDevice.isIPad ? 130 : 110
-                        ) { item in
-                            homeRouter.route(to: \.item, item)
-                        }
+                    if viewModel.hasNextUp {
+                        NextUpView(viewModel: .init())
                     }
 
-                    if !viewModel.latestAddedItems.isEmpty {
-                        PortraitPosterHStack(
-                            title: L10n.recentlyAdded,
-                            items: viewModel.latestAddedItems,
-                            itemWidth: UIDevice.isIPad ? 130 : 110
-                        ) { item in
-                            homeRouter.route(to: \.item, item)
-                        }
+                    if viewModel.hasRecentlyAdded {
+                        RecentlyAddedView(
+                            viewModel: .init(
+                                itemTypes: [.movie, .series],
+                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
+                            )
+                        )
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestInLibraryView(viewModel: .init(library: library))
+                        LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
                     }
                 }
                 .padding(.bottom, 50)

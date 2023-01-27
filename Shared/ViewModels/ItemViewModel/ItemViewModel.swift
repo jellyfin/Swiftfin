@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -65,13 +66,13 @@ class ItemViewModel: ViewModel {
         } else {
             // Remove if necessary. Note that this cannot be in deinit as
             // holding as an observer won't allow the object to be deinit-ed
-            Notifications.unsubscribe(self)
+            Notifications[.didSendStopReport].unsubscribe(self)
         }
     }
 
     func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
-        guard item.type == .episode || item.type == .movie else { return }
-        guard !item.missing, !item.unaired else { return }
+        guard item.type == .episode || item.type == .movie,
+              !item.missing else { return }
 
         item.createVideoPlayerViewModel()
             .sink { completion in
@@ -93,7 +94,7 @@ class ItemViewModel: ViewModel {
             return L10n.missing
         }
 
-        if let itemProgressString = item.getItemProgressString() {
+        if let itemProgressString = item.progress {
             return itemProgressString
         }
 

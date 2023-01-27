@@ -14,7 +14,7 @@ struct MovieItemView: View {
 
     @ObservedObject
     var viewModel: MovieItemViewModel
-    @Default(.itemViewType)
+    @Default(.Customization.itemViewType)
     private var itemViewType
 
     var body: some View {

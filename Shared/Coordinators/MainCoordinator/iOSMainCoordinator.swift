@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import Factory
 import Foundation
 import Nuke
 import Stinsen
@@ -15,7 +16,11 @@ import SwiftUI
 import WidgetKit
 
 final class MainCoordinator: NavigationCoordinatable {
-    var stack: NavigationStack<MainCoordinator>
+
+    @Injected(LogManager.service)
+    private var logger
+
+    var stack: Stinsen.NavigationStack<MainCoordinator>
 
     @Root
     var mainTab = makeMainTab
@@ -38,7 +43,8 @@ final class MainCoordinator: NavigationCoordinatable {
         UIScrollView.appearance().keyboardDismissMode = .onDrag
 
         // Back bar button item setup
-        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill")
+        let config = UIImage.SymbolConfiguration(paletteColors: [.white, .jellyfinPurple])
+        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill", withConfiguration: config)
         let barAppearance = UINavigationBar.appearance()
         barAppearance.backIndicatorImage = backButtonBackgroundImage
         barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
@@ -59,13 +65,13 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @objc
     func didSignIn() {
-        LogManager.log.info("Received `didSignIn` from SwiftfinNotificationCenter.")
+        logger.info("Received `didSignIn` from SwiftfinNotificationCenter.")
         root(\.mainTab)
     }
 
     @objc
     func didSignOut() {
-        LogManager.log.info("Received `didSignOut` from SwiftfinNotificationCenter.")
+        logger.info("Received `didSignOut` from SwiftfinNotificationCenter.")
         root(\.serverList)
     }
 

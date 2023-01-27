@@ -10,13 +10,7 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-// MARK: PortraitImageStackable
-
-extension BaseItemPerson: PortraitPoster {
-
-    var title: String {
-        self.name ?? "--"
-    }
+extension BaseItemPerson: Poster {
 
     var subtitle: String? {
         self.firstRole
@@ -42,5 +36,9 @@ extension BaseItemPerson: PortraitPoster {
         }
 
         return ImageSource(url: url, blurHash: blurHash)
+    }
+
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
+        []
     }
 }

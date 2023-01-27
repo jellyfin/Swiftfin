@@ -14,7 +14,7 @@ import Stinsen
 final class UserSignInViewModel: ViewModel {
 
     @RouterObject
-    private var Router: UserSignInCoordinator.Router?
+    private var router: UserSignInCoordinator.Router?
 
     @Published
     var publicUsers: [UserDto] = []
@@ -24,7 +24,7 @@ final class UserSignInViewModel: ViewModel {
     var quickConnectEnabled = false
 
     let server: SwiftfinStore.State.Server
-    private var quickConnectTimer: Timer?
+    private var quickConnectTimer: RepeatingTimer?
     private var quickConnectSecret: String?
 
     init(server: SwiftfinStore.State.Server) {
@@ -33,6 +33,7 @@ final class UserSignInViewModel: ViewModel {
 
         JellyfinAPIAPI.basePath = server.currentURI
         checkQuickConnect()
+        getPublicUsers()
     }
 
     var alertTitle: String {
@@ -45,7 +46,12 @@ final class UserSignInViewModel: ViewModel {
     }
 
     func signIn(username: String, password: String) {
-        LogManager.log.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
+        logger.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
+
+        let username = username.trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: .objectReplacement)
+        let password = password.trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: .objectReplacement)
 
         SessionManager.main.signInUser(server: server, username: username, password: password)
             .trackActivity(loading)
@@ -64,7 +70,7 @@ final class UserSignInViewModel: ViewModel {
         self.isLoading = false
     }
 
-    func loadUsers() {
+    func getPublicUsers() {
         UserAPI.getPublicUsers()
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
@@ -75,35 +81,17 @@ final class UserSignInViewModel: ViewModel {
             .store(in: &cancellables)
     }
 
-    func getProfileImageUrl(user: UserDto) -> URL? {
-        let urlString = ImageAPI.getUserImageWithRequestBuilder(
-            userId: user.id ?? "--",
-            imageType: .primary,
-            width: 200,
-            quality: 90
-        ).URLString
-        return URL(string: urlString)
-    }
-
-    func getSplashscreenUrl() -> URL? {
-        let urlString = ImageAPI.getSplashscreenWithRequestBuilder().URLString
-        return URL(string: urlString)
-    }
-
     func checkQuickConnect() {
         QuickConnectAPI.getEnabled()
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
             }, receiveValue: { enabled in
                 self.quickConnectEnabled = enabled
-                if enabled {
-                    self.startQuickConnect()
-                }
             })
             .store(in: &cancellables)
     }
 
-    private func startQuickConnect() {
+    func startQuickConnect(_ onSuccess: @escaping () -> Void) {
         QuickConnectAPI.initiate()
             .sink(receiveCompletion: { completion in
                 self.handleAPIRequestError(completion: completion)
@@ -111,21 +99,19 @@ final class UserSignInViewModel: ViewModel {
 
                 self.quickConnectSecret = response.secret
                 self.quickConnectCode = response.code
-                LogManager.log.debug("QuickConnect code: \(response.code ?? "--")")
+                self.logger.debug("QuickConnect code: \(response.code ?? .emptyDash)")
 
-                self.quickConnectTimer = Timer.scheduledTimer(
-                    timeInterval: 5,
-                    target: self,
-                    selector: #selector(self.checkAuthStatus),
-                    userInfo: nil,
-                    repeats: true
-                )
+                self.quickConnectTimer = RepeatingTimer(interval: 5) {
+                    self.checkAuthStatus(onSuccess)
+                }
+
+                self.quickConnectTimer?.start()
             })
             .store(in: &cancellables)
     }
 
     @objc
-    private func checkAuthStatus() {
+    private func checkAuthStatus(_ onSuccess: @escaping () -> Void) {
         guard let quickConnectSecret = quickConnectSecret else { return }
 
         QuickConnectAPI.connect(secret: quickConnectSecret)
@@ -134,11 +120,12 @@ final class UserSignInViewModel: ViewModel {
                 // this is a repeated call
             }, receiveValue: { value in
                 guard let authenticated = value.authenticated, authenticated else {
-                    LogManager.log.debug("QuickConnect not authenticated yet")
+                    self.logger.debug("QuickConnect not authenticated yet")
                     return
                 }
 
-                self.quickConnectTimer?.invalidate()
+                self.stopQuickConnectAuthCheck()
+                onSuccess()
 
                 SessionManager.main.signInUser(server: self.server, quickConnectSecret: quickConnectSecret)
                     .trackActivity(self.loading)
@@ -149,5 +136,12 @@ final class UserSignInViewModel: ViewModel {
                     .store(in: &self.cancellables)
             })
             .store(in: &cancellables)
+    }
+
+    func stopQuickConnectAuthCheck() {
+        DispatchQueue.main.async {
+            self.quickConnectTimer?.stop()
+            self.quickConnectTimer = nil
+        }
     }
 }

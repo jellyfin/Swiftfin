@@ -6,6 +6,8 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
+import JellyfinAPI
 import SwiftUI
 
 struct UserListView: View {
@@ -15,47 +17,39 @@ struct UserListView: View {
     @ObservedObject
     var viewModel: UserListViewModel
 
+    @State
+    private var longPressedUser: SwiftfinStore.State.User?
+
     @ViewBuilder
     private var listView: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(viewModel.users, id: \.id) { user in
-                    Button {
-                        viewModel.signIn(user: user)
-                    } label: {
-                        HStack {
-                            Text(user.username)
-                                .font(.title2)
-
-                            Spacer()
-
-                            if viewModel.isLoading {
-                                ProgressView()
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 100)
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            viewModel.remove(user: user)
-                        } label: {
-                            Label(L10n.remove, systemImage: "trash")
-                        }
-                    }
+        CollectionView(items: viewModel.users) { _, user, _ in
+            UserProfileButton(user: user)
+                .onSelect {
+                    viewModel.signIn(user: user)
                 }
-            }
-            .padding(.top, 50)
+                .onLongPressGesture {
+                    longPressedUser = user
+                }
         }
-        .padding(.top, 50)
+        .layout { _, layoutEnvironment in
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: .adaptive(withMinItemSize: 250),
+                itemSpacing: 20,
+                lineSpacing: 20,
+                sectionInsets: .init(top: 20, leading: 20, bottom: 20, trailing: 20)
+            )
+        }
+        .padding(50)
     }
 
     @ViewBuilder
     private var noUserView: some View {
-        VStack {
+        VStack(spacing: 50) {
             L10n.signInGetStarted.text
-                .frame(minWidth: 50, maxWidth: 500)
+                .frame(maxWidth: 500)
                 .multilineTextAlignment(.center)
-                .font(.callout)
+                .font(.body)
 
             Button {
                 userListRouter.route(to: \.userSignIn, viewModel.server)
@@ -63,46 +57,51 @@ struct UserListView: View {
                 L10n.signIn.text
                     .bold()
                     .font(.callout)
+                    .frame(width: 400, height: 75)
+                    .background(Color.jellyfinPurple)
             }
-            .padding(.top, 40)
-        }
-    }
-
-    @ViewBuilder
-    private var innerBody: some View {
-        if viewModel.users.isEmpty {
-            noUserView
-                .offset(y: -50)
-        } else {
-            listView
-        }
-    }
-
-    @ViewBuilder
-    private var toolbarContent: some View {
-        if viewModel.users.isEmpty {
-            EmptyView()
-        } else {
-            HStack {
-                Button {
-                    userListRouter.route(to: \.userSignIn, viewModel.server)
-                } label: {
-                    Image(systemName: "person.crop.circle.fill.badge.plus")
-                }
-            }
+            .buttonStyle(.card)
         }
     }
 
     var body: some View {
-        innerBody
-            .navigationTitle(viewModel.server.name)
-            .toolbar {
+        ZStack {
+            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
+                .ignoresSafeArea()
+
+            Color.black
+                .opacity(0.9)
+                .ignoresSafeArea()
+
+            if viewModel.users.isEmpty {
+                noUserView
+                    .offset(y: -50)
+            } else {
+                listView
+            }
+        }
+        .navigationTitle(viewModel.server.name)
+        .if(!viewModel.users.isEmpty) { view in
+            view.toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    toolbarContent
+                    Button {
+                        userListRouter.route(to: \.userSignIn, viewModel.server)
+                    } label: {
+                        Image(systemName: "person.crop.circle.fill.badge.plus")
+                    }
                 }
             }
-            .onAppear {
-                viewModel.fetchUsers()
-            }
+        }
+
+        .alert(item: $longPressedUser) { user in
+            Alert(
+                title: Text(user.username),
+                primaryButton: .destructive(L10n.remove.text, action: { viewModel.remove(user: user) }),
+                secondaryButton: .cancel()
+            )
+        }
+        .onAppear {
+            viewModel.fetchUsers()
+        }
     }
 }

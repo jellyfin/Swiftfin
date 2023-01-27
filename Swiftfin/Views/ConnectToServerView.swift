@@ -43,9 +43,17 @@ struct ConnectToServerView: View {
                     Button {
                         viewModel.connectToServer(uri: uri)
                     } label: {
-                        L10n.connect.text
+                        HStack {
+                            L10n.connect.text
+
+                            Spacer()
+
+                            if viewModel.isLoading {
+                                ProgressView()
+                            }
+                        }
                     }
-                    .disabled(uri.isEmpty)
+                    .disabled(uri.isEmpty || viewModel.isLoading)
                 }
             } header: {
                 L10n.connectToJellyfinServer.text
@@ -69,15 +77,15 @@ struct ConnectToServerView: View {
                             Spacer()
                         }
                     } else {
-                        ForEach(viewModel.discoveredServers.sorted(by: { $0.name < $1.name }), id: \.id) { discoveredServer in
+                        ForEach(viewModel.discoveredServers, id: \.id) { server in
                             Button {
-                                uri = discoveredServer.url.absoluteString
-                                viewModel.connectToServer(uri: discoveredServer.url.absoluteString)
+                                uri = server.currentURI
+                                viewModel.connectToServer(uri: server.currentURI)
                             } label: {
                                 VStack(alignment: .leading, spacing: 5) {
-                                    Text(discoveredServer.name)
+                                    Text(server.name)
                                         .font(.title3)
-                                    Text(discoveredServer.host)
+                                    Text(server.currentURI)
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }

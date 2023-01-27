@@ -6,30 +6,20 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
-import Stinsen
+import CollectionView
+import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct LibraryView: View {
 
     @EnvironmentObject
-    private var libraryRouter: LibraryCoordinator.Router
-    @StateObject
+    private var router: LibraryCoordinator.Router
+    @ObservedObject
     var viewModel: LibraryViewModel
-    var title: String
 
-    // MARK: tracks for grid
-
-    var defaultFilters = LibraryFilters(filters: [], sortOrder: [.ascending], withGenres: [], tags: [], sortBy: [.name])
-
-    @State
-    private var tracks: [GridItem] = Array(
-        repeating: .init(.flexible(), alignment: .top),
-        count: Int(UIScreen.main.bounds.size.width) / 125
-    )
-
-    func recalcTracks() {
-        tracks = Array(repeating: .init(.flexible(), alignment: .top), count: Int(UIScreen.main.bounds.size.width) / 125)
-    }
+    @Default(.Customization.Library.viewType)
+    private var libraryViewType
 
     @ViewBuilder
     private var loadingView: some View {
@@ -41,64 +31,59 @@ struct LibraryView: View {
         L10n.noResults.text
     }
 
+    private func baseItemOnSelect(_ item: BaseItemDto) {
+        if let baseParent = viewModel.parent as? BaseItemDto {
+            if baseParent.collectionType == "folders" {
+                router.route(to: \.library, .init(parent: item, type: .folders, filters: .init()))
+            } else if item.type == .folder {
+                router.route(to: \.library, .init(parent: item, type: .library, filters: .init()))
+            } else {
+                router.route(to: \.item, item)
+            }
+        } else {
+            router.route(to: \.item, item)
+        }
+    }
+
     @ViewBuilder
     private var libraryItemsView: some View {
-        DetectBottomScrollView {
-            VStack {
-                LazyVGrid(columns: tracks) {
-                    ForEach(viewModel.items, id: \.id) { item in
-                        PortraitPosterButton(item: item) { item in
-                            libraryRouter.route(to: \.item, item)
-                        }
-                    }
-                }
-                .ignoresSafeArea()
-                .listRowSeparator(.hidden)
-                .onRotate { _ in
-                    recalcTracks()
-                }
-
-                Spacer()
-                    .frame(height: 30)
+        PagingLibraryView(viewModel: viewModel)
+            .onSelect { item in
+                baseItemOnSelect(item)
             }
-        } didReachBottom: { newValue in
-            if newValue && viewModel.hasNextPage {
-                viewModel.requestNextPageAsync()
-            }
-        }
+            .ignoresSafeArea()
     }
 
     var body: some View {
         Group {
             if viewModel.isLoading && viewModel.items.isEmpty {
-                ProgressView()
-            } else if !viewModel.items.isEmpty {
-                libraryItemsView
-            } else {
+                loadingView
+            } else if viewModel.items.isEmpty {
                 noResultsView
+            } else {
+                libraryItemsView
             }
         }
+        .navigationTitle(viewModel.parent?.displayName ?? "")
         .navigationBarTitleDisplayMode(.inline)
+        .navBarDrawer {
+            ScrollView(.horizontal, showsIndicators: false) {
+                FilterDrawerHStack(viewModel: viewModel.filterViewModel)
+                    .onSelect { filterCoordinatorParameters in
+                        router.route(to: \.filter, filterCoordinatorParameters)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 1)
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
 
-                Button {
-                    libraryRouter
-                        .route(to: \.filter, (
-                            filters: $viewModel.filters,
-                            enabledFilterType: viewModel.enabledFilterType,
-                            parentId: viewModel.parentID ?? ""
-                        ))
-                } label: {
-                    Image(systemName: "line.horizontal.3.decrease.circle")
+                if viewModel.isLoading && !viewModel.items.isEmpty {
+                    ProgressView()
                 }
-                .foregroundColor(viewModel.filters == defaultFilters ? .accentColor : Color(UIColor.systemOrange))
 
-                Button {
-                    libraryRouter.route(to: \.search, .init(parentID: viewModel.parentID))
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                }
+                LibraryViewTypeToggle(libraryViewType: $libraryViewType)
             }
         }
     }

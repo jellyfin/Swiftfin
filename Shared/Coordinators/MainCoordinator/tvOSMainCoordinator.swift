@@ -6,13 +6,18 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import Nuke
 import Stinsen
 import SwiftUI
 
 final class MainCoordinator: NavigationCoordinatable {
-    var stack = NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
+
+    @Injected(LogManager.service)
+    private var logger
+
+    var stack = Stinsen.NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
 
     @Root
     var mainTab = makeMainTab
@@ -20,14 +25,6 @@ final class MainCoordinator: NavigationCoordinatable {
     var serverList = makeServerList
     @Root
     var liveTV = makeLiveTV
-
-    @ViewBuilder
-    func customize(_ view: AnyView) -> some View {
-        view.background {
-            Color.black
-                .ignoresSafeArea()
-        }
-    }
 
     init() {
         if SessionManager.main.currentLogin != nil {
@@ -39,6 +36,8 @@ final class MainCoordinator: NavigationCoordinatable {
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
         DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
+
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
         Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
@@ -46,13 +45,13 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @objc
     func didSignIn() {
-        LogManager.log.info("Received `didSignIn` from NSNotificationCenter.")
+        logger.info("Received `didSignIn` from NSNotificationCenter.")
         root(\.mainTab)
     }
 
     @objc
     func didSignOut() {
-        LogManager.log.info("Received `didSignOut` from NSNotificationCenter.")
+        logger.info("Received `didSignOut` from NSNotificationCenter.")
         root(\.serverList)
     }
 

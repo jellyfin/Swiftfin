@@ -32,7 +32,7 @@ extension ItemView {
                     .frame(height: 100)
                     .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
 
                 Button {
                     viewModel.toggleFavoriteState()
@@ -49,7 +49,7 @@ extension ItemView {
                     .frame(height: 100)
                     .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
         }
     }

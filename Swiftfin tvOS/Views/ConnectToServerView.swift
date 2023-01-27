@@ -12,16 +12,17 @@ import SwiftUI
 
 struct ConnectToServerView: View {
 
-    @StateObject
+    @ObservedObject
     var viewModel: ConnectToServerViewModel
     @State
-    var uri = ""
+    private var uri = ""
 
     @Default(.defaultHTTPScheme)
-    var defaultHTTPScheme
+    private var defaultHTTPScheme
 
-    var body: some View {
-        List {
+    @ViewBuilder
+    private var connectForm: some View {
+        VStack(alignment: .leading) {
             Section {
                 TextField(L10n.serverURL, text: $uri)
                     .disableAutocorrection(true)
@@ -37,43 +38,94 @@ struct ConnectToServerView: View {
                     viewModel.connectToServer(uri: uri)
                 } label: {
                     HStack {
-                        L10n.connect.text
-                        Spacer()
                         if viewModel.isLoading {
                             ProgressView()
                         }
+
+                        L10n.connect.text
+                            .bold()
+                            .font(.callout)
                     }
+                    .frame(height: 75)
+                    .frame(maxWidth: .infinity)
+                    .background(viewModel.isLoading || uri.isEmpty ? .secondary : Color.jellyfinPurple)
                 }
                 .disabled(viewModel.isLoading || uri.isEmpty)
+                .buttonStyle(.plain)
             } header: {
                 L10n.connectToJellyfinServer.text
             }
+        }
+    }
 
-            Section(header: L10n.localServers.text) {
-                if viewModel.searching {
-                    ProgressView()
+    @ViewBuilder
+    private var searchingDiscoverServers: some View {
+        HStack(spacing: 5) {
+            ProgressView()
+
+            L10n.searchingDots.text
+                .foregroundColor(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var noLocalServersFound: some View {
+        L10n.noLocalServersFound.text
+            .font(.callout)
+            .foregroundColor(.secondary)
+    }
+
+    @ViewBuilder
+    private var localServers: some View {
+        VStack(alignment: .center) {
+
+            HStack {
+                L10n.localServers.text
+                    .font(.title3)
+                    .fontWeight(.semibold)
+
+                SFSymbolButton(systemName: "arrow.clockwise") {
+                    viewModel.discoverServers()
                 }
-                ForEach(viewModel.discoveredServers.sorted(by: { $0.name < $1.name }), id: \.id) { discoveredServer in
-                    Button(action: {
-                        viewModel.connectToServer(uri: discoveredServer.url.absoluteString)
-                    }, label: {
-                        HStack {
-                            Text(discoveredServer.name)
-                                .font(.headline)
-                            Text("• \(discoveredServer.host)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            if viewModel.isLoading {
-                                ProgressView()
+                .frame(width: 30, height: 30)
+                .disabled(viewModel.searching || viewModel.isLoading)
+            }
+
+            if viewModel.searching {
+                searchingDiscoverServers
+                    .frame(maxHeight: .infinity)
+            } else {
+                if viewModel.discoveredServers.isEmpty {
+                    noLocalServersFound
+                        .frame(maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(viewModel.discoveredServers, id: \.self) { server in
+                                ServerButton(server: server)
+                                    .onSelect {
+                                        viewModel.connectToServer(uri: server.currentURI)
+                                    }
                             }
                         }
-
-                    })
+                        .padding()
+                    }
                 }
             }
-            .onAppear(perform: self.viewModel.discoverServers)
-            .headerProminence(.increased)
+        }
+    }
+
+    var body: some View {
+        HStack(alignment: .top) {
+            connectForm
+                .frame(maxWidth: .infinity)
+
+            localServers
+                .frame(maxWidth: .infinity)
+        }
+        .navigationTitle(L10n.connect.text)
+        .onAppear {
+            viewModel.discoverServers()
         }
         .alert(item: $viewModel.errorMessage) { _ in
             Alert(
@@ -82,6 +134,12 @@ struct ConnectToServerView: View {
                 dismissButton: .cancel()
             )
         }
-        .navigationTitle(L10n.connect)
+        .alert(item: $viewModel.addServerURIPayload) { _ in
+            Alert(
+                title: L10n.existingServer.text,
+                message: L10n.serverAlreadyExistsPrompt(viewModel.addServerURIPayload?.server.name ?? .emptyDash).text,
+                dismissButton: .cancel()
+            )
+        }
     }
 }

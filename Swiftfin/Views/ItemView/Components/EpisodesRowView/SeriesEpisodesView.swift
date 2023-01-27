@@ -59,16 +59,16 @@ struct SeriesEpisodesView<RowManager: EpisodesRowManager>: View {
                 HStack(alignment: .top, spacing: 15) {
                     if viewModel.isLoading {
                         ForEach(0 ..< 5) { _ in
-                            EpisodeCard(episode: .placeHolder)
+                            EpisodeCard(viewModel: viewModel, episode: .placeHolder)
                                 .redacted(reason: .placeholder)
                         }
                     } else if let selectedSeason = viewModel.selectedSeason {
                         if let seasonEpisodes = viewModel.seasonsEpisodes[selectedSeason] {
                             if seasonEpisodes.isEmpty {
-                                EpisodeCard(episode: .noResults)
+                                EpisodeCard(viewModel: viewModel, episode: .noResults)
                             } else {
                                 ForEach(seasonEpisodes) { episode in
-                                    EpisodeCard(episode: episode)
+                                    EpisodeCard(viewModel: viewModel, episode: episode)
                                         .id(episode.id)
                                 }
                             }

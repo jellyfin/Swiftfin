@@ -25,12 +25,7 @@ extension MovieItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    PillHStack(
-                        title: L10n.genres,
-                        items: genres
-                    ) { genre in
-                        itemRouter.route(to: \.library, (viewModel: .init(genre: genre), title: genre.title))
-                    }
+                    ItemView.GenresHStack(genres: genres)
 
                     Divider()
                 }
@@ -38,27 +33,17 @@ extension MovieItemView {
                 // MARK: Studios
 
                 if let studios = viewModel.item.studios, !studios.isEmpty {
-                    PillHStack(
-                        title: L10n.studios,
-                        items: studios
-                    ) { studio in
-                        itemRouter.route(to: \.library, (viewModel: .init(studio: studio), title: studio.name ?? ""))
-                    }
+                    ItemView.StudiosHStack(studios: studios)
 
                     Divider()
                 }
 
                 // MARK: Cast and Crew
 
-                if let castAndCrew = viewModel.item.people?.filter(\.isDisplayed),
+                if let castAndCrew = viewModel.item.people,
                    !castAndCrew.isEmpty
                 {
-                    PortraitPosterHStack(
-                        title: L10n.castAndCrew,
-                        items: castAndCrew
-                    ) { person in
-                        itemRouter.route(to: \.library, (viewModel: .init(person: person), title: person.title))
-                    }
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
 
                     Divider()
                 }
@@ -66,12 +51,7 @@ extension MovieItemView {
                 // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
-                    PortraitPosterHStack(
-                        title: L10n.recommended,
-                        items: viewModel.similarItems
-                    ) { item in
-                        itemRouter.route(to: \.item, item)
-                    }
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 
                     Divider()
                 }

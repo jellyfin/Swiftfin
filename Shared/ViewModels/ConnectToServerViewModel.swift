@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -26,7 +27,7 @@ final class ConnectToServerViewModel: ViewModel {
     @RouterObject
     var router: ConnectToServerCoodinator.Router?
     @Published
-    var discoveredServers: Set<ServerDiscovery.ServerLookupResponse> = []
+    var discoveredServers: [SwiftfinStore.State.Server] = []
     @Published
     var searching = false
     @Published
@@ -46,17 +47,11 @@ final class ConnectToServerViewModel: ViewModel {
 
     func connectToServer(uri: String, redirectCount: Int = 0) {
 
-        #if targetEnvironment(simulator)
-            var uri = uri
-            if uri == "http://localhost" || uri == "localhost" {
-                uri = "http://localhost:8096"
-            }
-        #endif
+        let uri = uri.trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: .objectReplacement)
 
-        let trimmedURI = uri.trimmingCharacters(in: .whitespaces)
-
-        LogManager.log.debug("Attempting to connect to server at \"\(trimmedURI)\"", tag: "connectToServer")
-        SessionManager.main.connectToServer(with: trimmedURI)
+        logger.debug("Attempting to connect to server at \"\(uri)\"", tag: "connectToServer")
+        SessionManager.main.connectToServer(with: uri)
             .trackActivity(loading)
             .sink(receiveCompletion: { completion in
                 // This is disgusting. ViewModel Error handling overall needs to be refactored
@@ -98,7 +93,7 @@ final class ConnectToServerViewModel: ViewModel {
                     }
                 }
             }, receiveValue: { server in
-                LogManager.log.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
+                self.logger.debug("Connected to server at \"\(uri)\"", tag: "connectToServer")
                 self.router?.route(to: \.userSignIn, server)
             })
             .store(in: &cancellables)
@@ -108,15 +103,26 @@ final class ConnectToServerViewModel: ViewModel {
         discoveredServers.removeAll()
         searching = true
 
+        var _discoveredServers: Set<SwiftfinStore.State.Server> = []
+
+        discovery.locateServer { server in
+            if let server = server {
+                _discoveredServers.insert(.init(
+                    uris: [],
+                    currentURI: server.url.absoluteString,
+                    name: server.name,
+                    id: server.id,
+                    os: "",
+                    version: "",
+                    usersIDs: []
+                ))
+            }
+        }
+
         // Timeout after 3 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.searching = false
-        }
-
-        discovery.locateServer { [self] server in
-            if let server = server {
-                discoveredServers.insert(server)
-            }
+            self.discoveredServers = _discoveredServers.sorted(by: { $0.name < $1.name })
         }
     }
 

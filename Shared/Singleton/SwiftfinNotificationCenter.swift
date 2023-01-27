@@ -6,9 +6,13 @@
 // Copyright (c) 2022 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 
 class SwiftfinNotification {
+
+    @Injected(Notifications.service)
+    private var notificationService
 
     private let notificationName: Notification.Name
 
@@ -17,23 +21,21 @@ class SwiftfinNotification {
     }
 
     func post(object: Any? = nil) {
-        Notifications.main.post(name: notificationName, object: object)
+        notificationService.post(name: notificationName, object: object)
     }
 
     func subscribe(_ observer: Any, selector: Selector) {
-        Notifications.main.addObserver(observer, selector: selector, name: notificationName, object: nil)
+        notificationService.addObserver(observer, selector: selector, name: notificationName, object: nil)
     }
 
     func unsubscribe(_ observer: Any) {
-        Notifications.main.removeObserver(self, name: notificationName, object: nil)
+        notificationService.removeObserver(self, name: notificationName, object: nil)
     }
 }
 
 enum Notifications {
 
-    static let main: NotificationCenter = {
-        NotificationCenter()
-    }()
+    static let service = Factory(scope: .singleton) { NotificationCenter() }
 
     final class Key {
         public typealias NotificationKey = Notifications.Key
@@ -50,10 +52,6 @@ enum Notifications {
     static subscript(key: Key) -> SwiftfinNotification {
         key.underlyingNotification
     }
-
-    static func unsubscribe(_ observer: Any) {
-        main.removeObserver(observer)
-    }
 }
 
 extension Notifications.Key {
@@ -63,8 +61,5 @@ extension Notifications.Key {
     static let processDeepLink = NotificationKey("processDeepLink")
     static let didPurge = NotificationKey("didPurge")
     static let didChangeServerCurrentURI = NotificationKey("didChangeCurrentLoginURI")
-    static let toggleOfflineMode = NotificationKey("toggleOfflineMode")
-    static let didDeleteOfflineItem = NotificationKey("didDeleteOfflineItem")
-    static let didAddDownload = NotificationKey("didAddDownload")
     static let didSendStopReport = NotificationKey("didSendStopReport")
 }

@@ -49,7 +49,7 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
     }
 
     private func getNextUp() {
-        LogManager.log.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
+        logger.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
         TvShowsAPI.getNextUp(
             userId: SessionManager.main.currentLogin.user.id,
             seriesId: self.item.id!,
