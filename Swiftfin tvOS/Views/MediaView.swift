@@ -26,31 +26,17 @@ struct MediaView: View {
         CollectionView(items: viewModel.libraryItems) { _, viewModel, _ in
             LibraryCard(viewModel: viewModel)
                 .onSelect {
-//                    switch item.library.collectionType {
-//                    case "favorites":
-//                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .favorites))
-//                    case "folders":
-//                        router.route(to: \.library, .init(parent: item.library, type: .folders, filters: .init()))
-//                    case "liveTV":
-//                        tabRouter.root(\.liveTV)
-//                    default:
-//                        router.route(to: \.library, .init(parent: item.library, type: .library, filters: .init()))
-//                    }
+                    switch viewModel.item.collectionType {
+                    case "favorites":
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .favorites))
+                    case "folders":
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .folders, filters: .init()))
+                    case "liveTV":
+                        tabRouter.root(\.liveTV)
+                    default:
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .init()))
+                    }
                 }
-//                .imageOverlay {
-//                    ZStack {
-//                        Color.black
-//                            .opacity(0.5)
-//
-//        //                        Text(item.library.displayTitle)
-//        //                            .foregroundColor(.white)
-//        //                            .font(.title2)
-//        //                            .fontWeight(.semibold)
-//        //                            .lineLimit(2)
-//        //                            .multilineTextAlignment(.center)
-//        //                            .frame(alignment: .center)
-//                    }
-//                }
         }
         .layout { _, layoutEnvironment in
             .grid(
@@ -91,8 +77,7 @@ extension MediaView {
                 }
                 .overlay {
                     if Defaults[.Customization.Library.randomImage] ||
-                        viewModel.item.collectionType == "favorites" ||
-                        viewModel.item.collectionType == "downloads"
+                        viewModel.item.collectionType == "favorites"
                     {
                         ZStack {
                             Color.black

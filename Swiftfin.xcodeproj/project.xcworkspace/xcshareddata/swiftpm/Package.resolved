@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/BlurHashKit",
       "state" : {
-        "revision" : "3c23237f1f2b62741bce70bd2e4ef2aa7799ea85",
-        "version" : "1.1.0"
+        "revision" : "c0bd7423398de68cbeb3f99bff70f79c38bf36ab",
+        "version" : "1.2.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults",
       "state" : {
-        "revision" : "7a22d378742acbef49ecff11b9de8bf8b72b34dc",
-        "version" : "7.0.0"
+        "revision" : "d71bfd8ffbf944ef08eacbca5fb96d6f69bf7696",
+        "version" : "7.1.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
       "state" : {
-        "revision" : "8557426f3286e20b631ecdac8115242f888656e0",
-        "version" : "1.2.8"
+        "revision" : "11cb81d39129d25329b7e1e3209cd0aea9b352f0",
+        "version" : "1.3.5"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "8ea514737c2011ff7d7544aa065ad44905bdae0b",
-        "version" : "11.1.0"
+        "revision" : "2e9337168d08acccf72c039bf9324be24a1cf7d7",
+        "version" : "11.5.3"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "3f13427fdc7886bb071a0979396dcd0ca4571f61",
-        "version" : "3.0.0"
+        "revision" : "5a303b257d579ae6d366ddc1da6763269985a5f7",
+        "version" : "3.2.0"
       }
     },
     {
@@ -96,7 +96,7 @@
       "location" : "https://github.com/kean/PulseLogHandler",
       "state" : {
         "branch" : "main",
-        "revision" : "2baa44b40a9f41f97763adbaccdad9d277e32eb5"
+        "revision" : "0481406b088d3e7952c73cbd92f045e149f2b914"
       }
     },
     {
@@ -105,7 +105,7 @@
       "location" : "https://github.com/rundfunk47/stinsen",
       "state" : {
         "branch" : "master",
-        "revision" : "17afde3c4763e014c7505da15258a5d44821c91a"
+        "revision" : "6dda57096e16020342b36ebea86dc4bdf6783426"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "6fe203dc33195667ce1759bf0182975e4653ba1c",
-        "version" : "1.4.4"
+        "revision" : "32e8d724467f8fe623624570367e3d50c5638e46",
+        "version" : "1.5.2"
       }
     },
     {
@@ -186,7 +186,7 @@
       "location" : "https://github.com/LePips/VLCUI",
       "state" : {
         "branch" : "main",
-        "revision" : "79fc6f3e78bd65af5fdcff4eaf11631cb8914048"
+        "revision" : "50d4f6ec05a2d8333952def0d8e45019a4207132"
       }
     }
   ],
