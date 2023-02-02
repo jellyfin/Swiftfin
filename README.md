@@ -17,13 +17,17 @@
   <b>Swiftfin</b> is a modern video client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Made using Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
 
-## ⚡️ Installation
+## ⚡️ Download
+
+**✨New! Available on the App Store**
+
+Learn more on our [announcement post](https://jellyfin.org/posts/2022/12/29/swiftfin/).
 
 <a href="https://apps.apple.com/us/app/swiftfin/id1604098728">
-  <img height=75 src="./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg"/>
+  <img height=75 alt="Download on the Apple App Store" src="./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg"/>
 </a>
 
-A [TestFlight]() instance is also available.
+A [TestFlight](./TESTFLIGHT.md) instance is also available.
 
 ## ⚙️ Development
 
