@@ -70,13 +70,7 @@ class DeviceProfileBuilder {
             subtitleProfiles.append(SubtitleProfile(format: "sub", method: .embed))
             subtitleProfiles.append(SubtitleProfile(format: "pgssub", method: .embed))
             // These need to be filtered. Most subrips are embedded. I hate subtitles.
-            subtitleProfiles.append(SubtitleProfile(format: "subrip", method: .external))
-            subtitleProfiles.append(SubtitleProfile(format: "sub", method: .external))
-            subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
-            subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
             subtitleProfiles.append(SubtitleProfile(format: "vtt", method: .external))
-            subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
-            subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
 
         } else { // VLCKit
 
@@ -113,8 +107,6 @@ class DeviceProfileBuilder {
             subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
             subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
             subtitleProfiles.append(SubtitleProfile(format: "vtt", method: .external))
-            subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
-            subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
 
         }
 
