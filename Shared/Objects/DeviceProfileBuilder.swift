@@ -31,12 +31,12 @@ class DeviceProfileBuilder {
         var subtitleProfiles: [SubtitleProfile] = []
 
         let containerString = "mpegts,mov,mp4,m4v,avi,3gp,3g2"
-        var audioCodecString = "aac,mp3,ac3,eac3,opus,amr"
+        var audioCodecString = "flac,aac,mp3,ac3,eac3,opus,amr"
         var videoCodecString = "h264,mpeg4"
 
         // Supports HEVC?
         if AVURLAsset.isPlayableExtendedMIMEType("video/mp4; codecs=hvc1") {
-            videoCodecString = videoCodecString+",hevc"
+            videoCodecString = "hevc,"+videoCodecString
         }
 
         // Separate native player profile from VLCKit profile
@@ -83,8 +83,8 @@ class DeviceProfileBuilder {
             // Build direct play profiles
             directPlayProfiles = [DirectPlayProfile(
                 container: containerString+",mkv,webm,ogg,asf,wmv,mpeg,mpg,flv",
-                audioCodec: audioCodecString+"alac,flac,dts,vorbis,mp2,mp1,wmav2,pcm_s24le",
-                videoCodec: videoCodecString+"h263,flv1,vc1,vp8,vp9,av1,wmv1,wmv2,msmpeg4v2,msmpeg4v3,mpeg2video,theora",
+                audioCodec: audioCodecString+",alac,dts,vorbis,mp2,mp1,wmav2,pcm_s24le",
+                videoCodec: videoCodecString+",h263,flv1,vc1,vp8,vp9,av1,wmv1,wmv2,msmpeg4v2,msmpeg4v3,mpeg2video,theora",
                 type: .video
             )]
 
@@ -92,8 +92,8 @@ class DeviceProfileBuilder {
             transcodingProfiles = [TranscodingProfile(
                 container: segmentContainer,
                 type: .video,
-                videoCodec: videoCodecString+"vc1,vp9,av1,mpeg2video",
-                audioCodec: audioCodecString+"dts,mp2,mp1",
+                videoCodec: videoCodecString+",vc1,vp9,av1,mpeg2video",
+                audioCodec: audioCodecString+",dts,mp2,mp1",
                 _protocol: "hls",
                 context: .streaming,
                 maxAudioChannels: "6",
@@ -117,8 +117,6 @@ class DeviceProfileBuilder {
             subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
 
         }
-        // Need to check for FLAC, HEVC - what about dolby vision? (dvhe, dvh1, hev1)
-        // truehd is not supported by VLCKit or native
 
         // For now, assume native and VLCKit support same codec conditions:
         let h264CodecConditions: [ProfileCondition] = [
