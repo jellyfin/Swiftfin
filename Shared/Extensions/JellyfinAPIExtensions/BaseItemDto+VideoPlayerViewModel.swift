@@ -105,7 +105,7 @@ extension BaseItemDto {
                         .joined(separator: ","),
                     breakOnNonKeyFrames: true,
                     requireAvc: true,
-                    transcodingMaxAudioChannels: 6,
+                    transcodingMaxAudioChannels: 8,
                     videoCodec: videoStream?.codec,
                     videoStreamIndex: videoStream?.index,
                     enableAdaptiveBitrateStreaming: true
@@ -273,7 +273,7 @@ extension BaseItemDto {
                         .joined(separator: ","),
                     breakOnNonKeyFrames: true,
                     requireAvc: true,
-                    transcodingMaxAudioChannels: 6,
+                    transcodingMaxAudioChannels: 8,
                     videoCodec: videoStream?.codec,
                     videoStreamIndex: videoStream?.index,
                     enableAdaptiveBitrateStreaming: true
