@@ -58,7 +58,7 @@ class DeviceProfileBuilder {
                 audioCodec: audioCodecString,
                 _protocol: "hls",
                 context: .streaming,
-                maxAudioChannels: "6",
+                maxAudioChannels: "8",
                 minSegments: 2,
                 breakOnNonKeyFrames: true
             )]
@@ -90,7 +90,7 @@ class DeviceProfileBuilder {
                 audioCodec: audioCodecString+",dts,mp2,mp1",
                 _protocol: "hls",
                 context: .streaming,
-                maxAudioChannels: "6",
+                maxAudioChannels: "8",
                 minSegments: 2,
                 breakOnNonKeyFrames: true
             )]
