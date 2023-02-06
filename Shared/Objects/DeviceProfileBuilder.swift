@@ -122,16 +122,17 @@ class DeviceProfileBuilder {
             ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "80", isRequired: false),
             ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false),
         ]
-        let hevcCodecConditions: [ProfileCondition] = [
-            ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
-            ProfileCondition(condition: .equalsAny, property: .videoProfile, value: "high|main|main 10", isRequired: false),
-            ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "175", isRequired: false),
-            ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false),
-        ]
 
         codecProfiles.append(CodecProfile(type: .video, applyConditions: h264CodecConditions, codec: "h264"))
 
         if AVURLAsset.isPlayableExtendedMIMEType("video/mp4; codecs=hvc1") {
+            let hevcCodecConditions: [ProfileCondition] = [
+                ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
+                ProfileCondition(condition: .equalsAny, property: .videoProfile, value: "high|main|main 10", isRequired: false),
+                ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "175", isRequired: false),
+                ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false),
+            ]
+
             codecProfiles.append(CodecProfile(type: .video, applyConditions: hevcCodecConditions, codec: "hevc"))
         }
 
