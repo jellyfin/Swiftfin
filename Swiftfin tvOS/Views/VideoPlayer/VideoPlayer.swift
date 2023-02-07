@@ -6,64 +6,78 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 import VLCUI
 
 struct VideoPlayer: View {
+    
+    enum OverlayType {
+        case main
+        case chapters
+        case confirmClose
+    }
 
     @EnvironmentObject
     private var router: VideoPlayerCoordinator.Router
 
     @ObservedObject
+    private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
+    @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
 
     @State
-    private var presentingConfirmClose: Bool = false
+    private var isPresentingOverlay: Bool = false
     @State
-    private var confirmCloseWorkItem: DispatchWorkItem?
-
-    init(manager: VideoPlayerManager) {
-        self.videoPlayerManager = manager
-    }
+    private var isScrubbing: Bool = false
+    
+    private var overlay: () -> any View
 
     @ViewBuilder
     private var playerView: some View {
-        PreferenceUIHostingControllerView {
-            ZStack {
-//                VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
+        ZStack {
+            VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
+                .proxy(videoPlayerManager.proxy)
+                .onTicksUpdated { ticks, _ in
 
-                Color.red
-                    .opacity(0.5)
-                    .visible(presentingConfirmClose)
-                
-                
-//                ConfirmCloseOverlay()
-//                    .visible(presentingConfirmClose)
-            }
-            .onMenuPressed {
-                confirmCloseWorkItem?.cancel()
-                
-                if presentingConfirmClose {
-                    router.dismissCoordinator()
-                } else {
-                    withAnimation {
-                        presentingConfirmClose = true
-                    }
+                    let newSeconds = ticks / 1000
+                    let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
+                    currentProgressHandler.progress = newProgress
+                    currentProgressHandler.seconds = newSeconds
 
-                    let task = DispatchWorkItem {
-                        withAnimation {
-                            self.presentingConfirmClose = false
+                    guard !isScrubbing else { return }
+                    currentProgressHandler.scrubbedProgress = newProgress
+                }
+                .onStateUpdated { state, _ in
+
+                    videoPlayerManager.onStateUpdated(newState: state)
+
+                    if state == .ended {
+                        if let _ = videoPlayerManager.nextViewModel,
+                           Defaults[.VideoPlayer.autoPlayEnabled]
+                        {
+                            videoPlayerManager.selectNextViewModel()
+                        } else {
+                            router.dismissCoordinator()
                         }
                     }
-
-                    confirmCloseWorkItem = task
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
                 }
-            }
-            .ignoresSafeArea()
+            
+            overlay()
+                .eraseToAnyView()
+                .environmentObject(videoPlayerManager)
+                .environmentObject(videoPlayerManager.currentProgressHandler)
+                .environmentObject(videoPlayerManager.currentViewModel!)
+                .environmentObject(videoPlayerManager.proxy)
+                .environment(\.isPresentingOverlay, $isPresentingOverlay)
+                .environment(\.isScrubbing, $isScrubbing)
         }
-        .ignoresSafeArea()
+        .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
+            DispatchQueue.main.async {
+                videoPlayerManager.currentProgressHandler
+                    .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
+            }
+        }
     }
 
     @ViewBuilder
@@ -72,20 +86,35 @@ struct VideoPlayer: View {
     }
 
     var body: some View {
-        Group {
+        ZStack {
+            
+            Color.black
+            
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
                 loadingView
             }
         }
+        .ignoresSafeArea()
+        .onChange(of: isScrubbing) { newValue in
+            guard !newValue else { return }
+            videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+        }
     }
 }
 
 extension VideoPlayer {
-
-    enum OverlayType {
-        case main
-        case chapters
+    
+    init(manager: VideoPlayerManager) {
+        self.init(
+            currentProgressHandler: manager.currentProgressHandler,
+            videoPlayerManager: manager,
+            overlay: { EmptyView() }
+        )
+    }
+    
+    func overlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.overlay, with: content)
     }
 }

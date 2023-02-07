@@ -99,12 +99,6 @@ struct VideoPlayer: View {
     private let updateViewProxy: UpdateViewProxy = .init()
     private var overlay: () -> any View
 
-    init(manager: VideoPlayerManager) {
-        self.videoPlayerManager = manager
-        self.currentProgressHandler = manager.currentProgressHandler
-        self.overlay = { EmptyView() }
-    }
-
     @ViewBuilder
     private var playerView: some View {
         SplitContentView(splitContentWidth: 400)
@@ -160,11 +154,11 @@ struct VideoPlayer: View {
                         overlay()
                             .eraseToAnyView()
                     }
-                    .environmentObject(videoPlayerManager.currentProgressHandler)
                     .environmentObject(splitContentViewProxy)
                     .environmentObject(videoPlayerManager)
-                    .environmentObject(videoPlayerManager.proxy)
+                    .environmentObject(videoPlayerManager.currentProgressHandler)
                     .environmentObject(videoPlayerManager.currentViewModel!)
+                    .environmentObject(videoPlayerManager.proxy)
                     .environment(\.aspectFilled, $isAspectFilled)
                     .environment(\.isPresentingOverlay, $isPresentingOverlay)
                     .environment(\.isScrubbing, $isScrubbing)
@@ -250,6 +244,14 @@ struct VideoPlayer: View {
 }
 
 extension VideoPlayer {
+    
+    init(manager: VideoPlayerManager) {
+        self.init(
+            currentProgressHandler: manager.currentProgressHandler,
+            videoPlayerManager: manager,
+            overlay: { EmptyView() }
+        )
+    }
 
     func overlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.overlay, with: content)
@@ -392,7 +394,7 @@ extension VideoPlayer {
             toNearest: 100
         )
 
-        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondToSecondLabel)
+        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondFormat)
         audioOffset = clamp(newOffset, min: -30000, max: 30000)
     }
 
@@ -516,7 +518,7 @@ extension VideoPlayer {
         )
         let clampedOffset = clamp(newOffset, min: -30000, max: 30000)
 
-        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondToSecondLabel)
+        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondFormat)
 
         subtitleOffset = clampedOffset
     }

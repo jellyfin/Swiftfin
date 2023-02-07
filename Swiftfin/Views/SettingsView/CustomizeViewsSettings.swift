@@ -15,6 +15,9 @@ struct CustomizeViewsSettings: View {
     var itemViewType
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
     private var cinematicItemViewTypeUsePrimaryImage
+    
+    @Default(.hapticFeedback)
+    private var hapticFeedback
 
     @Default(.Customization.shouldShowMissingSeasons)
     var shouldShowMissingSeasons
@@ -62,6 +65,8 @@ struct CustomizeViewsSettings: View {
                         Text("Uses the primary image and hides the logo.")
                     }
                 }
+                
+                Toggle("Haptic Feedback", isOn: $hapticFeedback)
             }
 
             Section {

@@ -10,9 +10,6 @@ import SwiftUI
 
 struct CircularProgressView: View {
 
-    @Environment(\.colorScheme)
-    private var colorScheme
-
     @State
     private var lineWidth: CGFloat = 1
 

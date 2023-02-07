@@ -451,6 +451,8 @@
 		E185920A28CEF23A00326F80 /* FocusGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920928CEF23A00326F80 /* FocusGuide.swift */; };
 		E18845F526DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Poster.swift */; };
 		E18845F626DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18845F426DD631E00B0C5B7 /* BaseItemDto+Poster.swift */; };
+		E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18A17EF298C68B700C22F62 /* Overlay.swift */; };
+		E18A17F2298C68BB00C22F62 /* MainOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18A17F1298C68BB00C22F62 /* MainOverlay.swift */; };
 		E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = E18A8E7928D5FEDF00333B9A /* VLCUI */; };
 		E18A8E7D28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18A8E7C28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift */; };
 		E18A8E7E28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18A8E7C28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift */; };
@@ -534,7 +536,6 @@
 		E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0628A0B958005C10C8 /* NukeUI */; };
 		E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0928A0BEFF005C10C8 /* BlurHashKit */; };
 		E19F6C5D28F5189300C5197E /* MediaStreamInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F6C5C28F5189300C5197E /* MediaStreamInfoView.swift */; };
-		E19F6C5F28F5193B00C5197E /* PlaybackInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F6C5E28F5193B00C5197E /* PlaybackInformationView.swift */; };
 		E1A1528228FD126C00600579 /* VerticalAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528128FD126C00600579 /* VerticalAlignment.swift */; };
 		E1A1528528FD191A00600579 /* TextPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528428FD191A00600579 /* TextPair.swift */; };
 		E1A1528828FD229500600579 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528728FD229500600579 /* ChevronButton.swift */; };
@@ -1043,6 +1044,8 @@
 		E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
 		E185920928CEF23A00326F80 /* FocusGuide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusGuide.swift; sourceTree = "<group>"; };
 		E18845F426DD631E00B0C5B7 /* BaseItemDto+Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+Poster.swift"; sourceTree = "<group>"; };
+		E18A17EF298C68B700C22F62 /* Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overlay.swift; sourceTree = "<group>"; };
+		E18A17F1298C68BB00C22F62 /* MainOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainOverlay.swift; sourceTree = "<group>"; };
 		E18A8E7C28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+VideoPlayerViewModel.swift"; sourceTree = "<group>"; };
 		E18A8E7F28D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MediaSourceInfo+ItemVideoPlayerViewModel.swift"; sourceTree = "<group>"; };
 		E18A8E8228D60BC400333B9A /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
@@ -1097,7 +1100,6 @@
 		E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainTabCoordinator.swift; sourceTree = "<group>"; };
 		E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomEdgeGradientModifier.swift; sourceTree = "<group>"; };
 		E19F6C5C28F5189300C5197E /* MediaStreamInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStreamInfoView.swift; sourceTree = "<group>"; };
-		E19F6C5E28F5193B00C5197E /* PlaybackInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackInformationView.swift; sourceTree = "<group>"; };
 		E1A1528128FD126C00600579 /* VerticalAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalAlignment.swift; sourceTree = "<group>"; };
 		E1A1528428FD191A00600579 /* TextPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPair.swift; sourceTree = "<group>"; };
 		E1A1528728FD229500600579 /* ChevronButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronButton.swift; sourceTree = "<group>"; };
@@ -1331,6 +1333,7 @@
 			isa = PBXGroup;
 			children = (
 				E1575EA4293E7D37001665B1 /* Legacy */,
+				E18A17F3298C68BF00C22F62 /* Overlays */,
 				E1575EA5293E7D40001665B1 /* VideoPlayer.swift */,
 				E1D9F474296E86D400129AF3 /* NativeVideoPlayer.swift */,
 			);
@@ -2121,7 +2124,6 @@
 			isa = PBXGroup;
 			children = (
 				E170D102294CE8BF0017224C /* LoadingView.swift */,
-				E19F6C5E28F5193B00C5197E /* PlaybackInformationView.swift */,
 				E129429A28F4A5E300796AC6 /* PlaybackSettingsView.swift */,
 			);
 			path = Components;
@@ -2130,7 +2132,6 @@
 		E1575EA4293E7D37001665B1 /* Legacy */ = {
 			isa = PBXGroup;
 			children = (
-				E178859C2780F5300094FBCF /* tvOSSLider */,
 				E17885A7278130690094FBCF /* Overlays */,
 				E1384943278036C70024FB48 /* VLCPlayerViewController.swift */,
 				E13AD72F2798C60F00FDCEE8 /* NativePlayerViewController.swift */,
@@ -2203,7 +2204,6 @@
 		E17885A7278130690094FBCF /* Overlays */ = {
 			isa = PBXGroup;
 			children = (
-				E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */,
 				E1FA2F7327818A8800B4C270 /* SmallMenuOverlay.swift */,
 				E178859F2780F55C0094FBCF /* tvOSVLCOverlay.swift */,
 			);
@@ -2216,6 +2216,25 @@
 				E185920928CEF23A00326F80 /* FocusGuide.swift */,
 			);
 			path = Objects;
+			sourceTree = "<group>";
+		};
+		E18A17F3298C68BF00C22F62 /* Overlays */ = {
+			isa = PBXGroup;
+			children = (
+				E18A17F4298C6A7300C22F62 /* Components */,
+				E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */,
+				E18A17F1298C68BB00C22F62 /* MainOverlay.swift */,
+				E18A17EF298C68B700C22F62 /* Overlay.swift */,
+			);
+			path = Overlays;
+			sourceTree = "<group>";
+		};
+		E18A17F4298C6A7300C22F62 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E178859C2780F5300094FBCF /* tvOSSLider */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		E18CE0B028A222310092E7F1 /* Components */ = {
@@ -3025,6 +3044,7 @@
 				E18E02202887492B0022598C /* AttributeFillView.swift in Sources */,
 				E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
+				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
 				E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */,
 				E154677A289AF48200087E35 /* CollectionItemContentView.swift in Sources */,
 				E193D53D27193F9700900D82 /* UserSignInCoordinator.swift in Sources */,
@@ -3057,6 +3077,7 @@
 				E1D9F475296E86D400129AF3 /* NativeVideoPlayer.swift in Sources */,
 				E1575E7D293E77B5001665B1 /* PosterType.swift in Sources */,
 				E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */,
+				E18A17F2298C68BB00C22F62 /* MainOverlay.swift in Sources */,
 				E193D549271941CC00900D82 /* UserSignInView.swift in Sources */,
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
 				E148128628C15475003B8787 /* APISortOrder.swift in Sources */,
@@ -3144,7 +3165,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E19F6C5F28F5193B00C5197E /* PlaybackInformationView.swift in Sources */,
 				E11245B428D97D5D00D8A977 /* BottomBarView.swift in Sources */,
 				E17FB55528C1250B00311DFE /* SimilarItemsHStack.swift in Sources */,
 				5364F455266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,

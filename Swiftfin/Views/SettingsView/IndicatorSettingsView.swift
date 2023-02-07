@@ -26,13 +26,13 @@ struct IndicatorSettingsView: View {
         Form {
             Section {
                 
-                Toggle("Show Favorited", isOn: $showFavorited)
+                Toggle("Favorited", isOn: $showFavorited)
                 
-                Toggle("Show Progress", isOn: $showProgress)
+                Toggle("Progress", isOn: $showProgress)
                 
-                Toggle("Show Unwatched", isOn: $showUnwatched)
+                Toggle("Unwatched", isOn: $showUnwatched)
                 
-                Toggle("Show Watched", isOn: $showWatched)
+                Toggle("Watched", isOn: $showWatched)
             }
         }
         .navigationTitle("Indicators")

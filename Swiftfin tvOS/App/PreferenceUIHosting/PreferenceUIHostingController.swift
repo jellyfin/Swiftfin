@@ -23,10 +23,14 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
                 .onPreferenceChange(DidPressMenuPreferenceKey.self) {
                     box.value?.didPressMenuAction = $0
                 }
+                .onPreferenceChange(DidPressSelectPreferenceKey.self) {
+                    box.value?.didPressSelectAction = $0
+                }
         ))
         box.value = self
 
         addButtonPressRecognizer(pressType: .menu, action: #selector(didPressMenuSelector))
+        addButtonPressRecognizer(pressType: .select, action: #selector(didPressSelectSelector))
     }
 
     @objc
@@ -47,18 +51,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
     }
 
     var didPressMenuAction: ActionHolder = .init(action: {})
-
-//    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-//        guard let pressType = presses.first?.type else { return }
-//
-//        print("Press: \(pressType)")
-//
-//        switch pressType {
-//        case .menu:
-//            didPressMenuAction.action()
-//        default: ()
-//        }
-//    }
+    var didPressSelectAction: ActionHolder = .init(action: {})
 
     private func addButtonPressRecognizer(pressType: UIPress.PressType, action: Selector) {
         let pressRecognizer = UITapGestureRecognizer()
@@ -71,6 +64,13 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
     private func didPressMenuSelector() {
         DispatchQueue.main.async {
             self.didPressMenuAction.action()
+        }
+    }
+    
+    @objc
+    private func didPressSelectSelector() {
+        DispatchQueue.main.async {
+            self.didPressSelectAction.action()
         }
     }
 }
@@ -106,6 +106,15 @@ struct DidPressMenuPreferenceKey: PreferenceKey {
     }
 }
 
+struct DidPressSelectPreferenceKey: PreferenceKey {
+
+    static var defaultValue: ActionHolder = .init(action: {})
+
+    static func reduce(value: inout ActionHolder, nextValue: () -> ActionHolder) {
+        value = nextValue()
+    }
+}
+
 // MARK: Preference Key View Extension
 
 extension View {
@@ -116,5 +125,9 @@ extension View {
 
     func onMenuPressed(_ action: @escaping () -> Void) -> some View {
         preference(key: DidPressMenuPreferenceKey.self, value: ActionHolder(action: action))
+    }
+    
+    func onSelectPressed(_ action: @escaping () -> Void) -> some View {
+        preference(key: DidPressSelectPreferenceKey.self, value: ActionHolder(action: action))
     }
 }

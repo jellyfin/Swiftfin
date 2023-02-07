@@ -103,44 +103,14 @@ extension MenuPosterHStack {
 
     func content(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
         copy(modifying: \.content, with: content)
-//        .init(
-//            manager: manager,
-//            type: type,
-//            itemScale: itemScale,
-//            singleImage: singleImage,
-//            content: content,
-//            imageOverlay: imageOverlay,
-//            contextMenu: contextMenu,
-//            onSelect: onSelect
-//        )
     }
 
     func imageOverlay(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
-//        .init(
-//            manager: manager,
-//            type: type,
-//            itemScale: itemScale,
-//            singleImage: singleImage,
-//            content: content,
-//            imageOverlay: imageOverlay,
-//            contextMenu: contextMenu,
-//            onSelect: onSelect
-//        )
     }
 
     func contextMenu(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
-//        .init(
-//            manager: manager,
-//            type: type,
-//            itemScale: itemScale,
-//            singleImage: singleImage,
-//            content: content,
-//            imageOverlay: imageOverlay,
-//            contextMenu: contextMenu,
-//            onSelect: onSelect
-//        )
     }
 
     func onSelect(_ action: @escaping (Model.Item) -> Void) -> Self {

@@ -32,7 +32,3 @@ extension Color {
     static let tertiarySystemFill = Color(UIColor.tertiarySystemFill)
     #endif
 }
-
-extension UIColor {
-    static let jellyfinPurple = UIColor(red: 172 / 255, green: 92 / 255, blue: 195 / 255, alpha: 1)
-}

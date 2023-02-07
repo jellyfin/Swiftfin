@@ -44,7 +44,7 @@ extension Defaults.Keys {
 
         enum CinematicItemViewType {
 
-            static let usePrimaryImage: Key<Bool> = .init("cinematicItemViewType.usePrimaryImage", default: false, suite: .generalSuite)
+            static let usePrimaryImage: Key<Bool> = .init("cinematicItemViewTypeUsePrimaryImage", default: false, suite: .generalSuite)
         }
 
         enum Episodes {
@@ -54,23 +54,23 @@ extension Defaults.Keys {
         
         enum Indicators {
             
-            static let showFavorited: Key<Bool> = .init("indicators.showFavorited", default: true, suite: .generalSuite)
-            static let showProgress: Key<Bool> = .init("indicators.showProgress", default: true, suite: .generalSuite)
-            static let showUnwatched: Key<Bool> = .init("indicators.showUnwatched", default: true, suite: .generalSuite)
-            static let showWatched: Key<Bool> = .init("indicators.showWatched", default: true, suite: .generalSuite)
+            static let showFavorited: Key<Bool> = .init("showFavoritedIndicator", default: true, suite: .generalSuite)
+            static let showProgress: Key<Bool> = .init("showProgressIndicator", default: true, suite: .generalSuite)
+            static let showUnwatched: Key<Bool> = .init("showUnwatchedIndicator", default: true, suite: .generalSuite)
+            static let showWatched: Key<Bool> = .init("showWatchedIndicator", default: true, suite: .generalSuite)
         }
 
         enum Library {
 
-            static let gridPosterType = Key<PosterType>("Customization.Library.gridPosterType", default: .portrait, suite: .generalSuite)
+            static let gridPosterType = Key<PosterType>("libraryGridPosterType", default: .portrait, suite: .generalSuite)
             static let cinematicBackground: Key<Bool> = .init(
                 "Customization.Library.cinematicBackground",
                 default: true,
                 suite: .generalSuite
             )
-            static let randomImage: Key<Bool> = .init("Customization.Library.randomImage", default: true, suite: .generalSuite)
-            static let showFavorites: Key<Bool> = .init("Customization.Library.showFavorites", default: true, suite: .generalSuite)
-            static let viewType = Key<LibraryViewType>("Customization.Library.viewType", default: .grid, suite: .generalSuite)
+            static let randomImage: Key<Bool> = .init("libraryRandomImage", default: true, suite: .generalSuite)
+            static let showFavorites: Key<Bool> = .init("libraryShowFavorites", default: true, suite: .generalSuite)
+            static let viewType = Key<LibraryViewType>("libraryViewType", default: .grid, suite: .generalSuite)
         }
     }
 
@@ -104,29 +104,29 @@ extension Defaults.Keys {
         enum Gesture {
 
             static let horizontalPanGesture: Key<PanAction> = .init(
-                "videoPlayer.horizontalPanGesture",
+                "videoPlayerHorizontalPanGesture",
                 default: .none,
                 suite: .generalSuite
             )
             static let horizontalSwipeGesture: Key<SwipeAction> = .init(
-                "videoPlayer.horizontalSwipeGesture",
+                "videoPlayerHorizontalSwipeGesture",
                 default: .none,
                 suite: .generalSuite
             )
             static let longPressGesture: Key<LongPressAction> = .init(
-                "videoPlayer.longPressGesture",
+                "videoPlayerLongPressGesture",
                 default: .gestureLock,
                 suite: .generalSuite
             )
-            static let multiTapGesture: Key<MultiTapAction> = .init("videoPlayer.multiTapGesture", default: .none, suite: .generalSuite)
-            static let pinchGesture: Key<PinchAction> = .init("videoPlayer.swipeGesture", default: .aspectFill, suite: .generalSuite)
+            static let multiTapGesture: Key<MultiTapAction> = .init("videoPlayerMultiTapGesture", default: .none, suite: .generalSuite)
+            static let pinchGesture: Key<PinchAction> = .init("videoPlayerSwipeGesture", default: .aspectFill, suite: .generalSuite)
             static let verticalPanGestureLeft: Key<PanAction> = .init(
-                "videoPlayer.verticalPanGestureLeft",
+                "videoPlayerVerticalPanGestureLeft",
                 default: .none,
                 suite: .generalSuite
             )
             static let verticalPanGestureRight: Key<PanAction> = .init(
-                "videoPlayer.verticalPanGestureRight",
+                "videoPlayerVerticalPanGestureRight",
                 default: .none,
                 suite: .generalSuite
             )
@@ -141,7 +141,7 @@ extension Defaults.Keys {
 
             static let chapterSlider: Key<Bool> = .init("chapterSlider", default: true, suite: .generalSuite)
             static let playbackButtonType: Key<PlaybackButtonType> = .init(
-                "VideoPlayer.Overlay.playbackButtonLocation",
+                "videoPlayerPlaybackButtonLocation",
                 default: .large,
                 suite: .generalSuite
             )
@@ -181,7 +181,7 @@ extension Defaults.Keys {
     // Experimental settings
     enum Experimental {
 
-        static let downloads: Key<Bool> = .init("experimental.downloads", default: false, suite: .generalSuite)
+        static let downloads: Key<Bool> = .init("experimentalDownloads", default: false, suite: .generalSuite)
         static let syncSubtitleStateWithAdjacent = Key<Bool>(
             "experimental.syncSubtitleState",
             default: false,

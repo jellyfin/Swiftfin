@@ -28,7 +28,9 @@ struct SeeAllButton: View {
 extension SeeAllButton {
 
     init() {
-        self.onSelect = {}
+        self.init(
+            onSelect: {}
+        )
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {

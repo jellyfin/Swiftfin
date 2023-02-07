@@ -101,8 +101,10 @@ struct PagingLibraryView: View {
 
 extension PagingLibraryView {
     init(viewModel: PagingLibraryViewModel) {
-        self.viewModel = viewModel
-        self.onSelect = { _ in }
+        self.init(
+            viewModel: viewModel,
+            onSelect: { _ in }
+        )
     }
 
     func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {

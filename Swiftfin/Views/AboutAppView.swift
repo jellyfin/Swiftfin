@@ -65,6 +65,18 @@ struct AboutAppView: View {
                     .onSelect {
                         UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
                     }
+                
+                ChevronButton(title: "Settings")
+                    .leadingView {
+                        Image(systemName: "gearshape.fill")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.primary)
+                    }
+                    .onSelect {
+                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                        UIApplication.shared.open(url)
+                    }
             }
         }
     }

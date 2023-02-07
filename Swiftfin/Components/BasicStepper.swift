@@ -40,11 +40,13 @@ extension BasicStepper {
         range: ClosedRange<Value>,
         step: Value.Stride
     ) {
-        self.title = title
-        self.range = range
-        self.step = step
-        self._value = value
-        self.formatter = { $0.description }
+        self.init(
+            value: value,
+            title: title,
+            range: range,
+            step: step,
+            formatter: { $0.description }
+        )
     }
 
     func valueFormatter(_ formatter: @escaping (Value) -> String) -> Self {

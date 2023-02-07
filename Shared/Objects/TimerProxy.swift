@@ -25,7 +25,7 @@ class TimerProxy: ObservableObject {
         isActive = false
     }
 
-    // stop the current work item but don't trigger an update
+    /// Stops the timer without triggering an active update
     func pause() {
         stopWorkitem?.cancel()
     }

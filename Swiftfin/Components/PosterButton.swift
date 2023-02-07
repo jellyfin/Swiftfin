@@ -139,9 +139,9 @@ extension PosterButton {
     }
 }
 
-// MARK: DefaultContentView
-
 extension PosterButton {
+    
+    // MARK: Default Content
 
     struct DefaultContentView: View {
 
@@ -199,6 +199,8 @@ extension PosterButton {
             }
         }
     }
+    
+    // MARK: Default Overlay
     
     struct DefaultOverlay: View {
         

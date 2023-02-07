@@ -15,6 +15,9 @@ struct ActionButtonSelectorView: View {
 
     @Binding
     var selectedButtonsBinding: [VideoPlayerActionButton]
+    
+    @Environment(\.editMode)
+    private var editMode
 
     @State
     private var _selectedButtons: [VideoPlayerActionButton]
@@ -28,11 +31,20 @@ struct ActionButtonSelectorView: View {
             Section {
                 ForEach(_selectedButtons) { item in
                     Button {
-                        select(item: item)
+                        if !(editMode?.wrappedValue.isEditing ?? true) {
+                            select(item: item)
+                        }
                     } label: {
                         HStack {
                             Image(systemName: item.settingsSystemImage)
                             Text(item.displayTitle)
+                            
+                            Spacer()
+                            
+                            if !(editMode?.wrappedValue.isEditing ?? false) {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundColor(.red)
+                            }
                         }
                         .foregroundColor(.primary)
                     }
@@ -50,11 +62,20 @@ struct ActionButtonSelectorView: View {
             Section {
                 ForEach(disabledButtons) { item in
                     Button {
-                        select(item: item)
+                        if !(editMode?.wrappedValue.isEditing ?? true) {
+                            select(item: item)
+                        }
                     } label: {
                         HStack {
                             Image(systemName: item.settingsSystemImage)
                             Text(item.displayTitle)
+                            
+                            Spacer()
+                            
+                            if !(editMode?.wrappedValue.isEditing ?? false) {
+                                Image(systemName: "plus.circle.fill")
+                                    .foregroundColor(.green)
+                            }
                         }
                         .foregroundColor(.primary)
                     }
@@ -93,7 +114,11 @@ struct ActionButtonSelectorView: View {
 extension ActionButtonSelectorView {
 
     init(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) {
-        self._selectedButtonsBinding = selectedButtonsBinding
-        self._selectedButtons = selectedButtonsBinding.wrappedValue
+        self.init(
+            selectedButtonsBinding: selectedButtonsBinding,
+            _selectedButtons: selectedButtonsBinding.wrappedValue
+        )
+//        self._selectedButtonsBinding = selectedButtonsBinding
+//        self._selectedButtons = selectedButtonsBinding.wrappedValue
     }
 }

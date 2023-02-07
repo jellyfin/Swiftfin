@@ -22,8 +22,6 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
     #if os(iOS)
     @Route(.push)
     var mediaStreamInfo = makeMediaStreamInfo
-    @Route(.push)
-    var playbackInformation = makePlaybackInformation
     #endif
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
@@ -34,11 +32,6 @@ final class PlaybackSettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeMediaStreamInfo(mediaStream: MediaStream) -> some View {
         MediaStreamInfoView(mediaStream: mediaStream)
-    }
-
-    @ViewBuilder
-    func makePlaybackInformation() -> some View {
-        PlaybackInformationView()
     }
     #endif
 

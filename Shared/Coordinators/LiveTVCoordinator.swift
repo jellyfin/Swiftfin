@@ -12,6 +12,7 @@ import Stinsen
 import SwiftUI
 
 final class LiveTVCoordinator: NavigationCoordinatable {
+    
     let stack = NavigationStack(initial: \LiveTVCoordinator.start)
 
     @Root

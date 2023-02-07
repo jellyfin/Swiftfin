@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// TODO: Change to `SeparatorHStack` with a result builder
+// Look at result builder
 
 struct DotHStack: View {
 

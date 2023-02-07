@@ -27,9 +27,10 @@ extension FixedWidthInteger {
 }
 
 extension Int {
-
-    var millisecondToSecondLabel: String {
-        let negative = self < 0
+    
+    /// Format if the current value represents milliseconds
+    var millisecondFormat: String {
+        let isNegative = self < 0
         let value = abs(self)
         let seconds = "\(value / 1000)"
         let milliseconds = "\(value % 1000)".first ?? "0"
@@ -38,6 +39,17 @@ extension Int {
             .appending(".")
             .appending(milliseconds)
             .appending("s")
-            .prepending("-", if: negative)
+            .prepending("-", if: isNegative)
+    }
+    
+    // Format if the current value represents seconds
+    var secondFormat: String {
+        let isNegative = self < 0
+        let value = abs(self)
+        let seconds = "\(value)"
+
+        return seconds
+            .appending("s")
+            .prepending("-", if: isNegative)
     }
 }

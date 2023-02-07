@@ -27,6 +27,9 @@ struct NativeVideoPlayerSettingsView: View {
                     range: 0 ... 30,
                     step: 1
                 )
+                .valueFormatter {
+                    $0.secondFormat
+                }
             } footer: {
                 Text("Resume content seconds before the recorded resume time")
             }

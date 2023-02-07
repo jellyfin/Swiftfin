@@ -10,6 +10,9 @@
 
 import GameController
 import UIKit
+import SwiftUI
+
+// TODO: Replace
 
 enum DPadState {
     case select
@@ -34,13 +37,10 @@ private let decelerationRate: Float = 0.92
 private let decelerationMaxVelocity: Float = 1000
 
 /// A control used to select a single value from a continuous range of values.
-public final class TvOSSlider: UIControl {
-
-    // MARK: - Public
+final class UITVOSSlider: UIControl {
 
     /// The slider’s current value.
-    @IBInspectable
-    public var value: Float {
+    var value: Float {
         get {
             storedValue
         }
@@ -55,67 +55,60 @@ public final class TvOSSlider: UIControl {
     }
 
     /// The minimum value of the slider.
-    @IBInspectable
-    public var minimumValue: Float = defaultMinimumValue {
+    var minimumValue: Float = defaultMinimumValue {
         didSet {
             value = max(value, minimumValue)
         }
     }
 
     /// The maximum value of the slider.
-    @IBInspectable
-    public var maximumValue: Float = defaultMaximumValue {
+    var maximumValue: Float = defaultMaximumValue {
         didSet {
             value = min(value, maximumValue)
         }
     }
 
     /// A Boolean value indicating whether changes in the slider’s value generate continuous update events.
-    @IBInspectable
-    public var isContinuous: Bool = defaultIsContinuous
+    var isContinuous: Bool = defaultIsContinuous
 
     /// The color used to tint the default minimum track images.
-    @IBInspectable
-    public var minimumTrackTintColor: UIColor? = defaultMininumTrackTintColor {
+    var minimumTrackTintColor: UIColor? = defaultMininumTrackTintColor {
         didSet {
             minimumTrackView.backgroundColor = minimumTrackTintColor
         }
     }
 
     /// The color used to tint the default maximum track images.
-    @IBInspectable
-    public var maximumTrackTintColor: UIColor? {
+    var maximumTrackTintColor: UIColor? {
         didSet {
             maximumTrackView.backgroundColor = maximumTrackTintColor
         }
     }
 
     /// The color used to tint the default thumb images.
-    @IBInspectable
-    public var thumbTintColor: UIColor = defaultThumbTintColor {
+    var thumbTintColor: UIColor = defaultThumbTintColor {
         didSet {
             thumbView.backgroundColor = thumbTintColor
         }
     }
 
     /// Scale factor applied to the slider when receiving the focus
-    @IBInspectable
-    public var focusScaleFactor: CGFloat = defaultFocusScaleFactor {
+    var focusScaleFactor: CGFloat = defaultFocusScaleFactor {
         didSet {
             updateStateDependantViews()
         }
     }
 
     /// Value added or subtracted from the current value on steps left or right updates
-    public var stepValue: Float = defaultStepValue
+    var stepValue: Float = defaultStepValue
 
     /// Damping value for panning gestures
-    public var panDampingValue: Float = 5
+    var panDampingValue: Float = 5
 
     // Size for thumb view
-    public var thumbSize: CGFloat = 30
+    var thumbSize: CGFloat = 30
 
-    public var fineTunningVelocityThreshold: Float = 600
+    var fineTunningVelocityThreshold: Float = 600
 
     /**
      Sets the slider’s current value, allowing you to animate the change visually.
@@ -124,7 +117,7 @@ public final class TvOSSlider: UIControl {
         - value: The new value to assign to the value property
         - animated: Specify true to animate the change in value; otherwise, specify false to update the slider’s appearance immediately. Animations are performed asynchronously and do not block the calling thread.
      */
-    public func setValue(_ value: Float, animated: Bool) {
+    func setValue(_ value: Float, animated: Bool) {
         self.value = value
         stopDeceleratingTimer()
 
@@ -143,7 +136,7 @@ public final class TvOSSlider: UIControl {
         - image: The minimum track image to associate with the specified states.
         - state: The control state with which to associate the image.
      */
-    public func setMinimumTrackImage(_ image: UIImage?, for state: UIControl.State) {
+    func setMinimumTrackImage(_ image: UIImage?, for state: UIControl.State) {
         minimumTrackViewImages[state.rawValue] = image
         updateStateDependantViews()
     }
@@ -155,7 +148,7 @@ public final class TvOSSlider: UIControl {
         - image: The maximum track image to associate with the specified states.
         - state: The control state with which to associate the image.
      */
-    public func setMaximumTrackImage(_ image: UIImage?, for state: UIControl.State) {
+    func setMaximumTrackImage(_ image: UIImage?, for state: UIControl.State) {
         maximumTrackViewImages[state.rawValue] = image
         updateStateDependantViews()
     }
@@ -167,86 +160,25 @@ public final class TvOSSlider: UIControl {
         - image: The thumb image to associate with the specified states.
         - state: The control state with which to associate the image.
      */
-    public func setThumbImage(_ image: UIImage?, for state: UIControl.State) {
+    func setThumbImage(_ image: UIImage?, for state: UIControl.State) {
         thumbViewImages[state.rawValue] = image
         updateStateDependantViews()
     }
 
-    /// The minimum track image currently being used to render the slider.
-    public var currentMinimumTrackImage: UIImage? {
-        minimumTrackView.image
-    }
-
-    /// Contains the maximum track image currently being used to render the slider.
-    public var currentMaximumTrackImage: UIImage? {
-        maximumTrackView.image
-    }
-
-    /// The thumb image currently being used to render the slider.
-    public var currentThumbImage: UIImage? {
-        thumbView.image
-    }
-
-    /**
-      Returns the minimum track image associated with the specified control state.
-
-      - Parameters:
-         - state: The control state whose minimum track image you want to use. Specify a single control state value for this parameter.
-
-     - Returns: The minimum track image associated with the specified state, or nil if no image has been set. This method might also return nil if you specify multiple control states in the state parameter. For a description of track images, see Customizing the Slider’s Appearance.
-      */
-    public func minimumTrackImage(for state: UIControl.State) -> UIImage? {
-        minimumTrackViewImages[state.rawValue]
-    }
-
-    /**
-     Returns the maximum track image associated with the specified control state.
-
-     - Parameters:
-        - state: The control state whose maximum track image you want to use. Specify a single control state value for this parameter.
-
-     - Returns: The maximum track image associated with the specified state, or nil if an appropriate image could not be retrieved. This method might return nil if you specify multiple control states in the state parameter. For a description of track images, see Customizing the Slider’s Appearance.
-     */
-    public func maximumTrackImage(for state: UIControl.State) -> UIImage? {
-        maximumTrackViewImages[state.rawValue]
-    }
-
-    /**
-     Returns the thumb image associated with the specified control state.
-
-     - Parameters:
-        - state: The control state whose thumb image you want to use. Specify a single control state value for this parameter.
-
-     - Returns: The thumb image associated with the specified state, or nil if an appropriate image could not be retrieved. This method might return nil if you specify multiple control states in the state parameter. For a description of track and thumb images, see Customizing the Slider’s Appearance.
-     */
-    public func thumbImage(for state: UIControl.State) -> UIImage? {
-        thumbViewImages[state.rawValue]
-    }
-
     // MARK: - Initializers
-
-    /// :nodoc:
-    //    public override init(frame: CGRect) {
-    //        super.init(frame: frame)
-    //        setUpView()
-    //    }
-
-    /// :nodoc:
-    //    public required init?(coder aDecoder: NSCoder) {
-    //        super.init(coder: aDecoder)
-    //        setUpView()
-    //    }
-
-    // MARK: VideoPlayerVieModel init
-
-//    init(viewModel: VideoPlayerViewModel) {
-//        self.viewModel = viewModel
-//        super.init(frame: .zero)
-//        setUpView()
-//    }
-
-    init() {
+    
+    private var onEditingChanged: (Bool) -> Void
+    private var valueBinding: Binding<CGFloat>
+    
+    init(
+        value: Binding<CGFloat>,
+        onEditingChanged: @escaping (Bool) -> Void
+    ) {
+        self.onEditingChanged = onEditingChanged
+        self.valueBinding = value
+        
         super.init(frame: .zero)
+        
         setUpView()
     }
 
@@ -262,7 +194,7 @@ public final class TvOSSlider: UIControl {
     // MARK: - UIControlStates
 
     /// :nodoc:
-    override public var isEnabled: Bool {
+    override var isEnabled: Bool {
         didSet {
             panGestureRecognizer.isEnabled = isEnabled
             updateStateDependantViews()
@@ -270,21 +202,21 @@ public final class TvOSSlider: UIControl {
     }
 
     /// :nodoc:
-    override public var isSelected: Bool {
+    override var isSelected: Bool {
         didSet {
             updateStateDependantViews()
         }
     }
 
     /// :nodoc:
-    override public var isHighlighted: Bool {
+    override var isHighlighted: Bool {
         didSet {
             updateStateDependantViews()
         }
     }
 
     /// :nodoc:
-    override public func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
         coordinator.addCoordinatedAnimations({
             self.updateStateDependantViews()
         }, completion: nil)
@@ -292,11 +224,9 @@ public final class TvOSSlider: UIControl {
 
     // MARK: - Private
 
-//    private let viewModel: VideoPlayerViewModel!
-
     private typealias ControlState = UInt
 
-    public var storedValue: Float = defaultValue
+    private var storedValue: Float = defaultValue
 
     private var thumbViewImages: [ControlState: UIImage] = [:]
     private var thumbView: UIImageView!
@@ -466,8 +396,8 @@ public final class TvOSSlider: UIControl {
             stopDeceleratingTimer()
         }
 
-//        viewModel.sliderPercentage = Double(percent)
-//        viewModel.sliderIsScrubbing = false
+        valueBinding.wrappedValue = CGFloat(percent)
+        onEditingChanged(false)
     }
 
     private func stopDeceleratingTimer() {
@@ -499,13 +429,11 @@ public final class TvOSSlider: UIControl {
 
         switch panGestureRecognizer.state {
         case .began:
-//            viewModel.sliderIsScrubbing = true
+            onEditingChanged(true)
 
             stopDeceleratingTimer()
             thumbViewCenterXConstraintConstant = Float(thumbViewCenterXConstraint.constant)
         case .changed:
-//            viewModel.sliderIsScrubbing = true
-
             let centerX = thumbViewCenterXConstraintConstant + translation / panDampingValue
             let percent = centerX / Float(trackView.frame.width)
             value = minimumValue + ((maximumValue - minimumValue) * percent)
@@ -513,14 +441,14 @@ public final class TvOSSlider: UIControl {
                 sendActions(for: .valueChanged)
             }
 
-//            viewModel.sliderPercentage = Double(percent)
+            valueBinding.wrappedValue = CGFloat(percent)
         case .ended, .cancelled:
 
             thumbViewCenterXConstraintConstant = Float(thumbViewCenterXConstraint.constant)
 
             if abs(velocity) > fineTunningVelocityThreshold {
                 let direction: Float = velocity > 0 ? 1 : -1
-                deceleratingVelocity = abs(velocity) > decelerationMaxVelocity ? decelerationMaxVelocity * direction : velocity
+                deceleratingVelocity = abs(velocity) >  decelerationMaxVelocity ? decelerationMaxVelocity * direction : velocity
                 deceleratingTimer = Timer.scheduledTimer(
                     timeInterval: 0.01,
                     target: self,
@@ -529,7 +457,7 @@ public final class TvOSSlider: UIControl {
                     repeats: true
                 )
             } else {
-//                viewModel.sliderIsScrubbing = false
+                onEditingChanged(false)
                 stopDeceleratingTimer()
             }
         default:
@@ -549,22 +477,22 @@ public final class TvOSSlider: UIControl {
 //        viewModel.playerOverlayDelegate?.didSelectForward()
     }
 
-    override public func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        for press in presses {
-            switch press.type {
-            case .select where dPadState == .left:
-                panGestureRecognizer.isEnabled = false
-                leftTapWasTriggered()
-            case .select where dPadState == .right:
-                panGestureRecognizer.isEnabled = false
-                rightTapWasTriggered()
-            case .select:
-                panGestureRecognizer.isEnabled = false
-            default:
-                break
-            }
-        }
-        panGestureRecognizer.isEnabled = true
-        super.pressesBegan(presses, with: event)
-    }
+//    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+//        for press in presses {
+//            switch press.type {
+//            case .select where dPadState == .left:
+//                panGestureRecognizer.isEnabled = false
+//                leftTapWasTriggered()
+//            case .select where dPadState == .right:
+//                panGestureRecognizer.isEnabled = false
+//                rightTapWasTriggered()
+//            case .select:
+//                panGestureRecognizer.isEnabled = false
+//            default:
+//                break
+//            }
+//        }
+//        panGestureRecognizer.isEnabled = true
+//        super.pressesBegan(presses, with: event)
+//    }
 }

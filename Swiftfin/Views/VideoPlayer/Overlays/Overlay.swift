@@ -6,7 +6,6 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension VideoPlayer {
@@ -29,8 +28,8 @@ extension VideoPlayer {
                 ChapterOverlay()
                     .visible(currentOverlayType == .chapters)
             }
-            .environment(\.currentOverlayType, $currentOverlayType)
             .animation(.linear(duration: 0.1), value: currentOverlayType)
+            .environment(\.currentOverlayType, $currentOverlayType)
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue else { return }
                 currentOverlayType = .main

@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
       "state" : {
-        "revision" : "11cb81d39129d25329b7e1e3209cd0aea9b352f0",
-        "version" : "1.3.5"
+        "revision" : "b92b5630e83d9c23fdea3356c66c4355cf67ffb3",
+        "version" : "1.3.6"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "2e9337168d08acccf72c039bf9324be24a1cf7d7",
-        "version" : "11.5.3"
+        "revision" : "df6cfba3f49aa6777b8c1084cb7778899ca166d3",
+        "version" : "11.6.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "5a303b257d579ae6d366ddc1da6763269985a5f7",
-        "version" : "3.2.0"
+        "revision" : "1b2edfb8eb9eaaefcba4335795b3d0ff092245ca",
+        "version" : "3.3.0"
       }
     },
     {

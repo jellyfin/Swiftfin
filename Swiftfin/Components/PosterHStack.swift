@@ -164,7 +164,7 @@ extension PosterHStack {
     }
 }
 
-// MARK: DefaultHeader
+// MARK: Default Header
 
 extension PosterHStack {
 
