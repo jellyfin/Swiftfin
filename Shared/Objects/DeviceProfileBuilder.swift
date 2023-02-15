@@ -83,16 +83,6 @@ class DeviceProfileBuilder {
             )] // H.264/HEVC with Dolby Digital - No Atmos - Vision
         }
 
-        // Device supports Dolby Atmos?
-        if supportsFeature(minimumSupported: .A12) {
-            directPlayProfiles = [DirectPlayProfile(
-                container: "mov,mp4,mkv,webm",
-                audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus",
-                videoCodec: "h264,hevc,dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9",
-                type: .video
-            )] // H.264/HEVC with Dolby Digital & Atmos - Vision
-        }
-
         // Build transcoding profiles
         var transcodingProfiles: [TranscodingProfile] = []
         transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264,mpeg4", audioCodec: "aac,mp3,wav")]
