@@ -24,17 +24,11 @@ struct ImageSource: Hashable {
     }
 }
 
-struct DefaultFailureView: View {
-
-    var body: some View {
-        Color.secondary
-    }
-}
-
 struct ImageView: View {
 
     @State
     private var sources: [ImageSource]
+    
     private var image: (NukeUI.Image) -> any View
     private var placeholder: (() -> any View)?
     private var failure: () -> any View
@@ -48,8 +42,7 @@ struct ImageView: View {
         } else if let blurHash = currentSource.blurHash {
             BlurHashView(blurHash: blurHash, size: .Circle(radius: 16))
         } else {
-            Color.secondarySystemFill
-                .opacity(0.5)
+            DefaultPlaceholderView()
         }
     }
 
@@ -138,5 +131,25 @@ extension ImageView {
 
     func resizingMode(_ resizingMode: ImageResizingMode) -> Self {
         copy(modifying: \.resizingMode, with: resizingMode)
+    }
+}
+
+// MARK: Defaults
+
+extension ImageView {
+    
+    struct DefaultFailureView: View {
+
+        var body: some View {
+            Color.secondarySystemFill
+        }
+    }
+    
+    struct DefaultPlaceholderView: View {
+        
+        var body: some View {
+            Color.secondarySystemFill
+                .opacity(0.5)
+        }
     }
 }

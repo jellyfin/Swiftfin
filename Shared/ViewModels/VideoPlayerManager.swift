@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -162,6 +163,10 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendStartReport() {
+        
+        #if DEBUG
+        guard Defaults[.sendProgressReports] else { return }
+        #endif
 
         currentProgressWorkItem?.cancel()
 
@@ -192,6 +197,10 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendStopReport() {
+        
+        #if DEBUG
+        guard Defaults[.sendProgressReports] else { return }
+        #endif
 
         print("sent stop report")
 
@@ -211,6 +220,10 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendPauseReport() {
+        
+        #if DEBUG
+        guard Defaults[.sendProgressReports] else { return }
+        #endif
 
         print("sent pause report")
 
@@ -233,6 +246,10 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendProgressReport() {
+        
+        #if DEBUG
+        guard Defaults[.sendProgressReports] else { return }
+        #endif
 
         let progressTask = DispatchWorkItem {
             self.sendProgressReport()

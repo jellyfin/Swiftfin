@@ -68,6 +68,15 @@ struct CustomizeViewsSettings: View {
                 
                 Toggle("Haptic Feedback", isOn: $hapticFeedback)
             }
+            
+            Section {
+                
+                Toggle("Favorites", isOn: $showFavorites)
+                
+                Toggle("Random Image", isOn: $libraryRandomImage)
+            } header: {
+                L10n.library.text
+            }
 
             Section {
                 Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
@@ -107,14 +116,6 @@ struct CustomizeViewsSettings: View {
                 // TODO: think of a better name
                 // TODO: localize after organization
                 Text("Episode Landscape Poster")
-            }
-
-            Section {
-                Toggle("Random Image", isOn: $libraryRandomImage)
-
-                Toggle("Show Favorites", isOn: $showFavorites)
-            } header: {
-                Text("Library")
             }
         }
         .navigationTitle(L10n.customize)

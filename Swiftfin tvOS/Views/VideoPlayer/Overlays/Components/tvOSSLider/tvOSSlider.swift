@@ -8,19 +8,10 @@
 
 // Modification of https://github.com/zattoo/TvOSSlider
 
-import GameController
 import UIKit
 import SwiftUI
 
 // TODO: Replace
-
-enum DPadState {
-    case select
-    case right
-    case left
-    case up
-    case down
-}
 
 private let trackViewHeight: CGFloat = 5
 private let animationDuration: TimeInterval = 0.3
@@ -246,8 +237,6 @@ final class UITVOSSlider: UIControl {
 
     private var thumbViewCenterXConstraint: NSLayoutConstraint!
 
-    private var dPadState: DPadState = .select
-
     private weak var deceleratingTimer: Timer?
     private var deceleratingVelocity: Float = 0
 
@@ -266,12 +255,6 @@ final class UITVOSSlider: UIControl {
 
         setUpGestures()
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(controllerConnected(note:)),
-            name: .GCControllerDidConnect,
-            object: nil
-        )
         updateStateDependantViews()
     }
 
@@ -362,24 +345,6 @@ final class UITVOSSlider: UIControl {
     }
 
     @objc
-    private func controllerConnected(note: NSNotification) {
-        guard let controller = note.object as? GCController else { return }
-        guard let micro = controller.microGamepad else { return }
-
-        let threshold: Float = 0.7
-        micro.reportsAbsoluteDpadValues = true
-        micro.dpad.valueChangedHandler = { [weak self] _, x, _ in
-            if x < -threshold {
-                self?.dPadState = .left
-            } else if x > threshold {
-                self?.dPadState = .right
-            } else {
-                self?.dPadState = .select
-            }
-        }
-    }
-
-    @objc
     private func handleDeceleratingTimer(timer: Timer) {
         let centerX = thumbViewCenterXConstraintConstant + deceleratingVelocity * 0.01
         let percent = centerX / Float(trackView.frame.width)
@@ -419,10 +384,8 @@ final class UITVOSSlider: UIControl {
 
     @objc
     private func panGestureWasTriggered(panGestureRecognizer: UIPanGestureRecognizer) {
-
-        if self.isVerticalGesture(panGestureRecognizer) {
-            return
-        }
+        
+        guard !isVerticalGesture(panGestureRecognizer) else { return }
 
         let translation = Float(panGestureRecognizer.translation(in: self).x)
         let velocity = Float(panGestureRecognizer.velocity(in: self).x)
@@ -476,23 +439,4 @@ final class UITVOSSlider: UIControl {
         //        setValue(value+stepValue, animated: true)
 //        viewModel.playerOverlayDelegate?.didSelectForward()
     }
-
-//    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-//        for press in presses {
-//            switch press.type {
-//            case .select where dPadState == .left:
-//                panGestureRecognizer.isEnabled = false
-//                leftTapWasTriggered()
-//            case .select where dPadState == .right:
-//                panGestureRecognizer.isEnabled = false
-//                rightTapWasTriggered()
-//            case .select:
-//                panGestureRecognizer.isEnabled = false
-//            default:
-//                break
-//            }
-//        }
-//        panGestureRecognizer.isEnabled = true
-//        super.pressesBegan(presses, with: event)
-//    }
 }

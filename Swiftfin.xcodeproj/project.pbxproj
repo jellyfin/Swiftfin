@@ -429,6 +429,7 @@
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
 		E173DA5226D04AAF00CC4EB7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* Color.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
+		E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */; };
 		E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonType.swift */; };
 		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
@@ -1024,6 +1025,7 @@
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
+		E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSettingsView.swift; sourceTree = "<group>"; };
 		E17665D828E80F0F00130507 /* PosterButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterButtonType.swift; sourceTree = "<group>"; };
 		E178859A2780F1F40094FBCF /* tvOSSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSSlider.swift; sourceTree = "<group>"; };
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
@@ -1934,12 +1936,12 @@
 		E11CEB85289984F5003E74C7 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				E11CEB8828998522003E74C7 /* iOSViewExtensions */,
+				E11CEB8828998522003E74C7 /* View */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		E11CEB8828998522003E74C7 /* iOSViewExtensions */ = {
+		E11CEB8828998522003E74C7 /* View */ = {
 			isa = PBXGroup;
 			children = (
 				E11CEB8A28998552003E74C7 /* iOSViewExtensions.swift */,
@@ -1947,7 +1949,7 @@
 				E113133028BDB6D600930F75 /* NavBarDrawerButtons */,
 				E11895B12893842D0042947B /* NavBarOffset */,
 			);
-			path = iOSViewExtensions;
+			path = View;
 			sourceTree = "<group>";
 		};
 		E11CEB9228999D8D003E74C7 /* EpisodeItemView */ = {
@@ -2599,6 +2601,7 @@
 			isa = PBXGroup;
 			children = (
 				E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */,
+				E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */,
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
 				E104C86F296E087200C1C3F9 /* IndicatorSettingsView.swift */,
 				E16AF11B292C98A7001422A8 /* GestureSettingsView.swift */,
@@ -3248,6 +3251,7 @@
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				C45942C627F695FB00C54FE7 /* LiveTVProgramsCoordinator.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
+				E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */,
 				E12CC1BB28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */,
 				E17FB55228C119D400311DFE /* Displayable.swift in Sources */,
 				E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */,

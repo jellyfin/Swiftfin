@@ -38,8 +38,7 @@ import SwiftUI
      }
 
     func updateUIView(_ uiView: UITVOSSlider, context: Context) {
-//        guard !viewModel.sliderIsScrubbing else { return }
-//        uiView.value = Float(maxValue * viewModel.sliderPercentage)
+        
     }
  }
 

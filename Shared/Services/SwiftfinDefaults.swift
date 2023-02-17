@@ -197,3 +197,19 @@ extension Defaults.Keys {
     static let downActionShowsMenu = Key<Bool>("downActionShowsMenu", default: true, suite: .generalSuite)
     static let confirmClose = Key<Bool>("confirmClose", default: false, suite: .generalSuite)
 }
+
+// MARK: Debug
+
+#if DEBUG
+
+extension UserDefaults {
+    
+    static let debugSuite = UserDefaults(suiteName: "swiftfinstore-debug-defaults")!
+}
+
+extension Defaults.Keys {
+    
+    static let sendProgressReports: Key<Bool> = .init("sendProgressReports", default: true, suite: .debugSuite)
+    
+}
+#endif

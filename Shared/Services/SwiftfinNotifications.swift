@@ -38,12 +38,12 @@ enum Notifications {
     static let service = Factory(scope: .singleton) { NotificationCenter() }
 
     final class Key {
-        public typealias NotificationKey = Notifications.Key
+        typealias NotificationKey = Notifications.Key
 
-        public let key: String
-        public let underlyingNotification: SwiftfinNotification
+        let key: String
+        let underlyingNotification: SwiftfinNotification
 
-        public init(_ key: String) {
+        init(_ key: String) {
             self.key = key
             self.underlyingNotification = SwiftfinNotification(Notification.Name(key))
         }
